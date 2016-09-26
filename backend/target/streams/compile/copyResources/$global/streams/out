@@ -1,0 +1,4 @@
+[debug] Copy resource mappings: 
+[debug] 	(C:\Develop\Source\angular2\conf\application.conf,C:\Develop\Source\angular2\target\scala-2.11\classes\application.conf)
+[debug] 	(C:\Develop\Source\angular2\conf\logback.xml,C:\Develop\Source\angular2\target\scala-2.11\classes\logback.xml)
+[debug] 	(C:\Develop\Source\angular2\conf\routes,C:\Develop\Source\angular2\target\scala-2.11\classes\routes)
