@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
-// @SOURCE:C:/Develop/Source/angular2/conf/routes
-// @DATE:Mon Sep 26 11:25:51 CEST 2016
+// @SOURCE:/home/jonas/code/TurnierManager/conf/routes
+// @DATE:Thu Sep 29 14:32:06 CEST 2016
 
 
 package router {

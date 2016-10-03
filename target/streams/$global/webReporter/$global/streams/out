@@ -1,7 +1,13 @@
-[error] C:\Develop\Source\angular2\app\assets\javascripts\app.component.ts:73: Cannot find name 'Playere'.
-[error]   public selectedHero: Playere;
-[error]                        ^
-[error] C:\Develop\Source\angular2\app\assets\javascripts\app.component.ts:85: Cannot find name 'Hero'.
-[error]   onSelect(hero: Hero) { this.selectedHero = hero; }
-[error]                  ^
-[error] two errors found
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/assets/javascripts/app.component.ts:1: Cannot find module './data/Player'.[0m
+[0m[[31merror[0m] [0mimport {Player} from './data/Player';[0m
+[0m[[31merror[0m] [0m                     ^[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/assets/javascripts/app.component.ts:73: Cannot find name 'Playere'.[0m
+[0m[[31merror[0m] [0m  public selectedHero: Playere;[0m
+[0m[[31merror[0m] [0m                       ^[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/assets/javascripts/app.component.ts:85: Cannot find name 'Hero'.[0m
+[0m[[31merror[0m] [0m  onSelect(hero: Hero) { this.selectedHero = hero; }[0m
+[0m[[31merror[0m] [0m                 ^[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/assets/javascripts/mock-heroes.ts:0: Cannot find module './data/Player'.[0m
+[0m[[31merror[0m] [0mimport { Player } from './data/Player';[0m
+[0m[[31merror[0m] [0m                       ^[0m
+[0m[[31merror[0m] [0mfour errors found[0m

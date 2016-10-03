@@ -49,10 +49,10 @@ Seq[Any](format.raw/*1.19*/("""
 object index extends index_Scope0.index
               /*
                   -- GENERATED --
-                  DATE: Mon Sep 26 11:25:51 CEST 2016
-                  SOURCE: C:/Develop/Source/angular2/app/views/index.scala.html
-                  HASH: d38efb0cedb80278626c6f75924d7c47c247dd6d
-                  MATRIX: 527->1|639->18|669->23|700->46|739->48|775->59|789->65|826->82|860->87
+                  DATE: Thu Sep 29 14:32:06 CEST 2016
+                  SOURCE: /home/jonas/code/TurnierManager/app/views/index.scala.html
+                  HASH: a6add7f293d17eaf9a630911b5b9513afcbfb73a
+                  MATRIX: 527->1|639->18|667->21|698->44|737->46|771->55|785->61|822->78|854->81
                   LINES: 20->1|25->1|27->3|27->3|27->3|29->5|29->5|29->5|31->7
                   -- GENERATED --
               */
