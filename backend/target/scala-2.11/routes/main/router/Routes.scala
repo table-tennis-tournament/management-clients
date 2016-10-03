@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
-// @SOURCE:C:/Develop/Source/angular2/conf/routes
-// @DATE:Mon Sep 26 11:25:51 CEST 2016
+// @SOURCE:/home/jonas/code/TurnierManager/conf/routes
+// @DATE:Thu Sep 29 14:32:06 CEST 2016
 
 package router
 
@@ -43,7 +43,7 @@ class Routes(
 
   def documentation = List(
     ("""GET""", this.prefix, """controllers.Application.index"""),
-    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/$file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
     case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
@@ -81,7 +81,7 @@ class Routes(
       Seq(classOf[String], classOf[Asset]),
       "GET",
       """ Map static resources from the /public folder to the /assets URL path""",
-      this.prefix + """assets/$file<.+>"""
+      this.prefix + """assets/""" + "$" + """file<.+>"""
     )
   )
 

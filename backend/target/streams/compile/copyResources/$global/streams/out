@@ -1,4 +1,4 @@
-[debug] Copy resource mappings: 
-[debug] 	(C:\Develop\Source\angular2\conf\application.conf,C:\Develop\Source\angular2\target\scala-2.11\classes\application.conf)
-[debug] 	(C:\Develop\Source\angular2\conf\logback.xml,C:\Develop\Source\angular2\target\scala-2.11\classes\logback.xml)
-[debug] 	(C:\Develop\Source\angular2\conf\routes,C:\Develop\Source\angular2\target\scala-2.11\classes\routes)
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(/home/jonas/code/TurnierManager/conf/routes,/home/jonas/code/TurnierManager/target/scala-2.11/classes/routes)[0m
+[0m[[0mdebug[0m] [0m	(/home/jonas/code/TurnierManager/conf/application.conf,/home/jonas/code/TurnierManager/target/scala-2.11/classes/application.conf)[0m
+[0m[[0mdebug[0m] [0m	(/home/jonas/code/TurnierManager/conf/logback.xml,/home/jonas/code/TurnierManager/target/scala-2.11/classes/logback.xml)[0m

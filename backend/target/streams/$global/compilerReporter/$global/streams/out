@@ -1,4 +1,4 @@
-[error] C:\Develop\Source\angular2\app\model\database\PlayerDatabase.scala:15: expected class or object definition
-[error] val players = TableQuery[Players]
-[error] ^
-[error] one error found
+[0m[[33mwarn[0m] [0m/home/jonas/code/TurnierManager/app/controllers/Application.scala:21: a pure expression does nothing in statement position; you may be omitting necessary parentheses[0m
+[0m[[33mwarn[0m] [0m    Ok[0m
+[0m[[33mwarn[0m] [0m    ^[0m
+[0m[[33mwarn[0m] [0mone warning found[0m
