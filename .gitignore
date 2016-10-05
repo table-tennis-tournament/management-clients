@@ -8,4 +8,9 @@ target
 /bin
 /.cache-tests
 /.worksheed
-project/
+/project/**
+project/**
+.sbtserver/master.log
+.sbtserver/previous.log
+.sbtserver/
+.cache-main
