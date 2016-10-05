@@ -18,7 +18,6 @@ class Application @Inject()(ttTableDAO: TTTableDAO) extends Controller {
     result.onFailure{
       case f => Logger.error(f.toString)
     }
-    Ok
     Ok(views.html.index("TurnierManager"))
   }
 
