@@ -1,12 +1,10 @@
-[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:25: inferred type arguments [Boolean] do not conform to method filter's type parameter bounds [T <: slick.lifted.Rep[_]][0m
-[0m[[31merror[0m] [0m    dbConfigProvider.get.db.run(ttTables.filter(_.name != "0").result)[0m
-[0m[[31merror[0m] [0m                                         ^[0m
-[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:25: type mismatch;[0m
-[0m[[31merror[0m] [0m found   : Tables.this.TTTablesTable => Boolean[0m
-[0m[[31merror[0m] [0m required: Tables.this.TTTablesTable => T[0m
-[0m[[31merror[0m] [0m    dbConfigProvider.get.db.run(ttTables.filter(_.name != "0").result)[0m
-[0m[[31merror[0m] [0m                                                       ^[0m
-[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:25: Type T cannot be a query condition (only Boolean, Rep[Boolean] and Rep[Option[Boolean]] are allowed[0m
-[0m[[31merror[0m] [0m    dbConfigProvider.get.db.run(ttTables.filter(_.name != "0").result)[0m
-[0m[[31merror[0m] [0m                                               ^[0m
-[0m[[31merror[0m] [0mthree errors found[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:83: No matching Shape found.[0m
+[0m[[31merror[0m] [0mSlick does not know how to map the given types.[0m
+[0m[[31merror[0m] [0mPossible causes: T in Table[T] does not match your * projection. Or you use an unsupported type in a Query (e.g. scala List).[0m
+[0m[[31merror[0m] [0m  Required level: slick.lifted.FlatShapeLevel[0m
+[0m[[31merror[0m] [0m     Source type: (slick.lifted.Rep[Long], slick.lifted.Rep[String], slick.lifted.Rep[String], slick.lifted.Rep[Int], slick.lifted.Rep[Boolean], slick.lifted.Rep[String], slick.lifted.Rep[Option[String]], slick.lifted.Rep[Option[String]], slick.lifted.Rep[Option[String]], slick.lifted.Rep[Option[String]], slick.lifted.Rep[Option[String]])[0m
+[0m[[31merror[0m] [0m   Unpacked type: (Long, String, String, Option[Int], Boolean, String, Option[String], Option[String], Option[String], Option[String], Option[String])[0m
+[0m[[31merror[0m] [0m     Packed type: Any[0m
+[0m[[31merror[0m] [0m    def * = (id, firstName, lastName, ttr, paid, sex, email, zipCode, location, street, phone) <> (Player.tupled, Player.unapply)[0m
+[0m[[31merror[0m] [0m                                                                                               ^[0m
+[0m[[31merror[0m] [0mone error found[0m

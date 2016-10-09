@@ -18,3 +18,17 @@ case class Match (
                  id: Long,
                  isPlaying: Boolean
                  )
+
+case class Player (
+                  id: Long,
+                  firstName: String,
+                  lastName: String,
+                  ttr: Option[Int],
+                  paid: Boolean,
+                  sex: String,
+                  email: Option[String],
+                  zipCode: Option[String],
+                  location: Option[String],
+                  street: Option[String],
+                  phone: Option[String]
+                  )

@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/jonas/code/TurnierManager/conf/routes
-// @DATE:Sun Oct 09 20:14:37 CEST 2016
+// @DATE:Sun Oct 09 21:34:57 CEST 2016
 
 package router
 
@@ -19,7 +19,9 @@ class Routes(
   Application_1: controllers.Application,
   // @LINE:8
   TableController_2: controllers.TableController,
-  // @LINE:11
+  // @LINE:10
+  PlayerController_3: controllers.PlayerController,
+  // @LINE:14
   Assets_0: controllers.Assets,
   val prefix: String
 ) extends GeneratedRouter {
@@ -30,15 +32,17 @@ class Routes(
     Application_1: controllers.Application,
     // @LINE:8
     TableController_2: controllers.TableController,
-    // @LINE:11
+    // @LINE:10
+    PlayerController_3: controllers.PlayerController,
+    // @LINE:14
     Assets_0: controllers.Assets
-  ) = this(errorHandler, Application_1, TableController_2, Assets_0, "/")
+  ) = this(errorHandler, Application_1, TableController_2, PlayerController_3, Assets_0, "/")
 
   import ReverseRouteContext.empty
 
   def withPrefix(prefix: String): Routes = {
     router.RoutesPrefix.setPrefix(prefix)
-    new Routes(errorHandler, Application_1, TableController_2, Assets_0, prefix)
+    new Routes(errorHandler, Application_1, TableController_2, PlayerController_3, Assets_0, prefix)
   }
 
   private[this] val defaultPrefix: String = {
@@ -48,6 +52,8 @@ class Routes(
   def documentation = List(
     ("""GET""", this.prefix, """controllers.Application.index"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """getAllTables""", """controllers.TableController.getAllTables"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """getAllPlayer""", """controllers.PlayerController.getAllPlayer"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """getPaidPlayer""", """controllers.PlayerController.getPaidPlayer"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
@@ -90,11 +96,45 @@ class Routes(
     )
   )
 
+  // @LINE:10
+  private[this] lazy val controllers_PlayerController_getAllPlayer2_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("getAllPlayer")))
+  )
+  private[this] lazy val controllers_PlayerController_getAllPlayer2_invoker = createInvoker(
+    PlayerController_3.getAllPlayer,
+    HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.PlayerController",
+      "getAllPlayer",
+      Nil,
+      "GET",
+      """""",
+      this.prefix + """getAllPlayer"""
+    )
+  )
+
   // @LINE:11
-  private[this] lazy val controllers_Assets_versioned2_route = Route("GET",
+  private[this] lazy val controllers_PlayerController_getPaidPlayer3_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("getPaidPlayer")))
+  )
+  private[this] lazy val controllers_PlayerController_getPaidPlayer3_invoker = createInvoker(
+    PlayerController_3.getPaidPlayer,
+    HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.PlayerController",
+      "getPaidPlayer",
+      Nil,
+      "GET",
+      """""",
+      this.prefix + """getPaidPlayer"""
+    )
+  )
+
+  // @LINE:14
+  private[this] lazy val controllers_Assets_versioned4_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("assets/"), DynamicPart("file", """.+""",false)))
   )
-  private[this] lazy val controllers_Assets_versioned2_invoker = createInvoker(
+  private[this] lazy val controllers_Assets_versioned4_invoker = createInvoker(
     Assets_0.versioned(fakeValue[String], fakeValue[Asset]),
     HandlerDef(this.getClass.getClassLoader,
       "router",
@@ -122,10 +162,22 @@ class Routes(
         controllers_TableController_getAllTables1_invoker.call(TableController_2.getAllTables)
       }
   
+    // @LINE:10
+    case controllers_PlayerController_getAllPlayer2_route(params) =>
+      call { 
+        controllers_PlayerController_getAllPlayer2_invoker.call(PlayerController_3.getAllPlayer)
+      }
+  
     // @LINE:11
-    case controllers_Assets_versioned2_route(params) =>
+    case controllers_PlayerController_getPaidPlayer3_route(params) =>
+      call { 
+        controllers_PlayerController_getPaidPlayer3_invoker.call(PlayerController_3.getPaidPlayer)
+      }
+  
+    // @LINE:14
+    case controllers_Assets_versioned4_route(params) =>
       call(Param[String]("path", Right("/public")), params.fromPath[Asset]("file", None)) { (path, file) =>
-        controllers_Assets_versioned2_invoker.call(Assets_0.versioned(path, file))
+        controllers_Assets_versioned4_invoker.call(Assets_0.versioned(path, file))
       }
   }
 }
