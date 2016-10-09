@@ -1,4 +1,12 @@
-[0m[[33mwarn[0m] [0m/home/jonas/code/TurnierManager/app/controllers/Application.scala:21: a pure expression does nothing in statement position; you may be omitting necessary parentheses[0m
-[0m[[33mwarn[0m] [0m    Ok[0m
-[0m[[33mwarn[0m] [0m    ^[0m
-[0m[[33mwarn[0m] [0mone warning found[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:25: inferred type arguments [Boolean] do not conform to method filter's type parameter bounds [T <: slick.lifted.Rep[_]][0m
+[0m[[31merror[0m] [0m    dbConfigProvider.get.db.run(ttTables.filter(_.name != "0").result)[0m
+[0m[[31merror[0m] [0m                                         ^[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:25: type mismatch;[0m
+[0m[[31merror[0m] [0m found   : Tables.this.TTTablesTable => Boolean[0m
+[0m[[31merror[0m] [0m required: Tables.this.TTTablesTable => T[0m
+[0m[[31merror[0m] [0m    dbConfigProvider.get.db.run(ttTables.filter(_.name != "0").result)[0m
+[0m[[31merror[0m] [0m                                                       ^[0m
+[0m[[31merror[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:25: Type T cannot be a query condition (only Boolean, Rep[Boolean] and Rep[Option[Boolean]] are allowed[0m
+[0m[[31merror[0m] [0m    dbConfigProvider.get.db.run(ttTables.filter(_.name != "0").result)[0m
+[0m[[31merror[0m] [0m                                               ^[0m
+[0m[[31merror[0m] [0mthree errors found[0m
