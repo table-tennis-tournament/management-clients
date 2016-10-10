@@ -16,7 +16,10 @@ case class TTTable(
 
 case class Match (
                  id: Long,
-                 isPlaying: Boolean
+                 isPlaying: Boolean,
+                 player1Id: Long,
+                 player2Id: Long,
+                 ttTableId: Option[Long]
                  )
 
 case class Player (
@@ -32,3 +35,10 @@ case class Player (
                   street: Option[String],
                   phone: Option[String]
                   )
+
+case class MatchInfo (
+                     ttMatch: Match,
+                     ttTable: Option[TTTable],
+                     player1: Option[Player],
+                     player2: Option[Player]
+                     )

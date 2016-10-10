@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/jonas/code/TurnierManager/conf/routes
-// @DATE:Sun Oct 09 21:34:57 CEST 2016
+// @DATE:Mon Oct 10 15:52:47 CEST 2016
 
 
 package router {
