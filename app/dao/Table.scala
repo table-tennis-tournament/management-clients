@@ -19,6 +19,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   //Tables
   private val ttTables = TableQuery[TTTablesTable]
+  private val matches = TableQuery[MatchesTable]
+  private val player = TableQuery[PlayerTable]
+
 
   def allTTTables(): Future[Seq[TTTable]] = {
     Logger.info("all()")
@@ -41,27 +44,37 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   //Matches
-  private val matches = TableQuery[MatchesTable]
+
 
   def allMatches(): Future[Seq[Match]] = {
     dbConfigProvider.get.db.run(matches.result)
+  }
+
+  val matchPlayerTable = for {
+    (((m,t),p1),p2) <- matches joinLeft ttTables on (_.ttTableId === _.id) joinLeft player on (_._1.player1Id === _.id) joinLeft player on (_._1._1.player2Id === _.id)
+  } yield (m, t, p1, p2)
+
+  def allMatchesWithPlayerAndTable()= {
+    dbConfigProvider.get.db.run(matchPlayerTable.result)
   }
 
   class MatchesTable(tag: Tag) extends Table[Match](tag, "matches") {
 
     def id = column[Long]("Matc_ID", O.PrimaryKey, O.AutoInc)
     def isPlaying = column[Boolean]("Matc_IsPlaying")
-    def player1Id = column[Option[Long]]("Matc_Play1_ID")
-    def player2Id = column[Option[Long]]("Matc_Play2_ID")
+    def player1Id = column[Long]("Matc_Play1_ID")
+    def player2Id = column[Long]("Matc_Play2_ID")
+    def ttTableId = column[Option[Long]]("Matc_Tabl_ID")
 
-    def * = (id, isPlaying) <> (Match.tupled, Match.unapply _)
+    def * = (id, isPlaying, player1Id, player2Id, ttTableId) <> (Match.tupled, Match.unapply _)
 
-    def player1 = foreignKey("Play1_FK", player1Id, player)(_.id.?)
-    def player2 = foreignKey("Play2_FK", player2Id, player)(_.id.?)
+    def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
+    def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
+    def ttTable = foreignKey("Table_FK", ttTableId, ttTables)(_.id.?)
   }
 
   //Players
-  private val player = TableQuery[PlayerTable]
+
 
   def allPlayer: Future[Seq[Player]] = {
     dbConfigProvider.get.db.run(player.result)

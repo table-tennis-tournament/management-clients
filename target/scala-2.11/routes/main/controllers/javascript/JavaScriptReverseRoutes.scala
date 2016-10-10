@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/jonas/code/TurnierManager/conf/routes
-// @DATE:Sun Oct 09 21:34:57 CEST 2016
+// @DATE:Mon Oct 10 15:52:47 CEST 2016
 
 import play.api.routing.JavaScriptReverseRoute
 import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -14,37 +14,7 @@ import _root_.controllers.Assets.Asset
 package controllers.javascript {
   import ReverseRouteContext.empty
 
-  // @LINE:10
-  class ReversePlayerController(_prefix: => String) {
-
-    def _defaultPrefix: String = {
-      if (_prefix.endsWith("/")) "" else "/"
-    }
-
-  
-    // @LINE:11
-    def getPaidPlayer: JavaScriptReverseRoute = JavaScriptReverseRoute(
-      "controllers.PlayerController.getPaidPlayer",
-      """
-        function() {
-          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "getPaidPlayer"})
-        }
-      """
-    )
-  
-    // @LINE:10
-    def getAllPlayer: JavaScriptReverseRoute = JavaScriptReverseRoute(
-      "controllers.PlayerController.getAllPlayer",
-      """
-        function() {
-          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "getAllPlayer"})
-        }
-      """
-    )
-  
-  }
-
-  // @LINE:14
+  // @LINE:16
   class ReverseAssets(_prefix: => String) {
 
     def _defaultPrefix: String = {
@@ -52,12 +22,32 @@ package controllers.javascript {
     }
 
   
-    // @LINE:14
+    // @LINE:16
     def versioned: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.Assets.versioned",
       """
         function(file1) {
           return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "assets/" + (""" + implicitly[PathBindable[Asset]].javascriptUnbind + """)("file", file1)})
+        }
+      """
+    )
+  
+  }
+
+  // @LINE:13
+  class ReverseMatchController(_prefix: => String) {
+
+    def _defaultPrefix: String = {
+      if (_prefix.endsWith("/")) "" else "/"
+    }
+
+  
+    // @LINE:13
+    def getAllMatches: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.MatchController.getAllMatches",
+      """
+        function() {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "getAllMatches"})
         }
       """
     )
@@ -98,6 +88,36 @@ package controllers.javascript {
       """
         function() {
           return _wA({method:"GET", url:"""" + _prefix + """"})
+        }
+      """
+    )
+  
+  }
+
+  // @LINE:10
+  class ReversePlayerController(_prefix: => String) {
+
+    def _defaultPrefix: String = {
+      if (_prefix.endsWith("/")) "" else "/"
+    }
+
+  
+    // @LINE:11
+    def getPaidPlayer: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.PlayerController.getPaidPlayer",
+      """
+        function() {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "getPaidPlayer"})
+        }
+      """
+    )
+  
+    // @LINE:10
+    def getAllPlayer: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.PlayerController.getAllPlayer",
+      """
+        function() {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "getAllPlayer"})
         }
       """
     )
