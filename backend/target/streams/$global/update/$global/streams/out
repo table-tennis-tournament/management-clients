@@ -7,7 +7,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for turniermanager#turniermanager_2.11;1.0-SNAPSHOT [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies turniermanager#turniermanager_2.11;1.0-SNAPSHOT->org.scala-lang#scala-library;2.11.7 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.11.7 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@3171d0bd[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@513b4300[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.7[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.7 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.7] org.scala-lang#scala-library;2.11.7[0m
@@ -8068,7 +8068,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-sbt#control_2.11;0.13.8-M3!control_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.akka#akka-actor_2.11;2.3.8!akka-actor_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.akka#akka-testkit_2.11;2.3.8!akka-testkit_2.11.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 3578ms :: artifacts dl 122ms[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 4089ms :: artifacts dl 129ms[0m
 [0m[[0mdebug[0m] [0m	report for turniermanager#turniermanager_2.11;1.0-SNAPSHOT compile produced in /home/jonas/code/TurnierManager/target/resolution-cache/reports/turniermanager-turniermanager_2.11-compile.xml[0m
 [0m[[0mdebug[0m] [0m	report for turniermanager#turniermanager_2.11;1.0-SNAPSHOT runtime produced in /home/jonas/code/TurnierManager/target/resolution-cache/reports/turniermanager-turniermanager_2.11-runtime.xml[0m
 [0m[[0mdebug[0m] [0m	report for turniermanager#turniermanager_2.11;1.0-SNAPSHOT test produced in /home/jonas/code/TurnierManager/target/resolution-cache/reports/turniermanager-turniermanager_2.11-test.xml[0m
@@ -8083,5 +8083,5 @@
 [0m[[0mdebug[0m] [0m	report for turniermanager#turniermanager_2.11;1.0-SNAPSHOT pom produced in /home/jonas/code/TurnierManager/target/resolution-cache/reports/turniermanager-turniermanager_2.11-pom.xml[0m
 [0m[[0mdebug[0m] [0m	report for turniermanager#turniermanager_2.11;1.0-SNAPSHOT scala-tool produced in /home/jonas/code/TurnierManager/target/resolution-cache/reports/turniermanager-turniermanager_2.11-scala-tool.xml[0m
 [0m[[0mdebug[0m] [0m	report for turniermanager#turniermanager_2.11;1.0-SNAPSHOT fork-run produced in /home/jonas/code/TurnierManager/target/resolution-cache/reports/turniermanager-turniermanager_2.11-fork-run.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (3578ms resolve - 122ms download)[0m
+[0m[[0mdebug[0m] [0m	resolve done (4089ms resolve - 129ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

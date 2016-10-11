@@ -70,4 +70,12 @@ class MatchController @Inject() (tables: Tables) extends Controller{
         Ok(Json.toJson(mi))
     }
   }
+
+  def setWaitingPos(id: Long, pos: Int) = Action.async {
+    val a = tables.setWaitingPostiton(id, pos)
+    a.flatMap {a => a map { a: Int =>
+      if (a==1) Ok(a.toString)
+      else NotFound(pos.toString)
+    }}
+  }
 }

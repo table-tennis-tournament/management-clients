@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/jonas/code/TurnierManager/conf/routes
-// @DATE:Mon Oct 10 15:52:47 CEST 2016
+// @DATE:Tue Oct 11 17:09:29 CEST 2016
 
 package router
 
@@ -23,7 +23,7 @@ class Routes(
   PlayerController_0: controllers.PlayerController,
   // @LINE:13
   MatchController_2: controllers.MatchController,
-  // @LINE:16
+  // @LINE:17
   Assets_3: controllers.Assets,
   val prefix: String
 ) extends GeneratedRouter {
@@ -38,7 +38,7 @@ class Routes(
     PlayerController_0: controllers.PlayerController,
     // @LINE:13
     MatchController_2: controllers.MatchController,
-    // @LINE:16
+    // @LINE:17
     Assets_3: controllers.Assets
   ) = this(errorHandler, Application_4, TableController_1, PlayerController_0, MatchController_2, Assets_3, "/")
 
@@ -59,6 +59,7 @@ class Routes(
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """getAllPlayer""", """controllers.PlayerController.getAllPlayer"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """getPaidPlayer""", """controllers.PlayerController.getPaidPlayer"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """getAllMatches""", """controllers.MatchController.getAllMatches"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """match/""" + "$" + """id<[^/]+>/setWaitingPosition""", """controllers.MatchController.setWaitingPos(id:Long, pos:Int)"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
@@ -152,11 +153,28 @@ class Routes(
     )
   )
 
-  // @LINE:16
-  private[this] lazy val controllers_Assets_versioned5_route = Route("GET",
+  // @LINE:14
+  private[this] lazy val controllers_MatchController_setWaitingPos5_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("match/"), DynamicPart("id", """[^/]+""",true), StaticPart("/setWaitingPosition")))
+  )
+  private[this] lazy val controllers_MatchController_setWaitingPos5_invoker = createInvoker(
+    MatchController_2.setWaitingPos(fakeValue[Long], fakeValue[Int]),
+    HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.MatchController",
+      "setWaitingPos",
+      Seq(classOf[Long], classOf[Int]),
+      "GET",
+      """""",
+      this.prefix + """match/""" + "$" + """id<[^/]+>/setWaitingPosition"""
+    )
+  )
+
+  // @LINE:17
+  private[this] lazy val controllers_Assets_versioned6_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("assets/"), DynamicPart("file", """.+""",false)))
   )
-  private[this] lazy val controllers_Assets_versioned5_invoker = createInvoker(
+  private[this] lazy val controllers_Assets_versioned6_invoker = createInvoker(
     Assets_3.versioned(fakeValue[String], fakeValue[Asset]),
     HandlerDef(this.getClass.getClassLoader,
       "router",
@@ -202,10 +220,16 @@ class Routes(
         controllers_MatchController_getAllMatches4_invoker.call(MatchController_2.getAllMatches)
       }
   
-    // @LINE:16
-    case controllers_Assets_versioned5_route(params) =>
+    // @LINE:14
+    case controllers_MatchController_setWaitingPos5_route(params) =>
+      call(params.fromPath[Long]("id", None), params.fromQuery[Int]("pos", None)) { (id, pos) =>
+        controllers_MatchController_setWaitingPos5_invoker.call(MatchController_2.setWaitingPos(id, pos))
+      }
+  
+    // @LINE:17
+    case controllers_Assets_versioned6_route(params) =>
       call(Param[String]("path", Right("/public")), params.fromPath[Asset]("file", None)) { (path, file) =>
-        controllers_Assets_versioned5_invoker.call(Assets_3.versioned(path, file))
+        controllers_Assets_versioned6_invoker.call(Assets_3.versioned(path, file))
       }
   }
 }

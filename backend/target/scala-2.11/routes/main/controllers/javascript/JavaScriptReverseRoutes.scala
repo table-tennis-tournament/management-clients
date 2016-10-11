@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/jonas/code/TurnierManager/conf/routes
-// @DATE:Mon Oct 10 15:52:47 CEST 2016
+// @DATE:Tue Oct 11 17:09:29 CEST 2016
 
 import play.api.routing.JavaScriptReverseRoute
 import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -14,7 +14,7 @@ import _root_.controllers.Assets.Asset
 package controllers.javascript {
   import ReverseRouteContext.empty
 
-  // @LINE:16
+  // @LINE:17
   class ReverseAssets(_prefix: => String) {
 
     def _defaultPrefix: String = {
@@ -22,7 +22,7 @@ package controllers.javascript {
     }
 
   
-    // @LINE:16
+    // @LINE:17
     def versioned: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.Assets.versioned",
       """
@@ -41,6 +41,16 @@ package controllers.javascript {
       if (_prefix.endsWith("/")) "" else "/"
     }
 
+  
+    // @LINE:14
+    def setWaitingPos: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.MatchController.setWaitingPos",
+      """
+        function(id0,pos1) {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "match/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("id", id0) + "/setWaitingPosition" + _qS([(""" + implicitly[QueryStringBindable[Int]].javascriptUnbind + """)("pos", pos1)])})
+        }
+      """
+    )
   
     // @LINE:13
     def getAllMatches: JavaScriptReverseRoute = JavaScriptReverseRoute(
