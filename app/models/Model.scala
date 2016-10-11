@@ -19,7 +19,9 @@ case class Match (
                  isPlaying: Boolean,
                  player1Id: Long,
                  player2Id: Long,
-                 ttTableId: Option[Long]
+                 ttTableId: Option[Long],
+                 isPlayed: Boolean,
+                 waitingList: Int
                  )
 
 case class Player (

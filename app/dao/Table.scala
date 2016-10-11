@@ -44,14 +44,21 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   //Matches
-
-
   def allMatches(): Future[Seq[Match]] = {
     dbConfigProvider.get.db.run(matches.result)
   }
 
+  def setWaitingPostiton(id: Long, pos: Int) = {
+    val sqlQ = sqlu"""update matches set Matc_Waitinglist = Matc_Waitinglist + 1 where Matc_Waitinglist >= ${pos} AND Matc_Waitinglist != 0"""
+    val f = dbConfigProvider.get.db.run(sqlQ)
+    f map { k =>
+      val add = for {m <- matches if m.id === id} yield m.waitingList
+      dbConfigProvider.get.db.run(add.update(pos))
+    }
+  }
+
   val matchPlayerTable = for {
-    (((m,t),p1),p2) <- matches joinLeft ttTables on (_.ttTableId === _.id) joinLeft player on (_._1.player1Id === _.id) joinLeft player on (_._1._1.player2Id === _.id)
+    (((m,t),p1),p2) <- matches.filterNot(_.isPlaying).filterNot(_.isPlayed).filter(_.waitingList === 0) joinLeft ttTables on (_.ttTableId === _.id) joinLeft player on (_._1.player1Id === _.id) joinLeft player on (_._1._1.player2Id === _.id)
   } yield (m, t, p1, p2)
 
   def allMatchesWithPlayerAndTable()= {
@@ -65,8 +72,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def player1Id = column[Long]("Matc_Play1_ID")
     def player2Id = column[Long]("Matc_Play2_ID")
     def ttTableId = column[Option[Long]]("Matc_Tabl_ID")
+    def isPlayed = column[Boolean]("Matc_Played")
+    def waitingList = column[Int]("Matc_Waitinglist")
 
-    def * = (id, isPlaying, player1Id, player2Id, ttTableId) <> (Match.tupled, Match.unapply _)
+    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, waitingList) <> (Match.tupled, Match.unapply _)
 
     def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
     def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
