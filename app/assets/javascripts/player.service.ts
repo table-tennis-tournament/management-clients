@@ -1,9 +1,8 @@
 import {Player} from './data/player';
-import {PLAYERS} from './mock-heroes';
 import {Injectable} from 'angular2/core';
 
 @Injectable()
-export class HeroService {
+export class PlayerService {
   getHeroes() {
     var PLAYERS: Player[] = [
       {"id": 11, "firstName": "Kian", "lastName": "Aragian", "ttr":1660, "club":"TTV Ettlingen"},

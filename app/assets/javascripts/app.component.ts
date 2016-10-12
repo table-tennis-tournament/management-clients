@@ -1,39 +1,40 @@
 import {Component, OnInit} from 'angular2/core';
 import {Player} from './data/Player';
-import {HeroDetailComponent} from './hero-detail.component';
-import {HeroService} from './hero.service';
+import {PlayerDetailComponent} from './player-detail.component';
+import {PlayerService} from './player.service';
 
 @Component({
   selector: 'my-app',
   template:`
     <h1>{{title}}</h1>
-    <h2>My Heroes</h2>
+    <h2>My Players</h2>
     <ul class="heroes">
-      <li *ngFor="#hero of heroes"
-        [class.selected]="hero === selectedHero"
-        (click)="onSelect(hero)">
-        <span class="badge">{{hero.id}}</span> {{hero.firstName}}
+      <li *ngFor="#player of players"
+        [class.selected]="player === selectedPlayer"
+        (click)="onSelect(player)">
+        <span class="badge">{{player.id}}</span> {{player.firstName}} {{player.lastName}}
       </li>
     </ul>
-    <my-hero-detail [hero]="selectedHero"></my-hero-detail>
+    <my-player-detail [player]="selectedPlayer"></my-player-detail>
   `,
-  directives: [HeroDetailComponent],
-  providers: [HeroService]
+  directives: [PlayerDetailComponent],
+  providers: [PlayerService]
 })
 export class AppComponent implements OnInit {
   public title = 'TurnierManager';
-  public heroes: Player[];
-  public selectedHero: Player;
+  public players: Player[];
+  public selectedPlayer: Player;
 
-  constructor(private _heroService: HeroService) { }
+  constructor(private _playerService: PlayerService) { }
 
-  getHeroes() {
-    this._heroService.getHeroes().then(heroes => this.heroes = heroes);
+  getPlayers() {
+    var result = this._playerService.getHeroes();
+    this.players = result;
   }
 
   ngOnInit() {
-    this.getHeroes();
+    this.getPlayers();
   }
 
-  onSelect(hero: Player) { this.selectedHero = hero; }
+  onSelect(player: Player) { this.selectedPlayer = player; }
 }
