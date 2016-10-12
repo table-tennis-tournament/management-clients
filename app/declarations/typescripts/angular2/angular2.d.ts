@@ -13,17 +13,17 @@
 // If you don't have them installed you can install them using TSD
 // https://github.com/DefinitelyTyped/tsd
 
-///<reference path="../es6-shim/es6-shim.d.ts"/>
+///<reference path="../../../../node_modules/es6-shim/es6-shim.js"/>
 // angular2/web_worker/worker depends transitively on these libraries.
 // If you don't have them installed you can install them using TSD
 // https://github.com/DefinitelyTyped/tsd
 
-///<reference path="../es6-shim/es6-shim.d.ts"/>
+///<reference path="../../../../node_modules/es6-shim/es6-shim.js"/>
 // angular2/web_worker/ui depends transitively on these libraries.
 // If you don't have them installed you can install them using TSD
 // https://github.com/DefinitelyTyped/tsd
 
-///<reference path="../es6-shim/es6-shim.d.ts"/>
+///<reference path="../../../../node_modules/es6-shim/es6-shim.js"/>
 
 
 interface Map<K,V> {}
