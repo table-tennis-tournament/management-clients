@@ -1,4 +1,0 @@
-[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
-[0m[[0mdebug[0m] [0m	(/home/jonas/code/TurnierManager/conf/routes,/home/jonas/code/TurnierManager/target/scala-2.11/classes/routes)[0m
-[0m[[0mdebug[0m] [0m	(/home/jonas/code/TurnierManager/conf/application.conf,/home/jonas/code/TurnierManager/target/scala-2.11/classes/application.conf)[0m
-[0m[[0mdebug[0m] [0m	(/home/jonas/code/TurnierManager/conf/logback.xml,/home/jonas/code/TurnierManager/target/scala-2.11/classes/logback.xml)[0m
