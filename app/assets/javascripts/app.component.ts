@@ -1,7 +1,8 @@
 import {Component, OnInit} from 'angular2/core';
 import {Player} from './data/Player';
 import {PlayerDetailComponent} from './player-detail.component';
-import {PlayerService} from './player.service';
+import {PlayerService} from './service/player.service';
+
 
 @Component({
   selector: 'my-app',
@@ -28,8 +29,13 @@ export class AppComponent implements OnInit {
   constructor(private _playerService: PlayerService) { }
 
   getPlayers() {
-    var result = this._playerService.getHeroes();
+    var result = this._playerService.getPlayers();
     this.players = result;
+    this._playerService.getAllPlayers().then(players =>{
+      console.log(players);
+      this.players = players;
+    } );
+
   }
 
   ngOnInit() {
