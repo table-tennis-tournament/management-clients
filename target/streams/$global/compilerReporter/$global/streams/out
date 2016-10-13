@@ -1,7 +1,0 @@
-[0m[[33mwarn[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:52: Reference to uninitialized value player[0m
-[0m[[33mwarn[0m] [0m    (((m,t),p1),p2) <- matches joinLeft ttTables on (_.ttTableId === _.id) joinLeft player on (_._1.player1Id === _.id) joinLeft player on (_._1._1.player2Id === _.id)[0m
-[0m[[33mwarn[0m] [0m                                                                                    ^[0m
-[0m[[33mwarn[0m] [0m/home/jonas/code/TurnierManager/app/dao/Table.scala:52: Reference to uninitialized value player[0m
-[0m[[33mwarn[0m] [0m    (((m,t),p1),p2) <- matches joinLeft ttTables on (_.ttTableId === _.id) joinLeft player on (_._1.player1Id === _.id) joinLeft player on (_._1._1.player2Id === _.id)[0m
-[0m[[33mwarn[0m] [0m                                                                                                                                 ^[0m
-[0m[[33mwarn[0m] [0mtwo warnings found[0m
