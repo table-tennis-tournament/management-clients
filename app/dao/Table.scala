@@ -17,7 +17,7 @@ import scala.concurrent.Future
 class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
   import driver.api._
 
-  //Tables
+  // Tables
   private val ttTables = TableQuery[TTTablesTable]
   private val matches = TableQuery[MatchesTable]
   private val player = TableQuery[PlayerTable]
@@ -43,17 +43,27 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def * = (id, name, left, top, matchId, tourId, groupId) <> (TTTable.tupled, TTTable.unapply _)
   }
 
-  //Matches
+  // Matches
   def allMatches(): Future[Seq[Match]] = {
     dbConfigProvider.get.db.run(matches.result)
   }
 
+  // Update the position in the waiting list. Plain SQL because Slick 3 does not support such querries
   def setWaitingPostiton(id: Long, pos: Int) = {
-    val sqlQ = sqlu"""update matches set Matc_Waitinglist = Matc_Waitinglist + 1 where Matc_Waitinglist >= ${pos} AND Matc_Waitinglist != 0"""
-    val f = dbConfigProvider.get.db.run(sqlQ)
-    f map { k =>
-      val add = for {m <- matches if m.id === id} yield m.waitingList
-      dbConfigProvider.get.db.run(add.update(pos))
+    dbConfigProvider.get.db.run(matches.filter(_.id === id).result) map { result =>
+      val oldPos = result.head.waitingList
+      val sqlQ1 = if(oldPos == 0) sqlu"""""" else
+        sqlu"""update matches set Matc_Waitinglist = Matc_Waitinglist - 1 where Matc_Waitinglist >= ${oldPos} AND Matc_Waitinglist != 0"""
+
+      val f1 = dbConfigProvider.get.db.run(sqlQ1)
+      f1 flatMap { r =>
+        val sqlQ2 = sqlu"""update matches set Matc_Waitinglist = Matc_Waitinglist + 1 where Matc_Waitinglist >= ${pos} AND Matc_Waitinglist != 0"""
+        val f2 = dbConfigProvider.get.db.run(sqlQ2)
+        f2 flatMap { k =>
+          val add = for {m <- matches if m.id === id} yield m.waitingList
+          dbConfigProvider.get.db.run(add.update(pos))
+        }
+      }
     }
   }
 
@@ -82,7 +92,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def ttTable = foreignKey("Table_FK", ttTableId, ttTables)(_.id.?)
   }
 
-  //Players
+  // Players
 
 
   def allPlayer: Future[Seq[Player]] = {
