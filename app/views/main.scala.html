@@ -3,32 +3,34 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <head>
-        <title>TurnierManager</title>
 
-        <script src="@routes.Assets.versioned("javascripts/angular2/bundles/angular2-polyfills.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.versioned("javascripts/systemjs/dist/system.src.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.versioned("javascripts/angular2/bundles/angular2.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.versioned("javascripts/rxjs/bundles/Rx.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.versioned("javascripts/jquery/dist/jquery.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.versioned("javascripts/bootstrap/dist/js/bootstrap.min.js")" type="text/javascript"></script>
-        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("javascripts/bootstrap/dist/css/bootstrap.min.css")">
-        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("stylesheets/main.css")">
+<head>
+    <title>TurnierManager</title>
+
+    <script src="@routes.Assets.versioned(" javascripts/angular2/bundles/angular2-polyfills.min.js ")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned(" javascripts/systemjs/dist/system.src.js ")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned(" javascripts/angular2/bundles/angular2.min.js ")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned(" javascripts/rxjs/bundles/Rx.js ")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned(" javascripts/jquery/dist/jquery.min.js ")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned(" javascripts/bootstrap/dist/js/bootstrap.min.js ")" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned(" javascripts/bootstrap/dist/css/bootstrap.min.css ")">
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned(" stylesheets/main.css ")">
 
 
-        <script>
+    <script>
         System.config({
-          baseURL: 'assets/javascripts',
-          defaultJSExtensions: true
+            baseURL: 'assets/javascripts',
+            defaultJSExtensions: true
         });
-          System.import('boot')
-                .then(null, console.error.bind(console));
-        </script>
+        System.import('boot')
+            .then(null, console.error.bind(console));
+    </script>
 
 
-    </head>
-    <body>
-    <header class="navbar navbar-inverse navbar-fixed-top basics-nav" data-ng-cloak>
+</head>
+
+<body>
+    <!--<header class="navbar navbar-inverse navbar-fixed-top basics-nav" data-ng-cloak>
         <div class="navbar-more-overlay"></div>
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
@@ -51,9 +53,10 @@
 				</div>
 			</div>
 		</nav>
-	</header>
-	<div class="container" data-ng-cloak>
-    	<my-app>Loading...</my-app>
-	</div>
+	</header>-->
+    <div class="container" data-ng-cloak>
+        <my-app>Loading...</my-app>
+    </div>
 </body>
+
 </html>

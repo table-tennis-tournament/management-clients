@@ -1,0 +1,36 @@
+{
+    "name": "turniermanager",
+    "version": "1.0.0",
+    "description": "App for managing table-tennis tournaments",
+    "dependencies": {
+        "es6-shim": "^0.35.1",
+        "@angular/common": "~2.1.0",
+        "@angular/compiler": "~2.1.0",
+        "@angular/core": "~2.1.0",
+        "@angular/forms": "~2.1.0",
+        "@angular/http": "~2.1.0",
+        "@angular/platform-browser": "~2.1.0",
+        "@angular/platform-browser-dynamic": "~2.1.0",
+        "@angular/router": "~3.1.0",
+        "@angular/upgrade": "~2.1.0",
+        "jquery": "^3.1.1",
+        "bootstrap": "^3.3.7",
+        "requirejs": "^2.3.2",
+        "es6-promise": "^4.0.5",
+        "typescript": "^2.0.3",
+        "reflect-metadata": "^0.1.8",
+        "rxjs": "5.0.0-beta.12",
+        "systemjs": "0.19.39",
+        "zone.js": "^0.6.26"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitlab.com/jonashansert/TurnierManager.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/jonashansert/TurnierManager/issues"
+    },
+    "homepage": "https://gitlab.com/jonashansert/TurnierManager#README"
+}

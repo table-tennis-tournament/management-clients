@@ -1,4 +1,4 @@
-import {Component, OnInit} from 'angular2/core';
+import {Component, OnInit} from '@angular/core';
 import {Player} from './data/Player';
 import {PlayerDetailComponent} from './player-detail.component';
 import {PlayerService} from './service/player.service';
@@ -18,7 +18,6 @@ import {PlayerService} from './service/player.service';
     </ul>
     <my-player-detail [player]="selectedPlayer"></my-player-detail>
   `,
-  directives: [PlayerDetailComponent],
   providers: [PlayerService]
 })
 export class AppComponent implements OnInit {

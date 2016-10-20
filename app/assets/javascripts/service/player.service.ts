@@ -1,6 +1,6 @@
 import {Player} from '../data/player';
-import {Injectable} from 'angular2/core';
-import { Headers, Http } from 'angular2/http';
+import {Injectable} from '@angular/core';
+import { Headers, Http } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
