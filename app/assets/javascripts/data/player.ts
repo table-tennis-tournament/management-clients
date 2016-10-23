@@ -1,3 +1,5 @@
+import {Club} from './club';
+
 export interface Player {
 	id: number;
 	firstName: string;
