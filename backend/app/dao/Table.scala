@@ -19,7 +19,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   import driver.api._
 
   // on Server start
-  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger BEFORE UPDATE ON matches BEGIN @tables_updated = 1;""").result(10.seconds)
+  Logger.info("config database")
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger BEFORE UPDATE ON matches BEGIN @tables_updated = 1;""") map {
+    result => Logger.info("result: " + result.toString)
+  }
+
 
   // Tables
   private val ttTables = TableQuery[TTTablesTable]
