@@ -9,6 +9,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
 /**
   * Created by jonas on 29.09.16.
@@ -16,6 +17,9 @@ import scala.concurrent.Future
 
 class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
   import driver.api._
+
+  // on Server start
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger BEFORE UPDATE ON matches BEGIN @tables_updated = 1;""").result(10.seconds)
 
   // Tables
   private val ttTables = TableQuery[TTTablesTable]
