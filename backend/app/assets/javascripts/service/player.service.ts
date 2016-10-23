@@ -1,6 +1,7 @@
 import {Player} from '../data/player';
 import {Injectable} from '@angular/core';
 import { Headers, Http } from '@angular/http';
+import {Promise} from 'es6-promise';
 
 import 'rxjs/add/operator/toPromise';
 

@@ -223,5 +223,5 @@ set ERROR_CODE=1
 :end
 
 @endlocal
-
+pause
 exit /B %ERROR_CODE%
