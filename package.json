@@ -21,6 +21,7 @@
         "requirejs": "^2.3.2",
         "es6-promise": "^4.0.5",
         "map": "^1.0.1",
+        "set": "^1.1.1",
         "promise": "^7.1.1",
         "typescript": "^2.0.3",
         "reflect-metadata": "^0.1.8",
