@@ -19,7 +19,7 @@ class Application @Inject()(table: Tables) extends Controller {
     result.onFailure{
       case f => Logger.error(f.toString)
     }
-    Ok(views.html.index("TurnierManager"))
+    Ok(views.html.index())
   }
 
 }
