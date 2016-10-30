@@ -4,7 +4,7 @@ import java.sql.{Date, Timestamp}
 
 import org.joda.time.DateTime
 
-case class TTTable(
+case class TTTableDAO(
                     id: Long,
                     name: String,
                     left: Long,
@@ -14,7 +14,15 @@ case class TTTable(
                     groupId: Option[Long]
                   )
 
-case class Match (
+case class TTTable(
+                       id: Long,
+                       name: String,
+                       left: Long,
+                       top: Long,
+                       ttMatch: Match
+                     )
+
+case class MatchDAO (
                  id: Long,
                  isPlaying: Boolean,
                  player1Id: Long,
@@ -22,7 +30,15 @@ case class Match (
                  ttTableId: Option[Long]
                  )
 
-case class Player (
+case class Match (
+                      id: Long,
+                      isPlaying: Boolean,
+                      player1: Player,
+                      player2: Player,
+                      ttTable: Option[TTTable]
+                    )
+
+case class PlayerDAO (
                   id: Long,
                   firstName: String,
                   lastName: String,
@@ -33,12 +49,31 @@ case class Player (
                   zipCode: Option[String],
                   location: Option[String],
                   street: Option[String],
-                  phone: Option[String]
+                  phone: Option[String],
+                  clubId: Long
                   )
 
-case class MatchInfo (
-                     ttMatch: Match,
-                     ttTable: Option[TTTable],
-                     player1: Option[Player],
-                     player2: Option[Player]
-                     )
+case class Player (
+                        id: Long,
+                        firstName: String,
+                        lastName: String,
+                        ttr: Option[Int],
+                        paid: Boolean,
+                        sex: String,
+                        email: Option[String],
+                        zipCode: Option[String],
+                        location: Option[String],
+                        street: Option[String],
+                        phone: Option[String],
+                        club: Club
+                      )
+
+case class ClubDAO (
+                id: Long,
+                name: String
+                )
+
+case class Club (
+                     id: Long,
+                     name: String
+                   )
