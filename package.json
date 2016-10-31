@@ -4,6 +4,7 @@
   "description": "App for managing table-tennis tournaments",
   "scripts": {
     "tsc": "tsc",
+    "tsc:w": "tsc -w",
     "postinstall": "typings install",
     "typings": "typings"
   },
