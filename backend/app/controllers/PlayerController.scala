@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import dao.Tables
-import models.Player
+import models.PlayerDAO
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, Controller}
@@ -11,8 +11,8 @@ import play.api.mvc.{Action, Controller}
   * Created by jonas on 09.10.16.
   */
 class PlayerController @Inject() (tables: Tables) extends Controller{
-  implicit val playerWrites = new Writes[Player] {
-    def writes(player: Player) = Json.obj(
+  implicit val playerWrites = new Writes[PlayerDAO] {
+    def writes(player: PlayerDAO) = Json.obj(
       "id" -> player.id,
       "firstName" -> player.firstName,
       "lastName" -> player.lastName,
@@ -30,14 +30,14 @@ class PlayerController @Inject() (tables: Tables) extends Controller{
   def getAllPlayer = Action.async {
     val playerF = tables.allPlayer
     playerF.map {
-      player: Seq[Player] => Ok(Json.toJson(player))
+      player: Seq[PlayerDAO] => Ok(Json.toJson(player))
     }
   }
 
   def getPaidPlayer = Action.async {
     val playerF = tables.paidPlayer
     playerF.map {
-      player: Seq[Player] => Ok(Json.toJson(player))
+      player: Seq[PlayerDAO] => Ok(Json.toJson(player))
     }
   }
 }

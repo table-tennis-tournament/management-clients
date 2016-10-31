@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import dao.Tables
-import models.TTTable
+import models.TTTableDAO
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -11,8 +11,8 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
   * Created by jonas on 09.10.16.
   */
 class TableController @Inject() (tables: Tables) extends Controller{
-  implicit val ttTableWrites = new Writes[TTTable] {
-    def writes(ttTable: TTTable) = Json.obj(
+  implicit val ttTableWrites = new Writes[TTTableDAO] {
+    def writes(ttTable: TTTableDAO) = Json.obj(
       "id" -> ttTable.id,
       "name" -> ttTable.name,
       "left" -> ttTable.left,
@@ -26,7 +26,7 @@ class TableController @Inject() (tables: Tables) extends Controller{
   def getAllTables = Action.async {
     val ttTablesF = tables.allTTTables()
     ttTablesF.map {
-      ttTables: Seq[TTTable] => Ok(Json.toJson(ttTables))
+      ttTables: Seq[TTTableDAO] => Ok(Json.toJson(ttTables))
     }
   }
 }
