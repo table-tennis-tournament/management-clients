@@ -31,12 +31,25 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   private val player = TableQuery[PlayerTable]
 
 
-  def allTTTables(): Future[Seq[TTTable]] = {
+  def allTTTables(): Future[Seq[TTTableDAO]] = {
     Logger.info("all()")
     dbConfigProvider.get.db.run(ttTables.filter(_.name =!= "0").result)
   }
 
-  class TTTablesTable(tag: Tag) extends Table[TTTable](tag, "tables") {
+  def getTTTable(id: Long): Future[Option[TTTable]] = {
+    val tableF = dbConfigProvider.get.db.run(ttTables.filter(_.id === id).result)
+    tableF map { t =>
+      val x = t.headOption
+      if(x.isDefined) {
+        val ta = x.get
+        Some(new TTTable(ta.id, ta.name, ta.left, ta.top, ta.matchId, ta.tourId, ta.groupId))
+      } else {
+        None
+      }
+    }
+  }
+
+  class TTTablesTable(tag: Tag) extends Table[TTTableDAO](tag, "tables") {
 
     def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Tabl_Name")
@@ -48,11 +61,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
     def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, left, top, matchId, tourId, groupId) <> (TTTable.tupled, TTTable.unapply _)
+    def * = (id, name, left, top, matchId, tourId, groupId) <> (TTTableDAO.tupled, TTTableDAO.unapply _)
   }
 
   // Matches
-  def allMatches(): Future[Seq[Match]] = {
+  def allMatches(): Future[Seq[MatchDAO]] = {
     dbConfigProvider.get.db.run(matches.result)
   }
 
@@ -83,7 +96,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     dbConfigProvider.get.db.run(matchPlayerTable.result)
   }
 
-  class MatchesTable(tag: Tag) extends Table[Match](tag, "matches") {
+  class MatchesTable(tag: Tag) extends Table[MatchDAO](tag, "matches") {
 
     def id = column[Long]("Matc_ID", O.PrimaryKey, O.AutoInc)
     def isPlaying = column[Boolean]("Matc_IsPlaying")
@@ -93,7 +106,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def isPlayed = column[Boolean]("Matc_Played")
     def waitingList = column[Int]("Matc_Waitinglist")
 
-    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, waitingList) <> (Match.tupled, Match.unapply _)
+    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, waitingList) <> (MatchDAO.tupled, MatchDAO.unapply _)
 
     def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
     def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
@@ -103,15 +116,28 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   // Players
 
 
-  def allPlayer: Future[Seq[Player]] = {
+  def allPlayer: Future[Seq[PlayerDAO]] = {
     dbConfigProvider.get.db.run(player.result)
   }
 
-  def paidPlayer: Future[Seq[Player]] = {
+  def paidPlayer: Future[Seq[PlayerDAO]] = {
     dbConfigProvider.get.db.run(player.filter(_.paid === true).result)
   }
 
-  class PlayerTable(tag: Tag) extends Table[Player](tag, "player") {
+  def getPlayer(id: Long): Future[Option[Player]] = {
+    val playerF = dbConfigProvider.get.db.run(player.filter(_.id === id).result)
+    playerF map { p =>
+      val x = p.headOption
+      if(x.isDefined) {
+        val pl = x.get
+        Some(new Player(pl.id, pl.firstName, pl.lastName, pl.ttr, pl.paid, pl.sex, pl.email, pl.zipCode, pl.location, pl.street, pl.phone))
+      } else {
+        None
+      }
+    }
+  }
+
+  class PlayerTable(tag: Tag) extends Table[PlayerDAO](tag, "player") {
     def id = column[Long]("Play_ID", O.PrimaryKey, O.AutoInc)
     def firstName = column[String]("Play_FirstName")
     def lastName = column[String]("Play_LastName")
@@ -124,6 +150,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def street = column[Option[String]]("Play_Street")
     def phone = column[Option[String]]("Play_TelNr")
 
-    def * = (id, firstName, lastName, ttr, paid, sex, email, zipCode, location, street, phone) <> (Player.tupled, Player.unapply)
+    def * = (id, firstName, lastName, ttr, paid, sex, email, zipCode, location, street, phone) <> (PlayerDAO.tupled, PlayerDAO.unapply)
   }
 }
