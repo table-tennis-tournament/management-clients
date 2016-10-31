@@ -4,7 +4,7 @@
     */
     "compilerOptions": {
         "target": "es5",
-        "module": "system",
+        "module": "commonjs",
         "moduleResolution": "node",
         /* the following two settings are required for angular2 annotations to work*/
         "emitDecoratorMetadata": true,
@@ -22,7 +22,7 @@
             ]
         },
         /* noImplicitAny when you want your typescript to be fully typed */
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,

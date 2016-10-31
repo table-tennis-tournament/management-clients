@@ -1,0 +1,39 @@
+{
+  "name": "jstranspiler",
+  "version": "1.0.0",
+  "description": "A js lib for providing a convenient framework in order to process a set of source files and produce a set of output files",
+  "keywords": [
+    "transpiler",
+    "framework"
+  ],
+  "homepage": "https://github.com/typesafehub/jstranspiler#jstranspiler",
+  "bugs": {
+    "url": "https://github.com/typesafehub/jstranspiler/issues"
+  },
+  "license": "Apache-2.0",
+  "main": "src/main.js",
+  "dependencies": {
+    "mkdirp": "0.5.0",
+    "when": "3.2.2"
+  },
+  "_id": "jstranspiler@1.0.0",
+  "dist": {
+    "shasum": "59406d51762cae33d07ce7aaafb3254b9f99baa8",
+    "tarball": "https://registry.npmjs.org/jstranspiler/-/jstranspiler-1.0.0.tgz"
+  },
+  "_from": "jstranspiler@latest",
+  "_npmVersion": "1.4.3",
+  "_npmUser": {
+    "name": "huntc",
+    "email": "huntc@internode.on.net"
+  },
+  "maintainers": [
+    {
+      "name": "huntc",
+      "email": "huntc@internode.on.net"
+    }
+  ],
+  "directories": {},
+  "_shasum": "59406d51762cae33d07ce7aaafb3254b9f99baa8",
+  "_resolved": "https://registry.npmjs.org/jstranspiler/-/jstranspiler-1.0.0.tgz"
+}
