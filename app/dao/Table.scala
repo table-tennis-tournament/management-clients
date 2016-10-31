@@ -17,14 +17,10 @@ import scala.concurrent.Future
 class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
   import driver.api._
 
-  // create MySQL Triggers on server start
-  Logger.info("create MySQL triggers")
-
   //Tables
   private val ttTables = TableQuery[TTTablesTable]
   private val matches = TableQuery[MatchesTable]
   private val player = TableQuery[PlayerTable]
-  private val clubs = TableQuery[ClubsTable]
 
 
   def allTTTables(): Future[Seq[TTTable]] = {
@@ -100,23 +96,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def location = column[Option[String]]("Play_Location")
     def street = column[Option[String]]("Play_Street")
     def phone = column[Option[String]]("Play_TelNr")
-    def clubId = column[Long]("Play_Club_ID")
 
-    def club = foreignKey("Club_FK", clubId, clubs)(_.id)
-
-    def * = (id, firstName, lastName, ttr, paid, sex, email, zipCode, location, street, phone, clubId, club) <> (Player.tupled, Player.unapply)
-  }
-
-  // Clubs
-
-  def allClubs: Future[Seq[Club]] = {
-    dbConfigProvider.get.db.run(clubs.result)
-  }
-
-  class ClubsTable(tag: Tag) extends Table[Club](tag, "club") {
-    def id = column[Long]("Club_ID", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("Club_Name")
-
-    def * = (id, name) <> (Club.tupled, Club.unapply)
+    def * = (id, firstName, lastName, ttr, paid, sex, email, zipCode, location, street, phone) <> (Player.tupled, Player.unapply)
   }
 }
