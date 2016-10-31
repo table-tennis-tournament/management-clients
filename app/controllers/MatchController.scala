@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import dao.Tables
-import models.{Match, MatchInfo, Player, TTTable}
+import models.{MatchDAO, MatchInfo, PlayerDAO, TTTableDAO}
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -11,8 +11,8 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
   */
 class MatchController @Inject() (tables: Tables) extends Controller{
 
-  implicit val ttMatchWrites = new Writes[Match] {
-    def writes(ttMatch: Match) = Json.obj(
+  implicit val ttMatchWrites = new Writes[MatchDAO] {
+    def writes(ttMatch: MatchDAO) = Json.obj(
       "id" -> ttMatch.id,
       "isPlaying" -> ttMatch.isPlaying,
       "player1Id" -> ttMatch.player1Id,
@@ -21,8 +21,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     )
   }
 
-  implicit val playerWrites = new Writes[Player] {
-    def writes(player: Player) = Json.obj(
+  implicit val playerWrites = new Writes[PlayerDAO] {
+    def writes(player: PlayerDAO) = Json.obj(
       "id" -> player.id,
       "firstName" -> player.firstName,
       "lastName" -> player.lastName,
@@ -37,8 +37,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     )
   }
 
-  implicit val ttTableWrites = new Writes[TTTable] {
-    def writes(ttTable: TTTable) = Json.obj(
+  implicit val ttTableWrites = new Writes[TTTableDAO] {
+    def writes(ttTable: TTTableDAO) = Json.obj(
       "id" -> ttTable.id,
       "name" -> ttTable.name,
       "left" -> ttTable.left,
@@ -62,12 +62,20 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   def getAllMatches = Action.async {
     val matchesF = tables.allMatchesWithPlayerAndTable()
     matchesF map {
-      matches: Seq[(Match, Option[TTTable], Option[Player], Option[Player])] =>
+      matches: Seq[(MatchDAO, Option[TTTableDAO], Option[PlayerDAO], Option[PlayerDAO])] =>
         var mi = Seq.empty[MatchInfo]
         for (m <- matches) {
           mi :+= new MatchInfo(m._1, m._2, m._3, m._4)
         }
         Ok(Json.toJson(mi))
     }
+  }
+
+  def setWaitingPos(id: Long, pos: Int) = Action.async {
+    val a = tables.setWaitingPostiton(id, pos)
+    a.flatMap {a => a map { a: Int =>
+      if (a==1) Ok(a.toString)
+      else NotFound(pos.toString)
+    }}
   }
 }
