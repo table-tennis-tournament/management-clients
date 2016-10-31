@@ -4,7 +4,7 @@ import java.sql.{Date, Timestamp}
 
 import org.joda.time.DateTime
 
-case class TTTableDAO(
+case class TTTable(
                     id: Long,
                     name: String,
                     left: Long,
@@ -14,15 +14,7 @@ case class TTTableDAO(
                     groupId: Option[Long]
                   )
 
-case class TTTable(
-                       id: Long,
-                       name: String,
-                       left: Long,
-                       top: Long,
-                       ttMatch: Match
-                     )
-
-case class MatchDAO (
+case class Match (
                  id: Long,
                  isPlaying: Boolean,
                  player1Id: Long,
@@ -30,15 +22,7 @@ case class MatchDAO (
                  ttTableId: Option[Long]
                  )
 
-case class Match (
-                      id: Long,
-                      isPlaying: Boolean,
-                      player1: Player,
-                      player2: Player,
-                      ttTable: Option[TTTable]
-                    )
-
-case class PlayerDAO (
+case class Player (
                   id: Long,
                   firstName: String,
                   lastName: String,
@@ -49,31 +33,12 @@ case class PlayerDAO (
                   zipCode: Option[String],
                   location: Option[String],
                   street: Option[String],
-                  phone: Option[String],
-                  clubId: Long
+                  phone: Option[String]
                   )
 
-case class Player (
-                        id: Long,
-                        firstName: String,
-                        lastName: String,
-                        ttr: Option[Int],
-                        paid: Boolean,
-                        sex: String,
-                        email: Option[String],
-                        zipCode: Option[String],
-                        location: Option[String],
-                        street: Option[String],
-                        phone: Option[String],
-                        club: Club
-                      )
-
-case class ClubDAO (
-                id: Long,
-                name: String
-                )
-
-case class Club (
-                     id: Long,
-                     name: String
-                   )
+case class MatchInfo (
+                     ttMatch: Match,
+                     ttTable: Option[TTTable],
+                     player1: Option[Player],
+                     player2: Option[Player]
+                     )
