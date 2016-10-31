@@ -8,10 +8,8 @@ target
 /bin
 /.cache-tests
 /.worksheed
-/project/**
 project/**
-.sbtserver/master.log
-.sbtserver/previous.log
 .sbtserver/
 .cache-main
 node_modules/
+typings/
