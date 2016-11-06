@@ -9,9 +9,7 @@ val ngVersion = "2.0.2"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "2.0.0",
-  //"com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
   "mysql" % "mysql-connector-java" % "5.1.12",
-//  "org.slf4j" % "slf4j-nop" % "1.6.4",
   jdbc,
   cache,
   ws,
@@ -58,17 +56,26 @@ resolveFromWebjarsNodeModulesDir := true
   ng2LintRulesDir.value
 ))
 
-//TypescriptKeys.module := "system"
-//TypescriptKeys.sourceMap := true
-//TypescriptKeys.experimentalDecorators := true
-//TypescriptKeys.emitDecoratorMetadata := true
-//TypescriptKeys.moduleResolution := "node"
 
+dependencyOverrides += "org.webjars.npm" % "minimatch" % "3.0.0"
+resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+
+// the typescript typing information is by convention in the typings directory
+// It provides ES6 implementations. This is required when compiling to ES5.
+typingsFile := Some(baseDirectory.value / "typings" / "index.d.ts")
+
+// use the webjars npm directory (target/web/node_modules ) for resolution of module imports of angular2/core etc
+resolveFromWebjarsNodeModulesDir := true
+
+// use the combined tslint and eslint rules plus ng2 lint rules
+(rulesDirectories in tslint) := Some(List(
+  tslintEslintRulesDir.value,
+  ng2LintRulesDir.value
+))
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
 
-
-
 // fork in run := true
+

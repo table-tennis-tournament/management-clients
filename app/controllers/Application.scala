@@ -26,7 +26,7 @@ class Application @Inject()(system: ActorSystem, checkDatabaseActor: ActorRef, t
     result.onFailure{
       case f => Logger.error(f.toString)
     }
-    Ok(views.html.index("TurnierManager"))
+    Ok(views.html.index())
   }
 
 }

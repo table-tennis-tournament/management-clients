@@ -3,6 +3,5 @@ export interface Player {
 	firstName: string;
 	lastName: string;
 	ttr: number;
-	paid: Boolean;
-	sex: String;
+	sex: string;
 }

@@ -1,13 +1,9 @@
-/// <reference path="../../../node_modules/angular2/typings/browser.d.ts" />
 
-import {bootstrap} from 'angular2/platform/browser';
-import {ROUTER_PROVIDERS} from 'angular2/router';
-import {HTTP_PROVIDERS} from 'angular2/http';
-import {PlayerService} from './service/player.service';
-import {AppComponent} from './app.component';
+console.log("Hello world");
 
-bootstrap(AppComponent, [
-  HTTP_PROVIDERS,
-  ROUTER_PROVIDERS,
-  PlayerService
-]);
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import {AppModule} from './app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+
