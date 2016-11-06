@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
-import {Player} from './data/player';
+import {Component} from "@angular/core";
+import {Player} from "./data/player";
 
 @Component({
-  selector: 'my-player-detail',
+  selector: "my-player-detail",
   template: `
     <div *ngIf="player">
       <h2>{{player.firstName}} details!</h2>
@@ -17,7 +17,7 @@ import {Player} from './data/player';
       </div>
     </div>
   `,
-  inputs: ['player']
+  inputs: ["player"]
 })
 export class PlayerDetailComponent{
   public player:Player;
