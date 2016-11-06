@@ -29,14 +29,9 @@
       true,
       "check-space"
     ],
-    "indent": [
-      true,
-      "spaces"
-    ],
     "no-duplicate-variable": true,
     "no-eval": true,
     "no-internal-module": true,
-    "no-trailing-whitespace": true,
     "no-var-keyword": false,
     "one-line": [
       true,
