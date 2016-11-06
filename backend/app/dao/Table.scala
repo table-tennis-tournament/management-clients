@@ -19,10 +19,24 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   import driver.api._
 
   // on Server start
+
   Logger.info("config database")
-  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger BEFORE UPDATE ON matches BEGIN @tables_updated = 1;""") map {
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger AFTER UPDATE ON tables FOR EACH ROW SET @tables_updated = 1;""") map {
     result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("tables_trigger not created, maybe it alread exists")
   }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_trigger AFTER UPDATE ON matches FOR EACH ROW SET @matches_updated = 1;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("matches_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_trigger AFTER UPDATE ON player FOR EACH ROW SET @mplayer_updated = 1;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("player_trigger not created, maybe it alread exists")
+  }
+
 
 
   // Tables
