@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {Player} from './data/Player';
-import {PlayerDetailComponent} from './player-detail.component';
-import {PlayerService} from './service/player.service';
+import {Component, OnInit} from "@angular/core"
+import {Player} from "./data/Player"
+import {PlayerDetailComponent} from "./player-detail.component"
+import {PlayerService} from "./service/player.service"
 
 
 @Component({
-  selector: 'my-app',
+  selector: "my-app",
   template:`
     <h1>{{title}}</h1>
     <h2>My Players</h2>
@@ -21,7 +21,7 @@ import {PlayerService} from './service/player.service';
   providers: [PlayerService]
 })
 export class AppComponent implements OnInit {
-  public title = 'TurnierManager';
+  public title = "TurnierManager";
   public players: Player[];
   public selectedPlayer: Player;
 
