@@ -19,16 +19,16 @@
         <script>    @* our app is downloaded as individual javascript files by SystemJs
                      after compilation by sbt-typescript*@
             var map = {
-                'app': 'assets/app',
+                'app': 'assets/javascripts',
                 '@@angular':'assets/lib/@@angular',
                 'rxjs':'assets/lib/rxjs',
-                'symbol-observable': 'assets/lib/symbol-observable'
-
+                'symbol-observable': 'assets/lib/symbol-observable',
+                'es6-promise':'assets/lib/es6-promise/lib'
             };
 
 
         var packages = {
-                'app': {main: 'main.js', defaultExtension: 'js'},
+                'app': {main: 'boot.js', defaultExtension: 'js'},
                 'rxjs': {defaultExtension: 'js'},
                 'assets/lib': {defaultExtension: 'js'},
                 'symbol-observable': {defaultExtension: 'js', main: 'index.js'}
@@ -77,7 +77,7 @@
 
 <body>
     <div class="container" data-ng-cloak>
-        <my-app>Loading...</my-app>
+        <tt-app>Loading...</tt-app>
     </div>
 </body>
 

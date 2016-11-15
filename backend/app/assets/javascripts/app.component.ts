@@ -5,7 +5,7 @@ import {PlayerService} from "./service/player.service"
 
 
 @Component({
-  selector: "my-app",
+  selector: "tt-app",
   template:`
     <h1>{{title}}</h1>
     <h2>My Players</h2>
