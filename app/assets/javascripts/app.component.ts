@@ -16,7 +16,12 @@ export class AppComponent{
 
   constructor(private playerService:PlayerService) {
         this.playerService = playerService;
-        this.players = playerService.getPlayers();
+        this.players = [];
+        playerService.getAllPlayers().subscribe(
+                               players => this.players = players, 
+                                err => {
+                                    console.log(err);
+                                });
     }
 
    onSelect(player: Player) { this.selectedPlayer = player; }
