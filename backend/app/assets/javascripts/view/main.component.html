@@ -1,9 +1,0 @@
-<h1>{{title}}</h1>
-<h2>My Players</h2>
-<ul class="heroes">
-    <li *ngFor="#player of players" [class.selected]="player === selectedPlayer" (click)="onSelect(player)">
-        <span class="badge">{{player.id}}</span> {{player.firstName}} {{player.lastName}}
-    </li>
-</ul>
-
-<my-player-detail [player]="selectedPlayer"></my-player-detail>
