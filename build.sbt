@@ -36,6 +36,8 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "symbol-observable" % "1.0.4",
   "org.webjars.npm" % "typescript" % "2.0.6",
 
+  "org.webjars" % "jquery" % "3.1.1",
+  "org.webjars" % "bootstrap" % "3.3.7-1" ,
   //tslint dependency
   "org.webjars.npm" % "tslint-eslint-rules" % "2.1.0",
   "org.webjars.npm" % "codelyzer" % "0.0.28"
