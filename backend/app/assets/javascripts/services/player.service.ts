@@ -1,10 +1,11 @@
 import {Player} from "../data/player"
 import {Injectable} from "@angular/core"
-import {Headers, Http } from "@angular/http"
+import {Http, Response, Headers, RequestOptions } from "@angular/http"
+import {Observable} from "rxjs/Rx";
 
 @Injectable()
 export class PlayerService {
-  private playerUrl = "getAllPlayer";
+  private playerUrl = "player/all";
 
   constructor(private http: Http){}
 
@@ -18,6 +19,11 @@ export class PlayerService {
 
       ];
     return PLAYERS;
+  }
+
+  getAllPlayers(): Observable<Player[]>{
+    return this.http.get(this.playerUrl).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
 }
