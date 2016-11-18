@@ -5,11 +5,10 @@ import { BrowserModule }  from "@angular/platform-browser"
 import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
 
-// Declarations
-import { AppComponent }         from "./app.component"
-import { PlayerService }         from "./service/player.service"
+import {AppComponent} from "./app.Component"
 
-import { routing } from "./app.routes"
+import { PlayerService } from "./services/player.service"
+
 
 // Decorator
 @NgModule({
@@ -17,15 +16,14 @@ import { routing } from "./app.routes"
     BrowserModule,
     FormsModule,
      HttpModule,
-    JsonpModule,
-    routing
+    JsonpModule
   ],
   declarations: [
     AppComponent
   ],
   providers: [
-    PlayerService
-  ],
+      PlayerService
+    ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {

@@ -1,45 +1,23 @@
-import {Component, OnInit} from "@angular/core"
+import {Component} from "@angular/core"
+import {PlayerService} from "./services/player.service"
+
 import {Player} from "./data/Player"
-import {PlayerDetailComponent} from "./player-detail.component"
-import {PlayerService} from "./service/player.service"
 
 
 @Component({
   selector: "tt-app",
-  template:`
-    <h1>{{title}}</h1>
-    <h2>My Players</h2>
-    <ul class="heroes">
-      <li *ngFor="#player of players"
-        [class.selected]="player === selectedPlayer"
-        (click)="onSelect(player)">
-        <span class="badge">{{player.id}}</span> {{player.firstName}} {{player.lastName}}
-      </li>
-    </ul>
-    <my-player-detail [player]="selectedPlayer"></my-player-detail>
-  `,
-  providers: [PlayerService]
+  templateUrl:"assets/javascripts/views/main.component.html"
 })
-export class AppComponent implements OnInit {
+export class AppComponent{
   public title = "TurnierManager";
+
   public players: Player[];
   public selectedPlayer: Player;
 
-  constructor(private _playerService: PlayerService) { }
+  constructor(private playerService:PlayerService) {
+        this.playerService = playerService;
+        this.players = playerService.getPlayers();
+    }
 
-  getPlayers() {
-    var result = this._playerService.getPlayers();
-    this.players = result;
-    this._playerService.getAllPlayers().then(players =>{
-      console.log(players);
-      this.players = players;
-    } );
-
-  }
-
-  ngOnInit() {
-    this.getPlayers();
-  }
-
-  onSelect(player: Player) { this.selectedPlayer = player; }
+   onSelect(player: Player) { this.selectedPlayer = player; }
 }

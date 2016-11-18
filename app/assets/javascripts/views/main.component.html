@@ -1,0 +1,11 @@
+<h1>{{title}}</h1>
+<h2>My Players</h2>
+
+<section class="main" *ngIf="players.length > 0">
+		<ul class="todo-list">
+			<li *ngFor="let player of players" [class.selected]="player === selectedPlayer" (click)="onSelect(player)">
+				<span class="badge">{{player.id}}</span> {{player.firstName}} {{player.lastName}}			
+            </li>
+		</ul>
+	</section>
+
