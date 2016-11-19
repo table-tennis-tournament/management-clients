@@ -7,8 +7,8 @@ import { HttpModule, JsonpModule } from "@angular/http"
 
 import { RouterModule, Routes } from "@angular/router"
 
-import {NavigationComponent} from "./navigation.component"
-import {AppComponent} from "./app.Component"
+import {AppComponent} from "./app.component"
+import {PlayerComponent} from "./player.component"
 
 import { PlayerService } from "./services/player.service"
 
@@ -17,29 +17,24 @@ import { routeConfig } from "./app.routes"
 import {APP_BASE_HREF} from "@angular/common";
 
 
-// const appRoutes: Routes = [
-//   { path: "", component: AppComponent },
-//   { path: "playerView", component: AppComponent }
-// ];
-// Decorator
 @NgModule({
-  declarations: [
-    NavigationComponent,
-    AppComponent
-  ],
+  
   imports: [
     BrowserModule,
     FormsModule,
-     HttpModule,
+    HttpModule,
     JsonpModule,
     RouterModule.forRoot(routeConfig)
   ],
-  
+  declarations: [
+    AppComponent,
+    PlayerComponent
+  ],
   providers: [
       PlayerService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
-  bootstrap: [NavigationComponent, AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule {
     // Module class
