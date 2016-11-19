@@ -5,9 +5,9 @@ import {Match} from "../data/Match"
 
 
 @Component({
-  templateUrl:"assets/javascripts/views/player.component.html"
+  templateUrl:"assets/javascripts/views/match.component.html"
 })
-export class PlayerComponent{
+export class MatchComponent{
 
     public matches: Match[];
     public selectedMatch: Match;
