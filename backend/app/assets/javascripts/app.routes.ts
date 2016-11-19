@@ -1,11 +1,16 @@
 // ====== ./app/app.routes.ts ======
 
 import { Routes, RouterModule } from "@angular/router"
-import { AppComponent } from "./app.component"
+import {PlayerComponent} from "./player.component"
 
 export const routeConfig:Routes = [
     {
         path: "playerView",
-        component: AppComponent
+        component: PlayerComponent
+    },
+    {
+        path: "",
+        redirectTo: "/playerView",
+        pathMatch: "full"
     }
 ];
