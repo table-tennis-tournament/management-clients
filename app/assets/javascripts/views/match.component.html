@@ -1,0 +1,89 @@
+<div class="row">
+        <div class="col s6 m2">
+            <h5>Nächste Spiele:</h5>
+            <ul class="collection">
+                <li class="collection-item">1: Maier-Müller</li>
+                <li class="collection-item">2: Winterhalter - Günter-Herbert</li>
+                <li class="collection-item">8: Aragian - Umapasisivam</li>
+                <li class="collection-item">9: Kienzle - Heizmann</li>
+                <li class="collection-item">1: Maier-Müller</li>
+                <li class="collection-item">2: Winterhalter - Günter-Herbert</li>
+                <li class="collection-item">8: Aragian - Umapasisivam</li>
+                <li class="collection-item">9: Kienzle - Heizmann</li>
+                <li class="collection-item">1: Maier-Müller</li>
+                <li class="collection-item">2: Winterhalter - Günter-Herbert</li>
+                <li class="collection-item">8: Aragian - Umapasisivam</li>
+                <li class="collection-item">9: Kienzle - Heizmann</li>
+                <li class="collection-item">1: Maier-Müller</li>
+                <li class="collection-item">2: Winterhalter - Günter-Herbert</li>
+                <li class="collection-item">8: Aragian - Umapasisivam</li>
+                <li class="collection-item">9: Kienzle - Heizmann</li>
+            </ul>
+        </div>
+        <div class="col s6 m2">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Tisch 1</span>
+                <p align="center">Herren A Einzel</p>
+                <p>Mike Schmidt</p>
+                <p>Manuel Wintert</p>
+            </div>      
+            <div class="card-action">
+              <a href="#">Freimachen</a>
+              <a href="#">Ergebnis</a>
+            </div>    
+             <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+                 <p>Manuel Winter ASV Grünwettersbach.</p>
+            </div>
+          </div>
+        </div>
+       <div class="col s6 m2">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Tisch 2</span>
+                <p>Herren A Einzel</p>
+                <p>Mike Schmidt</p>
+                <p>Manuel Wintert</p>
+            </div>          
+          </div>
+        </div>
+        <div class="col s6 m2">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Tisch 3</span>
+                <p>Herren A Einzel</p>
+                <p>Mike Schmidt</p>
+                <p>Manuel Wintert</p>
+            </div>          
+          </div>
+        </div>
+         <div class="col s6 m2">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Tisch 4</span>
+                <p>Herren A Einzel</p>
+                <p>Mike Schmidt</p>
+                <p>Manuel Wintert</p>
+            </div>          
+          </div>
+        </div>
+        <div class="col s6 m2">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Tisch 5</span>
+                <p>Herren A Einzel</p>
+                <p>Mike Schmidt</p>
+                <p>Manuel Wintert</p>
+            </div>          
+          </div>
+        </div>
+     </div>
+<section class="main" *ngIf="matches.length > 0">
+     
+		<ul class="todo-list">
+			<li *ngFor="let player of players" [class.selected]="player === selectedPlayer" (click)="onSelect(player)">
+				<span class="badge">{{player.id}}</span> {{player.firstName}} {{player.lastName}}			
+            </li>
+		</ul>
+</section>

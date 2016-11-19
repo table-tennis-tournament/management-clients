@@ -7,10 +7,12 @@ import { HttpModule, JsonpModule } from "@angular/http"
 
 import { RouterModule, Routes } from "@angular/router"
 
-import {AppComponent} from "./app.component"
-import {PlayerComponent} from "./player.component"
+import {AppComponent} from "./app.Component"
+import {PlayerComponent} from "./components/player.component"
+import {MatchComponent} from "./components/match.component"
 
 import { PlayerService } from "./services/player.service"
+import { MatchService } from "./services/match.service"
 
 import { routeConfig } from "./app.routes"
 
@@ -28,10 +30,12 @@ import {APP_BASE_HREF} from "@angular/common";
   ],
   declarations: [
     AppComponent,
-    PlayerComponent
+    PlayerComponent,
+    MatchComponent
   ],
   providers: [
       PlayerService,
+      MatchService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent]

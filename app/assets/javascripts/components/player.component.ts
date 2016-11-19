@@ -1,15 +1,13 @@
 import {Component} from "@angular/core"
-import {PlayerService} from "./services/player.service"
+import {PlayerService} from "../services/player.service"
 
-import {Player} from "./data/Player"
+import {Player} from "../data/Player"
 
 
 @Component({
   templateUrl:"assets/javascripts/views/player.component.html"
 })
 export class PlayerComponent{
-
-    public title = "TurnierManager";
 
     public players: Player[];
     public selectedPlayer: Player;
