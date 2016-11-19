@@ -15,7 +15,7 @@ export const routeConfig:Routes = [
     },
     {
         path: "",
-        redirectTo: "/playerView",
+        redirectTo: "/matchView",
         pathMatch: "full"
     }
 ];
