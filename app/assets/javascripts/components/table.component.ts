@@ -3,9 +3,30 @@ import {Match} from "../data/Match"
 
 
 @Component({
-  templateUrl : "assets/javascripts/views/table.component.html"
+    selector: "tt-table",
+    templateUrl : "assets/javascripts/views/table.component.html"
 })
-export class MatchComponent{
+export class TableComponent{
 
-    @Input() public match: Match;
+    public firstOpponent: string;
+    public secondOpponent: string;
+    public bgColor: string;
+
+    _match: Match;
+    get match(): Match {
+    return this._match;
+}
+
+    @Input("match")
+    set match(value: Match){
+        console.log(value);
+        this._match = value;
+        this.firstOpponent = "Fritz Walter";
+        this.secondOpponent = "Walter Maier";
+        this.bgColor = "orange";
+    } 
+
+    constructor(){
+        console.log(this.match);
+    }
 }
