@@ -10,6 +10,7 @@ import { RouterModule, Routes } from "@angular/router"
 import {AppComponent} from "./app.Component"
 import {PlayerComponent} from "./components/player.component"
 import {MatchComponent} from "./components/match.component"
+import {TableComponent} from "./components/table.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -31,7 +32,8 @@ import {APP_BASE_HREF} from "@angular/common";
   declarations: [
     AppComponent,
     PlayerComponent,
-    MatchComponent
+    MatchComponent,
+    TableComponent
   ],
   providers: [
       PlayerService,

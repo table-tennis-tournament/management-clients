@@ -11,15 +11,18 @@ export class MatchComponent{
 
     public matches: Match[];
     public selectedMatch: Match;
+    public rowCount: number[];
 
     constructor(private matchService:MatchService) {
         this.matchService = matchService;
         this.matches = [];
-        this.matchService.getAllMatches().subscribe(
-                               matches => this.matches = matches, 
-                                err => {
-                                    console.log(err);
-                                });
+        this.matchService.getAllMatches().subscribe( matches =>{
+                    this.matches = matches;
+                    this.rowCount = Array.from(Array(Math.ceil(this.matches.length / 5)).keys());
+                }, 
+                err => {
+                    console.log(err);
+                });
     }
 
    onSelect(match: Match) { this.selectedMatch = match; }
