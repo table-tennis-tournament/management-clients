@@ -21,17 +21,62 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   // on Server start
 
   Logger.info("config database")
-  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger AFTER UPDATE ON tables FOR EACH ROW SET @tables_updated = 1;""") map {
+//  dbConfigProvider.get.db.run(sqlu"""DROP TRIGGER tables_trigger;""") map {
+//    result => Logger.info("result: " + result.toString)
+//  } recover {
+//    case e => Logger.info("tables_trigger not created, maybe it alread exists")
+//  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TABLE triggers (id INT(6) PRIMARY KEY, trigger_name VARCHAR(30) , trigger_val INTEGER);""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info(e.toString)
+  }
+  dbConfigProvider.get.db.run(sqlu"""INSERT INTO triggers (id, trigger_name, trigger_val) VALUES (0, 'tables', 0)""") map {
     result => Logger.info("result: " + result.toString)
   } recover {
     case e => Logger.info("tables_trigger not created, maybe it alread exists")
   }
-  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_trigger AFTER UPDATE ON matches FOR EACH ROW SET @matches_updated = 1;""") map {
+  dbConfigProvider.get.db.run(sqlu"""INSERT INTO triggers (id, trigger_name, trigger_val) VALUES (1, 'matches', 0)""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("tables_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""INSERT INTO triggers (id, trigger_name, trigger_val) VALUES (2, 'player', 0)""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("tables_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger BEFORE UPDATE ON tables FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 0;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("tables_trigger not created, maybe it alread exists" + e.toString)
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_update_trigger AFTER UPDATE ON matches FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 1;""") map {
     result => Logger.info("result: " + result.toString)
   } recover {
     case e => Logger.info("matches_trigger not created, maybe it alread exists")
   }
-  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_trigger AFTER UPDATE ON player FOR EACH ROW SET @mplayer_updated = 1;""") map {
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_insert_trigger AFTER INSERT ON matches FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 1;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("matches_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_insert_trigger AFTER DELETE ON matches FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 1;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("matches_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_update_trigger AFTER UPDATE ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("player_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_update_trigger AFTER INSERT ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;""") map {
+    result => Logger.info("result: " + result.toString)
+  } recover {
+    case e => Logger.info("player_trigger not created, maybe it alread exists")
+  }
+  dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_update_trigger AFTER DELETE ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;""") map {
     result => Logger.info("result: " + result.toString)
   } recover {
     case e => Logger.info("player_trigger not created, maybe it alread exists")
@@ -44,6 +89,41 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   private val matches = TableQuery[MatchesTable]
   private val player = TableQuery[PlayerTable]
 
+  def resetTriggerTable = {
+    dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 0;""") map { result =>
+
+    }
+  }
+
+  def triggerTable(): Future[Int] = {
+    dbConfigProvider.get.db.run(sql"""SELECT trigger_val FROM triggers where id = 0;""".as[Int]) map { result =>
+      result.head
+    }
+  }
+
+  def resetTriggerMatches = {
+    dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 1;""") map { result =>
+
+    }
+  }
+
+  def triggerMatches(): Future[Int] = {
+    dbConfigProvider.get.db.run(sql"""SELECT trigger_val FROM triggers where id = 1;""".as[Int]) map { result =>
+      result.head
+    }
+  }
+
+  def resetTriggerPlayer = {
+    dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 2;""") map { result =>
+
+    }
+  }
+
+  def triggerPlayer(): Future[Int] = {
+    dbConfigProvider.get.db.run(sql"""SELECT trigger_val FROM triggers where id = 2;""".as[Int]) map { result =>
+      result.head
+    }
+  }
 
   def allTTTables(): Future[Seq[TTTableDAO]] = {
     Logger.info("all()")
