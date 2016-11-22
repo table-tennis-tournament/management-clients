@@ -15,8 +15,11 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   "org.scala-sbt" % "librarymanagement_2.10" % "0.1.0-M11",
+  "com.typesafe.akka" %% "akka-cluster" % "2.3.7",
+  "com.typesafe.akka" %% "akka-contrib" % "2.3.7",
 
-  //angular2 dependencies
+
+//angular2 dependencies
   "org.webjars.npm" % "angular__common" % ngVersion,
   "org.webjars.npm" % "angular__compiler" % ngVersion,
   "org.webjars.npm" % "angular__core" % ngVersion,
@@ -39,7 +42,8 @@ libraryDependencies ++= Seq(
   "org.webjars" % "materializecss" % "0.97.7",
   "org.webjars" % "jquery" % "3.1.1",
   "org.webjars" % "bootstrap" % "3.3.7-1" ,
-  //tslint dependency
+  //tslint dependencyOverrides
+
   "org.webjars.npm" % "tslint-eslint-rules" % "2.1.0",
   "org.webjars.npm" % "codelyzer" % "0.0.28"
 )
