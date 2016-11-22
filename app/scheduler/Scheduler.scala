@@ -14,5 +14,5 @@ import scala.concurrent.duration._
 class Scheduler @Inject() (val system: ActorSystem, @Named("scheduler-actor") val checkDatabaseActor: ActorRef, configuration: Configuration)(implicit ec: ExecutionContext) {
   //val frequency = configuration.getInt("frequency").get
   var actor = system.scheduler.schedule(
-    0.microseconds, 1.seconds, checkDatabaseActor, "update")
+    1 seconds, 1 seconds, checkDatabaseActor, "update")
 }
