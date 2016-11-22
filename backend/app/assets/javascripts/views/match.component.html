@@ -1,5 +1,5 @@
 <div class="row" *ngFor="let i of rowCount" >
-			<div *ngFor="let currentMatch of matches | slice:(i*5):(i+1)*5" class="col s2 m2">
+			<div *ngFor="let currentMatch of matches | slice:(i*5):(i+1)*5" class="col custom-col grid-example">
 				<tt-table [match]="currentMatch"></tt-table>
 		</div>
 </div>
