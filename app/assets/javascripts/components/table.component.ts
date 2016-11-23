@@ -1,5 +1,8 @@
 import {Component, Input} from "@angular/core"
 import {Match} from "../data/Match"
+import {Table} from "../data/Table"
+
+
 
 
 @Component({
@@ -14,30 +17,26 @@ export class TableComponent{
     public tableNumber: string;
     public firstClubName: string;
     public secondClubName:string;
-    public stage: string;
 
     public colorArray: string[] = [];
     
-    _match: Match;
-    get match(): Match {
-        return this._match;
+    _table: Table;
+    get table(): Table {
+        return this._table;
     }
 
-    @Input("match")
-    set match(value: Match){
+    @Input("table")
+    set table(value: Table){
         console.log(value);
-        this._match = value;
-        this._match.stage = "Achtelfinale";
-        this.firstOpponent = "Fritz Walter-Maier";
-        this.secondOpponent = "Walter Maier";
-        this.bgColor = this.colorArray[this.getRandomInt(1, 6)];
-        this.tableNumber = this.getRandomInt(1, 25);
-        this.firstClubName = "(ASV Grünwettersbach)";
-        this.secondClubName = "(TTV Ettlingen)";
+        this._table = value;
+        this.firstOpponent = this._table.match.team1[0].firstName + this._table.match.team1[0].lastName;
+        this.secondOpponent = this._table.match.team2[0].firstName + this._table.match.team2[0].lastName;
+        this.firstClubName = this._table.match.team1[0].club.clubName;
+        this.secondClubName = this._table.match.team2[0].club.clubName;
+        this.bgColor = this.colorArray[this._table.match.colorId];
     } 
 
     constructor(){
-        console.log(this.match);
         this.colorArray[1] = "indigo";
         this.colorArray[2] = "blue";
         this.colorArray[3] = "red";
@@ -46,9 +45,5 @@ export class TableComponent{
         this.colorArray[6] = "deep-purple";
     }
 
-    getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
+    
 }

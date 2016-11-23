@@ -1,4 +1,8 @@
-export interface Type{
-    id: number,
-    typeName: string
+export class Type{
+    id: number;
+    typeName: string;
+
+    constructor(typeName: string){
+        this.typeName = typeName;
+    }
 }

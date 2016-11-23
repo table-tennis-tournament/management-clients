@@ -1,8 +1,9 @@
 import {Match} from "./match"
 
-export interface Table{
-    id: number,
-    tableNumber: number,
-    match: Match,
-    isLocked: boolean
+export class Table{
+    id: number;
+    tableNumber: number;
+    match: Match;
+    isLocked: boolean;
 }
+
