@@ -2,7 +2,7 @@
 
 import { Routes, RouterModule } from "@angular/router"
 import {PlayerComponent} from "./components/player.component"
-import {MatchComponent} from "./components/match.component"
+import {TableViewComponent} from "./components/table.view.component"
 
 export const routeConfig:Routes = [
     {
@@ -10,12 +10,12 @@ export const routeConfig:Routes = [
         component: PlayerComponent
     },
     {
-        path: "matchView",
-        component: MatchComponent
+        path: "tableView",
+        component: TableViewComponent
     },
     {
         path: "",
-        redirectTo: "/matchView",
+        redirectTo: "/tableView",
         pathMatch: "full"
     }
 ];
