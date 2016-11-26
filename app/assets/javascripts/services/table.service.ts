@@ -11,39 +11,59 @@ import {WebSocketService} from "./web.socket.service";
 @Injectable()
 export class TableService {
   private allMatchesUrl = "table/all";
+  private nextMatchUrl = "matches/next";
+  public OnTableChanged: Observable<Match>;
 
   constructor(private http: Http, private webSocketService: WebSocketService){
-      
-      
-      console.log(this.webSocketService.wsObservable);
       this.subscribeToWebSocket();
-      
+      this.initTableChangedObserver();
   }
 
   subscribeToWebSocket(){
+      console.log("Start registering TableService on WebSocket");
       try {
-          this.webSocketService.wsObservable.subscribe((data) => {
-                console.log("data received: " + data);
-            },
-            (error) => {
-                console.log("on error received")
-            },
-            () => {
-                console.log("completed received");
-            });
+          this.webSocketService.WebSocketObservable.subscribe((data) => 
+                this.handleWebSocketMessage,
+                this.handleWebSocketError,
+                this.handleWebSocketCompleted);
       } catch (error) {
           console.log(error);
       }
+  }
 
+  initTableChangedObserver(){
+      this.OnTableChanged = Observable.create((observer) => {
+            console.log("observer is created");
+            observer.next();
+            
+        }).share();
+  }
+
+  handleWebSocketMessage(data){
+      console.log("data received: " + data);
+    //   this.OnTableChanged.
+  }
+
+  handleWebSocketError(error){
+      console.log("on error received")
+  }
+
+  handleWebSocketCompleted(){
+      console.log("completed received");
   }
 
   getAllMatches(): Observable<Match[]>{
-    return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
+        return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getNextMatch(): Observable<Match>{
+        return this.http.get(this.nextMatchUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
   getAllTables(): Table[]{
-      console.log("inside all TAbles");
+      console.log("getAllTables called");
       var tables: Table[] = [];
       for (var n = 0; n <= 23; n++) {         
             var newTable = new Table();
@@ -53,13 +73,12 @@ export class TableService {
             newTable.isLocked = false;
             tables[n] = newTable;
       }
-      console.log(tables);
       return tables;
   }
 
   getRandomMatch(): Match{
       var result = new Match();
-      result.colorId = this.getRandomInt(1,6);
+      result.colorId = this.getRandomInt(1,11);
       result.stage = "Achtelfinale";
       result.team1 = this.getPlayer("Heinz", "Schmidt", "ASV Grünwettersbach");
       result.team2 = this.getPlayer("Walter", "Maier", "TTV Ettlingen");
