@@ -6,12 +6,36 @@ import {Type} from "../data/type"
 import {Injectable} from "@angular/core"
 import {Http, Response, Headers, RequestOptions } from "@angular/http"
 import {Observable} from "rxjs/Rx";
+import {WebSocketService} from "./web.socket.service";
 
 @Injectable()
 export class TableService {
   private allMatchesUrl = "table/all";
 
-  constructor(private http: Http){}
+  constructor(private http: Http, private webSocketService: WebSocketService){
+      
+      
+      console.log(this.webSocketService.wsObservable);
+      this.subscribeToWebSocket();
+      
+  }
+
+  subscribeToWebSocket(){
+      try {
+          this.webSocketService.wsObservable.subscribe((data) => {
+                console.log("data received: " + data);
+            },
+            (error) => {
+                console.log("on error received")
+            },
+            () => {
+                console.log("completed received");
+            });
+      } catch (error) {
+          console.log(error);
+      }
+
+  }
 
   getAllMatches(): Observable<Match[]>{
     return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
