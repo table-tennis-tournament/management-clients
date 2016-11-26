@@ -24,6 +24,7 @@ export class TableViewComponent{
 
    onSelect(table: Table) { this.selectedTable = table; }
 
+
 //    this.matchService = matchService;
 //         this.matches = [];
 //         this.matchService.getAllMatches().subscribe( matches =>{

@@ -15,6 +15,7 @@ import {TableComponent} from "./components/table.component"
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
 import { TableService } from "./services/table.service"
+import { WebSocketService } from "./services/web.socket.service"
 
 import { routeConfig } from "./app.routes"
 
@@ -40,6 +41,7 @@ import {APP_BASE_HREF} from "@angular/common";
       PlayerService,
       MatchService,
       TableService,
+      WebSocketService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent]
