@@ -4,11 +4,11 @@ import {Injectable} from "@angular/core"
 @Injectable()
 export class WebSocketService {
 
-    public wsObservable:Observable<any>;
+    public WebSocketObservable:Observable<any>;
     private ws: WebSocket;
 
     initializeWebSocket(url) {
-        this.wsObservable = Observable.create((observer) => {
+        this.WebSocketObservable = Observable.create((observer) => {
             
             this.ws = new WebSocket(url);
 
