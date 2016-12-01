@@ -20,14 +20,15 @@ export class TableViewComponent{
         this.tableService = tableService;
         this.tables = tableService.getAllTables();
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-        console.log(this.tableService.OnTableChanged);
+        console.log("subscribe on table changed");
         this.tableService.OnTableChanged.subscribe(
-            this.handleMatchChanged
+            this.handleMatchChanged.bind(this)
         );
     }
 
     handleMatchChanged(match){
-        console.log("Match changed called: " + match);
+        console.log(match);
+        this.tables[4].match = match;
     }
 
    onSelect(table: Table) { this.selectedTable = table; }

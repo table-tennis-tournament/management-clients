@@ -12,6 +12,7 @@ export class WebSocketService {
             
             this.ws = new WebSocket(url);
 
+            // observer.next("testdata");
             this.ws.onopen = (e) => {
                 console.log("WebSocket was successfully registered.");
             };
@@ -29,7 +30,6 @@ export class WebSocketService {
             }
 
             this.ws.onmessage = (e) => {
-                console.log(e);
                 console.log("on Message de websocket");
                 if(e.data==="MatchesUpdated"){
                     observer.next("Update Message");
