@@ -29,21 +29,20 @@ export class TableComponent{
         this.secondOpponent = this._table.match.team2[0].firstName + this._table.match.team2[0].lastName;
         this.firstClubName = this._table.match.team1[0].club.clubName;
         this.secondClubName = this._table.match.team2[0].club.clubName;
-        this.bgColor = this.colorArray[this._table.match.colorId];
+        this.bgColor = this.colorArray[this._table.match.type.id];
     } 
 
     constructor(){
-        this.colorArray[1] = "red";
-        this.colorArray[2] = "pink";
-        this.colorArray[3] = "purple";
-        this.colorArray[4] = "deep-purple";
-        this.colorArray[5] = "indigo";
-        this.colorArray[6] = "blue";
-        this.colorArray[7] = "light-blue";
-        this.colorArray[8] = "cyan";
-        this.colorArray[9] = "teal";
-        this.colorArray[10] = "green";
-        this.colorArray[11] = "light-green";
+        this.colorArray[1] = "indigo";
+        this.colorArray[2] = "blue darken-1";
+        this.colorArray[3] = "green";
+        this.colorArray[4] = "light-green darken-1";
+        this.colorArray[5] = "grey";
+        this.colorArray[6] = "grey darken-3";
+        this.colorArray[7] = "orange";
+        this.colorArray[8] = "amber darken-1";
+        this.colorArray[9] = "pink";
+        this.colorArray[10] = "red darken-1";
 
         // this.colorArray[1] = "red lighten-3";
         // this.colorArray[2] = "pink lighten-3";

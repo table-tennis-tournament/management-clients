@@ -13,19 +13,22 @@ export class TableService {
   private allMatchesUrl = "table/all";
   private nextMatchUrl = "matches/next";
   public OnTableChanged: Observable<Match>;
+  private tableObserver: any;
+  private typeArray: Type[] = [];
 
   constructor(private http: Http, private webSocketService: WebSocketService){
-      this.subscribeToWebSocket();
       this.initTableChangedObserver();
+      this.subscribeToWebSocket();
+      this.initTypeArray();
   }
 
   subscribeToWebSocket(){
       console.log("Start registering TableService on WebSocket");
       try {
-          this.webSocketService.WebSocketObservable.subscribe((data) => 
-                this.handleWebSocketMessage,
-                this.handleWebSocketError,
-                this.handleWebSocketCompleted);
+          this.webSocketService.WebSocketObservable.subscribe(
+              this.handleWebSocketMessage.bind(this),
+                this.handleWebSocketError.bind(this),
+                this.handleWebSocketCompleted.bind(this));
       } catch (error) {
           console.log(error);
       }
@@ -33,15 +36,32 @@ export class TableService {
 
   initTableChangedObserver(){
       this.OnTableChanged = Observable.create((observer) => {
-            console.log("observer is created");
-            observer.next();
+            console.log("table changed observer is created");
+            this.tableObserver = observer;
+            
+            
             
         }).share();
   }
 
+  initTypeArray(){
+      this.typeArray[0] = new Type("A-Einzel", 1);
+      this.typeArray[1] = new Type("A-Doppel", 2);
+      this.typeArray[2] = new Type("B-Einzel", 3);
+      this.typeArray[3] = new Type("B-Doppel", 4);
+      this.typeArray[4] = new Type("C-Einzel", 5);
+      this.typeArray[5] = new Type("C-Doppel", 6);
+      this.typeArray[6] = new Type("D-Einzel", 7);
+      this.typeArray[7] = new Type("D-Doppel", 8);
+      this.typeArray[8] = new Type("Damen-EZ", 9);
+      this.typeArray[9] = new Type("Damen-D", 10);
+  }
+
   handleWebSocketMessage(data){
       console.log("data received: " + data);
-    //   this.OnTableChanged.
+      var newMatch = this.getRandomMatch();
+      console.log(this.tableObserver);
+      this.tableObserver.next(newMatch);
   }
 
   handleWebSocketError(error){
@@ -97,7 +117,7 @@ export class TableService {
     }
 
     getRandomType(): Type {
-        return new Type("Herren B");
+        return this.typeArray[this.getRandomInt(0,9)];
     }
 
 

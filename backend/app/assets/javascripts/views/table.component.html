@@ -1,7 +1,7 @@
 <div class="card {{bgColor}}">
     <div class="card-content white-text" *ngIf="match !== undefined">
         <span class="card-title activator">
-                <h4><span class="circle">{{table.tableNumber}}</span> B-Einzel<i class="material-icons right">more_vert</i></h4>
+                <h4><span class="circle">{{table.tableNumber}}</span> {{table.match.type.typeName}}<i class="material-icons right">more_vert</i></h4>
         </span>
         <p align="center">
             {{table.match.stage}}<br/>
