@@ -3,6 +3,7 @@ import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 
 import {Table} from "../data/table"
+import {Match} from "../data/match"
 
 
 @Component({
@@ -13,6 +14,7 @@ export class TableViewComponent{
     public tables: Table[];
     public selectedTable: Table;
     public rowCount: number[];
+    public currentMatch: Match;
 
     private tableService: TableService;
 
@@ -20,7 +22,6 @@ export class TableViewComponent{
         this.tableService = tableService;
         this.tables = tableService.getAllTables();
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-        console.log("subscribe on table changed");
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
@@ -28,7 +29,9 @@ export class TableViewComponent{
 
     handleMatchChanged(match){
         console.log(match);
-        this.tables[4].match = match;
+        this.currentMatch = match;
+        $('#modal1').modal('open');
+        this.tables[3].match = match;
     }
 
    onSelect(table: Table) { this.selectedTable = table; }
