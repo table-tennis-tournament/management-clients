@@ -24,6 +24,7 @@ export class TableComponent{
 
     @Input("table")
     set table(value: Table){
+        console.log("Start set Table");
         this._table = value;
         this.firstOpponent = this._table.match.team1[0].firstName + this._table.match.team1[0].lastName;
         this.secondOpponent = this._table.match.team2[0].firstName + this._table.match.team2[0].lastName;
@@ -33,6 +34,7 @@ export class TableComponent{
     } 
 
     constructor(){
+        this.colorArray[0] = "indigo";
         this.colorArray[1] = "indigo";
         this.colorArray[2] = "blue darken-1";
         this.colorArray[3] = "green";
