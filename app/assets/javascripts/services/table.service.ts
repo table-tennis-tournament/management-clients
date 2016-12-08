@@ -38,9 +38,7 @@ export class TableService {
       this.OnTableChanged = Observable.create((observer) => {
             console.log("table changed observer is created");
             this.tableObserver = observer;
-            
-            
-            
+
         }).share();
   }
 
@@ -65,7 +63,7 @@ export class TableService {
   }
 
   handleWebSocketError(error){
-      console.log("on error received")
+      console.log("on error received" + error);
   }
 
   handleWebSocketCompleted(){
@@ -98,7 +96,6 @@ export class TableService {
 
   getRandomMatch(): Match{
       var result = new Match();
-      result.colorId = this.getRandomInt(1,11);
       result.stage = "Achtelfinale";
       result.team1 = this.getPlayer("Heinz", "Schmidt", "ASV Grünwettersbach");
       result.team2 = this.getPlayer("Walter", "Maier", "TTV Ettlingen");
@@ -117,7 +114,7 @@ export class TableService {
     }
 
     getRandomType(): Type {
-        return this.typeArray[this.getRandomInt(0,9)];
+        return this.typeArray[this.getRandomInt(1,10)];
     }
 
 

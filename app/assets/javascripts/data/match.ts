@@ -8,8 +8,8 @@ export class Match {
 	team2: Player[];
 	type: Type;
 	stage: string;
-	currentMatchTime: Date;
+	groupName: string;
+	startTime: Date;
 	allowedTableGroups: TableGroup[];
 	result: any;
-	colorId: number;
 }
