@@ -1,21 +1,29 @@
 <div class="card {{bgColor}}">
-    <div class="card-content white-text" *ngIf="match !== undefined">
+    <div class="card-content white-text" *ngIf="table.match !== undefined && table.match !== null">
         <span class="card-title activator">
                 <h4><span class="circle">{{table.tableNumber}}</span> {{table.match.type.typeName}}<i class="material-icons right">more_vert</i></h4>
         </span>
         <p align="center">
             {{table.match.stage}}<br/>
-            {{firstOpponent}} {{firstClubName}}<br/>
-            {{secondOpponent}} {{secondClubName}}
+            {{firstOpponent}} <br/>
+            {{secondOpponent}}
+        </p>
+    </div>
+    <div class="card-content" *ngIf="table.match === undefined || table.match === null">
+        <span class="card-title activator">
+                <h4><span class="circle">{{table.tableNumber}}</span></h4>
+        </span>
+        <p align="center">
+            Frei
         </p>
     </div>
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action">
-            <a href="#">Freimachen</a>
-            <a href="#">Eingeben</a>
-            <a href="#">Zurücknehmen</a>
-            <a href="#">Sperren</a>
+            <a href="javascript:void(0)" (click)="onFree()">Freimachen</a>
+            <a href="javascript:void(0)" (click)="onResult()">Eingeben</a>
+            <a href="javascript:void(0)" (click)="onTakeBack()">Zurücknehmen</a>
+            <a href="javascript:void(0)" (click)="onLock()">Sperren</a>
         </div>    
     </div>
 </div>

@@ -1,6 +1,7 @@
 import {Component, Input} from "@angular/core"
 import {Match} from "../data/Match"
 import {Table} from "../data/Table"
+import {MatchToStringService} from "../services/match.toString.service"
 
 @Component({
     selector: "tt-table",
@@ -12,8 +13,6 @@ export class TableComponent{
     public secondOpponent: string;
     public bgColor: string;
     public tableNumber: string;
-    public firstClubName: string;
-    public secondClubName:string;
 
     public colorArray: string[] = [];
     
@@ -26,14 +25,29 @@ export class TableComponent{
     set table(value: Table){
         console.log("Start set Table");
         this._table = value;
-        this.firstOpponent = this._table.match.team1[0].firstName + this._table.match.team1[0].lastName;
-        this.secondOpponent = this._table.match.team2[0].firstName + this._table.match.team2[0].lastName;
-        this.firstClubName = this._table.match.team1[0].club.clubName;
-        this.secondClubName = this._table.match.team2[0].club.clubName;
+        this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team1);
+        this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team2);
         this.bgColor = this.colorArray[this._table.match.type.id];
     } 
 
-    constructor(){
+    onFree(){
+        console.log("on free clicked");
+        this.table.match = null;
+    }
+
+    onTakeBack(){
+        console.log("on takeback clicked");
+    }
+
+    onResult(){
+        console.log("on result clicked");
+    }
+
+    onLock(){
+        console.log("on lock clicked");
+    }
+
+    constructor(private matchToStringService: MatchToStringService){
         this.colorArray[0] = "indigo";
         this.colorArray[1] = "indigo";
         this.colorArray[2] = "blue darken-1";
