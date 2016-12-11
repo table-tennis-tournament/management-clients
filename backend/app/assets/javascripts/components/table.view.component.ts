@@ -18,10 +18,10 @@ export class TableViewComponent{
     public tables: Table[];
     public selectedTable: Table;
     public rowCount: number[];
-
     private tableService: TableService;
-// 
-    constructor(private matchService:MatchService, tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  public modal: Modal, public matchToStringService: MatchToStringService) {
+
+    constructor(private matchService:MatchService, tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
+        public modal: Modal, public matchToStringService: MatchToStringService) {
         console.log("table view constructor start");
         overlay.defaultViewContainer = vcRef;
         this.tableService = tableService;

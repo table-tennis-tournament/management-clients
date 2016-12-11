@@ -1,22 +1,15 @@
-<div class="card {{bgColor}}">
-    <div class="card-content white-text" *ngIf="table.match !== undefined && table.match !== null">
+<div class="card {{bgColor}}" *ngIf="table.match !== undefined && table.match !== null">
+    <div class="card-content white-text" >
         <span class="card-title activator">
                 <h4><span class="circle">{{table.tableNumber}}</span> {{table.match.type.typeName}}<i class="material-icons right">more_vert</i></h4>
         </span>
         <p align="center">
-            {{table.match.stage}}<br/>
+            <b>{{table.match.stage}}</b><br/>
             {{firstOpponent}} <br/>
             {{secondOpponent}}
         </p>
     </div>
-    <div class="card-content" *ngIf="table.match === undefined || table.match === null">
-        <span class="card-title activator">
-                <h4><span class="circle">{{table.tableNumber}}</span></h4>
-        </span>
-        <p align="center">
-            Frei
-        </p>
-    </div>
+   
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action">
@@ -26,4 +19,15 @@
             <a href="javascript:void(0)" (click)="onLock()">Sperren</a>
         </div>    
     </div>
+</div>
+
+<div class="card grey lighten-3" *ngIf="table.match === undefined || table.match === null">
+    <div class="card-content">
+        <span class="card-title activator">
+                <h4><span class="circle">{{table.tableNumber}}</span></h4>
+        </span>
+        <div class="text-centering">
+            <h4>Freier Tisch</h4>
+        </div>
+    </div> 
 </div>
