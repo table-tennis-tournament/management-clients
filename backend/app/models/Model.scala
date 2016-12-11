@@ -1,44 +1,80 @@
 package models
 
-import java.sql.{Date, Timestamp}
-
 import org.joda.time.DateTime
 
 case class TTTable(
-                    id: Long,
-                    name: String,
-                    left: Long,
-                    top: Long,
-                    matchId: Option[Long],
-                    tourId: Long,
-                    groupId: Option[Long]
-                  )
+  id: Long,
+  tableNumber: Int,
+  isLocked: Boolean
+)
 
-case class Match (
-                 id: Long,
-                 isPlaying: Boolean,
-                 player1Id: Long,
-                 player2Id: Long,
-                 ttTableId: Option[Long]
-                 )
+case class TTTableGroup(
+  id: Long,
+  tables: Seq[TTTable],
+  name: String
+)
 
-case class Player (
-                  id: Long,
-                  firstName: String,
-                  lastName: String,
-                  ttr: Option[Int],
-                  paid: Boolean,
-                  sex: String,
-                  email: Option[String],
-                  zipCode: Option[String],
-                  location: Option[String],
-                  street: Option[String],
-                  phone: Option[String]
-                  )
+case class Match(
+  id: Long,
+  player1: PlayerDAO,
+  player2: PlayerDAO,
+  matchType: String,
+  typeName: String,
+  groupName: String,
+  startTime: DateTime,
+  //allowedTableGroups: Seq[TTTableGroup],
+  //result: Seq[Tuple2[Int, Int]],
+  //colorId: Int,
+  ttTable: TTTable
+)
 
-case class MatchInfo (
-                     ttMatch: Match,
-                     ttTable: Option[TTTable],
-                     player1: Option[Player],
-                     player2: Option[Player]
-                     )
+case class MatchDAO(
+  id: Long,
+  isPlaying: Boolean,
+  player1Id: Long,
+  player2Id: Long,
+  ttTableId: Option[Long],
+  isPlayed: Boolean,
+  matchTypeId: Long,
+  typeId: Long,
+  groupId: Option[Long],
+  startTime: DateTime
+)
+
+case class Player(
+  id: Long,
+  firstName: String,
+  lastName: String,
+  ttr: Option[Int],
+  sex: String,
+  club: String
+)
+
+case class PlayerDAO(
+  id: Long,
+  firstName: String,
+  lastName: String,
+  ttr: Option[Int],
+  sex: String,
+  clubId: Option[Long]
+)
+
+case class Club(
+  id: Long,
+  clubName: String
+)
+
+case class MatchType(
+  id: Long,
+  name: String
+)
+
+case class Type(
+  id: Long,
+  name: String
+)
+
+case class Group(
+  id: Long,
+  name: String
+)

@@ -3,18 +3,31 @@
 # ~~~~
 
 # Home page
-GET     /                          controllers.Application.index
+GET     /                               controllers.Application.index
 
-GET     /table/all              controllers.TableController.getAllTables
+# PlayerController
+GET     /player/all                     controllers.PlayerController.getAllPlayer
+GET     /player/:id                     controllers.PlayerController.getPlayer(id: Long)
 
-GET     /player/all              controllers.PlayerController.getAllPlayer
-GET     /player/paid             controllers.PlayerController.getPaidPlayer
+# MatchController
+GET     /match/all                      controllers.MatchController.getAllMatches
+GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
+GET     /match/:id/result               controllers.MatchController.setResult(id: Long, result: Seq[Int])
 
-GET     /match/all             controllers.MatchController.getAllMatches
-GET     /match/:id/setWaitingPosition        controllers.MatchController.setWaitingPos(id: Long, pos: Int)
+# TableController
+GET     /table/all                      controllers.TableController.getAllTables
+GET     /table/:id                      controllers.TableController.getTable(id: Long)
+GET     /table/:id/free                 controllers.TableController.freeTable(id: Long)
+GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
+
+# MatchListController
+GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
+GET     /matchlist/next                 controllers.MatchListController.getNext
+
+# WebSocket for push messages
+GET     /register                       controllers.WebSocketController.socket
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
 
-# WebSocket
-GET     /ws                     controllers.WebSocketController.socket
