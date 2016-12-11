@@ -12,4 +12,5 @@ export class Match {
 	startTime: Date;
 	allowedTableGroups: TableGroup[];
 	result: any;
+	tableNumber: number;
 }

@@ -52,7 +52,7 @@ export class TableService {
       this.typeArray[6] = new Type("D-Einzel", 7);
       this.typeArray[7] = new Type("D-Doppel", 8);
       this.typeArray[8] = new Type("Damen-EZ", 9);
-      this.typeArray[9] = new Type("Damen-D", 10);
+      this.typeArray[9] = new Type("Damen-Do", 10);
   }
 
   handleWebSocketMessage(data){
@@ -100,13 +100,14 @@ export class TableService {
       result.team1 = this.getPlayer("Heinz", "Schmidt", "ASV Grünwettersbach");
       result.team2 = this.getPlayer("Walter", "Maier", "TTV Ettlingen");
       result.type = this.getRandomType()
+      result.tableNumber = this.getRandomInt(1,24);
       return result;
   }
 
   getRandomInt(min, max) {
-        min= Math.ceil(min);
-        max= Math.floor(max);
-        return Math.floor(Math.random() * (max - min)) + min;
+    min= Math.ceil(min);
+    max= Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
     }
 
     getPlayer(firstName: string, lastName: string, clubName: string): Player[]{

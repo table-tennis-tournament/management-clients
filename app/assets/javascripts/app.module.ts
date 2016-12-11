@@ -16,10 +16,14 @@ import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
 import { TableService } from "./services/table.service"
 import { WebSocketService } from "./services/web.socket.service"
+import { MatchToStringService } from "./services/match.toString.service"
 
 import { routeConfig } from "./app.routes"
 
 import {APP_BASE_HREF} from "@angular/common";
+
+import {ModalModule} from "angular2-modal";
+import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
 
 
 @NgModule({
@@ -29,6 +33,8 @@ import {APP_BASE_HREF} from "@angular/common";
     FormsModule,
     HttpModule,
     JsonpModule,
+    ModalModule.forRoot(),
+    BootstrapModalModule,
     RouterModule.forRoot(routeConfig)
   ],
   declarations: [
@@ -42,6 +48,7 @@ import {APP_BASE_HREF} from "@angular/common";
       MatchService,
       TableService,
       WebSocketService,
+      MatchToStringService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent]

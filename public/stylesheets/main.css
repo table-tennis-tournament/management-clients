@@ -86,3 +86,7 @@ span.circle {
     left: auto;
     right: auto;
 }
+
+.text-centering{
+    text-align: center;
+}
