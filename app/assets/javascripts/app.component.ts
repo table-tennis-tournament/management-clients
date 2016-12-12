@@ -1,45 +1,15 @@
-import {Component, OnInit} from "@angular/core"
-import {Player} from "./data/Player"
-import {PlayerDetailComponent} from "./player-detail.component"
-import {PlayerService} from "./service/player.service"
-
+import {Component} from "@angular/core"
+import {WebSocketService} from "./services/web.socket.service"
 
 @Component({
-  selector: "my-app",
-  template:`
-    <h1>{{title}}</h1>
-    <h2>My Players</h2>
-    <ul class="heroes">
-      <li *ngFor="#player of players"
-        [class.selected]="player === selectedPlayer"
-        (click)="onSelect(player)">
-        <span class="badge">{{player.id}}</span> {{player.firstName}} {{player.lastName}}
-      </li>
-    </ul>
-    <my-player-detail [player]="selectedPlayer"></my-player-detail>
-  `,
-  providers: [PlayerService]
+  selector: "tt-app",
+  templateUrl:"assets/javascripts/views/main.component.html"
 })
-export class AppComponent implements OnInit {
-  public title = "TurnierManager";
-  public players: Player[];
-  public selectedPlayer: Player;
+export class AppComponent{
 
-  constructor(private _playerService: PlayerService) { }
-
-  getPlayers() {
-    var result = this._playerService.getPlayers();
-    this.players = result;
-    this._playerService.getAllPlayers().then(players =>{
-      console.log(players);
-      this.players = players;
-    } );
-
+  constructor(private webSocketService: WebSocketService){
+    console.log("before init websocket");
+    this.webSocketService.initializeWebSocket("ws://192.168.178.27:9000/ws");
   }
 
-  ngOnInit() {
-    this.getPlayers();
-  }
-
-  onSelect(player: Player) { this.selectedPlayer = player; }
 }

@@ -1,13 +1,21 @@
 // ====== ./app/app.routes.ts ======
 
-import { ModuleWithProviders }  from "@angular/core"
 import { Routes, RouterModule } from "@angular/router"
-import { AppComponent } from "./app.component"
+import {PlayerComponent} from "./components/player.component"
+import {TableViewComponent} from "./components/table.view.component"
 
-// Route Configuration
-export const routes: Routes = [
-  { path: "player", component: AppComponent }
+export const routeConfig:Routes = [
+    {
+        path: "playerView",
+        component: PlayerComponent
+    },
+    {
+        path: "tableView",
+        component: TableViewComponent
+    },
+    {
+        path: "",
+        redirectTo: "/tableView",
+        pathMatch: "full"
+    }
 ];
-
-
-export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

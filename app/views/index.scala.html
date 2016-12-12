@@ -7,9 +7,14 @@
 <head>
     <title>TurnierManager</title>
 
+    <base href="/">
     <meta charset="utf-8">
-        <title>Angular2 • TodoMVC</title>
+        <title>Turniermanager</title>
         <link rel="stylesheet" href="assets/stylesheets/main.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
+        <link rel="stylesheet" href='@routes.Assets.versioned("lib/materialize-css/dist/css/materialize.min.css")'>
+        <script type='text/javascript' src='@routes.Assets.versioned("lib/materialize-css/dist/js/materialize.min.js")'></script>
         <script type='text/javascript' src='@routes.Assets.versioned("lib/systemjs/dist/system-polyfills.js")'></script>
         <script type='text/javascript' src='@routes.Assets.versioned("lib/core-js/client/shim.min.js")'></script>
         <script type='text/javascript' src='@routes.Assets.versioned("lib/zone.js/dist/zone.js")'></script>
@@ -19,17 +24,19 @@
         <script>    @* our app is downloaded as individual javascript files by SystemJs
                      after compilation by sbt-typescript*@
             var map = {
-                'app': 'assets/app',
+                'app': 'assets/javascripts',
                 '@@angular':'assets/lib/@@angular',
                 'rxjs':'assets/lib/rxjs',
-                'symbol-observable': 'assets/lib/symbol-observable'
-
+                'symbol-observable': 'assets/lib/symbol-observable',
+                'angular2-modal':'assets/lib/angular2-modal'
             };
 
 
         var packages = {
-                'app': {main: 'main.js', defaultExtension: 'js'},
+                'app': {main: 'boot.js', defaultExtension: 'js'},
                 'rxjs': {defaultExtension: 'js'},
+                'angular2-modal':{defaultExtension: 'js', main: 'index.js'},
+                'angular2-modal/plugins/bootstrap': { main: 'index.js', defaultExtension: 'js' },
                 'assets/lib': {defaultExtension: 'js'},
                 'symbol-observable': {defaultExtension: 'js', main: 'index.js'}
             };
@@ -76,9 +83,7 @@
     </head>
 
 <body>
-    <div class="container" data-ng-cloak>
-        <my-app>Loading...</my-app>
-    </div>
+  <tt-app>Loading...</tt-app>
 </body>
 
 </html>
