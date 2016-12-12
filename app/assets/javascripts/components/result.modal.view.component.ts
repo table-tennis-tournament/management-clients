@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
-import { DialogRef, ModalComponent, CloseGuard } from 'angular2-modal';
-import { BSModalContext } from 'angular2-modal/plugins/bootstrap/index';
+import { DialogRef, ModalComponent, CloseGuard } from "angular2-modal";
+import { BSModalContext } from "angular2-modal/plugins/bootstrap/index";
 
 export class CustomModalContext extends BSModalContext {
   public num1: number;
@@ -12,7 +12,7 @@ export class CustomModalContext extends BSModalContext {
  * A Sample of how simple it is to create a new window, with its own injects.
  */
 @Component({
-  selector: 'modal-content',
+  selector: "modal-content",
   //TODO: [ngClass] here on purpose, no real use, just to show how to workaround ng2 issue #4330.
   // Remove when solved.
   /* tslint:disable */ template: `
