@@ -1,7 +1,7 @@
 import {Component} from "@angular/core"
 import {PlayerService} from "../services/player.service"
 
-import {Player} from "../data/Player"
+import {Player} from "../data/player"
 
 
 @Component({
