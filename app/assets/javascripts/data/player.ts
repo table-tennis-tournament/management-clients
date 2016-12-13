@@ -1,4 +1,4 @@
-import {Club} from "./Club"
+import {Club} from "./club"
 
 export class Player {
 	id: number;

@@ -13,7 +13,7 @@ export class CustomModalContext extends BSModalContext {
  */
 @Component({
   selector: "modal-content",
-  //TODO: [ngClass] here on purpose, no real use, just to show how to workaround ng2 issue #4330.
+  // TODO: [ngClass] here on purpose, no real use, just to show how to workaround ng2 issue #4330.
   // Remove when solved.
   /* tslint:disable */ template: `
         <div class="container-fluid custom-modal-container">

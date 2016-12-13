@@ -7,7 +7,7 @@ import { HttpModule, JsonpModule } from "@angular/http"
 
 import { RouterModule, Routes } from "@angular/router"
 
-import {AppComponent} from "./app.Component"
+import {AppComponent} from "./app.component"
 import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
 import {TableComponent} from "./components/table.component"
