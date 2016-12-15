@@ -11,6 +11,7 @@ import {AppComponent} from "./app.Component"
 import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
 import {TableComponent} from "./components/table.component"
+import {CustomModal} from "./components/result.modal.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -35,12 +36,14 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     JsonpModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
+    
     RouterModule.forRoot(routeConfig)
   ],
   declarations: [
     AppComponent,
     PlayerComponent,
     TableViewComponent,
+    CustomModal,
     TableComponent
   ],
   providers: [
@@ -51,7 +54,8 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
       MatchToStringService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [ CustomModal ]
 })
 export class AppModule {
     // Module class
