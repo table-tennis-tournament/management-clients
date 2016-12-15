@@ -17,6 +17,9 @@ libraryDependencies ++= Seq(
   "org.scala-sbt" % "librarymanagement_2.10" % "0.1.0-M11",
   "com.typesafe.akka" %% "akka-cluster" % "2.3.7",
   "com.typesafe.akka" %% "akka-contrib" % "2.3.7",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0",
+  "joda-time" % "joda-time"    % "2.9.2",
+  "org.joda"  % "joda-convert" % "1.6",
 
 
 //angular2 dependencies
