@@ -2,6 +2,9 @@ import {Component, Input} from "@angular/core"
 import {Match} from "../data/match"
 import {Table} from "../data/table"
 import {MatchToStringService} from "../services/match.toString.service"
+import { Overlay, overlayConfigFactory } from "angular2-modal";
+import { Modal, BSModalContext } from "angular2-modal/plugins/bootstrap";
+import { CustomModalContext, CustomModal } from "./result.modal.view.component";
 
 @Component({
     selector: "tt-table",
@@ -40,14 +43,14 @@ export class TableComponent{
     }
 
     onResult(){
-        console.log("on result clicked");
+        return this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.match }, BSModalContext));
     }
 
     onLock(){
         console.log("on lock clicked");
     }
 
-    constructor(private matchToStringService: MatchToStringService){
+    constructor(private matchToStringService: MatchToStringService, public modal: Modal){
         this.colorArray[0] = "indigo";
         this.colorArray[1] = "indigo";
         this.colorArray[2] = "blue darken-1";
