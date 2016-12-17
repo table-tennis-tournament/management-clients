@@ -1,6 +1,6 @@
 import {Player} from "./player"
 import {Type} from "./type"
-import {TableGroup} from "./TableGroup"
+import {TableGroup} from "./tableGroup"
 
 export class Match {
 	id: number;

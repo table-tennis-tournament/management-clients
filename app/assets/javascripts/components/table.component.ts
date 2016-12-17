@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core"
-import {Match} from "../data/Match"
-import {Table} from "../data/Table"
+import {Match} from "../data/match"
+import {Table} from "../data/table"
 import {MatchToStringService} from "../services/match.toString.service"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
