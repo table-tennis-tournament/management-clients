@@ -16,7 +16,6 @@ import { Modal } from "angular2-modal/plugins/bootstrap";
 export class TableViewComponent{
 
     public tables: Table[];
-    public selectedTable: Table;
     public rowCount: number[];
     private tableService: TableService;
 
@@ -25,7 +24,7 @@ export class TableViewComponent{
         console.log("table view constructor start");
         overlay.defaultViewContainer = vcRef;
         this.tableService = tableService;
-        this.tables = tableService.getAllTables();
+        this.tables = tableService.getRandomTables();
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
@@ -54,7 +53,6 @@ export class TableViewComponent{
         .open();
     }
 
-   onSelect(table: Table) { this.selectedTable = table; }
 
 
 //    this.matchService = matchService;

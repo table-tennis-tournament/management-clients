@@ -21,8 +21,8 @@
         <script type='text/javascript' src='@routes.Assets.versioned("lib/reflect-metadata/Reflect.js")'></script>
         <script type='text/javascript' src='@routes.Assets.versioned("lib/systemjs/dist/system.src.js")'></script>
 
-        <script>    @* our app is downloaded as individual javascript files by SystemJs
-                     after compilation by sbt-typescript*@
+        <script>   
+
             var map = {
                 'app': 'assets/javascripts',
                 '@@angular':'assets/lib/@@angular',
@@ -75,7 +75,7 @@
             map : map,
             packages: packages,
         });
-        @* SystemJs works out which other modules our app module depends on and will download and load them*@
+        
         System.import('app')
             .catch(console.error.bind(console));
 
