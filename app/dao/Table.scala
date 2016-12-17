@@ -25,75 +25,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   import PortableJodaSupport._
 
-  // on Server start
-  configDatabase
-
-  def configDatabase {
-    Logger.info("config database")
-    //  dbConfigProvider.get.db.run(sqlu"""DROP TRIGGER tables_trigger;""") map {
-    //    result => Logger.info("result: " + result.toString)
-    //  } recover {
-    //    case e => Logger.info("tables_trigger not created, maybe it alread exists")
-    //  }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TABLE triggers (id INT(6) PRIMARY KEY, trigger_name VARCHAR(30) , trigger_val INTEGER);""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info(e.toString)
-    }
-    dbConfigProvider.get.db.run(sqlu"""INSERT INTO triggers (id, trigger_name, trigger_val) VALUES (0, 'tables', 0)""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("tables_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""INSERT INTO triggers (id, trigger_name, trigger_val) VALUES (1, 'matches', 0)""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("tables_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""INSERT INTO triggers (id, trigger_name, trigger_val) VALUES (2, 'player', 0)""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("tables_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER tables_trigger BEFORE UPDATE ON tables FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 0;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("tables_trigger not created, maybe it alread exists" + e.toString)
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_update_trigger AFTER UPDATE ON matches FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 1;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("matches_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_insert_trigger AFTER INSERT ON matches FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 1;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("matches_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER matches_insert_trigger AFTER DELETE ON matches FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 1;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("matches_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_update_trigger AFTER UPDATE ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("player_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_update_trigger AFTER INSERT ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("player_trigger not created, maybe it alread exists")
-    }
-    dbConfigProvider.get.db.run(sqlu"""CREATE TRIGGER player_update_trigger AFTER DELETE ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;""") map {
-      result => Logger.info("result: " + result.toString)
-    } recover {
-      case e => Logger.info("player_trigger not created, maybe it alread exists")
-    }
-  }
-
-
-
   // Tables
   private val ttTables = TableQuery[TTTablesTable]
   private val matches = TableQuery[MatchesTable]
@@ -144,6 +75,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     dbConfigProvider.get.db.run(ttTables.result)
   }
 
+  def getTTTable(id: Option[Long]): Future[Option[TTTable]] = if(id.isDefined) getTTTable(id.get) else Future.successful(None)
+
   def getTTTable(id: Long): Future[Option[TTTable]] = {
     val tableF = dbConfigProvider.get.db.run(ttTables.filter(_.id === id).result)
     tableF map { t =>
@@ -167,28 +100,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def * = (id, name, false) <> (TTTable.tupled, TTTable.unapply _)
   }
 
-  val allMatchInformation = for {
-    m <- matches
-    p1 <- player if m.player1Id === p1.id
-    p2 <- player if m.player2Id === p1.id
-    mt <- matchTypes if m.matchTypeId === mt.id
-    ty <- types if m.typeId === ty.id
-    g <- groups if m.groupeId === g.id
-    ta <- ttTables if m.ttTableId === ta.id
-  } yield (m.id, p1, p2, mt.name, ty.name, g.name, m.startTime, ta)
 
   // Matches
-  def allMatches(): Future[Seq[Match]] = {
-    dbConfigProvider.get.db.run(allMatchInformation.result) map {m =>
-      m map (m => (Match.apply _).tupled(m))
-    }
+  def allMatches(): Future[Seq[MatchDAO]] = {
+    dbConfigProvider.get.db.run(matches.result)
   }
 
-  def getMatch(id: Long): Future[Option[Match]] = {
-    val matchF = dbConfigProvider.get.db.run(allMatchInformation.filter(_._1 === id).result)
-    matchF map {matches =>
-      val mList = matches map (m => (Match.apply _).tupled(m))
-      mList.headOption
+  def getMatch(id: Long): Future[Option[MatchDAO]] = {
+    val matchF = dbConfigProvider.get.db.run(matches.filter(_.id === id).result)
+    matchF map { m =>
+      m.headOption
     }
   }
 
@@ -202,15 +123,17 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def isPlayed = column[Boolean]("Matc_Played")
     def matchTypeId = column[Long]("Matc_MaTy_ID")
     def typeId = column[Long]("Matc_Type_ID")
-    def groupeId = column[Option[Long]]("Matc_Grou_ID")
+    def groupId = column[Option[Long]]("Matc_Grou_ID")
     def startTime = column[DateTime]("Matc_StartTime")
+    def resultRaw = column[String]("Matc_ResultRaw")
 
-    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupeId, startTime) <> (MatchDAO.tupled, MatchDAO.unapply _)
+    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw) <> (MatchDAO.tupled, MatchDAO.unapply _)
 
     def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
     def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
     def ttTable = foreignKey("Table_FK", ttTableId, ttTables)(_.id.?)
     def matchType = foreignKey("MatchType_FK", matchTypeId, matchTypes)(_.id)
+    def group = foreignKey("Group_FK", groupId, groups)(_.id.?)
     def ttType = foreignKey("Type_FK", typeId, types)(_.id)
   }
 
@@ -272,12 +195,26 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def * = (id, name) <> (MatchType.tupled, MatchType.unapply _)
   }
 
+  def getMatchType(id: Long): Future[Option[MatchType]] = {
+    val mtF = dbConfigProvider.get.db.run(matchTypes.filter(_.id === id).result)
+    mtF map {mt =>
+      mt.headOption
+    }
+  }
+
   class TypeTable(tag: Tag) extends Table[Type](tag, "type") {
 
     def id = column[Long]("Type_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Type_Name")
 
     def * = (id, name) <> (Type.tupled, Type.unapply _)
+  }
+
+  def getType(id: Long): Future[Option[Type]] = {
+    val tF = dbConfigProvider.get.db.run(types.filter(_.id === id).result)
+    tF map {t =>
+      t.headOption
+    }
   }
 
   class GroupTable(tag: Tag) extends Table[Group](tag, "groups") {
@@ -288,5 +225,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def * = (id, name) <> (Group.tupled, Group.unapply _)
   }
 
+  def getGroup(id: Option[Long]): Future[Option[Group]] = if(id.isDefined) getGroup(id.get) else Future.successful(None)
 
+  def getGroup(id: Long): Future[Option[Group]] = {
+    val gF = dbConfigProvider.get.db.run(groups.filter(_.id === id).result)
+    gF map {g =>
+      g.headOption
+    }
+  }
 }

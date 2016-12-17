@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import dao.Tables
-import models.TTTable
+import models.{MatchDAO, TTTable}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -15,6 +15,7 @@ class TableController @Inject() (tables: Tables) extends Controller{
     def writes(ttTable: TTTable) = Json.obj(
       "id" -> ttTable.id,
       "number" -> ttTable.tableNumber,
+      "match" -> "",
       "isLocked" -> ttTable.isLocked
     )
   }
