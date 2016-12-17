@@ -9,18 +9,18 @@ GET     /                               controllers.Application.index
 GET     /player/all                     controllers.PlayerController.getAllPlayer
 GET     /player/:id                     controllers.PlayerController.getPlayer(id: Long)
 
-# MatchController
+# MatchController: result not implemented
 GET     /match/all                      controllers.MatchController.getAllMatches
 GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
 GET     /match/:id/result               controllers.MatchController.setResult(id: Long, result: Seq[Int])
 
-# TableController
+# TableController: Match is empty, free and lock not working
 GET     /table/all                      controllers.TableController.getAllTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
 GET     /table/:id/free                 controllers.TableController.freeTable(id: Long)
 GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
 
-# MatchListController
+# MatchListController: not working
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
 
