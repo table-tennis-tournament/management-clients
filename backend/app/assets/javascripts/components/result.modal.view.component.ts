@@ -3,10 +3,14 @@ import { Component } from "@angular/core";
 import { DialogRef, ModalComponent, CloseGuard } from "angular2-modal";
 import { BSModalContext } from "angular2-modal/plugins/bootstrap/index";
 import {Match} from "../data/match"
+import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
+import {Observable} from "rxjs/Rx";
+import {IResultHandler} from "../handler/result.handler"
 
 export class CustomModalContext extends BSModalContext {
   public currentMatch: Match;
+  public handler: IResultHandler;
 }
 
 /**
@@ -14,20 +18,19 @@ export class CustomModalContext extends BSModalContext {
  */
 @Component({
   selector: "modal-content",
-  // TODO: [ngClass] here on purpose, no real use, just to show how to workaround ng2 issue #4330.
-  // Remove when solved.
   /* tslint:disable */ template: `
    <div class="container-fluid custom-modal-container">
           
             <div class="row modal-content">
-              <p align="center">
-                  {{firstPlayerString}} <br/>
+              <div align="center">
+                  <div [class.text-bold]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
                   - <br/>
-                  {{secondPlayerString}}
-              </p>
-                <div class="input-field col s6">
+                  <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
+              </div>
+                <div class="col s1"></div>
+                <div class="input-field col s10">
                       <input id="result" class="form-control" type="text" autofocus #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
-                      <label for="result">Ergebnis (11:7 oder 7, bzw. 7:11 oder -7)</label>
+                      <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
                 </div>
             </div>
             <div class="row modal-footer">
@@ -44,13 +47,22 @@ export class CustomModal implements CloseGuard, ModalComponent<CustomModalContex
   public shouldUseMyClass: boolean;
   public firstPlayerString: string;
   public secondPlayerString: string;
-
+  public isFirstPlayerWinning: boolean;
+  public isSecondPlayerWinning: boolean;
+  public OnResultGotObserver: Observable<IResult[]>
+  private currentObserver: any;
+  public currentResult: IResult[];
+  
   constructor(public dialog: DialogRef<CustomModalContext>, public matchToStringService: MatchToStringService) {
     this.context = dialog.context;
     this.resultIsValid = false;
     dialog.setCloseGuard(this);
     this.firstPlayerString = matchToStringService.getPlayersNamesLong(this.context.currentMatch.team1);
     this.secondPlayerString = matchToStringService.getPlayersNamesLong(this.context.currentMatch.team2);
+     this.OnResultGotObserver = Observable.create((observer) => {
+            console.log("On Result got Observable created");
+            this.currentObserver = observer;
+        }).share();
   }
 
   onKeyUp(value){
@@ -61,11 +73,25 @@ export class CustomModal implements CloseGuard, ModalComponent<CustomModalContex
 
   onEnterPressed(value){
     if(this.resultIsValid){
-      this.dialog.close();
+      this.closeDialogAndInformObserversAboutResult();
+    }
+  }
+
+  onOK(){
+    this.closeDialogAndInformObserversAboutResult();
+  }
+
+  closeDialogAndInformObserversAboutResult(){
+    this.dialog.close();
+    if(this.context.handler !== null){
+      this.context.handler.handleResult(this.currentResult);
     }
   }
 
   checkValidResult(valueToCheck): boolean{
+    this.isFirstPlayerWinning = false;
+    this.isSecondPlayerWinning = false;
+    this.currentResult = [];
     var splittedValue = valueToCheck.split(" ");
     if(splittedValue.length < 3){
       return false;
@@ -74,19 +100,40 @@ export class CustomModal implements CloseGuard, ModalComponent<CustomModalContex
     var player2 = 0;
     for(var index = 0; index < splittedValue.length; index++){
       var currentValue = splittedValue[index];
-      if(currentValue < 0){
+      if(this.isFirstCharAMinus(currentValue)){
+        var resultWithoutMinus = +currentValue.substring(1);
+        var otherResult = this.getOtherResult(resultWithoutMinus);
+        this.currentResult[index] =  [resultWithoutMinus, otherResult];
         player2++;
         continue;
       }
-      if(currentValue > 0){
-        player1++;
+      if(!isNaN(currentValue)){
+        var otherResult = +this.getOtherResult(+currentValue)
+        this.currentResult[index] = [otherResult, +currentValue];
+        player1 ++;
         continue;
       }
     }
-    if(player1 >2 || player2 > 2){
+    if(player1 === 3 && player2 < 3){
+      this.isFirstPlayerWinning = true;
+      return true;
+    }
+     if(player2 === 3 && player1 < 3){
+      this.isSecondPlayerWinning = true;
       return true;
     }
     return false;
+  }
+
+  isFirstCharAMinus(resultToCheck){
+    return resultToCheck.charAt(0) === '-';
+  }
+
+  getOtherResult(opponentsResult : number): number{
+    if(opponentsResult < 10){
+      return 11;
+    }
+    return opponentsResult + 2;
   }
 
   onCancel(){

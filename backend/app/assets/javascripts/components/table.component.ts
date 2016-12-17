@@ -2,15 +2,20 @@ import {Component, Input} from "@angular/core"
 import {Match} from "../data/match"
 import {Table} from "../data/table"
 import {MatchToStringService} from "../services/match.toString.service"
-import { Overlay, overlayConfigFactory } from "angular2-modal";
-import { Modal, BSModalContext } from "angular2-modal/plugins/bootstrap";
-import { CustomModalContext, CustomModal } from "./result.modal.view.component";
+import {MatchService} from "../services/match.service"
+import {TableService} from "../services/table.service"
+import {Overlay, overlayConfigFactory } from "angular2-modal";
+import {Modal, BSModalContext } from "angular2-modal/plugins/bootstrap";
+import {CustomModalContext, CustomModal } from "./result.modal.view.component";
+import {IResultHandler} from "../handler/result.handler"
+import {IResult} from "../data/result"
+import {TypeColors} from "../data/typeColors"
 
 @Component({
     selector: "tt-table",
     templateUrl : "assets/javascripts/views/table.component.html"
 })
-export class TableComponent{
+export class TableComponent implements IResultHandler{
 
     public firstOpponent: string;
     public secondOpponent: string;
@@ -18,6 +23,11 @@ export class TableComponent{
     public tableNumber: string;
 
     public colorArray: string[] = [];
+
+     constructor(private matchToStringService: MatchToStringService, public modal: Modal, private tableService: TableService,
+        private matchService: MatchService){
+
+    }
     
     _table: Table;
     get table(): Table {
@@ -30,46 +40,36 @@ export class TableComponent{
         this._table = value;
         this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team1);
         this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team2);
-        this.bgColor = this.colorArray[this._table.match.type.id];
+        this.bgColor =TypeColors.TYPE_COLORS[this._table.match.type.id];
     } 
 
     onFree(){
-        console.log("on free clicked");
+        this.tableService.freeTable(this.table.match.id);
         this.table.match = null;
     }
 
     onTakeBack(){
         console.log("on takeback clicked");
+        this.tableService.takeBackTable(this.table.match.id);
+        this.table.match = null;
     }
 
     onResult(){
-        return this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.match }, BSModalContext));
+        console.log("before create dialog");
+        var dialog = this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.match, handler: this }, BSModalContext));
     }
 
     onLock(){
-        console.log("on lock clicked");
+        this.table.isLocked = true;
+        this.tableService.lockTable(this.table.id);
     }
 
-    constructor(private matchToStringService: MatchToStringService, public modal: Modal){
-        this.colorArray[0] = "indigo";
-        this.colorArray[1] = "indigo";
-        this.colorArray[2] = "blue darken-1";
-        this.colorArray[3] = "green";
-        this.colorArray[4] = "light-green darken-1";
-        this.colorArray[5] = "grey";
-        this.colorArray[6] = "grey darken-3";
-        this.colorArray[7] = "orange";
-        this.colorArray[8] = "amber darken-1";
-        this.colorArray[9] = "pink";
-        this.colorArray[10] = "red darken-1";
-
-        // this.colorArray[1] = "red lighten-3";
-        // this.colorArray[2] = "pink lighten-3";
-        // this.colorArray[3] = "purple lighten-3";
-        // this.colorArray[4] = "purple lighten-3";
-        // this.colorArray[5] = "blue lighten-3";
-        // this.colorArray[6] = "teal lighten-3";
+    handleResult(resultToHandle: IResult[]){
+        this.matchService.addResult(resultToHandle, this.table.match.id);
+        this.table.match = null;
     }
+
+   
 
     
 }

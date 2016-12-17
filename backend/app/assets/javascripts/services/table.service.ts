@@ -10,8 +10,11 @@ import {WebSocketService} from "./web.socket.service";
 
 @Injectable()
 export class TableService {
-  private allMatchesUrl = "table/all";
-  private nextMatchUrl = "matches/next";
+  private allTablesUrl = "table/all";
+
+  private lockTableUrl = "table/tableNumber/lock";
+  private freeTableUrl = "table/tableNumber/free";
+  private takeBackTableUrl = "table/tableNumber/free";
   public OnTableChanged: Observable<Match>;
   private tableObserver: any;
   private typeArray: Type[] = [];
@@ -70,17 +73,29 @@ export class TableService {
       console.log("completed received");
   }
 
-  getAllMatches(): Observable<Match[]>{
-        return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
+  getAllTables(): Observable<Table[]>{
+        return this.http.get(this.allTablesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
-  getNextMatch(): Observable<Match>{
-        return this.http.get(this.nextMatchUrl).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  freeTable(tableNumber: number){
+      return this.http.get(this.replaceTableNumer(tableNumber, this.freeTableUrl))
   }
 
-  getAllTables(): Table[]{
+  lockTable(tableNumber: number){
+      return this.http.get(this.replaceTableNumer(tableNumber, this.lockTableUrl))
+  }
+
+  takeBackTable(tableNumber: number){
+      return this.http.get(this.replaceTableNumer(tableNumber, this.takeBackTableUrl))
+  }
+
+  replaceTableNumer(tableNumber: number, url: string): string{
+      var regEx = new RegExp("tableNumber");
+      return this.lockTableUrl.replace(regEx, tableNumber.toString());
+  }
+
+  getRandomTables(): Table[]{
       console.log("getAllTables called");
       var tables: Table[] = [];
       for (var n = 0; n <= 23; n++) {         
@@ -88,6 +103,7 @@ export class TableService {
             newTable.id = n+1;
             newTable.tableNumber = n+1;
             newTable.match = this.getRandomMatch();
+            newTable.match.id = n+2;
             newTable.isLocked = false;
             tables[n] = newTable;
       }
