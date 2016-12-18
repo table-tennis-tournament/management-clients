@@ -97,7 +97,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
     def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, false) <> (TTTable.tupled, TTTable.unapply _)
+    def * = (id, name, false, matchId) <> (TTTable.tupled, TTTable.unapply _)
   }
 
 
@@ -113,27 +113,45 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
-  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Int]  = {
+  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean]  = {
     getMatch(id) flatMap  { m =>
       val ttMatch = m.get
       val x = result map (r => r.mkString("="))
       val resultRaw = x.mkString(",")
       val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0)+y(0), x(1)+y(1))}
-      val sets = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0) + (if(x(0)>x(1)) 1 else 0), x(0) + (if(x(0)<x(1)) 1 else 0))}
-      Logger.info(balls.toString())
+      var sets1 = 0
+      var sets2 = 0
+      for(s <- result) {
+        if(s(0) > s(1)){
+          sets1 += 1
+        } else {
+          sets2 += 1
+        }
+      }
       val ttMatchResult = ttMatch.copy(
         resultRaw = resultRaw,
         isPlayed = true,
-        result = sets(0) + " : " + sets(1),
+        result = sets1 + " : " + sets2,
         balls1 = balls(0),
         balls2 = balls(1),
-        sets1 = sets(0),
-        sets2 = sets(1),
+        sets1 = sets1,
+        sets2 = sets2,
         playedTableId = ttMatch.ttTableId
       )
-      dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) map {r =>
-        Logger.info("res: " + r.toString)
-        r
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) flatMap {r =>
+        if(m.get.ttTableId.isDefined && m.get.ttTableId.get != 0) {
+          Logger.info(m.get.ttTableId.toString)
+          getTTTable(m.get.ttTableId.get) flatMap {t =>
+            val tNew = t.get.copy(
+              matchId = None
+            )
+            dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map {r =>
+              true
+            }
+          }
+        } else {
+          Future.successful(true)
+        }
       }
     }
   }
