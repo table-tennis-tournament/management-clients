@@ -138,9 +138,19 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         sets2 = sets2,
         playedTableId = ttMatch.ttTableId
       )
-      dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) map {r =>
-        Logger.info("res: " + r.toString)
-        r
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) flatMap {r =>
+        if(m.get.ttTableId.isDefined) {
+          getTTTable(m.get.ttTableId.get) flatMap {t =>
+            val tNew = t.get.copy(
+              matchId = None
+            )
+            dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map {r =>
+              r
+            }
+          }
+        } else {
+          Future.successful(0)
+        }
       }
     }
   }
