@@ -5,6 +5,7 @@ import {MatchToStringService} from "../services/match.toString.service"
 import {RandomMatchService} from "../services/random.match.service"
 
 import {Table} from "../data/table"
+import {TableDto} from "../data/table.dto"
 import {Match} from "../data/match"
 
 import { Overlay } from "angular2-modal";
@@ -31,10 +32,11 @@ export class TableViewComponent{
         );
     }
 
-    getAllTablesSuccessful(tables: Table[]){
-        this.tables = tables;
-        for(var i=0; i< this.tables.length; i++){
-            this.tables[i].match = this.randomMatchService.getRandomMatch();
+    getAllTablesSuccessful(tables: TableDto[]){
+        this.tables = []
+        for(var i=0; i< tables.length; i++){
+            tables[i].table.match = this.randomMatchService.getRandomMatch();
+            this.tables.push(tables[i].table);
         }
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
         // this.tables = tableService.getRandomTables();

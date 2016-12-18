@@ -82,7 +82,7 @@ export class TableComponent implements IResultHandler{
 
     handleResult(resultToHandle: IResult[]){
         // var matchId = this.table.match.id;
-        var matchId = 43;
+        var matchId = 60;
         this.matchService.addResult(resultToHandle, matchId).subscribe(this.handleResultAfterRequestSuccessful.bind(this),
         this.handleErrorsOnService);
     }

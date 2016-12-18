@@ -1,5 +1,6 @@
 import {Match} from "../data/match"
 import {Table} from "../data/table"
+import {TableDto} from "../data/table.dto"
 import {Player} from "../data/player"
 import {Club} from "../data/club"
 import {Type} from "../data/type"
@@ -70,7 +71,7 @@ export class TableService {
       console.log("web socket completed received");
   }
 
-  getAllTables(): Observable<Table[]>{
+  getAllTables(): Observable<TableDto[]>{
         return this.http.get(this.allTablesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
