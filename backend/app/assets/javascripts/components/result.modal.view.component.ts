@@ -107,7 +107,7 @@ export class CustomModal implements CloseGuard, ModalComponent<CustomModalContex
         player2++;
         continue;
       }
-      if(!isNaN(currentValue)){
+      if(currentValue!== "" && !isNaN(currentValue)){
         var otherResult = +this.getOtherResult(+currentValue)
         this.currentResult[index] = [otherResult, +currentValue];
         player1 ++;

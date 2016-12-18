@@ -1,5 +1,7 @@
 import {Player} from "./player"
 import {Type} from "./type"
+import {Group} from "./group"
+import {MatchType} from "./matchType"
 import {TableGroup} from "./tableGroup"
 
 export class Match {
@@ -12,5 +14,7 @@ export class Match {
 	startTime: Date;
 	allowedTableGroups: TableGroup[];
 	result: any;
+	matchType: MatchType;
+	group: Group;
 	tableNumber: number;
 }

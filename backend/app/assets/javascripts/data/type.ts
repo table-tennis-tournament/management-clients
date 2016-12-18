@@ -1,9 +1,10 @@
 export class Type{
     id: number;
-    typeName: string;
+    name: string;
+    kind: number;
 
     constructor(typeName: string, id: number){
-        this.typeName = typeName;
+        this.name = typeName;
         this.id = id;
     }
 }

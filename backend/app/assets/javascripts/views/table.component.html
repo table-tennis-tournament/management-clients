@@ -1,5 +1,5 @@
 <div class="card {{bgColor}}" *ngIf="table.match !== undefined && table.match !== null">
-    <div class="card-content white-text" >
+    <div class="card-content {{textColor}}" >
         <span class="card-title activator">
                 <h4><span class="circle">{{table.tableNumber}}</span> {{table.match.type.typeName}}<i class="material-icons right">more_vert</i></h4>
         </span>
@@ -27,13 +27,17 @@
                 <h4><span class="circle">{{table.tableNumber}}</span><i class="material-icons right">more_vert</i></h4>
         </span>
         <div class="text-centering">
-            <h4>Freier Tisch</h4>
+            <div *ngIf="!table.isLocked" id="unLockedId"><h4>Freier Tisch</h4></div>
+            <div *ngIf="table.isLocked" id="lockedId"><h4>Gesperrt</h4></div>
         </div>
     </div>
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
-        <div class="card-action">
-            <a href="javascript:void(0)" (click)="onLock()">Sperren</a>
-        </div>    
+        <div class="card-action" *ngIf="!table.isLocked">
+            <a  href="javascript:void(0)" (click)="onLock()">Sperren</a>
+        </div>   
+        <div class="card-action" *ngIf="table.isLocked">
+            <a href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
+        </div>   
     </div> 
 </div>

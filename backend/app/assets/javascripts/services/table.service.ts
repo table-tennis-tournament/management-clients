@@ -7,6 +7,7 @@ import {Injectable} from "@angular/core"
 import {Http, Response, Headers, RequestOptions } from "@angular/http"
 import {Observable} from "rxjs/Rx";
 import {WebSocketService} from "./web.socket.service";
+import {MatchListService} from "./match.list.service"
 
 @Injectable()
 export class TableService {
@@ -19,7 +20,7 @@ export class TableService {
   private tableObserver: any;
   private typeArray: Type[] = [];
 
-  constructor(private http: Http, private webSocketService: WebSocketService){
+  constructor(private http: Http, private webSocketService: WebSocketService, private matchListService: MatchListService){
       this.initTableChangedObserver();
       this.subscribeToWebSocket();
       this.initTypeArray();
@@ -41,7 +42,6 @@ export class TableService {
       this.OnTableChanged = Observable.create((observer) => {
             console.log("table changed observer is created");
             this.tableObserver = observer;
-
         }).share();
   }
 
@@ -60,9 +60,21 @@ export class TableService {
 
   handleWebSocketMessage(data){
       console.log("data received: " + data);
-      var newMatch = this.getRandomMatch();
-      console.log(this.tableObserver);
-      this.tableObserver.next(newMatch);
+      this.matchListService.getNextMatch().subscribe(
+          this.informNextMatchListeners.bind(this),
+          this.handleErrorOnNextMatchRequest
+      )
+  }
+
+  informNextMatchListeners(match: Match){
+      console.log("Inform listeners: ");
+      console.log(match);
+      this.tableObserver.next(match);
+  }
+
+  handleErrorOnNextMatchRequest(error){
+      console.log("An error on receive next match: ");
+      console.log(error);
   }
 
   handleWebSocketError(error){
@@ -70,7 +82,7 @@ export class TableService {
   }
 
   handleWebSocketCompleted(){
-      console.log("completed received");
+      console.log("web socket completed received");
   }
 
   getAllTables(): Observable<Table[]>{
@@ -78,16 +90,16 @@ export class TableService {
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
-  freeTable(tableNumber: number){
-      return this.http.get(this.replaceTableNumer(tableNumber, this.freeTableUrl))
+  freeTable(tableId: number){
+      return this.http.get(this.replaceTableNumer(tableId, this.freeTableUrl))
   }
 
-  lockTable(tableNumber: number){
-      return this.http.get(this.replaceTableNumer(tableNumber, this.lockTableUrl))
+  lockTable(tableId: number): Observable<Response>{
+      return this.http.get(this.replaceTableNumer(tableId, this.lockTableUrl))
   }
 
-  takeBackTable(tableNumber: number){
-      return this.http.get(this.replaceTableNumer(tableNumber, this.takeBackTableUrl))
+  takeBackTable(tableId: number){
+      return this.http.get(this.replaceTableNumer(tableId, this.takeBackTableUrl))
   }
 
   replaceTableNumer(tableNumber: number, url: string): string{
