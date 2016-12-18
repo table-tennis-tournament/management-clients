@@ -131,7 +131,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         sets2 = sets(1),
         playedTableId = ttMatch.ttTableId
       )
-      dbConfigProvider.get.db.run(matches.update(ttMatchResult)) map {r =>
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) map {r =>
         Logger.info("res: " + r.toString)
         r
       }
