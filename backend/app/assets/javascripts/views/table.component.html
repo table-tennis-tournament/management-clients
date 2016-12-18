@@ -1,5 +1,5 @@
 <div class="card {{bgColor}}" *ngIf="table.match !== undefined && table.match !== null">
-    <div class="card-content {{textColor}}" >
+    <div class="card-content {{textColor}} custom-padding" >
         <span class="card-title activator">
                 <h4><span class="circle">{{table.number}}</span> {{table.match.type.name}}<i class="material-icons right">more_vert</i></h4>
         </span>
@@ -22,7 +22,7 @@
 </div>
 
 <div class="card grey lighten-3" *ngIf="table.match === undefined || table.match === null">
-    <div class="card-content">
+    <div class="card-content custom-padding">
         <span class="card-title activator">
                 <h4><span class="circle">{{table.number}}</span><i class="material-icons right">more_vert</i></h4>
         </span>
