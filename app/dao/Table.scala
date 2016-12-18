@@ -97,7 +97,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
     def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, false) <> (TTTable.tupled, TTTable.unapply _)
+    def * = (id, name, false, matchId) <> (TTTable.tupled, TTTable.unapply _)
   }
 
 
