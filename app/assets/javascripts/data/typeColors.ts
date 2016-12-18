@@ -1,8 +1,8 @@
 export class TypeColors{
     public static readonly TYPE_COLORS = [
         "",
-        "indigo",
         "blue darken-1",
+        "indigo",
         "light-green darken-1",
         "green",
         "grey",

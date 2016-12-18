@@ -1,4 +1,4 @@
-<div class="row" *ngFor="let i of rowCount" >
+<div class="row without-margin" *ngFor="let i of rowCount" >
 			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
 				<tt-table [table]="currentTable"></tt-table>
 		</div>
