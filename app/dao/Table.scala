@@ -84,6 +84,24 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def freeTTTable(id: Long): Future[Boolean] = {
+    getTTTable(id) flatMap {t =>
+      if(t.get.matchId.isDefined) {
+        getMatch(t.get.matchId.get) flatMap { m =>
+          val mNew = m.get.copy(ttTableId = None, isPlayed = true, isPlaying = false)
+          dbConfigProvider.get.db.run(matches.insertOrUpdate(mNew)) flatMap {r =>
+            val tNew = t.get.copy(matchId = None)
+            dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
+              true
+            }
+          }
+        }
+      } else {
+        Future.successful(false)
+      }
+    }
+  }
+
   class TTTablesTable(tag: Tag) extends Table[TTTable](tag, "tables") {
 
     def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
