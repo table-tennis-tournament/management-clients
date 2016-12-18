@@ -10,9 +10,11 @@ import {Injectable} from "@angular/core"
 export class RandomMatchService {
 
     private typeArray: Type[] = [];
+    private currentCounter: number;
 
     constructor(){
         this.initTypeArray();
+        this.currentCounter = 0;
     }
 
     initTypeArray(){
@@ -65,6 +67,8 @@ export class RandomMatchService {
     }
 
     getRandomType(): Type {
-        return this.typeArray[this.getRandomInt(1,10)];
+        this.currentCounter++;
+        return this.typeArray[this.currentCounter %10];
+        
     }
 }
