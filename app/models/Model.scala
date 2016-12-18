@@ -3,6 +3,7 @@ package models
 import com.google.inject.Inject
 import dao.Tables
 import org.joda.time.DateTime
+import play.api.Logger
 
 case class TTTable(
   id: Long,
@@ -27,7 +28,13 @@ case class MatchDAO(
   typeId: Long,
   groupId: Option[Long],
   startTime: DateTime,
-  resultRaw: String
+  resultRaw: String,
+  result: String,
+  balls1: Int,
+  balls2: Int,
+  sets1: Int,
+  sets2: Int,
+  playedTableId: Option[Long]
 ) {
   lazy val getResult = {
     if(resultRaw != "") {
@@ -70,7 +77,8 @@ case class MatchType(
 
 case class Type(
   id: Long,
-  name: String
+  name: String,
+  kind: Int
 )
 
 case class Group(
