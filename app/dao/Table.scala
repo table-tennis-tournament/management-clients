@@ -72,7 +72,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def allTTTables(): Future[Seq[TTTable]] = {
     Logger.info("all()")
-    dbConfigProvider.get.db.run(ttTables.result)
+    dbConfigProvider.get.db.run(ttTables.filter(_.name > 0).result)
   }
 
   def getTTTable(id: Option[Long]): Future[Option[TTTable]] = if(id.isDefined) getTTTable(id.get) else Future.successful(None)
@@ -113,6 +113,30 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Int]  = {
+    getMatch(id) flatMap  { m =>
+      val ttMatch = m.get
+      val x = result map (r => r.mkString("="))
+      val resultRaw = x.mkString(",")
+      val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0)+y(0), x(1)+y(1))}
+      val sets = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0) + (if(x(0)>x(1)) 1 else 0), x(0) + (if(x(0)<x(1)) 1 else 0))}
+      Logger.info(balls.toString())
+      val ttMatchResult = ttMatch.copy(
+        resultRaw = resultRaw,
+        isPlayed = true,
+        result = sets(0) + " : " + sets(1),
+        balls1 = balls(0),
+        balls2 = balls(1),
+        sets1 = sets(0),
+        sets2 = sets(1),
+        playedTableId = ttMatch.ttTableId
+      )
+      dbConfigProvider.get.db.run(matches.update(ttMatchResult)) map {r =>
+        r
+      }
+    }
+  }
+
   class MatchesTable(tag: Tag) extends Table[MatchDAO](tag, "matches") {
 
     def id = column[Long]("Matc_ID", O.PrimaryKey, O.AutoInc)
@@ -126,8 +150,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def groupId = column[Option[Long]]("Matc_Grou_ID")
     def startTime = column[DateTime]("Matc_StartTime")
     def resultRaw = column[String]("Matc_ResultRaw")
+    def result = column[String]("Matc_Result")
+    def balls1 = column[Int]("Matc_Balls1")
+    def balls2 = column[Int]("Matc_Balls2")
+    def sets1 = column[Int]("Matc_Sets1")
+    def sets2 = column[Int]("Matc_Sets2")
+    def playedTableId = column[Option[Long]]("Matc_PlayedTable_ID")
 
-    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw) <> (MatchDAO.tupled, MatchDAO.unapply _)
+    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
+      balls1, balls2, sets1, sets2, playedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
 
     def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
     def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
@@ -206,8 +237,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
     def id = column[Long]("Type_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Type_Name")
+    def kind = column[Int]("Type_Kind")
 
-    def * = (id, name) <> (Type.tupled, Type.unapply _)
+    def * = (id, name, kind) <> (Type.tupled, Type.unapply _)
   }
 
   def getType(id: Long): Future[Option[Type]] = {
