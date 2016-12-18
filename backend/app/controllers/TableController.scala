@@ -69,7 +69,8 @@ class TableController @Inject() (tables: Tables) extends Controller{
     val z = x map {y => Future.sequence(y)}
     val z2 = z.flatMap(z => z)
     z2 map {z =>
-      Ok(Json.toJson(z))
+      val x = z.sortBy(_.ttTable.tableNumber)
+      Ok(Json.toJson(x))
     }
   }
 
