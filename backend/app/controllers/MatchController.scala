@@ -3,11 +3,13 @@ package controllers
 import com.google.inject.Inject
 import dao.Tables
 import models._
+import play.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 /**
   * Created by jonas on 10.10.16.
   */
@@ -60,7 +62,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   implicit val typeWrites = new Writes[Type] {
     def writes(ttType: Type) = Json.obj(
       "id" -> ttType.id,
-      "name" -> ttType.name
+      "name" -> ttType.name,
+      "kind" -> ttType.kind
     )
   }
 
@@ -95,8 +98,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
     def writes(allMatchInfo: AllMatchInfo) = Json.obj(
       "match" -> allMatchInfo.ttMatch,
-      "player1" -> allMatchInfo.player1,
-      "player2" -> allMatchInfo.player2,
+      "team1" -> Seq(allMatchInfo.player1),
+      "team2" -> Seq(allMatchInfo.player2),
       "table" -> allMatchInfo.table,
       "matchType" -> allMatchInfo.matchType,
       "type" -> allMatchInfo.ttType,
@@ -154,5 +157,17 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def setResult(id: Long, result: Seq[Int]) = Action{Ok("not implemented")}
+  def setResult(id: Long) = Action { request =>
+    Logger.info(request.body.asJson.get.toString())
+    val res = request.body.asJson
+    if(res.isDefined) {
+      val resultO = res.get.validate[Seq[Seq[Int]]]
+      resultO.map { r =>
+        Await.ready(tables.setResult(id, r), 1 second)
+      }
+      Ok("OK")
+    } else {
+      BadRequest("No JSON found")
+    }
+  }
 }
