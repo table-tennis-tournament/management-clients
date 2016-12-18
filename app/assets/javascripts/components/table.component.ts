@@ -20,9 +20,8 @@ export class TableComponent implements IResultHandler{
     public firstOpponent: string;
     public secondOpponent: string;
     public bgColor: string;
+    public textColor: string;
     public tableNumber: string;
-
-    public colorArray: string[] = [];
 
      constructor(private matchToStringService: MatchToStringService, public modal: Modal, private tableService: TableService,
         private matchService: MatchService){
@@ -41,35 +40,54 @@ export class TableComponent implements IResultHandler{
         this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team1);
         this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team2);
         this.bgColor =TypeColors.TYPE_COLORS[this._table.match.type.id];
+        this.textColor = this._table.match.type.id % 2 ===1?"": "white-text";
     } 
 
-    onFree(){
-        this.tableService.freeTable(this.table.match.id);
-        this.table.match = null;
-    }
-
-    onTakeBack(){
-        console.log("on takeback clicked");
-        this.tableService.takeBackTable(this.table.match.id);
-        this.table.match = null;
-    }
-
     onResult(){
-        console.log("before create dialog");
         var dialog = this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.match, handler: this }, BSModalContext));
     }
 
-    onLock(){
-        this.table.isLocked = true;
-        this.tableService.lockTable(this.table.id);
+    onFree(){
+        this.tableService.freeTable(this.table.match.id).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
     }
 
-    handleResult(resultToHandle: IResult[]){
-        this.matchService.addResult(resultToHandle, this.table.match.id);
+    onLock(){
+        this.tableService.lockTable(this.table.id).subscribe(this.lockTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+    }
+
+    onUnLock(){
+        this.table.isLocked = false;
+    }
+
+    onTakeBack(){
+        this.tableService.takeBackTable(this.table.match.id).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+    }
+
+    freeTableAfterRequestSuccessfull(){
         this.table.match = null;
     }
 
-   
+    takeBackTableAfterRequestSuccessful(){
+        this.table.match = null;
+    }
 
-    
+    lockTableAfterRequestSuccessfull(){
+        console.log("successful lock table request");
+        this.table.isLocked = true;
+        this.table.match = null;
+    }
+
+    handleErrorsOnService(e){
+        console.log("An error ocurred: "+e.Message);
+    }
+
+    handleResult(resultToHandle: IResult[]){
+        this.matchService.addResult(resultToHandle, this.table.match.id).subscribe(this.handleResultAfterRequestSuccessful,
+        this.handleErrorsOnService);
+    }
+
+    handleResultAfterRequestSuccessful(){
+        this.table.match = null;
+    }
+   
 }

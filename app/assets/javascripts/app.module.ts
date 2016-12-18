@@ -4,6 +4,7 @@ import { NgModule }       from "@angular/core"
 import { BrowserModule }  from "@angular/platform-browser"
 import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
+import { CommonModule } from "@angular/common"
 
 import { RouterModule, Routes } from "@angular/router"
 
@@ -18,6 +19,7 @@ import { MatchService } from "./services/match.service"
 import { TableService } from "./services/table.service"
 import { WebSocketService } from "./services/web.socket.service"
 import { MatchToStringService } from "./services/match.toString.service"
+import { MatchListService } from "./services/match.list.service"
 
 import { routeConfig } from "./app.routes"
 
@@ -32,11 +34,11 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
   imports: [
     BrowserModule,
     FormsModule,
+    CommonModule,
     HttpModule,
     JsonpModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
-    
     RouterModule.forRoot(routeConfig)
   ],
   declarations: [
@@ -52,6 +54,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
       TableService,
       WebSocketService,
       MatchToStringService,
+      MatchListService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent],
