@@ -69,7 +69,8 @@ class TableController @Inject() (tables: Tables) extends Controller{
     val z = x map {y => Future.sequence(y)}
     val z2 = z.flatMap(z => z)
     z2 map {z =>
-      Ok(Json.toJson(z))
+      val x = z.sortBy(_.ttTable.tableNumber)
+      Ok(Json.toJson(x))
     }
   }
 
@@ -81,11 +82,16 @@ class TableController @Inject() (tables: Tables) extends Controller{
   }
 
   def freeTable(id: Long) = Action.async {
-    tables.freeTTTable(id: Long) map {r =>
+    tables.freeTTTable(id) map {r =>
       if (r) Ok("OK")
       else NotFound("no Match on Table")
     }
   }
 
-  def lockTable(id: Long) = Action{Ok("not implemented")}
+  def lockTable(id: Long) = Action.async {
+    tables.lockTTTable(id) map { r =>
+      if (r) Ok("OK")
+      else NotFound("no Match on Table")
+    }
+  }
 }
