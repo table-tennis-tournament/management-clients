@@ -72,7 +72,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def allTTTables(): Future[Seq[TTTable]] = {
     Logger.info("all()")
-    dbConfigProvider.get.db.run(ttTables.filter(_.name > 0).result)
+    dbConfigProvider.get.db.run(ttTables.filter(_.name > 0).sortBy(_.name).result)
   }
 
   def getTTTable(id: Option[Long]): Future[Option[TTTable]] = if(id.isDefined) getTTTable(id.get) else Future.successful(None)
@@ -132,6 +132,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         playedTableId = ttMatch.ttTableId
       )
       dbConfigProvider.get.db.run(matches.update(ttMatchResult)) map {r =>
+        Logger.info("res: " + r.toString)
         r
       }
     }
