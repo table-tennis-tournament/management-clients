@@ -10,6 +10,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.JdbcProfile
 import com.github.tototoshi.slick.MySQLJodaSupport._
+import slick.ast.Union
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -102,6 +103,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def lockTTTable(id: Long): Future[Boolean] = {
+    getTTTable(id) flatMap { t =>
+      val tNew = t.get.copy(isLocked = true)
+      dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
+        true
+      }
+    }
+  }
+
   class TTTablesTable(tag: Tag) extends Table[TTTable](tag, "tables") {
 
     def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
@@ -111,11 +121,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def matchId = column[Option[Long]]("Tabl_Matc_ID")
     def tourId = column[Long]("Tabl_Tour_ID")
     def groupId = column[Option[Long]]("Tabl_Group")
-    //def isLocked = column[Boolean]("Tabl_isLocked")
+    def isLocked = column[Boolean]("Tabl_isLocked")
 
     def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, false, matchId) <> (TTTable.tupled, TTTable.unapply _)
+    def * = (id, name, isLocked, matchId) <> (TTTable.tupled, TTTable.unapply _)
   }
 
 
@@ -155,7 +165,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         balls2 = balls(1),
         sets1 = sets1,
         sets2 = sets2,
-        playedTableId = ttMatch.ttTableId
+        playedTableId = ttMatch.ttTableId,
+        ttTableId = None
       )
       dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) flatMap {r =>
         if(m.get.ttTableId.isDefined && m.get.ttTableId.get != 0) {
