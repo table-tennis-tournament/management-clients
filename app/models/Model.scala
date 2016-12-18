@@ -1,5 +1,7 @@
 package models
 
+import com.google.inject.Inject
+import dao.Tables
 import org.joda.time.DateTime
 
 case class TTTable(
@@ -14,20 +16,6 @@ case class TTTableGroup(
   name: String
 )
 
-case class Match(
-  id: Long,
-  player1: PlayerDAO,
-  player2: PlayerDAO,
-  matchType: String,
-  typeName: String,
-  groupName: String,
-  startTime: DateTime,
-  //allowedTableGroups: Seq[TTTableGroup],
-  //result: Seq[Tuple2[Int, Int]],
-  //colorId: Int,
-  ttTable: TTTable
-)
-
 case class MatchDAO(
   id: Long,
   isPlaying: Boolean,
@@ -38,8 +26,19 @@ case class MatchDAO(
   matchTypeId: Long,
   typeId: Long,
   groupId: Option[Long],
-  startTime: DateTime
-)
+  startTime: DateTime,
+  resultRaw: String
+) {
+  lazy val getResult = {
+    if(resultRaw != "") {
+      val setsRaw = resultRaw.split(",")
+      val sets = setsRaw.toSeq.map(set => set.split("=").toSeq.map(i => i.toInt))
+      Some(sets)
+    } else {
+      None
+    }
+  }
+}
 
 case class Player(
   id: Long,
