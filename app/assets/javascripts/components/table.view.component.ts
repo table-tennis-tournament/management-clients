@@ -2,8 +2,10 @@ import {Component, ViewContainerRef, ViewEncapsulation} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
+import {RandomMatchService} from "../services/random.match.service"
 
 import {Table} from "../data/table"
+import {TableDto} from "../data/table.dto"
 import {Match} from "../data/match"
 
 import { Overlay } from "angular2-modal";
@@ -16,20 +18,33 @@ import { Modal } from "angular2-modal/plugins/bootstrap";
 export class TableViewComponent{
 
     public tables: Table[];
-    public selectedTable: Table;
     public rowCount: number[];
-    private tableService: TableService;
 
-    constructor(private matchService:MatchService, tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
-        public modal: Modal, public matchToStringService: MatchToStringService) {
+    constructor(private matchService:MatchService, private tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
+        public modal: Modal, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
         console.log("table view constructor start");
         overlay.defaultViewContainer = vcRef;
-        this.tableService = tableService;
-        this.tables = tableService.getAllTables();
-        this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
+
+        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
+       
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
+    }
+
+    getAllTablesSuccessful(tables: TableDto[]){
+        this.tables = []
+        for(var i=0; i< tables.length; i++){
+            tables[i].table.match = this.randomMatchService.getRandomMatch();
+            this.tables.push(tables[i].table);
+        }
+        this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
+        // this.tables = tableService.getRandomTables();
+        
+    }
+
+    getAllTablesFailed(error){
+        console.log(error);
     }
 
     handleMatchChanged(match: Match){
@@ -46,7 +61,7 @@ export class TableViewComponent{
         .isBlocking(true)
         .bodyClass("modal-content text-centering")
         .title("Neues Spiel Tisch Nr. "+match.tableNumber)
-        .body(`<h4>`+ match.type.typeName +`</h4><br/>
+        .body(`<h4>`+ match.type.name +`</h4><br/>
             <b>` + match.stage +`</b><br/><br/>
             `+ firstTeam +` <br/>
              <b>-</b> <br/> ` 
@@ -54,7 +69,6 @@ export class TableViewComponent{
         .open();
     }
 
-   onSelect(table: Table) { this.selectedTable = table; }
 
 
 //    this.matchService = matchService;

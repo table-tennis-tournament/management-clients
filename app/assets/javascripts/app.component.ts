@@ -9,7 +9,7 @@ export class AppComponent{
 
   constructor(private webSocketService: WebSocketService){
     console.log("before init websocket");
-    this.webSocketService.initializeWebSocket("ws://192.168.178.27:9000/ws");
+    this.webSocketService.initializeWebSocket("ws://192.168.178.27:9000/register");
   }
 
 }
