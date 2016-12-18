@@ -21,7 +21,6 @@ export class TableComponent implements IResultHandler{
     public secondOpponent: string;
     public bgColor: string;
     public textColor: string;
-    public tableNumber: string;
 
      constructor(private matchToStringService: MatchToStringService, public modal: Modal, private tableService: TableService,
         private matchService: MatchService){
