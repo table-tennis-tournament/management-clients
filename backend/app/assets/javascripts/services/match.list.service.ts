@@ -13,7 +13,7 @@ export class MatchListService {
 
     getNextMatch(): Observable<Match>{
         return this.http.get(this.nextMatchUrl).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch((error:any) => Observable.throw(error || "Server error"));
     }
 
     getCompleteMatchlist(): Observable<Match[]>{

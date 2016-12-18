@@ -47,7 +47,7 @@ export class TableComponent implements IResultHandler{
     }
 
     onFree(){
-        this.tableService.freeTable(this.table.match.id).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+        this.tableService.freeTable(this.table.id).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
     }
 
     onLock(){
@@ -59,7 +59,7 @@ export class TableComponent implements IResultHandler{
     }
 
     onTakeBack(){
-        this.tableService.takeBackTable(this.table.match.id).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+        this.tableService.takeBackTable(this.table.id).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
 
     freeTableAfterRequestSuccessfull(){
@@ -81,11 +81,14 @@ export class TableComponent implements IResultHandler{
     }
 
     handleResult(resultToHandle: IResult[]){
-        this.matchService.addResult(resultToHandle, this.table.match.id).subscribe(this.handleResultAfterRequestSuccessful,
+        // var matchId = this.table.match.id;
+        var matchId = 44;
+        this.matchService.addResult(resultToHandle, matchId).subscribe(this.handleResultAfterRequestSuccessful,
         this.handleErrorsOnService);
     }
 
     handleResultAfterRequestSuccessful(){
+        console.log("sucessfully added result");
         this.table.match = null;
     }
    
