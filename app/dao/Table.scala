@@ -113,7 +113,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
-  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Int]  = {
+  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean]  = {
     getMatch(id) flatMap  { m =>
       val ttMatch = m.get
       val x = result map (r => r.mkString("="))
@@ -139,17 +139,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         playedTableId = ttMatch.ttTableId
       )
       dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) flatMap {r =>
-        if(m.get.ttTableId.isDefined) {
+        if(m.get.ttTableId.isDefined && m.get.ttTableId.get != 0) {
+          Logger.info(m.get.ttTableId.toString)
           getTTTable(m.get.ttTableId.get) flatMap {t =>
             val tNew = t.get.copy(
               matchId = None
             )
             dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map {r =>
-              r
+              true
             }
           }
         } else {
-          Future.successful(0)
+          Future.successful(true)
         }
       }
     }
