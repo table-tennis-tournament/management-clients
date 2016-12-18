@@ -80,7 +80,12 @@ class TableController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def freeTable(id: Long) = Action{Ok("not implemented")}
+  def freeTable(id: Long) = Action.async {
+    tables.freeTTTable(id: Long) map {r =>
+      if (r) Ok("OK")
+      else NotFound("no Match on Table")
+    }
+  }
 
   def lockTable(id: Long) = Action{Ok("not implemented")}
 }
