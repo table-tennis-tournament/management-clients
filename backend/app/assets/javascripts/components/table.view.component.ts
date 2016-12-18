@@ -2,6 +2,7 @@ import {Component, ViewContainerRef, ViewEncapsulation} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
+import {RandomMatchService} from "../services/random.match.service"
 
 import {Table} from "../data/table"
 import {Match} from "../data/match"
@@ -17,18 +18,31 @@ export class TableViewComponent{
 
     public tables: Table[];
     public rowCount: number[];
-    private tableService: TableService;
 
-    constructor(private matchService:MatchService, tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
-        public modal: Modal, public matchToStringService: MatchToStringService) {
+    constructor(private matchService:MatchService, private tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
+        public modal: Modal, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
         console.log("table view constructor start");
         overlay.defaultViewContainer = vcRef;
-        this.tableService = tableService;
-        this.tables = tableService.getRandomTables();
-        this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
+
+        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
+       
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
+    }
+
+    getAllTablesSuccessful(tables: Table[]){
+        this.tables = tables;
+        for(var i=0; i< this.tables.length; i++){
+            this.tables[i].match = this.randomMatchService.getRandomMatch();
+        }
+        this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
+        // this.tables = tableService.getRandomTables();
+        
+    }
+
+    getAllTablesFailed(error){
+        console.log(error);
     }
 
     handleMatchChanged(match: Match){
@@ -45,7 +59,7 @@ export class TableViewComponent{
         .isBlocking(true)
         .bodyClass("modal-content text-centering")
         .title("Neues Spiel Tisch Nr. "+match.tableNumber)
-        .body(`<h4>`+ match.type.typeName +`</h4><br/>
+        .body(`<h4>`+ match.type.name +`</h4><br/>
             <b>` + match.stage +`</b><br/><br/>
             `+ firstTeam +` <br/>
              <b>-</b> <br/> ` 
