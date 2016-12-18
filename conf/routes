@@ -9,13 +9,13 @@ GET     /                               controllers.Application.index
 GET     /player/all                     controllers.PlayerController.getAllPlayer
 GET     /player/:id                     controllers.PlayerController.getPlayer(id: Long)
 
-# MatchController: result not implemented
+# MatchController:
 GET     /match/all                      controllers.MatchController.getAllMatches
 GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
 
-# TableController: Match is empty, free and lock not working
+# TableController:
 GET     /table/all                      controllers.TableController.getAllTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
 GET     /table/:id/free                 controllers.TableController.freeTable(id: Long)
