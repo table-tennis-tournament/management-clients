@@ -105,7 +105,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def lockTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap { t =>
-      val tNew = t.get.copy(isLocked = true)
+      val tNew = t.get.copy(isLocked = Some(true))
       dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
         true
       }
@@ -121,7 +121,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def matchId = column[Option[Long]]("Tabl_Matc_ID")
     def tourId = column[Long]("Tabl_Tour_ID")
     def groupId = column[Option[Long]]("Tabl_Group")
-    def isLocked = column[Boolean]("Tabl_isLocked")
+    def isLocked = column[Option[Boolean]]("Tabl_isLocked")
 
     def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 

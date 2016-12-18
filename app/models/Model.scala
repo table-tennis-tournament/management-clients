@@ -8,7 +8,7 @@ import play.api.Logger
 case class TTTable(
   id: Long,
   tableNumber: Int,
-  isLocked: Boolean,
+  isLocked: Option[Boolean],
   matchId: Option[Long]
 )
 
