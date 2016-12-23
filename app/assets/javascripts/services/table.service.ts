@@ -64,7 +64,8 @@ export class TableService {
   }
 
   handleWebSocketError(error){
-      console.log("on error received" + error);
+      console.log("on error received");
+      console.log(error);
   }
 
   handleWebSocketCompleted(){

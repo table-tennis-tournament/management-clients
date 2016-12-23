@@ -13,6 +13,8 @@ import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
 import {TableComponent} from "./components/table.component"
 import {CustomModal} from "./components/result.modal.view.component"
+import {SupervisorViewComponent} from "./components/supervisor.view.component"
+import {MatchFilterComponent} from "./components/match.filter.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -47,6 +49,8 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     PlayerComponent,
     TableViewComponent,
     CustomModal,
+    SupervisorViewComponent,
+    MatchFilterComponent,
     TableComponent
   ],
   providers: [
