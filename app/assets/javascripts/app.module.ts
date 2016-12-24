@@ -6,6 +6,8 @@ import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
 import { CommonModule } from "@angular/common"
 
+import { MaterializeModule } from "angular2-materialize";
+
 import { RouterModule, Routes } from "@angular/router"
 
 import {AppComponent} from "./app.component"
@@ -15,6 +17,7 @@ import {TableComponent} from "./components/table.component"
 import {CustomModal} from "./components/result.modal.view.component"
 import {SupervisorViewComponent} from "./components/supervisor.view.component"
 import {MatchFilterComponent} from "./components/match.filter.component"
+import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -40,6 +43,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     CommonModule,
     HttpModule,
     JsonpModule,
+    MaterializeModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
     RouterModule.forRoot(routeConfig)
@@ -51,6 +55,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     CustomModal,
     SupervisorViewComponent,
     MatchFilterComponent,
+    MatchFilterCriteriaComponent,
     TableComponent
   ],
   providers: [

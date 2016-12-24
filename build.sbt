@@ -47,7 +47,7 @@ libraryDependencies ++= Seq(
 
   "org.webjars.npm" % "materialize-css" % "0.97.8",
   "org.webjars.npm" % "angular2-materialize" % "5.2.1",
-  "org.webjars" % "jquery" % "3.1.1",
+  "org.webjars" % "jquery" % "2.2.4",
   //tslint dependencyOverrides
 
   "org.webjars.npm" % "tslint-eslint-rules" % "2.1.0",

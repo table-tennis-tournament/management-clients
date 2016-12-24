@@ -1,9 +1,18 @@
 
-<div class="row">
-    <match-filter></match-filter>
-</div>
-<div class="row without-margin" *ngFor="let i of rowCount" >
-			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
-				<tt-table [table]="currentTable"></tt-table>
+<ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
+	<li>
+		<div class="collapsible-header"><i class="material-icons">filter_drama</i>Filter</div>
+      	<div class="collapsible-body"><match-filter></match-filter></div>
+	</li>
+<li>
+	<div class="collapsible-header"><i class="material-icons">place</i>Second</div>
+      <div class="collapsible-body">
+		  <div class="row" >
+			Meine Spiele
 		</div>
-</div>
+	</div>
+	
+</li>
+
+
+</ul>

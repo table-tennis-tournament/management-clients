@@ -1,0 +1,9 @@
+
+<div class="row" *ngFor="let currentFilter of filterCriterias">
+    <match-filter-criteria [criteria]="currentFilter"></match-filter-criteria>
+</div>
+<div class="row"> 
+    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+        <i class="material-icons right">send</i>
+    </button>
+</div>
