@@ -1,9 +1,12 @@
 
-<div class="row" *ngFor="let currentFilter of filterCriterias">
-    <match-filter-criteria [criteria]="currentFilter"></match-filter-criteria>
+<div class="row" *ngFor="let i of rowCount" >
+    <div class="col" *ngFor="let currentFilter of filterCriterias | slice:(i*2):(i+1)*2">
+        <match-filter-criteria [criteria]="currentFilter"></match-filter-criteria>
+    </div>
 </div>
 <div class="row"> 
-    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    <button class="btn waves-effect waves-light" type="submit" name="action">Anwenden
         <i class="material-icons right">send</i>
     </button>
 </div>
+
