@@ -44,6 +44,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "typescript" % "2.0.6",
 
   "org.webjars.npm" % "angular2-modal" % "2.0.0-beta.12",
+  "org.webjars.npm" % "ng2-dragula" % "1.2.2-0"
 
   "org.webjars.npm" % "materialize-css" % "0.97.8",
   "org.webjars.npm" % "angular2-materialize" % "5.2.1",
