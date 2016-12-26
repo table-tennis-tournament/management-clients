@@ -56,6 +56,14 @@ export class RandomMatchService {
       return result;
   }
 
+  getRandomMatches(countOfMatches: number): Match[]{
+      var result = [];
+      for(var i = 0; i <countOfMatches; i++){
+          result.push(this.getRandomMatch());
+      }
+      return result;
+  }
+
   getRandomInt(min, max) {
     min= Math.ceil(min);
     max= Math.floor(max);
