@@ -45,19 +45,12 @@ class TableController @Inject() (tables: Tables) extends Controller{
   }
 
   def getAllTableInfo(ttTable: TTTable): Future[TableInfo] = {
-    if(ttTable.matchId.isDefined) {
-      val mF = tables.getMatch(ttTable.matchId.get)
-      mF map { m =>
-        TableInfo(
-          ttTable,
-          m
-        )
-      }
-    } else {
-      Future.successful(TableInfo(
+    val mF = tables.getMatchOnTable(ttTable.id)
+    mF map { m =>
+      TableInfo(
         ttTable,
-        None
-      ))
+        m
+      )
     }
   }
 

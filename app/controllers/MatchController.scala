@@ -87,8 +87,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
 
   case class AllMatchInfo(
     ttMatch: MatchDAO,
-    player1: Player,
-    player2: Player,
+    player1: Seq[Player],
+    player2: Seq[Player],
     table: Option[TTTable],
     matchType: MatchType,
     ttType: Type,
@@ -98,8 +98,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
     def writes(allMatchInfo: AllMatchInfo) = Json.obj(
       "match" -> allMatchInfo.ttMatch,
-      "team1" -> Seq(allMatchInfo.player1),
-      "team2" -> Seq(allMatchInfo.player2),
+      "team1" -> allMatchInfo.player1,
+      "team2" -> allMatchInfo.player2,
       "table" -> allMatchInfo.table,
       "matchType" -> allMatchInfo.matchType,
       "type" -> allMatchInfo.ttType,
@@ -107,7 +107,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     )
   }
 
-  def getAllMatchInfo(matchDAO: MatchDAO): Future[AllMatchInfo] = {
+  def getAllMatchInfo(matchDAO: MatchDAO): Future[Option[AllMatchInfo]] = {
     val p1F = tables.getPlayer(matchDAO.player1Id)
     val p2F = tables.getPlayer(matchDAO.player2Id)
     val tF = tables.getTTTable(matchDAO.ttTableId)
@@ -121,17 +121,17 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       mt <- mtF
       ty <- tyF
       g <- gF
-    } yield(p1.get, p2.get, t, mt.get, ty.get, g)
+    } yield(p1, p2, t, mt.get, ty.get, g)
     pF map {p =>
-      AllMatchInfo(
+      Some(AllMatchInfo(
         matchDAO,
-        p._1,
-        p._2,
+        if(p._1.isDefined) Seq(p._1.get) else Seq.empty,
+        if(p._2.isDefined) Seq(p._2.get) else Seq.empty,
         p._3,
         p._4,
         p._5,
         p._6
-      )
+      ))
     }
   }
 
@@ -150,7 +150,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   def getMatch(id: Long) = Action.async {
     val matchF = tables.getMatch(id)
     matchF flatMap { ttMatch =>
-      val amiF = getAllMatchInfo(ttMatch.get)
+      val amiF = if(ttMatch.isDefined) getAllMatchInfo(ttMatch.get) else Future(None)
       amiF map { ami =>
         Ok(Json.toJson(ami))
       }

@@ -35,7 +35,7 @@ case class MatchDAO(
   balls2: Int,
   sets1: Int,
   sets2: Int,
-  playedTableId: Option[Long]
+  plannedTableId: Option[Long]
 ) {
   lazy val getResult = {
     if(resultRaw != "") {
