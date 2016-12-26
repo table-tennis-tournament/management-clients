@@ -141,6 +141,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def getMatchOnTable(id: Long): Future[Option[MatchDAO]] = {
+    val matchF = dbConfigProvider.get.db.run(matches.filter(_.ttTableId === id).result)
+    matchF map { m =>
+      m.headOption
+    }
+  }
+
   def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean]  = {
     getMatch(id) flatMap  { m =>
       val ttMatch = m.get
@@ -165,7 +172,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         balls2 = balls(1),
         sets1 = sets1,
         sets2 = sets2,
-        playedTableId = ttMatch.ttTableId,
+        plannedTableId = ttMatch.ttTableId,
         ttTableId = None
       )
       dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) flatMap {r =>
@@ -204,10 +211,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def balls2 = column[Int]("Matc_Balls2")
     def sets1 = column[Int]("Matc_Sets1")
     def sets2 = column[Int]("Matc_Sets2")
-    def playedTableId = column[Option[Long]]("Matc_PlayedTable_ID")
+    def plannedTableId = column[Option[Long]]("Matc_PlannedTable_ID")
 
     def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
-      balls1, balls2, sets1, sets2, playedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
+      balls1, balls2, sets1, sets2, plannedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
 
     def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
     def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
