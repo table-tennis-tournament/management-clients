@@ -34,6 +34,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   private val types = TableQuery[TypeTable]
   private val groups = TableQuery[GroupTable]
   private val clubs = TableQuery[ClubTable]
+  private val doubles = TableQuery[DoubleTable]
 
   def resetTriggerTable = {
     dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 0;""") map { result =>
@@ -90,7 +91,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       if(t.get.matchId.isDefined) {
         getMatch(t.get.matchId.get) flatMap { m =>
           val mNew = m.get.copy(ttTableId = None, isPlayed = true, isPlaying = false)
-          dbConfigProvider.get.db.run(matches.insertOrUpdate(mNew)) flatMap {r =>
+          dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(mNew))) flatMap {r =>
             val tNew = t.get.copy(matchId = None)
             dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
               true
@@ -130,14 +131,41 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
 
   // Matches
-  def allMatches(): Future[Seq[MatchDAO]] = {
-    dbConfigProvider.get.db.run(matches.result)
+  def allMatches(): Future[Seq[TTMatch]] = {
+    dbConfigProvider.get.db.run(matches.result) flatMap {res =>
+      val x = res map { r =>
+        toMatch(r)
+      }
+      Future.sequence(x)
+    }
   }
 
-  def getMatch(id: Long): Future[Option[MatchDAO]] = {
+  def toMatch(m: MatchDAO): Future[TTMatch] = {
+    if(m.team1Id < 100000)
+      Future.successful(TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.ttTableId, m.isPlayed, m.matchTypeId,
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId, 1))
+    else
+      getDouble(m.team1Id - 100000) flatMap { d1 =>
+        getDouble(m.team2Id - 100000) map { d2 =>
+          TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if(d1.isDefined && d2.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
+            if(d1.isDefined && d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.ttTableId, m.isPlayed, m.matchTypeId,
+            m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId,
+            2)
+        }
+      }
+
+  }
+
+  def toMatchDAO(m: TTMatch): MatchDAO = {
+    MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, m.ttTableId, m.isPlayed, m.matchTypeId,
+      m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId)
+  }
+
+  def getMatch(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.id === id).result)
-    matchF map { m =>
-      m.headOption
+    matchF flatMap { m =>
+      val mH = m.headOption
+      if(mH.isDefined) toMatch(mH.get) map {m => Some(m)} else Future.successful(None)
     }
   }
 
@@ -175,7 +203,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
         plannedTableId = ttMatch.ttTableId,
         ttTableId = None
       )
-      dbConfigProvider.get.db.run(matches.insertOrUpdate(ttMatchResult)) flatMap {r =>
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(ttMatchResult))) flatMap {r =>
         if(m.get.ttTableId.isDefined && m.get.ttTableId.get != 0) {
           Logger.info(m.get.ttTableId.toString)
           getTTTable(m.get.ttTableId.get) flatMap {t =>
@@ -319,6 +347,25 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     val gF = dbConfigProvider.get.db.run(groups.filter(_.id === id).result)
     gF map {g =>
       g.headOption
+    }
+  }
+
+  class DoubleTable(tag: Tag) extends Table[Double](tag, "doubles") {
+
+    def id = column[Long]("Doub_ID", O.PrimaryKey, O.AutoInc)
+    def player1Id = column[Long]("Doub_Play1_ID")
+    def player2Id = column[Long]("Doub_Play2_ID")
+    def kindId = column[Int]("Doub_Kind")
+
+    def * = (id, player1Id, player2Id, kindId) <> (Double.tupled, Double.unapply _)
+  }
+
+  def getAllDoubles = dbConfigProvider.get.db.run(doubles.result)
+
+  def getDouble(id: Long): Future[Option[Double]] = {
+    val dF = dbConfigProvider.get.db.run(doubles.filter(_.id === id).result)
+    dF map {d =>
+      d.headOption
     }
   }
 }
