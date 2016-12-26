@@ -35,11 +35,12 @@ export class TableViewComponent{
     getAllTablesSuccessful(tables: TableDto[]){
         this.tables = []
         for(var i=0; i< tables.length; i++){
-            tables[i].table.match = this.randomMatchService.getRandomMatch();
+            if(tables[i].table.isLocked !== true){
+                tables[i].table.match = this.randomMatchService.getRandomMatch();
+            }
             this.tables.push(tables[i].table);
         }
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-        // this.tables = tableService.getRandomTables();
         
     }
 

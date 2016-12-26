@@ -36,10 +36,14 @@ export class TableComponent implements IResultHandler{
     set table(value: Table){
         console.log("Start set Table");
         this._table = value;
-        this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team1);
-        this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team2);
-        this.bgColor =TypeColors.TYPE_COLORS[this._table.match.type.id];
-        this.textColor = this._table.match.type.id % 2 ===1?"": "white-text";
+        console.log(this._table.match);
+        if(this._table.match){
+            this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team1);
+            this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.match.team2);
+            this.bgColor =TypeColors.TYPE_COLORS[this._table.match.type.id];
+            this.textColor = this._table.match.type.id % 2 ===1?"": "white-text";
+        }
+        
     } 
 
     onResult(){
