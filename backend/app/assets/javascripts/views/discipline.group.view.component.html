@@ -6,10 +6,7 @@
                     <div class="collapsible-header"><i class="material-icons">perm_identity</i>Spieler</div>
                     <div class="collapsible-body">
                         <div class="collection">
-                            <a href="javascript:void(0)" class="collection-item">Kevin Valentin (TG Söllingen)</a>
-                            <a href="javascript:void(0)" class="collection-item light-green darken-1 white-text">Kian Aragian (TTV Ettlingen)</a>
-                            <a href="javascript:void(0)" class="collection-item">Daniel Weißkopf (TTV Ettlingen)</a>
-                            <a href="javascript:void(0)" class="collection-item light-green darken-1 white-text">Luca Holub (TTSF Hohberg)</a>
+                            <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">{{currentPlayer.firstName}} {{currentPlayer.lastName}}</a>
                         </div>
                     </div>
                 </li>
@@ -17,12 +14,7 @@
                     <div class="collapsible-header"><i class="material-icons">view_list</i>Spiele</div>
                     <div class="collapsible-body">
                         <div class="collection">
-                            <a href="javascript:void(0)" class="collection-item">Valentin - Holub <div class="right">3:0</div></a>
-                            <a href="javascript:void(0)" class="collection-item">Aragian - Weißkopf <div class="right">3:2</div></a>
-                            <a href="javascript:void(0)" class="collection-item">Valentin - Weißkopf <div class="right">3:1</div></a>
-                            <a href="javascript:void(0)" class="collection-item">Aragian - Holub <div class="right">3:0</div></a>
-                            <a href="javascript:void(0)" class="collection-item">Valentin - Aragian <span class="circle right">2</span></a>
-                            <a href="javascript:void(0)" class="collection-item">Weißkopf - Holub <span class="circle right">12</span></a>
+                            <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item">Valentin - Holub <div class="right">3:0</div></a>
                         </div>
                     </div>
                 </li>
