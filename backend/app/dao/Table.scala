@@ -113,6 +113,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def unlockTTTable(id: Long): Future[Boolean] = {
+    getTTTable(id) flatMap { t =>
+      val tNew = t.get.copy(isLocked = Some(false))
+      dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
+        true
+      }
+    }
+  }
+
   class TTTablesTable(tag: Tag) extends Table[TTTable](tag, "tables") {
 
     def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
@@ -128,7 +137,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
     def * = (id, name, isLocked, matchId) <> (TTTable.tupled, TTTable.unapply _)
   }
-
 
   // Matches
   def allMatches(): Future[Seq[TTMatch]] = {
@@ -172,6 +180,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def getMatchOnTable(id: Long): Future[Option[MatchDAO]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.ttTableId === id).result)
     matchF map { m =>
+      Logger.info("Match on Table: " + m.headOption.toString)
       m.headOption
     }
   }
