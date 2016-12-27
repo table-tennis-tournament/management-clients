@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {Match} from "../data/match";
+import {MatchDto} from "../data/match.dto";
 import {MatchService} from "../services/match.service";
 import {RandomMatchService} from "../services/random.match.service";
 
@@ -9,18 +9,20 @@ import {RandomMatchService} from "../services/random.match.service";
 })
 export class MatchListComponent{
 
-    public matches: Match[];
+    public matches: MatchDto[];
 
     constructor(private matchService: MatchService, private randomMatchService: RandomMatchService){
-        this.matches = this.randomMatchService.getRandomMatches(30);
-    //    matchService.getAllMatches().subscribe(
-    //        this.getAllMatchesSuccess,
-    //        this.getAllMatchesError
-    //    )
+        // this.matches = this.randomMatchService.getRandomMatches(30);
+       matchService.getAllMatches().subscribe(
+           this.getAllMatchesSuccess.bind(this),
+           this.getAllMatchesError
+       )
     }
 
-    private getAllMatchesSuccess(matches){
+    private getAllMatchesSuccess(matches: MatchDto[]){
+        console.log("On set matches");
         this.matches = matches;
+        console.log("After set matches");
     }
     private getAllMatchesError(error){
         console.log("error on get All matches");
