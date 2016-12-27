@@ -20,10 +20,15 @@ GET     /table/all                      controllers.TableController.getAllTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
 GET     /table/:id/free                 controllers.TableController.freeTable(id: Long)
 GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
+GET     /table/:id/unlock               controllers.TableController.unlockTable(id: Long)
 
 # MatchListController: not working
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
+# PUT     /matchlist/match                controllers.MatchListController.setMatch
+# PUT     /matchlist/group                controllers.MatchListController.setGroup
+# DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
+# DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroupe(id:Long)
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket

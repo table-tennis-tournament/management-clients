@@ -3,6 +3,7 @@ package controllers
 import com.google.inject.Inject
 import dao.Tables
 import models.{MatchDAO, TTTable}
+import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -47,6 +48,7 @@ class TableController @Inject() (tables: Tables) extends Controller{
   def getAllTableInfo(ttTable: TTTable): Future[TableInfo] = {
     val mF = tables.getMatchOnTable(ttTable.id)
     mF map { m =>
+      Logger.info("match: " + m.toString)
       TableInfo(
         ttTable,
         m
@@ -63,6 +65,7 @@ class TableController @Inject() (tables: Tables) extends Controller{
     val z2 = z.flatMap(z => z)
     z2 map {z =>
       val x = z.sortBy(_.ttTable.tableNumber)
+      Logger.info("m: " + x.toString())
       Ok(Json.toJson(x))
     }
   }
@@ -82,6 +85,13 @@ class TableController @Inject() (tables: Tables) extends Controller{
   }
 
   def lockTable(id: Long) = Action.async {
+    tables.lockTTTable(id) map { r =>
+      if (r) Ok("OK")
+      else NotFound("no Match on Table")
+    }
+  }
+
+  def unlockTable(id: Long) = Action.async {
     tables.lockTTTable(id) map { r =>
       if (r) Ok("OK")
       else NotFound("no Match on Table")
