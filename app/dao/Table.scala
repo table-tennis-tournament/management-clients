@@ -35,6 +35,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   private val groups = TableQuery[GroupTable]
   private val clubs = TableQuery[ClubTable]
   private val doubles = TableQuery[DoubleTable]
+  private val matchList = TableQuery[MatchListTable]
 
   def resetTriggerTable = {
     dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 0;""") map { result =>
@@ -386,6 +387,31 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def asGroup = column[Option[Long]]("as_group")
     def position = column[Int]("position")
 
-    def * = (id, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
+    def * = (id.?, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
+  }
+
+  def getMatchList = {
+    val mlF = dbConfigProvider.get.db.run(matchList.result)
+    mlF map {ml =>
+      ml.sortBy(_.position)
+    }
+  }
+
+  def setMatchList(ml: Seq[MatchList]) = {
+    val resF = ml map {mlEntry =>
+      dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
+    }
+    Future.sequence(resF) map {rList =>
+      rList
+    }
+  }
+
+  def delMatchList(ml: Seq[MatchList], id: Long) = {
+    val resF = ml map {mlEntry =>
+      dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
+    }
+    Future.sequence(resF) map { r =>
+      dbConfigProvider.get.db.run(matchList.filter(_.id === id).delete)
+    }
   }
 }
