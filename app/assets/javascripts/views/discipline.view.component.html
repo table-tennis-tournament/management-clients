@@ -5,7 +5,7 @@
       </ul>
     </div>
     <div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12">
-        Gruppe 1
+        <group-view *ngFor="let currentGroup of {{currentTab.groups}}"  [group]="{{currentGroup}}">
         <!--<group-view [groups]="{{currentTab.groups}}"></group-view>-->
     </div>
   </div>
