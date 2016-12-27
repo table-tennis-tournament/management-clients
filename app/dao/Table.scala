@@ -177,11 +177,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
-  def getMatchOnTable(id: Long): Future[Option[MatchDAO]] = {
+  def getMatchOnTable(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.ttTableId === id).result)
-    matchF map { m =>
+    matchF flatMap { m =>
       Logger.info("Match on Table: " + m.headOption.toString)
-      m.headOption
+      val mH = m.headOption
+      if(mH.isDefined) toMatch(mH.get) map {m => Some(m)} else Future.successful(None)
     }
   }
 
@@ -376,5 +377,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     dF map {d =>
       d.headOption
     }
+  }
+
+  class MatchListTable(tag: Tag) extends Table[MatchList](tag, "match_list") {
+
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def matchId = column[Long]("match_id")
+    def asGroup = column[Option[Long]]("as_group")
+    def position = column[Int]("position")
+
+    def * = (id, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
   }
 }
