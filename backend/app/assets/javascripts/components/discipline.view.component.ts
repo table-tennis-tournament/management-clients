@@ -11,9 +11,9 @@ export class DisciplineViewComponent{
     constructor(){
         this.tabs = [];
         this.tabs[0] = new DisciplineTab(1, "Herren B");
-        this.tabs[1] = new DisciplineTab(1, "Herren C");
-        this.tabs[2] = new DisciplineTab(1, "Herren D");
-        this.tabs[3] = new DisciplineTab(1, "Herren E");
+        this.tabs[1] = new DisciplineTab(2, "Herren C");
+        this.tabs[2] = new DisciplineTab(3, "Herren D");
+        this.tabs[3] = new DisciplineTab(4, "Herren E");
     }
    
 }

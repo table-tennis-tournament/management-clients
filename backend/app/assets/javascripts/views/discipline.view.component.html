@@ -4,8 +4,8 @@
         <li *ngFor="let currentTab of tabs" class="tab col s3"><a href="#{{currentTab.id}}">{{currentTab.name}}</a></li>
       </ul>
     </div>
-    <div id="test1" class="col s12">Test 1</div>
-    <div id="test2" class="col s12">Test 2</div>
-    <div id="test3" class="col s12">Test 3</div>
-    <!--<div id="test4" class="col s12">Test 4</div>-->
+    <div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12">
+        Gruppe 1
+        <!--<group-view [groups]="{{currentTab.groups}}"></group-view>-->
+    </div>
   </div>
