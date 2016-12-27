@@ -74,8 +74,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     )
   }
 
-  implicit val ttMatchWrites = new Writes[MatchDAO] {
-    def writes(ttMatch: MatchDAO) = Json.obj(
+  implicit val ttMatchWrites = new Writes[TTMatch] {
+    def writes(ttMatch: TTMatch) = Json.obj(
       "id" -> ttMatch.id,
       "startTime" -> ttMatch.startTime,
       "isPlayed" -> ttMatch.isPlayed,
@@ -86,20 +86,20 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   }
 
   case class AllMatchInfo(
-    ttMatch: MatchDAO,
-    player1: Player,
-    player2: Player,
-    table: Option[TTTable],
-    matchType: MatchType,
-    ttType: Type,
-    group: Option[Group]
+                           ttMatch: TTMatch,
+                           player1: Seq[Player],
+                           player2: Seq[Player],
+                           table: Option[TTTable],
+                           matchType: MatchType,
+                           ttType: Type,
+                           group: Option[Group]
   )
 
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
     def writes(allMatchInfo: AllMatchInfo) = Json.obj(
       "match" -> allMatchInfo.ttMatch,
-      "team1" -> Seq(allMatchInfo.player1),
-      "team2" -> Seq(allMatchInfo.player2),
+      "team1" -> allMatchInfo.player1,
+      "team2" -> allMatchInfo.player2,
       "table" -> allMatchInfo.table,
       "matchType" -> allMatchInfo.matchType,
       "type" -> allMatchInfo.ttType,
@@ -107,13 +107,13 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     )
   }
 
-  def getAllMatchInfo(matchDAO: MatchDAO): Future[AllMatchInfo] = {
-    val p1F = tables.getPlayer(matchDAO.player1Id)
-    val p2F = tables.getPlayer(matchDAO.player2Id)
-    val tF = tables.getTTTable(matchDAO.ttTableId)
-    val mtF = tables.getMatchType(matchDAO.matchTypeId)
-    val tyF = tables.getType(matchDAO.typeId)
-    val gF = tables.getGroup(matchDAO.groupId)
+  def getAllMatchInfo(ttMatch: TTMatch): Future[Option[AllMatchInfo]] = {
+    val p1F = Future.sequence(ttMatch.player1Ids map {id => tables.getPlayer(id)})
+    val p2F = Future.sequence(ttMatch.player2Ids map {id => tables.getPlayer(id)})
+    val tF = tables.getTTTable(ttMatch.ttTableId)
+    val mtF = tables.getMatchType(ttMatch.matchTypeId)
+    val tyF = tables.getType(ttMatch.typeId)
+    val gF = tables.getGroup(ttMatch.groupId)
     val pF = for {
       p1 <- p1F
       p2 <- p2F
@@ -121,17 +121,17 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       mt <- mtF
       ty <- tyF
       g <- gF
-    } yield(p1.get, p2.get, t, mt.get, ty.get, g)
+    } yield(p1, p2, t, mt.get, ty.get, g)
     pF map {p =>
-      AllMatchInfo(
-        matchDAO,
-        p._1,
-        p._2,
+      Some(AllMatchInfo(
+        ttMatch,
+        p._1.flatten,
+        p._2.flatten,
         p._3,
         p._4,
         p._5,
         p._6
-      )
+      ))
     }
   }
 
@@ -150,7 +150,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   def getMatch(id: Long) = Action.async {
     val matchF = tables.getMatch(id)
     matchF flatMap { ttMatch =>
-      val amiF = getAllMatchInfo(ttMatch.get)
+      val amiF = if(ttMatch.isDefined) getAllMatchInfo(ttMatch.get) else Future(None)
       amiF map { ami =>
         Ok(Json.toJson(ami))
       }

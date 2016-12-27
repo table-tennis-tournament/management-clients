@@ -18,11 +18,44 @@ case class TTTableGroup(
   name: String
 )
 
+case class TTMatch(
+    id: Long,
+    isPlaying: Boolean,
+    team1Id: Long,
+    team2Id: Long,
+    player1Ids: Seq[Long],
+    player2Ids: Seq[Long],
+    ttTableId: Option[Long],
+    isPlayed: Boolean,
+    matchTypeId: Long,
+    typeId: Long,
+    groupId: Option[Long],
+    startTime: DateTime,
+    resultRaw: String,
+    result: String,
+    balls1: Int,
+    balls2: Int,
+    sets1: Int,
+    sets2: Int,
+    plannedTableId: Option[Long],
+    kindId: Int
+  ) {
+  lazy val getResult = {
+    if(resultRaw != "") {
+      val setsRaw = resultRaw.split(",")
+      val sets = setsRaw.toSeq.map(set => set.split("=").toSeq.map(i => i.toInt))
+      Some(sets)
+    } else {
+      None
+    }
+  }
+}
+
 case class MatchDAO(
   id: Long,
   isPlaying: Boolean,
-  player1Id: Long,
-  player2Id: Long,
+  team1Id: Long,
+  team2Id: Long,
   ttTableId: Option[Long],
   isPlayed: Boolean,
   matchTypeId: Long,
@@ -35,7 +68,7 @@ case class MatchDAO(
   balls2: Int,
   sets1: Int,
   sets2: Int,
-  playedTableId: Option[Long]
+  plannedTableId: Option[Long]
 ) {
   lazy val getResult = {
     if(resultRaw != "") {
@@ -85,4 +118,11 @@ case class Type(
 case class Group(
   id: Long,
   name: String
+)
+
+case class Double(
+  id: Long,
+  player1Id: Long,
+  player2Id: Long,
+  kindId: Int
 )
