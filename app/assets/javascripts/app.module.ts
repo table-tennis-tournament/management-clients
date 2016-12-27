@@ -19,6 +19,7 @@ import {SupervisorViewComponent} from "./components/supervisor.view.component"
 import {MatchFilterComponent} from "./components/match.filter.component"
 import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.component"
 import {MatchListComponent} from "./components/match.list.view.component"
+import {DisciplineViewComponent} from "./components/discipline.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -58,6 +59,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     MatchFilterComponent,
     MatchFilterCriteriaComponent,
     MatchListComponent,
+    DisciplineViewComponent,
     TableComponent
   ],
   providers: [
