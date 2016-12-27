@@ -74,6 +74,14 @@ export class RandomMatchService {
         return [new Player(firstName, lastName, new Club(clubName))];
     }
 
+    getPlayers(count: number){
+        var result: Player[] = [];
+        for(var i= 0; i<count; i++){
+            result.push(this.getPlayer("Encrico", "Fussy", "TTC Mutschelbach")[0]);
+        }
+        return result;
+    }
+
     getRandomType(): Type {
         this.currentCounter++;
         return this.typeArray[this.currentCounter %10];
