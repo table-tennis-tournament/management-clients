@@ -126,3 +126,10 @@ case class Double(
   player2Id: Long,
   kindId: Int
 )
+
+case class MatchList(
+  id: Long,
+  matchId: Long,
+  asGroup: Option[Long],
+  position: Int
+)
