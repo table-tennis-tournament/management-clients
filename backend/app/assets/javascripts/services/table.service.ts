@@ -1,4 +1,4 @@
-import {Match} from "../data/match"
+import {MatchDto} from "../data/match.dto"
 import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
 import {Player} from "../data/player"
@@ -17,7 +17,7 @@ export class TableService {
   private freeTableUrl = "table/tableNumber/free";
   private takeBackTableUrl = "table/tableNumber/free";
   private unlockTableUrl = "table/tableNumber/unlock";
-  public OnTableChanged: Observable<Match>;
+  public OnTableChanged: Observable<MatchDto>;
   private tableObserver: any;
   
 
@@ -53,7 +53,7 @@ export class TableService {
       )
   }
 
-  informNextMatchListeners(match: Match){
+  informNextMatchListeners(match: MatchDto){
       console.log("Inform listeners: ");
       console.log(match);
       this.tableObserver.next(match);
