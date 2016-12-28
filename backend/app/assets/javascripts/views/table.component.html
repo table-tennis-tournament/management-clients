@@ -1,10 +1,10 @@
-<div class="card {{bgColor}}" *ngIf="table.match">
+<div class="card {{bgColor}}" *ngIf="table.matchinfo">
     <div class="card-content {{textColor}} custom-padding" >
         <span class="card-title activator">
-                <h4><span class="circle">{{table.number}}</span>{{table.match.type.name}}<i class="material-icons right">more_vert</i></h4>
+                <h4><span class="circle">{{table.table.number}}</span>{{table.matchinfo.type.name}}<span *ngIf="table.matchinfo.type.kind===2">-DO</span><i class="material-icons right">more_vert</i></h4>
         </span>
         <p class="center-align truncate">
-            <b>{{table.match.stage}}</b><br/>
+            <b>{{table.matchinfo.matchType.name}}</b><br/>
             {{firstOpponent}} <br/>
             {{secondOpponent}}
         </p>
@@ -21,22 +21,22 @@
     </div>
 </div>
 
-<div class="card grey lighten-3" *ngIf="!table.match">
+<div class="card grey lighten-3" *ngIf="!table.matchinfo">
     <div class="card-content custom-padding">
         <span class="card-title activator">
                 <h4><span class="circle">{{table.number}}</span><i class="material-icons right">more_vert</i></h4>
         </span>
         <div class="text-centering">
-            <div *ngIf="!table.isLocked" id="unLockedId"><h4>Freier Tisch</h4></div>
-            <div *ngIf="table.isLocked" id="lockedId"><h4>Gesperrt</h4></div>
+            <div *ngIf="!table.table.isLocked" id="unLockedId"><h4>Freier Tisch</h4></div>
+            <div *ngIf="table.table.isLocked" id="lockedId"><h4>Gesperrt</h4></div>
         </div>
     </div>
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
-        <div class="card-action" *ngIf="!table.isLocked">
+        <div class="card-action" *ngIf="!table.table.isLocked">
             <a  href="javascript:void(0)" (click)="onLock()">Sperren</a>
         </div>   
-        <div class="card-action" *ngIf="table.isLocked">
+        <div class="card-action" *ngIf="table.table.isLocked">
             <a href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
         </div>   
     </div> 

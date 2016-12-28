@@ -14,14 +14,18 @@ export class MatchToStringService {
         return this.getSinglePlayerString(players[0]);
     }
     if(players.length === 2){
-        return this.getSinglePlayerString(players[0]) + "<br/>"+
-            this.getSinglePlayerString(players[1]) ;
+        return this.getSinglePlayerStringShort(players[0]) + "/"+
+            this.getSinglePlayerStringShort(players[1]) ;
     }
     return "";
   }
 
   getSinglePlayerString(player: Player){
-      return player.firstName + " " + player.lastName + "("+player.club.clubName + ")";
+      return player.firstName + " " + player.lastName + "("+player.club + ")";
+  }
+
+  getSinglePlayerStringShort(player: Player){
+      return player.firstName.substr(0, 2) + ". " + player.lastName;
   }
 
 }

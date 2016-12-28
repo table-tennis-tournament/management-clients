@@ -1,7 +1,7 @@
-import {Match} from "./match"
+import {MatchDto} from "./match.dto"
 import {Table} from "./table"
 
 export class TableDto{
     table: Table
-    match: Match;
+    matchinfo: MatchDto;
 }
