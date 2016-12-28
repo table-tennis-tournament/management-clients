@@ -4,6 +4,7 @@ import {Group} from "./group"
 import {MatchType} from "./matchType"
 import {TableGroup} from "./tableGroup"
 import {MatchLight} from "./match.light"
+import {TableLight} from "./table.light"
 
 export class MatchDto {
     match: MatchLight;
@@ -12,5 +13,5 @@ export class MatchDto {
 	type: Type;
 	matchType: MatchType;
 	group: Group;
-	table: number;
+	table: TableLight;
 }
