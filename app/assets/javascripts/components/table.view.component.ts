@@ -35,7 +35,6 @@ export class TableViewComponent{
     getAllTablesSuccessful(tables: TableDto[]){
         this.tables = tables;
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-        
     }
 
     getAllTablesFailed(error){
@@ -43,11 +42,11 @@ export class TableViewComponent{
     }
 
     handleMatchChanged(match: MatchDto){
-        this.tables[match.tableNumber].matchinfo = match;
+        this.tables[match.table.id].matchinfo = match;
         this.openModalDialogForMatch(match);
     }
 
-    openModalDialogForMatch(match: Match){
+    openModalDialogForMatch(match: MatchDto){
         var firstTeam = this.matchToStringService.getPlayersNamesLong(match.team1);
         var secondTeam = this.matchToStringService.getPlayersNamesLong(match.team2);
         this.modal.alert()
@@ -55,9 +54,9 @@ export class TableViewComponent{
         .showClose(false)
         .isBlocking(true)
         .bodyClass("modal-content text-centering")
-        .title("Neues Spiel Tisch Nr. "+match.tableNumber)
+        .title("Neues Spiel Tisch Nr. "+match.table.tableNumber)
         .body(`<h4>`+ match.type.name +`</h4><br/>
-            <b>` + match.stage +`</b><br/><br/>
+            <b>` + match.matchType.name +`</b><br/><br/>
             `+ firstTeam +` <br/>
              <b>-</b> <br/> ` 
              + secondTeam +`<br/>`)
