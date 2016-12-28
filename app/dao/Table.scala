@@ -35,6 +35,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   private val groups = TableQuery[GroupTable]
   private val clubs = TableQuery[ClubTable]
   private val doubles = TableQuery[DoubleTable]
+  private val matchList = TableQuery[MatchListTable]
 
   def resetTriggerTable = {
     dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 0;""") map { result =>
@@ -88,18 +89,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def freeTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap {t =>
-      if(t.get.matchId.isDefined) {
-        getMatch(t.get.matchId.get) flatMap { m =>
-          val mNew = m.get.copy(ttTableId = None, isPlayed = true, isPlaying = false)
-          dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(mNew))) flatMap {r =>
-            val tNew = t.get.copy(matchId = None)
-            dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
-              true
-            }
+      Logger.debug("Table: " + t.toString)
+      getMatchOnTable(id) flatMap { m =>
+        val mNew = m.get.copy(ttTableId = None, isPlayed = true, isPlaying = false)
+        dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(mNew))) flatMap {r =>
+          val tNew = t.get.copy(matchId = None)
+          dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
+            true
           }
         }
-      } else {
-        Future.successful(false)
       }
     }
   }
@@ -386,6 +384,31 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def asGroup = column[Option[Long]]("as_group")
     def position = column[Int]("position")
 
-    def * = (id, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
+    def * = (id.?, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
+  }
+
+  def getMatchList = {
+    val mlF = dbConfigProvider.get.db.run(matchList.result)
+    mlF map {ml =>
+      ml.sortBy(_.position)
+    }
+  }
+
+  def setMatchList(ml: Seq[MatchList]) = {
+    val resF = ml map {mlEntry =>
+      dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
+    }
+    Future.sequence(resF) map {rList =>
+      rList
+    }
+  }
+
+  def delMatchList(ml: Seq[MatchList], id: Long) = {
+    val resF = ml map {mlEntry =>
+      dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
+    }
+    Future.sequence(resF) map { r =>
+      dbConfigProvider.get.db.run(matchList.filter(_.id === id).delete)
+    }
   }
 }

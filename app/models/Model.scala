@@ -128,7 +128,7 @@ case class Double(
 )
 
 case class MatchList(
-  id: Long,
+  id: Option[Long],
   matchId: Long,
   asGroup: Option[Long],
   position: Int

@@ -196,7 +196,7 @@ class TableController @Inject() (tables: Tables) extends Controller{
   }
 
   def unlockTable(id: Long) = Action.async {
-    tables.lockTTTable(id) map { r =>
+    tables.unlockTTTable(id) map { r =>
       if (r) Ok("OK")
       else NotFound("no Match on Table")
     }

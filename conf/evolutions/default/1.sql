@@ -14,7 +14,7 @@ CREATE TRIGGER player_update_trigger AFTER UPDATE ON player FOR EACH ROW UPDATE 
 CREATE TRIGGER player_insert_trigger AFTER INSERT ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;
 CREATE TRIGGER player_delete_trigger AFTER DELETE ON player FOR EACH ROW UPDATE triggers SET trigger_val = 1 where id = 2;
 ALTER TABLE tables ADD Tabl_isLocked INT;
-CREATE TABLE match_list (id INT PRIMARY KEY, match_id INT, as_group INT, position INT);
+CREATE TABLE match_list (id INT AUTO_INCREMENT PRIMARY KEY, match_id INT, as_group INT, position INT);
 
 
 # --- !Downs
