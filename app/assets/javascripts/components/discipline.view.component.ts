@@ -12,6 +12,7 @@ import {MatchService} from "../services/match.service"
 })
 export class DisciplineViewComponent{
     public tabs: DisciplineTab[];
+    
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
         this.matchService.getAllMatches().subscribe(this.handleAllMatches.bind(this));

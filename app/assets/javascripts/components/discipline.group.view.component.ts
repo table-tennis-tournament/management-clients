@@ -7,8 +7,6 @@ import {DisciplineGroup} from "../data/discipline.group"
 })
 export class DisciplineGroupViewComponent{
 
-    
-
      _group: DisciplineGroup;
     get group(): DisciplineGroup {
         return this._group;

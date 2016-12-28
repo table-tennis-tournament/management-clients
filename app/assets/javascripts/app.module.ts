@@ -36,6 +36,7 @@ import {APP_BASE_HREF} from "@angular/common";
 
 import {ModalModule} from "angular2-modal";
 import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
+import {DndModule} from "ng2-dnd";
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     MaterializeModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
+    DndModule.forRoot(),
     RouterModule.forRoot(routeConfig)
   ],
   declarations: [
