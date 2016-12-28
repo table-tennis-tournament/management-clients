@@ -15,8 +15,4 @@ export class MatchDto {
 	matchType: MatchType;
 	group: Group;
 	table: TableLight;
-	public get bgColor(): string {
-		console.log("get bg color: "+this.type.id);
-        return TypeColors.TYPE_COLORS[this.type.id];
-    }
 }
