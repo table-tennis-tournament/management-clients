@@ -90,18 +90,14 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def freeTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap {t =>
       Logger.debug("Table: " + t.toString)
-      if(t.get.matchId.isDefined) {
-        getMatch(t.get.matchId.get) flatMap { m =>
-          val mNew = m.get.copy(ttTableId = None, isPlayed = true, isPlaying = false)
-          dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(mNew))) flatMap {r =>
-            val tNew = t.get.copy(matchId = None)
-            dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
-              true
-            }
+      getMatchOnTable(id) flatMap { m =>
+        val mNew = m.get.copy(ttTableId = None, isPlayed = true, isPlaying = false)
+        dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(mNew))) flatMap {r =>
+          val tNew = t.get.copy(matchId = None)
+          dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
+            true
           }
         }
-      } else {
-        Future.successful(false)
       }
     }
   }
