@@ -26,9 +26,9 @@ GET     /table/:id/unlock               controllers.TableController.unlockTable(
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
 PUT     /matchlist/match/:id/:position  controllers.MatchListController.addMatch(id: Long, position: Int)
-# PUT     /matchlist/group                controllers.MatchListController.setGroup
+PUT     /matchlist/group/:id/:position  controllers.MatchListController.addGroup(id: Long, position: Int)
 DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
-# DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroupe(id:Long)
+DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket

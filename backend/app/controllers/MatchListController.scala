@@ -3,6 +3,7 @@ package controllers
 import com.google.inject.Inject
 import dao.Tables
 import models._
+import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -152,8 +153,25 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
       }
       val newMLAdded = newML ++ Seq(newMLEntry)
       tables.setMatchList(newMLAdded) map {result =>
-        Ok("added Match")
+        Ok("added match")
       }
+    }
+  }
+
+  def addGroup(id: Long, position: Int) = Action.async{
+    tables.getMatchesInGroup(id) flatMap { ml =>
+      val addML = ml map { m =>
+        MatchList(None, m.id, Some(id), position)
+      }
+      tables.getMatchList flatMap { oldML =>
+        val ml = oldML map { mlEntry =>
+          if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+        }
+        tables.setMatchList(ml ++ addML) map { res =>
+          Ok("added group")
+        }
+      }
+
     }
   }
 
@@ -164,7 +182,19 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
       }
       tables.delMatchList(newML, ml.filter(_.matchId == id).head.id.get) map {result =>
-        Ok("deleted Match")
+        Ok("deleted match")
+      }
+    }
+  }
+
+  def deleteGroup(id: Long) = Action.async{
+    tables.getMatchList flatMap {ml =>
+      val position = ml.filter(_.asGroup.getOrElse(0) == id).head.position
+      val newML = ml map {mlEntry =>
+        if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+      }
+      tables.delMatchListGroup(newML, id) map {result =>
+        Ok("deleted group")
       }
     }
   }
