@@ -46,6 +46,7 @@ export class DisciplineViewComponent{
             }
             var currentGroup = currentItemTab.groups[currentItem.group.id];
             currentGroup.matches.push(currentItem);
+            
             if(!allPlayerArray[currentItem.team1[0].id]){
                 currentGroup.players.push(currentItem.team1[0]);
                 allPlayerArray[currentItem.team1[0].id] = true;
