@@ -35,7 +35,6 @@ export class TableViewComponent{
     getAllTablesSuccessful(tables: TableDto[]){
         this.tables = tables;
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-        
     }
 
     getAllTablesFailed(error){

@@ -2,6 +2,7 @@ import {Component, Input} from "@angular/core";
 import {DisciplineTab} from "../data/discipline.tab"
 import {DisciplineGroup} from "../data/discipline.group"
 import {MatchDto} from "../data/match.dto"
+import {TypeColors} from "../data/typeColors"
 import {RandomMatchService} from "../services/random.match.service"
 import {MatchService} from "../services/match.service"
 
@@ -13,15 +14,6 @@ export class DisciplineViewComponent{
     public tabs: DisciplineTab[];
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
-        this.tabs = [];
-        this.tabs[0] = new DisciplineTab(1, "Herren B");
-        this.tabs[0].groups = this.getDisciplineGroups(27);
-        this.tabs[1] = new DisciplineTab(2, "Herren C");
-        this.tabs[1].groups = this.getDisciplineGroups(5);
-        this.tabs[2] = new DisciplineTab(3, "Herren D");
-        this.tabs[2].groups = this.getDisciplineGroups(2);
-        this.tabs[3] = new DisciplineTab(4, "Herren E");
-        this.tabs[3].groups = this.getDisciplineGroups(22);
         this.matchService.getAllMatches().subscribe(this.handleAllMatches.bind(this));
     }
 
@@ -41,16 +33,21 @@ export class DisciplineViewComponent{
             
             if(!currentItemTab.groups[currentItem.group.id]){
                 currentItemTab.groups[currentItem.group.id]=new DisciplineGroup();
-                currentItemTab.groups[currentItem.group.id].name = "Gruppe "+currentItem.group.name;
+                currentItemTab.groups[currentItem.group.id].name = "Gruppe " + currentItem.group.name;
+                currentItemTab.groups[currentItem.group.id].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
                 allPlayerArray = [];
             }
             var currentGroup = currentItemTab.groups[currentItem.group.id];
             currentGroup.matches.push(currentItem);
             
-            if(!allPlayerArray[currentItem.team1[0].id]){
-                currentGroup.players.push(currentItem.team1[0]);
-                allPlayerArray[currentItem.team1[0].id] = true;
+            var allPlayers = currentItem.team1.concat(currentItem.team2);
+            for(var playerIndex = 0; playerIndex < allPlayers.length; playerIndex++){
+                if(!allPlayerArray[allPlayers[playerIndex].id]){
+                    currentGroup.players.push(allPlayers[playerIndex]);
+                    allPlayerArray[allPlayers[playerIndex].id] = true;
+                }
             }
+            
         }
         this.tabs = this.clearTabList(tabList);
     }
@@ -76,13 +73,4 @@ export class DisciplineViewComponent{
         return cleanedResult;
     }
 
-    getDisciplineGroups(count: number): DisciplineGroup[]{
-        var result: DisciplineGroup[] = [];
-        for(var i=0; i< count; i++){
-            result[i] = new DisciplineGroup();
-            result[i].players = this.randomMatchService.getPlayers(4);
-        }
-        return result;
-    }
-   
 }

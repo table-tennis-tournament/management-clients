@@ -1,3 +1,5 @@
 <div class="collection">
-     <a *ngFor="let currentMatch of matches" class="collection-item blue darken-1 white-text">{{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}</a>
+     <a *ngFor="let currentMatch of matches" class="collection-item grey white-text">
+         <span *ngIf="currentMatch.team1[0]" >{{currentMatch.team1[0].lastName}}</span> - 
+         <span *ngIf="currentMatch.team2[0]" >{{currentMatch.team2[0].lastName}}</span></a>
 </div>
