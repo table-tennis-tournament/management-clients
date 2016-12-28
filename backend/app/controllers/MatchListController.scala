@@ -209,7 +209,15 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
       Future.sequence(x)
     }
     amiSeqF map {amiSeq =>
-      Ok(Json.toJson(amiSeq.headOption))      // TODO: do not read all matches
+      if (amiSeq.headOption.isDefined) {
+        if(amiSeq.head.matchList.asGroup.isDefined) {
+          Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
+        } else {
+          Ok(Json.toJson(Seq(amiSeq.head)))
+        }
+      } else {
+        Ok(Json.toJson(Seq.empty[MatchListInfo]))
+      }
     }
   }
 
