@@ -6,6 +6,9 @@ import {DisciplineGroup} from "../data/discipline.group"
     templateUrl : "assets/javascripts/views/discipline.group.view.component.html"
 })
 export class DisciplineGroupViewComponent{
+
+    
+
      _group: DisciplineGroup;
     get group(): DisciplineGroup {
         return this._group;
