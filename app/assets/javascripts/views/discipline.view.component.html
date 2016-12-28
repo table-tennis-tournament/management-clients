@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col s12">
+      <ul class="tabs"  materialize="tabs">
+        <li *ngFor="let currentTab of tabs" class="tab col s3"><a href="#{{currentTab.id}}">{{currentTab.name}}</a></li>
+      </ul>
+    </div>
+    <div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12">
+      <div class="row" *ngFor="let i of currentTab.rowCount" >
+			    <div *ngFor="let currentGroup of currentTab.groups | slice:(i*4):(i+1)*4" class="col s3">
+				    <group-view [group]="currentGroup"></group-view>
+		      </div>
+      </div>
+        <!--<group-view *ngFor="let currentGroup of {{currentTab.groups}}"  [group]="{{currentGroup}}"></group-view>-->
+        <!--<group-view [groups]="{{currentTab.groups}}"></group-view>-->
+    </div>
+  </div>

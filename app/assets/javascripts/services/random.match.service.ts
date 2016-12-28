@@ -56,6 +56,14 @@ export class RandomMatchService {
       return result;
   }
 
+  getRandomMatches(countOfMatches: number): Match[]{
+      var result = [];
+      for(var i = 0; i <countOfMatches; i++){
+          result.push(this.getRandomMatch());
+      }
+      return result;
+  }
+
   getRandomInt(min, max) {
     min= Math.ceil(min);
     max= Math.floor(max);
@@ -64,6 +72,14 @@ export class RandomMatchService {
 
     getPlayer(firstName: string, lastName: string, clubName: string): Player[]{
         return [new Player(firstName, lastName, new Club(clubName))];
+    }
+
+    getPlayers(count: number){
+        var result: Player[] = [];
+        for(var i= 0; i<count; i++){
+            result.push(this.getPlayer("Encrico", "Fussy", "TTC Mutschelbach")[0]);
+        }
+        return result;
     }
 
     getRandomType(): Type {

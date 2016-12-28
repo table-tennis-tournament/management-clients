@@ -1,4 +1,4 @@
-import {Match} from "../data/match"
+import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {Injectable} from "@angular/core"
 import {Http, Response, Headers, RequestOptions } from "@angular/http"
@@ -11,7 +11,7 @@ export class MatchService {
 
   constructor(private http: Http){}
 
-  getAllMatches(): Observable<Match[]>{
+  getAllMatches(): Observable<MatchDto[]>{
     return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }

@@ -47,3 +47,11 @@ span.circle {
 .text-bold{
     font-weight: bold;
 }
+
+.card.custom-padding{
+    padding:5px;
+}
+
+.without-margin{
+    margin-bottom:0px;
+}

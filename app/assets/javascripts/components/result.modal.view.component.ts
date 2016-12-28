@@ -22,7 +22,7 @@ export class CustomModalContext extends BSModalContext {
    <div class="container-fluid custom-modal-container">
           
             <div class="row modal-content">
-              <div align="center">
+              <div class="center-align">
                   <div [class.text-bold]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
                   - <br/>
                   <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>

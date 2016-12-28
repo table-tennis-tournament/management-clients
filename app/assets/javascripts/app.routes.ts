@@ -3,6 +3,7 @@
 import { Routes, RouterModule } from "@angular/router"
 import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
+import {SupervisorViewComponent} from "./components/supervisor.view.component"
 
 export const routeConfig:Routes = [
     {
@@ -12,6 +13,10 @@ export const routeConfig:Routes = [
     {
         path: "tableView",
         component: TableViewComponent
+    },
+    {
+        path: "supervisorView",
+        component: SupervisorViewComponent
     },
     {
         path: "",

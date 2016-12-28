@@ -6,7 +6,7 @@ import {RandomMatchService} from "../services/random.match.service"
 
 import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
-import {Match} from "../data/match"
+import {MatchDto} from "../data/match.dto"
 
 import { Overlay } from "angular2-modal";
 import { Modal } from "angular2-modal/plugins/bootstrap";
@@ -17,7 +17,7 @@ import { Modal } from "angular2-modal/plugins/bootstrap";
 })
 export class TableViewComponent{
 
-    public tables: Table[];
+    public tables: TableDto[];
     public rowCount: number[];
 
     constructor(private matchService:MatchService, private tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
@@ -33,13 +33,8 @@ export class TableViewComponent{
     }
 
     getAllTablesSuccessful(tables: TableDto[]){
-        this.tables = []
-        for(var i=0; i< tables.length; i++){
-            tables[i].table.match = this.randomMatchService.getRandomMatch();
-            this.tables.push(tables[i].table);
-        }
+        this.tables = tables;
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-        // this.tables = tableService.getRandomTables();
         
     }
 
@@ -47,8 +42,8 @@ export class TableViewComponent{
         console.log(error);
     }
 
-    handleMatchChanged(match: Match){
-        this.tables[match.tableNumber].match = match;
+    handleMatchChanged(match: MatchDto){
+        this.tables[match.tableNumber].matchinfo = match;
         this.openModalDialogForMatch(match);
     }
 
@@ -68,16 +63,4 @@ export class TableViewComponent{
              + secondTeam +`<br/>`)
         .open();
     }
-
-
-
-//    this.matchService = matchService;
-//         this.matches = [];
-//         this.matchService.getAllMatches().subscribe( matches =>{
-//                     this.tables = matches;
-//                     this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
-//                 }, 
-//                 err => {
-//                     console.log(err);
-//                 });
 }

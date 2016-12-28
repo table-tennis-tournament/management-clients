@@ -16,6 +16,7 @@ export class TableService {
   private lockTableUrl = "table/tableNumber/lock";
   private freeTableUrl = "table/tableNumber/free";
   private takeBackTableUrl = "table/tableNumber/free";
+  private unlockTableUrl = "table/tableNumber/unlock";
   public OnTableChanged: Observable<Match>;
   private tableObserver: any;
   
@@ -64,7 +65,8 @@ export class TableService {
   }
 
   handleWebSocketError(error){
-      console.log("on error received" + error);
+      console.log("on error received");
+      console.log(error);
   }
 
   handleWebSocketCompleted(){
@@ -77,11 +79,16 @@ export class TableService {
   }
 
   freeTable(tableId: number){
+      console.log("free table is called: "+ tableId);
       return this.http.get(this.replaceTableNumer(tableId, this.freeTableUrl))
   }
 
   lockTable(tableId: number): Observable<Response>{
       return this.http.get(this.replaceTableNumer(tableId, this.lockTableUrl))
+  }
+
+  unlockTable(tableId: number): Observable<Response>{
+      return this.http.get(this.replaceTableNumer(tableId, this.unlockTableUrl))
   }
 
   takeBackTable(tableId: number){
@@ -90,7 +97,7 @@ export class TableService {
 
   replaceTableNumer(tableNumber: number, url: string): string{
       var regEx = new RegExp("tableNumber");
-      return this.lockTableUrl.replace(regEx, tableNumber.toString());
+      return url.replace(regEx, tableNumber.toString());
   }
 
   

@@ -10,7 +10,7 @@
     <base href="/">
     <meta charset="utf-8">
         <title>Turniermanager</title>
-        <link rel="stylesheet" href="assets/stylesheets/main.css">
+        
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
         <link rel="stylesheet" href='@routes.Assets.versioned("lib/materialize-css/dist/css/materialize.min.css")'>
@@ -20,7 +20,8 @@
         <script type='text/javascript' src='@routes.Assets.versioned("lib/zone.js/dist/zone.js")'></script>
         <script type='text/javascript' src='@routes.Assets.versioned("lib/reflect-metadata/Reflect.js")'></script>
         <script type='text/javascript' src='@routes.Assets.versioned("lib/systemjs/dist/system.src.js")'></script>
-
+        <link rel="stylesheet" href="assets/stylesheets/main.css">
+        
         <script>   
 
             var map = {
@@ -28,7 +29,9 @@
                 '@@angular':'assets/lib/@@angular',
                 'rxjs':'assets/lib/rxjs',
                 'symbol-observable': 'assets/lib/symbol-observable',
-                'angular2-modal':'assets/lib/angular2-modal'
+                'angular2-modal':'assets/lib/angular2-modal',
+                "materialize-css": 'assets/lib/materialize-css',
+                "angular2-materialize": 'assets/lib/angular2-materialize'
             };
 
 
@@ -38,7 +41,9 @@
                 'angular2-modal':{defaultExtension: 'js', main: 'index.js'},
                 'angular2-modal/plugins/bootstrap': { main: 'index.js', defaultExtension: 'js' },
                 'assets/lib': {defaultExtension: 'js'},
-                'symbol-observable': {defaultExtension: 'js', main: 'index.js'}
+                'symbol-observable': {defaultExtension: 'js', main: 'index.js'},
+                'materialize-css': {'main': 'dist/js/materialize'},
+                'angular2-materialize': {'main': 'dist/index.js'}
             };
         var ngPackageNames = [
                 'common',
