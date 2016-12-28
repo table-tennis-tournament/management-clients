@@ -86,13 +86,13 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   }
 
   case class AllMatchInfo(
-                           ttMatch: TTMatch,
-                           player1: Seq[Player],
-                           player2: Seq[Player],
-                           table: Option[TTTable],
-                           matchType: MatchType,
-                           ttType: Type,
-                           group: Option[Group]
+    ttMatch: TTMatch,
+    player1: Seq[Player],
+    player2: Seq[Player],
+    table: Option[TTTable],
+    matchType: MatchType,
+    ttType: Type,
+    group: Option[Group]
   )
 
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {

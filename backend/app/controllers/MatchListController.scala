@@ -169,6 +169,18 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def getNext = Action{Ok("not implemented")}
+  def getNext = Action.async {
+    val amiSeqF = tables.getMatchList flatMap { ml =>
+      val x = ml map {mlEntry =>
+        tables.getMatch(mlEntry.matchId) flatMap { m =>
+          getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
+        }
+      }
+      Future.sequence(x)
+    }
+    amiSeqF map {amiSeq =>
+      Ok(Json.toJson(amiSeq.headOption))      // TODO: do not read all matches
+    }
+  }
 
 }
