@@ -175,6 +175,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def getMatchesInGroup(id: Long): Future[Seq[TTMatch]] = {
+    allMatches() map { ml =>
+      ml.filter(_.groupId.getOrElse(0) == id)
+    }
+  }
+
   def getMatchOnTable(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.ttTableId === id).result)
     matchF flatMap { m =>
@@ -409,6 +415,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
     Future.sequence(resF) map { r =>
       dbConfigProvider.get.db.run(matchList.filter(_.id === id).delete)
+    }
+  }
+
+  def delMatchListGroup(ml: Seq[MatchList], id: Long) = {
+    val resF = ml map {mlEntry =>
+      dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
+    }
+    Future.sequence(resF) map { r =>
+      val res = dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
     }
   }
 }
