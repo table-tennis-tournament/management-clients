@@ -42,7 +42,7 @@ object MatchFilter {
         case "GroupIdFilter" => JsSuccess(MatchFilterType(filterType, (json \ "filter").as[GroupIdFilter]))
         case "KindIdFilter" => JsSuccess(MatchFilterType(filterType, (json \ "filter").as[KindIdFilter]))
         case _ => {
-          Logger.info("error parsing JSON: " + filterType)
+          Logger.error("error parsing JSON: " + filterType)
           JsError()
         }
       }
@@ -61,7 +61,6 @@ case class PlayerIdFilter(playerIds: Seq[Long]) extends MatchFilter {
     val x = playerIds map {id =>
       matches.filter(m => m.player1Ids.contains(id) || m.player2Ids.contains(id))
     }
-    Logger.info("x: " + x.toString())
     x.foldLeft(Seq.empty[TTMatch])((a, b) => a.union(b))
   }
 }
