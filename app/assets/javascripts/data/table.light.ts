@@ -1,5 +1,5 @@
 export class TableLight{
     id: number;
-    tableNumber: number;
+    number: number;
     isLocked: boolean;
 }

@@ -2,6 +2,26 @@ export class TypeColors{
 
     constructor(){
         console.log("in Constructor");
+        TypeColors.TYPE_COLORS[1] = "amber darken-1";
+        TypeColors.TYPE_COLORS[2] = "orange";
+        TypeColors.TYPE_COLORS[3] = "light-green darken-1";
+        TypeColors.TYPE_COLORS[4] = "green";
+        TypeColors.TYPE_COLORS[5] = "red lighten-3";
+        TypeColors.TYPE_COLORS[6] = "pink";
+        TypeColors.TYPE_COLORS[7] = "grey";
+        TypeColors.TYPE_COLORS[8] = "grey darken-3";
+        TypeColors.TYPE_COLORS[9] = "blue darken-1";
+        TypeColors.TYPE_COLORS[10] = "indigo";
+        TypeColors.TYPE_COLORS[11] = "amber darken-1";
+        TypeColors.TYPE_COLORS[12] = "orange";
+        TypeColors.TYPE_COLORS[13] = "light-green darken-1";
+        TypeColors.TYPE_COLORS[14] = "green";
+        TypeColors.TYPE_COLORS[15] = "red lighten-3";
+        TypeColors.TYPE_COLORS[16] = "pink";
+        TypeColors.TYPE_COLORS[17] = "grey";
+        TypeColors.TYPE_COLORS[18] = "grey darken-3";
+        TypeColors.TYPE_COLORS[19] = "blue darken-1";
+        TypeColors.TYPE_COLORS[20] = "indigo";
         TypeColors.TYPE_COLORS[21] = "amber darken-1";
         TypeColors.TYPE_COLORS[22] = "orange";
         TypeColors.TYPE_COLORS[23] = "light-green darken-1";
