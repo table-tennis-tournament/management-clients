@@ -7,4 +7,5 @@ export class DisciplineGroup{
     matches: MatchDto[]= [];
     bgColor: string;
     textColor: string;
+    tableNumbers: number[]=[];
 }
