@@ -16,6 +16,7 @@ import scala.util.{Failure, Success, Try}
   * Created by jonas on 10.10.16.
   */
 class MatchController @Inject() (tables: Tables) extends Controller{
+  import models.MatchFilter._
 
   implicit val playerWrites = new Writes[Player] {
     def writes(player: Player) = Json.obj(
@@ -173,47 +174,13 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-
-  implicit val playerIdFilterWrites = Json.writes[PlayerIdFilter]
-  implicit val playerIdFilterReads = Json.reads[PlayerIdFilter]
-  implicit val typeIdFilterWrites = Json.writes[TypeIdFilter]
-  implicit val typeIdFilterReads = Json.reads[TypeIdFilter]
-  implicit val matchFilterWrites = new Writes[MatchFilter] {
-    override def writes(x: MatchFilter) = {
-      val y = x match {
-        case p: PlayerIdFilter => Json.toJson(p)
-        case t: TypeIdFilter => Json.toJson(t)
-      }
-      y
-    }
-  }
-  implicit val matchFilterTypeWrites = Json.writes[MatchFilterType]
-  implicit val matchFilterTypeReads = new Reads[MatchFilterType] {
-    override def reads(json: JsValue): JsResult[MatchFilterType] = {
-      val filterType = (json \ "filterType").as[String]
-      filterType match {
-        case "PlayerIdFilter" => JsSuccess(MatchFilterType(filterType, (json \ "filter").as[PlayerIdFilter]))
-        case "TypeIdFilter" => JsSuccess(MatchFilterType(filterType, (json \ "filter").as[TypeIdFilter]))
-        case _ => {
-          Logger.info("error parsing JSON: " + filterType)
-          JsError()
-        }
-      }
-    }
-  }
-
-
   def getFilteredMatchList = Action.async { request =>
+    val filterTypeList = request.body.asJson.get.as[Seq[MatchFilterType]]
     tables.allMatches() map { matches =>
-      val filters = Seq.empty[MatchFilterType] :+
-        MatchFilterType("PlayerIdFilter", PlayerIdFilter(Seq(100L, 99L))) :+
-        MatchFilterType("TypeIdFilter", TypeIdFilter(Seq(25L)))
-      val filterTypeList = Json.toJson(filters).as[Seq[MatchFilterType]]
       val filterList = filterTypeList map {ft => ft.filter}
       val fMatches = filterList map {f =>
         f.filterMatches(matches)
       }
-      Logger.info("fMatches: " + fMatches.toString)
       val res = fMatches.foldLeft(matches)((a, b) => a.intersect(b))
       Ok(res.toString)
     }
