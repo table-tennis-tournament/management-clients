@@ -7,13 +7,16 @@ import play.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success, Try}
 /**
   * Created by jonas on 10.10.16.
   */
 class MatchController @Inject() (tables: Tables) extends Controller{
+  import models.MatchFilter._
 
   implicit val playerWrites = new Writes[Player] {
     def writes(player: Player) = Json.obj(
@@ -168,6 +171,18 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       }
     } else {
       Future.successful(BadRequest("No JSON found"))
+    }
+  }
+
+  def getFilteredMatchList = Action.async { request =>
+    val filterTypeList = request.body.asJson.get.as[Seq[MatchFilterType]]
+    tables.allMatches() map { matches =>
+      val filterList = filterTypeList map {ft => ft.filter}
+      val fMatches = filterList map {f =>
+        f.filterMatches(matches)
+      }
+      val res = fMatches.foldLeft(matches)((a, b) => a.intersect(b))
+      Ok(res.toString)
     }
   }
 }
