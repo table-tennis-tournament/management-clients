@@ -7,6 +7,10 @@ import play.api.libs.json.{Json, Writes}
   */
 
 object PlayerModel {
+  implicit val clubWrites = Json.writes[Club]
+  implicit val clubReads = Json.reads[Club]
+  implicit val typeWrites = Json.writes[Type]
+  implicit val typeReads = Json.reads[Type]
   implicit val playerWrites = new Writes[Player] {
     def writes(player: Player) = Json.obj(
       "id" -> player.id,
@@ -14,7 +18,9 @@ object PlayerModel {
       "lastName" -> player.lastName,
       "ttr" -> player.ttr,
       "sex" -> player.sex,
-      "club" -> player.club
+      "club" -> player.club,
+      "hasMatches" -> player.hasMatches,
+      "types" -> player.types
     )
   }
 
@@ -24,8 +30,8 @@ object PlayerModel {
       "firstName" -> player.firstName,
       "lastName" -> player.lastName,
       "ttr" -> player.ttr,
-      "sex" -> player.sex
-      //"club" -> player.club
+      "sex" -> player.sex,
+      "clubId" -> player.clubId
     )
   }
 }
@@ -36,7 +42,9 @@ case class Player(
     lastName: String,
     ttr: Option[Int],
     sex: String,
-    club: String
+    club: Option[Club],
+    hasMatches: Boolean,
+    types: Seq[Type]
   )
 
 case class PlayerDAO(
