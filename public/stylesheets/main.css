@@ -5,7 +5,6 @@
 
 .numberCircle {
     border-radius: 50%;
-    
     width: 50px;
     height: 50px;
     padding: 4px;
@@ -13,7 +12,6 @@
     border: 2px solid #666;
     color: #666;
     text-align: center;
-
     font: 32px Arial, sans-serif;
 }
 
@@ -31,8 +29,6 @@ span.circle {
     width: 1.6em;
 }
 
-
-
 .custom-col {
     width: 20%;
     margin-left: auto;
@@ -40,18 +36,22 @@ span.circle {
     right: auto;
 }
 
-.text-centering{
+.text-centering {
     text-align: center;
 }
 
-.text-bold{
+.text-bold {
     font-weight: bold;
 }
 
-.card.custom-padding{
-    padding:5px;
+.card.custom-padding {
+    padding: 5px;
 }
 
-.without-margin{
-    margin-bottom:0px;
+.without-margin {
+    margin-bottom: 0px;
+}
+
+.minheigth {
+    min-height: 400px;
 }
