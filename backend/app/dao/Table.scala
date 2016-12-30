@@ -159,7 +159,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
             2)
         }
       }
-
   }
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
@@ -268,23 +267,35 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   // Players
 
-  val allPlayerInformation = for {
-    (p, c) <- player join clubs on(_.clubId === _.id)
-  } yield (p.id, p.firstName, p.lastName, p.ttr, p.sex, c.name)
+  def getPlayerFromPlayerDAO(p: PlayerDAO): Future[Player]= {
+    allMatches() flatMap {matches =>
+      val playerMatches = matches.filterNot(_.isPlayed).filterNot(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id))
+      val typeIds = (playerMatches map {m => m.typeId}).distinct
+      val typesFO = Future.sequence(typeIds map {t => getType(t)})
+      val typesF = typesFO map {_ map {_.get}}
+      typesF flatMap { t =>
+        val clubF = if(p.clubId.isDefined) getClub(p.clubId.get) else Future.successful(None)
+        clubF map { club =>
+          Player(p.id, p.firstName, p.lastName, p.ttr, p.sex, club, playerMatches.isDefinedAt(0), t)
+        }
+      }
+    }
+  }
 
   def allPlayer: Future[Seq[Player]] = {
-    dbConfigProvider.get.db.run(allPlayerInformation.result) map {p =>
-      p map (p => (Player.apply _).tupled(p))
+    dbConfigProvider.get.db.run(player.result) flatMap { ap =>
+      val x = ap map { p => getPlayerFromPlayerDAO(p)}
+      Future.sequence(x)
     }
   }
 
   def getPlayer(id: Long): Future[Option[Player]] = {
-    val playerF = dbConfigProvider.get.db.run(allPlayerInformation.filter(_._1 === id).result)
-    playerF map { p =>
+    val playerF = dbConfigProvider.get.db.run(player.filter(_.id === id).result)
+    playerF flatMap { p =>
       if(p.headOption.isDefined) {
-        Some((Player.apply _).tupled(p.head))
+        getPlayerFromPlayerDAO(p.head) map {Some(_)}
       } else {
-        None
+        Future.successful(None)
       }
     }
   }
@@ -295,6 +306,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def name = column[String]("Club_Name")
 
     def * = (id, name) <> (Club.tupled, Club.unapply _)
+  }
+
+  def getClub(id: Long): Future[Option[Club]] = {
+    dbConfigProvider.get.db.run(clubs.filter(_.id === id).result) map {_.headOption}
   }
 
   class PlayerTable(tag: Tag) extends Table[PlayerDAO](tag, "player") {
