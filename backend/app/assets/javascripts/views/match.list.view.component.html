@@ -1,5 +1,6 @@
-<div class="collection">
-     <a *ngFor="let currentMatch of matches" class="collection-item {{colorArray[currentMatch.matchinfo.type.id]}} white-text">
-         <span *ngIf="currentMatch.matchinfo.team1[0]" >{{currentMatch.matchinfo.team1[0].lastName}}</span> - 
-         <span *ngIf="currentMatch.matchinfo.team2[0]" >{{currentMatch.matchinfo.team2[0].lastName}}</span></a>
+<div class="collection minheigth" dnd-droppable (onDropSuccess)="transferDataSuccess($event)">
+    <a *ngFor="let currentMatch of matches" class="collection-item {{colorArray[currentMatch.matchinfo.type.id]}} white-text">
+
+        <span *ngIf="currentMatch.matchinfo.team1[0]">{{currentMatch.matchinfo.team1[0].lastName}}</span> -
+        <span *ngIf="currentMatch.matchinfo.team2[0]">{{currentMatch.matchinfo.team2[0].lastName}}</span></a>
 </div>

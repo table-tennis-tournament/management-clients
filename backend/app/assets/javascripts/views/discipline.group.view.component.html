@@ -1,25 +1,25 @@
 <div class="card {{group.bgColor}}">
     <div class="card-content">
         <span class="card-title">{{group.name}}<span class="circle right">2</span></span>
-            <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">perm_identity</i>Spieler</div>
-                    <div class="collapsible-body">
-                        <div class="collection">
-                            <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">{{currentPlayer.firstName}} {{currentPlayer.lastName}}</a>
-                        </div>
+        <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
+            <li dnd-draggable [dragEnabled]="true" [dragData]="group">
+                <div class="collapsible-header"><i class="material-icons">perm_identity</i>Spieler</div>
+                <div class="collapsible-body">
+                    <div class="collection">
+                        <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">{{currentPlayer.firstName}} {{currentPlayer.lastName}}</a>
                     </div>
-                </li>
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">view_list</i>Spiele</div>
-                    <div class="collapsible-body">
-                        <div class="collection">
-                            <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item">
+                </div>
+            </li>
+            <li>
+                <div class="collapsible-header"><i class="material-icons">view_list</i>Spiele</div>
+                <div class="collapsible-body">
+                    <div class="collection">
+                        <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
                                 {{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}  
                                 <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a>
-                        </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>

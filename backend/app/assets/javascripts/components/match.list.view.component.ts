@@ -28,4 +28,13 @@ export class MatchListComponent{
         console.log("error on get All matches");
         console.log(error);
     }
+
+    transferDataSuccess($event) {
+        console.log($event.dragData);
+        if($event.dragData.team1){
+            var matchListItem = new MatchListDto();
+            matchListItem.matchinfo = $event.dragData;
+            this.matches.push(matchListItem);
+        }
+    }
 }
