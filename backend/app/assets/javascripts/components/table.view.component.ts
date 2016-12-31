@@ -54,7 +54,7 @@ export class TableViewComponent{
         .showClose(false)
         .isBlocking(true)
         .bodyClass("modal-content text-centering")
-        .title("Neues Spiel Tisch Nr. "+match.table.tableNumber)
+        .title("Neues Spiel Tisch Nr. "+match.table.number)
         .body(`<h4>`+ match.type.name +`</h4><br/>
             <b>` + match.matchType.name +`</b><br/><br/>
             `+ firstTeam +` <br/>

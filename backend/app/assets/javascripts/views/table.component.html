@@ -1,11 +1,11 @@
 <div class="card {{bgColor}}" *ngIf="table.matchinfo">
     <div class="card-content {{textColor}} custom-padding" >
         <span class="card-title activator">
-                <h4>
-                    <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
+                <h4> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
                 {{table.matchinfo.type.name}}<span *ngIf="table.matchinfo.type.kind===2">-DO</span><i class="material-icons right">more_vert</i></h4>
         </span>
         <p class="center-align truncate">
+            <b *ngIf="table.table.isLocked">Tisch wird gesperrt.</b>
             <b>{{table.matchinfo.matchType.name}}</b><br/>
             {{firstOpponent}} <br/>
             {{secondOpponent}}
@@ -18,7 +18,8 @@
             <a href="javascript:void(0)" (click)="onFree()">Freimachen</a>
             <a href="javascript:void(0)" (click)="onResult()">Eingeben</a>
             <a href="javascript:void(0)" (click)="onTakeBack()">Zurücknehmen</a>
-            <a href="javascript:void(0)" (click)="onLock()">Sperren</a>
+            <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="onLock()">Sperren</a>
+            <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
         </div>    
     </div>
 </div>

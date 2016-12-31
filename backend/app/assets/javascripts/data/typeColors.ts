@@ -2,6 +2,7 @@ export class TypeColors{
 
     constructor(){
         console.log("in Constructor");
+        TypeColors.TYPE_COLORS[0] = "brown darken-4";
         TypeColors.TYPE_COLORS[1] = "amber darken-1";
         TypeColors.TYPE_COLORS[2] = "orange";
         TypeColors.TYPE_COLORS[3] = "light-green darken-1";

@@ -38,11 +38,18 @@ export class TableComponent implements IResultHandler{
         if(this._table.matchinfo){
             this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team1);
             this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team2);
-            this.bgColor =TypeColors.TYPE_COLORS[this._table.matchinfo.type.id];
-            this.textColor = this._table.matchinfo.type.kind ===2?"": "white-text";
+            this.setBgColorAndTextColorDependsOnType();
         }
         
     } 
+
+    setBgColorAndTextColorDependsOnType(){
+        if(this.table.matchinfo){
+            this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo.type.id];
+            this.textColor = this.table.matchinfo.type.kind ===2?"": "white-text";
+        }
+        
+    }
 
     onResult(){
         var dialog = this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.matchinfo, handler: this }, BSModalContext));
@@ -57,12 +64,17 @@ export class TableComponent implements IResultHandler{
     }
 
     onUnLock(){
-        this.table.table.isLocked = false;
-        this.tableService.unlockTable(this.table.table.id).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+        
+        this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
 
     onTakeBack(){
         this.tableService.takeBackTable(this.table.table.id).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+    }
+
+    unLockTableAfterRequestSuccessful(){
+        this.table.table.isLocked = false;
+        this.setBgColorAndTextColorDependsOnType();
     }
 
     freeTableAfterRequestSuccessfull(){
@@ -76,7 +88,8 @@ export class TableComponent implements IResultHandler{
     lockTableAfterRequestSuccessfull(){
         console.log("successful lock table request");
         this.table.table.isLocked = true;
-        this.table.matchinfo = null;
+        this.bgColor =TypeColors.TYPE_COLORS[0];
+        this.textColor = "white-text";
     }
 
     handleErrorsOnService(e){
