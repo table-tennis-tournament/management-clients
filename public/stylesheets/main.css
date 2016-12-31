@@ -55,3 +55,18 @@ span.circle {
 .minheigth {
     min-height: 400px;
 }
+
+.rotate-90{
+    transform: rotate(90deg);
+
+}
+
+.rotate-270{
+    transform: rotate(270deg);
+
+}
+
+.cut-text{
+    max-width: 100px;
+    text-overflow: ellipsis;
+}

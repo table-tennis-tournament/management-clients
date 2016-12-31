@@ -10,7 +10,7 @@ import {RandomMatchService} from "../services/random.match.service";
 })
 export class MatchListComponent{
 
-    public matches: MatchListDto[];
+    public matches: Array<MatchListDto>;
     public colorArray: string[];
 
     constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
@@ -35,6 +35,29 @@ export class MatchListComponent{
             var matchListItem = new MatchListDto();
             matchListItem.matchinfo = $event.dragData;
             this.matches.push(matchListItem);
+            this.matchListService.addMatchListItem(matchListItem.matchinfo.match.id, this.matches.length).subscribe(
+                e => console.log(e),
+                error =>console.log(error)
+            )
+        
         }
+    }
+
+    onUp(){
+        console.log("on up clicked");
+    }
+    onDown(){
+        console.log("on down clicked");
+    }
+
+    onDelete(index){
+        console.log("on delete"+ index);
+        var newIndex = this.matches.indexOf(index, 0);
+        if (index > -1) {
+            var itemToDelete = this.matches[index];
+            this.matchListService.deleteMatchListItem(itemToDelete).subscribe(x=>console.log(x));
+            this.matches.splice(newIndex, 1);
+        }
+        
     }
 }

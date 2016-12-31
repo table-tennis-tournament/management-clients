@@ -1,8 +1,8 @@
 <div class="card {{group.bgColor}}">
     <div class="card-content">
-        <span class="card-title">{{group.name}}<span class="circle right">2</span></span>
+        <span class="card-title"><span dnd-draggable [dragEnabled]="true" [dragData]="group">{{group.name}}</span><span class="circle right">2</span></span>
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
-            <li dnd-draggable [dragEnabled]="true" [dragData]="group">
+            <li >
                 <div class="collapsible-header"><i class="material-icons">perm_identity</i>Spieler</div>
                 <div class="collapsible-body">
                     <div class="collection">
