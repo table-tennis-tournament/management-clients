@@ -1,6 +1,6 @@
 // ====== ./app/app.module.ts ======
 // Imports
-import { NgModule }       from "@angular/core"
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA }       from "@angular/core"
 import { BrowserModule }  from "@angular/platform-browser"
 import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
@@ -21,6 +21,7 @@ import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.c
 import {MatchListComponent} from "./components/match.list.view.component"
 import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
+import {DisciplineFinalViewComponent} from "./components/discipline.final.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -62,8 +63,10 @@ import {DndModule} from "ng2-dnd";
     MatchFilterComponent,
     MatchFilterCriteriaComponent,
     MatchListComponent,
+    DisciplineFinalViewComponent,
     DisciplineViewComponent,
     DisciplineGroupViewComponent,
+    
     TableComponent
   ],
   providers: [
@@ -77,7 +80,7 @@ import {DndModule} from "ng2-dnd";
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent],
-  entryComponents: [ CustomModal ]
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule {
     // Module class
