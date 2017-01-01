@@ -191,6 +191,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId)
   }
 
+  def startMatch(matchId: Long, tableId: Long): Future[Boolean] = {
+    getMatch(matchId) flatMap { m =>
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(
+            toMatchDAO(m.get.copy(isPlaying = true, ttTableId = Some(tableId))))) map { result =>
+        true
+      }
+    }
+  }
+
   def getMatch(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.id === id).result)
     matchF flatMap { m =>

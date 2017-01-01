@@ -129,15 +129,17 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
           }
           Future.sequence(x)
         }
-        amiSeqF map {amiSeq =>
+        amiSeqF flatMap {amiSeq =>
           if (amiSeq.headOption.isDefined) {
             if(amiSeq.head.matchList.asGroup.isDefined) {
-              Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
+              Future.successful(Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup))))
             } else {
-              Ok(Json.toJson(Seq(amiSeq.head)))
+              tables.startMatch(amiSeq.head.ttMatch.ttMatch.id, freeTable.get.id) map { result =>
+                Ok(Json.toJson(Seq(amiSeq.head)))
+              }
             }
           } else {
-            Ok(Json.toJson(Seq.empty[MatchListInfo]))
+            Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
           }
         }
       } else {
