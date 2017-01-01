@@ -67,8 +67,10 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
       }
       val newMLAdded = newML ++ Seq(newMLEntry)
-      tables.setMatchList(newMLAdded) map {result =>
-        Ok("added match")
+      tables.setMatchList(newMLAdded) flatMap {result =>
+        tables.getMatchList map { ml =>
+          Ok(Json.toJson(ml.filter(_.matchId == id).headOption))
+        }
       }
     }
   }
@@ -82,8 +84,10 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         val ml = oldML map { mlEntry =>
           if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
         }
-        tables.setMatchList(ml ++ addML) map { res =>
-          Ok("added group")
+        tables.setMatchList(ml ++ addML) flatMap { res =>
+          tables.getMatchList map { ml =>
+            Ok(Json.toJson(ml.filter(_.asGroup == Some(id))))
+          }
         }
       }
 
