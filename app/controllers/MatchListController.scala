@@ -132,6 +132,10 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         amiSeqF flatMap {amiSeq =>
           if (amiSeq.headOption.isDefined) {
             if(amiSeq.head.matchList.asGroup.isDefined) {
+              val matchIds = amiSeq map {ml =>
+                ml.ttMatch.ttMatch.id
+              }
+              tables.startGroup(matchIds, freeTable.get.id)
               Future.successful(Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup))))
             } else {
               tables.startMatch(amiSeq.head.ttMatch.ttMatch.id, freeTable.get.id) map { result =>
