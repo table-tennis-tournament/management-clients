@@ -78,6 +78,31 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     dbConfigProvider.get.db.run(ttTables.filter(_.name > 0).sortBy(_.name.asc).result)
   }
 
+  def getFreeTables(): Future[Seq[TTTable]] = {
+    allTTTables() flatMap {ttTables =>
+      val x = ttTables map {t =>
+        getMatchOnTable(t.id) map { m =>
+          if(m.isDefined) Some(t) else None
+        }
+      }
+      Future.sequence(x) map { ttTables =>
+        ttTables.filter(_.isDefined) map (_.get)
+      }
+    }
+  }
+
+  def getFreeTable(): Future[Option[TTTable]] = getFreeTable(Seq.empty[Long])
+
+  def getFreeTable(tableIds: Seq[Long]): Future[Option[TTTable]] = {
+    getFreeTables() map {freeTables =>
+      if(tableIds.isEmpty) {
+        freeTables.headOption
+      } else {
+        freeTables.filter(t => tableIds.contains(t.id)).headOption
+      }
+    }
+  }
+
   def getTTTable(id: Option[Long]): Future[Option[TTTable]] = if(id.isDefined) getTTTable(id.get) else Future.successful(None)
 
   def getTTTable(id: Long): Future[Option[TTTable]] = {
@@ -439,6 +464,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
     Future.sequence(resF) map { r =>
       val res = dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
+    }
+  }
+
+  def startMatch(ttMatch: TTMatch) = {
+    dbConfigProvider.get.db.run(matches.filter(_.id === ttMatch.id).result) flatMap { m =>
+      val newMatch = toMatchDAO(ttMatch).copy(isPlaying = true, ttTableId = ttMatch.ttTableId)
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(newMatch)) map {result =>
+        ttMatch.ttTableId
+      }
     }
   }
 }

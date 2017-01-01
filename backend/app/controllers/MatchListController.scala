@@ -8,6 +8,7 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+import scala.None
 import scala.concurrent.Future
 
 /**
@@ -91,7 +92,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   def deleteMatch(id: Long) = Action.async{
     tables.getMatchList flatMap {ml =>
-      val position = ml.filter(_.matchId == id).head.position
+      val position = ml.filter(_.id == id).head.position
       val newML = ml map {mlEntry =>
         if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
       }
@@ -114,25 +115,30 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   }
 
   def getNext = Action.async {
-    val amiSeqF = tables.getMatchList flatMap { ml =>
-      val x = ml map {mlEntry =>
-        tables.getMatch(mlEntry.matchId) flatMap { m =>
-          getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
+    tables.getFreeTable() flatMap {freeTable =>
+      if(freeTable.isDefined) {
+        val amiSeqF = tables.getMatchList flatMap { ml =>
+          val x = ml map {mlEntry =>
+            tables.getMatch(mlEntry.matchId) flatMap { m =>
+              getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
+            }
+          }
+          Future.sequence(x)
         }
-      }
-      Future.sequence(x)
-    }
-    amiSeqF map {amiSeq =>
-      if (amiSeq.headOption.isDefined) {
-        if(amiSeq.head.matchList.asGroup.isDefined) {
-          Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
-        } else {
-          Ok(Json.toJson(Seq(amiSeq.head)))
+        amiSeqF map {amiSeq =>
+          if (amiSeq.headOption.isDefined) {
+            if(amiSeq.head.matchList.asGroup.isDefined) {
+              Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
+            } else {
+              Ok(Json.toJson(Seq(amiSeq.head)))
+            }
+          } else {
+            Ok(Json.toJson(Seq.empty[MatchListInfo]))
+          }
         }
       } else {
-        Ok(Json.toJson(Seq.empty[MatchListInfo]))
+        Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
       }
     }
   }
-
 }

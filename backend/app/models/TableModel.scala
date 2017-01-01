@@ -7,6 +7,8 @@ import play.api.libs.json.{Json, Writes}
   */
 
 object TableModel {
+  import models.PlayerModel._
+
   implicit val playerWrites = new Writes[Player] {
     def writes(player: Player) = Json.obj(
       "id" -> player.id,
