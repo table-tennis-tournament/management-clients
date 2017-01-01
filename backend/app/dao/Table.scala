@@ -200,6 +200,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def startGroup(matchIds: Seq[Long], tableId: Long): Future[Boolean] = {
+    val result = matchIds map { mId =>
+      startMatch(mId, tableId)
+    }
+    Future.sequence(result) map {r => r.foldRight(true)((a,b) => a && b)}
+  }
+
   def getMatch(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.id === id).result)
     matchF flatMap { m =>
