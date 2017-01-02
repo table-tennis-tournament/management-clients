@@ -21,7 +21,7 @@ import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.c
 import {MatchListComponent} from "./components/match.list.view.component"
 import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
-import {DisciplineFinalViewComponent} from "./components/discipline.final.view.component"
+import { StageViewComponent } from "./components/stage.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -63,10 +63,9 @@ import {DndModule} from "ng2-dnd";
     MatchFilterComponent,
     MatchFilterCriteriaComponent,
     MatchListComponent,
-    DisciplineFinalViewComponent,
     DisciplineViewComponent,
     DisciplineGroupViewComponent,
-    
+    StageViewComponent,
     TableComponent
   ],
   providers: [

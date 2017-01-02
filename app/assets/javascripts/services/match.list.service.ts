@@ -27,7 +27,7 @@ export class MatchListService {
 
     deleteMatchListItem(itemToDelete: MatchListDto): Observable<any>{
         var regEx = new RegExp("itemId");
-        var url = this.deleteMatchListItemUrl.replace(regEx, itemToDelete.matchListItem.id.toString());
+        var url = this.deleteMatchListItemUrl.replace(regEx, itemToDelete.matchinfo.match.id.toString());
         return this.http.delete(url).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
     }

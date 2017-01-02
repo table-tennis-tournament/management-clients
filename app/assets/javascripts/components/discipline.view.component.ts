@@ -1,6 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {DisciplineTab} from "../data/discipline.tab"
 import {DisciplineGroup} from "../data/discipline.group"
+import {DisciplineStage} from "../data/discipline.stage"
 import {MatchDto} from "../data/match.dto"
 import {TypeColors} from "../data/typeColors"
 import {RandomMatchService} from "../services/random.match.service"
@@ -22,15 +23,32 @@ export class DisciplineViewComponent{
         console.log("inside handle all matches");
         var tabList: DisciplineTab[] = [];
         var allPlayerArray: boolean[] = [];
+        var allStages:number[] = [];
+        var currentIndex:number = 0;
         for(var index=0; index < result.length; index++){
             var currentItem = result[index];
-            if(!currentItem.group){
-                continue;
-            }
+           
             if(!tabList[currentItem.type.id]){
-                tabList[currentItem.type.id] = new DisciplineTab(currentItem.type.id, currentItem.type.name);
+                allStages = [];
+                currentIndex = 0;
+                tabList[currentItem.type.id] = new DisciplineTab(currentItem.type.id, currentItem.type.name, currentItem.type.kind);
             }
             var currentItemTab = tabList[currentItem.type.id];
+
+             if(!currentItem.group){
+                 var localIndex = allStages[currentItem.matchType.name];
+                 var currentStage = currentItemTab.stages[localIndex];
+                 if(!currentStage){
+                     allStages[currentItem.matchType.name] = currentIndex;
+                     currentItemTab.stages[currentIndex] = new DisciplineStage();
+                     currentItemTab.stages[currentIndex].name = currentItem.matchType.name;
+                     currentStage = currentItemTab.stages[currentIndex];
+                     currentIndex++;
+                 }
+                 
+                 currentStage.matches.push(currentItem);
+                continue;
+            }
             
             if(!currentItemTab.groups[currentItem.group.id]){
                 currentItemTab.groups[currentItem.group.id]=new DisciplineGroup();
