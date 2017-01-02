@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
 
 @Component({
-    selector: "final-view",
+    selector: "test-view",
     templateUrl : "assets/javascripts/views/discipline.final.view.component.html"
 })
 export class DisciplineFinalViewComponent{

@@ -39,7 +39,6 @@ export class MatchListComponent{
                 e => console.log(e),
                 error =>console.log(error)
             )
-        
         }
     }
 
@@ -55,8 +54,8 @@ export class MatchListComponent{
         var newIndex = this.matches.indexOf(index, 0);
         if (index > -1) {
             var itemToDelete = this.matches[index];
-            this.matchListService.deleteMatchListItem(itemToDelete).subscribe(x=>console.log(x));
             this.matches.splice(newIndex, 1);
+            this.matchListService.deleteMatchListItem(itemToDelete).subscribe(x=>console.log(x));
         }
         
     }

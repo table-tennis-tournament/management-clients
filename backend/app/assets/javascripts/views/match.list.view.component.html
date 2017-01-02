@@ -16,8 +16,8 @@
     <ul class="collection minheigth" dnd-droppable (onDropSuccess)="transferDataSuccess($event)">
         <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item {{colorArray[currentMatch.matchinfo.type.id]}} white-text">
             
-                    <span class="cut-text" *ngIf="currentMatch.matchinfo.team1[0]">{{currentMatch.matchinfo.team1[0].lastName}} - {{currentMatch.matchinfo.team2[0].lastName}}</span>
-                    <!--<span *ngIf="currentMatch.matchinfo.team2[0]"></span>-->
+                    <span class="cut-text" *ngIf="currentMatch.matchinfo.team1[0]">{{currentMatch.matchinfo.team1[0].lastName}} - </span>
+                    <span *ngIf="currentMatch.matchinfo.team2[0]">{{currentMatch.matchinfo.team2[0].lastName}}</span>
             
                 <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons right white-text" >close</i></a>
                 <a href="javascript:void(0)" (click)="onUp(i)"><i class="material-icons right white-text rotate-270"  >play_arrow</i></a>
