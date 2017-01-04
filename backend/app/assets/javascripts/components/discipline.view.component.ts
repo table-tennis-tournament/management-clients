@@ -54,13 +54,16 @@ export class DisciplineViewComponent{
                 currentItemTab.groups[currentItem.group.id]=new DisciplineGroup();
                 currentItemTab.groups[currentItem.group.id].name = "Gruppe " + currentItem.group.name;
                 currentItemTab.groups[currentItem.group.id].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
+                currentItemTab.groups[currentItem.group.id].tableNumbers = [];
                 allPlayerArray = [];
             }
             var currentGroup = currentItemTab.groups[currentItem.group.id];
             currentGroup.matches.push(currentItem);
 
             if(currentItem.table){
-                currentGroup.tableNumbers.push(currentItem.table.number);
+                if(currentItem.match.isPlayed === false){
+                    currentGroup.tableNumbers.push(currentItem.table.number);
+                }
             }
             
             var allPlayers = currentItem.team1.concat(currentItem.team2);
@@ -73,6 +76,7 @@ export class DisciplineViewComponent{
             
         }
         this.tabs = this.clearTabList(tabList);
+        this.tabs[0].isActive = true;
     }
 
     clearTabList(tabListToClean: DisciplineTab[]): DisciplineTab[]{
@@ -94,6 +98,30 @@ export class DisciplineViewComponent{
            } 
         });
         return cleanedResult;
+    }
+
+    onCollapseAll(){
+        this.setValuesOnTabs(false, false);
+    }
+
+    onOpenPlayers(){
+        this.setValuesOnTabs(false, true);
+    }
+
+    onOpenAll(){
+        this.setValuesOnTabs(true, true);
+    }
+
+    setValuesOnTabs(isMatchActive: boolean, isPlayerActive:boolean){
+        console.log("start iterating ...");
+        for(var index = 0; index < this.tabs.length; index++){
+            this.tabs[index].groups.forEach(function(element){
+                element.isMatchActive =true;
+                element.isPlayerActive = true;
+            });
+        }
+        console.log("end iterating ...");
+        this.tabs = this.tabs;
     }
 
 }

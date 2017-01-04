@@ -67,7 +67,6 @@ span.circle {
 }
 
 .cut-text{
-    max-width: 100px;
     text-overflow: ellipsis;
 }
 
