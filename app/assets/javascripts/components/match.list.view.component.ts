@@ -10,7 +10,7 @@ import {RandomMatchService} from "../services/random.match.service";
 })
 export class MatchListComponent{
 
-    public matches: Array<MatchListDto>;
+    public matches: Array<any>;
     public colorArray: string[];
 
     constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
@@ -39,6 +39,14 @@ export class MatchListComponent{
                 e => console.log(e),
                 error =>console.log(error)
             )
+        }
+        if($event.dragData.matches){
+            var matchListItem = new MatchListDto();
+             this.matches.push($event.dragData);
+            this.matchListService.addGroupListItem($event.dragData.matches[0].group.id, this.matches.length).subscribe(
+                e => console.log(e),
+                error =>console.log(error)
+            );
         }
     }
 

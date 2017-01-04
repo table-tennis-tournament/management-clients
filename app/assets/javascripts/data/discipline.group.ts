@@ -8,4 +8,6 @@ export class DisciplineGroup{
     bgColor: string;
     textColor: string;
     tableNumbers: number[]=[];
+    isPlayerActive:boolean = true;
+    isMatchActive:boolean = false;
 }
