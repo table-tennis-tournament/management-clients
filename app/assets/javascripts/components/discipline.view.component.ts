@@ -16,6 +16,11 @@ export class DisciplineViewComponent{
     
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
+        this.onFilterSelected();
+        console.log("start discipline view");
+    }
+
+    onFilterSelected(){
         this.matchService.getAllMatches().subscribe(this.handleAllMatches.bind(this));
     }
 
@@ -89,6 +94,8 @@ export class DisciplineViewComponent{
         });
         return cleanedResult;
     }
+
+    
 
     getCleanedGroups(groupsToClean: DisciplineGroup[]){
         var cleanedResult: DisciplineGroup[] = [];

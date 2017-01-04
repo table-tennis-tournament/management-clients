@@ -1,6 +1,6 @@
  <div class="fixed-action-btn horizontal">
-    <a class="btn-floating btn-large blue">
-      <i class="large material-icons">search</i>
+    <a class="btn-floating btn-large blue" (click)="onFilterSelected()">
+      <i class="large material-icons" >search</i>
     </a>
     <ul>
       <li><a class="btn-floating green" href="javascript:void(0)" (click)="onCollapseAll()"><i class="material-icons">reorder</i></a></li>
@@ -9,6 +9,7 @@
       
     </ul>
 </div>
+
 <div class="row">
     <div class="col s12">
       <ul class="tabs"  materialize="tabs">
