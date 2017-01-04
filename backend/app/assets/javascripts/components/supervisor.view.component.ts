@@ -16,4 +16,7 @@ import { Modal } from "angular2-modal/plugins/bootstrap";
 })
 export class SupervisorViewComponent{
 
+  constructor(){
+    console.log("start supervisor");
+  }
 }
