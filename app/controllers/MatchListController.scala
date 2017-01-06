@@ -96,7 +96,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   def deleteMatch(id: Long) = Action.async{
     tables.getMatchList flatMap {ml =>
-      val position = ml.filter(_.id == id).head.position
+      val position = ml.filter(_.matchId == id).head.position
       val newML = ml map {mlEntry =>
         if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
       }
@@ -119,36 +119,42 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   }
 
   def getNext = Action.async {
-    tables.getFreeTable() flatMap {freeTable =>
-      if(freeTable.isDefined) {
-        val amiSeqF = tables.getMatchList flatMap { ml =>
-          val x = ml map {mlEntry =>
-            tables.getMatch(mlEntry.matchId) flatMap { m =>
-              getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
-            }
-          }
-          Future.sequence(x)
-        }
-        amiSeqF flatMap {amiSeq =>
-          if (amiSeq.headOption.isDefined) {
-            if(amiSeq.head.matchList.asGroup.isDefined) {
-              val matchIds = amiSeq map {ml =>
-                ml.ttMatch.ttMatch.id
-              }
-              tables.startGroup(matchIds, freeTable.get.id)
-              Future.successful(Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup))))
-            } else {
-              tables.startMatch(amiSeq.head.ttMatch.ttMatch.id, freeTable.get.id) map { result =>
-                Ok(Json.toJson(Seq(amiSeq.head)))
-              }
-            }
-          } else {
-            Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
-          }
-        }
-      } else {
-        Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
-      }
-    }
+    Future.successful(Ok("not implemented"))
+
   }
+//    tables.getFreeTable() flatMap {freeTable =>
+//      if(freeTable.isDefined) {
+//        val amiSeqF = tables.getMatchList flatMap { ml =>
+//          val x = ml map {mlEntry =>
+//            tables.getMatch(mlEntry.matchId) flatMap { m =>
+//              getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
+//            }
+//          }
+//          Future.sequence(x)
+//        }
+//        amiSeqF flatMap {amiSeq =>
+//          if (amiSeq.headOption.isDefined) {
+//            if(amiSeq.head.matchList.asGroup.isDefined) {
+//              val matchIds = amiSeq map {ml =>
+//                ml.ttMatch.ttMatch.id
+//              }
+//              tables.startGroup(matchIds, freeTable.get.id) flatMap {r1 =>
+//                deleteGroup(amiSeq.head.matchList.asGroup.get) map {r2 =>
+//                  Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
+//                }
+//              }
+//            } else {
+//              tables.startMatch(amiSeq.head.ttMatch.ttMatch.id, freeTable.get.id) map { result =>
+//                Ok(Json.toJson(Seq(amiSeq.head)))
+//              }
+//            }
+//          } else {
+//            Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
+//          }
+//        }
+//      } else {
+//        Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
+//      }
+//    }
+//  }
 }
