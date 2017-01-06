@@ -20,7 +20,7 @@
           <div class="col" *ngFor="let currentStage of currentTab.stages">
             <ul class="collection with-header">
               <li class="collection-header"><h4>{{currentStage.name}}</h4></li>
-              <li class="collection-item" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+              <li class="collection-item {{colors[currentMatch.type.id]}}" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
                   <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}} - </span>
                       <span *ngIf="currentMatch.team2[0]">{{currentMatch.team2[0].lastName}}</span>
               </li>
