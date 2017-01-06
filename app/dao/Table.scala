@@ -105,6 +105,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def getTTTable(id: Option[Long]): Future[Option[TTTable]] = if(id.isDefined) getTTTable(id.get) else Future.successful(None)
 
+  def getTTTableFromName(name: Int): Future[TTTable] = {
+    val tableF = dbConfigProvider.get.db.run(ttTables.filter(_.name === name).result)
+    tableF map { t =>
+      t.head
+    }
+  }
+
   def getTTTable(id: Long): Future[Option[TTTable]] = {
     val tableF = dbConfigProvider.get.db.run(ttTables.filter(_.id === id).result)
     tableF map { t =>
