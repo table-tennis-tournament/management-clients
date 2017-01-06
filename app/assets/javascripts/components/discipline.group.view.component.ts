@@ -11,6 +11,7 @@ export class DisciplineGroupViewComponent{
 
     typeColors: string[];
     currentTableInput:any;
+    showInput:boolean = true;
 
     constructor(private matchListService: MatchListService){
         this.typeColors = TypeColors.TYPE_COLORS;
@@ -23,6 +24,10 @@ export class DisciplineGroupViewComponent{
 
     @Input("group")
     set group(value: DisciplineGroup){
+        this.showInput = true;
+        if(value.tableNumbers){
+            this.showInput = value.tableNumbers.length ===0;
+        }
         this._group = value;
     } 
 
