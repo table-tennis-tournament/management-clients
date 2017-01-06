@@ -28,6 +28,7 @@ GET     /matchlist/all                  controllers.MatchListController.getAllMa
 GET     /matchlist/next                 controllers.MatchListController.getNext
 PUT     /matchlist/match/:id/:position  controllers.MatchListController.addMatch(id: Long, position: Int)
 PUT     /matchlist/group/:id/:position  controllers.MatchListController.addGroup(id: Long, position: Int)
+PUT     /matchlist/grouptotable/:groupId/:tableName     controllers.MatchListController.setGroupToTable(groupId: Long, tableName: Int)
 DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
 DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
 
