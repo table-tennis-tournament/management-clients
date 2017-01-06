@@ -12,7 +12,8 @@ export class MatchListService {
     private addMatchListItemUrl = "matchlist/match/matchId/position ";
     private deleteGroupListItemUrl = "matchlist/deleteGroup/itemId ";
     private addGroupListItemUrl = "matchlist/group/groupId/position ";
-    
+    private addGroupToTableUrl = "/matchlist/grouptotable/groupId/tableNumber ";
+      
     constructor(private http: Http){}
 
     getNextMatch(): Observable<MatchListDto>{
@@ -50,6 +51,17 @@ export class MatchListService {
         var url = this.addGroupListItemUrl.replace(regEx, groupId.toString());
         regEx = new RegExp("position");
         url = url.replace(regEx, position.toString());
+        return this.http.put(url, JSON.stringify(""), {headers: headers})
+             .map(res => res.json());
+    }
+
+    setGroupOnTable(groupId: number, tableNumber:number):Observable<any>{
+         var headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        var regEx = new RegExp("groupId");
+        var url = this.addGroupToTableUrl.replace(regEx, groupId.toString());
+        regEx = new RegExp("tableNumber");
+        url = url.replace(regEx, tableNumber.toString());
         return this.http.put(url, JSON.stringify(""), {headers: headers})
              .map(res => res.json());
     }

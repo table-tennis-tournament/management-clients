@@ -27,13 +27,12 @@ export class DisciplineGroupViewComponent{
     } 
 
     addTableClicked(){
-        if (isNaN(this.currentTableInput)) 
-        {
+        if(isNaN(this.currentTableInput)){
             alert("Eingabe muss Nummer sein.");
             return;
         }
         if(this.currentTableInput){
-            console.log(this.currentTableInput);
+            this.matchListService.setGroupOnTable(this.group.matches[0].group.id, this.currentTableInput).subscribe(x=>alert(x), error=>console.log(error));
         }
 
     }
