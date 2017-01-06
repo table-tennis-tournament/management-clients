@@ -120,12 +120,16 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   def setGroupToTable(groupId: Long, tableName: Int) = Action.async{
     tables.getTTTableFromName(tableName) flatMap {table =>
-      tables.allMatches() map {matches =>
-        val matchesInGroup = matches.filter(_.groupId == groupId)
-        matchesInGroup map { m =>
+      tables.allMatches() flatMap {matches =>
+        Logger.info("matches: " + matches.toString())
+        val matchesInGroup = matches.filter(_.groupId.getOrElse(0) == groupId)
+        val res = matchesInGroup map { m =>
           tables.startMatch(m.id, table.id)
         }
-        Ok("OK")
+        Future.sequence(res) map {r =>
+          Logger.info("result: " + r.toString() + " " + table.toString + " " + matchesInGroup.toString())
+          Ok("{}")
+        }
       }
     }
   }
