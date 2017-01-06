@@ -13,11 +13,12 @@ import {MatchService} from "../services/match.service"
 })
 export class DisciplineViewComponent{
     public tabs: DisciplineTab[];
+    public colors: string[];
     
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
         this.onFilterSelected();
-        console.log("start discipline view");
+        this.colors = TypeColors.TYPE_COLORS;
     }
 
     onFilterSelected(){
