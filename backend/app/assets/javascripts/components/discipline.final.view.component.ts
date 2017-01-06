@@ -8,6 +8,6 @@ export class DisciplineFinalViewComponent{
 
     
    constructor(){
-       console.log("Init discipline final view");
+       console.log("in constructor");
    }
 }

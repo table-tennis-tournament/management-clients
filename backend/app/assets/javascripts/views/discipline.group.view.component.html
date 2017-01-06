@@ -8,7 +8,10 @@
                 <div class="collapsible-header" [class.active]="group.isPlayerActive"><i class="material-icons">perm_identity</i>Spieler</div>
                 <div class="collapsible-body">
                     <div class="collection">
-                        <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">{{currentPlayer.firstName}} {{currentPlayer.lastName}}</a>
+                        <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
+                            {{currentPlayer.firstName}} {{currentPlayer.lastName}}
+                            <div *ngFor="let currentType of currentPlayer.types" class="{{typeColors[currentType.id]}} right square"></div>
+                        </a>
                     </div>
                 </div>
             </li>

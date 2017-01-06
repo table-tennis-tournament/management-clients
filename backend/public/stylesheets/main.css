@@ -29,6 +29,11 @@ span.circle {
     width: 1.6em;
 }
 
+.square {
+  width: 20px;
+  height: 20px;
+}
+
 .custom-col {
     width: 20%;
     margin-left: auto;
