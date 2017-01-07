@@ -47,7 +47,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def getMatchesByType(typeId: Long) = {
+  def getMatchesByType(typeId: Long) = Action.async {
     val matchesF = tables.allMatches()
     val x = matchesF map {matches =>
       matches map(ttMatch => getAllMatchInfo(ttMatch))
