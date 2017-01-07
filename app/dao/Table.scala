@@ -136,7 +136,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def lockTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap { t =>
-      val tNew = t.get.copy(isLocked = Some(true))
+      val tNew = t.get.copy(isLocked = Some(true), tableNumber = -t.get.tableNumber)
       dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
         true
       }
@@ -145,7 +145,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def unlockTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap { t =>
-      val tNew = t.get.copy(isLocked = Some(false))
+      val tNew = t.get.copy(isLocked = Some(false), tableNumber = -t.get.tableNumber)
       dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
         true
       }
