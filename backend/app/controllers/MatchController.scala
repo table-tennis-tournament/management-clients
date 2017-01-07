@@ -55,7 +55,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     val z = x map {y => Future.sequence(y)}
     val z2 = z.flatMap(z => z)
     z2 map {z =>
-      Ok(Json.toJson(z))
+      val m = z.filter(_.isDefined) map {z1 => z1.get}
+      Ok(Json.toJson(m.sortBy(_.ttMatch.id)))
     }
   }
 
