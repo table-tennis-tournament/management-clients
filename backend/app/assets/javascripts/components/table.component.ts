@@ -34,6 +34,7 @@ export class TableComponent implements IResultHandler{
 
     @Input("table")
     set table(value: TableDto){
+        console.log(value);
         this._table = value;
         if(this._table.matchinfo){
             this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team1);
