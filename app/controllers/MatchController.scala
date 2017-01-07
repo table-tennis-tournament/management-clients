@@ -108,4 +108,10 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       Ok(res.toString)
     }
   }
+
+  def getTypes = Action.async {
+    tables.allTypes map {types =>
+      Ok(Json.toJson(types))
+    }
+  }
 }
