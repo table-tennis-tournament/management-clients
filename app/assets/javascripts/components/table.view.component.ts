@@ -25,12 +25,15 @@ export class TableViewComponent{
         public modal: Modal, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
         console.log("table view constructor start");
         overlay.defaultViewContainer = vcRef;
-
-        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
-       
+        this.loadAllTables();
+        
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
+    }
+
+    loadAllTables(){
+        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
     }
 
     getAllTablesSuccessful(tables: TableDto[]){
@@ -43,10 +46,11 @@ export class TableViewComponent{
     }
 
     handleMatchChanged(match: MatchListDto[]){
-        if(match.length === 1){
-            this.tables[match[0].matchinfo.table.number].matchinfo = match[0].matchinfo;
-            this.openModalDialogForMatch(match[0].matchinfo);
-        }
+        this.loadAllTables();
+        // if(match.length === 1){
+        //     this.tables[match[0].matchinfo.table.number].matchinfo = match[0].matchinfo;
+        //     this.openModalDialogForMatch(match[0].matchinfo);
+        // }
         
     }
 
