@@ -21,6 +21,10 @@ export class DisciplineViewComponent{
         this.colors = TypeColors.TYPE_COLORS;
     }
 
+    onTabSelected(testNumber: number){
+        console.log("current value: " + testNumber);
+    }
+
     onFilterSelected(){
         this.matchService.getAllMatches().subscribe(this.handleAllMatches.bind(this));
     }
