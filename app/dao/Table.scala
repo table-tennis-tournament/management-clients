@@ -75,7 +75,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def allTTTables(): Future[Seq[TTTable]] = {
     Logger.info("all()")
-    dbConfigProvider.get.db.run(ttTables.filter(_.name > 0).sortBy(_.name.asc).result)
+    dbConfigProvider.get.db.run(ttTables.filterNot(_.name == 0).sortBy(_.name.asc).result)
   }
 
   def getFreeTables(): Future[Seq[TTTable]] = {
