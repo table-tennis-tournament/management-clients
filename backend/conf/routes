@@ -17,6 +17,8 @@ GET     /match/:id                      controllers.MatchController.getMatch(id:
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
 
+GET     /types/all                      controllers.MatchController.getTypes
+
 # TableController:
 GET     /table/all                      controllers.TableController.getAllTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
