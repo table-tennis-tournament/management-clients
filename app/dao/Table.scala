@@ -317,7 +317,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def getPlayerFromPlayerDAO(p: PlayerDAO): Future[Player]= {
     allMatches() flatMap {matches =>
-      val playerMatches = matches.filterNot(_.isPlayed).filterNot(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id))
+      val playerMatches = matches.filterNot(_.isPlayed).filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id))
       val typeIds = (playerMatches map {m => m.typeId}).distinct
       val typesFO = Future.sequence(typeIds map {t => getType(t)})
       val typesF = typesFO map {_ map {_.get}}
