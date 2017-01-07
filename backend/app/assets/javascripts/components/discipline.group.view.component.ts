@@ -31,9 +31,7 @@ export class DisciplineGroupViewComponent{
         this._group = value;
     } 
 
-    onTabSelected(testNumber: number){
-        console.log("current value: " + testNumber);
-    }
+    
 
     addTableClicked(){
         if(isNaN(this.currentTableInput)){

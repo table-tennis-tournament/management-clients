@@ -1,5 +1,6 @@
 import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
+import {Type} from "../data/type"
 import {Injectable} from "@angular/core"
 import {Http, Response, Headers, RequestOptions } from "@angular/http"
 import {Observable} from "rxjs/Rx";
@@ -7,6 +8,8 @@ import {Observable} from "rxjs/Rx";
 @Injectable()
 export class MatchService {
   private allMatchesUrl = "match/all";
+  private allTypesUrl = "types/all";
+  private getMatchesByTypeUrl = "match/typeid/typeIdValue";
   private addResultString = "match/matchId/result";
 
   constructor(private http: Http){}
@@ -23,6 +26,17 @@ export class MatchService {
     return this.http.post(url, resultToHandle);
   }
 
- 
+  getAllTypes(): Observable<Type[]>{
+    return this.http.get(this.allTypesUrl).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getMatchesByType(typeId: number): Observable<MatchDto>{
+    var regEx = new RegExp("typeIdValue");
+    var url = this.getMatchesByTypeUrl.replace(regEx, typeId.toString());
+        
+    return this.http.get(url).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
 
 }
