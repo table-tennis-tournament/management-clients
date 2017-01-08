@@ -6,7 +6,7 @@
         </span>
         <p class="center-align truncate">
             <b *ngIf="table.table.isLocked">Tisch wird gesperrt.</b>
-            <b>{{table.matchinfo.matchType.name}}</b><br/>
+            <b>{{table.matchinfo.matchType.name}}</b><b *ngIf="table.matchinfo.group">{{table.matchinfo.group.name}}</b><br/>
             {{firstOpponent}} <br/>
             {{secondOpponent}}
         </p>

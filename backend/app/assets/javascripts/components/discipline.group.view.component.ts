@@ -37,7 +37,7 @@ export class DisciplineGroupViewComponent{
             return;
         }
         if(this.currentTableInput){
-            this.matchListService.setGroupOnTable(this.group.matches[0].group.id, this.currentTableInput).subscribe(x=>alert(x), error=>console.log(error));
+            this.matchListService.setGroupOnTable(this.group.matches[0].group.id, this.currentTableInput).subscribe(x=>alert("Erfolgreich eingetragen."), error=>console.log(error));
         }
 
     }

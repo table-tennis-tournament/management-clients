@@ -23,7 +23,7 @@ export class TypeColors{
         TypeColors.TYPE_COLORS[18] = "grey darken-3";
         TypeColors.TYPE_COLORS[19] = "blue darken-1";
         TypeColors.TYPE_COLORS[20] = "indigo";
-        TypeColors.TYPE_COLORS[21] = "amber darken-1";
+        TypeColors.TYPE_COLORS[21] = "amber darken-4";
         TypeColors.TYPE_COLORS[22] = "orange";
         TypeColors.TYPE_COLORS[23] = "light-green darken-1";
         TypeColors.TYPE_COLORS[24] = "green";
