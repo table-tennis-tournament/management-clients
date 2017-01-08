@@ -47,7 +47,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def getMatchesByType(typeId: Long) = {
+  def getMatchesByType(typeId: Long) = Action.async {
     val matchesF = tables.allMatches()
     val x = matchesF map {matches =>
       matches map(ttMatch => getAllMatchInfo(ttMatch))
@@ -106,6 +106,12 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       }
       val res = fMatches.foldLeft(matches)((a, b) => a.intersect(b))
       Ok(res.toString)
+    }
+  }
+
+  def getTypes = Action.async {
+    tables.allTypes map {types =>
+      Ok(Json.toJson(types))
     }
   }
 }

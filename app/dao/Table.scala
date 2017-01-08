@@ -410,6 +410,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def allTypes: Future[Seq[Type]] = {
+    dbConfigProvider.get.db.run(types.result)
+  }
+
   class GroupTable(tag: Tag) extends Table[Group](tag, "groups") {
 
     def id = column[Long]("Grou_ID", O.PrimaryKey, O.AutoInc)
