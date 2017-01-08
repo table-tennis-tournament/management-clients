@@ -82,7 +82,10 @@ export class DisciplineViewComponent{
             
         }
         this.tabs = this.clearTabList(tabList);
-        this.tabs[0].isActive = true;
+        if(this.tabs.length > 0){
+            this.tabs[0].isActive = true;
+        }
+        
     }
 
     clearTabList(tabListToClean: DisciplineTab[]): DisciplineTab[]{
@@ -90,13 +93,22 @@ export class DisciplineViewComponent{
         tabListToClean.forEach(element => {
            if(element){
                element.groups = this.getCleanedGroups(element.groups);
+               element.stages = this.getCleanedStages(element.stages);
                cleanedResult.push(element);
            } 
         });
         return cleanedResult;
     }
 
-    
+    getCleanedStages(stagesToClean: DisciplineStage[]){
+        var cleanedResult: DisciplineStage[] = [];
+        stagesToClean.forEach(element => {
+           if(element){
+               cleanedResult.push(element);
+           } 
+        });
+        return cleanedResult;
+    }
 
     getCleanedGroups(groupsToClean: DisciplineGroup[]){
         var cleanedResult: DisciplineGroup[] = [];
