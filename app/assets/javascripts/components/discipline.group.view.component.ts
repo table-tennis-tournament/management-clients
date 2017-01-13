@@ -31,6 +31,8 @@ export class DisciplineGroupViewComponent{
         this._group = value;
     } 
 
+    
+
     addTableClicked(){
         if(isNaN(this.currentTableInput)){
             alert("Eingabe muss Nummer sein.");

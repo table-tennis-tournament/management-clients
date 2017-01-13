@@ -11,30 +11,15 @@
 </div>
 
 <div class="row">
+  
     <div class="col s12">
       <ul class="tabs"  materialize="tabs">
-        <li *ngFor="let currentTab of tabs" class="tab col"><a href="#{{currentTab.id}}" >{{currentTab.name}}</a></li>
+        <li *ngFor="let currentTab of tabs" class="tab col"><a href="#{{currentTab.id}}" (click)="onTabSelected(currentTab)" >{{currentTab.name}}</a></li>
       </ul>
-      <div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12" style="display: none;">
-      <div *ngIf="currentTab.stages" class="row">
-          <div class="col" *ngFor="let currentStage of currentTab.stages">
-            <ul class="collection with-header">
-              <li class="collection-header"><h4>{{currentStage.name}}</h4></li>
-              <li class="collection-item {{colors[currentMatch.type.id]}}" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
-                  <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}} - </span>
-                      <span *ngIf="currentMatch.team2[0]">{{currentMatch.team2[0].lastName}}</span>
-              </li>
-            </ul>
-          </div>
-      </div>
-      <div *ngIf="currentTab.groups" >
-        <div class="row" *ngFor="let i of currentTab.rowCount" >
-            <div *ngFor="let currentGroup of currentTab.groups | slice:(i*4):(i+1)*4" class="col s3">
-              <group-view [group]="currentGroup"></group-view>
-            </div>
-        </div>
-      </div>
-    </div>
+      
+      <!--<div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12" style="display: none;">
+      
+    </div>-->
     
 
     
@@ -42,5 +27,25 @@
         <!--<group-view *ngFor="let currentGroup of {{currentTab.groups}}"  [group]="{{currentGroup}}"></group-view>-->
         <!--<group-view [groups]="{{currentTab.groups}}"></group-view>-->
     </div>
-    
+    <div *ngIf="selectedTab" class="row">
+      <div *ngIf="selectedTab.stages" class="row">
+            <div class="col" *ngFor="let currentStage of selectedTab.stages">
+              <ul class="collection with-header">
+                <li class="collection-header"><h4>{{currentStage.name}}</h4></li>
+                <li class="collection-item {{colors[currentMatch.type.id]}}" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+                    <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}} - </span>
+                        <span *ngIf="currentMatch.team2[0]">{{currentMatch.team2[0].lastName}}</span>
+                </li>
+              </ul>
+            </div>
+        </div>
+        <div *ngIf="selectedTab.groups" >
+          <div class="row" *ngFor="let i of selectedTab.rowCount" >
+              <div *ngFor="let currentGroup of selectedTab.groups | slice:(i*4):(i+1)*4" class="col s3">
+                <group-view [group]="currentGroup"></group-view>
+              </div>
+              3
+          </div>
+        </div>
+    </div>
   </div>
