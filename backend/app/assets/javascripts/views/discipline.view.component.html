@@ -1,3 +1,14 @@
+<div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+    <div class="modal-content">
+      <h4>Modal Header</h4>
+      <p>A bunch of text</p>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closeModal()">Close</a>
+      <a class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+</div>
+
  <div class="fixed-action-btn horizontal">
     <a class="btn-floating btn-large blue" (click)="onFilterSelected()">
       <i class="large material-icons" >search</i>
@@ -49,3 +60,4 @@
         </div>
     </div>
   </div>
+

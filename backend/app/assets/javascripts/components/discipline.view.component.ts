@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, EventEmitter} from "@angular/core";
 import {DisciplineTab} from "../data/discipline.tab"
 import {DisciplineGroup} from "../data/discipline.group"
 import {DisciplineStage} from "../data/discipline.stage"
@@ -7,6 +7,7 @@ import {Type} from "../data/type"
 import {TypeColors} from "../data/typeColors"
 import {RandomMatchService} from "../services/random.match.service"
 import {MatchService} from "../services/match.service"
+import {MaterializeAction} from "angular2-materialize";
 
 @Component({
     selector: "discipline-view",
@@ -16,6 +17,7 @@ export class DisciplineViewComponent{
     public tabs: DisciplineTab[];
     public colors: string[];
     public selectedTab: DisciplineTab;
+    public modalActions = new EventEmitter<string|MaterializeAction>();
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
         this.onFilterSelected();
@@ -198,11 +200,17 @@ export class DisciplineViewComponent{
     }
 
     onCollapseAll(){
+        console.log("collapse all");
+        this.modalActions.emit({action:"modal",params:["open"]});
         this.setValuesOnTabs(false, false);
     }
 
     onOpenPlayers(){
         this.setValuesOnTabs(false, true);
+    }
+
+    closeModal() {
+        this.modalActions.emit({action:"modal",params:["close"]});
     }
 
     onOpenAll(){

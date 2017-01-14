@@ -5,7 +5,7 @@ version := "1.0-SNAPSHOT"
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.7"
-val ngVersion = "2.1.0"
+val ngVersion = "2.4.3"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "2.0.0",
@@ -44,7 +44,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "ng2-dnd" % "2.1.1",
 
   "org.webjars.npm" % "materialize-css" % "0.97.8",
-  "org.webjars.npm" % "angular2-materialize" % "5.2.1",
+  "org.webjars.npm" % "angular2-materialize" % "6.3.0",
   "org.webjars" % "jquery" % "2.2.4",
   //tslint dependencyOverrides
 
