@@ -1,13 +1,4 @@
-<div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
-    <div class="modal-content">
-      <h4>Modal Header</h4>
-      <p>A bunch of text</p>
-    </div>
-    <div class="modal-footer">
-      <a class="waves-effect waves-green btn-flat" (click)="closeModal()">Close</a>
-      <a class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-    </div>
-</div>
+
 
  <div class="fixed-action-btn horizontal">
     <a class="btn-floating btn-large blue" (click)="onFilterSelected()">
@@ -27,16 +18,6 @@
       <ul class="tabs"  materialize="tabs">
         <li *ngFor="let currentTab of tabs" class="tab col"><a href="#{{currentTab.id}}" (click)="onTabSelected(currentTab)" >{{currentTab.name}}</a></li>
       </ul>
-      
-      <!--<div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12" style="display: none;">
-      
-    </div>-->
-    
-
-    
-      
-        <!--<group-view *ngFor="let currentGroup of {{currentTab.groups}}"  [group]="{{currentGroup}}"></group-view>-->
-        <!--<group-view [groups]="{{currentTab.groups}}"></group-view>-->
     </div>
     <div *ngIf="selectedTab" class="row">
       <div *ngIf="selectedTab.stages" class="row">

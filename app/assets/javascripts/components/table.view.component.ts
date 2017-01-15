@@ -9,8 +9,6 @@ import {TableDto} from "../data/table.dto"
 import {MatchListDto} from "../data/match.list.dto"
 import {MatchDto} from "../data/match.dto"
 
-import { Overlay } from "angular2-modal";
-import { Modal } from "angular2-modal/plugins/bootstrap";
 
 
 @Component({
@@ -21,10 +19,7 @@ export class TableViewComponent{
     public tables: TableDto[];
     public rowCount: number[];
 
-    constructor(private matchService:MatchService, private tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
-        public modal: Modal, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
-        console.log("table view constructor start");
-        overlay.defaultViewContainer = vcRef;
+    constructor(private matchService:MatchService, private tableService:TableService, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
         this.loadAllTables();
         
         this.tableService.OnTableChanged.subscribe(
@@ -57,17 +52,17 @@ export class TableViewComponent{
     openModalDialogForMatch(match: MatchDto){
         var firstTeam = this.matchToStringService.getPlayersNamesLong(match.team1);
         var secondTeam = this.matchToStringService.getPlayersNamesLong(match.team2);
-        this.modal.alert()
-        .size("lg")
-        .showClose(false)
-        .isBlocking(true)
-        .bodyClass("modal-content text-centering")
-        .title("Neues Spiel Tisch Nr. "+match.table.number)
-        .body(`<h4>`+ match.type.name +`</h4><br/>
-            <b>` + match.matchType.name +`</b><br/><br/>
-            `+ firstTeam +` <br/>
-             <b>-</b> <br/> ` 
-             + secondTeam +`<br/>`)
-        .open();
+        // this.modal.alert()
+        // .size("lg")
+        // .showClose(false)
+        // .isBlocking(true)
+        // .bodyClass("modal-content text-centering")
+        // .title("Neues Spiel Tisch Nr. "+match.table.number)
+        // .body(`<h4>`+ match.type.name +`</h4><br/>
+        //     <b>` + match.matchType.name +`</b><br/><br/>
+        //     `+ firstTeam +` <br/>
+        //      <b>-</b> <br/> ` 
+        //      + secondTeam +`<br/>`)
+        // .open();
     }
 }
