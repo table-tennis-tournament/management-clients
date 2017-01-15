@@ -14,14 +14,14 @@ import {AppComponent} from "./app.component"
 import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
 import {TableComponent} from "./components/table.component"
-import {CustomModal} from "./components/result.modal.view.component"
 import {SupervisorViewComponent} from "./components/supervisor.view.component"
 import {MatchFilterComponent} from "./components/match.filter.component"
 import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.component"
 import {MatchListComponent} from "./components/match.list.view.component"
 import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
-import { StageViewComponent } from "./components/stage.view.component"
+import {StageViewComponent} from "./components/stage.view.component"
+import {ResultModalComponent} from "./components/result.modal.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -35,8 +35,6 @@ import { routeConfig } from "./app.routes"
 
 import {APP_BASE_HREF} from "@angular/common";
 
-import {ModalModule} from "angular2-modal";
-import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
 import {DndModule} from "ng2-dnd";
 
 
@@ -49,8 +47,6 @@ import {DndModule} from "ng2-dnd";
     HttpModule,
     JsonpModule,
     MaterializeModule,
-    ModalModule.forRoot(),
-    BootstrapModalModule,
     DndModule.forRoot(),
     RouterModule.forRoot(routeConfig)
   ],
@@ -58,7 +54,6 @@ import {DndModule} from "ng2-dnd";
     AppComponent,
     PlayerComponent,
     TableViewComponent,
-    CustomModal,
     SupervisorViewComponent,
     MatchFilterComponent,
     MatchFilterCriteriaComponent,
@@ -66,6 +61,7 @@ import {DndModule} from "ng2-dnd";
     DisciplineViewComponent,
     DisciplineGroupViewComponent,
     StageViewComponent,
+    ResultModalComponent,
     TableComponent
   ],
   providers: [

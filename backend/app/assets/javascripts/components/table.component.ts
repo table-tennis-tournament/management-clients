@@ -5,8 +5,6 @@ import {MatchToStringService} from "../services/match.toString.service"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {Overlay, overlayConfigFactory } from "angular2-modal";
-import {Modal, BSModalContext } from "angular2-modal/plugins/bootstrap";
-import {CustomModalContext, CustomModal } from "./result.modal.view.component";
 import {IResultHandler} from "../handler/result.handler"
 import {IResult} from "../data/result"
 import {TypeColors} from "../data/typeColors"
@@ -22,7 +20,7 @@ export class TableComponent implements IResultHandler{
     public bgColor: string;
     public textColor: string;
 
-     constructor(private matchToStringService: MatchToStringService, public modal: Modal, private tableService: TableService,
+    constructor(private matchToStringService: MatchToStringService, private tableService: TableService,
         private matchService: MatchService){
 
     }
@@ -52,7 +50,7 @@ export class TableComponent implements IResultHandler{
     }
 
     onResult(){
-        var dialog = this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.matchinfo, handler: this }, BSModalContext));
+        console.log("open dialog");
     }
 
     onFree(){
