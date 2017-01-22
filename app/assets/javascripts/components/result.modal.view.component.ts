@@ -1,7 +1,4 @@
-import { Component, EventEmitter } from "@angular/core";
-
-import { DialogRef, ModalComponent, CloseGuard } from "angular2-modal";
-import { BSModalContext } from "angular2-modal/plugins/bootstrap/index";
+import { Component, EventEmitter, Injectable } from "@angular/core";
 import {Match} from "../data/match"
 import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
@@ -50,6 +47,10 @@ export class ResultModalComponent{
   setMatch(matchToSet: Match){
     this.firstPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team1);
     this.secondPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team2);
+  }
+
+  setResultHandler(handlerToSet: IResultHandler){
+    this.currentResultHandler = handlerToSet;
   }
 
   onKeyUp(value){

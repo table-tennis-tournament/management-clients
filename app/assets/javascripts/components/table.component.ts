@@ -8,6 +8,8 @@ import {Overlay, overlayConfigFactory } from "angular2-modal";
 import {IResultHandler} from "../handler/result.handler"
 import {IResult} from "../data/result"
 import {TypeColors} from "../data/typeColors"
+import {ResultModalComponent} from "./result.modal.view.component"
+import {MaterializeAction} from "angular2-materialize";
 
 @Component({
     selector: "tt-table",
@@ -50,7 +52,9 @@ export class TableComponent implements IResultHandler{
     }
 
     onResult(){
-        console.log("open dialog");
+        
+        // this.resultModal.setResultHandler(this);
+        // this.resultModal.openModal();
     }
 
     onFree(){
@@ -62,7 +66,6 @@ export class TableComponent implements IResultHandler{
     }
 
     onUnLock(){
-        
         this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
 
