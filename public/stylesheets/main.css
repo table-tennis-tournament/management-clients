@@ -5,7 +5,6 @@
 
 .numberCircle {
     border-radius: 50%;
-    
     width: 50px;
     height: 50px;
     padding: 4px;
@@ -13,7 +12,6 @@
     border: 2px solid #666;
     color: #666;
     text-align: center;
-
     font: 32px Arial, sans-serif;
 }
 
@@ -31,7 +29,10 @@ span.circle {
     width: 1.6em;
 }
 
-
+.square {
+  width: 20px;
+  height: 20px;
+}
 
 .custom-col {
     width: 20%;
@@ -40,18 +41,58 @@ span.circle {
     right: auto;
 }
 
-.text-centering{
+.text-centering {
     text-align: center;
 }
 
-.text-bold{
+.text-bold {
     font-weight: bold;
 }
 
-.card.custom-padding{
-    padding:5px;
+.card.custom-padding {
+    padding: 5px;
 }
 
-.without-margin{
-    margin-bottom:0px;
+.without-margin {
+    margin-bottom: 0px;
+}
+
+.minheigth {
+    min-height: 400px;
+}
+
+.rotate-90{
+    transform: rotate(90deg);
+
+}
+
+.rotate-270{
+    transform: rotate(270deg);
+
+}
+
+.cut-text{
+    text-overflow: ellipsis;
+}
+
+table.bracket {
+    border-collapse: collapse;
+    border: none;
+}
+
+.bracket td {
+    vertical-align: middle;
+    width: 40em;
+    margin: 0;
+    padding: 10px;
+}
+
+.bracket td p {
+    border-bottom: solid 1px black;
+    margin: 0;
+    padding: 5px 5px 5px 5px;
+}
+
+.bracket th{
+    text-align:center;
 }

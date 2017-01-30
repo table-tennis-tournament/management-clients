@@ -11,16 +11,7 @@ import play.api.mvc.{Action, Controller}
   * Created by jonas on 09.10.16.
   */
 class PlayerController @Inject() (tables: Tables) extends Controller{
-  implicit val playerWrites = new Writes[Player] {
-    def writes(player: Player) = Json.obj(
-      "id" -> player.id,
-      "firstName" -> player.firstName,
-      "lastName" -> player.lastName,
-      "ttr" -> player.ttr,
-      "sex" -> player.sex,
-      "club" -> player.club
-    )
-  }
+  import models.PlayerModel._
 
   def getAllPlayer = Action.async {
     val playerF = tables.allPlayer

@@ -75,10 +75,42 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def allTTTables(): Future[Seq[TTTable]] = {
     Logger.info("all()")
-    dbConfigProvider.get.db.run(ttTables.filter(_.name > 0).sortBy(_.name.asc).result)
+    dbConfigProvider.get.db.run(ttTables.filterNot(_.name === 0).sortBy(_.name.asc).result)
+  }
+
+  def getFreeTables(): Future[Seq[TTTable]] = {
+    allTTTables() flatMap {ttTables =>
+      val x = ttTables map {t =>
+        getMatchOnTable(t.id) map { m =>
+          if(m.isDefined) Some(t) else None
+        }
+      }
+      Future.sequence(x) map { ttTables =>
+        ttTables.filter(_.isDefined) map (_.get)
+      }
+    }
+  }
+
+  def getFreeTable(): Future[Option[TTTable]] = getFreeTable(Seq.empty[Long])
+
+  def getFreeTable(tableIds: Seq[Long]): Future[Option[TTTable]] = {
+    getFreeTables() map {freeTables =>
+      if(tableIds.isEmpty) {
+        freeTables.headOption
+      } else {
+        freeTables.filter(t => tableIds.contains(t.id)).headOption
+      }
+    }
   }
 
   def getTTTable(id: Option[Long]): Future[Option[TTTable]] = if(id.isDefined) getTTTable(id.get) else Future.successful(None)
+
+  def getTTTableFromName(name: Int): Future[TTTable] = {
+    val tableF = dbConfigProvider.get.db.run(ttTables.filter(_.name === name).result)
+    tableF map { t =>
+      t.head
+    }
+  }
 
   def getTTTable(id: Long): Future[Option[TTTable]] = {
     val tableF = dbConfigProvider.get.db.run(ttTables.filter(_.id === id).result)
@@ -104,7 +136,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def lockTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap { t =>
-      val tNew = t.get.copy(isLocked = Some(true))
+      val tNew = t.get.copy(isLocked = Some(true), tableNumber = -t.get.tableNumber)
       dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
         true
       }
@@ -113,7 +145,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def unlockTTTable(id: Long): Future[Boolean] = {
     getTTTable(id) flatMap { t =>
-      val tNew = t.get.copy(isLocked = Some(false))
+      val tNew = t.get.copy(isLocked = Some(false), tableNumber = -t.get.tableNumber)
       dbConfigProvider.get.db.run(ttTables.insertOrUpdate(tNew)) map { r =>
         true
       }
@@ -159,7 +191,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
             2)
         }
       }
-
   }
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
@@ -167,11 +198,33 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId)
   }
 
+  def startMatch(matchId: Long, tableId: Long): Future[Boolean] = {
+    getMatch(matchId) flatMap { m =>
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(
+            toMatchDAO(m.get.copy(isPlaying = true, ttTableId = Some(tableId))))) map { result =>
+        true
+      }
+    }
+  }
+
+  def startGroup(matchIds: Seq[Long], tableId: Long): Future[Boolean] = {
+    val result = matchIds map { mId =>
+      startMatch(mId, tableId)
+    }
+    Future.sequence(result) map {r => r.foldRight(true)((a,b) => a && b)}
+  }
+
   def getMatch(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.id === id).result)
     matchF flatMap { m =>
       val mH = m.headOption
       if(mH.isDefined) toMatch(mH.get) map {m => Some(m)} else Future.successful(None)
+    }
+  }
+
+  def getMatchesInGroup(id: Long): Future[Seq[TTMatch]] = {
+    allMatches() map { ml =>
+      ml.filter(_.groupId.getOrElse(0) == id)
     }
   }
 
@@ -262,23 +315,35 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   // Players
 
-  val allPlayerInformation = for {
-    (p, c) <- player join clubs on(_.clubId === _.id)
-  } yield (p.id, p.firstName, p.lastName, p.ttr, p.sex, c.name)
+  def getPlayerFromPlayerDAO(p: PlayerDAO): Future[Player]= {
+    allMatches() flatMap {matches =>
+      val playerMatches = matches.filterNot(_.isPlayed).filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id))
+      val typeIds = (playerMatches map {m => m.typeId}).distinct
+      val typesFO = Future.sequence(typeIds map {t => getType(t)})
+      val typesF = typesFO map {_ map {_.get}}
+      typesF flatMap { t =>
+        val clubF = if(p.clubId.isDefined) getClub(p.clubId.get) else Future.successful(None)
+        clubF map { club =>
+          Player(p.id, p.firstName, p.lastName, p.ttr, p.sex, club, playerMatches.isDefinedAt(0), t)
+        }
+      }
+    }
+  }
 
   def allPlayer: Future[Seq[Player]] = {
-    dbConfigProvider.get.db.run(allPlayerInformation.result) map {p =>
-      p map (p => (Player.apply _).tupled(p))
+    dbConfigProvider.get.db.run(player.result) flatMap { ap =>
+      val x = ap map { p => getPlayerFromPlayerDAO(p)}
+      Future.sequence(x)
     }
   }
 
   def getPlayer(id: Long): Future[Option[Player]] = {
-    val playerF = dbConfigProvider.get.db.run(allPlayerInformation.filter(_._1 === id).result)
-    playerF map { p =>
+    val playerF = dbConfigProvider.get.db.run(player.filter(_.id === id).result)
+    playerF flatMap { p =>
       if(p.headOption.isDefined) {
-        Some((Player.apply _).tupled(p.head))
+        getPlayerFromPlayerDAO(p.head) map {Some(_)}
       } else {
-        None
+        Future.successful(None)
       }
     }
   }
@@ -289,6 +354,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def name = column[String]("Club_Name")
 
     def * = (id, name) <> (Club.tupled, Club.unapply _)
+  }
+
+  def getClub(id: Long): Future[Option[Club]] = {
+    dbConfigProvider.get.db.run(clubs.filter(_.id === id).result) map {_.headOption}
   }
 
   class PlayerTable(tag: Tag) extends Table[PlayerDAO](tag, "player") {
@@ -339,6 +408,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     tF map {t =>
       t.headOption
     }
+  }
+
+  def allTypes: Future[Seq[Type]] = {
+    dbConfigProvider.get.db.run(types.result)
   }
 
   class GroupTable(tag: Tag) extends Table[Group](tag, "groups") {
@@ -409,6 +482,24 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
     Future.sequence(resF) map { r =>
       dbConfigProvider.get.db.run(matchList.filter(_.id === id).delete)
+    }
+  }
+
+  def delMatchListGroup(ml: Seq[MatchList], id: Long) = {
+    val resF = ml map {mlEntry =>
+      dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
+    }
+    Future.sequence(resF) map { r =>
+      val res = dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
+    }
+  }
+
+  def startMatch(ttMatch: TTMatch) = {
+    dbConfigProvider.get.db.run(matches.filter(_.id === ttMatch.id).result) flatMap { m =>
+      val newMatch = toMatchDAO(ttMatch).copy(isPlaying = true, ttTableId = ttMatch.ttTableId)
+      dbConfigProvider.get.db.run(matches.insertOrUpdate(newMatch)) map {result =>
+        ttMatch.ttTableId
+      }
     }
   }
 }

@@ -21,7 +21,7 @@ export class MatchToStringService {
   }
 
   getSinglePlayerString(player: Player){
-      return player.firstName + " " + player.lastName + "("+player.club + ")";
+      return player.firstName + " " + player.lastName + "("+player.club.clubName + ")";
   }
 
   getSinglePlayerStringShort(player: Player){

@@ -1,6 +1,6 @@
 // ====== ./app/app.module.ts ======
 // Imports
-import { NgModule }       from "@angular/core"
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA }       from "@angular/core"
 import { BrowserModule }  from "@angular/platform-browser"
 import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
@@ -21,6 +21,7 @@ import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.c
 import {MatchListComponent} from "./components/match.list.view.component"
 import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
+import { StageViewComponent } from "./components/stage.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -36,6 +37,7 @@ import {APP_BASE_HREF} from "@angular/common";
 
 import {ModalModule} from "angular2-modal";
 import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
+import {DndModule} from "ng2-dnd";
 
 
 @NgModule({
@@ -49,6 +51,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     MaterializeModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
+    DndModule.forRoot(),
     RouterModule.forRoot(routeConfig)
   ],
   declarations: [
@@ -62,6 +65,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
     MatchListComponent,
     DisciplineViewComponent,
     DisciplineGroupViewComponent,
+    StageViewComponent,
     TableComponent
   ],
   providers: [
@@ -75,7 +79,7 @@ import {BootstrapModalModule} from "angular2-modal/plugins/bootstrap";
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent],
-  entryComponents: [ CustomModal ]
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule {
     // Module class

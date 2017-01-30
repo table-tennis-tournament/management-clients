@@ -1,5 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {DisciplineGroup} from "../data/discipline.group"
+import {TypeColors} from "../data/typeColors"
+
 
 @Component({
     selector: "group-view",
@@ -7,7 +9,11 @@ import {DisciplineGroup} from "../data/discipline.group"
 })
 export class DisciplineGroupViewComponent{
 
-    
+    typeColors: string[];
+
+    constructor(){
+        this.typeColors = TypeColors.TYPE_COLORS;
+    }
 
      _group: DisciplineGroup;
     get group(): DisciplineGroup {

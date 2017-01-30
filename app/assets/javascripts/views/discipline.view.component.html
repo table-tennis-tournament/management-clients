@@ -1,16 +1,46 @@
+ <div class="fixed-action-btn horizontal">
+    <a class="btn-floating btn-large blue" (click)="onFilterSelected()">
+      <i class="large material-icons" >search</i>
+    </a>
+    <ul>
+      <li><a class="btn-floating green" href="javascript:void(0)" (click)="onCollapseAll()"><i class="material-icons">reorder</i></a></li>
+      <li><a class="btn-floating blue" href="javascript:void(0)" (click)="onOpenAll()"><i class="material-icons">list</i></a></li>
+      <li><a class="btn-floating yellow darken-1" href="javascript:void(0)" (click)="onOpenPlayers()"><i class="material-icons">person_pin</i></a></li>
+      
+    </ul>
+</div>
+
 <div class="row">
     <div class="col s12">
       <ul class="tabs"  materialize="tabs">
-        <li *ngFor="let currentTab of tabs" class="tab col s3"><a href="#{{currentTab.id}}">{{currentTab.name}}</a></li>
+        <li *ngFor="let currentTab of tabs" class="tab col"><a href="#{{currentTab.id}}" >{{currentTab.name}}</a></li>
       </ul>
-    </div>
-    <div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12">
-      <div class="row" *ngFor="let i of currentTab.rowCount" >
-			    <div *ngFor="let currentGroup of currentTab.groups | slice:(i*4):(i+1)*4" class="col s3">
-				    <group-view [group]="currentGroup"></group-view>
-		      </div>
+      <div *ngFor="let currentTab of tabs" id="{{currentTab.id}}" class="col s12" style="display: none;">
+      <div *ngIf="currentTab.stages" class="row">
+          <div class="col" *ngFor="let currentStage of currentTab.stages">
+            <ul class="collection with-header">
+              <li class="collection-header"><h4>{{currentStage.name}}</h4></li>
+              <li class="collection-item" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+                  <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}} - </span>
+                      <span *ngIf="currentMatch.team2[0]">{{currentMatch.team2[0].lastName}}</span>
+              </li>
+            </ul>
+          </div>
       </div>
+      <div *ngIf="currentTab.groups" >
+        <div class="row" *ngFor="let i of currentTab.rowCount" >
+            <div *ngFor="let currentGroup of currentTab.groups | slice:(i*4):(i+1)*4" class="col s3">
+              <group-view [group]="currentGroup"></group-view>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+
+    
+      
         <!--<group-view *ngFor="let currentGroup of {{currentTab.groups}}"  [group]="{{currentGroup}}"></group-view>-->
         <!--<group-view [groups]="{{currentTab.groups}}"></group-view>-->
     </div>
+    
   </div>

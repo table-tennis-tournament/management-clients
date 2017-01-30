@@ -3,10 +3,12 @@ package controllers
 import com.google.inject.Inject
 import dao.Tables
 import models._
+import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+import scala.None
 import scala.concurrent.Future
 
 /**
@@ -14,110 +16,23 @@ import scala.concurrent.Future
   */
 class MatchListController @Inject() (tables: Tables) extends Controller{
 
-  implicit val playerWrites = new Writes[Player] {
-    def writes(player: Player) = Json.obj(
-      "id" -> player.id,
-      "firstName" -> player.firstName,
-      "lastName" -> player.lastName,
-      "ttr" -> player.ttr,
-      "sex" -> player.sex,
-      "club" -> player.club
-    )
-  }
-
-  implicit val resultWrites = new Writes[(Int, Int)] {
-    def writes(result: (Int, Int)) = Json.obj(
-      "player1" -> result._1,
-      "player2" -> result._2
-    )
-  }
-
-  implicit val matchTypeWrites = new Writes[MatchType] {
-    def writes(matchType: MatchType) = Json.obj(
-      "id" -> matchType.id,
-      "name" -> matchType.name
-    )
-  }
-
-  implicit val typeWrites = new Writes[Type] {
-    def writes(ttType: Type) = Json.obj(
-      "id" -> ttType.id,
-      "name" -> ttType.name,
-      "kind" -> ttType.kind
-    )
-  }
-
-  implicit val groupWrites = new Writes[Group] {
-    def writes(group: Group) = Json.obj(
-      "id" -> group.id,
-      "name" -> group.name
-    )
-  }
-
-  implicit val ttMatchWrites = new Writes[TTMatch] {
-    def writes(ttMatch: TTMatch) = Json.obj(
-      "id" -> ttMatch.id,
-      "startTime" -> ttMatch.startTime,
-      "isPlayed" -> ttMatch.isPlayed
-      // "allowedTableGroups" -> ttMatch.allowedTableGroups,
-      // "result" -> ttMatch.getResult
-      // "colorId" -> ttMatch.colorId
-    )
-  }
-
-  implicit val matchListWrites = new Writes[MatchList] {
-    def writes(matchList: MatchList) = Json.obj(
-      "id" -> matchList.id,
-      "position" -> matchList.position,
-      "group" -> matchList.asGroup
-    )
-  }
-
-  case class AllMatchInfo(
-    ttMatch: TTMatch,
-    player1: Seq[Player],
-    player2: Seq[Player],
-    matchType: MatchType,
-    ttType: Type,
-    group: Option[Group]
-  )
-
-  implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
-    def writes(allMatchInfo: AllMatchInfo) = Json.obj(
-      "match" -> allMatchInfo.ttMatch,
-      "team1" -> allMatchInfo.player1,
-      "team2" -> allMatchInfo.player2,
-      "matchType" -> allMatchInfo.matchType,
-      "type" -> allMatchInfo.ttType,
-      "group" -> allMatchInfo.group
-    )
-  }
-
-  case class MatchListInfo(
-    matchList: MatchList,
-    ttMatch: AllMatchInfo
-  )
-
-  implicit val matchListInfoWrites = new Writes[MatchListInfo] {
-    def writes(matchListInfo: MatchListInfo) = Json.obj(
-      "matchListItem" -> matchListInfo.matchList,
-      "matchinfo" -> matchListInfo.ttMatch
-    )
-  }
+  import models.MatchModel._
 
   def getAllMatchInfo(ttMatch: TTMatch): Future[Option[AllMatchInfo]] = {
     val p1F = Future.sequence(ttMatch.player1Ids map {id => tables.getPlayer(id)})
     val p2F = Future.sequence(ttMatch.player2Ids map {id => tables.getPlayer(id)})
+    val tF = tables.getTTTable(ttMatch.ttTableId)
     val mtF = tables.getMatchType(ttMatch.matchTypeId)
     val tyF = tables.getType(ttMatch.typeId)
     val gF = tables.getGroup(ttMatch.groupId)
     val pF = for {
       p1 <- p1F
       p2 <- p2F
+      t <- tF
       mt <- mtF
       ty <- tyF
       g <- gF
-    } yield(p1, p2, mt.get, ty.get, g)
+    } yield(p1, p2, t, mt.get, ty.get, g)
     pF map {p =>
       Some(AllMatchInfo(
         ttMatch,
@@ -125,7 +40,8 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         p._2.flatten,
         p._3,
         p._4,
-        p._5
+        p._5,
+        p._6
       ))
     }
   }
@@ -151,9 +67,30 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
       }
       val newMLAdded = newML ++ Seq(newMLEntry)
-      tables.setMatchList(newMLAdded) map {result =>
-        Ok("added Match")
+      tables.setMatchList(newMLAdded) flatMap {result =>
+        tables.getMatchList map { ml =>
+          Ok(Json.toJson(ml.filter(_.matchId == id).headOption))
+        }
       }
+    }
+  }
+
+  def addGroup(id: Long, position: Int) = Action.async{
+    tables.getMatchesInGroup(id) flatMap { ml =>
+      val addML = ml map { m =>
+        MatchList(None, m.id, Some(id), position)
+      }
+      tables.getMatchList flatMap { oldML =>
+        val ml = oldML map { mlEntry =>
+          if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+        }
+        tables.setMatchList(ml ++ addML) flatMap { res =>
+          tables.getMatchList map { ml =>
+            Ok(Json.toJson(ml.filter(_.asGroup == Some(id))))
+          }
+        }
+      }
+
     }
   }
 
@@ -164,11 +101,76 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
       }
       tables.delMatchList(newML, ml.filter(_.matchId == id).head.id.get) map {result =>
-        Ok("deleted Match")
+        Ok("deleted match")
       }
     }
   }
 
-  def getNext = Action{Ok("not implemented")}
+  def deleteGroup(id: Long) = Action.async{
+    tables.getMatchList flatMap {ml =>
+      val position = ml.filter(_.asGroup.getOrElse(0) == id).head.position
+      val newML = ml map {mlEntry =>
+        if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+      }
+      tables.delMatchListGroup(newML, id) map {result =>
+        Ok("deleted group")
+      }
+    }
+  }
 
+  def setGroupToTable(groupId: Long, tableName: Int) = Action.async{
+    tables.getTTTableFromName(tableName) flatMap {table =>
+      tables.allMatches() flatMap {matches =>
+        Logger.info("matches: " + matches.toString())
+        val matchesInGroup = matches.filter(_.groupId.getOrElse(0) == groupId)
+        val res = matchesInGroup map { m =>
+          tables.startMatch(m.id, table.id)
+        }
+        Future.sequence(res) map {r =>
+          Logger.info("result: " + r.toString() + " " + table.toString + " " + matchesInGroup.toString())
+          Ok("{}")
+        }
+      }
+    }
+  }
+
+  def getNext = Action.async {
+    Future.successful(Ok("not implemented"))
+
+  }
+//    tables.getFreeTable() flatMap {freeTable =>
+//      if(freeTable.isDefined) {
+//        val amiSeqF = tables.getMatchList flatMap { ml =>
+//          val x = ml map {mlEntry =>
+//            tables.getMatch(mlEntry.matchId) flatMap { m =>
+//              getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
+//            }
+//          }
+//          Future.sequence(x)
+//        }
+//        amiSeqF flatMap {amiSeq =>
+//          if (amiSeq.headOption.isDefined) {
+//            if(amiSeq.head.matchList.asGroup.isDefined) {
+//              val matchIds = amiSeq map {ml =>
+//                ml.ttMatch.ttMatch.id
+//              }
+//              tables.startGroup(matchIds, freeTable.get.id) flatMap {r1 =>
+//                deleteGroup(amiSeq.head.matchList.asGroup.get) map {r2 =>
+//                  Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
+//                }
+//              }
+//            } else {
+//              tables.startMatch(amiSeq.head.ttMatch.ttMatch.id, freeTable.get.id) map { result =>
+//                Ok(Json.toJson(Seq(amiSeq.head)))
+//              }
+//            }
+//          } else {
+//            Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
+//          }
+//        }
+//      } else {
+//        Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
+//      }
+//    }
+//  }
 }

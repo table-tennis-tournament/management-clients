@@ -6,6 +6,7 @@ import {RandomMatchService} from "../services/random.match.service"
 
 import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
+import {MatchListDto} from "../data/match.list.dto"
 import {MatchDto} from "../data/match.dto"
 
 import { Overlay } from "angular2-modal";
@@ -41,9 +42,12 @@ export class TableViewComponent{
         console.log(error);
     }
 
-    handleMatchChanged(match: MatchDto){
-        this.tables[match.table.id].matchinfo = match;
-        this.openModalDialogForMatch(match);
+    handleMatchChanged(match: MatchListDto[]){
+        if(match.length === 1){
+            this.tables[match[0].matchinfo.table.number].matchinfo = match[0].matchinfo;
+            this.openModalDialogForMatch(match[0].matchinfo);
+        }
+        
     }
 
     openModalDialogForMatch(match: MatchDto){
@@ -54,7 +58,7 @@ export class TableViewComponent{
         .showClose(false)
         .isBlocking(true)
         .bodyClass("modal-content text-centering")
-        .title("Neues Spiel Tisch Nr. "+match.table.tableNumber)
+        .title("Neues Spiel Tisch Nr. "+match.table.number)
         .body(`<h4>`+ match.type.name +`</h4><br/>
             <b>` + match.matchType.name +`</b><br/><br/>
             `+ firstTeam +` <br/>

@@ -11,9 +11,13 @@ GET     /player/:id                     controllers.PlayerController.getPlayer(i
 
 # MatchController:
 GET     /match/all                      controllers.MatchController.getAllMatches
+GET     /match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
+GET     /match/filter                   controllers.MatchController.getFilteredMatchList()
 GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
+
+GET     /types/all                      controllers.MatchController.getTypes
 
 # TableController:
 GET     /table/all                      controllers.TableController.getAllTables
@@ -26,9 +30,10 @@ GET     /table/:id/unlock               controllers.TableController.unlockTable(
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
 PUT     /matchlist/match/:id/:position  controllers.MatchListController.addMatch(id: Long, position: Int)
-# PUT     /matchlist/group                controllers.MatchListController.setGroup
+PUT     /matchlist/group/:id/:position  controllers.MatchListController.addGroup(id: Long, position: Int)
+PUT     /matchlist/grouptotable/:groupId/:tableName     controllers.MatchListController.setGroupToTable(groupId: Long, tableName: Int)
 DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
-# DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroupe(id:Long)
+DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket
