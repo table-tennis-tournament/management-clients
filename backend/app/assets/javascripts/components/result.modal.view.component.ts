@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Injectable } from "@angular/core";
+import { Component, EventEmitter, Injectable, Input, Output } from "@angular/core";
 import {Match} from "../data/match"
 import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
@@ -39,10 +39,23 @@ export class ResultModalComponent{
   private currentResultHandler: IResultHandler;
   public currentResult: IResult[];
   public modalActions = new EventEmitter<string|MaterializeAction>();
+  private _isVisible: boolean;
   
   constructor(public matchToStringService: MatchToStringService) {
     this.resultIsValid = false;
   }
+
+  @Input()
+  set isVisible(isVisible: boolean){
+    this._isVisible = isVisible;
+    if(this._isVisible){
+      this.openModal();
+      return;
+    }
+    this.closeModal();
+  }
+
+  @Output() onConfirmed = new EventEmitter<boolean>();
 
   setMatch(matchToSet: Match){
     this.firstPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team1);
@@ -74,7 +87,7 @@ export class ResultModalComponent{
   }
 
   closeDialogAndInformObserversAboutResult(){
-    if(this.currentResultHandler !== null){
+    if(this.currentResultHandler !== null && this.currentResultHandler !== undefined){
       this.currentResultHandler.handleResult(this.currentResult);
     }
     this.closeModal();
@@ -135,6 +148,7 @@ export class ResultModalComponent{
 
   closeModal() {
         this.modalActions.emit({action:"modal",params:["close"]});
+        this.onConfirmed.emit(false);
     }
 
   beforeDismiss(): boolean {
