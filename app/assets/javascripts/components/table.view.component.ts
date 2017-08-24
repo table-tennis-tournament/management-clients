@@ -18,8 +18,11 @@ export class TableViewComponent{
 
     public tables: TableDto[];
     public rowCount: number[];
+    public ShowModal: boolean;
 
-    constructor(private matchService:MatchService, private tableService:TableService, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
+    constructor(private matchService:MatchService, private tableService:TableService, 
+        public matchToStringService: MatchToStringService, 
+        private randomMatchService: RandomMatchService) {
         this.loadAllTables();
         
         this.tableService.OnTableChanged.subscribe(
@@ -47,6 +50,15 @@ export class TableViewComponent{
         //     this.openModalDialogForMatch(match[0].matchinfo);
         // }
         
+    }
+
+    openModal(){
+        this.ShowModal = false;
+        this.ShowModal = true;
+    }
+
+    onConfirmed(confirmed: boolean){
+        this.ShowModal = false;
     }
 
     openModalDialogForMatch(match: MatchDto){
