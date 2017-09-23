@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Injectable, Input, Output } from "@angular/core";
-import {Match} from "../data/match"
+import {Component, EventEmitter, Injectable, Input, Output } from "@angular/core";
+import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
 import {Observable} from "rxjs/Rx";
@@ -10,13 +10,14 @@ import {MaterializeAction} from "angular2-materialize";
   selector: "modal-result",
   /* tslint:disable */ template: `
   <div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
-    <div class="modal-content">
-      <h4>Modal Header</h4>
+    <div class="modal-content center-align">
+      <h4>{{headerString}}</h4>
+      <br/><br/>
       <div [class.text-bold]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
-                  - <br/>
-                  <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
+      <div class="center-align"><h4>  - </h4><br/></div>          
+      <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
       </div>
-       <div class="input-field col s10">
+       <div class="input-field col s4 m2">
                       <input id="result" class="form-control" type="text" autofocus #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
                       <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
        </div>
@@ -33,6 +34,7 @@ export class ResultModalComponent{
   public shouldUseMyClass: boolean;
   public firstPlayerString: string;
   public secondPlayerString: string;
+  public headerString: string;
   public isFirstPlayerWinning: boolean;
   public isSecondPlayerWinning: boolean;
   public OnResultGotObserver: Observable<IResult[]>
@@ -45,21 +47,10 @@ export class ResultModalComponent{
     this.resultIsValid = false;
   }
 
-  @Input()
-  set isVisible(isVisible: boolean){
-    this._isVisible = isVisible;
-    if(this._isVisible){
-      this.openModal();
-      return;
-    }
-    this.closeModal();
-  }
-
-  @Output() onConfirmed = new EventEmitter<boolean>();
-
-  setMatch(matchToSet: Match){
+  setMatch(matchToSet: MatchDto){
     this.firstPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team1);
     this.secondPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team2);
+    this.headerString = matchToSet.type.name + " " + matchToSet.matchType.name;
   }
 
   setResultHandler(handlerToSet: IResultHandler){
@@ -67,9 +58,7 @@ export class ResultModalComponent{
   }
 
   onKeyUp(value){
-    console.log(value);
     this.resultIsValid = this.checkValidResult(value);
-    console.log("Current result is valid: " + this.resultIsValid);
   }
 
   onEnterPressed(value){
@@ -148,7 +137,6 @@ export class ResultModalComponent{
 
   closeModal() {
         this.modalActions.emit({action:"modal",params:["close"]});
-        this.onConfirmed.emit(false);
     }
 
   beforeDismiss(): boolean {
