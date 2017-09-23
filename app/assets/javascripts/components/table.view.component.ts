@@ -1,16 +1,16 @@
-import {Component, ViewContainerRef, ViewEncapsulation} from "@angular/core"
+import {Component, ViewContainerRef, ViewEncapsulation, ViewChild} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
 import {RandomMatchService} from "../services/random.match.service"
+import {ResultModalComponent} from "./result.modal.view.component"
 
 import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
 import {MatchListDto} from "../data/match.list.dto"
 import {MatchDto} from "../data/match.dto"
-
-import { Overlay } from "angular2-modal";
-import { Modal } from "angular2-modal/plugins/bootstrap";
+import {Match} from "../data/match"
+import {ResultEvent} from "../handler/result.event"
 
 
 @Component({
@@ -21,16 +21,20 @@ export class TableViewComponent{
     public tables: TableDto[];
     public rowCount: number[];
 
-    constructor(private matchService:MatchService, private tableService:TableService, overlay: Overlay, vcRef: ViewContainerRef,  
-        public modal: Modal, public matchToStringService: MatchToStringService, private randomMatchService: RandomMatchService) {
-        console.log("table view constructor start");
-        overlay.defaultViewContainer = vcRef;
+    @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
-        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
-       
+    constructor(private matchService:MatchService, private tableService:TableService, 
+        public matchToStringService: MatchToStringService, 
+        private randomMatchService: RandomMatchService) {
+        this.loadAllTables();
+        
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
+    }
+
+    loadAllTables(){
+        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
     }
 
     getAllTablesSuccessful(tables: TableDto[]){
@@ -43,27 +47,12 @@ export class TableViewComponent{
     }
 
     handleMatchChanged(match: MatchListDto[]){
-        if(match.length === 1){
-            this.tables[match[0].matchinfo.table.number].matchinfo = match[0].matchinfo;
-            this.openModalDialogForMatch(match[0].matchinfo);
-        }
-        
+        this.loadAllTables();
     }
 
-    openModalDialogForMatch(match: MatchDto){
-        var firstTeam = this.matchToStringService.getPlayersNamesLong(match.team1);
-        var secondTeam = this.matchToStringService.getPlayersNamesLong(match.team2);
-        this.modal.alert()
-        .size("lg")
-        .showClose(false)
-        .isBlocking(true)
-        .bodyClass("modal-content text-centering")
-        .title("Neues Spiel Tisch Nr. "+match.table.number)
-        .body(`<h4>`+ match.type.name +`</h4><br/>
-            <b>` + match.matchType.name +`</b><br/><br/>
-            `+ firstTeam +` <br/>
-             <b>-</b> <br/> ` 
-             + secondTeam +`<br/>`)
-        .open();
+    onResultForMatch(resultEvent: ResultEvent){
+        this.resultDialog.setResultHandler(resultEvent.handler);
+        this.resultDialog.setMatch(resultEvent.match);
+        this.resultDialog.openModal();
     }
 }
