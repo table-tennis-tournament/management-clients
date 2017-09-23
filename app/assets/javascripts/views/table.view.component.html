@@ -1,10 +1,8 @@
 <div class="row without-margin" *ngFor="let i of rowCount" >
 			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
-				<tt-table [table]="currentTable"></tt-table>
+				<tt-table [table]="currentTable" (onResultForMatch)="onResultForMatch($event)"></tt-table>
 		</div>
 </div>
 
-<modal-result [isVisible]="ShowModal" (onConfirmed)="onConfirmed($event)"></modal-result>
-
-<a href="javascript:void(0)" (click)="openModal()">Open Modal</a>
+<modal-result></modal-result>
 
