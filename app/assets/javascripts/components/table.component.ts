@@ -1,15 +1,16 @@
-import {Component, Input} from "@angular/core"
+import {Component, Input, Output, EventEmitter} from "@angular/core"
 import {Match} from "../data/match"
+import {MatchDto} from "../data/match.dto"
 import {TableDto} from "../data/table.dto"
 import {MatchToStringService} from "../services/match.toString.service"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
-import {Overlay, overlayConfigFactory } from "angular2-modal";
-import {Modal, BSModalContext } from "angular2-modal/plugins/bootstrap";
-import {CustomModalContext, CustomModal } from "./result.modal.view.component";
+import {Overlay, overlayConfigFactory } from "angular2-modal"
 import {IResultHandler} from "../handler/result.handler"
+import {ResultEvent} from "../handler/result.event"
 import {IResult} from "../data/result"
 import {TypeColors} from "../data/typeColors"
+import {MaterializeAction} from "angular2-materialize"
 
 @Component({
     selector: "tt-table",
@@ -22,7 +23,7 @@ export class TableComponent implements IResultHandler{
     public bgColor: string;
     public textColor: string;
 
-     constructor(private matchToStringService: MatchToStringService, public modal: Modal, private tableService: TableService,
+    constructor(private matchToStringService: MatchToStringService, private tableService: TableService,
         private matchService: MatchService){
 
     }
@@ -43,6 +44,8 @@ export class TableComponent implements IResultHandler{
         
     } 
 
+    @Output() onResultForMatch = new EventEmitter<ResultEvent>();
+
     setBgColorAndTextColorDependsOnType(){
         if(this.table.matchinfo){
             this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo.type.id];
@@ -52,7 +55,10 @@ export class TableComponent implements IResultHandler{
     }
 
     onResult(){
-        var dialog = this.modal.open(CustomModal,  overlayConfigFactory({ currentMatch: this.table.matchinfo, handler: this }, BSModalContext));
+        var resultEvent = new ResultEvent();
+        resultEvent.handler = this;
+        resultEvent.match = this.table.matchinfo;
+        this.onResultForMatch.emit(resultEvent);
     }
 
     onFree(){
@@ -64,7 +70,6 @@ export class TableComponent implements IResultHandler{
     }
 
     onUnLock(){
-        
         this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
 
