@@ -134,18 +134,25 @@ class MatchController @Inject() (tables: Tables) extends Controller{
         }
         val res = if (groupReady) {
           Logger.info("Set group to Table")
-          val a = tables.getMatchList flatMap {ml =>
-            val position = ml.filter(_.asGroup.getOrElse(0) == groupId).head.position
-            val newML = ml map {mlEntry =>
-              if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-            }
-            tables.delMatchListGroup(newML, groupId).flatMap(_.flatMap(
-              matchesInGroup map { m =>
+          tables.getMatchList flatMap {ml =>
+            val position = ml.filter(_.asGroup.getOrElse(0) == groupId).headOption.map(_.position)
+            if(position.isDefined) {
+              val newML = ml map { mlEntry =>
+                if (mlEntry.position > position.get) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+              }
+              val a = tables.delMatchListGroup(newML, groupId).flatMap(_.flatMap(
+                matchesInGroup map { m =>
+                  tables.startMatch(m.id, table.id)
+                }
+              ))
+              a
+            } else {
+              val started = matchesInGroup map { m =>
                 tables.startMatch(m.id, table.id)
               }
-            ))
+              Future.sequence(started).map(_.forall(x => x))
+            }
           }
-          a
         } else {
           Logger.error("Group not ready")
           Future.successful[Boolean](false)
