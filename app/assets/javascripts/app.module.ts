@@ -22,6 +22,7 @@ import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
 import {StageViewComponent} from "./components/stage.view.component"
 import {ResultModalComponent} from "./components/result.modal.view.component"
+import {TableAssignViewComponent} from "./components/table.assign.view.component"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -62,7 +63,8 @@ import {DndModule} from "ng2-dnd";
     DisciplineGroupViewComponent,
     StageViewComponent,
     ResultModalComponent,
-    TableComponent
+    TableComponent,
+    TableAssignViewComponent
   ],
   providers: [
       PlayerService,
