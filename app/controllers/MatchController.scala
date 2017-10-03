@@ -3,7 +3,7 @@ package controllers
 import com.google.inject.Inject
 import dao.Tables
 import models._
-import play.Logger
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -112,6 +112,40 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   def getTypes = Action.async {
     tables.allTypes map {types =>
       Ok(Json.toJson(types))
+    }
+  }
+
+  def setGroupToTable(groupId: Long, tableName: Int) = Action.async{
+    tables.getTTTableFromName(tableName) flatMap {table =>
+      tables.allMatches() flatMap {matches =>
+        Logger.info("matches: " + matches.toString())
+        val matchesInGroup = matches.filter(_.groupId.getOrElse(0) == groupId)
+        val groupReady = matchesInGroup forall { m =>
+          if (!(m.isPlayed || m.isPlaying)) {
+            (m.player1Ids ++ m.player2Ids).forall { p =>
+              val ml = matches.filter { ma =>
+                ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+              }
+              ml.isEmpty // p is not playing
+            }
+          } else {
+            true
+          }
+        }
+        val res = if (groupReady) {
+          Logger.info("Set group to Table")
+          matchesInGroup map { m =>
+            tables.startMatch(m.id, table.id)
+          }
+        } else {
+          Logger.error("Group not ready")
+          Seq.empty[Future[Boolean]]
+        }
+        Future.sequence(res) map { r =>
+          Logger.info("result: " + r.toString() + " " + table.toString + " " + matchesInGroup.toString())
+          Ok("{}")
+        }
+      }
     }
   }
 }
