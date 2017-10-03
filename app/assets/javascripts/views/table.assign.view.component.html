@@ -1,0 +1,37 @@
+<div class="row without-margin">
+	<div class="col s2">
+		<div class="row without-margin">
+			<div>
+				<p>
+					<input type="checkbox" class="filled-in" id="filled-in-box" checked="checked" />
+					<label for="filled-in-box">Nach Warteschlange</label>
+				</p>
+			</div>
+			<div class="input-field col s12">
+				<select  materialize="material_select" (change)="onMatchlistTypeChange($event)" [(ngModel)]="selectedOption">
+					<option [value]="2">Alle Spiele</option>
+					<option [value]="1">Warteschlange</option>
+				</select>
+				<label>Spieltyp</label>
+			</div>
+			 
+		</div>
+		<div *ngIf="selectedOption !=='1'">
+			<discipline-match-list></discipline-match-list>
+		</div>
+		<div *ngIf="selectedOption === '1'">
+			<match-list></match-list>
+		</div>
+		
+	</div>
+	<div class="col s10">
+		<div class="row without-margin" *ngFor="let i of rowCount" >
+			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
+				<tt-table [table]="currentTable"></tt-table>
+		</div>
+		</div>
+	</div>
+
+</div>
+
+
