@@ -134,15 +134,66 @@ class MatchController @Inject() (tables: Tables) extends Controller{
         }
         val res = if (groupReady) {
           Logger.info("Set group to Table")
-          matchesInGroup map { m =>
-            tables.startMatch(m.id, table.id)
+          val a = tables.getMatchList flatMap {ml =>
+            val position = ml.filter(_.asGroup.getOrElse(0) == groupId).head.position
+            val newML = ml map {mlEntry =>
+              if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+            }
+            tables.delMatchListGroup(newML, groupId).flatMap(_.flatMap(
+              matchesInGroup map { m =>
+                tables.startMatch(m.id, table.id)
+              }
+            ))
           }
+          a
         } else {
           Logger.error("Group not ready")
-          Seq.empty[Future[Boolean]]
+          Future.successful[Boolean](false)
         }
-        Future.sequence(res) map { r =>
+        res map { r =>
           Logger.info("result: " + r.toString() + " " + table.toString + " " + matchesInGroup.toString())
+          Ok("{}")
+        }
+      }
+    }
+  }
+
+  def setMatchToTable(matchId: Long, tableName: Int) = Action.async{
+    tables.getTTTableFromName(tableName) flatMap {table =>
+      tables.allMatches() flatMap {matches =>
+        Logger.info("matches: " + matches.toString())
+        val m = matches.filter(_.id == matchId).head
+        val matchReady = if (!(m.isPlayed || m.isPlaying)) {
+          (m.player1Ids ++ m.player2Ids).forall { p =>
+            val ml = matches.filter { ma =>
+              ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+            }
+            ml.isEmpty // p is not playing
+          }
+        } else {
+          false
+        }
+        val res = if (matchReady) {
+          Logger.info("Set match to Table")
+          tables.getMatchList flatMap { ml =>
+            val position = ml.filter(_.matchId == matchId).headOption.map(_.position)
+            if (position.isDefined) {
+              val newML = ml map { mlEntry =>
+                if (mlEntry.position > position.get) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+              }
+              tables.delMatchList(newML, ml.filter(_.matchId == matchId).head.id.get) map { result =>
+                tables.startMatch(m.id, table.id)
+              }
+            } else {
+              tables.startMatch(m.id, table.id)
+            }
+          }
+        } else {
+          Logger.error("Match not ready")
+          Future.successful[Boolean](false)
+        }
+        res map { r =>
+          Logger.info("result: " + r.toString() + " " + table.toString + " " + m.toString())
           Ok("{}")
         }
       }

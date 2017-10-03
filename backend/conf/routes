@@ -16,7 +16,7 @@ GET     /match/filter                   controllers.MatchController.getFilteredM
 GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
-#PUT     /match/matchtotable/:groupId/:tableName     controllers.MatchListController.setMatchToTable(groupId: Long, tableName: Int)
+PUT     /match/matchtotable/:matchId/:tableName     controllers.MatchController.setMatchToTable(matchId: Long, tableName: Int)
 PUT     /match/grouptotable/:groupId/:tableName     controllers.MatchController.setGroupToTable(groupId: Long, tableName: Int)
 
 GET     /types/all                      controllers.MatchController.getTypes
@@ -35,6 +35,8 @@ PUT     /matchlist/addMatch/:id/:position  controllers.MatchListController.addMa
 PUT     /matchlist/addGroup/:id/:position  controllers.MatchListController.addGroup(id: Long, position: Int)
 DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
 DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
+GET     /matchlist/active               controllers.MatchListController.isActive
+POST    /matchlist/active               controllers.MatchListController.setActive(isActive: Boolean)
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket
