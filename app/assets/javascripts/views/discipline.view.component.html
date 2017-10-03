@@ -1,8 +1,6 @@
-
-
  <div class="fixed-action-btn horizontal">
     <a class="btn-floating btn-large blue" (click)="onFilterSelected()">
-      <i class="large material-icons" >search</i>
+      <i class="large material-icons">search</i>
     </a>
     <ul>
       <li><a class="btn-floating green" href="javascript:void(0)" (click)="onCollapseAll()"><i class="material-icons">reorder</i></a></li>
@@ -36,7 +34,6 @@
               <div *ngFor="let currentGroup of selectedTab.groups | slice:(i*4):(i+1)*4" class="col s3">
                 <group-view [group]="currentGroup"></group-view>
               </div>
-              3
           </div>
         </div>
     </div>
