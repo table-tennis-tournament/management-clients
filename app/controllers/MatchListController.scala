@@ -18,6 +18,8 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   import models.MatchModel._
 
+  var isActiv = false
+
   def getAllMatchInfo(ttMatch: TTMatch): Future[Option[AllMatchInfo]] = {
     val p1F = Future.sequence(ttMatch.player1Ids map {id => tables.getPlayer(id)})
     val p2F = Future.sequence(ttMatch.player2Ids map {id => tables.getPlayer(id)})
@@ -121,5 +123,14 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   def getNext = Action.async {
 
     Future.successful(Ok("not implemented"))
+  }
+
+  def setActive(isActive: Boolean) = Action.async {
+    this.isActiv = isActive
+    Future.successful(Ok("set to " + isActive.toString))
+  }
+
+  def isActive = Action.async {
+    Future.successful(Ok(isActiv.toString))
   }
 }

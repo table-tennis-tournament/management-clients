@@ -500,7 +500,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
     }
     Future.sequence(resF) map { r =>
-      val res = dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
+      dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
     }
   }
 
