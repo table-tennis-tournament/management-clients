@@ -14,6 +14,7 @@ export class MatchListComponent{
     public colorArray: string[];
 
     constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
+        console.log("on match list view start");
        matchListService.getCompleteMatchlist().subscribe(
            this.getAllMatchesSuccess.bind(this),
            this.getAllMatchesError
@@ -22,6 +23,7 @@ export class MatchListComponent{
     }
 
     private getAllMatchesSuccess(matches: MatchListDto[]){
+        console.log("get all matches complete");
         this.matches = matches;
     }
     private getAllMatchesError(error){

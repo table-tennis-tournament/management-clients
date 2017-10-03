@@ -20,16 +20,19 @@ export class DisciplineViewComponent{
     public modalActions = new EventEmitter<string|MaterializeAction>();
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
+        console.log("start discipline view component");
         this.onFilterSelected();
         this.colors = TypeColors.TYPE_COLORS;
     }
 
     onTabSelected(selectedTab: DisciplineTab){
+        console.log("on tab selected");
         this.selectedTab = selectedTab;
         this.setTabForId(selectedTab.id);
     }
 
     onFilterSelected(){
+        console.log("on filter selected")
         // this.matchService.getAllMatches().subscribe(this.handleAllMatches.bind(this));
         this.matchService.getAllTypes().subscribe(this.allTypesSelected.bind(this))
     }
@@ -51,16 +54,17 @@ export class DisciplineViewComponent{
     }
 
     handleSetSelectedTab(result: MatchDto[]){
-        console.log("start selected tab");
         var currentItemTab = this.selectedTab;
+        currentItemTab.groups = [];
+        currentItemTab.stages = [];
         var allStages:number[] = [];
         var currentIndex:number = 0;
         var allPlayerArray: boolean[] = [];
+        var currentItem = null;
         for(var index=0; index < result.length; index++){
-            var currentItem = result[index];
-            
+            currentItem = result[index];
 
-             if(!currentItem.group){
+            if(!currentItem.group){
                  var localIndex = allStages[currentItem.matchType.name];
                  var currentStage = currentItemTab.stages[localIndex];
                  if(!currentStage){
@@ -100,6 +104,7 @@ export class DisciplineViewComponent{
             }
             
         }
+        currentItemTab.groups = this.getCleanedGroups(currentItemTab.groups);
         this.selectedTab = currentItemTab;
         console.log("end selected tab");
     }
