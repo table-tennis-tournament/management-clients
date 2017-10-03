@@ -54,6 +54,13 @@ export class TableComponent implements IResultHandler{
         
     }
 
+    onMatchDrop(event){
+        var match = event.dragData
+        if(this.table.matchinfo === null){
+            this.table.matchinfo = match;
+        }
+    };
+
     onResult(){
         var resultEvent = new ResultEvent();
         resultEvent.handler = this;

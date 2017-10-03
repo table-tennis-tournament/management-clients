@@ -61,6 +61,11 @@ span.circle {
     min-height: 400px;
 }
 
+.maxHeight {
+    max-height: 800px;
+    overflow: auto;
+}
+
 .rotate-90{
     transform: rotate(90deg);
 

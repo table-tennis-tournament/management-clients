@@ -21,12 +21,12 @@ export class TableAssignViewComponent{
     public tables: TableDto[];
     public rowCount: number[];
 
-    public showWaitlist:boolean;
+    public selectedOption:string;
 
     constructor(private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
         private randomMatchService: RandomMatchService) {
-        this.showWaitlist = true;
+        this.selectedOption = "2";
         this.loadAllTables();
     }
 
@@ -39,13 +39,12 @@ export class TableAssignViewComponent{
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
     }
 
-    onMatchlistTypeChange(event, second){
-        console.log(event);
-        console.log(second);
+    onMatchlistTypeChange(event){
         console.log("inside on matchlist changed");
     }
 
     getAllTablesFailed(error){
+        console.log("Get all Tables failed following problems:");
         console.log(error);
     }
 

@@ -1,5 +1,5 @@
 <div class="row">
-    <ul class="collection minheigth" dnd-droppable (onDropSuccess)="transferDataSuccess($event)">
+    <ul class="collection minheigth maxHeight" dnd-droppable (onDropSuccess)="transferDataSuccess($event)">
         <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item indigo white-text">
                     <div class="cut-text" *ngIf="currentMatch.matchinfo">
                         <span *ngIf="currentMatch.matchinfo.team1[0]">{{currentMatch.matchinfo.team1[0].lastName}}</span>

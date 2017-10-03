@@ -8,93 +8,19 @@
 				</p>
 			</div>
 			<div class="input-field col s12">
-				<select  materialize="material_select" (change)="onMatchlistTypeChange($event)">
-					<option value="" disabled selected>Wähle ...</option>
-					<option value="1">Warteschlange</option>
-					<option value="2">Alle Spiele</option>
+				<select  materialize="material_select" (change)="onMatchlistTypeChange($event)" [(ngModel)]="selectedOption">
+					<option [value]="2">Alle Spiele</option>
+					<option [value]="1">Warteschlange</option>
 				</select>
 				<label>Spieltyp</label>
 			</div>
-			
+			 
 		</div>
-		<div *ngIf="!showWaitlist">
-			<div class="row without-margin">
-				<div class="input-field col s12">
-					<select  materialize="material_select">
-						<option value="" disabled selected>Wähle Spielkasse ...</option>
-						<option value="1">Herren A</option>
-						<option value="2">Herren B</option>
-						<option value="3">Herren C</option>
-						<option value="4">Herren D</option>
-					</select>
-					<label>Spieltyp</label>
-				</div>
-			</div>
-			<div class="row without-margin">
-				<ul class="collection">
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-				  </ul>
-			</div>
+		<div *ngIf="selectedOption !=='1'">
+			<discipline-match-list></discipline-match-list>
 		</div>
-		<div *ngIf="showWaitlist">
-			<div class="row without-margin">
-				<ul class="collection">
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-					<li class="collection-item">Alvin</li>
-				  </ul>
-			</div>
+		<div *ngIf="selectedOption === '1'">
+			<match-list></match-list>
 		</div>
 		
 	</div>

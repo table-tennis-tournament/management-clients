@@ -1,0 +1,22 @@
+<div class="row without-margin">
+    <div class="input-field col s12">
+        <select  materialize="material_select" (change)="onDisciplineChanged($event)" [(ngModel)]="selectedDiscipline">
+            <option [value]="0">Alle</option>
+           <option *ngFor="let currentDiscipline of disciplines" class="{{colorArray[currentDiscipline.id]}} indigo" [value]="currentDiscipline.id">{{currentDiscipline.name}}</option>
+        </select>
+        <label>Konkurrenz</label>
+    </div>
+</div>
+<div class="row">
+    <ul class="collection maxHeight">
+        <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item {{colorArray[currentMatch.type.id]}} white-text"  dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+            <div class="cut-text" *ngIf="currentMatch">
+                <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
+                <span *ngIf="currentMatch.team1[1]">/{{currentMatch.team1[1].lastName}}</span>
+                <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
+                <span *ngIf="currentMatch.team2[1]">/{{currentMatch.team2[1].lastName}}</span>
+            </div>
+        </li>
+    </ul>
+</div>
+
