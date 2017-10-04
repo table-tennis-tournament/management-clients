@@ -18,6 +18,8 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   import models.MatchModel._
 
+  var isActiv = false
+
   def getAllMatchInfo(ttMatch: TTMatch): Future[Option[AllMatchInfo]] = {
     val p1F = Future.sequence(ttMatch.player1Ids map {id => tables.getPlayer(id)})
     val p2F = Future.sequence(ttMatch.player2Ids map {id => tables.getPlayer(id)})
@@ -118,59 +120,17 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def setGroupToTable(groupId: Long, tableName: Int) = Action.async{
-    tables.getTTTableFromName(tableName) flatMap {table =>
-      tables.allMatches() flatMap {matches =>
-        Logger.info("matches: " + matches.toString())
-        val matchesInGroup = matches.filter(_.groupId.getOrElse(0) == groupId)
-        val res = matchesInGroup map { m =>
-          tables.startMatch(m.id, table.id)
-        }
-        Future.sequence(res) map {r =>
-          Logger.info("result: " + r.toString() + " " + table.toString + " " + matchesInGroup.toString())
-          Ok("{}")
-        }
-      }
-    }
-  }
-
   def getNext = Action.async {
-    Future.successful(Ok("not implemented"))
 
+    Future.successful(Ok("not implemented"))
   }
-//    tables.getFreeTable() flatMap {freeTable =>
-//      if(freeTable.isDefined) {
-//        val amiSeqF = tables.getMatchList flatMap { ml =>
-//          val x = ml map {mlEntry =>
-//            tables.getMatch(mlEntry.matchId) flatMap { m =>
-//              getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
-//            }
-//          }
-//          Future.sequence(x)
-//        }
-//        amiSeqF flatMap {amiSeq =>
-//          if (amiSeq.headOption.isDefined) {
-//            if(amiSeq.head.matchList.asGroup.isDefined) {
-//              val matchIds = amiSeq map {ml =>
-//                ml.ttMatch.ttMatch.id
-//              }
-//              tables.startGroup(matchIds, freeTable.get.id) flatMap {r1 =>
-//                deleteGroup(amiSeq.head.matchList.asGroup.get) map {r2 =>
-//                  Ok(Json.toJson(amiSeq.filter(_.matchList.asGroup == amiSeq.head.matchList.asGroup)))
-//                }
-//              }
-//            } else {
-//              tables.startMatch(amiSeq.head.ttMatch.ttMatch.id, freeTable.get.id) map { result =>
-//                Ok(Json.toJson(Seq(amiSeq.head)))
-//              }
-//            }
-//          } else {
-//            Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
-//          }
-//        }
-//      } else {
-//        Future.successful(Ok(Json.toJson(Seq.empty[MatchListInfo])))
-//      }
-//    }
-//  }
+
+  def setActive(isActive: Boolean) = Action.async {
+    this.isActiv = isActive
+    Future.successful(Ok("set to " + isActive.toString))
+  }
+
+  def isActive = Action.async {
+    Future.successful(Ok(isActiv.toString))
+  }
 }

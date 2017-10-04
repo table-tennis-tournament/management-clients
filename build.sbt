@@ -21,6 +21,7 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0",
   "joda-time" % "joda-time"    % "2.9.2",
   "org.joda"  % "joda-convert" % "1.6",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % "test",
 
 
 //angular2 dependencies

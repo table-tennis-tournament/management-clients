@@ -3,7 +3,7 @@ package controllers
 import com.google.inject.Inject
 import dao.Tables
 import models._
-import play.Logger
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -112,6 +112,98 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   def getTypes = Action.async {
     tables.allTypes map {types =>
       Ok(Json.toJson(types))
+    }
+  }
+
+  def setGroupToTable(groupId: Long, tableName: Int) = Action.async{
+    tables.getTTTableFromName(tableName) flatMap {table =>
+      tables.allMatches() flatMap {matches =>
+        Logger.info("matches: " + matches.toString())
+        val matchesInGroup = matches.filter(_.groupId.getOrElse(0) == groupId)
+        val groupReady = matchesInGroup forall { m =>
+          if (!(m.isPlayed || m.isPlaying)) {
+            (m.player1Ids ++ m.player2Ids).forall { p =>
+              val ml = matches.filter { ma =>
+                ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+              }
+              ml.isEmpty // p is not playing
+            }
+          } else {
+            true
+          }
+        }
+        val res = if (groupReady) {
+          Logger.info("Set group to Table")
+          tables.getMatchList flatMap {ml =>
+            val position = ml.filter(_.asGroup.getOrElse(0) == groupId).headOption.map(_.position)
+            if(position.isDefined) {
+              val newML = ml map { mlEntry =>
+                if (mlEntry.position > position.get) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+              }
+              val a = tables.delMatchListGroup(newML, groupId).flatMap(_.flatMap(
+                matchesInGroup map { m =>
+                  tables.startMatch(m.id, table.id)
+                }
+              ))
+              a
+            } else {
+              val started = matchesInGroup map { m =>
+                tables.startMatch(m.id, table.id)
+              }
+              Future.sequence(started).map(_.forall(x => x))
+            }
+          }
+        } else {
+          Logger.error("Group not ready")
+          Future.successful[Boolean](false)
+        }
+        res map { r =>
+          Logger.info("result: " + r.toString() + " " + table.toString + " " + matchesInGroup.toString())
+          Ok("{}")
+        }
+      }
+    }
+  }
+
+  def setMatchToTable(matchId: Long, tableName: Int) = Action.async{
+    tables.getTTTableFromName(tableName) flatMap {table =>
+      tables.allMatches() flatMap {matches =>
+        Logger.info("matches: " + matches.toString())
+        val m = matches.filter(_.id == matchId).head
+        val matchReady = if (!(m.isPlayed || m.isPlaying)) {
+          (m.player1Ids ++ m.player2Ids).forall { p =>
+            val ml = matches.filter { ma =>
+              ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+            }
+            ml.isEmpty // p is not playing
+          }
+        } else {
+          false
+        }
+        val res = if (matchReady) {
+          Logger.info("Set match to Table")
+          tables.getMatchList flatMap { ml =>
+            val position = ml.filter(_.matchId == matchId).headOption.map(_.position)
+            if (position.isDefined) {
+              val newML = ml map { mlEntry =>
+                if (mlEntry.position > position.get) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+              }
+              tables.delMatchList(newML, ml.filter(_.matchId == matchId).head.id.get) map { result =>
+                tables.startMatch(m.id, table.id)
+              }
+            } else {
+              tables.startMatch(m.id, table.id)
+            }
+          }
+        } else {
+          Logger.error("Match not ready")
+          Future.successful[Boolean](false)
+        }
+        res map { r =>
+          Logger.info("result: " + r.toString() + " " + table.toString + " " + m.toString())
+          Ok("{}")
+        }
+      }
     }
   }
 }

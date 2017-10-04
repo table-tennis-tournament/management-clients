@@ -228,6 +228,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def isPossibleMatch(id: Long): Future[Boolean] = {
+    val ma = (for {
+      m <- matches.filter(_.id === id)
+      p <- player if m.player1Id === p.id || m.player2Id === p.id
+      matchesWithPlayer <- matches if matchesWithPlayer.player1Id === p.id || matchesWithPlayer.player2Id === p.id
+      matchesBlocking <- matches if matchesBlocking.id === matchesWithPlayer.id && matchesBlocking.isPlaying === true
+    } yield (matchesBlocking.id)).exists
+    dbConfigProvider.get.db.run(ma.result)
+  }
+
   def getMatchOnTable(id: Long): Future[Option[TTMatch]] = {
     val matchF = dbConfigProvider.get.db.run(matches.filter(_.ttTableId === id).result)
     matchF flatMap { m =>
@@ -490,7 +500,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       dbConfigProvider.get.db.run(matchList.insertOrUpdate(mlEntry))
     }
     Future.sequence(resF) map { r =>
-      val res = dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
+      dbConfigProvider.get.db.run(matchList.filter(_.asGroup === Option(id)).delete)
     }
   }
 
