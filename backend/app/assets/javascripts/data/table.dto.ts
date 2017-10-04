@@ -1,7 +1,7 @@
 import {MatchDto} from "./match.dto"
-import {Table} from "./table"
+import {TableLight} from "./table.light"
 
 export class TableDto{
-    table: Table
+    table: TableLight
     matchinfo: MatchDto;
 }
