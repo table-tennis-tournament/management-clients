@@ -36,15 +36,18 @@ export class TableComponent implements IResultHandler{
     @Input("table")
     set table(value: TableDto){
         this._table = value;
+        this.updateMatchInfo();
+    } 
+
+    @Output() onResultForMatch = new EventEmitter<ResultEvent>();
+
+    updateMatchInfo(){
         if(this._table.matchinfo){
             this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team1);
             this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team2);
             this.setBgColorAndTextColorDependsOnType();
         }
-        
-    } 
-
-    @Output() onResultForMatch = new EventEmitter<ResultEvent>();
+    }
 
     setBgColorAndTextColorDependsOnType(){
         if(this.table.matchinfo){
@@ -57,9 +60,14 @@ export class TableComponent implements IResultHandler{
     onMatchDrop(event){
         var match = event.dragData
         if(this.table.matchinfo === null){
-            this.table.matchinfo = match;
+            this.matchService.assignMatchToTable(match.match.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, match), this.handleErrorsOnService);
         }
     };
+
+    onMatchAssigned(match){
+        this.table.matchinfo = match;
+        this.updateMatchInfo();
+    }
 
     onResult(){
         var resultEvent = new ResultEvent();
