@@ -22,16 +22,22 @@ export class TableAssignViewComponent{
     public rowCount: number[];
 
     public selectedOption:string;
+    public isWaitingListActive: boolean;
 
     constructor(private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
         private randomMatchService: RandomMatchService) {
         this.selectedOption = "2";
         this.loadAllTables();
+        this.loadActiveWaitingList();
     }
 
     loadAllTables(){
         this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
+    }
+
+    loadActiveWaitingList(){
+
     }
 
     getAllTablesSuccessful(tables: TableDto[]){
@@ -41,6 +47,10 @@ export class TableAssignViewComponent{
 
     onMatchlistTypeChange(event){
         console.log("inside on matchlist changed");
+    }
+
+    onWaitingListActiveChanged(){
+        
     }
 
     getAllTablesFailed(error){
