@@ -14,7 +14,6 @@ export class MatchListComponent{
     public colorArray: string[];
 
     constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
-        console.log("on match list view start");
        matchListService.getCompleteMatchlist().subscribe(
            this.getAllMatchesSuccess.bind(this),
            this.getAllMatchesError
@@ -32,7 +31,6 @@ export class MatchListComponent{
     }
 
     transferDataSuccess($event) {
-        console.log($event.dragData);
         if($event.dragData.team1){
             var matchListItem = new MatchListDto();
             matchListItem.matchinfo = $event.dragData;
