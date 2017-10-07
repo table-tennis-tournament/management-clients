@@ -79,7 +79,6 @@ export class TableService {
   }
 
   freeTable(tableId: number){
-      console.log("free table is called: "+ tableId);
       return this.http.get(this.replaceTableNumer(tableId, this.freeTableUrl))
   }
 

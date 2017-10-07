@@ -1,7 +1,6 @@
 import {Component, ViewContainerRef, ViewEncapsulation, ViewChild} from "@angular/core"
-import {MatchService} from "../services/match.service"
+import {MatchListService} from "../services/match.list.service"
 import {TableService} from "../services/table.service"
-import {MatchToStringService} from "../services/match.toString.service"
 import {RandomMatchService} from "../services/random.match.service"
 import {ResultModalComponent} from "./result.modal.view.component"
 
@@ -24,20 +23,22 @@ export class TableAssignViewComponent{
     public selectedOption:string;
     public isWaitingListActive: boolean;
 
-    constructor(private matchService:MatchService, private tableService:TableService, 
-        public matchToStringService: MatchToStringService, 
-        private randomMatchService: RandomMatchService) {
+    constructor(private matchListService:MatchListService, private tableService:TableService) {
         this.selectedOption = "2";
         this.loadAllTables();
         this.loadActiveWaitingList();
     }
 
     loadAllTables(){
-        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.getAllTablesFailed)
+        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.onError)
     }
 
     loadActiveWaitingList(){
+        this.matchListService.getMatchlistActive().subscribe(this.onMatchlistActiveLoaded.bind(this));
+    }
 
+    onMatchlistActiveLoaded(_isActive){
+        this.isWaitingListActive = _isActive;
     }
 
     getAllTablesSuccessful(tables: TableDto[]){
@@ -50,10 +51,15 @@ export class TableAssignViewComponent{
     }
 
     onWaitingListActiveChanged(){
-        
+        this.matchListService.setMatchlistActive(this.isWaitingListActive).
+            subscribe(this.onSetWaitingListActiveSuccess.bind(this), this.onError.bind(this));
     }
 
-    getAllTablesFailed(error){
+    onSetWaitingListActiveSuccess(){
+        console.log("on set waiting list active finished");
+    }
+
+    onError(error){
         console.log("Get all Tables failed following problems:");
         console.log(error);
     }

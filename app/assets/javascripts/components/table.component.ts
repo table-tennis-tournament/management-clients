@@ -1,6 +1,7 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core"
 import {Match} from "../data/match"
 import {MatchDto} from "../data/match.dto"
+import {Group} from "../data/group"
 import {TableDto} from "../data/table.dto"
 import {MatchToStringService} from "../services/match.toString.service"
 import {MatchService} from "../services/match.service"
@@ -58,10 +59,20 @@ export class TableComponent implements IResultHandler{
     }
 
     onMatchDrop(event){
-        var match = event.dragData
-        if(this.table.matchinfo === null){
-            this.matchService.assignMatchToTable(match.match.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, match), this.handleErrorsOnService);
+        var match = event.dragData.match;
+       
+        if(this.table.matchinfo !== null){
+            return;
         }
+        var isGroup = event.dragData.isGroup;
+        if(isGroup === false){
+            this.matchService.assignMatchToTable(match.match.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, match), this.handleErrorsOnService);
+            return;
+        }
+        if(match.group != null){
+            this.matchService.assignGroupToTable(match.group.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, match), this.handleErrorsOnService);
+        }
+        
     };
 
     onMatchAssigned(match){

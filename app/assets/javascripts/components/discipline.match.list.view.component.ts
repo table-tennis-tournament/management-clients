@@ -1,6 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {MatchDto} from "../data/match.dto";
 import {TypeColors} from "../data/typeColors";
+import {DisciplineShortcuts} from "../data/disciplineShortcuts";
 import {Type} from "../data/type";
 import {MatchListService} from "../services/match.list.service";
 import {MatchService} from "../services/match.service";
@@ -15,11 +16,13 @@ export class DisciplineMatchListComponent{
     public colorArray: string[];
     public disciplines:Array<Type>;
     public selectedDiscipline:any;
+    public disciplineType:string[];
 
     constructor(private matchListService: MatchListService, private matchService: MatchService){
        this.getAllMatches()
        this.matchService.getAllTypes().subscribe(this.allTypesSelected.bind(this))
        this.colorArray = TypeColors.TYPE_COLORS;
+       this.disciplineType = DisciplineShortcuts.TYPE;
     }
 
     private getAllMatches(){

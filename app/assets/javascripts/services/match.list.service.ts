@@ -9,11 +9,11 @@ export class MatchListService {
     private nextMatchUrl = "matchlist/next";
     private allMatchListUrl = "matchlist/all";
     private deleteMatchListItemUrl = "matchlist/deleteMatch/itemId ";
-    private addMatchListItemUrl = "matchlist/match/matchId/position ";
+    private addMatchListItemUrl = "matchlist/addMatch/matchId/position ";
     private deleteGroupListItemUrl = "matchlist/deleteGroup/itemId ";
-    private addGroupListItemUrl = "matchlist/group/groupId/position ";
+    private addGroupListItemUrl = "matchlist/addGroup/groupId/position ";
     private addGroupToTableUrl = "/matchlist/grouptotable/groupId/tableNumber ";
-    private matchlistActiveUrl = "/matchlist/active ";
+    private matchlistActiveUrl = "/matchlist/active";
       
     constructor(private http: Http){}
 
@@ -74,8 +74,8 @@ export class MatchListService {
     }
 
     setMatchlistActive(isActive:boolean):Observable<any>{
-        return this.http.put(this.matchlistActiveUrl, JSON.stringify({isActive: isActive}), {headers: this.getHeaders()})
-             .map(res => res.json());
+        var query = this.matchlistActiveUrl + "?isActive="+isActive.toString();
+        return this.http.post(query, JSON.stringify({}), {headers: this.getHeaders()});
     }
 
 }
