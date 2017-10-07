@@ -47,10 +47,11 @@ export class TableService {
 
   handleWebSocketMessage(data){
       console.log("data received: " + data);
-      this.matchListService.getNextMatch().subscribe(
-          this.informNextMatchListeners.bind(this),
-          this.handleErrorOnNextMatchRequest
-      )
+
+    //   this.matchListService.getNextMatch().subscribe(
+    //       this.informNextMatchListeners.bind(this),
+    //       this.handleErrorOnNextMatchRequest
+    //   )
   }
 
   informNextMatchListeners(matches: MatchListDto[]){

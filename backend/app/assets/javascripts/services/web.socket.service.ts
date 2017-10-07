@@ -30,7 +30,6 @@ export class WebSocketService {
             }
 
             this.ws.onmessage = (e) => {
-                console.log("on Message de websocket");
                 if(e.data==="MatchesUpdated"){
                     observer.next("Update Message");
                 }
