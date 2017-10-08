@@ -19,6 +19,7 @@ POST    /match/:id/result               controllers.MatchController.setResult(id
 PUT     /match/matchtotable/:matchId/:tableName     controllers.MatchController.setMatchToTable(matchId: Long, tableName: Int)
 PUT     /match/grouptotable/:groupId/:tableName     controllers.MatchController.setGroupToTable(groupId: Long, tableName: Int)
 GET     /match/open/all                 controllers.MatchController.getOpenMatches
+GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 
 GET     /types/all                      controllers.MatchController.getTypes
 
