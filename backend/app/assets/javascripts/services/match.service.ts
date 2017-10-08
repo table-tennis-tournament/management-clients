@@ -8,7 +8,9 @@ import {Observable} from "rxjs/Rx";
 @Injectable()
 export class MatchService {
   private allMatchesUrl = "match/all";
+  private allOpenMatchesUrl = "match/open/all";
   private allTypesUrl = "types/all";
+  private allOpenTypesUrl = "types/open/typeid/typeIdValue";
   private getMatchesByTypeUrl = "match/typeid/typeIdValue";
   private addResultString = "match/matchId/result";
   private assignMatchToTableUrl = "match/matchtotable/matchId/tableName";
@@ -18,6 +20,11 @@ export class MatchService {
 
   getAllMatches(): Observable<MatchDto[]>{
     return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getAllOpenMatches(): Observable<MatchDto[]>{
+    return this.http.get(this.allOpenMatchesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
@@ -54,6 +61,11 @@ export class MatchService {
 
   getAllTypes(): Observable<Type[]>{
     return this.http.get(this.allTypesUrl).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getAllOpenTypes(): Observable<Type[]>{
+    return this.http.get(this.allOpenTypesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
