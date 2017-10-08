@@ -87,6 +87,20 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
+  def getPlayedMatches  = Action.async {
+    val matchesF = tables.allMatches()
+    val x = matchesF map {matches =>
+      val playedMatches = matches.filter(m => m.isPlayed && m.getResult.isEmpty)
+      playedMatches map(ttMatch => getAllMatchInfo(ttMatch))
+    }
+    val z = x map {y => Future.sequence(y)}
+    val z2 = z.flatMap(z => z)
+    z2 map {z =>
+      val m = z.filter(_.isDefined) map {z1 => z1.get}
+      Ok(Json.toJson(m.sortBy(_.ttMatch.id)))
+    }
+  }
+
   def getOpenMatchesByTypeId(typeid: Long)  = Action.async {
     val matchesF = tables.allMatches()
     val x = matchesF map {matches =>
