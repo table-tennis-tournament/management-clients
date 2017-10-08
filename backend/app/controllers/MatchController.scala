@@ -144,6 +144,13 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
+  def getActiveTypes = Action.async {
+    tables.allTypes map {types =>
+      val activeTypes = types.filter(_.active)
+      Ok(Json.toJson(activeTypes))
+    }
+  }
+
   def setGroupToTable(groupId: Long, tableName: Int) = Action.async{
     tables.getTTTableFromName(tableName) flatMap {table =>
       tables.allMatches() flatMap {matches =>

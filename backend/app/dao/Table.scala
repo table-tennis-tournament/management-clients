@@ -409,8 +409,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def id = column[Long]("Type_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Type_Name")
     def kind = column[Int]("Type_Kind")
+    def active = column[Boolean]("Type_Active")
 
-    def * = (id, name, kind) <> (Type.tupled, Type.unapply _)
+    def * = (id, name, kind, active) <> (Type.tupled, Type.unapply _)
   }
 
   def getType(id: Long): Future[Option[Type]] = {
