@@ -63,6 +63,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   }
 
   def addMatch(id: Long, position: Int) = Action.async{
+    Logger.info("addMatch")
     val newMLEntry = MatchList(None, id, None, position)
     tables.getMatchList flatMap {ml =>
       val newML = ml map {mlEntry =>
@@ -78,6 +79,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   }
 
   def addGroup(id: Long, position: Int) = Action.async{
+    Logger.info("addGroup")
     tables.getMatchesInGroup(id) flatMap { ml =>
       val addML = ml map { m =>
         MatchList(None, m.id, Some(id), position)
