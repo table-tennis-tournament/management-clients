@@ -10,7 +10,5 @@ export class DisciplineShortcuts{
             DisciplineShortcuts.TYPE["Runde 1"] = "RD1";
             
         }
-        public static TYPE = [
-            {Finale: "FI"}
-        ]
+        public static TYPE = []
     }
