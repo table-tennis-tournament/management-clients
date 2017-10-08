@@ -7,14 +7,20 @@ import {Observable} from "rxjs/Rx";
 
 @Injectable()
 export class MatchService {
+
   private allMatchesUrl = "match/all";
   private allOpenMatchesUrl = "match/open/all";
-  private allTypesUrl = "types/all";
-  private allOpenTypesUrl = "types/open/typeid/typeIdValue";
+  
   private getMatchesByTypeUrl = "match/typeid/typeIdValue";
+  private getOpenMatchesByTypeUrl = "match/open/typeid/typeIdValue";
+
   private addResultString = "match/matchId/result";
+
   private assignMatchToTableUrl = "match/matchtotable/matchId/tableName";
   private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
+
+  private allTypesUrl = "types/all";
+  private allOpenTypesUrl = "types/open/all ";
 
   constructor(private http: Http){}
 
@@ -55,7 +61,6 @@ export class MatchService {
   addResult(resultToHandle: IResult[], matchId: number){
     var regEx = new RegExp("matchId");
     var url = this.addResultString.replace(regEx, matchId.toString());
-    console.log("before http post: " + url)
     return this.http.post(url, resultToHandle);
   }
 
@@ -64,7 +69,7 @@ export class MatchService {
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
-  getAllOpenTypes(): Observable<Type[]>{
+  getAllOpenTypes(typeId: number): Observable<Type[]>{
     return this.http.get(this.allOpenTypesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
@@ -72,6 +77,14 @@ export class MatchService {
   getMatchesByType(typeId: number): Observable<MatchDto>{
     var regEx = new RegExp("typeIdValue");
     var url = this.getMatchesByTypeUrl.replace(regEx, typeId.toString());
+        
+    return this.http.get(url).map((res:Response) => res.json())
+               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getOpenMatchesByType(typeId: number): Observable<MatchDto>{
+    var regEx = new RegExp("typeIdValue");
+    var url = this.getOpenMatchesByTypeUrl.replace(regEx, typeId.toString());
         
     return this.http.get(url).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
