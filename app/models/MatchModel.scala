@@ -35,7 +35,8 @@ object MatchModel {
     def writes(ttType: Type) = Json.obj(
       "id" -> ttType.id,
       "name" -> ttType.name,
-      "kind" -> ttType.kind
+      "kind" -> ttType.kind,
+      "active" -> ttType.active
     )
   }
 
@@ -166,7 +167,8 @@ case class MatchType(
 case class Type(
     id: Long,
     name: String,
-    kind: Int
+    kind: Int,
+    active: Boolean
   )
 
 case class Group(

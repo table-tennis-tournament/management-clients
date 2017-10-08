@@ -73,6 +73,35 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     }
   }
 
+  def getOpenMatches  = Action.async {
+    val matchesF = tables.allMatches()
+    val x = matchesF map {matches =>
+      val openMatches = matches.filter(m => !m.isPlaying && !m.isPlayed)
+      openMatches map(ttMatch => getAllMatchInfo(ttMatch))
+    }
+    val z = x map {y => Future.sequence(y)}
+    val z2 = z.flatMap(z => z)
+    z2 map {z =>
+      val m = z.filter(_.isDefined) map {z1 => z1.get}
+      Ok(Json.toJson(m.sortBy(_.ttMatch.id)))
+    }
+  }
+
+  def getOpenMatchesByTypeId(typeid: Long)  = Action.async {
+    val matchesF = tables.allMatches()
+    val x = matchesF map {matches =>
+      val openMatches = matches.filter(m => !m.isPlaying && !m.isPlayed)
+      val openMatchesByType = openMatches.filter(_.typeId == typeid)
+      openMatchesByType map(ttMatch => getAllMatchInfo(ttMatch))
+    }
+    val z = x map {y => Future.sequence(y)}
+    val z2 = z.flatMap(z => z)
+    z2 map {z =>
+      val m = z.filter(_.isDefined) map {z1 => z1.get}
+      Ok(Json.toJson(m.sortBy(_.ttMatch.id)))
+    }
+  }
+
   def getMatch(id: Long) = Action.async {
     val matchF = tables.getMatch(id)
     matchF flatMap { ttMatch =>
@@ -112,6 +141,13 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   def getTypes = Action.async {
     tables.allTypes map {types =>
       Ok(Json.toJson(types))
+    }
+  }
+
+  def getActiveTypes = Action.async {
+    tables.allTypes map {types =>
+      val activeTypes = types.filter(_.active)
+      Ok(Json.toJson(activeTypes))
     }
   }
 
