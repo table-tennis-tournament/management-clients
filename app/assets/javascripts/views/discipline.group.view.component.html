@@ -1,9 +1,9 @@
 <div class="card {{group.bgColor}}">
-    <div class="card-content">
+    <div class="card-content black-text">
         <span class="card-title"><span dnd-draggable [dragEnabled]="true" [dragData]="group">{{group.name}}</span>
         
         <span class="circle right" *ngFor="let tableNumber of group.tableNumbers">{{tableNumber}}</span></span>
-        <div class="row" *ngIf="showInput">
+        <!-- <div class="row" *ngIf="showInput">
             <div class="col s6">
                 <input id="result" class="form-control " [(ngModel)]="currentTableInput" type="text">
             </div>
@@ -11,7 +11,7 @@
                 <a class="waves-effect waves-light btn" (click)="addTableClicked()">OK</a>
             </div>
             
-        </div>
+        </div> -->
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
             <li >
                 <div class="collapsible-header" [class.active]="group.isPlayerActive"><i class="material-icons">perm_identity</i>Spieler</div>
@@ -28,7 +28,8 @@
                 <div class="collapsible-header" [class.active]="group.isMatchActive"><i class="material-icons">view_list</i>Spiele</div>
                 <div class="collapsible-body">
                     <div class="collection">
-                        <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+                        <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" 
+                            dnd-draggable [dragEnabled]="!currentMatch.match.isPlayed" [dragData]="currentMatch" [dropZones]="['match-dropZone']">
                                 {{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}  
                                 <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a>
                     </div>
