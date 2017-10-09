@@ -69,7 +69,7 @@ export class MatchService {
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
-  getAllOpenTypes(typeId: number): Observable<Type[]>{
+  getAllOpenTypes(): Observable<Type[]>{
     return this.http.get(this.allOpenTypesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }

@@ -20,13 +20,13 @@ export class DisciplineMatchListComponent{
 
     constructor(private matchListService: MatchListService, private matchService: MatchService){
        this.getAllMatches()
-       this.matchService.getAllTypes().subscribe(this.allTypesSelected.bind(this))
+       this.matchService.getAllOpenTypes().subscribe(this.allTypesSelected.bind(this))
        this.colorArray = TypeColors.TYPE_COLORS;
        this.disciplineType = DisciplineShortcuts.TYPE;
     }
 
     private getAllMatches(){
-        this.matchService.getAllMatches().subscribe(
+        this.matchService.getAllOpenMatches().subscribe(
             this.getAllMatchesSuccess.bind(this),
             this.getAllMatchesError
         )
@@ -49,7 +49,7 @@ export class DisciplineMatchListComponent{
             this.getAllMatches();
             return;
         }
-        this.matchService.getMatchesByType(this.selectedDiscipline).subscribe(this.matchesChanged.bind(this));
+        this.matchService.getOpenMatchesByType(this.selectedDiscipline).subscribe(this.matchesChanged.bind(this));
     }
 
     matchesChanged(matches: MatchDto[]){

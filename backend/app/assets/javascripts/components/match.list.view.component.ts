@@ -10,8 +10,9 @@ import {RandomMatchService} from "../services/random.match.service";
 })
 export class MatchListComponent{
 
-    public matches: Array<any>;
-    public colorArray: string[];
+    public matches: Array<any> = [];
+    public colorArray: string[] = [];
+    sourceList: Array<any> = [{name:"item1"},{name:"item2"}];
 
     constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
        matchListService.getCompleteMatchlist().subscribe(
@@ -22,11 +23,10 @@ export class MatchListComponent{
     }
 
     private getAllMatchesSuccess(matches: MatchListDto[]){
-        console.log("get all matches complete");
         this.matches = matches;
     }
     private getAllMatchesError(error){
-        console.log("error on get All matches");
+        console.log("error on get All matches for waitinglist");
         console.log(error);
     }
 

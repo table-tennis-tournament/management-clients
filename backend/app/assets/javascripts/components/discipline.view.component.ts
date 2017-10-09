@@ -32,9 +32,7 @@ export class DisciplineViewComponent{
     }
 
     onFilterSelected(){
-        console.log("on filter selected")
-        // this.matchService.getAllMatches().subscribe(this.handleAllMatches.bind(this));
-        this.matchService.getAllTypes().subscribe(this.allTypesSelected.bind(this))
+        this.matchService.getAllOpenTypes().subscribe(this.allTypesSelected.bind(this))
     }
 
     allTypesSelected(result: Type[]){
