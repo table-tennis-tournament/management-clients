@@ -5,7 +5,7 @@ version := "1.0-SNAPSHOT"
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.7"
-val ngVersion = "2.4.9"
+val ngVersion = "4.4.4"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "2.0.0",
@@ -30,7 +30,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "angular__core" % ngVersion,
   "org.webjars.npm" % "angular__forms" % ngVersion,
   "org.webjars.npm" % "angular__http" % ngVersion,
-  "org.webjars.npm" % "angular__router" % "3.2.0-rc.0",
+  "org.webjars.npm" % "angular__router" % ngVersion,
   "org.webjars.npm" % "angular__platform-browser-dynamic" % ngVersion,
   "org.webjars.npm" % "angular__platform-browser" % ngVersion,
   "org.webjars.npm" % "systemjs" % "0.19.39",
@@ -42,7 +42,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "zone.js" % "0.6.26",
   "org.webjars.npm" % "core-js" % "2.4.1",
   "org.webjars.npm" % "symbol-observable" % "1.0.4",
-  "org.webjars.npm" % "typescript" % "2.0.6",
+  "org.webjars.npm" % "typescript" % "2.3.4",
 
   "org.webjars.npm" % "ng2-dnd" % "2.1.1",
 
