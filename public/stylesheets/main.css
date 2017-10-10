@@ -30,8 +30,8 @@ span.circle {
 }
 
 .square {
-  width: 20px;
-  height: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 .custom-col {
@@ -61,7 +61,7 @@ span.circle {
     min-height: 400px;
 }
 
-.waiting-list-drop-zone{
+.waiting-list-drop-zone {
     min-height: 100px;
 }
 
@@ -70,33 +70,31 @@ span.circle {
     overflow: auto;
 }
 
-.discipline-match-list-root{
+.discipline-match-list-root {
     height: 25px;
 }
 
-.discipline-match-list-square{
+.discipline-match-list-square {
     width: 25px;
     height: 25px;
     float: right;
     text-align: center
 }
 
-.discipline-match-list-item{
+.discipline-match-list-item {
     width: calc(100% - 30px);
     float: left;
 }
 
-.rotate-90{
+.rotate-90 {
     transform: rotate(90deg);
-
 }
 
-.rotate-270{
+.rotate-270 {
     transform: rotate(270deg);
-
 }
 
-.cut-text{
+.cut-text {
     text-overflow: ellipsis;
 }
 
@@ -118,6 +116,10 @@ table.bracket {
     padding: 5px 5px 5px 5px;
 }
 
-.bracket th{
-    text-align:center;
+.bracket th {
+    text-align: center;
+}
+
+nav ul li.active {
+    background-color: rgba(0, 0, 0, 0.38);
 }
