@@ -3,15 +3,6 @@
         <span class="card-title"><span dnd-draggable [dragEnabled]="true" [dragData]="group">{{group.name}}</span>
         
         <span class="circle right" *ngFor="let tableNumber of group.tableNumbers">{{tableNumber}}</span></span>
-        <!-- <div class="row" *ngIf="showInput">
-            <div class="col s6">
-                <input id="result" class="form-control " [(ngModel)]="currentTableInput" type="text">
-            </div>
-            <div class="col s6">
-                <a class="waves-effect waves-light btn" (click)="addTableClicked()">OK</a>
-            </div>
-            
-        </div> -->
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
             <li >
                 <div class="collapsible-header" [class.active]="group.isPlayerActive"><i class="material-icons">perm_identity</i>Spieler</div>

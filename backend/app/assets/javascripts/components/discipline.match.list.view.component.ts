@@ -1,5 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {MatchDto} from "../data/match.dto";
+import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {DisciplineShortcuts} from "../data/disciplineShortcuts";
 import {Type} from "../data/type";
@@ -19,8 +20,8 @@ export class DisciplineMatchListComponent{
     public disciplineType:string[];
 
     constructor(private matchListService: MatchListService, private matchService: MatchService){
-       this.getAllMatches()
        this.matchService.getAllOpenTypes().subscribe(this.allTypesSelected.bind(this))
+       this.getAllMatches()
        this.colorArray = TypeColors.TYPE_COLORS;
        this.disciplineType = DisciplineShortcuts.TYPE;
     }
@@ -44,12 +45,57 @@ export class DisciplineMatchListComponent{
         console.log(error);
     }
 
+    public onTableAssigned(dragData: any){
+        var isGroup = dragData.isGroup;
+        if(isGroup === false){
+            this.matches.splice(dragData.index, 1);
+            return;
+        }
+        if(dragData.match.group != null){
+            var groupId = dragData.match.group.id;
+            var matchIndex = this.matches.length;
+            var currentMatch = null;
+            for(;matchIndex > -1; matchIndex--){
+                currentMatch = this.matches[matchIndex];
+                if(currentMatch !== null && currentMatch !== undefined && currentMatch.group.id === groupId){
+                    this.matches.splice(matchIndex, 1);
+                }
+            }
+        }
+        
+    }
+
     onDisciplineChanged(){
         if (this.selectedDiscipline === "0"){
             this.getAllMatches();
             return;
         }
+        if (this.selectedDiscipline === "-1"){
+            this.getWaitingList();
+            return;
+        }
         this.matchService.getOpenMatchesByType(this.selectedDiscipline).subscribe(this.matchesChanged.bind(this));
+    }
+
+    onRefreshMatchesClicked(){
+        this.onDisciplineChanged();
+    }
+
+    getWaitingList(){
+        this.matchListService.getCompleteMatchlist().subscribe(this.onMatchlistLoaded.bind(this));
+    }
+
+    onMatchlistLoaded(matches: MatchListDto[]){
+        this.matches = [];
+        if(matches === null || matches === undefined){
+            console.log("Empty Matches on matchlist loaded");
+            return;
+        }
+        matches.forEach(element => {
+            if(element !== null && element !== undefined && element.matchinfo !== null){
+                this.matches.push(element.matchinfo);
+            }
+        });
     }
 
     matchesChanged(matches: MatchDto[]){
