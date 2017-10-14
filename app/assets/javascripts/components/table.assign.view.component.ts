@@ -3,6 +3,7 @@ import {MatchListService} from "../services/match.list.service"
 import {TableService} from "../services/table.service"
 import {RandomMatchService} from "../services/random.match.service"
 import {ResultModalComponent} from "./result.modal.view.component"
+import {DisciplineMatchListComponent} from "./discipline.match.list.view.component"
 
 import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
@@ -23,10 +24,21 @@ export class TableAssignViewComponent{
     public selectedOption:string;
     public isWaitingListActive: boolean;
 
+    @ViewChild(DisciplineMatchListComponent) matchListComponent: DisciplineMatchListComponent;
+
+
     constructor(private matchListService:MatchListService, private tableService:TableService) {
         this.selectedOption = "2";
         this.loadAllTables();
         this.loadActiveWaitingList();
+    }
+
+    onRefreshTablesClicked(){
+        this.loadAllTables();
+    }
+
+    onRefreshMatchesClicked(){
+        this.matchListComponent.onRefreshMatchesClicked();
     }
 
     loadAllTables(){

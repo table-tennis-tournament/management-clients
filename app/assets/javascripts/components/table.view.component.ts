@@ -42,6 +42,10 @@ export class TableViewComponent{
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
     }
 
+    onTableRefresh(){
+        this.loadAllTables();
+    }
+
     getAllTablesFailed(error){
         console.log(error);
     }

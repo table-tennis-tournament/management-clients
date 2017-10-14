@@ -42,6 +42,8 @@ export class TableComponent implements IResultHandler{
 
     @Output() onResultForMatch = new EventEmitter<ResultEvent>();
 
+    @Output() onTableAssigned = new EventEmitter<any>();
+
     updateMatchInfo(){
         if(this._table.matchinfo){
             this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team1);
@@ -66,18 +68,20 @@ export class TableComponent implements IResultHandler{
         }
         var isGroup = event.dragData.isGroup;
         if(isGroup === false){
-            this.matchService.assignMatchToTable(match.match.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, match), this.handleErrorsOnService);
+            this.matchService.assignMatchToTable(match.match.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
             return;
         }
         if(match.group != null){
-            this.matchService.assignGroupToTable(match.group.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, match), this.handleErrorsOnService);
+            this.matchService.assignGroupToTable(match.group.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
         }
         
     };
 
-    onMatchAssigned(match){
+    onMatchAssigned(dragData){
+        var match = dragData.match;
         this.table.matchinfo = match;
         this.updateMatchInfo();
+        this.onTableAssigned.emit(dragData);
     }
 
     onResult(){

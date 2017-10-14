@@ -3,5 +3,10 @@
 				<tt-table [table]="currentTable" (onResultForMatch)="onResultForMatch($event)"></tt-table>
 		</div>
 </div>
+<div class="fixed-action-btn horizontal">
+		<a class="btn-floating btn-large blue" (click)="onTableRefresh()">
+		  <i class="large material-icons">refresh</i>
+		</a>
+	</div>
 
 <modal-result></modal-result>

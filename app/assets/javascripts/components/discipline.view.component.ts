@@ -221,7 +221,6 @@ export class DisciplineViewComponent{
     }
 
     setValuesOnTabs(isMatchActive: boolean, isPlayerActive:boolean){
-        console.log("start iterating ...");
         for(var index = 0; index < this.tabs.length; index++){
             this.tabs[index].groups.forEach(function(element){
                 element.isMatchActive =true;
