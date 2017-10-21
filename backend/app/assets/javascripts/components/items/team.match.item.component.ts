@@ -9,10 +9,5 @@ export class TeamMatchItemComponent{
 
     @Input() team:Player[];
 
-
-    constructor(){
-        console.log("on out");
-    }
-
    
 }

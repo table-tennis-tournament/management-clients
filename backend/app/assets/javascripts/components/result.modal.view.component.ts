@@ -18,7 +18,7 @@ import {MaterializeAction} from "angular2-materialize";
       <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
       </div>
        <div class="input-field col s4 m2">
-                      <input ModFocus autofocus  id="result" class="form-control" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
+                      <input autofocus  id="result" class="form-control" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
                       <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
        </div>
     <div class="modal-footer">
@@ -42,9 +42,8 @@ export class ResultModalComponent{
   public currentResult: IResult[];
   public modalActions = new EventEmitter<string|MaterializeAction>();
   
-  constructor(public matchToStringService: MatchToStringService, @Inject(ElementRef) private element: ElementRef, private renderer: Renderer) {
+  constructor(public matchToStringService: MatchToStringService) {
     this.resultIsValid = false;
-    this.renderer.invokeElementMethod(this.element.nativeElement, 'focus', []);
   }
 
   setMatch(matchToSet: MatchDto){
@@ -69,7 +68,6 @@ export class ResultModalComponent{
 
   openModal(){
     this.modalActions.emit({action:"modal",params:["open"]});
-    this.renderer.invokeElementMethod(this.element.nativeElement, 'focus', []);
   }
 
   onOK(){

@@ -12,9 +12,4 @@ export class StageMatchItemComponent{
 
     @Input() group:Group;
 
-    constructor(){
-        console.log("in const");
-    }
-
-   
 }
