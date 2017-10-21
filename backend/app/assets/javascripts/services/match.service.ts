@@ -19,6 +19,9 @@ export class MatchService {
   private assignMatchToTableUrl = "match/matchtotable/matchId/tableName";
   private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
 
+  private getPlayedMatchesUrl = "match/open/all";
+  private getPlayedMatchesByTypeUrl = "match/open/typeid/typeIdValue";
+
   private allTypesUrl = "types/all";
   private allOpenTypesUrl = "types/open/all ";
 
@@ -88,6 +91,19 @@ export class MatchService {
         
     return this.http.get(url).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getAllPlayedMatches():Observable<MatchDto>{
+    return this.http.get(this.getPlayedMatchesUrl).map((res:Response) => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getPlayedMatchesByTypeId(typeId: number):Observable<MatchDto>{
+    var regEx = new RegExp("typeIdValue");
+    var url = this.getPlayedMatchesByTypeUrl.replace(regEx, typeId.toString());
+       
+    return this.http.get(url).map((res:Response) => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
 }

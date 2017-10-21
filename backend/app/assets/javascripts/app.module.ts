@@ -24,6 +24,14 @@ import {StageViewComponent} from "./components/stage.view.component"
 import {ResultModalComponent} from "./components/result.modal.view.component"
 import {TableAssignViewComponent} from "./components/table.assign.view.component"
 import {DisciplineMatchListComponent} from "./components/discipline.match.list.view.component"
+import {ResultViewComponent} from "./components/result.view.component"
+import {DisciplineSelectViewComponent} from "./components/discipline.select.view.component"
+
+import {DisciplineMatchItemComponent} from "./components/items/discipline.match.item.component"
+import {StageMatchItemComponent} from "./components/items/stage.match.item.component"
+import {TeamMatchItemComponent} from "./components/items/team.match.item.component"
+
+import {ModalFocusDirective} from "./directives/mod.focus.directive"
 
 import { PlayerService } from "./services/player.service"
 import { MatchService } from "./services/match.service"
@@ -66,7 +74,13 @@ import {DndModule} from "ng2-dnd";
     ResultModalComponent,
     TableComponent,
     DisciplineMatchListComponent,
-    TableAssignViewComponent
+    TableAssignViewComponent,
+    ResultViewComponent,
+    DisciplineSelectViewComponent,
+    ModalFocusDirective,
+    DisciplineMatchItemComponent,
+    StageMatchItemComponent,
+    TeamMatchItemComponent
   ],
   providers: [
       PlayerService,
