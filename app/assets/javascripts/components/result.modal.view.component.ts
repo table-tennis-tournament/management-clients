@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Injectable, Input, Output } from "@angular/core";
+import {Component, EventEmitter, Injectable, Input, Output, ElementRef, Renderer, Inject } from "@angular/core";
 import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
@@ -18,7 +18,7 @@ import {MaterializeAction} from "angular2-materialize";
       <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
       </div>
        <div class="input-field col s4 m2">
-                      <input id="result" class="form-control" type="text" autofocus #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
+                      <input ModFocus autofocus  id="result" class="form-control" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
                       <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
        </div>
     <div class="modal-footer">
@@ -41,10 +41,10 @@ export class ResultModalComponent{
   private currentResultHandler: IResultHandler;
   public currentResult: IResult[];
   public modalActions = new EventEmitter<string|MaterializeAction>();
-  private _isVisible: boolean;
   
-  constructor(public matchToStringService: MatchToStringService) {
+  constructor(public matchToStringService: MatchToStringService, @Inject(ElementRef) private element: ElementRef, private renderer: Renderer) {
     this.resultIsValid = false;
+    this.renderer.invokeElementMethod(this.element.nativeElement, 'focus', []);
   }
 
   setMatch(matchToSet: MatchDto){
@@ -69,6 +69,7 @@ export class ResultModalComponent{
 
   openModal(){
     this.modalActions.emit({action:"modal",params:["open"]});
+    this.renderer.invokeElementMethod(this.element.nativeElement, 'focus', []);
   }
 
   onOK(){
@@ -79,6 +80,9 @@ export class ResultModalComponent{
     if(this.currentResultHandler !== null && this.currentResultHandler !== undefined){
       this.currentResultHandler.handleResult(this.currentResult);
     }
+    this.currentResult = [];
+    this.isFirstPlayerWinning = false;
+    this.isSecondPlayerWinning = false;
     this.closeModal();
   }
 
@@ -131,7 +135,6 @@ export class ResultModalComponent{
   }
 
   onCancel(){
-    console.log("in Close");
     this.closeModal();
   }
 

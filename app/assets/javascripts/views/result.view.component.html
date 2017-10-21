@@ -1,0 +1,46 @@
+<div class="row">
+
+</div>
+<div class="row">
+		<div class="input-field col s6 m2">
+				<discipline-select (onTypeChanged)="onTypeChanged($event)" [showWaitingList]="false"></discipline-select>
+		</div>
+	<div class="col">
+			<a class="btn-floating btn-medium blue" (click)="onRefreshMatchesClicked()">
+					<i class="medium material-icons">refresh</i>
+			 </a>
+	</div>
+	
+</div>
+
+<div class="row">
+	<table class="highlight centered">
+		<thead>
+			<tr>
+					<th>Nr</th>
+					<th>Spieler 1</th>
+					<th>Spieler 2</th>
+					<th>Typ</th>
+					<th>Konkurrenz</th>
+					<th>Eingabe</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr *ngFor="let currentMatch of matches; let i = index;">
+					<td>{{currentMatch.match.id}}</td>
+					<td><team-match-item [team]="currentMatch.team1"></team-match-item></td>
+					<td><team-match-item [team]="currentMatch.team2"></team-match-item></td>
+					<td><stage-match-item [stage]="currentMatch.matchType" [group]="currentMatch.group"></stage-match-item></td>
+					<td><discipline-match-item [discipline]="currentMatch.type"></discipline-match-item></td>
+					<td>
+						<a class="btn-floating btn-medium blue" (click)="onResultForMatch(i)">
+							<i class="medium material-icons">chevron_right</i>
+						</a>
+					</td>
+				</tr>
+		</tbody>
+	</table>
+</div>
+
+<modal-result></modal-result>
