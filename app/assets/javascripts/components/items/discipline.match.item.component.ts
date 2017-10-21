@@ -8,10 +8,5 @@ import {Type} from "../../data/type";
 export class DisciplineMatchItemComponent{
 
     @Input() discipline:Type;
-
-    constructor(){
-        console.log("on out");
-    }
-
    
 }
