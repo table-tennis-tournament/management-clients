@@ -32,6 +32,7 @@ span.circle {
 .square {
     width: 20px;
     height: 20px;
+    display: inline-block;
 }
 
 .custom-col {
@@ -63,6 +64,10 @@ span.circle {
 
 .waiting-list-drop-zone {
     min-height: 100px;
+}
+
+.waitlist-item-text{
+    width: calc(100% - 20px);
 }
 
 .maxHeight {

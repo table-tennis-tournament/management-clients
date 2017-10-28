@@ -27,9 +27,12 @@ import {DisciplineMatchListComponent} from "./components/discipline.match.list.v
 import {ResultViewComponent} from "./components/result.view.component"
 import {DisciplineSelectViewComponent} from "./components/discipline.select.view.component"
 
+import {DisciplineStageComponent} from "./components/discipline/discipline.stage.view.component"
+
 import {DisciplineMatchItemComponent} from "./components/items/discipline.match.item.component"
 import {StageMatchItemComponent} from "./components/items/stage.match.item.component"
 import {TeamMatchItemComponent} from "./components/items/team.match.item.component"
+import {MatchItemComponent} from "./components/items/match.item.component"
 
 import {ModalFocusDirective} from "./directives/mod.focus.directive"
 
@@ -80,6 +83,8 @@ import {DndModule} from "ng2-dnd";
     ModalFocusDirective,
     DisciplineMatchItemComponent,
     StageMatchItemComponent,
+    MatchItemComponent,
+    DisciplineStageComponent,
     TeamMatchItemComponent
   ],
   providers: [

@@ -1,8 +1,9 @@
 <div class="card {{group.bgColor}}">
     <div class="card-content black-text">
         <span class="card-title"><span dnd-draggable [dragEnabled]="true" [dragData]="group">{{group.name}}</span>
-        
-        <span class="circle right" *ngFor="let tableNumber of group.tableNumbers">{{tableNumber}}</span></span>
+
+        <span class="right">{{openMatches}}/{{allMatchCount}}</span>
+        <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span></span>
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
             <li >
                 <div class="collapsible-header" [class.active]="group.isPlayerActive"><i class="material-icons">perm_identity</i>Spieler</div>

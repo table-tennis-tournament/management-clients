@@ -31,6 +31,10 @@ export class DisciplineViewComponent{
         this.setTabForId(selectedTab.id);
     }
 
+    onRefreshCurrentTab(){
+        this.onTabSelected(this.selectedTab);
+    }
+
     onFilterSelected(){
         this.matchService.getAllOpenTypes().subscribe(this.allTypesSelected.bind(this))
     }

@@ -11,8 +11,10 @@ export class DisciplineGroupViewComponent{
 
     typeColors: string[];
     currentTableInput:any;
-    showInput:boolean = true;
-
+    openMatches:number;
+    allMatchCount:number;
+    tableNumbers: any[];
+    
     constructor(private matchListService: MatchListService){
         this.typeColors = TypeColors.TYPE_COLORS;
     }
@@ -24,14 +26,30 @@ export class DisciplineGroupViewComponent{
 
     @Input("group")
     set group(value: DisciplineGroup){
-        this.showInput = true;
-        if(value.tableNumbers){
-            this.showInput = value.tableNumbers.length ===0;
-        }
         this._group = value;
+        this.calculateOpenMatches();
+        this.setTables();
     } 
 
-    
+    calculateOpenMatches(){
+        this.openMatches = 0;
+        this._group.matches.forEach(element => {
+            if(element.match.isPlayed !== true){
+                this.openMatches++;
+            }
+        });
+        this.allMatchCount = this._group.matches.length;
+    }
+
+    setTables(){
+        var numberArray = [];
+        this._group.tableNumbers.forEach(element =>{
+            if(numberArray.indexOf(element) < 0){
+                numberArray.push(element);
+            }
+        });
+        this.tableNumbers = numberArray;
+    }
 
     addTableClicked(){
         if(isNaN(this.currentTableInput)){

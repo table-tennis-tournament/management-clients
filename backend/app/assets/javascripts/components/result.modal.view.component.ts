@@ -8,25 +8,7 @@ import {MaterializeAction} from "angular2-materialize";
 
 @Component({
   selector: "modal-result",
-  /* tslint:disable */ template: `
-  <div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
-    <div class="modal-content center-align">
-      <h4>{{headerString}}</h4>
-      <br/><br/>
-      <div [class.text-bold]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
-      <div class="center-align"><h4>  - </h4><br/></div>          
-      <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
-      </div>
-       <div class="input-field col s4 m2">
-                      <input autofocus  id="result" class="form-control" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
-                      <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
-       </div>
-    <div class="modal-footer">
-      <a class="waves-effect waves-green btn-flat"  (click)="onCancel()">Abbrechen</a>
-      <a class="modal-action modal-close waves-effect waves-green btn-flat" [class.disabled]="!resultIsValid" (click)="onOK()">OK</a>
-    </div>
-  </div>
-      `
+  templateUrl : "assets/javascripts/views/result.modal.view.component.html"
 })
 export class ResultModalComponent{
 
@@ -41,6 +23,8 @@ export class ResultModalComponent{
   private currentResultHandler: IResultHandler;
   public currentResult: IResult[];
   public modalActions = new EventEmitter<string|MaterializeAction>();
+
+  public currentInput: string;
   
   constructor(public matchToStringService: MatchToStringService) {
     this.resultIsValid = false;
@@ -67,6 +51,7 @@ export class ResultModalComponent{
   }
 
   openModal(){
+    this.currentInput = "";
     this.modalActions.emit({action:"modal",params:["open"]});
   }
 
@@ -122,10 +107,10 @@ export class ResultModalComponent{
   }
 
   isFirstCharAMinus(resultToCheck){
-    return resultToCheck.charAt(0) === '-';
+    return resultToCheck.charAt(0) === "-";
   }
 
-  getOtherResult(opponentsResult : number): number{
+  getOtherResult(opponentsResult: number): number{
     if(opponentsResult < 10){
       return 11;
     }
