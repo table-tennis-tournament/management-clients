@@ -1,6 +1,6 @@
  <div class="fixed-action-btn horizontal">
-    <a class="btn-floating btn-large blue" (click)="onFilterSelected()">
-      <i class="large material-icons">search</i>
+    <a class="btn-floating btn-large blue" (click)="onRefreshCurrentTab()">
+      <i class="large material-icons">refresh</i>
     </a>
     <ul>
       <li><a class="btn-floating green" href="javascript:void(0)" (click)="onCollapseAll()"><i class="material-icons">reorder</i></a></li>
@@ -21,12 +21,16 @@
       <div *ngIf="selectedTab.stages" class="row">
             <div class="col" *ngFor="let currentStage of selectedTab.stages">
               <ul class="collection with-header">
-                <li class="collection-header"><h4>{{currentStage.name}}</h4></li>
-                <li class="collection-item {{colors[currentMatch.type.id]}}" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
-                    <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}} - </span>
-                        <span *ngIf="currentMatch.team2[0]">{{currentMatch.team2[0].lastName}}</span>
+                <li class="collection-header amber darken-1"><h4>{{currentStage.name}}</h4></li>
+                <li class="collection-item" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+                    <match-item [match]="currentMatch"></match-item> 
                 </li>
               </ul>
+            </div>
+        </div>
+        <div *ngIf="selectedTab.stages" >
+            <div class="row" *ngFor="let currentStage of selectedTab.stages">
+              <discipline-stage [stage]="currentStage"></discipline-stage>
             </div>
         </div>
         <div *ngIf="selectedTab.groups" >

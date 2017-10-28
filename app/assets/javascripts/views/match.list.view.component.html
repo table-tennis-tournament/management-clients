@@ -1,57 +1,17 @@
-<!-- <div class="row">
-    <ul class="collection minheigth maxHeight" dnd-droppable (onDropSuccess)="transferDataSuccess($event)">
-        <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item {{currentMatch.bgColor}} white-text">
-                    <div class="cut-text" *ngIf="currentMatch.matchinfo">
-                        <span *ngIf="currentMatch.matchinfo.team1[0]">{{currentMatch.matchinfo.team1[0].lastName}}</span>
-                        <span *ngIf="currentMatch.matchinfo.team1[1]">/{{currentMatch.matchinfo.team1[1].lastName}}</span>
-                        <span *ngIf="currentMatch.matchinfo.team2[0]">- {{currentMatch.matchinfo.team2[0].lastName}}</span>
-                        <span *ngIf="currentMatch.matchinfo.team2[1]">/{{currentMatch.matchinfo.team2[1].lastName}}</span>
-                        <span class="right">
-                            <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
-                        </span>
-                    </div>
-                    <div class="cut-text" *ngIf="currentMatch.matches">
-                        <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
-                            <li >
-                                <div class="collapsible-header {{currentMatch.bgColor}}">{{currentMatch.name}} 
-                                    <span class="right">
-                                        <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
-                                    </span>
-                                </div>
-                                <div class="collapsible-body">
-                                    <div class="collection">
-                                        <a *ngFor="let matchGroup of currentMatch.matches" href="javascript:void(0)" class="collection-item">
-                                            {{matchGroup.team1[0].lastName}} - {{matchGroup.team2[0].lastName}}
-                                        </a>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    
-        </li>
-    </ul>
-</div> -->
 <div class="row">
-        <ul class="collection waiting-list-drop-zone" dnd-droppable (onDropSuccess)="transferDataSuccess($event)">
-        </ul>
+        <ul class="collection waiting-list-drop-zone" dnd-droppable (onDropSuccess)="transferDataSuccess($event)"></ul>
 </div>
 <div class="row">
     <div dnd-sortable-container [sortableData]="matches" [dropZones]="['match-dropZone']">
         <ul class="collection minheigth maxHeight">
                 <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item {{colorArray[currentMatch.matchinfo.type.id]}} " 
                     dnd-sortable [sortableIndex]="i" >
-                    <div class="cut-text " *ngIf="currentMatch.matchinfo">
-                            <span *ngIf="currentMatch.matchinfo.team1[0]">{{currentMatch.matchinfo.team1[0].lastName}}</span>
-                            <span *ngIf="currentMatch.matchinfo.team1[1]">/{{currentMatch.matchinfo.team1[1].lastName}}</span>
-                            <span *ngIf="currentMatch.matchinfo.team2[0]">- {{currentMatch.matchinfo.team2[0].lastName}}</span>
-                            <span *ngIf="currentMatch.matchinfo.team2[1]">/{{currentMatch.matchinfo.team2[1].lastName}}</span>
-                            <span class="right">
-                                <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
-                                <!--<a href="javascript:void(0)" (click)="onUp(i)"><i class="material-icons white-text rotate-270"  >play_arrow</i></a>-->
-                                <!--<a href="javascript:void(0)" (click)="onDown(i)"><i class="material-icons white-text rotate-90" >play_arrow</i></a>-->
-                            </span>
+                    <div class="cut-text" *ngIf="currentMatch.matchinfo">
+                            <team-match-item [team]="currentMatch.matchinfo.team1"></team-match-item> - <br/>
+                            <team-match-item [team]="currentMatch.matchinfo.team2"></team-match-item>
+                          <a href="javascript:void(0)" class="secondary-content" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
                     </div>
+                   
                     <div class="cut-text" *ngIf="currentMatch.matches">
                             <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
                                 <li >
@@ -63,7 +23,8 @@
                                     <div class="collapsible-body">
                                         <div class="collection">
                                             <a *ngFor="let matchGroup of currentMatch.matches" href="javascript:void(0)" class="collection-item">
-                                                {{matchGroup.team1[0].lastName}} - {{matchGroup.team2[0].lastName}}
+                                                <team-match-item [team]="matchGroup.team1"></team-match-item> -
+                                                <team-match-item [team]="matchGroup.team2"></team-match-item>
                                             </a>
                                         </div>
                                     </div>
