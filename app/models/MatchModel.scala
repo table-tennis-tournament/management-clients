@@ -63,7 +63,6 @@ object MatchModel {
       "match" -> allMatchInfo.ttMatch,
       "team1" -> allMatchInfo.player1,
       "team2" -> allMatchInfo.player2,
-      "table" -> allMatchInfo.table,
       "matchType" -> allMatchInfo.matchType,
       "type" -> allMatchInfo.ttType,
       "group" -> allMatchInfo.group
@@ -90,7 +89,6 @@ case class AllMatchInfo(
     ttMatch: TTMatch,
     player1: Seq[Player],
     player2: Seq[Player],
-    table: Option[TTTable],
     matchType: MatchType,
     ttType: Type,
     group: Option[Group]
@@ -103,7 +101,7 @@ case class TTMatch(
     team2Id: Long,
     player1Ids: Seq[Long],
     player2Ids: Seq[Long],
-    ttTableId: Option[Long],
+    //ttTableId: Option[Long],
     isPlayed: Boolean,
     matchTypeId: Long,
     typeId: Long,

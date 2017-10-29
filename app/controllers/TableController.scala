@@ -17,88 +17,49 @@ class TableController @Inject() (tables: Tables) extends Controller{
 
   import models.TableModel._
 
-  def getAllMatchInfo(ttMatch: TTMatch): Future[Option[AllMatchInfoTable]] = {
-    val p1F = Future.sequence(ttMatch.player1Ids map {id => tables.getPlayer(id)})
-    val p2F = Future.sequence(ttMatch.player2Ids map {id => tables.getPlayer(id)})
-    val tF = tables.getTTTable(ttMatch.ttTableId)
-    val mtF = tables.getMatchType(ttMatch.matchTypeId)
-    val tyF = tables.getType(ttMatch.typeId)
-    val gF = tables.getGroup(ttMatch.groupId)
-    val pF = for {
-      p1 <- p1F
-      p2 <- p2F
-      mt <- mtF
-      ty <- tyF
-      g <- gF
-    } yield(p1, p2, mt.get, ty.get, g)
-    pF map {p =>
-      Some(AllMatchInfoTable(
-        ttMatch,
-        p._1.flatten,
-        p._2.flatten,
-        p._3,
-        p._4,
-        p._5
-      ))
-    }
+  def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfoTable] = {
+    val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
+    val p2 = ttMatch.player2Ids map {id => tables.getPlayer(id)}
+    val mt = tables.getMatchType(ttMatch.matchTypeId)
+    val ty = tables.getType(ttMatch.typeId)
+    val g = tables.getGroup(ttMatch.groupId)
+    if (mt.isDefined && ty.isDefined)
+      Some(AllMatchInfoTable(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g))
+    else
+      None
   }
 
-  def getAllTableInfo(ttTable: TTTable): Future[TableInfo] = {
-    val mF = tables.getMatchOnTable(ttTable.id)
-    mF flatMap { m =>
-      val matchInfo = if(m.isDefined) {
-        getAllMatchInfo(m.get)
-      } else {
-        Future.successful(None)
-      }
-      matchInfo map {mi =>
-        TableInfo(
-          ttTable,
-          mi
-        )
-      }
-    }
+  def getAllTableInfo(ttTable: TTTable): TableInfo = {
+    TableInfo(
+      ttTable,
+      ttTable.matchId.map(id => getAllMatchInfo(tables.getMatch(id).get).get)
+    )
   }
 
-  def getAllTables = Action.async {
-    val tablesF = tables.allTTTables()
-    val x = tablesF map {tables =>
-      tables map(ttTable => getAllTableInfo(ttTable))
-    }
-    val z = x map {y => Future.sequence(y)}
-    val z2 = z.flatMap(z => z)
-    z2 map {z =>
-      val x = z.sortBy(_.ttTable.tableNumber)
-      Logger.info("m: " + x.toString())
-      Ok(Json.toJson(x))
-    }
+  def getAllTables = Action {
+    val t = tables.allTTTables()
+    val x = t.map(ttTable => getAllTableInfo(ttTable))
+    val z = x.sortBy(_.ttTable.tableNumber)
+    Logger.info("m: " + z.toString())
+    Ok(Json.toJson(z))
   }
 
-  def getTable(id: Long) = Action.async {
-    val ttTablesF = tables.allTTTables()
-    ttTablesF.map {
-      ttTables: Seq[TTTable] => Ok(Json.toJson(ttTables.headOption))
-    }
+  def getTable(id: Long) = Action {
+    Ok(Json.toJson(tables.getTTTable(id)))
   }
 
-  def freeTable(id: Long) = Action.async {
-    tables.freeTTTable(id) map {r =>
-      if (r) Ok("OK")
-      else NotFound("no Match on Table")
-    }
+  def freeTable(id: Long) = Action {
+    tables.freeTTTable(id)
+    Ok("OK")
   }
 
-  def lockTable(id: Long) = Action.async {
-    tables.lockTTTable(id) map { r =>
-      if (r) Ok("OK")
-      else NotFound("no Match on Table")
-    }
+  def lockTable(id: Long) = Action {
+    tables.lockTTTable(id)
+    Ok("OK")
   }
 
-  def unlockTable(id: Long) = Action.async {
-    tables.unlockTTTable(id) map { r =>
-      if (r) Ok("OK")
-      else NotFound("no Match on Table")
-    }
+  def unlockTable(id: Long) = Action {
+    tables.unlockTTTable(id)
+    Ok("OK")
   }
 }
