@@ -1,6 +1,6 @@
 <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
     <li >
-        <div class="collapsible-header" [class.active]="showFirst"><i class="material-icons">view_list</i>{{stage.name}}</div>
+        <div class="collapsible-header" [class.active]="isOpen"><i class="material-icons">view_list</i>{{stage.name}}</div>
         <div class="collapsible-body">
             <div class="collection">
                 <a *ngFor="let currentMatch of stage.matches" href="javascript:void(0)" class="collection-item" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
