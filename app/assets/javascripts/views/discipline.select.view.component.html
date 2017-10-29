@@ -1,6 +1,8 @@
 <select  materialize="material_select" (change)="onDisciplineChanged($event)" [(ngModel)]="selectedDiscipline">
-            <option [value]="0">Alle</option>
-            <option *ngIf="showWaitingList" [value]="-1">Warteschlange</option>
-           <option *ngFor="let currentDiscipline of disciplines" class="{{colorArray[currentDiscipline.id]}} indigo" [value]="currentDiscipline.id">{{currentDiscipline.name}}</option>
-        </select>
+        <option [value]="0">Alle</option>
+        <option *ngIf="showWaitingList" [value]="-1">Warteschlange</option>
+        <option *ngFor="let currentDiscipline of disciplines" class="{{colorArray[currentDiscipline.id]}} indigo" [value]="currentDiscipline.id">
+                {{currentDiscipline.name}} <span *ngIf="currentDiscipline.kind === 2">-Doppel</span>
+        </option>
+</select>
 <label>Konkurrenz</label>

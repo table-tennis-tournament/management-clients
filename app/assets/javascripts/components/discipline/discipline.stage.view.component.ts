@@ -8,7 +8,7 @@ import {DisciplineStage} from "../../data/discipline.stage";
 })
 export class DisciplineStageComponent{
 
-    showFirst:boolean = false;
+    isOpen:boolean = false;
   
-  @Input() stage:DisciplineStage;
+    @Input() stage:DisciplineStage;
 }

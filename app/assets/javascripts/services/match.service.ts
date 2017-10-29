@@ -86,6 +86,9 @@ export class MatchService {
   }
 
   getOpenMatchesByType(typeId: number): Observable<MatchDto>{
+    if(typeId === null || typeId === undefined){
+      return new Observable<MatchDto>();
+    }
     var regEx = new RegExp("typeIdValue");
     var url = this.getOpenMatchesByTypeUrl.replace(regEx, typeId.toString());
         
