@@ -45,17 +45,17 @@ export class TableComponent implements IResultHandler{
     @Output() onTableAssigned = new EventEmitter<any>();
 
     updateMatchInfo(){
-        if(this._table.matchinfo){
-            this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team1);
-            this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo.team2);
+        if(this._table.matchinfo[0]){
+            this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo[0].team1);
+            this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo[0].team2);
             this.setBgColorAndTextColorDependsOnType();
         }
     }
 
     setBgColorAndTextColorDependsOnType(){
-        if(this.table.matchinfo){
-            this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo.type.id];
-            this.textColor = this.table.matchinfo.type.kind ===2?"": "white-text";
+        if(this.table.matchinfo[0]){
+            this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo[0].type.id];
+            this.textColor = this.table.matchinfo[0].type.kind ===2?"": "white-text";
         }
         
     }
@@ -63,7 +63,7 @@ export class TableComponent implements IResultHandler{
     onMatchDrop(event){
         var match = event.dragData.match;
        
-        if(this.table.matchinfo !== null){
+        if(this.table.matchinfo[0] !== null && this.table.matchinfo[0] !== undefined){
             return;
         }
         var isGroup = event.dragData.isGroup;
@@ -87,7 +87,7 @@ export class TableComponent implements IResultHandler{
     onResult(){
         var resultEvent = new ResultEvent();
         resultEvent.handler = this;
-        resultEvent.match = this.table.matchinfo;
+        resultEvent.match = this.table.matchinfo[0];
         this.onResultForMatch.emit(resultEvent);
     }
 
@@ -132,7 +132,7 @@ export class TableComponent implements IResultHandler{
     }
 
     handleResult(resultToHandle: IResult[]){
-        var matchId = this.table.matchinfo.match.id;
+        var matchId = this.table.matchinfo[0].match.id;
         this.matchService.addResult(resultToHandle, matchId).subscribe(this.handleResultAfterRequestSuccessful.bind(this),
         this.handleErrorsOnService);
     }
