@@ -143,6 +143,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def takeBackTTTable(matchId: Long) = {
+    ttTablesSeq = ttTablesSeq map { t =>
+      t.copy(matchId = t.matchId.filterNot(_ == matchId))
+    }
+    ttMatchSeq = ttMatchSeq map { m =>
+      if (m.id == matchId) m.copy(isPlaying = false)
+      else m
+    }
+  }
+
   def lockTTTable(id: Long) = {
     ttTablesSeq = ttTablesSeq map { t =>
       if (t.id == id) t.copy(isLocked = Some(true), tableNumber = -t.tableNumber)

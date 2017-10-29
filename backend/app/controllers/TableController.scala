@@ -53,6 +53,11 @@ class TableController @Inject() (tables: Tables) extends Controller{
     Ok("OK")
   }
 
+  def takeBackTable(id: Long) = Action {
+    tables.takeBackTTTable(id)
+    Ok("OK")
+  }
+
   def lockTable(id: Long) = Action {
     tables.lockTTTable(id)
     Ok("OK")
