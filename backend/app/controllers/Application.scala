@@ -13,17 +13,30 @@ import scala.concurrent.duration._
 
 class Application @Inject()(table: Tables) extends Controller {
 
-  def index = Action {
-    val result = table.allTTTables()
-    result.map {
-      ttTables => {
-        Logger.info(ttTables.toString())
+  def index = Action.async {
+
+    Logger.debug("update everything")
+    table.updateTTTables flatMap { a =>
+      table.updateDoublesSeq flatMap { b =>
+        table.updateMatches flatMap { c =>
+          table.updateClubList flatMap { d =>
+            table.updateMatchTypeList flatMap { e =>
+              table.updateTypesList flatMap { f =>
+                table.updateGroupsSeq flatMap { g =>
+                  table.updateMatchListSeq flatMap { h =>
+                    table.updatePlayerList map { i =>
+                      val x = a && b && c && d && e && f && g && h && i
+                      Logger.debug(x.toString)
+                      Ok(views.html.index())
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
-    result.onFailure{
-      case f => Logger.error(f.toString)
-    }
-    Ok(views.html.index())
   }
 
 }

@@ -109,14 +109,20 @@ case class AllMatchInfoTable(
 
 case class TableInfo(
     ttTable: TTTable,
-    ttMatch: Option[AllMatchInfoTable]
+    ttMatch: Seq[AllMatchInfoTable]
   )
 
 case class TTTable(
     id: Long,
     tableNumber: Int,
     isLocked: Option[Boolean],
-    matchId: Option[Long]
+    matchId: Seq[Long] = Seq.empty[Long]
+  )
+
+case class TTTableDAO(
+    id: Long,
+    tableNumber: Int,
+    isLocked: Option[Boolean]
   )
 
 case class TTTableGroup(

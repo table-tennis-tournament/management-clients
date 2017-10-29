@@ -20,119 +20,86 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   var isActiv = false
 
-  def getAllMatchInfo(ttMatch: TTMatch): Future[Option[AllMatchInfo]] = {
-    val p1F = Future.sequence(ttMatch.player1Ids map {id => tables.getPlayer(id)})
-    val p2F = Future.sequence(ttMatch.player2Ids map {id => tables.getPlayer(id)})
-    val tF = tables.getTTTable(ttMatch.ttTableId)
-    val mtF = tables.getMatchType(ttMatch.matchTypeId)
-    val tyF = tables.getType(ttMatch.typeId)
-    val gF = tables.getGroup(ttMatch.groupId)
-    val pF = for {
-      p1 <- p1F
-      p2 <- p2F
-      t <- tF
-      mt <- mtF
-      ty <- tyF
-      g <- gF
-    } yield(p1, p2, t, mt.get, ty.get, g)
-    pF map {p =>
-      Some(AllMatchInfo(
-        ttMatch,
-        p._1.flatten,
-        p._2.flatten,
-        p._3,
-        p._4,
-        p._5,
-        p._6
-      ))
-    }
+  def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
+    val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
+    val p2 = ttMatch.player2Ids map {id => tables.getPlayer(id)}
+    val mt = tables.getMatchType(ttMatch.matchTypeId)
+    val ty = tables.getType(ttMatch.typeId)
+    val g = tables.getGroup(ttMatch.groupId)
+    if (mt.isDefined && ty.isDefined)
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g))
+    else
+      None
   }
 
-  def getAllMatchList = Action.async{
-    val amiSeqF = tables.getMatchList flatMap { ml =>
-      val x = ml map {mlEntry =>
-        tables.getMatch(mlEntry.matchId) flatMap { m =>
-          getAllMatchInfo(m.get) map {mi => MatchListInfo(mlEntry, mi.get)}
-        }
-      }
-      Future.sequence(x)
+  def getAllMatchList = Action{
+    val ml = tables.getMatchList
+    val x = ml map {mlEntry =>
+      val m = tables.getMatch(mlEntry.matchId)
+      val mi = getAllMatchInfo(m.get)
+      MatchListInfo(mlEntry, mi.get)
     }
-    amiSeqF map {amiSeq =>
-      Ok(Json.toJson(amiSeq))
-    }
+    Ok(Json.toJson(x))
   }
 
-  def addMatch(id: Long, position: Int) = Action.async{
+  def addMatch(id: Long, position: Int) = Action{
     Logger.info("addMatch")
     val newMLEntry = MatchList(None, id, None, position)
-    tables.getMatchList flatMap {ml =>
-      val newML = ml map {mlEntry =>
-        if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
-      }
-      val newMLAdded = newML ++ Seq(newMLEntry)
-      tables.setMatchList(newMLAdded) flatMap {result =>
-        tables.getMatchList map { ml =>
-          Ok(Json.toJson(ml.filter(_.matchId == id).headOption))
-        }
-      }
+    val ml = tables.getMatchList
+    val newML = ml map {mlEntry =>
+      if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
     }
+    val newMLAdded = newML ++ Seq(newMLEntry)
+    tables.setMatchList(newMLAdded)
+    val ml2 = tables.getMatchList
+    Ok(Json.toJson(ml2.filter(_.matchId == id).headOption))
   }
 
-  def addGroup(id: Long, position: Int) = Action.async{
+  def addGroup(id: Long, position: Int) = Action{
     Logger.info("addGroup")
-    tables.getMatchesInGroup(id) flatMap { ml =>
-      val addML = ml map { m =>
-        MatchList(None, m.id, Some(id), position)
-      }
-      tables.getMatchList flatMap { oldML =>
-        val ml = oldML map { mlEntry =>
-          if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
-        }
-        tables.setMatchList(ml ++ addML) flatMap { res =>
-          tables.getMatchList map { ml =>
-            Ok(Json.toJson(ml.filter(_.asGroup == Some(id))))
-          }
-        }
-      }
-
+    val ml = tables.getMatchesInGroup(id)
+    val addML = ml map { m =>
+      MatchList(None, m.id, Some(id), position)
     }
-  }
-
-  def deleteMatch(id: Long) = Action.async{
-    tables.getMatchList flatMap {ml =>
-      val position = ml.filter(_.matchId == id).head.position
-      val newML = ml map {mlEntry =>
-        if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-      }
-      tables.delMatchList(newML, ml.filter(_.matchId == id).head.id.get) map {result =>
-        Ok("deleted match")
-      }
+    val oldML = tables.getMatchList
+    val ml2 = oldML map { mlEntry =>
+      if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
     }
+    tables.setMatchList(ml2 ++ addML)
+    val ml3 = tables.getMatchList
+    Ok(Json.toJson(ml3.filter(_.asGroup == Some(id))))
   }
 
-  def deleteGroup(id: Long) = Action.async{
-    tables.getMatchList flatMap {ml =>
-      val position = ml.filter(_.asGroup.getOrElse(0) == id).head.position
-      val newML = ml map {mlEntry =>
-        if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-      }
-      tables.delMatchListGroup(newML, id) map {result =>
-        Ok("deleted group")
-      }
+  def deleteMatch(id: Long) = Action{
+    val ml = tables.getMatchList
+    val position = ml.filter(_.matchId == id).head.position
+    val newML = ml map {mlEntry =>
+      if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
     }
+    tables.delMatchList(newML, ml.filter(_.matchId == id).head.id.get)
+    Ok("deleted match")
   }
 
-  def getNext = Action.async {
-
-    Future.successful(Ok("not implemented"))
+  def deleteGroup(id: Long) = Action {
+    val ml = tables.getMatchList
+    val position = ml.filter(_.asGroup.getOrElse(0) == id).head.position
+    val newML = ml map {mlEntry =>
+      if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+    }
+    tables.delMatchListGroup(newML, id)
+    Ok("deleted group")
   }
 
-  def setActive(isActive: Boolean) = Action.async {
+  def getNext = Action {
+    Ok("not implemented")
+  }
+
+  def setActive(isActive: Boolean) = Action {
     this.isActiv = isActive
-    Future.successful(Ok("set to " + isActive.toString))
+    Ok("set to " + isActive.toString)
   }
 
-  def isActive = Action.async {
-    Future.successful(Ok(isActiv.toString))
+  def isActive = Action {
+    Ok(isActiv.toString)
   }
 }

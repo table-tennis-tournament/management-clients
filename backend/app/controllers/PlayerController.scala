@@ -13,17 +13,11 @@ import play.api.mvc.{Action, Controller}
 class PlayerController @Inject() (tables: Tables) extends Controller{
   import models.PlayerModel._
 
-  def getAllPlayer = Action.async {
-    val playerF = tables.allPlayer
-    playerF.map {
-      player: Seq[Player] => Ok(Json.toJson(player))
-    }
+  def getAllPlayer = Action {
+    Ok(Json.toJson(tables.allPlayer))
   }
 
-  def getPlayer(id: Long) = Action.async {
-    val playerF = tables.getPlayer(id)
-    playerF map { player =>
-      Ok(Json.toJson(player))
-    }
+  def getPlayer(id: Long) = Action {
+    Ok(Json.toJson(tables.getPlayer(id)))
   }
 }
