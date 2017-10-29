@@ -79,7 +79,7 @@ export class TableComponent implements IResultHandler{
 
     onMatchAssigned(dragData){
         var match = dragData.match;
-        this.table.matchinfo = match;
+        this.table.matchinfo[0] = match;
         this.updateMatchInfo();
         this.onTableAssigned.emit(dragData);
     }
