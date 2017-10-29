@@ -21,6 +21,7 @@ PUT     /match/grouptotable/:groupId/:tableName     controllers.MatchController.
 GET     /match/open/all                 controllers.MatchController.getOpenMatches
 GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 GET     /match/played/all               controllers.MatchController.getPlayedMatches
+GET     /match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
 
 GET     /types/all                      controllers.MatchController.getTypes
 GET     /types/open/all                controllers.MatchController.getActiveTypes
