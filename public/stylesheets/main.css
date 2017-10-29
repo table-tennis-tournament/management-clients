@@ -128,3 +128,7 @@ table.bracket {
 nav ul li.active {
     background-color: rgba(0, 0, 0, 0.38);
 }
+
+h4.no-margin{
+    margin:0;
+}

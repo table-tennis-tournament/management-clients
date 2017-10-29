@@ -1,7 +1,7 @@
 <div class="card {{bgColor}}" *ngIf="table.matchinfo">
     <div class="card-content {{textColor}} custom-padding">
         <span class="card-title activator truncate">
-                <h4> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
+                <h4 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
                 <span> <span>{{table.matchinfo.type.name}}<span *ngIf="table.matchinfo.type.kind===2">-DO</span></span></span>
                 <i class="material-icons right">more_vert</i>
                </h4>
@@ -32,8 +32,8 @@
                 <h4><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span><i class="material-icons right">more_vert</i></h4>
         </span>
         <div class="text-centering">
-            <div *ngIf="!table.table.isLocked" id="unLockedId"><h4>Freier Tisch</h4></div>
-            <div *ngIf="table.table.isLocked" id="lockedId"><h4>Gesperrt</h4></div>
+            <div *ngIf="!table.table.isLocked" id="unLockedId"><h4 class="no-margin">Freier Tisch</h4></div>
+            <div *ngIf="table.table.isLocked" id="lockedId"><h4 class="no-margin">Gesperrt</h4></div>
         </div>
     </div>
     <div class="card-reveal">
