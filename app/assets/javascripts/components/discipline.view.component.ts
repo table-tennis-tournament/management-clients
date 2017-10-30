@@ -48,7 +48,10 @@ export class DisciplineViewComponent{
         }
         this.tabs = newTabs;
         this.selectedTab = this.tabs[0];
-        this.setTabForId(this.tabs[0].id);
+        if(this.tabs !== null && this.tabs[0]!== null){
+            this.setTabForId(this.tabs[0].id);
+        }
+        
     }
 
     setTabForId(tabId: number){
