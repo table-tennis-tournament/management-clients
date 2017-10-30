@@ -2,7 +2,6 @@ import {Component, Input} from "@angular/core";
 import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {MatchListService} from "../services/match.list.service";
-import {RandomMatchService} from "../services/random.match.service";
 
 @Component({
     selector: "match-list",
@@ -14,7 +13,7 @@ export class MatchListComponent{
     public colorArray: string[] = [];
     sourceList: Array<any> = [{name:"item1"},{name:"item2"}];
 
-    constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
+    constructor(private matchListService: MatchListService){
        matchListService.getCompleteMatchlist().subscribe(
            this.getAllMatchesSuccess.bind(this),
            this.getAllMatchesError
@@ -48,13 +47,6 @@ export class MatchListComponent{
                 error =>console.log(error)
             );
         }
-    }
-
-    onUp(){
-        console.log("on up clicked");
-    }
-    onDown(){
-        console.log("on down clicked");
     }
 
     onDelete(index){

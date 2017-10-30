@@ -8,9 +8,7 @@
         </span>
         <p class="center-align truncate">
             <b *ngIf="table.table.isLocked">Tisch wird gesperrt. </b>
-            <b>{{table.matchinfo[0].matchType.name}} </b><b *ngIf="table.matchinfo[0].group">{{table.matchinfo[0].group.name}}</b><br/>
-            {{firstOpponent}} <br/>
-            {{secondOpponent}}
+            <table-match-item [matches]="table.matchinfo"></table-match-item>
         </p>
     </div>
    
