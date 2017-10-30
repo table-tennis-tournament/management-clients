@@ -86,7 +86,15 @@ export class TableComponent implements IResultHandler{
     }
 
     onFree(){
-        this.tableService.freeTable(this.table.table.id).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+        var matchId = this.getMatchId();
+        this.tableService.freeTable(matchId).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+    }
+
+    getMatchId(){
+        if(this.table.matchinfo != null && this.table.matchinfo.length === 1){
+            return this.table.matchinfo[0].match.id;
+        }
+        return 0;
     }
 
     onLock(){
@@ -98,7 +106,8 @@ export class TableComponent implements IResultHandler{
     }
 
     onTakeBack(){
-        this.tableService.takeBackTable(this.table.table.id).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+        var matchId = this.getMatchId();
+        this.tableService.takeBackTable(matchId).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
 
     unLockTableAfterRequestSuccessful(){

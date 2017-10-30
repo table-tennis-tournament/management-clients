@@ -1,4 +1,4 @@
-<div class="card {{bgColor}}" *ngIf="table.matchinfo[0]">
+<div class="card {{bgColor}}" *ngIf="table.matchinfo&&table.matchinfo[0]">
     <div class="card-content {{textColor}} custom-padding">
         <span class="card-title activator truncate">
                 <h4 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<div class="card grey lighten-3" *ngIf="!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
+<div class="card grey lighten-3" *ngIf="table.matchinfo===null||!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
     <div class="card-content custom-padding">
         <span class="card-title activator">
                 <h4><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span><i class="material-icons right">more_vert</i></h4>
