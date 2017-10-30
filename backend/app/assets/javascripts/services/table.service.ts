@@ -15,8 +15,9 @@ export class TableService {
   private allTablesUrl = "table/all";
   private lockTableUrl = "table/tableNumber/lock";
   private freeTableUrl = "table/tableNumber/free";
-  private takeBackTableUrl = "table/tableNumber/free";
+  private takeBackTableUrl = "/table/tableNumber/takeback";
   private unlockTableUrl = "table/tableNumber/unlock";
+  
   public OnTableChanged: Observable<MatchListDto[]>;
   private tableObserver: any;
   

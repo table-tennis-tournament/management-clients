@@ -1,6 +1,6 @@
 // ====== ./app/app.module.ts ======
 // Imports
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA }       from "@angular/core"
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core"
 import { BrowserModule }  from "@angular/platform-browser"
 import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
@@ -33,6 +33,7 @@ import {DisciplineMatchItemComponent} from "./components/items/discipline.match.
 import {StageMatchItemComponent} from "./components/items/stage.match.item.component"
 import {TeamMatchItemComponent} from "./components/items/team.match.item.component"
 import {MatchItemComponent} from "./components/items/match.item.component"
+import {TableMatchItemComponent} from "./components/items/table.match.item.component"
 
 import {ModalFocusDirective} from "./directives/mod.focus.directive"
 
@@ -85,6 +86,7 @@ import {DndModule} from "ng2-dnd";
     StageMatchItemComponent,
     MatchItemComponent,
     DisciplineStageComponent,
+    TableMatchItemComponent,
     TeamMatchItemComponent
   ],
   providers: [

@@ -37,20 +37,13 @@ export class TableComponent implements IResultHandler{
     @Input("table")
     set table(value: TableDto){
         this._table = value;
-        this.updateMatchInfo();
+        this.setBgColorAndTextColorDependsOnType();
     } 
 
     @Output() onResultForMatch = new EventEmitter<ResultEvent>();
 
     @Output() onTableAssigned = new EventEmitter<any>();
 
-    updateMatchInfo(){
-        if(this._table.matchinfo[0]){
-            this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo[0].team1);
-            this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo[0].team2);
-            this.setBgColorAndTextColorDependsOnType();
-        }
-    }
 
     setBgColorAndTextColorDependsOnType(){
         if(this.table.matchinfo[0]){
@@ -79,9 +72,10 @@ export class TableComponent implements IResultHandler{
 
     onMatchAssigned(dragData){
         var match = dragData.match;
+        this.table.matchinfo=[]
         this.table.matchinfo[0] = match;
-        this.updateMatchInfo();
         this.onTableAssigned.emit(dragData);
+        this.setBgColorAndTextColorDependsOnType();
     }
 
     onResult(){
@@ -121,7 +115,6 @@ export class TableComponent implements IResultHandler{
     }
 
     lockTableAfterRequestSuccessfull(){
-        console.log("successful lock table request");
         this.table.table.isLocked = true;
         this.bgColor =TypeColors.TYPE_COLORS[0];
         this.textColor = "white-text";
@@ -138,7 +131,6 @@ export class TableComponent implements IResultHandler{
     }
 
     handleResultAfterRequestSuccessful(){
-        console.log("sucessfully added result");
         this.table.matchinfo = null;
     }
    
