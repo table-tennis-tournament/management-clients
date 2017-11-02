@@ -1,0 +1,19 @@
+<div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+    <div class="modal-content center-align">
+      <h4>Wähle Spiel</h4>
+      <br/><br/>
+      <div class="row">
+          <div class="input-field col s6">
+              <select name="multiSelect" [(ngModel)]="selectedMatches" multiple materialize="material_select" [materializeSelectOptions]="matches" [disabled]="isDisabled?true:null">
+                <option value="" disabled selected>Wähle Match</option>
+                <option *ngFor="let match of matches" [value]="match.id">{{match.team1[0].firstName}}</option>
+              </select>
+              <label>Wähle Spiel</label>
+            </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat"  (click)="onCancel()">Abbrechen</a>
+      <a class="modal-action modal-close waves-effect waves-green btn-flat" (click)="onOK()">OK</a>
+    </div>
+  </div>
