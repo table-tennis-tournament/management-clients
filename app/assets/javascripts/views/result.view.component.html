@@ -2,27 +2,21 @@
 
 </div>
 <div class="row">
-		<div class="input-field col s6 m2">
-				<discipline-select (onTypeChanged)="onTypeChanged($event)" [showWaitingList]="false"></discipline-select>
-		</div>
-	<div class="col">
-			<a class="btn-floating btn-medium blue" (click)="onRefreshMatchesClicked()">
-					<i class="medium material-icons">refresh</i>
-			 </a>
+	<div class="input-field col s10 m6">
+			<discipline-select (onTypeChanged)="onTypeChanged($event)" [showWaitingList]="false"></discipline-select>
 	</div>
-	
 </div>
 
 <div class="row">
 	<table class="highlight centered striped">
 		<thead>
 			<tr>
-					<th>Nr</th>
-					<th>Spieler 1</th>
-					<th>Spieler 2</th>
-					<th>Typ</th>
-					<th>Konkurrenz</th>
-					<th>Eingabe</th>
+				<th>Nr</th>
+				<th>Spieler 1</th>
+				<th>Spieler 2</th>
+				<th>Typ</th>
+				<th>Konkurrenz</th>
+				<th>Eingabe</th>
 			</tr>
 		</thead>
 

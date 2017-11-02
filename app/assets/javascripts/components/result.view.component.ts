@@ -19,19 +19,20 @@ export class ResultViewComponent implements IResultHandler{
     public rowCount: number[];
 
     private currentMatchIndex: number;
-    private currentTypeId: number;
+    private currentTypeId: string;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
     constructor(private matchService:MatchService,
         public matchToStringService: MatchToStringService) {
-            this.reloadMatches(0);
+            this.reloadMatches("0");
     }
 
-    reloadMatches(typeId: number){
+    reloadMatches(typeId: any){
         this.currentTypeId = typeId;
-        if(typeId < 1){
+        if(typeId === "0"){
             this.matchService.getAllPlayedMatches().subscribe(this.onMatchesLoaded.bind(this));
+            return;
         }
         this.matchService.getPlayedMatchesByTypeId(typeId).subscribe(this.onMatchesLoaded.bind(this));
     }
@@ -40,11 +41,7 @@ export class ResultViewComponent implements IResultHandler{
         this.matches = result;
     }
 
-    onRefreshMatchesClicked(){
-        this.reloadMatches(this.currentTypeId);
-    }
-
-    onTypeChanged(event:any){
+    onTypeChanged(event:string){
         this.reloadMatches(event);
     }
 
