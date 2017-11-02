@@ -37,7 +37,8 @@ export class TableAssignViewComponent{
         this.loadAllTables();
     }
 
-    onRefreshMatchesClicked(){
+
+    onTypeChanged(){
         this.matchListComponent.onRefreshMatchesClicked();
     }
 

@@ -50,6 +50,12 @@ span.circle {
     font-weight: bold;
 }
 
+.winner-text{
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+
 .card.custom-padding {
     padding: 5px;
 }

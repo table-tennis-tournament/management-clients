@@ -17,7 +17,7 @@ export class DisciplineSelectViewComponent{
 
     @Input() showWaitingList:boolean;
 
-    @Output() onTypeChanged = new EventEmitter<string>();
+    @Output() onTypeChanged = new EventEmitter<Type>();
 
     constructor(private matchService: MatchService){
        this.matchService.getAllOpenTypes().subscribe(this.allTypesSelected.bind(this))
@@ -26,11 +26,17 @@ export class DisciplineSelectViewComponent{
     }
 
     private allTypesSelected(allTypes: Type[]){
-        this.disciplines = allTypes;
+        var result = []
+        result.push(new Type("Alle", 0));
+        if(this.showWaitingList){
+            result.push(new Type("Warteschlange", -1));
+        }
+        result = result.concat(allTypes);
+        this.disciplines = result;
     }
 
     onDisciplineChanged(){
        this.onTypeChanged.emit(this.selectedDiscipline);
     }
-   
+
 }

@@ -1,11 +1,6 @@
 <div class="row without-margin">
     <div class="input-field col s12">
-        <select  materialize="material_select" (change)="onDisciplineChanged($event)" [(ngModel)]="selectedDiscipline">
-            <option [value]="0">Alle</option>
-            <option [value]="-1">Warteschlange</option>
-           <option *ngFor="let currentDiscipline of disciplines" class="{{colorArray[currentDiscipline.id]}} indigo" [value]="currentDiscipline.id">{{currentDiscipline.name}}</option>
-        </select>
-        <label>Konkurrenz</label>
+       <discipline-select (onTypeChanged)="onTypeChanged($event)" [showWaitingList]="true"></discipline-select>
     </div>
 </div>
 <div class="row">

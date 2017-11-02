@@ -20,13 +20,11 @@ export class DisciplineViewComponent{
     public modalActions = new EventEmitter<string|MaterializeAction>();
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
-        console.log("start discipline view component");
         this.onFilterSelected();
         this.colors = TypeColors.TYPE_COLORS;
     }
 
     onTabSelected(selectedTab: DisciplineTab){
-        console.log("on tab selected");
         this.selectedTab = selectedTab;
         this.setTabForId(selectedTab.id);
     }
