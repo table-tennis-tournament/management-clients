@@ -11,7 +11,6 @@ export class MatchListComponent{
 
     public matches: Array<any> = [];
     public colorArray: string[] = [];
-    sourceList: Array<any> = [{name:"item1"},{name:"item2"}];
 
     constructor(private matchListService: MatchListService){
        matchListService.getCompleteMatchlist().subscribe(
@@ -47,6 +46,17 @@ export class MatchListComponent{
                 error =>console.log(error)
             );
         }
+    }
+
+    onDragStart($event){
+        console.log("start deleting match item");
+        this.matchListService.deleteMatchListItem($event.match.matchinfo.match.id);
+    }
+
+    onDropSuccess($event){
+        
+        console.log("drop success");
+        console.log($event);
     }
 
     onDelete(index){
