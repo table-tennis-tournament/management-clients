@@ -37,11 +37,6 @@ export class TableAssignViewComponent{
         this.loadAllTables();
     }
 
-
-    onTypeChanged(){
-        this.matchListComponent.onRefreshMatchesClicked();
-    }
-
     loadAllTables(){
         this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.onError)
     }

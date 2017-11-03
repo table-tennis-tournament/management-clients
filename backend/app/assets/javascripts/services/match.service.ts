@@ -19,8 +19,8 @@ export class MatchService {
   private assignMatchToTableUrl = "match/matchtotable/matchId/tableName";
   private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
 
-  private getPlayedMatchesUrl = "match/open/all";
-  private getPlayedMatchesByTypeUrl = "match/open/typeid/typeIdValue";
+  private getPlayedMatchesUrl = "match/played/all";
+  private getPlayedMatchesByTypeUrl = "match/played/typeid/typeIdValue";
 
   private allTypesUrl = "types/all";
   private allOpenTypesUrl = "types/open/all ";

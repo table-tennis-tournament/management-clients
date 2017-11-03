@@ -22,6 +22,7 @@ import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
 import {StageViewComponent} from "./components/stage.view.component"
 import {ResultModalComponent} from "./components/result.modal.view.component"
+import {SelectMatchModalComponent} from "./components/table/table.select.match.modal.component"
 import {TableAssignViewComponent} from "./components/table.assign.view.component"
 import {DisciplineMatchListComponent} from "./components/discipline.match.list.view.component"
 import {ResultViewComponent} from "./components/result.view.component"
@@ -87,6 +88,7 @@ import {DndModule} from "ng2-dnd";
     MatchItemComponent,
     DisciplineStageComponent,
     TableMatchItemComponent,
+    SelectMatchModalComponent,
     TeamMatchItemComponent
   ],
   providers: [

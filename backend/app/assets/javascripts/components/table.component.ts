@@ -9,9 +9,13 @@ import {TableService} from "../services/table.service"
 import {Overlay, overlayConfigFactory } from "angular2-modal"
 import {IResultHandler} from "../handler/result.handler"
 import {ResultEvent} from "../handler/result.event"
+import {SelectMatchEvent} from "../handler/select.match.event"
 import {IResult} from "../data/result"
 import {TypeColors} from "../data/typeColors"
 import {MaterializeAction} from "angular2-materialize"
+import {TakeBackMatchHandler} from "../handler/takeBack.match.handler";
+import {FreeMatchHandler} from "../handler/free.match.handler";
+import { ISelectMatchHandler } from "app/assets/javascripts/handler/select.match.handler";
 
 @Component({
     selector: "tt-table",
@@ -43,6 +47,8 @@ export class TableComponent implements IResultHandler{
     @Output() onResultForMatch = new EventEmitter<ResultEvent>();
 
     @Output() onTableAssigned = new EventEmitter<any>();
+
+    @Output() onSelectMatch = new EventEmitter<SelectMatchEvent>();
 
 
     setBgColorAndTextColorDependsOnType(){
@@ -85,16 +91,10 @@ export class TableComponent implements IResultHandler{
         this.onResultForMatch.emit(resultEvent);
     }
 
-    onFree(){
-        var matchId = this.getMatchId();
-        this.tableService.freeTable(matchId).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
-    }
+   
 
-    getMatchId(){
-        if(this.table.matchinfo != null && this.table.matchinfo.length === 1){
-            return this.table.matchinfo[0].match.id;
-        }
-        return 0;
+    isSingleMatch(){
+        return this.table.matchinfo != null && this.table.matchinfo.length === 1;
     }
 
     onLock(){
@@ -104,10 +104,35 @@ export class TableComponent implements IResultHandler{
     onUnLock(){
         this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
+   
+    onFree(){
+        if(this.isSingleMatch()){
+            var matchId = this.table.matchinfo[0].match.id;
+            this.tableService.freeTable(matchId).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+            return;
+        }
+        this.fireSelectMatchEvent(new FreeMatchHandler(this.tableService))
+    }
 
     onTakeBack(){
-        var matchId = this.getMatchId();
-        this.tableService.takeBackTable(matchId).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+        if(this.isSingleMatch()){
+            var matchId = this.table.matchinfo[0].match.id;
+            this.tableService.takeBackTable(matchId).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+            return;
+        }
+        this.fireSelectMatchEvent(new TakeBackMatchHandler(this.tableService))
+    }
+
+    fireSelectMatchEvent(selectHandler: ISelectMatchHandler){
+        var selectEvent = new SelectMatchEvent();
+        selectEvent.handler = selectHandler;
+        selectEvent.handler.onRefresh.subscribe(this.onTableRefresh.bind(this));
+        selectEvent.matches = this._table.matchinfo;
+        this.onSelectMatch.emit(selectEvent);
+    }
+
+    onTableRefresh(){
+        console.log("to do reload table");
     }
 
     unLockTableAfterRequestSuccessful(){

@@ -63,6 +63,7 @@ export class ResultViewComponent implements IResultHandler{
     handleResultAfterRequestSuccessful(){
         this.matches.slice(this.currentMatchIndex, 1);
         this.currentMatchIndex = 0;
+        this.reloadMatches(this.currentTypeId);
     }
 
     handleErrorsOnService(error){
