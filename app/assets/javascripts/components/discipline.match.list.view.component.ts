@@ -52,7 +52,11 @@ export class DisciplineMatchListComponent{
             var currentMatch = null;
             for(;matchIndex > -1; matchIndex--){
                 currentMatch = this.matches[matchIndex];
-                if(currentMatch !== null && currentMatch !== undefined && currentMatch.group.id === groupId){
+                if( currentMatch !== null && 
+                    currentMatch !== undefined && 
+                    currentMatch.group !== null &&
+                    currentMatch.group !== undefined &&
+                    currentMatch.group.id === groupId){
                     this.matches.splice(matchIndex, 1);
                 }
             }

@@ -13,9 +13,10 @@ import {MatchListService} from "./match.list.service"
 @Injectable()
 export class TableService {
   private allTablesUrl = "table/all";
+  private tableByIdUrl = "table/tableNumber";
   private lockTableUrl = "table/tableNumber/lock";
   private freeTableUrl = "table/tableNumber/free";
-  private takeBackTableUrl = "/table/tableNumber/takeback";
+  private takeBackTableUrl = "table/tableNumber/takeback";
   private unlockTableUrl = "table/tableNumber/unlock";
   
   public OnTableChanged: Observable<MatchListDto[]>;
@@ -78,6 +79,11 @@ export class TableService {
   getAllTables(): Observable<TableDto[]>{
         return this.http.get(this.allTablesUrl).map((res:Response) => res.json())
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+  }
+
+  getTableById(id: any): Observable<TableDto[]>{
+    return this.http.get(this.replaceTableNumer(id, this.tableByIdUrl)).map((res:Response) => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
   freeTable(tableId: number){

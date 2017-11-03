@@ -95,6 +95,7 @@ span.circle {
 .discipline-match-list-item {
     width: calc(100% - 30px);
     float: left;
+    line-height: 1rem;
 }
 
 .rotate-90 {

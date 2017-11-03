@@ -1,6 +1,6 @@
 <div class="row without-margin" *ngFor="let i of rowCount" >
 			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
-				<tt-table [table]="currentTable" (onResultForMatch)="onResultForMatch($event)"></tt-table>
+				<tt-table [table]="currentTable" (onResultForMatch)="onResultForMatch($event)" (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"></tt-table>
 		</div>
 </div>
 <div class="fixed-action-btn horizontal">
@@ -8,5 +8,5 @@
 		  <i class="large material-icons">refresh</i>
 		</a>
 	</div>
-
+<modal-select-match></modal-select-match>
 <modal-result></modal-result>
