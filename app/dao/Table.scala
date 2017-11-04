@@ -207,6 +207,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     ttMatchSeq
   }
 
+  def getMatchesOnTable(id: Long): Seq[TTMatch] = {
+    ttMatchSeq.filter( m => ttTablesSeq.filter(_.id == id).head.matchId.contains(m.id))
+  }
+
   def toMatch(m: MatchDAO): TTMatch = {
     if (m.team1Id < 100000)
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.isPlayed, m.matchTypeId,
