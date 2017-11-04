@@ -21,7 +21,7 @@
                 <div class="collapsible-body">
                     <div class="collection">
                         <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" 
-                            dnd-draggable [dragEnabled]="!currentMatch.match.isPlayed" [dragData]="currentMatch" [dropZones]="['match-dropZone']">
+                            dnd-draggable [dragEnabled]="!currentMatch.match.isPlayed" [dragData]="currentMatch">
                                 {{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}  
                                 <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a>
                     </div>

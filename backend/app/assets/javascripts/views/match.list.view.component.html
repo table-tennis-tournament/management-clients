@@ -4,9 +4,9 @@
 <div class="row">
     <div dnd-sortable-container [sortableData]="matches" [dropZones]="['match-dropZone']">
         <ul class="collection minheigth maxHeight">
-                <li *ngFor="let currentMatch of matches; let i = index;" [dragData]="{match: currentMatch, index: i}" (onDragStart)="onDragStart($event)" (onDropSuccess)="onDropSuccess($event)" class="collection-item {{colorArray[currentMatch.matchinfo.type.id]}} " 
+                <li *ngFor="let currentMatch of matches; let i = index;" [dragData]="{match: currentMatch, index: i}" (onDragStart)="onDragStart($event)" (onDropSuccess)="onDropSuccess($event)" class="collection-item  " 
                     dnd-sortable [sortableIndex]="i" >
-                    <div class="cut-text" *ngIf="currentMatch.matchinfo">
+                    <div class="cut-text {{colorArray[currentMatch.matchinfo.type.id]}}" *ngIf="currentMatch.matchinfo">
                         <team-match-item [team]="currentMatch.matchinfo.team1"></team-match-item> - <br/>
                         <team-match-item [team]="currentMatch.matchinfo.team2"></team-match-item>
                         <a href="javascript:void(0)" class="secondary-content" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>

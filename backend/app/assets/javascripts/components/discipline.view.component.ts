@@ -18,6 +18,7 @@ export class DisciplineViewComponent{
     public colors: string[];
     public selectedTab: DisciplineTab;
     public modalActions = new EventEmitter<string|MaterializeAction>();
+    public rowCount: number[];
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
         this.onFilterSelected();
@@ -46,9 +47,10 @@ export class DisciplineViewComponent{
         }
         this.tabs = newTabs;
         this.selectedTab = this.tabs[0];
-        if(this.tabs !== null && this.tabs[0]!== null){
+        if(this.tabs && this.tabs[0]!== null){
             this.setTabForId(this.tabs[0].id);
         }
+        this.rowCount = Array.from(Array(Math.ceil(this.tabs.length / 12)).keys());
         
     }
 
