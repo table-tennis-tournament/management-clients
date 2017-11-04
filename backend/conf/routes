@@ -29,8 +29,6 @@ GET     /types/open/all                controllers.MatchController.getActiveType
 # TableController:
 GET     /table/all                      controllers.TableController.getAllTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
-GET     /table/:id/free                 controllers.TableController.freeTable(id: Long)
-GET     /table/:id/takeback             controllers.TableController.takeBackTable(id: Long)
 GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
 GET     /table/:id/unlock               controllers.TableController.unlockTable(id: Long)
 
@@ -43,6 +41,8 @@ DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMa
 DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
 GET     /matchlist/active               controllers.MatchListController.isActive
 POST    /matchlist/active               controllers.MatchListController.setActive(isActive: Boolean)
+POST    /match/free                     controllers.MatchController.freeMatches
+POST    /match/takeBack                 controllers.MatchController.takeBackMatches
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket

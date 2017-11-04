@@ -48,16 +48,6 @@ class TableController @Inject() (tables: Tables) extends Controller{
     Ok(Json.toJson(tables.getTTTable(id)))
   }
 
-  def freeTable(id: Long) = Action {
-    tables.freeTTTable(id)
-    Ok("OK")
-  }
-
-  def takeBackTable(id: Long) = Action {
-    tables.takeBackTTTable(id)
-    Ok("OK")
-  }
-
   def lockTable(id: Long) = Action {
     tables.lockTTTable(id)
     Ok("OK")
