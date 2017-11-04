@@ -148,7 +148,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
     ttMatchSeq = ttMatchSeq map { m =>
-      if (m.id == matchId) m.copy(isPlaying = false)
+      if (m.id == matchId) m.copy(isPlaying = false, isPlayed = false)
       else m
     }
   }

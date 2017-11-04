@@ -18,6 +18,7 @@ import scala.util.{Failure, Success, Try}
 class MatchController @Inject() (tables: Tables) extends Controller{
   import models.MatchFilter._
   import models.MatchModel._
+  import models.AnswerModel._
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
     val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
@@ -29,6 +30,42 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g))
     else
       None
+  }
+
+  def freeMatches = Action { request =>
+    val req = request.body.asJson
+    req match {
+      case Some(r) => {
+        r.asOpt[Seq[Long]] match {
+          case Some(ids) => {
+            ids map { id =>
+              tables.freeTTTable(id)
+            }
+            Ok(Json.toJson(Answer(true, "successful")))
+          }
+          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+        }
+      }
+      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+    }
+  }
+
+  def takeBackMatches = Action { request =>
+    val req = request.body.asJson
+    req match {
+      case Some(r) => {
+        r.asOpt[Seq[Long]] match {
+          case Some(ids) => {
+            ids map { id =>
+              tables.takeBackTTTable(id)
+            }
+            Ok(Json.toJson(Answer(true, "successful")))
+          }
+          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+        }
+      }
+      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+    }
   }
 
   def getMatchesByType(typeId: Long) = Action {
