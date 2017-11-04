@@ -9,14 +9,18 @@
       
     </ul>
 </div>
-
+<div class="row " *ngFor="let i of rowCount" >
+  <div *ngFor="let currentTab of tabs | slice:(i*12):(i+1)*12" class="col no-padding">
+    <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>
+</div>
+</div>
 <div class="row">
   
-    <div class="col s12">
+    <!-- <div class="col s12">
       <ul class="tabs"  materialize="tabs">
         <li *ngFor="let currentTab of tabs" class="tab col"><a href="#{{currentTab.id}}" (click)="onTabSelected(currentTab)" >{{currentTab.name}}</a></li>
       </ul>
-    </div>
+    </div> -->
     <div *ngIf="selectedTab" class="row">
       <div *ngIf="selectedTab.stages" class="row">
             <div class="col" *ngFor="let currentStage of selectedTab.stages">

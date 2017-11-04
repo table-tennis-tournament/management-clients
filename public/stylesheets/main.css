@@ -98,6 +98,10 @@ span.circle {
     line-height: 1rem;
 }
 
+.no-padding{
+    padding:0;
+}
+
 .rotate-90 {
     transform: rotate(90deg);
 }

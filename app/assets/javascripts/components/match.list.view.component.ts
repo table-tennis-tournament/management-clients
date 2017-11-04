@@ -32,20 +32,23 @@ export class MatchListComponent{
         if($event.dragData.team1){
             var matchListItem = new MatchListDto();
             matchListItem.matchinfo = $event.dragData;
-            this.matches.push(matchListItem);
             this.matchListService.addMatchListItem(matchListItem.matchinfo.match.id, this.matches.length).subscribe(
-                e => console.log(e),
+                this.onMatchlistItemAdded.bind(this, matchListItem),
                 error =>console.log(error)
-            )
+            );
+            return;
         }
         if($event.dragData.matches){
             var matchListItem = new MatchListDto();
-             this.matches.push($event.dragData);
             this.matchListService.addGroupListItem($event.dragData.matches[0].group.id, this.matches.length).subscribe(
-                e => console.log(e),
+                this.onMatchlistItemAdded.bind(this, $event.dragData),
                 error =>console.log(error)
             );
         }
+    }
+
+    onMatchlistItemAdded(matchListItem: MatchListDto){
+        this.matches.push(matchListItem);
     }
 
     onDragStart($event){
@@ -60,13 +63,14 @@ export class MatchListComponent{
     }
 
     onDelete(index){
-        console.log("on delete"+ index);
-        var newIndex = this.matches.indexOf(index, 0);
-        if (index > -1) {
+        // var newIndex = this.matches.indexOf(index, 0);
+        if (index > -1 && this.matches) {
             var itemToDelete = this.matches[index];
-            this.matches.splice(newIndex, 1);
-            this.matchListService.deleteMatchListItem(itemToDelete).subscribe(x=>console.log(x));
+            this.matchListService.deleteMatchListItem(itemToDelete.matchinfo.match.id).subscribe(this.onMatchlistItemDeleted.bind(this, index));
         }
-        
+    }
+
+    onMatchlistItemDeleted(index){
+        this.matches.splice(index, 1);
     }
 }
