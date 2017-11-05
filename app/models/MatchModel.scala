@@ -79,7 +79,7 @@ object MatchModel {
     )
   }
 
-  implicit val locationReads: Reads[MatchList] = (
+  implicit val matchListReads: Reads[MatchList] = (
     (JsPath \ "id").readNullable[Long] and
     (JsPath \ "matchIds").read[Seq[Long]] and
     (JsPath \ "group").readNullable[Long] and
