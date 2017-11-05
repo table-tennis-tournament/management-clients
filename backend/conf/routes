@@ -36,8 +36,7 @@ GET     /table/:id/unlock               controllers.TableController.unlockTable(
 # MatchListController: not working
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
-PUT     /matchlist/addMatch/:id/:position  controllers.MatchListController.addMatch(id: Long, position: Int)
-PUT     /matchlist/addGroup/:id/:position  controllers.MatchListController.addGroup(id: Long, position: Int)
+POST    /matchlist/addMatch             controllers.MatchListController.addMatch
 DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
 DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
 GET     /matchlist/active               controllers.MatchListController.isActive

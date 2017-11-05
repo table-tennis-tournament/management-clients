@@ -23,12 +23,10 @@ class Application @Inject()(table: Tables) extends Controller {
             table.updateMatchTypeList flatMap { e =>
               table.updateTypesList flatMap { f =>
                 table.updateGroupsSeq flatMap { g =>
-                  table.updateMatchListSeq flatMap { h =>
-                    table.updatePlayerList map { i =>
-                      val x = a && b && c && d && e && f && g && h && i
-                      Logger.debug(x.toString)
-                      Ok(views.html.index())
-                    }
+                  table.updatePlayerList map { i =>
+                    val x = a && b && c && d && e && f && g && i
+                    Logger.debug(x.toString)
+                    Ok(views.html.index())
                   }
                 }
               }
