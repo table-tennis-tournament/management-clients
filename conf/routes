@@ -16,8 +16,7 @@ GET     /match/typeid/:typeid           controllers.MatchController.getMatchesBy
 GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
-PUT     /match/matchtotable/:matchId/:tableName     controllers.MatchController.setMatchToTable(matchId: Long, tableName: Int)
-PUT     /match/grouptotable/:groupId/:tableName     controllers.MatchController.setGroupToTable(groupId: Long, tableName: Int)
+POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int)
 GET     /match/open/all                 controllers.MatchController.getOpenMatches
 GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 GET     /match/played/all               controllers.MatchController.getPlayedMatches
@@ -37,7 +36,7 @@ GET     /table/:id/unlock               controllers.TableController.unlockTable(
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
 POST    /matchlist/addMatch             controllers.MatchListController.addMatch
-DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
+DELETE  /matchlist/deleteMatch/:uuid    controllers.MatchListController.deleteMatch(uuid: String)
 GET     /matchlist/active               controllers.MatchListController.isActive
 POST    /matchlist/active               controllers.MatchListController.setActive(isActive: Boolean)
 POST    /match/free                     controllers.MatchController.freeMatches

@@ -1,5 +1,6 @@
 package dao
 
+import java.util.UUID
 import javax.inject.Inject
 
 import com.github.tototoshi.slick.MySQLJodaSupport
@@ -534,11 +535,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     ttMatchListSeq = ml
   }
 
-  def delMatchList(ml: Seq[MatchList], id: Long) = {
+  def delMatchList(ml: Seq[MatchList], uuid: UUID) = {
     ttMatchListSeq = ml
   }
 
-  def delMatchListGroup(ml: Seq[MatchList], id: Long) = {
+  def delMatchListGroup(ml: Seq[MatchList], uuid: UUID) = {
     ttMatchListSeq = ml
   }
 

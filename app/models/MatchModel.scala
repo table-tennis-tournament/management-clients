@@ -1,5 +1,7 @@
 package models
 
+import java.util.UUID
+
 import org.joda.time.DateTime
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 import play.api.libs.functional.syntax._
@@ -72,7 +74,7 @@ object MatchModel {
 
   implicit val matchListWrites = new Writes[MatchList] {
     def writes(matchList: MatchList) = Json.obj(
-      "id" -> matchList.id,
+      "id" -> matchList.uuid,
       "matchIds" -> matchList.matchId,
       "position" -> matchList.position,
       "group" -> matchList.asGroup
@@ -80,7 +82,7 @@ object MatchModel {
   }
 
   implicit val matchListReads: Reads[MatchList] = (
-    (JsPath \ "id").readNullable[Long] and
+    (JsPath \ "uuid").readNullable[UUID] and
     (JsPath \ "matchIds").read[Seq[Long]] and
     (JsPath \ "group").readNullable[Long] and
     (JsPath \ "position").read[Int]
@@ -192,7 +194,7 @@ case class Double(
   )
 
 case class MatchList(
-    id: Option[Long],
+    uuid: Option[UUID],
     matchId: Seq[Long],
     asGroup: Option[Long],
     position: Int
