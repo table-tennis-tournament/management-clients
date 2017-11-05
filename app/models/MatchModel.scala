@@ -91,7 +91,8 @@ case class AllMatchInfo(
     player2: Seq[Player],
     matchType: MatchType,
     ttType: Type,
-    group: Option[Group]
+    group: Option[Group],
+    isPlayable: Boolean
   )
 
 case class TTMatch(
