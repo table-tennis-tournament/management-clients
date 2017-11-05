@@ -17,6 +17,7 @@ import scala.concurrent.Future
 class MatchListController @Inject() (tables: Tables) extends Controller{
 
   import models.MatchModel._
+  import models.AnswerModel._
 
   var isActiv = false
 
@@ -36,39 +37,34 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   def getAllMatchList = Action{
     val ml = tables.getMatchList
     val x = ml map {mlEntry =>
-      val m = tables.getMatch(mlEntry.matchId)
-      val mi = getAllMatchInfo(m.get)
-      MatchListInfo(mlEntry, mi.get)
+      val m = mlEntry.matchId.map(id => tables.getMatch(id)).filter(_.isDefined).map(_.get)
+      val mi = m.map(m => getAllMatchInfo(m)).filter(_.isDefined).map(_.get)
+      MatchListInfo(mlEntry, mi)
     }
     Ok(Json.toJson(x))
   }
 
-  def addMatch(id: Long, position: Int) = Action{
-    Logger.info("addMatch")
-    val newMLEntry = MatchList(None, id, None, position)
-    val ml = tables.getMatchList
-    val newML = ml map {mlEntry =>
-      if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+  def addMatch = Action{ request =>
+    val jsonO = request.body.asJson
+    jsonO match {
+      case Some(json) => {
+        json.validate[MatchList].asOpt match {
+          case Some(matchList) => {
+            Logger.info("addMatch")
+            val newMLEntry = matchList
+            val ml = tables.getMatchList
+            val newML = ml map {mlEntry =>
+              if (mlEntry.position >= matchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+            }
+            val newMLAdded = newML ++ Seq(newMLEntry)
+            tables.setMatchList(newMLAdded)
+            Ok(Json.toJson(Answer(true, "match added")))
+          }
+          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+        }
+      }
+      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
     }
-    val newMLAdded = newML ++ Seq(newMLEntry)
-    tables.setMatchList(newMLAdded)
-    val ml2 = tables.getMatchList
-    Ok(Json.toJson(ml2.filter(_.matchId == id).headOption))
-  }
-
-  def addGroup(id: Long, position: Int) = Action{
-    Logger.info("addGroup")
-    val ml = tables.getMatchesInGroup(id)
-    val addML = ml map { m =>
-      MatchList(None, m.id, Some(id), position)
-    }
-    val oldML = tables.getMatchList
-    val ml2 = oldML map { mlEntry =>
-      if (mlEntry.position >= position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
-    }
-    tables.setMatchList(ml2 ++ addML)
-    val ml3 = tables.getMatchList
-    Ok(Json.toJson(ml3.filter(_.asGroup == Some(id))))
   }
 
   def deleteMatch(id: Long) = Action{

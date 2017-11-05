@@ -1,7 +1,8 @@
 package models
 
 import org.joda.time.DateTime
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{JsPath, Json, Reads, Writes}
+import play.api.libs.functional.syntax._
 
 /**
   * Created by jonas on 29.12.16.
@@ -72,10 +73,18 @@ object MatchModel {
   implicit val matchListWrites = new Writes[MatchList] {
     def writes(matchList: MatchList) = Json.obj(
       "id" -> matchList.id,
+      "matchIds" -> matchList.matchId,
       "position" -> matchList.position,
       "group" -> matchList.asGroup
     )
   }
+
+  implicit val locationReads: Reads[MatchList] = (
+    (JsPath \ "id").readNullable[Long] and
+    (JsPath \ "matchIds").read[Seq[Long]] and
+    (JsPath \ "group").readNullable[Long] and
+    (JsPath \ "position").read[Int]
+    )(MatchList.apply _)
 
   implicit val matchListInfoWrites = new Writes[MatchListInfo] {
     def writes(matchListInfo: MatchListInfo) = Json.obj(
@@ -184,7 +193,7 @@ case class Double(
 
 case class MatchList(
     id: Option[Long],
-    matchId: Long,
+    matchId: Seq[Long],
     asGroup: Option[Long],
     position: Int
   )
@@ -192,5 +201,5 @@ case class MatchList(
 
 case class MatchListInfo(
     matchList: MatchList,
-    ttMatch: AllMatchInfo
+    ttMatch: Seq[AllMatchInfo]
   )

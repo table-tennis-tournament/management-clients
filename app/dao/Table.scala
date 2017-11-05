@@ -35,7 +35,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   private val groups = TableQuery[GroupTable]
   private val clubs = TableQuery[ClubTable]
   private val doubles = TableQuery[DoubleTable]
-  private val matchList = TableQuery[MatchListTable]
+  // private val matchList = TableQuery[MatchListTable]
 
   var ttTablesSeq = Seq.empty[TTTable]
   var ttMatchSeq = Seq.empty[TTMatch]
@@ -510,23 +510,23 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     ttDoublesSeq.filter(_.id == id).headOption
   }
 
-  class MatchListTable(tag: Tag) extends Table[MatchList](tag, "match_list") {
-
-    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def matchId = column[Long]("match_id")
-    def asGroup = column[Option[Long]]("as_group")
-    def position = column[Int]("position")
-
-    def * = (id.?, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
-  }
-
-  def updateMatchListSeq: Future[Boolean] = {
-    dbConfigProvider.get.db.run(matchList.result) map {mlList =>
-      ttMatchListSeq = mlList.sortBy(_.position)
-      Logger.debug("read MatchList: " + ttMatchListSeq.size.toString)
-      true
-    }
-  }
+//  class MatchListTable(tag: Tag) extends Table[MatchList](tag, "match_list") {
+//
+//    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+//    def matchId = column[Long]("match_id")
+//    def asGroup = column[Option[Long]]("as_group")
+//    def position = column[Int]("position")
+//
+//    def * = (id.?, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
+//  }
+//
+//  def updateMatchListSeq: Future[Boolean] = {
+//    dbConfigProvider.get.db.run(matchList.result) map {mlList =>
+//      ttMatchListSeq = mlList.sortBy(_.position)
+//      Logger.debug("read MatchList: " + ttMatchListSeq.size.toString)
+//      true
+//    }
+//  }
 
   def getMatchList = ttMatchListSeq.sortBy(_.position)
 
