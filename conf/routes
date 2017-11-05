@@ -22,6 +22,7 @@ GET     /match/open/all                 controllers.MatchController.getOpenMatch
 GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 GET     /match/played/all               controllers.MatchController.getPlayedMatches
 GET     /match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
+GET     /match/loadnew                  controllers.MatchController.loadNewMatches
 
 GET     /types/all                      controllers.MatchController.getTypes
 GET     /types/open/all                controllers.MatchController.getActiveTypes

@@ -228,4 +228,10 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
     Ok("{}")
   }
+
+  def loadNewMatches = Action.async {
+    tables.loadNewMatches() map { n =>
+      Ok(Json.toJson(Answer(true, "new matches: " + n.toString)))
+    }
+  }
 }
