@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.UUID
+
 import com.google.inject.Inject
 import dao.Tables
 import models._
@@ -51,7 +53,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
         json.validate[MatchList].asOpt match {
           case Some(matchList) => {
             Logger.info("addMatch")
-            val newMLEntry = matchList
+            val newMLEntry = matchList.copy(uuid = Some(matchList.uuid.getOrElse(UUID.randomUUID())))
             val ml = tables.getMatchList
             val newML = ml map {mlEntry =>
               if (mlEntry.position >= matchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
@@ -67,24 +69,14 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
     }
   }
 
-  def deleteMatch(id: Long) = Action{
+  def deleteMatch(uuid: String) = Action{
     val ml = tables.getMatchList
-    val position = ml.filter(_.matchId == id).head.position
+    val position = ml.filter(_.uuid == UUID.fromString(uuid)).head.position
     val newML = ml map {mlEntry =>
       if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
     }
-    tables.delMatchList(newML, ml.filter(_.matchId == id).head.id.get)
+    tables.delMatchList(newML, UUID.fromString(uuid))
     Ok("deleted match")
-  }
-
-  def deleteGroup(id: Long) = Action {
-    val ml = tables.getMatchList
-    val position = ml.filter(_.asGroup.getOrElse(0) == id).head.position
-    val newML = ml map {mlEntry =>
-      if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-    }
-    tables.delMatchListGroup(newML, id)
-    Ok("deleted group")
   }
 
   def getNext = Action {

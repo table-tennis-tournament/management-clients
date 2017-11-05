@@ -149,84 +149,53 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     Ok(Json.toJson(tables.allTypes.filter(_.active)))
   }
 
-  def setGroupToTable(groupId: Long, tableName: Int) = Action{
-    val table = tables.getTTTableFromName(tableName).get
-    val matches = tables.allMatches()
-    Logger.info("matches: " + matches.toString())
-    val matchesInGroup = matches.filter(_.groupId.getOrElse(0) == groupId)
-    val groupReady = matchesInGroup forall { m =>
-      if (!(m.isPlayed || m.isPlaying)) {
-        (m.player1Ids ++ m.player2Ids).forall { p =>
-          val ml = matches.filter { ma =>
-            ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+  def setMatchToTable(tableName: Int) = Action{ request =>
+    request.body.asJson match {
+      case Some(matchIdsJson) => {
+        matchIdsJson.validate[Seq[Long]].asOpt match {
+          case Some(matchIds) => {
+            val table = tables.getTTTableFromName(tableName).get
+            val matches = tables.allMatches()
+            Logger.info("matches: " + matches.toString())
+            val m = matchIds.map(id => matches.filter(_.id == id).head)
+            val matchReady = m.forall(m => if (!(m.isPlayed || m.isPlaying)) {
+                (m.player1Ids ++ m.player2Ids).forall { p =>
+                  val ml = matches.filter { ma =>
+                    ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+                  }
+                  ml.isEmpty // p is not playing
+                }
+              } else {
+                false
+              })
+            val res = if (matchReady) {
+              matchIds.foreach { matchId =>
+                Logger.info("Set match to Table")
+                val ml = tables.getMatchList
+                ml.filter(_.matchId == matchId).headOption match {
+                  case Some(mlItem) => {
+                    val newML = ml map { mlEntry =>
+                      if (mlEntry.position > mlItem.position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+                    }
+                    tables.delMatchList(newML, ml.filter(_.matchId == matchId).head.uuid.get)
+                    m.foreach(m => tables.startMatch(m.id, table.id))
+                  }
+                  case _ => m.foreach(m => tables.startMatch(m.id, table.id))
+                }
+              }
+            } else {
+              Logger.error("Match not ready")
+              Future.successful[Boolean](false)
+            }
+            Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
+            Ok("{}")
           }
-          ml.isEmpty // p is not playing
+          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
         }
-      } else {
-        true
       }
+      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
     }
-    val res = if (groupReady) {
-      Logger.info("Set group to Table")
-      val ml = tables.getMatchList
-      val position = ml.filter(_.asGroup.getOrElse(0) == groupId).headOption.map(_.position)
-      if(position.isDefined) {
-        val newML = ml map { mlEntry =>
-          if (mlEntry.position > position.get) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-        }
-        tables.delMatchListGroup(newML, groupId)
-        val a = matchesInGroup map { m =>
-          tables.startMatch(m.id, table.id)
-        }
-        a
-      } else {
-        val started = matchesInGroup map { m =>
-          tables.startMatch(m.id, table.id)
-        }
-        started
-      }
-    } else {
-      Logger.error("Group not ready")
-      Future.successful[Boolean](false)
-    }
-    Logger.info("result: " + res.toString() + " " + table.toString + " " + matchesInGroup.toString())
-    Ok("{}")
-  }
 
-  def setMatchToTable(matchId: Long, tableName: Int) = Action{
-    val table = tables.getTTTableFromName(tableName).get
-    val matches = tables.allMatches()
-    Logger.info("matches: " + matches.toString())
-    val m = matches.filter(_.id == matchId).head
-    val matchReady = if (!(m.isPlayed || m.isPlaying)) {
-      (m.player1Ids ++ m.player2Ids).forall { p =>
-        val ml = matches.filter { ma =>
-          ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
-        }
-        ml.isEmpty // p is not playing
-      }
-    } else {
-      false
-    }
-    val res = if (matchReady) {
-      Logger.info("Set match to Table")
-      val ml = tables.getMatchList
-      val position = ml.filter(_.matchId == matchId).headOption.map(_.position)
-      if (position.isDefined) {
-        val newML = ml map { mlEntry =>
-          if (mlEntry.position > position.get) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-        }
-        tables.delMatchList(newML, ml.filter(_.matchId == matchId).head.id.get)
-        tables.startMatch(m.id, table.id)
-      } else {
-        tables.startMatch(m.id, table.id)
-      }
-    } else {
-      Logger.error("Match not ready")
-      Future.successful[Boolean](false)
-    }
-    Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
-    Ok("{}")
   }
 
   def loadNewMatches = Action.async {
