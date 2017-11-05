@@ -18,15 +18,14 @@ export class DisciplineViewComponent{
     public colors: string[];
     public selectedTab: DisciplineTab;
     public modalActions = new EventEmitter<string|MaterializeAction>();
+    public rowCount: number[];
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
-        console.log("start discipline view component");
         this.onFilterSelected();
         this.colors = TypeColors.TYPE_COLORS;
     }
 
     onTabSelected(selectedTab: DisciplineTab){
-        console.log("on tab selected");
         this.selectedTab = selectedTab;
         this.setTabForId(selectedTab.id);
     }
@@ -48,7 +47,11 @@ export class DisciplineViewComponent{
         }
         this.tabs = newTabs;
         this.selectedTab = this.tabs[0];
-        this.setTabForId(this.tabs[0].id);
+        if(this.tabs && this.tabs[0]!== null){
+            this.setTabForId(this.tabs[0].id);
+        }
+        this.rowCount = Array.from(Array(Math.ceil(this.tabs.length / 12)).keys());
+        
     }
 
     setTabForId(tabId: number){

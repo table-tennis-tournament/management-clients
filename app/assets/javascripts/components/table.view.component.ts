@@ -11,6 +11,7 @@ import {MatchListDto} from "../data/match.list.dto"
 import {MatchDto} from "../data/match.dto"
 import {Match} from "../data/match"
 import {ResultEvent} from "../handler/result.event"
+import { SelectMatchModalComponent } from "../components/table/table.select.match.modal.component";
 
 
 @Component({
@@ -22,6 +23,8 @@ export class TableViewComponent{
     public rowCount: number[];
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
+    
+    @ViewChild(SelectMatchModalComponent) selectMatch: SelectMatchModalComponent;
 
     constructor(private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 

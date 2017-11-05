@@ -1,3 +1,9 @@
+<div class="fixed-action-btn horizontal">
+	<a class="btn-floating btn-large blue" (click)="onRefreshTablesClicked()">
+		<i class="large material-icons">refresh</i>
+	</a>
+</div>
+
 <div class="row without-margin">
 	<div class="col s2">
 		<div class="row without-margin">
@@ -6,16 +12,9 @@
 					<input type="checkbox" class="filled-in" [(ngModel)]="isWaitingListActive" id="filled-in-box" (change)="onWaitingListActiveChanged()" />
 					<label for="filled-in-box">Nach Warteschlange</label>
 				</p>
-				<a class="btn-floating btn-medium blue" (click)="onRefreshMatchesClicked()">
-						<i class="medium material-icons">refresh</i>
-					 </a>
-				<a class="btn-floating btn-medium blue" (click)="onRefreshTablesClicked()">
-					<i class="medium material-icons">cached</i>
-					</a>
 			</div> 
 		</div>
 		<discipline-match-list></discipline-match-list>
-
 		
 	</div>
 	<div class="col s10">

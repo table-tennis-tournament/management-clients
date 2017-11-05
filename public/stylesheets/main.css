@@ -50,6 +50,12 @@ span.circle {
     font-weight: bold;
 }
 
+.winner-text{
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+
 .card.custom-padding {
     padding: 5px;
 }
@@ -89,6 +95,11 @@ span.circle {
 .discipline-match-list-item {
     width: calc(100% - 30px);
     float: left;
+    line-height: 1rem;
+}
+
+.no-padding{
+    padding:0;
 }
 
 .rotate-90 {

@@ -1,16 +1,14 @@
-<div class="card {{bgColor}}" *ngIf="table.matchinfo[0]">
+<div class="card {{bgColor}}" *ngIf="table.matchinfo&&table.matchinfo[0]">
     <div class="card-content {{textColor}} custom-padding">
         <span class="card-title activator truncate">
                 <h4 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
-                <span> <span>{{table.matchinfo[0].type.name}}<span *ngIf="table.matchinfo[0].type.kind===2">-DO</span></span></span>
+                <span> <span>{{table.matchinfo[0].type.name}}<!-- <span *ngIf="table.matchinfo[0].type.kind===2">-DO</span> --></span></span>
                 <i class="material-icons right">more_vert</i>
                </h4>
         </span>
         <p class="center-align truncate">
             <b *ngIf="table.table.isLocked">Tisch wird gesperrt. </b>
-            <b>{{table.matchinfo[0].matchType.name}} </b><b *ngIf="table.matchinfo[0].group">{{table.matchinfo[0].group.name}}</b><br/>
-            {{firstOpponent}} <br/>
-            {{secondOpponent}}
+            <table-match-item [matches]="table.matchinfo"></table-match-item>
         </p>
     </div>
    
@@ -26,7 +24,7 @@
     </div>
 </div>
 
-<div class="card grey lighten-3" *ngIf="!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
+<div class="card grey lighten-3" *ngIf="table.matchinfo===null||!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
     <div class="card-content custom-padding">
         <span class="card-title activator">
                 <h4><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span><i class="material-icons right">more_vert</i></h4>

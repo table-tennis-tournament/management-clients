@@ -2,7 +2,6 @@ import {Component, Input} from "@angular/core";
 import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {MatchListService} from "../services/match.list.service";
-import {RandomMatchService} from "../services/random.match.service";
 
 @Component({
     selector: "match-list",
@@ -12,9 +11,8 @@ export class MatchListComponent{
 
     public matches: Array<any> = [];
     public colorArray: string[] = [];
-    sourceList: Array<any> = [{name:"item1"},{name:"item2"}];
 
-    constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
+    constructor(private matchListService: MatchListService){
        matchListService.getCompleteMatchlist().subscribe(
            this.getAllMatchesSuccess.bind(this),
            this.getAllMatchesError
@@ -34,37 +32,45 @@ export class MatchListComponent{
         if($event.dragData.team1){
             var matchListItem = new MatchListDto();
             matchListItem.matchinfo = $event.dragData;
-            this.matches.push(matchListItem);
             this.matchListService.addMatchListItem(matchListItem.matchinfo.match.id, this.matches.length).subscribe(
-                e => console.log(e),
+                this.onMatchlistItemAdded.bind(this, matchListItem),
                 error =>console.log(error)
-            )
+            );
+            return;
         }
         if($event.dragData.matches){
             var matchListItem = new MatchListDto();
-             this.matches.push($event.dragData);
             this.matchListService.addGroupListItem($event.dragData.matches[0].group.id, this.matches.length).subscribe(
-                e => console.log(e),
+                this.onMatchlistItemAdded.bind(this, $event.dragData),
                 error =>console.log(error)
             );
         }
     }
 
-    onUp(){
-        console.log("on up clicked");
+    onMatchlistItemAdded(matchListItem: MatchListDto){
+        this.matches.push(matchListItem);
     }
-    onDown(){
-        console.log("on down clicked");
+
+    onDragStart($event){
+        console.log("start deleting match item");
+        this.matchListService.deleteMatchListItem($event.match.matchinfo.match.id);
+    }
+
+    onDropSuccess($event){
+        
+        console.log("drop success");
+        console.log($event);
     }
 
     onDelete(index){
-        console.log("on delete"+ index);
-        var newIndex = this.matches.indexOf(index, 0);
-        if (index > -1) {
+        // var newIndex = this.matches.indexOf(index, 0);
+        if (index > -1 && this.matches) {
             var itemToDelete = this.matches[index];
-            this.matches.splice(newIndex, 1);
-            this.matchListService.deleteMatchListItem(itemToDelete).subscribe(x=>console.log(x));
+            this.matchListService.deleteMatchListItem(itemToDelete.matchinfo.match.id).subscribe(this.onMatchlistItemDeleted.bind(this, index));
         }
-        
+    }
+
+    onMatchlistItemDeleted(index){
+        this.matches.splice(index, 1);
     }
 }

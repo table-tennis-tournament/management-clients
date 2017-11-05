@@ -1,0 +1,28 @@
+<div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+    <div class="modal-content center-align">
+      <h4>Wähle Spiel</h4>
+      <br/><br/>
+      <form materialize class="col s12">
+      <div class="row">
+          <div class="col s10">
+              <p *ngFor="let match of matches; let i = index;">
+                <input name="test{{match.match.id}}" type="checkbox" id="test{{match.match.id}}" [(ngModel)]="match.match.isPlayed"  [disabled]="isDisabled?true:null"/>
+                <label for="test{{match.match.id}}"><team-match-item [team]="match.team1"></team-match-item> - <team-match-item [team]="match.team2"></team-match-item></label>
+              </p>
+          </div>
+         <!--  <div class="input-field col s6">
+              <select name="multiSelect" [(ngModel)]="selectedMatches" multiple materialize="material_select" [materializeSelectOptions]="matches" [disabled]="isDisabled?true:null">
+                <option value="" disabled selected>Wähle Match</option>
+                <option *ngFor="let match of matches" [value]="match">{{match.team1[0].firstName}}</option>
+              </select>
+              <label>Wähle Spiel</label>
+            </div> -->
+      </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat"  (click)="onCancel()">Abbrechen</a>
+      <a class="modal-action waves-effect waves-green btn-flat"  (click)="onAllSelected()">Alle</a>
+      <a class="modal-action modal-close waves-effect waves-green btn-flat" (click)="onOK()">OK</a>
+    </div>
+  </div>

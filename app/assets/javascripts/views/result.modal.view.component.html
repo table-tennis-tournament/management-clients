@@ -2,9 +2,9 @@
     <div class="modal-content center-align">
       <h4>{{headerString}}</h4>
       <br/><br/>
-      <div [class.text-bold]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
+      <div [class.winner-text]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
       <div class="center-align"><h4>  - </h4><br/></div>          
-      <div [class.text-bold]="isSecondPlayerWinning">{{secondPlayerString}}</div>
+      <div [class.winner-text]="isSecondPlayerWinning">{{secondPlayerString}}</div>
       </div>
        <div class="input-field col s4 m2">
                       <input autofocus  id="result" class="form-control" [(ngModel)]="currentInput" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">

@@ -9,9 +9,13 @@ import {TableService} from "../services/table.service"
 import {Overlay, overlayConfigFactory } from "angular2-modal"
 import {IResultHandler} from "../handler/result.handler"
 import {ResultEvent} from "../handler/result.event"
+import {SelectMatchEvent} from "../handler/select.match.event"
 import {IResult} from "../data/result"
 import {TypeColors} from "../data/typeColors"
 import {MaterializeAction} from "angular2-materialize"
+import {TakeBackMatchHandler} from "../handler/takeBack.match.handler";
+import {FreeMatchHandler} from "../handler/free.match.handler";
+import { ISelectMatchHandler } from "app/assets/javascripts/handler/select.match.handler";
 
 @Component({
     selector: "tt-table",
@@ -37,20 +41,15 @@ export class TableComponent implements IResultHandler{
     @Input("table")
     set table(value: TableDto){
         this._table = value;
-        this.updateMatchInfo();
+        this.setBgColorAndTextColorDependsOnType();
     } 
 
     @Output() onResultForMatch = new EventEmitter<ResultEvent>();
 
     @Output() onTableAssigned = new EventEmitter<any>();
 
-    updateMatchInfo(){
-        if(this._table.matchinfo[0]){
-            this.firstOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo[0].team1);
-            this.secondOpponent = this.matchToStringService.getPlayersNamesLong(this._table.matchinfo[0].team2);
-            this.setBgColorAndTextColorDependsOnType();
-        }
-    }
+    @Output() onSelectMatch = new EventEmitter<SelectMatchEvent>();
+
 
     setBgColorAndTextColorDependsOnType(){
         if(this.table.matchinfo[0]){
@@ -79,9 +78,10 @@ export class TableComponent implements IResultHandler{
 
     onMatchAssigned(dragData){
         var match = dragData.match;
+        this.table.matchinfo=[]
         this.table.matchinfo[0] = match;
-        this.updateMatchInfo();
         this.onTableAssigned.emit(dragData);
+        this.setBgColorAndTextColorDependsOnType();
     }
 
     onResult(){
@@ -91,8 +91,10 @@ export class TableComponent implements IResultHandler{
         this.onResultForMatch.emit(resultEvent);
     }
 
-    onFree(){
-        this.tableService.freeTable(this.table.table.id).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+   
+
+    isSingleMatch(){
+        return this.table.matchinfo != null && this.table.matchinfo.length === 1;
     }
 
     onLock(){
@@ -102,9 +104,35 @@ export class TableComponent implements IResultHandler{
     onUnLock(){
         this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
     }
+   
+    onFree(){
+        if(this.isSingleMatch()){
+            var matchId = this.table.matchinfo[0].match.id;
+            this.tableService.freeTable(matchId).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+            return;
+        }
+        this.fireSelectMatchEvent(new FreeMatchHandler(this.tableService))
+    }
 
     onTakeBack(){
-        this.tableService.takeBackTable(this.table.table.id).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+        if(this.isSingleMatch()){
+            var matchId = this.table.matchinfo[0].match.id;
+            this.tableService.takeBackTable(matchId).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+            return;
+        }
+        this.fireSelectMatchEvent(new TakeBackMatchHandler(this.tableService))
+    }
+
+    fireSelectMatchEvent(selectHandler: ISelectMatchHandler){
+        var selectEvent = new SelectMatchEvent();
+        selectEvent.handler = selectHandler;
+        selectEvent.handler.onRefresh.subscribe(this.onTableRefresh.bind(this));
+        selectEvent.matches = this._table.matchinfo;
+        this.onSelectMatch.emit(selectEvent);
+    }
+
+    onTableRefresh(){
+        console.log("to do reload table");
     }
 
     unLockTableAfterRequestSuccessful(){
@@ -121,7 +149,6 @@ export class TableComponent implements IResultHandler{
     }
 
     lockTableAfterRequestSuccessfull(){
-        console.log("successful lock table request");
         this.table.table.isLocked = true;
         this.bgColor =TypeColors.TYPE_COLORS[0];
         this.textColor = "white-text";
@@ -138,7 +165,6 @@ export class TableComponent implements IResultHandler{
     }
 
     handleResultAfterRequestSuccessful(){
-        console.log("sucessfully added result");
         this.table.matchinfo = null;
     }
    
