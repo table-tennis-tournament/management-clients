@@ -38,7 +38,6 @@ GET     /matchlist/all                  controllers.MatchListController.getAllMa
 GET     /matchlist/next                 controllers.MatchListController.getNext
 POST    /matchlist/addMatch             controllers.MatchListController.addMatch
 DELETE  /matchlist/deleteMatch/:id      controllers.MatchListController.deleteMatch(id: Long)
-DELETE  /matchlist/deleteGroup/:id      controllers.MatchListController.deleteGroup(id:Long)
 GET     /matchlist/active               controllers.MatchListController.isActive
 POST    /matchlist/active               controllers.MatchListController.setActive(isActive: Boolean)
 POST    /match/free                     controllers.MatchController.freeMatches
