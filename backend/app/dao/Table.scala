@@ -203,6 +203,19 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
+  def loadNewMatches(): Future[Int] = {
+    dbConfigProvider.get.db.run(matches.result) map { res =>
+      val x = res map { r =>
+        toMatch(r)
+      }
+      val matchSeqIds = ttMatchSeq.map(_.id)
+      val newMatches = x.filter(m => !matchSeqIds.contains(m.id))
+      ttMatchSeq = ttMatchSeq ++ newMatches
+      Logger.debug("add Matches " + newMatches.size.toString)
+      newMatches.size
+    }
+  }
+
   def allMatches(): Seq[TTMatch] = {
     ttMatchSeq
   }
