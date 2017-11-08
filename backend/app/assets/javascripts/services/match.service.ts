@@ -16,7 +16,7 @@ export class MatchService {
 
   private addResultString = "match/matchId/result";
 
-  private assignMatchToTableUrl = "match/matchtotable/matchId/tableName";
+  private assignMatchToTableUrl = "match/matchtotable/tableName";
   private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
 
   private getPlayedMatchesUrl = "match/played/all";
@@ -37,12 +37,11 @@ export class MatchService {
                .catch((error:any) => Observable.throw(error.json().error || "Server error"));
   }
 
-  assignMatchToTable(matchId: number, tableName: number): Observable<any>{
-    var regEx = new RegExp("matchId");
-    var url = this.assignMatchToTableUrl.replace(regEx, matchId.toString());
-    regEx = new RegExp("tableName");
+  assignMatchToTable(matchIds: number[], tableName: number): Observable<any>{
+    var url = this.assignMatchToTableUrl;
+    var regEx = new RegExp("tableName");
     url = url.replace(regEx, tableName.toString());
-    return this.http.put(url, JSON.stringify(""), {headers: this.getHeaders()})
+    return this.http.post(url, JSON.stringify(matchIds), {headers: this.getHeaders()})
          .map(res => res.json());
   }
 
