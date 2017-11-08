@@ -67,7 +67,7 @@ export class TableComponent implements IResultHandler{
         }
         var isGroup = event.dragData.isGroup;
         if(isGroup === false){
-            this.matchService.assignMatchToTable(match.match.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
+            this.matchService.assignMatchToTable([match.match.id], this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
             return;
         }
         if(match.group != null){
