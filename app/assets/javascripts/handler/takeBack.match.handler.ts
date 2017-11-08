@@ -1,4 +1,5 @@
 import {MatchDto} from "../data/match.dto"
+import {StatusDto} from "../data/status.dto"
 import {ISelectMatchHandler} from "../handler/select.match.handler"
 import {TableService} from "../services/table.service"
 import {EventEmitter} from "@angular/core"
@@ -12,15 +13,19 @@ export class TakeBackMatchHandler implements ISelectMatchHandler {
     }
 
     handleSelection(matches: MatchDto[]) {
-        if(matches!== null && matches.length === 1){
-            this.tableService.takeBackTable(matches[0].match.id).subscribe(this.onSuccessfullRefresh.bind(this));
+        if(matches!== null && matches.length > 0){
+            var matchIds = [];
+            matches.map(x=> matchIds.push(x.match.id));
+            this.tableService.takeBackTable(matchIds).subscribe(this.onSuccessfullRefresh.bind(this));
         }
     }
     handleAll(matches: MatchDto[]) {
-        throw new Error("Method not implemented.");
+        this.handleSelection(matches);
     }
 
-    onSuccessfullRefresh(){
-        this.onRefresh.emit("success");
+    onSuccessfullRefresh(result: StatusDto){
+        if(result.successful === true){
+            this.onRefresh.emit("success");
+        }
     }
 }

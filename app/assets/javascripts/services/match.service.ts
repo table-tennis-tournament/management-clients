@@ -2,8 +2,9 @@ import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {Type} from "../data/type"
 import {Injectable} from "@angular/core"
-import {Http, Response, Headers, RequestOptions } from "@angular/http"
+import {Http, Response, Headers, RequestOptions, RequestOptionsArgs } from "@angular/http"
 import {Observable} from "rxjs/Rx";
+import { BaseService } from "../services/base.service";
 
 @Injectable()
 export class MatchService {
@@ -25,7 +26,7 @@ export class MatchService {
   private allTypesUrl = "types/all";
   private allOpenTypesUrl = "types/open/all ";
 
-  constructor(private http: Http){}
+  constructor(private http: Http, private baseService: BaseService){}
 
   getAllMatches(): Observable<MatchDto[]>{
     return this.http.get(this.allMatchesUrl).map((res:Response) => res.json())
@@ -41,7 +42,7 @@ export class MatchService {
     var url = this.assignMatchToTableUrl;
     var regEx = new RegExp("tableName");
     url = url.replace(regEx, tableName.toString());
-    return this.http.post(url, JSON.stringify(matchIds), {headers: this.getHeaders()})
+    return this.http.post(url, JSON.stringify(matchIds), this.baseService.getHeaders())
          .map(res => res.json());
   }
 
@@ -50,14 +51,8 @@ export class MatchService {
     var url = this.assignGroupToTableUrl.replace(regEx, groupId.toString());
     regEx = new RegExp("tableName");
     url = url.replace(regEx, tableName.toString());
-    return this.http.put(url, JSON.stringify(""), {headers: this.getHeaders()})
+    return this.http.put(url, JSON.stringify(""), )
          .map(res => res.json());
-  }
-
-  getHeaders(){
-    var headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    return headers;
   }
 
   addResult(resultToHandle: IResult[], matchId: number){
@@ -68,12 +63,12 @@ export class MatchService {
 
   getAllTypes(): Observable<Type[]>{
     return this.http.get(this.allTypesUrl).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch(this.baseService.HandleError);
   }
 
   getAllOpenTypes(): Observable<Type[]>{
     return this.http.get(this.allOpenTypesUrl).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch(this.baseService.HandleError);
   }
 
   getMatchesByType(typeId: number): Observable<MatchDto>{
@@ -81,7 +76,7 @@ export class MatchService {
     var url = this.getMatchesByTypeUrl.replace(regEx, typeId.toString());
         
     return this.http.get(url).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch(this.baseService.HandleError);
   }
 
   getOpenMatchesByType(typeId: number): Observable<MatchDto>{
@@ -92,12 +87,12 @@ export class MatchService {
     var url = this.getOpenMatchesByTypeUrl.replace(regEx, typeId.toString());
         
     return this.http.get(url).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch(this.baseService.HandleError);
   }
 
   getAllPlayedMatches():Observable<MatchDto>{
     return this.http.get(this.getPlayedMatchesUrl).map((res:Response) => res.json())
-        .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+        .catch(this.baseService.HandleError);
   }
 
   getPlayedMatchesByTypeId(typeId: number):Observable<MatchDto>{
@@ -105,7 +100,7 @@ export class MatchService {
     var url = this.getPlayedMatchesByTypeUrl.replace(regEx, typeId.toString());
        
     return this.http.get(url).map((res:Response) => res.json())
-        .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+        .catch(this.baseService.HandleError);
   }
 
 }

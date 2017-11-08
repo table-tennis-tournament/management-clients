@@ -52,7 +52,7 @@ export class TableComponent implements IResultHandler{
 
 
     setBgColorAndTextColorDependsOnType(){
-        if(this.table.matchinfo[0]){
+        if(this.table.matchinfo && this.table.matchinfo[0]){
             this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo[0].type.id];
             this.textColor = this.table.matchinfo[0].type.kind ===2?"": "white-text";
         }
@@ -62,7 +62,7 @@ export class TableComponent implements IResultHandler{
     onMatchDrop(event){
         var match = event.dragData.match;
        
-        if(this.table.matchinfo[0] !== null && this.table.matchinfo[0] !== undefined){
+        if(this.table.matchinfo && this.table.matchinfo[0]){
             return;
         }
         var isGroup = event.dragData.isGroup;
@@ -108,7 +108,7 @@ export class TableComponent implements IResultHandler{
     onFree(){
         if(this.isSingleMatch()){
             var matchId = this.table.matchinfo[0].match.id;
-            this.tableService.freeTable(matchId).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+            this.tableService.freeTable([matchId]).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
             return;
         }
         this.fireSelectMatchEvent(new FreeMatchHandler(this.tableService))
@@ -117,7 +117,7 @@ export class TableComponent implements IResultHandler{
     onTakeBack(){
         if(this.isSingleMatch()){
             var matchId = this.table.matchinfo[0].match.id;
-            this.tableService.takeBackTable(matchId).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+            this.tableService.takeBackTable([matchId]).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
             return;
         }
         this.fireSelectMatchEvent(new TakeBackMatchHandler(this.tableService))

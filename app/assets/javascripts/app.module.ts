@@ -45,6 +45,7 @@ import { WebSocketService } from "./services/web.socket.service"
 import { MatchToStringService } from "./services/match.toString.service"
 import { MatchListService } from "./services/match.list.service"
 import { RandomMatchService } from "./services/random.match.service"
+import { BaseService } from "./services/base.service"
 
 import { routeConfig } from "./app.routes"
 
@@ -99,6 +100,7 @@ import {DndModule} from "ng2-dnd";
       MatchToStringService,
       MatchListService,
       RandomMatchService,
+      BaseService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent],
