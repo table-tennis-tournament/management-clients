@@ -31,28 +31,28 @@ export class MatchListComponent{
     }
 
     transferDataSuccess($event) {
+        
+        var matchinfo = [];
         if($event.dragData.team1){
             // var matchListItem = new MatchListDto();
             // matchListItem.matchinfo = $event.dragData;
-            var match = $event.dragData;
-            var matchDto = new MatchListDto();
-            
-            var matchListItem = new MatchListItem([match.match.id]);
-            matchListItem.position = this.matches.length;
-            matchDto.matchListItem = matchListItem;
-            matchDto.matchinfo = [match]
-            this.matchListService.addMatchListItem(matchListItem).subscribe(
-                this.onMatchlistItemAdded.bind(this, matchDto),
-                error =>console.log(error)
-            );
-            return;
+            matchinfo = [$event.dragData];
         }
-        if($event.dragData.matches){
-            this.matchListService.addGroupListItem($event.dragData.matches[0].group.id, this.matches.length).subscribe(
-                this.onMatchlistItemAdded.bind(this, $event.dragData),
-                error =>console.log(error)
-            );
+        if($event.dragData[0]){
+            matchinfo = $event.dragData;
         }
+
+        var matchDto = new MatchListDto();
+        var matchIds = matchinfo.map(x=>x.match.id);
+        
+        var matchListItem = new MatchListItem(matchIds);
+        matchListItem.position = this.matches.length;
+        matchDto.matchListItem = matchListItem;
+        matchDto.matchinfo = matchinfo;
+        this.matchListService.addMatchListItem(matchListItem).subscribe(
+            this.onMatchlistItemAdded.bind(this, matchDto),
+            error =>console.log(error)
+        );
     }
 
     onMatchlistItemAdded(matchListItem: MatchListDto){

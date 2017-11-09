@@ -56,30 +56,34 @@ export class TableComponent implements IResultHandler{
             this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo[0].type.id];
             this.textColor = this.table.matchinfo[0].type.kind ===2?"": "white-text";
         }
-        
     }
 
     onMatchDrop(event){
-        var match = event.dragData.match;
-       
         if(this.table.matchinfo && this.table.matchinfo[0]){
             return;
         }
+        var match = event.dragData.match;
+        var matchIds = [];
         var isGroup = event.dragData.isGroup;
         if(isGroup === false){
-            this.matchService.assignMatchToTable([match.match.id], this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
-            return;
+            matchIds = [match.match.id]
         }
-        if(match.group != null){
-            this.matchService.assignGroupToTable(match.group.id, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
+        if(event.dragData.matches){
+            matchIds = event.dragData.matches.map(x=>x.match.id);
         }
-        
+        this.matchService.assignMatchToTable(matchIds, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
     };
 
     onMatchAssigned(dragData){
         var match = dragData.match;
-        this.table.matchinfo=[]
-        this.table.matchinfo[0] = match;
+        this.table.matchinfo=[];
+        var isGroup = dragData.isGroup;
+        if(isGroup === false){
+            this.table.matchinfo[0] = match;
+        }
+        if(dragData.matches){
+            this.table.matchinfo = dragData.matches;
+        }
         this.onTableAssigned.emit(dragData);
         this.setBgColorAndTextColorDependsOnType();
     }

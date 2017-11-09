@@ -48,20 +48,30 @@ export class DisciplineMatchListComponent{
         }
         if(dragData.match.group != null){
             var groupId = dragData.match.group.id;
-            var matchIndex = this.matches.length;
             var currentMatch = null;
-            for(;matchIndex > -1; matchIndex--){
+            for(var matchIndex = this.matches.length; matchIndex > -1; matchIndex--){
                 currentMatch = this.matches[matchIndex];
-                if( currentMatch !== null && 
-                    currentMatch !== undefined && 
-                    currentMatch.group !== null &&
-                    currentMatch.group !== undefined &&
-                    currentMatch.group.id === groupId){
+                if(this.isMatchInGroup(groupId, currentMatch)){
                     this.matches.splice(matchIndex, 1);
                 }
             }
         }
-        
+    }
+
+    isMatchInGroup(groupId: number, currentMatch: MatchDto){
+        return  currentMatch !== null && 
+        currentMatch !== undefined && 
+        currentMatch.group !== null &&
+        currentMatch.group !== undefined &&
+        currentMatch.group.id === groupId;
+    }
+
+    public onDragStart($event){
+        if($event.dragData.isGroup === true){
+            var groupId = $event.dragData.match.group.id
+            var groupMatches = this.matches.filter(x=> this.isMatchInGroup(groupId, x));
+            $event.dragData.matches = groupMatches; 
+        }
     }
 
     onTypeChanged(event){
