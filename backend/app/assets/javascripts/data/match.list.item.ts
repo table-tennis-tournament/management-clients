@@ -1,5 +1,10 @@
 export class MatchListItem {
-    id: number;
+
+    constructor(matchId: number[]){
+        this.matchIds = matchId;
+    }
     position: number;
+    id: string;
+    matchIds: number[];
     group: number;
 }

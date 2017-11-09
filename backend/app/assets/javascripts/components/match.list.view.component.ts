@@ -1,7 +1,9 @@
+import {MatchListItem} from "../data/match.list.item";
 import {Component, Input} from "@angular/core";
 import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {MatchListService} from "../services/match.list.service";
+import { MatchDto } from "app/assets/javascripts/data/match.dto";
 
 @Component({
     selector: "match-list",
@@ -9,7 +11,7 @@ import {MatchListService} from "../services/match.list.service";
 })
 export class MatchListComponent{
 
-    public matches: Array<any> = [];
+    public matches: Array<MatchListDto> = [];
     public colorArray: string[] = [];
 
     constructor(private matchListService: MatchListService){
@@ -30,16 +32,22 @@ export class MatchListComponent{
 
     transferDataSuccess($event) {
         if($event.dragData.team1){
-            var matchListItem = new MatchListDto();
-            matchListItem.matchinfo = $event.dragData;
-            this.matchListService.addMatchListItem(matchListItem.matchinfo.match.id, this.matches.length).subscribe(
-                this.onMatchlistItemAdded.bind(this, matchListItem),
+            // var matchListItem = new MatchListDto();
+            // matchListItem.matchinfo = $event.dragData;
+            var match = $event.dragData;
+            var matchDto = new MatchListDto();
+            
+            var matchListItem = new MatchListItem([match.match.id]);
+            matchListItem.position = this.matches.length;
+            matchDto.matchListItem = matchListItem;
+            matchDto.matchinfo = [match]
+            this.matchListService.addMatchListItem(matchListItem).subscribe(
+                this.onMatchlistItemAdded.bind(this, matchDto),
                 error =>console.log(error)
             );
             return;
         }
         if($event.dragData.matches){
-            var matchListItem = new MatchListDto();
             this.matchListService.addGroupListItem($event.dragData.matches[0].group.id, this.matches.length).subscribe(
                 this.onMatchlistItemAdded.bind(this, $event.dragData),
                 error =>console.log(error)
@@ -66,7 +74,7 @@ export class MatchListComponent{
         // var newIndex = this.matches.indexOf(index, 0);
         if (index > -1 && this.matches) {
             var itemToDelete = this.matches[index];
-            this.matchListService.deleteMatchListItem(itemToDelete.matchinfo.match.id).subscribe(this.onMatchlistItemDeleted.bind(this, index));
+            this.matchListService.deleteMatchListItem(itemToDelete.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, index));
         }
     }
 
