@@ -13,7 +13,7 @@
                     <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
                     <span *ngIf="currentMatch.team2[1]">/{{currentMatch.team2[1].lastName}}</span>
                 </div>
-                <div *ngIf="currentMatch.group" dnd-draggable [dragEnabled]="true" [dragData]="{match: currentMatch, isGroup: true}" class="discipline-match-list-square indigo white-text">{{currentMatch.group.name}}</div>
+                <div *ngIf="currentMatch.group" dnd-draggable (onDragStart)="onDragStart($event)" [dragEnabled]="true" [dragData]="{match: currentMatch, isGroup: true}" class="discipline-match-list-square indigo white-text">{{currentMatch.group.name}}</div>
                 <div *ngIf="!currentMatch.group" class="discipline-match-list-square indigo white-text">{{disciplineType[currentMatch.matchType.name]}}</div>
             </div>
         </li>

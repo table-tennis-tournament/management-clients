@@ -4,8 +4,8 @@
 <div class="row">
     <div dnd-sortable-container [sortableData]="matches" [dropZones]="['match-dropZone']">
         <ul class="collection minheigth maxHeight">
-            <li *ngFor="let currentMatch of matches; let i = index;" [dragData]="{match: currentMatch, index: i}" (onDragStart)="onDragStart($event)" (onDropSuccess)="onDropSuccess($event)" class="collection-item  " dnd-sortable [sortableIndex]="i">
-                <div class="cut-text {{colorArray[currentMatch.matchinfo[0].type.id]}}" *ngIf="!currentMatch.matchinfo[1]">
+            <li *ngFor="let currentMatch of matches; let i = index;" [dragData]="{match: currentMatch, index: i}" (onDragStart)="onDragStart($event)" (onDropSuccess)="onDropSuccess($event)" class="collection-item {{colorArray[currentMatch.matchinfo[0].type.id]}} " dnd-sortable [sortableIndex]="i">
+                <div class="cut-text " *ngIf="!currentMatch.matchinfo[1]">
                     <team-match-item [team]="currentMatch.matchinfo[0].team1"></team-match-item> - <br/>
                     <team-match-item [team]="currentMatch.matchinfo[0].team2"></team-match-item>
                     <a href="javascript:void(0)" class="secondary-content" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
@@ -14,7 +14,7 @@
                 <div class="cut-text" *ngIf="currentMatch.matchinfo[1]">
                     <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
                         <li>
-                            <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">{{currentMatch.name}}
+                            <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">Gruppe {{currentMatch.matchinfo[0].group.name}}
                                 <span class="right">
                                             <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
                                         </span>
