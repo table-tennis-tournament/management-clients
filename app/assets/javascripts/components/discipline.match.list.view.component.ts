@@ -104,7 +104,8 @@ export class DisciplineMatchListComponent{
         }
         matches.forEach(element => {
             if(element !== null && element !== undefined && element.matchinfo !== null){
-                this.matches.push(element.matchinfo);
+                element.matchinfo.forEach(y => this.matches.push(y));
+                // this.matches.push(element.matchinfo);
             }
         });
     }

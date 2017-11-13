@@ -60,14 +60,28 @@ export class MatchListComponent{
     }
 
     onDragStart($event){
-        console.log("start deleting match item");
-        this.matchListService.deleteMatchListItem($event.match.matchinfo.match.id);
+        this.matchListService.deleteMatchListItem($event.match.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, -1));
     }
 
     onDropSuccess($event){
-        
-        console.log("drop success");
-        console.log($event);
+        var matchListItem = $event.match.matchListItem;
+        matchListItem.position = this.getListIndex($event.match.matchListItem.id);
+        this.matchListService.addMatchListItem(matchListItem).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
+    }
+
+    onMatchlistAdded(match){
+        console.log("todo update matchid"+ match);
+    }
+
+    getListIndex(matchListId){
+        var currentMatch = null;
+        for(var index = 0; index < this.matches.length; index++){
+            currentMatch = this.matches[index];
+            if(currentMatch.matchListItem.id === matchListId){
+                return index;
+            }
+        }
+        return this.matches.length;
     }
 
     onDelete(index){
