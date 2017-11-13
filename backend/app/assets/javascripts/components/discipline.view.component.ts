@@ -114,8 +114,8 @@ export class DisciplineViewComponent{
         console.log("end selected tab");
     }
 
-    handleAllMatches(result: MatchDto[]){
-        console.log("inside handle all matches");
+    handleAll(result: MatchDto[]){
+        console.log("inside handle all ");
         var tabList: DisciplineTab[] = [];
         var allPlayerArray: boolean[] = [];
         var allStages:number[] = [];
@@ -209,14 +209,16 @@ export class DisciplineViewComponent{
         return cleanedResult;
     }
 
-    onCollapseAll(){
-        console.log("collapse all");
-        this.modalActions.emit({action:"modal",params:["open"]});
-        this.setValuesOnTabs(false, false);
+    onOpenPlayers(){
+        this.randomMatchService.expandPlayer();
     }
 
-    onOpenPlayers(){
-        this.setValuesOnTabs(false, true);
+    onSyncMatches(){
+        this.matchService.syncMatches().subscribe(this.onSuccessfullSync.bind(this));
+    }
+
+    onSuccessfullSync(){
+        this.onRefreshCurrentTab();
     }
 
     closeModal() {
@@ -224,18 +226,6 @@ export class DisciplineViewComponent{
     }
 
     onOpenAll(){
-        this.setValuesOnTabs(true, true);
+        this.randomMatchService.expandMatches();
     }
-
-    setValuesOnTabs(isMatchActive: boolean, isPlayerActive:boolean){
-        for(var index = 0; index < this.tabs.length; index++){
-            this.tabs[index].groups.forEach(function(element){
-                element.isMatchActive =true;
-                element.isPlayerActive = true;
-            });
-        }
-        console.log("end iterating ...");
-        this.tabs = this.tabs;
-    }
-
 }

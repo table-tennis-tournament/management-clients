@@ -4,9 +4,9 @@
 
         <span class="right">{{openMatches}}/{{allMatchCount}}</span>
         <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span></span>
-        <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
-            <li >
-                <div class="collapsible-header" [class.active]="group.isPlayerActive"><i class="material-icons">perm_identity</i>Spieler</div>
+        <ul materialize="collapsible" class="collapsible" data-collapsible="expandable" [materializeActions]="collapsibleActions">
+            <li > 
+                <div class="collapsible-header"><i class="material-icons">perm_identity</i>Spieler</div>
                 <div class="collapsible-body">
                     <div class="collection">
                         <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
@@ -17,7 +17,7 @@
                 </div>
             </li>
             <li>
-                <div class="collapsible-header" [class.active]="group.isMatchActive"><i class="material-icons">view_list</i>Spiele</div>
+                <div class="collapsible-header"><i class="material-icons">view_list</i>Spiele</div>
                 <div class="collapsible-body">
                     <div class="collection">
                         <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" 
