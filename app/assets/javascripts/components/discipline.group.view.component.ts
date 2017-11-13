@@ -1,22 +1,26 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, EventEmitter, OnChanges, SimpleChanges} from "@angular/core";
 import {DisciplineGroup} from "../data/discipline.group"
 import {TypeColors} from "../data/typeColors"
 import {MatchListService} from "../services/match.list.service"
+import {MaterializeAction} from "angular2-materialize";
+import { RandomMatchService } from "../services/random.match.service";
 
 @Component({
     selector: "group-view",
     templateUrl : "assets/javascripts/views/discipline.group.view.component.html"
 })
-export class DisciplineGroupViewComponent{
-
+export class DisciplineGroupViewComponent implements OnChanges{
     typeColors: string[];
     currentTableInput:any;
     openMatches:number;
     allMatchCount:number;
     tableNumbers: any[];
+    collapsibleActions:EventEmitter<string|MaterializeAction> = new EventEmitter<string|MaterializeAction>();
     
-    constructor(private matchListService: MatchListService){
+    constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
         this.typeColors = TypeColors.TYPE_COLORS;
+        this.randomMatchService.expandMatches$.subscribe(this.onExpandMatches.bind(this));
+        this.randomMatchService.expandPlayers$.subscribe(this.onExpandPlayers.bind(this));
     }
 
      _group: DisciplineGroup;
@@ -30,6 +34,30 @@ export class DisciplineGroupViewComponent{
         this.calculateOpenMatches();
         this.setTables();
     } 
+
+    onExpandMatches(){
+        this._group.isMatchActive = true;
+        this.collapsibleActions.emit({action:"collapsible",params:["open",1]});
+    } 
+
+    onExpandPlayers(){
+        this._group.isPlayerActive = true;
+        this.collapsibleActions.emit({action:"collapsible",params:["open",0]});
+    } 
+
+    ngOnChanges(changes: SimpleChanges): void {
+        let log: string[] = [];
+        for (let propName in changes) {
+          let changedProp = changes[propName];
+          let to = JSON.stringify(changedProp.currentValue);
+          if (changedProp.isFirstChange()) {
+            log.push(`Initial value of ${propName} set to ${to}`);
+          } else {
+            let from = JSON.stringify(changedProp.previousValue);
+            log.push(`${propName} changed from ${from} to ${to}`);
+          }
+        }
+    }
 
     calculateOpenMatches(){
         this.openMatches = 0;

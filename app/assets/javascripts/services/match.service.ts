@@ -16,6 +16,7 @@ export class MatchService {
   private getOpenMatchesByTypeUrl = "match/open/typeid/typeIdValue";
 
   private addResultString = "match/matchId/result";
+  private loadNewUrl = "match/loadnew";
 
   private assignMatchToTableUrl = "match/matchtotable/tableName";
   private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
@@ -69,6 +70,11 @@ export class MatchService {
   getAllOpenTypes(): Observable<Type[]>{
     return this.http.get(this.allOpenTypesUrl).map((res:Response) => res.json())
                .catch(this.baseService.HandleError);
+  }
+
+  syncMatches(): Observable<any>{
+    return this.http.get(this.loadNewUrl).map((res:Response) => res.json())
+      .catch(this.baseService.HandleError); 
   }
 
   getMatchesByType(typeId: number): Observable<MatchDto>{
