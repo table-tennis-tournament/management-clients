@@ -60,7 +60,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
             }
             val newMLAdded = newML ++ Seq(newMLEntry)
             tables.setMatchList(newMLAdded)
-            Ok(Json.toJson(Answer(true, "match added")))
+            Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
         }
