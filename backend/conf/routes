@@ -13,15 +13,15 @@ GET     /player/:id                     controllers.PlayerController.getPlayer(i
 GET     /match/all                      controllers.MatchController.getAllMatches
 GET     /match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
 # GET     /match/filter                   controllers.MatchController.getFilteredMatchList()
-GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
-# Result format: [[5,11],[13,11],[11,0],[11,4]]
-POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
 POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int)
 GET     /match/open/all                 controllers.MatchController.getOpenMatches
 GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 GET     /match/played/all               controllers.MatchController.getPlayedMatches
 GET     /match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
 GET     /match/loadnew                  controllers.MatchController.loadNewMatches
+GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
+# Result format: [[5,11],[13,11],[11,0],[11,4]]
+POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
 
 GET     /types/all                      controllers.MatchController.getTypes
 GET     /types/open/all                controllers.MatchController.getActiveTypes

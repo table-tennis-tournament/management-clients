@@ -212,7 +212,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       val matchSeqIds = ttMatchSeq.map(_.id)
       val newMatches = x.filter(m => !matchSeqIds.contains(m.id))
       ttMatchSeq = ttMatchSeq ++ newMatches
-      Logger.debug("add Matches " + newMatches.size.toString)
+      Logger.info("add Matches " + newMatches.size.toString)
       newMatches.size
     }
   }
