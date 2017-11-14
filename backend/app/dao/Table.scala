@@ -288,7 +288,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
-  def setResult(id: Long, result: Seq[Seq[Int]]) = {
+  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
     val x = result map (r => r.mkString("="))
     val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0)+y(0), x(1)+y(1))}
@@ -318,6 +318,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
           sets2 = sets2
         )
       } else m
+    }
+    ttMatchSeq.find(_.id == id) match {
+      case Some(ttMatch) => writeMatch(ttMatch)
+      case _ => Future.successful(false)
+    }
+  }
+
+  def writeMatch(ttMatch: TTMatch): Future[Boolean] = {
+    dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(ttMatch))) map {r =>
+      if(r == 1) true else false
     }
   }
 

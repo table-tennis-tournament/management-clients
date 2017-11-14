@@ -117,15 +117,17 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     Ok(Json.toJson(ami))
   }
 
-  def setResult(id: Long) = Action { request =>
+  def setResult(id: Long) = Action.async { request =>
     Logger.info(request.body.asJson.get.toString())
     val res = request.body.asJson
     if(res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
-      val res2 = tables.setResult(id, resultO.get)
-      Ok(res2.toString)
+      tables.setResult(id, resultO.get) map {res =>
+        if(res) Ok(Json.toJson(Answer(true, "set result")))
+        else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
+      }
     } else {
-      BadRequest("No JSON found")
+      Future.successful(BadRequest(Json.toJson(Answer(false, "wrong request format"))))
     }
   }
 
