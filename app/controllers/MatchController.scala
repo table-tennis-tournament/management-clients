@@ -174,10 +174,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
                 val ml = tables.getMatchList
                 ml.filter(_.matchId == matchId).headOption match {
                   case Some(mlItem) => {
-                    val newML = ml map { mlEntry =>
-                      if (mlEntry.position > mlItem.position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
-                    }
-                    tables.delMatchList(newML, ml.filter(_.matchId == matchId).head.uuid.get)
+                    tables.delMatchList(mlItem.uuid.get)
                     m.foreach(m => tables.startMatch(m.id, table.id))
                   }
                   case _ => m.foreach(m => tables.startMatch(m.id, table.id))
