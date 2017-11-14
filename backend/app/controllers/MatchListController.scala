@@ -70,13 +70,14 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   }
 
   def deleteMatch(uuid: String) = Action{
-    val ml = tables.getMatchList
-    val position = ml.filter(_.uuid == UUID.fromString(uuid)).head.position
-    val newML = ml map {mlEntry =>
-      if (mlEntry.position > position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
+    Logger.info(tables.getMatchList.toString())
+    Logger.info(uuid)
+    if(tables.delMatchList(UUID.fromString(uuid))){
+      Ok(Json.toJson(Answer(true, "match deleted")))
+    } else {
+      BadRequest(Json.toJson(Answer(false, "UUID not found")))
     }
-    tables.delMatchList(newML, UUID.fromString(uuid))
-    Ok("deleted match")
+
   }
 
   def getNext = Action {
