@@ -142,11 +142,11 @@ class MatchController @Inject() (tables: Tables) extends Controller{
 //  }
 
   def getTypes = Action {
-    Ok(Json.toJson(tables.allTypes))
+    Ok(Json.toJson(tables.allTypes.sortBy(_.name)))
   }
 
   def getActiveTypes = Action {
-    Ok(Json.toJson(tables.allTypes.filter(_.active)))
+    Ok(Json.toJson(tables.allTypes.filter(_.active).sortBy(_.name)))
   }
 
   def setMatchToTable(tableName: Int) = Action{ request =>
