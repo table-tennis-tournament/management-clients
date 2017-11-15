@@ -16,7 +16,6 @@ import scala.util.{Failure, Success, Try}
   * Created by jonas on 10.10.16.
   */
 class MatchController @Inject() (tables: Tables) extends Controller{
-  import models.MatchFilter._
   import models.MatchModel._
   import models.AnswerModel._
 
@@ -130,18 +129,6 @@ class MatchController @Inject() (tables: Tables) extends Controller{
       Future.successful(BadRequest(Json.toJson(Answer(false, "wrong request format"))))
     }
   }
-
-//  def getFilteredMatchList = Action { request =>
-//    val filterTypeList = request.body.asJson.get.as[Seq[MatchFilterType]]
-//    tables.allMatches() map { matches =>
-//      val filterList = filterTypeList map {ft => ft.filter}
-//      val fMatches = filterList map {f =>
-//        f.filterMatches(matches)
-//      }
-//      val res = fMatches.foldLeft(matches)((a, b) => a.intersect(b))
-//      Ok(res.toString)
-//    }
-//  }
 
   def getTypes = Action {
     Ok(Json.toJson(tables.allTypes.sortBy(_.name)))
