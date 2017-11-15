@@ -14,5 +14,6 @@ class JobModule extends AbstractModule with AkkaGuiceSupport {
     bindActor[CheckDatabaseActor]("scheduler-actor")
     bind(classOf[Scheduler]).asEagerSingleton()
     bind(classOf[Tables]).asEagerSingleton()
+    bind(classOf[Startup]).asEagerSingleton()
   }
 }
