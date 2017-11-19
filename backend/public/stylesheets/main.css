@@ -98,6 +98,22 @@ span.circle {
     line-height: 1rem;
 }
 
+.discipline-stage-view .collapsible .first-stage{
+    height: 40px;
+}
+
+.discipline-stage-view .collapsible .second-stage{
+    height: 80px;
+}
+
+.discipline-stage-view .collapsible .third-stage{
+    height: 160px;
+}
+
+.discipline-stage-view .collapsible .fourth-stage{
+    height: 320px;
+}
+
 .no-padding{
     padding:0;
 }
