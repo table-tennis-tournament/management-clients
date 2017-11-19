@@ -4,11 +4,10 @@ import com.google.inject.Inject
 import dao.Tables
 import models._
 import play.api.Logger
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.Future
 
 /**
   * Created by jonas on 09.10.16.
@@ -16,6 +15,7 @@ import scala.concurrent.Future
 class TableController @Inject() (tables: Tables) extends Controller{
 
   import models.TableModel._
+  import models.AnswerModel._
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfoTable] = {
     val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
