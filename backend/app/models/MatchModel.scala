@@ -125,6 +125,7 @@ case class TTMatch(
     balls2: Int,
     sets1: Int,
     sets2: Int,
+    nr: Int,
     plannedTableId: Option[Long],
     kindId: Int
   ) {
@@ -135,6 +136,13 @@ case class TTMatch(
       Some(sets)
     } else {
       None
+    }
+  }
+  lazy val getWinnerIds = {
+    if(sets1 > sets2) {
+      player1Ids
+    } else {
+      player2Ids
     }
   }
 }
@@ -156,6 +164,7 @@ case class MatchDAO(
     balls2: Int,
     sets1: Int,
     sets2: Int,
+    nr: Int,
     plannedTableId: Option[Long]
   ) {
   lazy val getResult = {

@@ -54,42 +54,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   implicit def seqToContainsAnyOf[T](seq: Seq[T]) = new ContainsAnyOf(seq)
 
-  def resetTriggerTable = {
-    dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 0;""") map { result =>
-
-    }
-  }
-
-  def triggerTable(): Future[Int] = {
-    dbConfigProvider.get.db.run(sql"""SELECT trigger_val FROM triggers where id = 0;""".as[Int]) map { result =>
-      result.head
-    }
-  }
-
-  def resetTriggerMatches = {
-    dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 1;""") map { result =>
-
-    }
-  }
-
-  def triggerMatches(): Future[Int] = {
-    dbConfigProvider.get.db.run(sql"""SELECT trigger_val FROM triggers where id = 1;""".as[Int]) map { result =>
-      result.head
-    }
-  }
-
-  def resetTriggerPlayer = {
-    dbConfigProvider.get.db.run(sqlu"""UPDATE triggers SET trigger_val = 0 where id = 2;""") map { result =>
-
-    }
-  }
-
-  def triggerPlayer(): Future[Int] = {
-    dbConfigProvider.get.db.run(sql"""SELECT trigger_val FROM triggers where id = 2;""".as[Int]) map { result =>
-      result.head
-    }
-  }
-
   def updateTTTables() = {
     Logger.info("update()")
     val ttTableF = dbConfigProvider.get.db.run(ttTables.filterNot(_.name === 0).sortBy(_.name.asc).result)
@@ -236,20 +200,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def toMatch(m: MatchDAO): TTMatch = {
     if (m.team1Id < 100000)
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId, 1)
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId, 1)
     else {
       val d1 = getDouble(m.team1Id - 100000)
       val d2 = getDouble(m.team2Id - 100000)
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if (d1.isDefined && d2.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
         if (d1.isDefined && d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId,
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId,
         2)
     }
   }
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
     MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, None, m.isPlayed, m.matchTypeId,
-      m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.plannedTableId)
+      m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
   }
 
   def startMatch(matchId: Long, tableId: Long) = {
@@ -320,8 +284,24 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       } else m
     }
     ttMatchSeq.find(_.id == id) match {
-      case Some(ttMatch) => writeMatch(ttMatch)
+      case Some(ttMatch) => writeMatch(ttMatch) flatMap { b =>
+        if(b && ttMatch.groupId.getOrElse(0) == 999) writeNextKoMatch(ttMatch) else Future.successful(b)
+      }
       case _ => Future.successful(false)
+    }
+  }
+
+  def writeNextKoMatch(ttMatch: TTMatch): Future[Boolean] = {
+    val nr = ttMatch.nr
+    val newNr =  ((nr/1000)-1)*1000+((nr%1000)+1)/2
+    val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
+    val newMatch = if(nr%1000%2 == 1) {
+      uMatch.copy(player1Ids = ttMatch.getWinnerIds)
+    } else {
+      uMatch.copy(player2Ids = ttMatch.getWinnerIds)
+    }
+    writeMatch(newMatch) map {res =>
+      res
     }
   }
 
@@ -350,9 +330,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     def sets1 = column[Int]("Matc_Sets1")
     def sets2 = column[Int]("Matc_Sets2")
     def plannedTableId = column[Option[Long]]("Matc_PlannedTable_ID")
+    def nr = column[Int]("Matc_Nr")
 
     def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
-      balls1, balls2, sets1, sets2, plannedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
+      balls1, balls2, sets1, sets2, nr, plannedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
 
     def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
     def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
