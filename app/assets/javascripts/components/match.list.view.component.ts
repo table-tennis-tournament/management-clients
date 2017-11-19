@@ -4,6 +4,7 @@ import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {MatchListService} from "../services/match.list.service";
 import { MatchDto } from "app/assets/javascripts/data/match.dto";
+import { StatusDto } from "app/assets/javascripts/data/status.dto";
 
 @Component({
     selector: "match-list",
@@ -55,7 +56,8 @@ export class MatchListComponent{
         );
     }
 
-    onMatchlistItemAdded(matchListItem: MatchListDto){
+    onMatchlistItemAdded(matchListItem: MatchListDto, status: StatusDto){
+        matchListItem.matchListItem.id = status.data;
         this.matches.push(matchListItem);
     }
 
@@ -69,8 +71,8 @@ export class MatchListComponent{
         this.matchListService.addMatchListItem(matchListItem).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
     }
 
-    onMatchlistAdded(match){
-        console.log("todo update matchid"+ match);
+    onMatchlistAdded(match: MatchListItem, status: StatusDto){
+        this.matches[match.position].matchListItem.id = status.data;
     }
 
     getListIndex(matchListId){
@@ -93,6 +95,9 @@ export class MatchListComponent{
     }
 
     onMatchlistItemDeleted(index){
+        if(index < 0){
+            return;
+        }
         this.matches.splice(index, 1);
     }
 }
