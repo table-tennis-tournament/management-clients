@@ -45,7 +45,10 @@ class TableController @Inject() (tables: Tables) extends Controller{
   }
 
   def getTable(id: Long) = Action {
-    Ok(Json.toJson(tables.getMatchesOnTable(id)))
+    tables.getTTTable(id) match {
+      case Some(ttTable) => Ok(Json.toJson(getAllTableInfo(ttTable)))
+      case _ => BadRequest(Json.toJson(Answer(false, "table not found")))
+    }
   }
 
   def lockTable(id: Long) = Action {
