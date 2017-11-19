@@ -160,11 +160,14 @@ class MatchController @Inject() (tables: Tables) extends Controller{
             val res = if (matchReady) {
               matchIds.foreach { matchId =>
                 Logger.info("Set match to Table")
+                Logger.info(tables.getMatchList.toString())
+                Logger.info("matchId: " + matchId)
                 val ml = tables.getMatchList
-                ml.filter(_.matchId == matchId).headOption match {
+                ml.filter(_.matchId.contains(matchId)).headOption match {
                   case Some(mlItem) => {
-                    tables.delMatchList(mlItem.uuid.get)
-                    m.foreach(m => tables.startMatch(m.id, table.id))
+                    Logger.info("delMatchList")
+                    tables.delMatchListItem(mlItem.uuid.get, matchId)
+                    tables.startMatch(matchId, table.id)
                   }
                   case _ => m.foreach(m => tables.startMatch(m.id, table.id))
                 }
