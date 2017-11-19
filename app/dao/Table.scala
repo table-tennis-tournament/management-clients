@@ -529,6 +529,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def delMatchList(uuid: UUID): Boolean = {
     ttMatchListSeq.filter(_.uuid == Some(uuid)).headOption match {
       case Some(mlItem) => {
+        Logger.debug("del: " + mlItem.toString)
         ttMatchListSeq = ttMatchListSeq.filterNot(_.uuid == Some(uuid)) map {mlEntry =>
           if (mlEntry.position > mlItem.position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
         }
@@ -536,7 +537,17 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       }
       case _ => false
     }
+  }
 
+  def delMatchListItem(uuid: UUID, id: Long) = {
+    ttMatchListSeq = ttMatchListSeq map { mlItem =>
+      if (mlItem.uuid == Some(uuid)) {
+        val newMlItem = mlItem.copy(matchId = mlItem.matchId.filterNot(_ == id))
+        newMlItem
+      }
+      else mlItem
+    }
+    ttMatchListSeq.filter(_.matchId.isEmpty).foreach(ml => delMatchList(ml.uuid.get))
   }
 
   def delMatchListGroup(ml: Seq[MatchList], uuid: UUID) = {
