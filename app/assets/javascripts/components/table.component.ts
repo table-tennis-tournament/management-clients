@@ -136,7 +136,11 @@ export class TableComponent implements IResultHandler{
     }
 
     onTableRefresh(){
-        console.log("to do reload table");
+        this.tableService.getTableById(this._table.table.id).subscribe(this.onGetTable.bind(this));
+    }
+
+    onGetTable(table: TableDto){
+        this.table = table;
     }
 
     unLockTableAfterRequestSuccessful(){
