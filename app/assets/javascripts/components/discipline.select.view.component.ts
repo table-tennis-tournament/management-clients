@@ -27,10 +27,10 @@ export class DisciplineSelectViewComponent{
 
     private allTypesSelected(allTypes: Type[]){
         var result = []
-        result.push(new Type("Alle", 0));
         if(this.showWaitingList){
             result.push(new Type("Warteschlange", -1));
         }
+        result.push(new Type("Alle", 0));
         result = result.concat(allTypes);
         this.disciplines = result;
     }

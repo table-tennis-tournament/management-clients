@@ -15,6 +15,13 @@ export class DisciplineTab{
         return Array.from(Array(Math.ceil(this.groups.length / 4)).keys());
     }
 
+    get stageRowCount(): number[]{
+        if(!this.stages){
+            return Array.from(Array(Math.ceil(0)).keys());;
+        }
+        return Array.from(Array(Math.ceil(this.stages.length / 3)).keys());
+    }
+
 
     constructor(id: number, name: string, kind: number){
         this.id = id;
