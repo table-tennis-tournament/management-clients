@@ -6,7 +6,6 @@ import dao.Tables
 import play.api._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
-import scheduler.CheckDatabaseActor
 
 import scala.concurrent.duration._
 
