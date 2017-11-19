@@ -188,8 +188,22 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   }
 
   def loadNewMatches = Action.async {
-    tables.loadNewMatches() map { n =>
-      Ok(Json.toJson(Answer(true, "new matches: " + n.toString)))
+    tables.loadNewMatches() flatMap { n =>
+      tables.updateDoublesSeq flatMap { b =>
+        tables.updateClubList flatMap { d =>
+          tables.updateMatchTypeList flatMap { e =>
+            tables.updateTypesList flatMap { f =>
+              tables.updateGroupsSeq flatMap { g =>
+                tables.updatePlayerList map { i =>
+                  val x = n && b && d && e && f && g && i
+                  if(x) Ok(Json.toJson(Answer(true, "load new matches")))
+                  else BadRequest(Json.toJson(Answer(false, "error loading new matches")))
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -168,7 +168,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
   }
 
-  def loadNewMatches(): Future[Int] = {
+  def loadNewMatches(): Future[Boolean] = {
     dbConfigProvider.get.db.run(matches.result) map { res =>
       val x = res map { r =>
         toMatch(r)
@@ -177,7 +177,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       val newMatches = x.filter(m => !matchSeqIds.contains(m.id))
       ttMatchSeq = ttMatchSeq ++ newMatches
       Logger.info("add Matches " + newMatches.size.toString)
-      newMatches.size
+      true
     }
   }
 
