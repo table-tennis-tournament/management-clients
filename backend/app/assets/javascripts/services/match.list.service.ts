@@ -4,6 +4,7 @@ import {Http, Response, Headers, RequestOptions } from "@angular/http"
 import {Observable} from "rxjs/Rx";
 import { BaseService } from "../services/base.service";
 import { MatchListItem } from "../data/match.list.item";
+import { StatusDto } from "app/assets/javascripts/data/status.dto";
 
 
 @Injectable()
@@ -36,7 +37,7 @@ export class MatchListService {
                .catch(this.baseService.HandleError);
     }
 
-    addMatchListItem(matches: MatchListItem): Observable<any>{
+    addMatchListItem(matches: MatchListItem): Observable<StatusDto>{
         return this.http.post(this.addMatchListItemUrl, JSON.stringify(matches), this.baseService.getHeaders())
              .map(res => res.json());
     }
