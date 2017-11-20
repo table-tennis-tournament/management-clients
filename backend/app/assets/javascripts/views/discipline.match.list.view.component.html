@@ -5,9 +5,9 @@
 </div>
 <div class="row">
     <ul class="collection maxHeight">
-        <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item {{colorArray[currentMatch.type.id]}} white-text"  >
+        <li *ngFor="let currentMatch of matches; let i = index;" class="collection-item {{colorArray[currentMatch.type.id]}} white-text" [class.disabled-item]="!currentMatch.match.isPlayed" >
             <div class="cut-text discipline-match-list-root" *ngIf="currentMatch">
-                <div class="discipline-match-list-item" dnd-draggable [dragEnabled]="true" [dragData]="{match: currentMatch, isGroup: false, index: i}">
+                <div class="discipline-match-list-item"  dnd-draggable [dragEnabled]="true" [dragData]="{match: currentMatch, isGroup: false, index: i}">
                     <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
                     <span *ngIf="currentMatch.team1[1]">/{{currentMatch.team1[1].lastName}}</span>
                     <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
