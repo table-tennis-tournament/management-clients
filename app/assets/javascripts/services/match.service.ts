@@ -5,6 +5,7 @@ import {Injectable} from "@angular/core"
 import {Http, Response, Headers, RequestOptions, RequestOptionsArgs } from "@angular/http"
 import {Observable} from "rxjs/Rx";
 import { BaseService } from "../services/base.service";
+import { StatusDto } from "app/assets/javascripts/data/status.dto";
 
 @Injectable()
 export class MatchService {
@@ -72,7 +73,7 @@ export class MatchService {
                .catch(this.baseService.HandleError);
   }
 
-  syncMatches(): Observable<any>{
+  syncMatches(): Observable<StatusDto>{
     return this.http.get(this.loadNewUrl).map((res:Response) => res.json())
       .catch(this.baseService.HandleError); 
   }

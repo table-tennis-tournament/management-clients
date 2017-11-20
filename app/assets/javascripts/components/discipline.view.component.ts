@@ -8,6 +8,7 @@ import {TypeColors} from "../data/typeColors"
 import {RandomMatchService} from "../services/random.match.service"
 import {MatchService} from "../services/match.service"
 import {MaterializeAction} from "angular2-materialize";
+import { StatusDto } from "app/assets/javascripts/data/status.dto";
 
 @Component({
     selector: "discipline-view",
@@ -217,8 +218,9 @@ export class DisciplineViewComponent{
         this.matchService.syncMatches().subscribe(this.onSuccessfullSync.bind(this));
     }
 
-    onSuccessfullSync(){
+    onSuccessfullSync(status: StatusDto){
         this.onRefreshCurrentTab();
+        alert(status.message);
     }
 
     closeModal() {
