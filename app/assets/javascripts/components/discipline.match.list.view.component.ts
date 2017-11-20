@@ -20,7 +20,7 @@ export class DisciplineMatchListComponent{
     public disciplineType:string[];
 
     constructor(private matchListService: MatchListService, private matchService: MatchService){
-       this.getAllMatches()
+        this.getWaitingList();
        this.colorArray = TypeColors.TYPE_COLORS;
        this.disciplineType = DisciplineShortcuts.TYPE;
     }
@@ -29,7 +29,7 @@ export class DisciplineMatchListComponent{
         this.matchService.getAllOpenMatches().subscribe(
             this.getAllMatchesSuccess.bind(this),
             this.getAllMatchesError
-        )
+        );
     }
 
     private getAllMatchesSuccess(matches: MatchDto[]){
