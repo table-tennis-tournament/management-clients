@@ -1,9 +1,3 @@
-<div class="fixed-action-btn horizontal">
-	<a class="btn-floating btn-large blue" (click)="onRefreshTablesClicked()">
-		<i class="large material-icons">refresh</i>
-	</a>
-</div>
-
 <div class="row without-margin">
 	<div class="col s2">
 		<div class="row without-margin">
@@ -18,11 +12,7 @@
 		
 	</div>
 	<div class="col s10">
-		<div class="row without-margin" *ngFor="let i of rowCount" >
-			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
-				<tt-table [table]="currentTable" (onTableAssigned)="matchListComponent.onTableAssigned($event)"></tt-table>
-		</div>
-		</div>
+		<table-view-component></table-view-component>
 	</div>
 
 </div>

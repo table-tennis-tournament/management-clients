@@ -77,6 +77,7 @@ export class DisciplineViewComponent{
                      allStages[currentItem.matchType.name] = currentIndex;
                      currentItemTab.stages[currentIndex] = new DisciplineStage();
                      currentItemTab.stages[currentIndex].name = currentItem.matchType.name;
+                     currentItemTab.stages[currentIndex].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
                      currentStage = currentItemTab.stages[currentIndex];
                      currentIndex++;
                  }
@@ -112,7 +113,6 @@ export class DisciplineViewComponent{
         }
         currentItemTab.groups = this.getCleanedGroups(currentItemTab.groups);
         this.selectedTab = currentItemTab;
-        console.log("end selected tab");
     }
 
     handleAll(result: MatchDto[]){
