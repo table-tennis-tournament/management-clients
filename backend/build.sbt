@@ -65,6 +65,8 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 // It provides ES6 implementations. This is required when compiling to ES5.
 typingsFile := Some(baseDirectory.value / "typings" / "index.d.ts")
 
+JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
+
 // use the webjars npm directory (target/web/node_modules ) for resolution of module imports of angular2/core etc
 resolveFromWebjarsNodeModulesDir := true
 
