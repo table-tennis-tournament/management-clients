@@ -1,25 +1,11 @@
 import {Component, ViewContainerRef, ViewEncapsulation, ViewChild} from "@angular/core"
 import {MatchListService} from "../services/match.list.service"
-import {TableService} from "../services/table.service"
-import {RandomMatchService} from "../services/random.match.service"
-import {ResultModalComponent} from "./result.modal.view.component"
 import {DisciplineMatchListComponent} from "./discipline.match.list.view.component"
-
-import {Table} from "../data/table"
-import {TableDto} from "../data/table.dto"
-import {MatchListDto} from "../data/match.list.dto"
-import {MatchDto} from "../data/match.dto"
-import {Match} from "../data/match"
-import {ResultEvent} from "../handler/result.event"
-
 
 @Component({
   templateUrl:"assets/javascripts/views/table.assign.view.component.html"
 })
 export class TableAssignViewComponent{
-
-    public tables: TableDto[];
-    public rowCount: number[];
 
     public selectedOption:string;
     public isWaitingListActive: boolean;
@@ -27,18 +13,9 @@ export class TableAssignViewComponent{
     @ViewChild(DisciplineMatchListComponent) matchListComponent: DisciplineMatchListComponent;
 
 
-    constructor(private matchListService:MatchListService, private tableService:TableService) {
+    constructor(private matchListService:MatchListService) {
         this.selectedOption = "2";
-        this.loadAllTables();
         this.loadActiveWaitingList();
-    }
-
-    onRefreshTablesClicked(){
-        this.loadAllTables();
-    }
-
-    loadAllTables(){
-        this.tableService.getAllTables().subscribe(this.getAllTablesSuccessful.bind(this), this.onError)
     }
 
     loadActiveWaitingList(){
@@ -47,11 +24,6 @@ export class TableAssignViewComponent{
 
     onMatchlistActiveLoaded(_isActive){
         this.isWaitingListActive = _isActive;
-    }
-
-    getAllTablesSuccessful(tables: TableDto[]){
-        this.tables = tables;
-        this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
     }
 
     onMatchlistTypeChange(event){
@@ -64,17 +36,13 @@ export class TableAssignViewComponent{
     }
 
     onSetWaitingListActiveSuccess(){
-        console.log("on set waiting list active finished");
+        console.log("waiting list changed success");
     }
 
     onError(error){
         console.log("Get all Tables failed following problems:");
         console.log(error);
+        this.isWaitingListActive = !this.isWaitingListActive;
     }
-
-    handleMatchChanged(match: MatchListDto[]){
-        this.loadAllTables();
-    }
-
   
 }

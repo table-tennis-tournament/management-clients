@@ -15,7 +15,8 @@ import { SelectMatchModalComponent } from "../components/table/table.select.matc
 
 
 @Component({
-  templateUrl:"assets/javascripts/views/table.view.component.html"
+  templateUrl:"assets/javascripts/views/table.view.component.html",
+  selector: "table-view-component"
 })
 export class TableViewComponent{
 
