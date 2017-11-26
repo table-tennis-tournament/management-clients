@@ -68,7 +68,8 @@ object MatchModel {
       "team2" -> allMatchInfo.player2,
       "matchType" -> allMatchInfo.matchType,
       "type" -> allMatchInfo.ttType,
-      "group" -> allMatchInfo.group
+      "group" -> allMatchInfo.group,
+      "isPlayable" -> allMatchInfo.isPlayable
     )
   }
 
@@ -129,7 +130,7 @@ case class TTMatch(
     plannedTableId: Option[Long],
     kindId: Int
   ) {
-  lazy val getResult = {
+  def getResult = {
     if(resultRaw != "") {
       val setsRaw = resultRaw.split(",")
       val sets = setsRaw.toSeq.map(set => set.split("=").toSeq.map(i => i.toInt))
@@ -138,7 +139,7 @@ case class TTMatch(
       None
     }
   }
-  lazy val getWinnerIds = {
+  def getWinnerIds = {
     if(sets1 > sets2) {
       player1Ids
     } else {
