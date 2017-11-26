@@ -8,6 +8,7 @@ import {TypeColors} from "../data/typeColors"
 import {RandomMatchService} from "../services/random.match.service"
 import {MatchService} from "../services/match.service"
 import {MaterializeAction} from "angular2-materialize";
+import { StatusDto } from "app/assets/javascripts/data/status.dto";
 
 @Component({
     selector: "discipline-view",
@@ -76,6 +77,7 @@ export class DisciplineViewComponent{
                      allStages[currentItem.matchType.name] = currentIndex;
                      currentItemTab.stages[currentIndex] = new DisciplineStage();
                      currentItemTab.stages[currentIndex].name = currentItem.matchType.name;
+                     currentItemTab.stages[currentIndex].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
                      currentStage = currentItemTab.stages[currentIndex];
                      currentIndex++;
                  }
@@ -111,7 +113,6 @@ export class DisciplineViewComponent{
         }
         currentItemTab.groups = this.getCleanedGroups(currentItemTab.groups);
         this.selectedTab = currentItemTab;
-        console.log("end selected tab");
     }
 
     handleAll(result: MatchDto[]){
@@ -217,8 +218,9 @@ export class DisciplineViewComponent{
         this.matchService.syncMatches().subscribe(this.onSuccessfullSync.bind(this));
     }
 
-    onSuccessfullSync(){
+    onSuccessfullSync(status: StatusDto){
         this.onRefreshCurrentTab();
+        alert(status.message);
     }
 
     closeModal() {

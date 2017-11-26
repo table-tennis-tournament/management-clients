@@ -42,7 +42,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "zone.js" % "0.8.16",
   "org.webjars.npm" % "core-js" % "2.5.1",
   "org.webjars.npm" % "symbol-observable" % "1.0.4",
-  "org.webjars.npm" % "typescript" % "2.3.4",
+  "org.webjars.npm" % "typescript" % "2.5.2",
 
   "org.webjars.npm" % "ng2-dnd" % "4.2.0",
 
@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "traceur" % "0.0.111",
   //tslint dependencyOverrides
 
-  "org.webjars.npm" % "tslint-eslint-rules" % "2.1.0",
+  "org.webjars.npm" % "tslint-eslint-rules" % "3.1.0",
   "org.webjars.npm" % "codelyzer" % "0.0.28"
 )
 
@@ -65,14 +65,16 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 // It provides ES6 implementations. This is required when compiling to ES5.
 typingsFile := Some(baseDirectory.value / "typings" / "index.d.ts")
 
+//JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
+
 // use the webjars npm directory (target/web/node_modules ) for resolution of module imports of angular2/core etc
 resolveFromWebjarsNodeModulesDir := true
 
 // use the combined tslint and eslint rules plus ng2 lint rules
-(rulesDirectories in tslint) := Some(List(
-  tslintEslintRulesDir.value,
-  ng2LintRulesDir.value
-))
+//(rulesDirectories in tslint) := Some(List(
+//  tslintEslintRulesDir.value,
+//  ng2LintRulesDir.value
+//))
 
 
 // Play provides two styles of routers, one expects its actions to be injected, the

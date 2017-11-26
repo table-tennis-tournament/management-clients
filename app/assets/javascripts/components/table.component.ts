@@ -16,6 +16,7 @@ import {MaterializeAction} from "angular2-materialize"
 import {TakeBackMatchHandler} from "../handler/takeBack.match.handler";
 import {FreeMatchHandler} from "../handler/free.match.handler";
 import { ISelectMatchHandler } from "app/assets/javascripts/handler/select.match.handler";
+import { AssignEvent } from "app/assets/javascripts/handler/assign.event";
 
 @Component({
     selector: "tt-table",
@@ -46,7 +47,7 @@ export class TableComponent implements IResultHandler{
 
     @Output() onResultForMatch = new EventEmitter<ResultEvent>();
 
-    @Output() onTableAssigned = new EventEmitter<any>();
+    @Output() onTableAssigned = new EventEmitter<AssignEvent>();
 
     @Output() onSelectMatch = new EventEmitter<SelectMatchEvent>();
 
@@ -62,28 +63,13 @@ export class TableComponent implements IResultHandler{
         if(this.table.matchinfo && this.table.matchinfo[0]){
             return;
         }
-        var match = event.dragData.match;
-        var matchIds = [];
-        var isGroup = event.dragData.isGroup;
-        if(isGroup === false){
-            matchIds = [match.match.id]
-        }
-        if(event.dragData.matches){
-            matchIds = event.dragData.matches.map(x=>x.match.id);
-        }
+        var matchIds = event.dragData.matches.map(x=>x.match.id);;
         this.matchService.assignMatchToTable(matchIds, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
     };
 
     onMatchAssigned(dragData){
-        var match = dragData.match;
         this.table.matchinfo=[];
-        var isGroup = dragData.isGroup;
-        if(isGroup === false){
-            this.table.matchinfo[0] = match;
-        }
-        if(dragData.matches){
-            this.table.matchinfo = dragData.matches;
-        }
+        this.table.matchinfo = dragData.matches;
         this.onTableAssigned.emit(dragData);
         this.setBgColorAndTextColorDependsOnType();
     }
@@ -94,8 +80,6 @@ export class TableComponent implements IResultHandler{
         resultEvent.match = this.table.matchinfo[0];
         this.onResultForMatch.emit(resultEvent);
     }
-
-   
 
     isSingleMatch(){
         return this.table.matchinfo != null && this.table.matchinfo.length === 1;
@@ -136,7 +120,11 @@ export class TableComponent implements IResultHandler{
     }
 
     onTableRefresh(){
-        console.log("to do reload table");
+        this.tableService.getTableById(this._table.table.id).subscribe(this.onGetTable.bind(this));
+    }
+
+    onGetTable(table: TableDto){
+        this.table = table;
     }
 
     unLockTableAfterRequestSuccessful(){

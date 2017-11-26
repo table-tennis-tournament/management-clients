@@ -20,7 +20,7 @@ export class DisciplineMatchListComponent{
     public disciplineType:string[];
 
     constructor(private matchListService: MatchListService, private matchService: MatchService){
-       this.getAllMatches()
+        this.getWaitingList();
        this.colorArray = TypeColors.TYPE_COLORS;
        this.disciplineType = DisciplineShortcuts.TYPE;
     }
@@ -29,7 +29,7 @@ export class DisciplineMatchListComponent{
         this.matchService.getAllOpenMatches().subscribe(
             this.getAllMatchesSuccess.bind(this),
             this.getAllMatchesError
-        )
+        );
     }
 
     private getAllMatchesSuccess(matches: MatchDto[]){
@@ -41,19 +41,14 @@ export class DisciplineMatchListComponent{
     }
 
     public onTableAssigned(dragData: any){
-        var isGroup = dragData.isGroup;
-        if(isGroup === false){
-            this.matches.splice(dragData.index, 1);
+        if(!dragData.matches){
             return;
         }
-        if(dragData.match.group != null){
-            var groupId = dragData.match.group.id;
-            var currentMatch = null;
-            for(var matchIndex = this.matches.length; matchIndex > -1; matchIndex--){
-                currentMatch = this.matches[matchIndex];
-                if(this.isMatchInGroup(groupId, currentMatch)){
-                    this.matches.splice(matchIndex, 1);
-                }
+        var currentMatch = null;
+        for(var matchIndex = this.matches.length; matchIndex > -1; matchIndex--){
+            currentMatch = this.matches[matchIndex];
+            if(dragData.matches.indexOf(currentMatch)> -1){
+                this.matches.splice(matchIndex, 1);
             }
         }
     }
@@ -68,7 +63,7 @@ export class DisciplineMatchListComponent{
 
     public onDragStart($event){
         if($event.dragData.isGroup === true){
-            var groupId = $event.dragData.match.group.id
+            var groupId = $event.dragData.matches[0].group.id
             var groupMatches = this.matches.filter(x=> this.isMatchInGroup(groupId, x));
             $event.dragData.matches = groupMatches; 
         }

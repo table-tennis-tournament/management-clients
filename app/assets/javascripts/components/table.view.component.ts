@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef, ViewEncapsulation, ViewChild} from "@angular/core"
+import {Component, ViewContainerRef, ViewEncapsulation, ViewChild, Output, EventEmitter} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
@@ -12,10 +12,12 @@ import {MatchDto} from "../data/match.dto"
 import {Match} from "../data/match"
 import {ResultEvent} from "../handler/result.event"
 import { SelectMatchModalComponent } from "../components/table/table.select.match.modal.component";
+import { AssignEvent } from "app/assets/javascripts/handler/assign.event";
 
 
 @Component({
-  templateUrl:"assets/javascripts/views/table.view.component.html"
+  templateUrl:"assets/javascripts/views/table.view.component.html",
+  selector: "table-view-component"
 })
 export class TableViewComponent{
 
@@ -25,6 +27,8 @@ export class TableViewComponent{
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
     
     @ViewChild(SelectMatchModalComponent) selectMatch: SelectMatchModalComponent;
+
+    @Output() onTableAssigned = new EventEmitter<AssignEvent>();
 
     constructor(private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
@@ -43,6 +47,10 @@ export class TableViewComponent{
     getAllTablesSuccessful(tables: TableDto[]){
         this.tables = tables;
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
+    }
+
+    onTableAssignedHandler($event: AssignEvent){
+        this.onTableAssigned.emit($event);
     }
 
     onTableRefresh(){
