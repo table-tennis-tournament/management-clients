@@ -217,6 +217,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   def startMatch(matchId: Long, tableId: Long) = {
+    Logger.debug("start match")
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId) m.copy(isPlaying = true)
       else m
@@ -285,7 +286,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     }
     ttMatchSeq.find(_.id == id) match {
       case Some(ttMatch) => writeMatch(ttMatch) flatMap { b =>
-        if(b && ttMatch.groupId.getOrElse(0) == 999) writeNextKoMatch(ttMatch) else Future.successful(b)
+        if(
+               b                                          // write successful
+            && ttMatch.groupId.getOrElse(0) == 999        // KO match
+            && (2 to 8).contains(ttMatch.matchTypeId)     // not the final match
+        ) {
+          writeNextKoMatch(ttMatch)
+        } else Future.successful(b)
       }
       case _ => Future.successful(false)
     }
