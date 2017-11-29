@@ -11,6 +11,7 @@
 	<table class="highlight centered striped">
 		<thead>
 			<tr>
+				<th></th>
 				<th>Nr</th>
 				<th>Spieler 1</th>
 				<th>Spieler 2</th>
@@ -22,6 +23,9 @@
 
 		<tbody>
 			<tr *ngFor="let currentMatch of matches; let i = index;">
+					<td><a class="btn-floating btn-medium blue" (click)="onTakeBackForMatch(i)">
+							<i class="medium material-icons">chevron_left</i>
+						</a></td>
 					<td>{{currentMatch.match.id}}</td>
 					<td><team-match-item [team]="currentMatch.team1"></team-match-item></td>
 					<td><team-match-item [team]="currentMatch.team2"></team-match-item></td>

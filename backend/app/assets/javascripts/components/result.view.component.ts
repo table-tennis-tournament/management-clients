@@ -8,6 +8,7 @@ import {MatchDto} from "../data/match.dto"
 import {Match} from "../data/match"
 import {Type} from "../data/type"
 import {ResultEvent} from "../handler/result.event"
+import {TableService} from "../services/table.service";
 
 
 @Component({
@@ -24,7 +25,7 @@ export class ResultViewComponent implements IResultHandler{
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
     constructor(private matchService:MatchService,
-        public matchToStringService: MatchToStringService) {
+        public matchToStringService: MatchToStringService, private tableService: TableService) {
             this.reloadMatches("0");
     }
 
@@ -51,6 +52,15 @@ export class ResultViewComponent implements IResultHandler{
         var match = this.matches[matchIndex];
         this.resultDialog.setMatch(match);
         this.resultDialog.openModal();
+    }
+
+    onTakeBackForMatch(matchIndex){
+        var match = this.matches[matchIndex];
+        this.tableService.takeBackTable([match.match.id]).subscribe(this.onSuccessfullTakeBack.bind(this));
+    }
+
+    onSuccessfullTakeBack(){
+        this.reloadMatches(this.currentTypeId);
     }
 
     handleResult(resultToHandle: [number, number][]) {
