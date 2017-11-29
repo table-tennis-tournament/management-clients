@@ -29,10 +29,12 @@ export class DisciplineSelectViewComponent{
         var result = []
         if(this.showWaitingList){
             result.push(new Type("Warteschlange", -1));
+
         }
         result.push(new Type("Alle", 0));
         result = result.concat(allTypes);
         this.disciplines = result;
+        this.selectedDiscipline = this.disciplines[0].id;
     }
 
     onDisciplineChanged(){

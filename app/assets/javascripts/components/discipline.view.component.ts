@@ -55,6 +55,11 @@ export class DisciplineViewComponent{
         
     }
 
+    onDeleteStage($event: DisciplineStage){
+        var index = this.selectedTab.stages.indexOf($event);
+        this.selectedTab.stages.splice(index, 1);
+    }
+
     setTabForId(tabId: number){
         this.matchService.getMatchesByType(tabId).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
     }

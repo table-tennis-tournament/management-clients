@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, EventEmitter, Output} from "@angular/core";
 import {DisciplineStage} from "../../data/discipline.stage";
 
 
@@ -10,6 +10,8 @@ export class DisciplineStageComponent{
 
     lineStageClass:string[];
 
+    @Output() onDeleteStage = new EventEmitter<DisciplineStage>();
+
     constructor(){
         this.lineStageClass = [];
         this.lineStageClass.push("first-stage");
@@ -19,6 +21,10 @@ export class DisciplineStageComponent{
     }
 
     isOpen:boolean = true;
+
+    onDelete(){
+        this.onDeleteStage.emit(this.stage);
+    }
   
     @Input() stage:DisciplineStage;
 
