@@ -169,7 +169,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
                     tables.delMatchListItem(mlItem.uuid.get, matchId)
                     tables.startMatch(matchId, table.id)
                   }
-                  case _ => m.foreach(m => tables.startMatch(m.id, table.id))
+                  case _ => tables.startMatch(matchId, table.id)
                 }
               }
             } else {
