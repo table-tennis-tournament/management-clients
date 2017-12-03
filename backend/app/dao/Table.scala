@@ -309,6 +309,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       uMatch.copy(player2Ids = ttMatch.getWinnerIds, team2Id = ttMatch.team2Id)
     }
     Logger.debug("writeNextKoMatch" + newMatch.toString)
+    ttMatchSeq = ttMatchSeq map { m =>
+      if (m.id == newMatch.id) newMatch
+      else m
+    }
     writeMatch(newMatch) map {res =>
       res
     }
