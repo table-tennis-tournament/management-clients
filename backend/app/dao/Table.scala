@@ -216,15 +216,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
   }
 
-  def startMatch(matchId: Long, tableId: Long) = {
+  def startMatch(matchId: Long, tableId: Long): Boolean= {
     Logger.debug("start match")
-    ttMatchSeq = ttMatchSeq map { m =>
-      if (m.id == matchId) m.copy(isPlaying = true)
-      else m
-    }
-    ttTablesSeq = ttTablesSeq map { t =>
-      if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
-      else t
+    if(ttTablesSeq.filter(_.matchId == matchId).isEmpty) {
+      ttMatchSeq = ttMatchSeq map { m =>
+        if (m.id == matchId) m.copy(isPlaying = true)
+        else m
+      }
+      ttTablesSeq = ttTablesSeq map { t =>
+        if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
+        else t
+      }
+      true
+    } else {
+      false
     }
   }
 
