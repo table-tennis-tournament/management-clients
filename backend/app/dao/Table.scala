@@ -212,8 +212,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
-    MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, None, m.isPlayed, m.matchTypeId,
-      m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
+    if(m.player1Ids.length <= 1 && m.player2Ids.length <= 1)
+      MatchDAO(m.id, m.isPlaying, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.isPlayed, m.matchTypeId,
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
+    else
+      MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, None, m.isPlayed, m.matchTypeId,
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
   }
 
   def startMatch(matchId: Long, tableId: Long) = {
@@ -316,6 +320,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def writeMatch(ttMatch: TTMatch): Future[Boolean] = {
     dbConfigProvider.get.db.run(matches.insertOrUpdate(toMatchDAO(ttMatch))) map {r =>
+      Logger.debug("result " + r)
       if(r == 1) true else false
     }
   }
