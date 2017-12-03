@@ -301,12 +301,14 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def writeNextKoMatch(ttMatch: TTMatch): Future[Boolean] = {
     val nr = ttMatch.nr
     val newNr =  ((nr/1000)-1)*1000+((nr%1000)+1)/2
+    Logger.debug("newNr " + newNr)
     val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
     val newMatch = if(nr%1000%2 == 1) {
       uMatch.copy(player1Ids = ttMatch.getWinnerIds)
     } else {
       uMatch.copy(player2Ids = ttMatch.getWinnerIds)
     }
+    Logger.debug("writeNextKoMatch" + newMatch.toString)
     writeMatch(newMatch) map {res =>
       res
     }
