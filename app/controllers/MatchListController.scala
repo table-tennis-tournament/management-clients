@@ -30,8 +30,9 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
     val ty = tables.getType(ttMatch.typeId)
     val g = tables.getGroup(ttMatch.groupId)
     val pl = tables.isPlayable(ttMatch)
+    val inML = tables.isInMatchList(ttMatch)
     if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl))
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML))
     else
       None
   }
