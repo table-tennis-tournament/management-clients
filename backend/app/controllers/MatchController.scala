@@ -169,15 +169,21 @@ class MatchController @Inject() (tables: Tables) extends Controller{
                     tables.delMatchListItem(mlItem.uuid.get, matchId)
                     tables.startMatch(matchId, table.id)
                   }
-                  case _ => tables.startMatch(matchId, table.id)
+                  case _ => {
+                    tables.startMatch(matchId, table.id)
+                  }
                 }
               }
+              true
             } else {
               Logger.error("Match not ready")
-              Future.successful[Boolean](false)
+              false
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
-            Ok("{}")
+            if(res)
+              Ok(Json.toJson(Answer(true, "started match")))
+            else
+              BadRequest(Json.toJson(Answer(false, "match not ready")))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
         }
