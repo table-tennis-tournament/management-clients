@@ -158,7 +158,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
                 false
               })
             val res = if (matchReady) {
-              matchIds.foreach { matchId =>
+              val result = matchIds map { matchId =>
                 Logger.info("Set match to Table")
                 Logger.info(tables.getMatchList.toString())
                 Logger.info("matchId: " + matchId)
@@ -174,7 +174,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
                   }
                 }
               }
-              true
+              result.forall(x => x)
             } else {
               Logger.error("Match not ready")
               false
@@ -183,7 +183,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
             if(res)
               Ok(Json.toJson(Answer(true, "started match")))
             else
-              BadRequest(Json.toJson(Answer(false, "match not ready")))
+              BadRequest(Json.toJson(Answer(false, "not all matches started")))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
         }
