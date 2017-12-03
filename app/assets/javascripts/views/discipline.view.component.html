@@ -13,38 +13,20 @@
     <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>
 </div>
 </div>
-<div class="row">
-  
-    <!-- <div class="col s12">
-      <ul class="tabs"  materialize="tabs">
-        <li *ngFor="let currentTab of tabs" class="tab col"><a href="#{{currentTab.id}}" (click)="onTabSelected(currentTab)" >{{currentTab.name}}</a></li>
-      </ul>
-    </div> -->
-    <div *ngIf="selectedTab" class="row">
-      <!-- <div *ngIf="selectedTab.stages" class="row">
-            <div class="col" *ngFor="let currentStage of selectedTab.stages">
-              <ul class="collection with-header">
-                <li class="collection-header amber darken-1"><h4>{{currentStage.name}}</h4></li>
-                <li class="collection-item" *ngFor="let currentMatch of currentStage.matches" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
-                    <match-item [match]="currentMatch"></match-item> 
-                </li>
-              </ul>
+<div *ngIf="selectedTab" class="row">
+    <div *ngIf="selectedTab.stages" class="discipline-stage-view">
+        <div class="row" *ngFor="let i of selectedTab.stageRowCount">
+            <div *ngFor="let currentStage of selectedTab.stages | slice:(i*3):(i+1)*3; let r = index" class="col s4">
+                <discipline-stage [stage]="currentStage" [index]="r" (onDeleteStage)="onDeleteStage($event)"></discipline-stage>
             </div>
-        </div> -->
-        <div *ngIf="selectedTab.stages" class="discipline-stage-view">
-            <div class="row" *ngFor="let i of selectedTab.stageRowCount">
-                <div *ngFor="let currentStage of selectedTab.stages | slice:(i*3):(i+1)*3; let r = index" class="col s4">
-                    <discipline-stage [stage]="currentStage" [index]="r"></discipline-stage>
-                </div>
-            </div>
-        </div>
-        <div *ngIf="selectedTab.groups" >
-          <div class="row" *ngFor="let i of selectedTab.rowCount" >
-              <div *ngFor="let currentGroup of selectedTab.groups | slice:(i*4):(i+1)*4" class="col s3">
-                <group-view [group]="currentGroup"></group-view>
-              </div>
-          </div>
         </div>
     </div>
-  </div>
+    <div *ngIf="selectedTab.groups" >
+      <div class="row" *ngFor="let i of selectedTab.rowCount" >
+          <div *ngFor="let currentGroup of selectedTab.groups | slice:(i*4):(i+1)*4" class="col s3">
+            <group-view [group]="currentGroup"></group-view>
+          </div>
+      </div>
+    </div>
+</div>
 

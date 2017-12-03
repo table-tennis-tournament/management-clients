@@ -71,7 +71,7 @@ export class TableComponent implements IResultHandler{
         this.table.matchinfo=[];
         this.table.matchinfo = dragData.matches;
         this.onTableAssigned.emit(dragData);
-        this.setBgColorAndTextColorDependsOnType();
+        this.onTableRefresh();
     }
 
     onResult(){
@@ -125,6 +125,7 @@ export class TableComponent implements IResultHandler{
 
     onGetTable(table: TableDto){
         this.table = table;
+        this.setBgColorAndTextColorDependsOnType();
     }
 
     unLockTableAfterRequestSuccessful(){

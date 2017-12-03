@@ -15,4 +15,5 @@ export class MatchDto {
 	matchType: MatchType;
 	group: Group;
 	table: TableLight;
+	isPlayable: boolean;
 }

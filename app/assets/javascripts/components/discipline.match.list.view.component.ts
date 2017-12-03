@@ -44,13 +44,7 @@ export class DisciplineMatchListComponent{
         if(!dragData.matches){
             return;
         }
-        var currentMatch = null;
-        for(var matchIndex = this.matches.length; matchIndex > -1; matchIndex--){
-            currentMatch = this.matches[matchIndex];
-            if(dragData.matches.indexOf(currentMatch)> -1){
-                this.matches.splice(matchIndex, 1);
-            }
-        }
+        this.onDisciplineChanged(this.selectedDiscipline);
     }
 
     isMatchInGroup(groupId: number, currentMatch: MatchDto){
@@ -75,11 +69,11 @@ export class DisciplineMatchListComponent{
 
     onDisciplineChanged(typeId: any){
         this.selectedDiscipline = typeId;
-        if (this.selectedDiscipline === "0"){
+        if (this.selectedDiscipline === "0" || this.selectedDiscipline === 0){
             this.getAllMatches();
             return;
         }
-        if (this.selectedDiscipline === "-1"){
+        if (this.selectedDiscipline === "-1" || this.selectedDiscipline === -1){
             this.getWaitingList();
             return;
         }
