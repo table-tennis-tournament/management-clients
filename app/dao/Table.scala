@@ -120,14 +120,14 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def lockTTTable(id: Long) = {
     ttTablesSeq = ttTablesSeq map { t =>
-      if (t.id == id) t.copy(isLocked = Some(true), tableNumber = -t.tableNumber)
+      if (t.id == id) t.copy(isLocked = Some(true))
       else t
     }
   }
 
   def unlockTTTable(id: Long) = {
     ttTablesSeq = ttTablesSeq map { t =>
-      if (t.id == id) t.copy(isLocked = Some(false), tableNumber = -t.tableNumber)
+      if (t.id == id) t.copy(isLocked = Some(false))
       else t
     }
   }
