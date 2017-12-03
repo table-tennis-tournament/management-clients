@@ -55,12 +55,16 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
             Logger.info("addMatch")
             val newMLEntry = matchList.copy(uuid = Some(matchList.uuid.getOrElse(UUID.randomUUID())))
             val ml = tables.getMatchList
-            val newML = ml map {mlEntry =>
-              if (mlEntry.position >= matchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+            if (ml.filter(_.matchId == matchList.matchId).isEmpty) {
+              val newML = ml map { mlEntry =>
+                if (mlEntry.position >= matchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+              }
+              val newMLAdded = newML ++ Seq(newMLEntry)
+              tables.setMatchList(newMLAdded)
+              Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
+            } else {
+              BadRequest(Json.toJson(Answer(false, "match is already in match list", newMLEntry.uuid)))
             }
-            val newMLAdded = newML ++ Seq(newMLEntry)
-            tables.setMatchList(newMLAdded)
-            Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
         }
