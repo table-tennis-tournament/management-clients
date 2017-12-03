@@ -212,12 +212,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
-    if(m.player1Ids.length <= 1 && m.player2Ids.length <= 1)
-      MatchDAO(m.id, m.isPlaying, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
-    else
-      MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, None, m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
+    MatchDAO(m.id, m.isPlaying, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.isPlayed, m.matchTypeId,
+      m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
   }
 
   def startMatch(matchId: Long, tableId: Long) = {
@@ -308,9 +304,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     Logger.debug("newNr " + newNr)
     val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
     val newMatch = if(nr%1000%2 == 1) {
-      uMatch.copy(player1Ids = ttMatch.getWinnerIds)
+      uMatch.copy(player1Ids = ttMatch.getWinnerIds, team1Id = ttMatch.team1Id)
     } else {
-      uMatch.copy(player2Ids = ttMatch.getWinnerIds)
+      uMatch.copy(player2Ids = ttMatch.getWinnerIds, team2Id = ttMatch.team2Id)
     }
     Logger.debug("writeNextKoMatch" + newMatch.toString)
     writeMatch(newMatch) map {res =>
