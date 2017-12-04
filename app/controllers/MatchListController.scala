@@ -97,4 +97,23 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
   def isActive = Action {
     Ok(isActiv.toString)
   }
+
+  def move(uuid: String, pos: Int) = Action {
+    val ml = tables.getMatchList
+    ml.find(_.uuid == UUID.fromString(uuid)) match {
+      case Some(mlItem) => {
+        val mlDel = ml.filter(_.position != mlItem.position) map { m =>
+          if(m.position < mlItem.position) m
+          else m.copy(position = m.position - 1)
+        }
+        val mlNew = mlDel map { m =>
+          if(m.position < pos) m
+          else m.copy(position = m.position + 1)
+        }
+        tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
+        Ok(Json.toJson(Answer(true, "changed match list")))
+      }
+      case _ => BadRequest(Json.toJson(Answer(false, "UUID not found")))
+    }
+  }
 }
