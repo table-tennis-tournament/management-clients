@@ -1,21 +1,26 @@
-import {Component, Input, EventEmitter, OnChanges, SimpleChanges} from "@angular/core";
+import {Component, Input, EventEmitter, Output} from "@angular/core";
 import {DisciplineGroup} from "../data/discipline.group"
 import {TypeColors} from "../data/typeColors"
 import {MatchListService} from "../services/match.list.service"
 import {MaterializeAction} from "angular2-materialize";
 import { RandomMatchService } from "../services/random.match.service";
+import { ResultEvent } from "../handler/result.event";
+import { ResultMatchHandler } from "../handler/result.match.handler";
 
 @Component({
     selector: "group-view",
     templateUrl : "assets/javascripts/views/discipline.group.view.component.html"
 })
-export class DisciplineGroupViewComponent implements OnChanges{
+export class DisciplineGroupViewComponent{
     typeColors: string[];
     currentTableInput:any;
     openMatches:number;
+    isComplete:boolean;
     allMatchCount:number;
     tableNumbers: any[];
     collapsibleActions:EventEmitter<string|MaterializeAction> = new EventEmitter<string|MaterializeAction>();
+
+    @Output() onResultForMatch = new EventEmitter<ResultEvent>();
     
     constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
         this.typeColors = TypeColors.TYPE_COLORS;
@@ -32,7 +37,7 @@ export class DisciplineGroupViewComponent implements OnChanges{
     set group(value: DisciplineGroup){
         this._group = value;
         this.calculateOpenMatches();
-        this.setTables();
+        // this.setTables();
     } 
 
     onExpandMatches(){
@@ -45,28 +50,24 @@ export class DisciplineGroupViewComponent implements OnChanges{
         this.collapsibleActions.emit({action:"collapsible",params:["open",0]});
     } 
 
-    ngOnChanges(changes: SimpleChanges): void {
-        let log: string[] = [];
-        for (let propName in changes) {
-          let changedProp = changes[propName];
-          let to = JSON.stringify(changedProp.currentValue);
-          if (changedProp.isFirstChange()) {
-            log.push(`Initial value of ${propName} set to ${to}`);
-          } else {
-            let from = JSON.stringify(changedProp.previousValue);
-            log.push(`${propName} changed from ${from} to ${to}`);
-          }
-        }
-    }
-
     calculateOpenMatches(){
         this.openMatches = 0;
+        this.isComplete = true;
         this._group.matches.forEach(element => {
             if(element.match.isPlayed !== true){
                 this.openMatches++;
             }
+            if(element.match.result == null){
+                this.isComplete = false;
+            }
         });
         this.allMatchCount = this._group.matches.length;
+    }
+
+    onResultClicked(currentMatch){
+        var resultEvent = new ResultEvent();
+        resultEvent.match = currentMatch;
+        this.onResultForMatch.emit(resultEvent);
     }
 
     setTables(){

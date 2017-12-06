@@ -24,9 +24,10 @@
     <div *ngIf="selectedTab.groups" >
       <div class="row" *ngFor="let i of selectedTab.rowCount" >
           <div *ngFor="let currentGroup of selectedTab.groups | slice:(i*4):(i+1)*4" class="col s3">
-            <group-view [group]="currentGroup"></group-view>
+            <group-view [group]="currentGroup" (onResultForMatch)="onResultForMatch($event)"></group-view>
           </div>
       </div>
     </div>
 </div>
+<modal-result></modal-result>
 

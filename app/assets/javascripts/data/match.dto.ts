@@ -16,4 +16,5 @@ export class MatchDto {
 	group: Group;
 	table: TableLight;
 	isPlayable: boolean;
+	isInWaitingList: boolean;
 }

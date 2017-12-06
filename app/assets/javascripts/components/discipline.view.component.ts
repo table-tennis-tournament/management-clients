@@ -1,4 +1,4 @@
-import {Component, Input, EventEmitter} from "@angular/core";
+import {Component, Input, EventEmitter, ViewChild} from "@angular/core";
 import {DisciplineTab} from "../data/discipline.tab"
 import {DisciplineGroup} from "../data/discipline.group"
 import {DisciplineStage} from "../data/discipline.stage"
@@ -8,7 +8,9 @@ import {TypeColors} from "../data/typeColors"
 import {RandomMatchService} from "../services/random.match.service"
 import {MatchService} from "../services/match.service"
 import {MaterializeAction} from "angular2-materialize";
-import { StatusDto } from "app/assets/javascripts/data/status.dto";
+import { StatusDto } from "../data/status.dto";
+import { ResultModalComponent } from "../components/result.modal.view.component";
+import { ResultMatchHandler } from "../handler/result.match.handler";
 
 @Component({
     selector: "discipline-view",
@@ -20,6 +22,8 @@ export class DisciplineViewComponent{
     public selectedTab: DisciplineTab;
     public modalActions = new EventEmitter<string|MaterializeAction>();
     public rowCount: number[];
+
+    @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
     constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
         this.onFilterSelected();
@@ -62,6 +66,12 @@ export class DisciplineViewComponent{
 
     setTabForId(tabId: number){
         this.matchService.getMatchesByType(tabId).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
+    }
+
+    onResultForMatch($event){
+        this.resultDialog.setResultHandler(new ResultMatchHandler(this.matchService));
+        this.resultDialog.setMatch($event.match);
+        this.resultDialog.openModal();
     }
 
     handleSetSelectedTab(result: MatchDto[]){

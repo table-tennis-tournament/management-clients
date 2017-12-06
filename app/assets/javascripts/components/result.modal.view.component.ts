@@ -25,6 +25,8 @@ export class ResultModalComponent{
   public modalActions = new EventEmitter<string|MaterializeAction>();
 
   public currentInput: string;
+
+  private currentMatch: MatchDto;
   
   constructor(public matchToStringService: MatchToStringService) {
     this.resultIsValid = false;
@@ -34,6 +36,7 @@ export class ResultModalComponent{
     this.firstPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team1);
     this.secondPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team2);
     this.headerString = matchToSet.type.name + " " + matchToSet.matchType.name;
+    this.currentMatch = matchToSet;
   }
 
   setResultHandler(handlerToSet: IResultHandler){
@@ -51,8 +54,25 @@ export class ResultModalComponent{
   }
 
   openModal(){
-    this.currentInput = "";
+    this.setInputIfAvailable();
     this.modalActions.emit({action:"modal",params:["open"]});
+  }
+
+  setInputIfAvailable(){
+    var matchToSet = this.currentMatch;
+    var resultString = "";
+    if(matchToSet.match.result){
+      matchToSet.match.result.forEach(element => {
+        if(element[0]>element[1]){
+          resultString += element[1] + " ";
+        } else{
+          resultString += "-"+element[0] + " ";
+        }
+      });
+      resultString = resultString.substr(0, resultString.length - 1);
+      this.checkValidResult(resultString);
+    }
+    this.currentInput = resultString;
   }
 
   onOK(){
@@ -61,7 +81,7 @@ export class ResultModalComponent{
 
   closeDialogAndInformObserversAboutResult(){
     if(this.currentResultHandler !== null && this.currentResultHandler !== undefined){
-      this.currentResultHandler.handleResult(this.currentResult);
+      this.currentResultHandler.handleResult(this.currentResult, this.currentMatch);
     }
     this.currentResult = [];
     this.isFirstPlayerWinning = false;
