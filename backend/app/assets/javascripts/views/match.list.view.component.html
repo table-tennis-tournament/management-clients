@@ -11,7 +11,7 @@
                     <a href="javascript:void(0)" class="secondary-content" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
                 </div>
 
-                <div class="cut-text" *ngIf="currentMatch.matchinfo[1]">
+                <div class="cut-text" *ngIf="currentMatch.matchinfo[1]&&currentMatch.matchinfo[1].group">
                     <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
                         <li>
                             <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">Gruppe {{currentMatch.matchinfo[0].group.name}}
@@ -30,6 +30,26 @@
                         </li>
                     </ul>
                 </div>
+
+                <div class="cut-text" *ngIf="currentMatch.matchinfo[1]&&currentMatch.matchinfo[1].matchType.name">
+                        <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
+                            <li>
+                                <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">{{currentMatch.matchinfo[0].matchType.name}}
+                                    <span class="right">
+                                                <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
+                                            </span>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="collection">
+                                        <a *ngFor="let matchGroup of currentMatch.matchinfo" href="javascript:void(0)" class="collection-item">
+                                            <team-match-item [team]="matchGroup.team1"></team-match-item> -
+                                            <team-match-item [team]="matchGroup.team2"></team-match-item>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
             </li>
         </ul>
     </div>

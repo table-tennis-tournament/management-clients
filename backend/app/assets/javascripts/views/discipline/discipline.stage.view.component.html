@@ -1,14 +1,16 @@
 <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
     <li >
         <div class="collapsible-header {{stage.bgColor}}" [class.active]="isOpen">
-            <i class="material-icons">view_list</i>{{stage.name}}
+            <span dnd-draggable [dragEnabled]="true" [dragData]="stage.matches">
+                <i class="material-icons">view_list</i>{{stage.name}}
+            </span>
             <span class="right">
                 <a href="javascript:void(0)" (click)="onDelete()"><i class="material-icons" >close</i></a>
             </span>
         </div>
         <div class="collapsible-body no-padding">
             <div class="collection">
-                <a *ngFor="let currentMatch of stage.matches" href="javascript:void(0)" class="collection-item {{lineStageClass[index]}}" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
+                <a *ngFor="let currentMatch of stage.matches" href="javascript:void(0)" class="collection-item {{lineStageClass[index]}}" [class.disabled-item]="!currentMatch.isPlayable&&!currentMatch.match.result" dnd-draggable [dragEnabled]="true" [dragData]="currentMatch">
                     <div>
                         <match-item [match]="currentMatch"></match-item> 
                     </div>    
