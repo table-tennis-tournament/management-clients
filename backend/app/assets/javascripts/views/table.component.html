@@ -27,12 +27,12 @@
 <div class="card grey lighten-3" *ngIf="table.matchinfo===null||!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
     <div class="card-content custom-padding">
         <span class="card-title activator">
-                <h4><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span><i class="material-icons right">more_vert</i></h4>
+                <h4><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
+                    <span *ngIf="!table.table.isLocked" id="unLockedId">Freier Tisch</span>
+                    <span *ngIf="table.table.isLocked" id="unLockedId">Freier Tisch</span>
+                    <i class="material-icons right">more_vert</i></h4>
         </span>
-        <div class="text-centering">
-            <div *ngIf="!table.table.isLocked" id="unLockedId"><h4 class="no-margin">Freier Tisch</h4></div>
-            <div *ngIf="table.table.isLocked" id="lockedId"><h4 class="no-margin">Gesperrt</h4></div>
-        </div>
+       
     </div>
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
