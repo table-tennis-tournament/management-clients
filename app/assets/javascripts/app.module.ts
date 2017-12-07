@@ -46,12 +46,14 @@ import { MatchToStringService } from "./services/match.toString.service"
 import { MatchListService } from "./services/match.list.service"
 import { RandomMatchService } from "./services/random.match.service"
 import { BaseService } from "./services/base.service"
+import { ToastService } from "./services/toast.service";
 
 import { routeConfig } from "./app.routes"
 
 import {APP_BASE_HREF} from "@angular/common";
 
 import {DndModule} from "ng2-dnd";
+
 
 
 @NgModule({
@@ -101,6 +103,7 @@ import {DndModule} from "ng2-dnd";
       MatchListService,
       RandomMatchService,
       BaseService,
+      ToastService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent],

@@ -11,6 +11,7 @@ import {MaterializeAction} from "angular2-materialize";
 import { StatusDto } from "../data/status.dto";
 import { ResultModalComponent } from "../components/result.modal.view.component";
 import { ResultMatchHandler } from "../handler/result.match.handler";
+import { ToastService } from "../services/toast.service";
 
 @Component({
     selector: "discipline-view",
@@ -25,7 +26,7 @@ export class DisciplineViewComponent{
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
-    constructor(private randomMatchService: RandomMatchService, private matchService: MatchService){
+    constructor(private randomMatchService: RandomMatchService, private matchService: MatchService, private toastService: ToastService){
         this.onFilterSelected();
         this.colors = TypeColors.TYPE_COLORS;
     }
@@ -56,6 +57,7 @@ export class DisciplineViewComponent{
             this.setTabForId(this.tabs[0].id);
         }
         this.rowCount = Array.from(Array(Math.ceil(this.tabs.length / 12)).keys());
+       
         
     }
 
@@ -69,11 +71,13 @@ export class DisciplineViewComponent{
     }
 
     onResultForMatch($event){
-        this.resultDialog.setResultHandler(new ResultMatchHandler(this.matchService));
+        var resultHandler = new ResultMatchHandler(this.matchService);
+        resultHandler.onRefresh.subscribe(this.onRefreshCurrentTab.bind(this));
+        this.resultDialog.setResultHandler(resultHandler);
         this.resultDialog.setMatch($event.match);
         this.resultDialog.openModal();
     }
-
+    
     handleSetSelectedTab(result: MatchDto[]){
         var currentItemTab = this.selectedTab;
         currentItemTab.groups = [];
@@ -235,7 +239,7 @@ export class DisciplineViewComponent{
 
     onSuccessfullSync(status: StatusDto){
         this.onRefreshCurrentTab();
-        alert(status.message);
+        this.toastService.toast("Spiele erfolgreich geladen. Nachricht: " + status.message);
     }
 
     closeModal() {

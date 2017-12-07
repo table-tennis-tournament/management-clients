@@ -1,5 +1,6 @@
 import {Component, Input, EventEmitter, Output} from "@angular/core";
 import {DisciplineStage} from "../../data/discipline.stage";
+import { ResultEvent } from "../../handler/result.event";
 
 
 @Component({
@@ -11,6 +12,8 @@ export class DisciplineStageComponent{
     lineStageClass:string[];
 
     @Output() onDeleteStage = new EventEmitter<DisciplineStage>();
+
+    @Output() onResultForMatch = new EventEmitter<ResultEvent>();
 
     constructor(){
         this.lineStageClass = [];
@@ -29,4 +32,10 @@ export class DisciplineStageComponent{
     @Input() stage:DisciplineStage;
 
     @Input() index:number;
+
+    onResultClicked(currentMatch){
+        var resultEvent = new ResultEvent();
+        resultEvent.match = currentMatch;
+        this.onResultForMatch.emit(resultEvent);
+    }
 }

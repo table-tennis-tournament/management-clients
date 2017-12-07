@@ -31,7 +31,7 @@
                     </ul>
                 </div>
 
-                <div class="cut-text" *ngIf="currentMatch.matchinfo[1]&&currentMatch.matchinfo[1].matchType.name">
+                <div class="cut-text" *ngIf="currentMatch.matchinfo[1]&&!currentMatch.matchinfo[1].group">
                         <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
                             <li>
                                 <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">{{currentMatch.matchinfo[0].matchType.name}}

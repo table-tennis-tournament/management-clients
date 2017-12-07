@@ -57,10 +57,10 @@ export class MatchService {
          .map(res => res.json());
   }
 
-  addResult(resultToHandle: IResult[], matchId: number){
+  addResult(resultToHandle: IResult[], matchId: number):Observable<StatusDto>{
     var regEx = new RegExp("matchId");
     var url = this.addResultString.replace(regEx, matchId.toString());
-    return this.http.post(url, resultToHandle);
+    return this.http.post(url, resultToHandle).map((res:Response) => res.json());
   }
 
   getAllTypes(): Observable<Type[]>{
