@@ -17,7 +17,7 @@
     <div *ngIf="selectedTab.stages" class="discipline-stage-view">
         <div class="row" *ngFor="let i of selectedTab.stageRowCount">
             <div *ngFor="let currentStage of selectedTab.stages | slice:(i*3):(i+1)*3; let r = index" class="col s4">
-                <discipline-stage [stage]="currentStage" [index]="r" (onDeleteStage)="onDeleteStage($event)"></discipline-stage>
+                <discipline-stage [stage]="currentStage" (onResultForMatch)="onResultForMatch($event)" [index]="r" (onDeleteStage)="onDeleteStage($event)"></discipline-stage>
             </div>
         </div>
     </div>

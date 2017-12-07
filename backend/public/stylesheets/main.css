@@ -169,6 +169,15 @@ h4.no-margin{
     margin:0;
 }
 
+#toast-container{
+    right: 50%;
+    top: 86%;
+}
+/* .toast.toast-middle{
+    right: 100%;
+    top: 95%;
+} */
+
 @font-face {
     font-family: 'Material Icons';
     font-style: normal;

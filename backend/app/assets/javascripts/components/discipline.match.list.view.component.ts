@@ -20,9 +20,10 @@ export class DisciplineMatchListComponent{
     public disciplineType:string[];
 
     constructor(private matchListService: MatchListService, private matchService: MatchService){
-        this.getWaitingList();
-       this.colorArray = TypeColors.TYPE_COLORS;
-       this.disciplineType = DisciplineShortcuts.TYPE;
+        this.selectedDiscipline = "-1";
+        this.onDisciplineChanged(this.selectedDiscipline);
+        this.colorArray = TypeColors.TYPE_COLORS;
+        this.disciplineType = DisciplineShortcuts.TYPE;
     }
 
     private getAllMatches(){
@@ -94,7 +95,6 @@ export class DisciplineMatchListComponent{
         matches.forEach(element => {
             if(element !== null && element !== undefined && element.matchinfo !== null){
                 element.matchinfo.forEach(y => this.matches.push(y));
-                // this.matches.push(element.matchinfo);
             }
         });
     }

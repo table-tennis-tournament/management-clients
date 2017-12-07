@@ -12,7 +12,8 @@ import {MatchDto} from "../data/match.dto"
 import {Match} from "../data/match"
 import {ResultEvent} from "../handler/result.event"
 import { SelectMatchModalComponent } from "../components/table/table.select.match.modal.component";
-import { AssignEvent } from "app/assets/javascripts/handler/assign.event";
+import { AssignEvent } from "../handler/assign.event";
+import { ToastService } from "../services/toast.service";
 
 
 @Component({
@@ -32,7 +33,8 @@ export class TableViewComponent{
 
     constructor(private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
-        private randomMatchService: RandomMatchService) {
+        private randomMatchService: RandomMatchService,
+        private toastService: ToastService) {
         this.loadAllTables();
         
         this.tableService.OnTableChanged.subscribe(
@@ -47,6 +49,7 @@ export class TableViewComponent{
     getAllTablesSuccessful(tables: TableDto[]){
         this.tables = tables;
         this.rowCount = Array.from(Array(Math.ceil(this.tables.length / 5)).keys());
+        this.toastService.toastSuccess();
     }
 
     onTableAssignedHandler($event: AssignEvent){
