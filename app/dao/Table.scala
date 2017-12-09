@@ -206,8 +206,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
       Logger.debug("double")
       val d1 = getDouble(m.team1Id - 100000)
       val d2 = getDouble(m.team2Id - 100000)
-      val x = TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if (d1.isDefined && d2.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
-        if (d1.isDefined && d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.isPlayed, m.matchTypeId,
+      val x = TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if (d1.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
+        if (d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId,
         2)
       Logger.debug(x.toString)
