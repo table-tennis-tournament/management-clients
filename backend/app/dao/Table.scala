@@ -368,11 +368,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def getPlayerFromPlayerDAO(p: PlayerDAO): Player = {
     val playerMatches = ttMatchSeq.filterNot(_.isPlayed).filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id))
-    val typeIds = (playerMatches map {m => m.typeId}).distinct
-    val typesFO = typeIds map {t => getType(t)}
-    val typesF = typesFO map {_.get}
     val club = if(p.clubId.isDefined) getClub(p.clubId.get) else None
-    Player(p.id, p.firstName, p.lastName, p.ttr, p.sex, club, playerMatches.isDefinedAt(0), typesF)
+    Player(p.id, p.firstName, p.lastName, p.ttr, p.sex, club, playerMatches.isDefinedAt(0), Seq.empty[Long])
   }
 
   def updatePlayerList: Future[Boolean] = {
@@ -390,6 +387,17 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def getPlayer(id: Long): Option[Player] = {
     ttPlayerSeq.filter(_.id == id).headOption
+  }
+
+  def getPlayerTypes(playerO: Option[Player]): Option[Player] = {
+    playerO match {
+      case Some(player) => {
+        val types = ttMatchSeq.filter(m => !m.getResult.isDefined).map(_.typeId).distinct
+        Some(player.copy(typeIds = types))
+      }
+      case _ => None
+    }
+
   }
 
   class ClubTable(tag: Tag) extends Table[Club](tag, "club") {

@@ -20,8 +20,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
   import models.AnswerModel._
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
-    val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
-    val p2 = ttMatch.player2Ids map {id => tables.getPlayer(id)}
+    val p1 = ttMatch.player1Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
+    val p2 = ttMatch.player2Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
     val mt = tables.getMatchType(ttMatch.matchTypeId)
     val ty = tables.getType(ttMatch.typeId)
     val g = tables.getGroup(ttMatch.groupId)

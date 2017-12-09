@@ -20,7 +20,20 @@ object PlayerModel {
       "sex" -> player.sex,
       "club" -> player.club,
       "hasMatches" -> player.hasMatches,
-      "types" -> player.types
+      "types" -> player.typeIds
+    )
+  }
+
+  implicit val playerTypesWrites = new Writes[PlayerTypes] {
+    def writes(playerT: PlayerTypes) = Json.obj(
+      "id" -> playerT.player.id,
+      "firstName" -> playerT.player.firstName,
+      "lastName" -> playerT.player.lastName,
+      "ttr" -> playerT.player.ttr,
+      "sex" -> playerT.player.sex,
+      "club" -> playerT.player.club,
+      "hasMatches" -> playerT.player.hasMatches,
+      "types" -> playerT.typeIds
     )
   }
 
@@ -44,7 +57,12 @@ case class Player(
     sex: String,
     club: Option[Club],
     hasMatches: Boolean,
-    types: Seq[Type]
+    typeIds: Seq[Long]
+  )
+
+case class PlayerTypes(
+    player: Player,
+    typeIds: Seq[Long]
   )
 
 case class PlayerDAO(
