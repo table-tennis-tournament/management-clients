@@ -576,7 +576,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   def isInMatchList(ttMatch: TTMatch): Boolean = {
-    ttMatchListSeq.filter(_.matchId == ttMatch.id).nonEmpty
+    ttMatchListSeq.filter(_.matchId.contains(ttMatch.id)).nonEmpty
   }
 //  def startMatch(ttMatch: TTMatch) = {
 //    ttMatchSeq = ttMatchSeq map {m =>
