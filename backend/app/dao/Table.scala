@@ -198,7 +198,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   }
 
   def toMatch(m: MatchDAO): TTMatch = {
-    if (m.team1Id < 100000 && m.team2Id < 100000)
+    if (m.team1Id < 100000 || m.team2Id < 100000)
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId, 1)
     else {
