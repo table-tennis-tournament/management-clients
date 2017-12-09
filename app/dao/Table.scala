@@ -200,9 +200,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def toMatch(m: MatchDAO): TTMatch = {
     Logger.debug(m.toString)
     if (m.team1Id < 100000 || m.team2Id < 100000)
+      Logger.debug("single")
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId, 1)
     else {
+      Logger.debug("double")
       val d1 = getDouble(m.team1Id - 100000)
       val d2 = getDouble(m.team2Id - 100000)
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if (d1.isDefined && d2.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
