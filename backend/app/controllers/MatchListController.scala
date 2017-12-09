@@ -100,6 +100,8 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   def move(uuid: String, pos: Int) = Action {
     val ml = tables.getMatchList
+    Logger.debug(ml.toString())
+    Logger.debug(uuid)
     ml.find(_.uuid == UUID.fromString(uuid)) match {
       case Some(mlItem) => {
         val mlDel = ml.filter(_.position != mlItem.position) map { m =>
