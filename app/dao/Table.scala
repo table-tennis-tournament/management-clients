@@ -392,7 +392,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def getPlayerTypes(playerO: Option[Player]): Option[Player] = {
     playerO match {
       case Some(player) => {
-        val types = ttMatchSeq.filter(m => !m.getResult.isDefined).map(_.typeId).distinct
+        val types = ttMatchSeq.filter(m => (!m.getResult.isDefined && (m.player1Ids.contains(player.id) || m.player2Ids.contains(player.id))))
+          .map(_.typeId).distinct
         Some(player.copy(typeIds = types))
       }
       case _ => None
