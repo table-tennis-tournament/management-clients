@@ -103,7 +103,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
     Logger.debug(ml.toString())
     Logger.debug(uuid)
     Logger.debug(UUID.fromString(uuid).toString)
-    ml.find(_.uuid == UUID.fromString(uuid)) match {
+    ml.find(_.uuid == Some(UUID.fromString(uuid))) match {
       case Some(mlItem) => {
         val mlDel = ml.filter(_.position != mlItem.position) map { m =>
           if(m.position < mlItem.position) m
