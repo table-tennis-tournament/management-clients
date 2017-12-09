@@ -361,13 +361,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
     def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
       balls1, balls2, sets1, sets2, nr, plannedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
-
-    def player1 = foreignKey("Play1_FK", player1Id, player)(_.id)
-    def player2 = foreignKey("Play2_FK", player2Id, player)(_.id)
-    def ttTable = foreignKey("Table_FK", ttTableId, ttTables)(_.id.?)
-    def matchType = foreignKey("MatchType_FK", matchTypeId, matchTypes)(_.id)
-    def group = foreignKey("Group_FK", groupId, groups)(_.id.?)
-    def ttType = foreignKey("Type_FK", typeId, types)(_.id)
   }
 
   // Players
