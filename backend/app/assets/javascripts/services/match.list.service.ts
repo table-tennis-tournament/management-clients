@@ -13,6 +13,7 @@ export class MatchListService {
     private allMatchListUrl = "matchlist/all";
     private deleteMatchListItemUrl = "matchlist/deleteMatch/itemId ";
     private addMatchListItemUrl = "/matchlist/addMatch";
+    private moveMatchListItemUrl = "/matchlist/move/itemId/position";
     private deleteGroupListItemUrl = "matchlist/deleteGroup/itemId ";
     private addGroupListItemUrl = "matchlist/addGroup/groupId/position ";
     private addGroupToTableUrl = "/matchlist/grouptotable/groupId/tableNumber ";
@@ -40,6 +41,15 @@ export class MatchListService {
     addMatchListItem(matches: MatchListItem): Observable<StatusDto>{
         return this.http.post(this.addMatchListItemUrl, JSON.stringify(matches), this.baseService.getHeaders())
              .map(res => res.json());
+    }
+
+    transferMatchListItem(match: MatchListItem, newPosition: number): Observable<StatusDto>{
+        var regEx = new RegExp("itemId");
+        var url = this.moveMatchListItemUrl.replace(regEx, match.id);
+        regEx = new RegExp("position");
+        url = url.replace(regEx, newPosition.toString());
+        return this.http.get(url)
+            .map(res => res.json());
     }
 
     addGroupListItem(groupId: number, position:number): Observable<any>{
