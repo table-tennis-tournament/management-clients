@@ -62,17 +62,19 @@ export class MatchListComponent{
     }
 
     onDragStart($event){
-        this.matchListService.deleteMatchListItem($event.match.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, -1));
+        // this.matchListService.deleteMatchListItem($event.match.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, -1));
     }
 
     onDropSuccess($event){
         var matchListItem = $event.match.matchListItem;
-        matchListItem.position = this.getListIndex($event.match.matchListItem.id);
-        this.matchListService.addMatchListItem(matchListItem).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
+        var newPosition = this.getListIndex($event.match.matchListItem.id);
+        // this.matchListService.addMatchListItem(matchListItem).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
+        this.matchListService.transferMatchListItem(matchListItem, newPosition).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
     }
 
     onMatchlistAdded(match: MatchListItem, status: StatusDto){
-        this.matches[match.position].matchListItem.id = status.data;
+        console.log(status);
+        // this.matches[match.position].matchListItem.id = status.data;
     }
 
     getListIndex(matchListId){
