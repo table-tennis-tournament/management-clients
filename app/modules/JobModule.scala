@@ -1,5 +1,6 @@
 package modules
 
+import actors.PrinterActor
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 import scheduler.Scheduler
@@ -14,5 +15,6 @@ class JobModule extends AbstractModule with AkkaGuiceSupport {
     bind(classOf[Scheduler]).asEagerSingleton()
     bind(classOf[Tables]).asEagerSingleton()
     bind(classOf[Startup]).asEagerSingleton()
+    bindActor[PrinterActor]("printer_actor", _=>PrinterActor.props)
   }
 }
