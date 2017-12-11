@@ -1,6 +1,9 @@
 package controllers
 
-import com.google.inject.Inject
+import actors.PrinterActor.{GetPrinter, Print}
+import akka.actor.{ActorRef, ActorSystem}
+import javax.inject._
+
 import dao.Tables
 import models._
 import play.api.Logger
@@ -8,6 +11,8 @@ import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json
+import akka.pattern.ask
+import akka.util.Timeout
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
