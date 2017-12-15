@@ -16,7 +16,9 @@ import {MaterializeAction} from "angular2-materialize"
 import {TakeBackMatchHandler} from "../handler/takeBack.match.handler";
 import {FreeMatchHandler} from "../handler/free.match.handler";
 import { ISelectMatchHandler } from "app/assets/javascripts/handler/select.match.handler";
-import { AssignEvent } from "app/assets/javascripts/handler/assign.event";
+import { AssignEvent } from "../handler/assign.event";
+import { StatusDto } from "../data/status.dto";
+import { ToastService } from "../services/toast.service";
 
 @Component({
     selector: "tt-table",
@@ -30,7 +32,7 @@ export class TableComponent implements IResultHandler{
     public textColor: string;
 
     constructor(private matchToStringService: MatchToStringService, private tableService: TableService,
-        private matchService: MatchService){
+        private matchService: MatchService, private toastService:ToastService){
 
     }
     
@@ -139,6 +141,19 @@ export class TableComponent implements IResultHandler{
 
     takeBackTableAfterRequestSuccessful(){
         this.table.matchinfo = null;
+    }
+
+    onPrint(){
+        this.tableService.printMatch(this.table.matchinfo[0].match.id).subscribe(this.onPrinted.bind(this));
+    }
+
+    onPrinted(status: StatusDto){
+        if(status.successful){
+            this.toastService.toast("An Drucker gesendet");
+            return;
+        }
+        this.toastService.toast(status.message);
+        
     }
 
     lockTableAfterRequestSuccessfull(){

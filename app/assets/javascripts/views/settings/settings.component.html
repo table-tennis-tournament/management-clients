@@ -1,0 +1,15 @@
+<h4>Einstellungen</h4>
+<br/>
+<div class="row">
+  <div class="col s4">
+    <select  materialize="material_select" [(ngModel)]="selectedPrinter" >
+            <option *ngFor="let printer of printers" [value]="printer">
+                    {{printer}}
+            </option>
+    </select>
+    <label>Drucker</label>
+  </div>
+  <div class="col s6">
+    <a class="waves-effect waves-light btn" (click)="onSaveClicked()"><i class="material-icons left">save</i>Speichern</a>
+  </div>
+</div>

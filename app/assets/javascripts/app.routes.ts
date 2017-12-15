@@ -6,6 +6,7 @@ import {TableViewComponent} from "./components/table.view.component"
 import {SupervisorViewComponent} from "./components/supervisor.view.component"
 import {TableAssignViewComponent} from "./components/table.assign.view.component"
 import {ResultViewComponent} from "./components/result.view.component"
+import { SettingsComponent } from "./components/settings/settings.component";
 
 export const routeConfig:Routes = [
     {
@@ -27,6 +28,10 @@ export const routeConfig:Routes = [
     {
         path: "resultView",
         component: ResultViewComponent
+    },
+    {
+        path: "settingsView",
+        component: SettingsComponent
     },
     {
         path: "",
