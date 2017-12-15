@@ -20,6 +20,7 @@ export class TableService {
   private freeTableUrl = "match/free";
   private takeBackTableUrl = "match/takeBack ";
   private unlockTableUrl = "table/tableNumber/unlock";
+  private printMatchUrl = "printer/print/matchId";
   
   public OnTableChanged: Observable<MatchListDto[]>;
   private tableObserver: any;
@@ -31,7 +32,6 @@ export class TableService {
   }
 
   subscribeToWebSocket(){
-      console.log("Start registering TableService on WebSocket");
       try {
           this.webSocketService.WebSocketObservable.subscribe(
                 this.handleWebSocketMessage.bind(this),
@@ -44,7 +44,6 @@ export class TableService {
 
   initTableChangedObserver(){
       this.OnTableChanged = Observable.create((observer) => {
-            console.log("table changed observer is created");
             this.tableObserver = observer;
         }).share();
   }
@@ -80,12 +79,12 @@ export class TableService {
 
   getAllTables(): Observable<TableDto[]>{
         return this.http.get(this.allTablesUrl).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch(this.baseService.HandleError);
   }
 
   getTableById(id: any): Observable<TableDto[]>{
     return this.http.get(this.replaceTableNumer(id, this.tableByIdUrl)).map((res:Response) => res.json())
-        .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+        .catch(this.baseService.HandleError);
   }
 
   freeTable(matchIds: number[]):Observable<StatusDto>{
@@ -96,13 +95,19 @@ export class TableService {
       return this.http.get(this.replaceTableNumer(tableId, this.lockTableUrl))
   }
 
+  printMatch(matchId: number):Observable<StatusDto>{
+    var regEx = new RegExp("matchId");
+    var url = this.printMatchUrl.replace(regEx, matchId.toString());
+    return this.http.get(url).map((res:Response) => res.json())
+            .catch(this.baseService.HandleError);
+  }
+
   unlockTable(tableId: number): Observable<Response>{
       return this.http.get(this.replaceTableNumer(tableId, this.unlockTableUrl))
   }
 
   takeBackTable(matchIds: number[]):Observable<StatusDto>{
       return this.http.post(this.takeBackTableUrl, JSON.stringify(matchIds), this.baseService.getHeaders()).map((res:Response) => res.json());
-    //   return this.http.get(this.replaceTableNumer(tableId, this.takeBackTableUrl))
   }
 
   replaceTableNumer(tableNumber: number, url: string): string{

@@ -27,6 +27,7 @@ import {TableAssignViewComponent} from "./components/table.assign.view.component
 import {DisciplineMatchListComponent} from "./components/discipline.match.list.view.component"
 import {ResultViewComponent} from "./components/result.view.component"
 import {DisciplineSelectViewComponent} from "./components/discipline.select.view.component"
+import { SettingsComponent } from "./components/settings/settings.component";
 
 import {DisciplineStageComponent} from "./components/discipline/discipline.stage.view.component"
 
@@ -47,13 +48,13 @@ import { MatchListService } from "./services/match.list.service"
 import { RandomMatchService } from "./services/random.match.service"
 import { BaseService } from "./services/base.service"
 import { ToastService } from "./services/toast.service";
+import { SettingsService } from "./services/settings.service";
 
 import { routeConfig } from "./app.routes"
 
 import {APP_BASE_HREF} from "@angular/common";
 
 import {DndModule} from "ng2-dnd";
-
 
 
 @NgModule({
@@ -92,7 +93,8 @@ import {DndModule} from "ng2-dnd";
     DisciplineStageComponent,
     TableMatchItemComponent,
     SelectMatchModalComponent,
-    TeamMatchItemComponent
+    TeamMatchItemComponent,
+    SettingsComponent
   ],
   providers: [
       PlayerService,
@@ -104,6 +106,7 @@ import {DndModule} from "ng2-dnd";
       RandomMatchService,
       BaseService,
       ToastService,
+      SettingsService,
       {provide: APP_BASE_HREF, useValue : "/" }
     ],
   bootstrap: [AppComponent],
