@@ -32,7 +32,7 @@ GET     /table/:id                      controllers.TableController.getTable(id:
 GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
 GET     /table/:id/unlock               controllers.TableController.unlockTable(id: Long)
 
-# MatchListController: not working
+# MatchListController:
 GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
 GET     /matchlist/next                 controllers.MatchListController.getNext
 POST    /matchlist/addMatch             controllers.MatchListController.addMatch
@@ -45,6 +45,11 @@ POST    /match/takeBack                 controllers.MatchController.takeBackMatc
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket
+
+# PrinterController:
+GET     /printer/all                    controllers.PrinterController.allPrinter
+GET     /printer/print/:id              controllers.PrinterController.print(id: Long)
+GET     /printer/set/:name              controllers.PrinterController.setPrinter(name: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
