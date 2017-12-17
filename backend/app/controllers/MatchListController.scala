@@ -53,7 +53,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
       case Some(json) => {
         json.validate[MatchList].asOpt match {
           case Some(matchList) => {
-            matchList.matchId.filter(id => !tables.getMatch(id).get.isPlayed || !tables.getMatch(id).get.isPlaying)
+            matchList.matchId.filter(id => !tables.getMatch(id).get.isPlayed && !tables.getMatch(id).get.isPlaying)
             Logger.info("addMatch")
             val newMLEntry = matchList.copy(uuid = Some(matchList.uuid.getOrElse(UUID.randomUUID())), matchId = matchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
             val ml = tables.getMatchList
