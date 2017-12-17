@@ -13,7 +13,8 @@ GET     /player/:id                     controllers.PlayerController.getPlayer(i
 GET     /match/all                      controllers.MatchController.getAllMatches
 GET     /match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
 # GET     /match/filter                   controllers.MatchController.getFilteredMatchList()
-POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int)
+POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true)
+POST    /match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false)
 GET     /match/open/all                 controllers.MatchController.getOpenMatches
 GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 GET     /match/played/all               controllers.MatchController.getPlayedMatches
@@ -28,6 +29,7 @@ GET     /types/open/all                controllers.MatchController.getActiveType
 
 # TableController:
 GET     /table/all                      controllers.TableController.getAllTables
+GET     /table/free                     controllers.TableController.getFreeTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
 GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
 GET     /table/:id/unlock               controllers.TableController.unlockTable(id: Long)
