@@ -40,7 +40,7 @@ GET     /matchlist/next                 controllers.MatchListController.getNext
 POST    /matchlist/addMatch             controllers.MatchListController.addMatch
 DELETE  /matchlist/deleteMatch/:uuid    controllers.MatchListController.deleteMatch(uuid: String)
 GET     /matchlist/active               controllers.MatchListController.isActive
-POST    /matchlist/active               controllers.MatchListController.setActive(isActive: Boolean)
+GET     /matchlist/active/:isActive     controllers.MatchListController.setActive(isActive: Boolean)
 GET     /matchlist/move/:uuid/:position controllers.MatchListController.move(uuid: String, position: Int)
 POST    /match/free                     controllers.MatchController.freeMatches
 POST    /match/takeBack                 controllers.MatchController.takeBackMatches
@@ -52,6 +52,7 @@ GET     /register                       controllers.WebSocketController.socket
 GET     /printer/all                    controllers.PrinterController.allPrinter
 GET     /printer/print/:id              controllers.PrinterController.print(id: Long)
 GET     /printer/set/:name              controllers.PrinterController.setPrinter(name: String)
+GET     /printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
 
 
 # Map static resources from the /public folder to the /assets URL path
