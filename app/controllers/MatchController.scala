@@ -144,7 +144,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     Ok(Json.toJson(tables.allTypes.filter(_.active).sortBy(_.name)))
   }
 
-  def setMatchToTable(tableName: Int) = Action{ request =>
+  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true) = Action{ request =>
     request.body.asJson match {
       case Some(matchIdsJson) => {
         matchIdsJson.validate[Seq[Long]].asOpt match {
@@ -153,7 +153,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
             val matches = tables.allMatches()
             Logger.info("matches: " + matches.toString())
             val m = matchIds.map(id => matches.filter(_.id == id).head)
-            val matchReady = m.forall(m => if (!(m.isPlayed || m.isPlaying)) {
+            val matchReady = m.forall(m => if (!(m.isPlayed || (m.isPlaying || !checkPlayable))) {
                 (m.player1Ids ++ m.player2Ids).forall { p =>
                   val ml = matches.filter { ma =>
                     ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
