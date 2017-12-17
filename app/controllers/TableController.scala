@@ -44,6 +44,14 @@ class TableController @Inject() (tables: Tables) extends Controller{
     Ok(Json.toJson(z))
   }
 
+  def getFreeTables = Action {
+    val t = tables.allTTTables().filter(t => t.matchId.isEmpty && !t.isLocked.getOrElse(false))
+    val x = t.map(ttTable => getAllTableInfo(ttTable))
+    val z = x.sortBy(_.ttTable.tableNumber)
+    Logger.info("m: " + z.toString())
+    Ok(Json.toJson(z))
+  }
+
   def getTable(id: Long) = Action {
     tables.getTTTable(id) match {
       case Some(ttTable) => Ok(Json.toJson(getAllTableInfo(ttTable)))
