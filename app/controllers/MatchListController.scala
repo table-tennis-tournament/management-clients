@@ -53,13 +53,13 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
       case Some(json) => {
         json.validate[MatchList].asOpt match {
           case Some(matchList) => {
-            matchList.matchId.filter(id => !tables.getMatch(id).get.isPlayed && !tables.getMatch(id).get.isPlaying)
+            val filteredMatchList = matchList.copy(matchId = matchList.matchId.filter(id => !tables.getMatch(id).get.isPlayed && !tables.getMatch(id).get.isPlaying))
             Logger.info("addMatch")
-            val newMLEntry = matchList.copy(uuid = Some(matchList.uuid.getOrElse(UUID.randomUUID())), matchId = matchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
+            val newMLEntry = filteredMatchList.copy(uuid = Some(filteredMatchList.uuid.getOrElse(UUID.randomUUID())), matchId = filteredMatchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
             val ml = tables.getMatchList
-            if (ml.filter(_.matchId == matchList.matchId).isEmpty) {
+            if (ml.filter(_.matchId == filteredMatchList.matchId).isEmpty) {
               val newML = ml map { mlEntry =>
-                if (mlEntry.position >= matchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
+                if (mlEntry.position >= filteredMatchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
               }
               val newMLAdded = newML ++ Seq(newMLEntry)
               tables.setMatchList(newMLAdded)
