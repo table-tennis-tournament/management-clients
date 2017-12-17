@@ -17,10 +17,11 @@ export class TableService {
   private allTablesUrl = "table/all";
   private tableByIdUrl = "table/tableNumber";
   private lockTableUrl = "table/tableNumber/lock";
-  private freeTableUrl = "match/free";
+  private freeMatchUrl = "match/free";
   private takeBackTableUrl = "match/takeBack ";
   private unlockTableUrl = "table/tableNumber/unlock";
   private printMatchUrl = "printer/print/matchId";
+  private freeTablesUrl = "table/free";
   
   public OnTableChanged: Observable<MatchListDto[]>;
   private tableObserver: any;
@@ -50,11 +51,6 @@ export class TableService {
 
   handleWebSocketMessage(data){
       console.log("data received: " + data);
-
-    //   this.matchListService.getNextMatch().subscribe(
-    //       this.informNextMatchListeners.bind(this),
-    //       this.handleErrorOnNextMatchRequest
-    //   )
   }
 
   informNextMatchListeners(matches: MatchListDto[]){
@@ -88,7 +84,12 @@ export class TableService {
   }
 
   freeTable(matchIds: number[]):Observable<StatusDto>{
-      return this.http.post(this.freeTableUrl, JSON.stringify(matchIds), this.baseService.getHeaders()).map((res:Response) => res.json());
+      return this.http.post(this.freeMatchUrl, JSON.stringify(matchIds), this.baseService.getHeaders()).map((res:Response) => res.json());
+  }
+
+  getFreeTables():Observable<TableDto[]>{
+    return this.http.get(this.freeTablesUrl).map((res:Response) => res.json())
+            .catch(this.baseService.HandleError);
   }
 
   lockTable(tableId: number): Observable<Response>{

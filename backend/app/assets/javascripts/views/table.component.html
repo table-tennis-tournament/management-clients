@@ -19,6 +19,7 @@
             <a href="javascript:void(0)" (click)="onResult()">Eingeben</a>
             <a href="javascript:void(0)" (click)="onTakeBack()">Zurücknehmen</a>
             <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>
+            <a href="javascript:void(0)" (click)="assignToSecondTable()">2. Tisch</a>
             <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="onLock()">Sperren</a>
             <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
         </div>    

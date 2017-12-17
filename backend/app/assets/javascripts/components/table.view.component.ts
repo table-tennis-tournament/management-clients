@@ -14,6 +14,7 @@ import {ResultEvent} from "../handler/result.event"
 import { SelectMatchModalComponent } from "../components/table/table.select.match.modal.component";
 import { AssignEvent } from "../handler/assign.event";
 import { ToastService } from "../services/toast.service";
+import { ModalSelectTableComponent } from "./modals/select.table.modal";
 
 
 @Component({
@@ -28,6 +29,8 @@ export class TableViewComponent{
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
     
     @ViewChild(SelectMatchModalComponent) selectMatch: SelectMatchModalComponent;
+
+    @ViewChild(ModalSelectTableComponent) selectTable: ModalSelectTableComponent;
 
     @Output() onTableAssigned = new EventEmitter<AssignEvent>();
 

@@ -19,6 +19,8 @@ import { ISelectMatchHandler } from "app/assets/javascripts/handler/select.match
 import { AssignEvent } from "../handler/assign.event";
 import { StatusDto } from "../data/status.dto";
 import { ToastService } from "../services/toast.service";
+import { SelectTableEvent } from "../handler/select.table.event";
+import { AssignSecondTableHandler } from "../handler/assign.second.table.handler";
 
 @Component({
     selector: "tt-table",
@@ -52,6 +54,8 @@ export class TableComponent implements IResultHandler{
     @Output() onTableAssigned = new EventEmitter<AssignEvent>();
 
     @Output() onSelectMatch = new EventEmitter<SelectMatchEvent>();
+
+    @Output() onSelectTable = new EventEmitter<SelectTableEvent>();
 
 
     setBgColorAndTextColorDependsOnType(){
@@ -141,6 +145,14 @@ export class TableComponent implements IResultHandler{
 
     takeBackTableAfterRequestSuccessful(){
         this.table.matchinfo = null;
+    }
+
+    assignToSecondTable(){
+        var selectEvent = new SelectTableEvent();
+        selectEvent.handler = new AssignSecondTableHandler(this.matchService);
+        selectEvent.handler.onRefresh.subscribe(this.onTableRefresh.bind(this));
+        selectEvent.matches = this._table.matchinfo;
+        this.onSelectTable.emit(selectEvent);
     }
 
     onPrint(){
