@@ -29,6 +29,7 @@ GET     /types/open/all                controllers.MatchController.getActiveType
 
 # TableController:
 GET     /table/all                      controllers.TableController.getAllTables
+GET     /table/free                     controllers.TableController.getFreeTables
 GET     /table/:id                      controllers.TableController.getTable(id: Long)
 GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
 GET     /table/:id/unlock               controllers.TableController.unlockTable(id: Long)
