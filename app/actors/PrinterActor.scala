@@ -2,25 +2,27 @@ package actors
 
 import java.awt.print.PrinterJob
 import javax.print.PrintServiceLookup
+import javax.print.attribute.HashPrintRequestAttributeSet
+import javax.print.attribute.standard.{MediaSizeName, OrientationRequested}
 import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
 
 import akka.actor._
-import models.TTMatch
-import play.api.Logger
+import models.{AllMatchInfo, TTMatch}
+import play.api.{Logger, Play}
 
 
 
 object PrinterActor {
   def props = Props[PrinterActor]
 
-  case class Print(name: String)
+  case class Print(allMatchInfo: AllMatchInfo)
   case class GetPrinter()
   case class SetPrinter(name: String)
 
-  sealed trait Answer
-  case object PrinterNotFound extends Answer
-  case object PrinterFound extends Answer
+  sealed trait PrinterAnswer
+  case object PrinterNotFound extends PrinterAnswer
+  case object PrinterFound extends PrinterAnswer
 }
 
 
@@ -29,15 +31,27 @@ class PrinterActor extends Actor {
   import actors.PrinterActor._
 
   var printService = PrintServiceLookup.lookupDefaultPrintService()
+  var html = scala.io.Source.fromFile("templates/print1.html").mkString
+  var aset = new HashPrintRequestAttributeSet
+  aset.add(MediaSizeName.ISO_A6)
+  aset.add(OrientationRequested.LANDSCAPE)
 
   def receive = {
-    case Print(name: String) =>
+    case Print(allMatchInfo) =>
+      val newHtml = html
+        .replaceAll("""\[name1\]""", allMatchInfo.player1.map(p => p.lastName + ", " + p.firstName).mkString(" / "))
+        .replaceAll("""\[name2\]""", allMatchInfo.player2.map(p => p.lastName + ", " + p.firstName).mkString(" / "))
+        .replaceAll("""\[club1\]""", allMatchInfo.player1.map(p => p.club.get.clubName).mkString(" / "))
+        .replaceAll("""\[club2\]""", allMatchInfo.player2.map(p => p.club.get.clubName).mkString(" / "))
+        .replaceAll("""\[id\]""", allMatchInfo.ttMatch.id.toString)
+        .replaceAll("""\[type\]""", allMatchInfo.ttType.name)
+        .replaceAll("""\[matchtype\]""", allMatchInfo.matchType.name)
       val editorPane = new JEditorPane()
       val htmlEditor = new HTMLEditorKit()
       editorPane.setEditorKit(htmlEditor)
       editorPane.setDocument(htmlEditor.createDefaultDocument())
-      editorPane.setText("<!DOCTYPE html>\n<html>\n<body>\n\n<h1>My First Heading</h1>\n\n<p>My first paragraph.</p>\n\n</body>\n</html>")
-      editorPane.print(null, null, false, printService, null, false)
+      editorPane.setText(newHtml)
+      editorPane.print(null, null, false, printService, aset, false)
     case GetPrinter =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq
       sender() ! printers

@@ -252,6 +252,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     ttMatchSeq.filter(_.id == id).headOption
   }
 
+  def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
+    val p1 = ttMatch.player1Ids map {id => getPlayerTypes(getPlayer(id))}
+    val p2 = ttMatch.player2Ids map {id => getPlayerTypes(getPlayer(id))}
+    val mt = getMatchType(ttMatch.matchTypeId)
+    val ty = getType(ttMatch.typeId)
+    val g = getGroup(ttMatch.groupId)
+    val pl = isPlayable(ttMatch)
+    val inML = isInMatchList(ttMatch)
+    if (mt.isDefined && ty.isDefined)
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML))
+    else
+      None
+  }
+
   def getMatchesInGroup(id: Long): Seq[TTMatch] = {
     ttMatchSeq.filter(_.groupId.getOrElse(0) == id)
   }
