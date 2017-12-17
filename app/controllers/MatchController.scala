@@ -13,6 +13,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json
 import akka.pattern.ask
 import akka.util.Timeout
+import websocket.WebSocketActor._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -20,7 +21,8 @@ import scala.util.{Failure, Success, Try}
 /**
   * Created by jonas on 10.10.16.
   */
-class MatchController @Inject() (tables: Tables) extends Controller{
+class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: ActorRef) extends Controller{
+  implicit val timeout: Timeout = 5.seconds
   import models.MatchModel._
   import models.AnswerModel._
 
@@ -47,7 +49,8 @@ class MatchController @Inject() (tables: Tables) extends Controller{
             ids map { id =>
               tables.freeTTTable(id)
             }
-            Ok(Json.toJson(Answer(true, "successful")))
+            pub ! MatchFree
+            Ok(Json.toJson(Answer(true, "successful")).toString())
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
         }
@@ -65,6 +68,7 @@ class MatchController @Inject() (tables: Tables) extends Controller{
             ids map { id =>
               tables.takeBackTTTable(id)
             }
+            pub ! MatchTakeBack
             Ok(Json.toJson(Answer(true, "successful")))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
@@ -128,8 +132,10 @@ class MatchController @Inject() (tables: Tables) extends Controller{
     if(res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.setResult(id, resultO.get) map {res =>
-        if(res) Ok(Json.toJson(Answer(true, "set result")))
-        else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
+        if(res) {
+          pub ! MatchResult
+          Ok(Json.toJson(Answer(true, "set result")))
+        } else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
       }
     } else {
       Future.successful(BadRequest(Json.toJson(Answer(false, "wrong request format"))))
@@ -186,9 +192,10 @@ class MatchController @Inject() (tables: Tables) extends Controller{
               false
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
-            if(res)
+            if(res) {
+              pub ! MatchToTable
               Ok(Json.toJson(Answer(true, "started match")))
-            else
+            } else
               BadRequest(Json.toJson(Answer(false, "not all matches started")))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
@@ -208,8 +215,10 @@ class MatchController @Inject() (tables: Tables) extends Controller{
               tables.updateGroupsSeq flatMap { g =>
                 tables.updatePlayerList map { i =>
                   val x = n && b && d && e && f && g && i
-                  if(x) Ok(Json.toJson(Answer(true, "load new matches")))
-                  else BadRequest(Json.toJson(Answer(false, "error loading new matches")))
+                  if(x) {
+                    pub ! MatchLoadNew
+                    Ok(Json.toJson(Answer(true, "load new matches")))
+                  } else BadRequest(Json.toJson(Answer(false, "error loading new matches")))
                 }
               }
             }

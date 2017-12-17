@@ -12,3 +12,13 @@ object AnswerModel{
   }
 }
 case class Answer(successful: Boolean, message: String, data: Option[Any] = None)
+
+object WSMessageModel{
+  implicit val wsMessageWrites = new Writes[WSMessage] {
+    def writes(wsMessage: WSMessage) = Json.obj(
+      "action" -> wsMessage.action,
+      "id" -> wsMessage.changedId
+    )
+  }
+}
+case class WSMessage(action: String, changedId: Option[String] = None)

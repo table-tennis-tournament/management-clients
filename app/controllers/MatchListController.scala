@@ -1,7 +1,9 @@
 package controllers
 
 import java.util.UUID
+import javax.inject.Named
 
+import akka.actor.ActorRef
 import com.google.inject.Inject
 import dao.Tables
 import models._
@@ -9,6 +11,7 @@ import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import websocket.WebSocketActor.{MatchListActive, MatchListAdd, MatchListDelete, MatchListMove}
 
 import scala.None
 import scala.concurrent.Future
@@ -16,7 +19,7 @@ import scala.concurrent.Future
 /**
   * Created by jonas on 24.11.16.
   */
-class MatchListController @Inject() (tables: Tables) extends Controller{
+class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") pub: ActorRef) extends Controller{
 
   import models.MatchModel._
   import models.AnswerModel._
@@ -63,6 +66,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
               }
               val newMLAdded = newML ++ Seq(newMLEntry)
               tables.setMatchList(newMLAdded)
+              pub ! MatchListAdd
               Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
             } else {
               BadRequest(Json.toJson(Answer(false, "match is already in match list", newMLEntry.uuid)))
@@ -79,6 +83,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
     Logger.info(tables.getMatchList.toString())
     Logger.info(uuid)
     if(tables.delMatchList(UUID.fromString(uuid))){
+      pub ! MatchListDelete
       Ok(Json.toJson(Answer(true, "match deleted")))
     } else {
       BadRequest(Json.toJson(Answer(false, "UUID not found")))
@@ -92,6 +97,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
 
   def setActive(isActive: Boolean) = Action {
     this.isActiv = isActive
+    pub ! MatchListActive
     Ok("set to " + isActive.toString)
   }
 
@@ -112,6 +118,7 @@ class MatchListController @Inject() (tables: Tables) extends Controller{
           else m.copy(position = m.position + 1)
         }
         tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
+        pub ! MatchListMove
         Ok(Json.toJson(Answer(true, "changed match list")))
       }
       case _ => BadRequest(Json.toJson(Answer(false, "UUID not found")))
