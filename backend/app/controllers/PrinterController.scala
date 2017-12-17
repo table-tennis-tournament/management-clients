@@ -20,7 +20,7 @@ import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.duration._
 
-class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRef, tables: Tables) extends Controller{
+class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRef, @Named("publisher_actor") pubActor: ActorRef, tables: Tables) extends Controller{
   implicit val timeout: Timeout = 5.seconds
   import models.AnswerModel._
 

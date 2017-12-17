@@ -9,7 +9,7 @@ import javax.swing.text.html.HTMLEditorKit
 
 import akka.actor._
 import models.{AllMatchInfo, TTMatch}
-import play.api.{Logger, Play}
+import play.api.Logger
 
 
 
@@ -30,6 +30,7 @@ object PrinterActor {
 class PrinterActor extends Actor {
   import actors.PrinterActor._
 
+  Logger.debug("starting PrinterActor")
   var printService = PrintServiceLookup.lookupDefaultPrintService()
   var html = scala.io.Source.fromFile("templates/print1.html").mkString
   var aset = new HashPrintRequestAttributeSet
@@ -65,23 +66,5 @@ class PrinterActor extends Actor {
         case _ => sender ! PrinterNotFound
       }
 
-  }
-}
-
-import java.awt.Font
-import java.awt.Graphics
-import java.awt.print.PageFormat
-import java.awt.print.Printable
-
-object SchiriPrintable {
-  val font = new Font(Font.SANS_SERIF, Font.PLAIN, 20)
-}
-
-class SchiriPrintable(ttMatch: String) extends Printable {
-  override def print(g: Graphics, pageFormat: PageFormat, pageIndex: Int): Int = {
-    if (pageIndex >= 2) return Printable.NO_SUCH_PAGE
-    g.setFont(SchiriPrintable.font)
-    g.drawString(ttMatch, 100, 100)
-    Printable.PAGE_EXISTS
   }
 }

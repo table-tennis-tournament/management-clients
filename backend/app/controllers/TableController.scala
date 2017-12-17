@@ -1,5 +1,8 @@
 package controllers
 
+import javax.inject.Named
+
+import akka.actor.ActorRef
 import com.google.inject.Inject
 import dao.Tables
 import models._
@@ -7,12 +10,13 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import websocket.WebSocketActor.{TableLock, TableUnlock}
 
 
 /**
   * Created by jonas on 09.10.16.
   */
-class TableController @Inject() (tables: Tables) extends Controller{
+class TableController @Inject() (tables: Tables, @Named("publisher_actor") pub: ActorRef) extends Controller{
 
   import models.TableModel._
   import models.AnswerModel._
@@ -61,11 +65,13 @@ class TableController @Inject() (tables: Tables) extends Controller{
 
   def lockTable(id: Long) = Action {
     tables.lockTTTable(id)
+    pub ! TableLock
     Ok("OK")
   }
 
   def unlockTable(id: Long) = Action {
     tables.unlockTTTable(id)
+    pub ! TableUnlock
     Ok("OK")
   }
 }
