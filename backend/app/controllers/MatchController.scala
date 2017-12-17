@@ -159,7 +159,8 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             val matches = tables.allMatches()
             Logger.info("matches: " + matches.toString())
             val m = matchIds.map(id => matches.filter(_.id == id).head)
-            val matchReady = m.forall(m => if (!(m.isPlayed || (m.isPlaying || !checkPlayable))) {
+            Logger.debug(checkPlayable.toString)
+            val matchReady = !checkPlayable || m.forall(m => if (!(m.isPlayed || m.isPlaying)) {
                 (m.player1Ids ++ m.player2Ids).forall { p =>
                   val ml = matches.filter { ma =>
                     ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
