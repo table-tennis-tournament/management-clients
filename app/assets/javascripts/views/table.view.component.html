@@ -1,6 +1,11 @@
 <div class="row without-margin" *ngFor="let i of rowCount" >
 			<div *ngFor="let currentTable of tables | slice:(i*5):(i+1)*5" class="col custom-col">
-				<tt-table [table]="currentTable" (onTableAssigned)="onTableAssignedHandler($event)" (onResultForMatch)="onResultForMatch($event)" (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"></tt-table>
+				<tt-table [table]="currentTable" 
+					(onTableAssigned)="onTableAssignedHandler($event)" 
+					(onResultForMatch)="onResultForMatch($event)" 
+					(onSelectMatch)="selectMatch.onSelectMatchEvent($event)"
+					(onSelectTable)="selectTable.selectTable($event)">
+			</tt-table>
 		</div>
 </div>
 <div class="fixed-action-btn horizontal">
@@ -10,3 +15,4 @@
 	</div>
 <modal-select-match></modal-select-match>
 <modal-result></modal-result>
+<modal-select-table></modal-select-table>

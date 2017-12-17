@@ -21,6 +21,7 @@ export class MatchService {
 
   private assignMatchToTableUrl = "match/matchtotable/tableName";
   private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
+  private assignSecondMatchToTableUrl = "match/matchtosecondtable/tableName";
 
   private getPlayedMatchesUrl = "match/played/all";
   private getPlayedMatchesByTypeUrl = "match/played/typeid/typeIdValue";
@@ -42,6 +43,14 @@ export class MatchService {
 
   assignMatchToTable(matchIds: number[], tableName: number): Observable<any>{
     var url = this.assignMatchToTableUrl;
+    var regEx = new RegExp("tableName");
+    url = url.replace(regEx, tableName.toString());
+    return this.http.post(url, JSON.stringify(matchIds), this.baseService.getHeaders())
+         .map(res => res.json());
+  }
+
+  assignSecondMatchToTable(matchIds: number[], tableName: number): Observable<any>{
+    var url = this.assignSecondMatchToTableUrl;
     var regEx = new RegExp("tableName");
     url = url.replace(regEx, tableName.toString());
     return this.http.post(url, JSON.stringify(matchIds), this.baseService.getHeaders())

@@ -30,6 +30,7 @@ import {DisciplineSelectViewComponent} from "./components/discipline.select.view
 import { SettingsComponent } from "./components/settings/settings.component";
 
 import {DisciplineStageComponent} from "./components/discipline/discipline.stage.view.component"
+import { ModalSelectTableComponent } from "./components/modals/select.table.modal";
 
 import {DisciplineMatchItemComponent} from "./components/items/discipline.match.item.component"
 import {StageMatchItemComponent} from "./components/items/stage.match.item.component"
@@ -55,6 +56,7 @@ import { routeConfig } from "./app.routes"
 import {APP_BASE_HREF} from "@angular/common";
 
 import {DndModule} from "ng2-dnd";
+
 
 
 @NgModule({
@@ -94,6 +96,7 @@ import {DndModule} from "ng2-dnd";
     TableMatchItemComponent,
     SelectMatchModalComponent,
     TeamMatchItemComponent,
+    ModalSelectTableComponent,
     SettingsComponent
   ],
   providers: [
