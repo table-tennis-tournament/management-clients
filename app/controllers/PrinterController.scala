@@ -49,4 +49,9 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
     }
   }
 
+  def setPrintOnStart(printOnStart: Boolean) = Action {
+    tables.printOnStart = printOnStart
+    Ok(Json.toJson(Answer(true, "set printOnStart = " + printOnStart)))
+  }
+
 }

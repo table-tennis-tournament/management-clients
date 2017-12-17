@@ -1,8 +1,10 @@
 package dao
 
 import java.util.UUID
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
+import actors.PrinterActor.Print
+import akka.actor.ActorRef
 import com.github.tototoshi.slick.MySQLJodaSupport
 import models._
 import org.joda.time.DateTime
@@ -19,13 +21,15 @@ import scala.concurrent.duration._
 /**
   * Created by jonas on 29.09.16.
   */
-class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @Named("printer_actor") printerActor: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
   object PortableJodaSupport extends com.github.tototoshi.slick.GenericJodaSupport(dbConfigProvider.get.driver)
 
   import PortableJodaSupport._
+
+  var printOnStart: Boolean = false
 
   // Tables
   private val ttTables = TableQuery[TTTablesTable]
@@ -227,6 +231,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
 
   def startMatch(matchId: Long, tableId: Long): Boolean= {
     Logger.debug("start match")
+    if(printOnStart) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
     if(ttTablesSeq.filter(_.matchId == matchId).isEmpty) {
       ttMatchSeq = ttMatchSeq map { m =>
         if (m.id == matchId) m.copy(isPlaying = true)
