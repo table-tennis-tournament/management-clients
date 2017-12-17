@@ -2,6 +2,8 @@ package actors
 
 import java.awt.print.PrinterJob
 import javax.print.PrintServiceLookup
+import javax.print.attribute.HashPrintRequestAttributeSet
+import javax.print.attribute.standard.{MediaSizeName, OrientationRequested}
 import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
 
@@ -30,7 +32,9 @@ class PrinterActor extends Actor {
 
   var printService = PrintServiceLookup.lookupDefaultPrintService()
   var html = scala.io.Source.fromFile("templates/print1.html").mkString
-  Logger.debug(html)
+  var aset = new HashPrintRequestAttributeSet
+  aset.add(MediaSizeName.ISO_A6)
+  aset.add(OrientationRequested.LANDSCAPE)
 
   def receive = {
     case Print(allMatchInfo) =>
@@ -47,7 +51,7 @@ class PrinterActor extends Actor {
       editorPane.setEditorKit(htmlEditor)
       editorPane.setDocument(htmlEditor.createDefaultDocument())
       editorPane.setText(newHtml)
-      editorPane.print(null, null, false, printService, null, false)
+      editorPane.print(null, null, false, printService, aset, false)
     case GetPrinter =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq
       sender() ! printers
