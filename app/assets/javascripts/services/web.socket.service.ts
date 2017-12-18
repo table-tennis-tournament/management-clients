@@ -1,5 +1,6 @@
 import {Observable} from "rxjs/Rx";
 import {Injectable, EventEmitter} from "@angular/core"
+import { WebsocketMessage } from "app/assets/javascripts/data/websocket.message";
 
 @Injectable()
 export class WebSocketService {
@@ -46,9 +47,34 @@ export class WebSocketService {
     }
 
     onMessageFromWebserviceGot(e){
-        if(e.data==="MatchesUpdated"){
+        var message = this.tryGetMessageFromWebsocket(e);
+        if(message === null){
+            return;
+        }
+        if(message.action === "MatchToTable"){
             this.OnTableRefresh.emit();
         }
+        if (message.action === "MatchListAdd" ||
+            message.action === "MatchListDelete" ||
+            message.action === "MatchListMove"){
+            this.OnWaitinglistRefresh.emit();
+        }
+        if(message.action === "MatchFree"){
+            this.OnTableRefresh.emit();
+            this.OnResultRefresh.emit();
+        }
+        if( message.action === "MatchTakeBack"){
+            this.OnTableRefresh.emit();
+        }
+    }
+
+    tryGetMessageFromWebsocket(event):WebsocketMessage{
+        try{
+            return JSON.parse(event.data);
+        } catch(e){
+            console.log(e)
+        }
+        return null;
     }
 
 }

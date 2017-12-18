@@ -6,6 +6,7 @@ import {DisciplineShortcuts} from "../data/disciplineShortcuts";
 import {Type} from "../data/type";
 import {MatchListService} from "../services/match.list.service";
 import {MatchService} from "../services/match.service";
+import { WebSocketService } from "../services/web.socket.service";
 
 @Component({
     selector: "discipline-match-list",
@@ -19,11 +20,12 @@ export class DisciplineMatchListComponent{
     public selectedDiscipline:any;
     public disciplineType:string[];
 
-    constructor(private matchListService: MatchListService, private matchService: MatchService){
+    constructor(private matchListService: MatchListService, private matchService: MatchService, private websocketService: WebSocketService){
         this.selectedDiscipline = "-1";
         this.onDisciplineChanged(this.selectedDiscipline);
         this.colorArray = TypeColors.TYPE_COLORS;
         this.disciplineType = DisciplineShortcuts.TYPE;
+        this.websocketService.OnWaitinglistRefresh.subscribe(this.onWaitinglistRefresh.bind(this));
     }
 
     private getAllMatches(){
@@ -39,6 +41,12 @@ export class DisciplineMatchListComponent{
     private getAllMatchesError(error){
         console.log("error on get All matches");
         console.log(error);
+    }
+
+    onWaitinglistRefresh(){
+        if(this.selectedDiscipline === "-1"){
+            this.getWaitingList();
+        }
     }
 
     public onTableAssigned(dragData: any){

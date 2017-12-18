@@ -15,6 +15,7 @@ import { SelectMatchModalComponent } from "../components/table/table.select.matc
 import { AssignEvent } from "../handler/assign.event";
 import { ToastService } from "../services/toast.service";
 import { ModalSelectTableComponent } from "./modals/select.table.modal";
+import { WebSocketService } from "../services/web.socket.service";
 
 
 @Component({
@@ -37,12 +38,14 @@ export class TableViewComponent{
     constructor(private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
         private randomMatchService: RandomMatchService,
-        private toastService: ToastService) {
+        private toastService: ToastService,
+        private websocketService: WebSocketService) {
         this.loadAllTables();
         
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
+        this.websocketService.OnTableRefresh.subscribe(this.onTableRefresh.bind(this));
     }
 
     loadAllTables(){

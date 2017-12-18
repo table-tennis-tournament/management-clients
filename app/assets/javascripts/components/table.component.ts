@@ -126,7 +126,7 @@ export class TableComponent implements IResultHandler{
     }
 
     onTableRefresh(){
-        this.tableService.getTableById(this._table.table.id).subscribe(this.onGetTable.bind(this));
+        // this.tableService.getTableById(this._table.table.id).subscribe(this.onGetTable.bind(this));
     }
 
     onGetTable(table: TableDto){
