@@ -54,6 +54,9 @@ GET     /printer/print/:id              controllers.PrinterController.print(id: 
 GET     /printer/set/:name              controllers.PrinterController.setPrinter(name: String)
 GET     /printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
 
+GET     /settings/all                   controllers.SettingsController.allSettings
+# POST    /settings                       controllers.SettingsController.setSettings
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)

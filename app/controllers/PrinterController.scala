@@ -1,6 +1,6 @@
 package controllers
 
-import actors.PrinterActor.{GetPrinter, Print, PrinterFound, SetPrinter}
+import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter}
 import akka.actor.{ActorRef, ActorSystem}
 import javax.inject._
 import javax.swing.JEditorPane
@@ -37,7 +37,7 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
   }
 
   def allPrinter = Action.async {
-    (printerActor ? GetPrinter).mapTo[Seq[String]].map(msg => Ok(Json.toJson(msg)))
+    (printerActor ? GetPrinterList).mapTo[Seq[String]].map(msg => Ok(Json.toJson(msg)))
   }
 
   def setPrinter(name: String) = Action.async {
