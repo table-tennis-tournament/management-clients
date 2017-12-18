@@ -22,3 +22,20 @@ object WSMessageModel{
   }
 }
 case class WSMessage(action: String, changedId: Option[String] = None)
+
+object SettingModel{
+  implicit val settingWrites = new Writes[Setting] {
+    def writes(setting: Setting) = {
+
+      Json.obj(
+        "key" -> setting.key,
+        "value" -> (setting.value match {
+          case s: String => s
+          case b: Boolean => b
+          case e => "error"
+        })
+      )
+    }
+  }
+}
+case class Setting(key: String, value: Any)

@@ -2,6 +2,7 @@ package dao
 
 import java.util.UUID
 import javax.inject.{Inject, Named}
+import javax.print.{PrintService, PrintServiceLookup}
 
 import actors.PrinterActor.Print
 import akka.actor.ActorRef

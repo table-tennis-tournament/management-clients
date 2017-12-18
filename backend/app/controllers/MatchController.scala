@@ -1,6 +1,6 @@
 package controllers
 
-import actors.PrinterActor.{GetPrinter, Print}
+import actors.PrinterActor.{GetPrinterList, Print}
 import akka.actor.{ActorRef, ActorSystem}
 import javax.inject._
 

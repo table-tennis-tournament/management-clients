@@ -17,8 +17,9 @@ object PrinterActor {
   def props = Props[PrinterActor]
 
   case class Print(allMatchInfo: AllMatchInfo)
-  case class GetPrinter()
+  case class GetPrinterList()
   case class SetPrinter(name: String)
+  case class GetPrinter()
 
   sealed trait PrinterAnswer
   case object PrinterNotFound extends PrinterAnswer
@@ -53,9 +54,11 @@ class PrinterActor extends Actor {
       editorPane.setDocument(htmlEditor.createDefaultDocument())
       editorPane.setText(newHtml)
       editorPane.print(null, null, false, printService, aset, false)
-    case GetPrinter =>
+    case GetPrinterList =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq
       sender() ! printers
+    case GetPrinter =>
+      sender() ! printService.getName
     case SetPrinter(name: String) =>
       val psO = PrintServiceLookup.lookupPrintServices(null, null).find(_.getName == name)
       psO match {
