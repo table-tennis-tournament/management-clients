@@ -195,6 +195,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
             if(res) {
               pub ! MatchToTable
+              pub ! MatchListDelete
               Ok(Json.toJson(Answer(true, "started match")))
             } else
               BadRequest(Json.toJson(Answer(false, "not all matches started")))
