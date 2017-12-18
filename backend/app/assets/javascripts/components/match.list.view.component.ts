@@ -3,8 +3,9 @@ import {Component, Input} from "@angular/core";
 import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {MatchListService} from "../services/match.list.service";
-import { MatchDto } from "app/assets/javascripts/data/match.dto";
-import { StatusDto } from "app/assets/javascripts/data/status.dto";
+import { MatchDto } from "../data/match.dto";
+import { StatusDto } from "../data/status.dto";
+import { WebSocketService } from "../services/web.socket.service";
 
 @Component({
     selector: "match-list",
@@ -15,12 +16,11 @@ export class MatchListComponent{
     public matches: Array<MatchListDto> = [];
     public colorArray: string[] = [];
 
-    constructor(private matchListService: MatchListService){
-       matchListService.getCompleteMatchlist().subscribe(
-           this.getAllMatchesSuccess.bind(this),
-           this.getAllMatchesError
-       )
+    constructor(private matchListService: MatchListService,
+                private websocketService: WebSocketService){
+       this.loadWaitingList();
        this.colorArray = TypeColors.TYPE_COLORS;
+       this.websocketService.OnWaitinglistRefresh.subscribe(this.onWaitinglistRefresh.bind(this));
     }
 
     private getAllMatchesSuccess(matches: MatchListDto[]){
@@ -31,8 +31,18 @@ export class MatchListComponent{
         console.log(error);
     }
 
+    onWaitinglistRefresh(){
+        this.loadWaitingList();
+    }
+
+    loadWaitingList(){
+        this.matchListService.getCompleteMatchlist().subscribe(
+            this.getAllMatchesSuccess.bind(this),
+            this.getAllMatchesError
+        )
+    }
+
     transferDataSuccess($event) {
-        
         var matchinfo = [];
         if($event.dragData.team1){
             // var matchListItem = new MatchListDto();
@@ -57,18 +67,13 @@ export class MatchListComponent{
     }
 
     onMatchlistItemAdded(matchListItem: MatchListDto, status: StatusDto){
-        matchListItem.matchListItem.id = status.data;
-        this.matches.push(matchListItem);
-    }
-
-    onDragStart($event){
-        // this.matchListService.deleteMatchListItem($event.match.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, -1));
+        // matchListItem.matchListItem.id = status.data;
+        // this.matches.push(matchListItem);
     }
 
     onDropSuccess($event){
         var matchListItem = $event.match.matchListItem;
         var newPosition = this.getListIndex($event.match.matchListItem.id);
-        // this.matchListService.addMatchListItem(matchListItem).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
         this.matchListService.transferMatchListItem(matchListItem, newPosition).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
     }
 
@@ -89,7 +94,6 @@ export class MatchListComponent{
     }
 
     onDelete(index){
-        // var newIndex = this.matches.indexOf(index, 0);
         if (index > -1 && this.matches) {
             var itemToDelete = this.matches[index];
             this.matchListService.deleteMatchListItem(itemToDelete.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, index));

@@ -9,6 +9,7 @@ import {Match} from "../data/match"
 import {Type} from "../data/type"
 import {ResultEvent} from "../handler/result.event"
 import {TableService} from "../services/table.service";
+import { WebSocketService } from "../services/web.socket.service";
 
 
 @Component({
@@ -25,8 +26,11 @@ export class ResultViewComponent implements IResultHandler{
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
     constructor(private matchService:MatchService,
-        public matchToStringService: MatchToStringService, private tableService: TableService) {
+        public matchToStringService: MatchToStringService, 
+        private tableService: TableService,
+        private websocketService: WebSocketService) {
             this.reloadMatches("0");
+            this.websocketService.OnResultRefresh.subscribe(this.onResultRefresh.bind(this));
     }
 
     reloadMatches(typeId: any){
@@ -36,6 +40,10 @@ export class ResultViewComponent implements IResultHandler{
             return;
         }
         this.matchService.getPlayedMatchesByTypeId(typeId).subscribe(this.onMatchesLoaded.bind(this));
+    }
+
+    onResultRefresh(){
+        this.reloadMatches(this.currentTypeId);
     }
 
     onMatchesLoaded(result){
