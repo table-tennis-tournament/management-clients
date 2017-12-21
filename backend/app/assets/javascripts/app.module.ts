@@ -20,7 +20,6 @@ import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.c
 import {MatchListComponent} from "./components/match.list.view.component"
 import {DisciplineViewComponent} from "./components/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
-import {StageViewComponent} from "./components/stage.view.component"
 import {ResultModalComponent} from "./components/result.modal.view.component"
 import {SelectMatchModalComponent} from "./components/table/table.select.match.modal.component"
 import {TableAssignViewComponent} from "./components/table.assign.view.component"
@@ -50,6 +49,7 @@ import { RandomMatchService } from "./services/random.match.service"
 import { BaseService } from "./services/base.service"
 import { ToastService } from "./services/toast.service";
 import { SettingsService } from "./services/settings.service";
+import { MatchHelperService } from "./services/match.helper.service";
 
 import { routeConfig } from "./app.routes"
 
@@ -81,7 +81,6 @@ import {DndModule} from "ng2-dnd";
     MatchListComponent,
     DisciplineViewComponent,
     DisciplineGroupViewComponent,
-    StageViewComponent,
     ResultModalComponent,
     TableComponent,
     DisciplineMatchListComponent,
@@ -108,6 +107,7 @@ import {DndModule} from "ng2-dnd";
       MatchListService,
       RandomMatchService,
       BaseService,
+      MatchHelperService,
       ToastService,
       SettingsService,
       {provide: APP_BASE_HREF, useValue : "/" }

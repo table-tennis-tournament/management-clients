@@ -123,8 +123,33 @@ span.circle {
     height: 320px;
 }
 
+
+.discipline-stage-view .collapsible .first-stage-result{
+    height: 60px;
+    padding-top:5px;
+}
+
+.discipline-stage-view .collapsible .second-stage-result{
+    height: 120px;
+    padding-top:40px;
+}
+
+.discipline-stage-view .collapsible .third-stage-result{
+    height: 240px;
+    padding-top:100px;
+}
+
+.discipline-stage-view .collapsible .fourth-stage-result{
+    height: 480px;
+    padding-top:220px;
+}
+
 .no-padding{
     padding:0;
+}
+
+.minimal-padding{
+    padding:5px;
 }
 
 .rotate-90 {
@@ -172,6 +197,19 @@ h4.no-margin{
 #toast-container{
     right: 50%;
     top: 86%;
+}
+
+.result-string-min-width{
+    width: 30px;
+    float: right;
+}
+
+.full-width-30px{
+    width: calc(100% - 30px);
+}
+
+.inline-block-root{
+    display:inline-block;
 }
 /* .toast.toast-middle{
     right: 100%;
