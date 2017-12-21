@@ -18,10 +18,12 @@ export class AppResultComponent{
   public rowCount: number[];
   public selectedTab: DisciplineTab;
   private lineStageClass:string[];
+  public colors: string[];
 
   constructor(private matchService: MatchService, private matchHelperService: MatchHelperService){
     this.loadTypes();
     new TypeColors();
+    this.colors = TypeColors.TYPE_COLORS;
     new DisciplineShortcuts();
     this.initLineStage();
   }
@@ -62,14 +64,16 @@ export class AppResultComponent{
     if(newTab.stages.length === 6){
       var newStage = this.splitStageInTwo(16, newTab.stages[0]);
       var newStage2 = this.splitStageInTwo(8, newTab.stages[1]);
+      var newStage3 = this.splitStageInTwo(4, newTab.stages[2]);
 
       newTab.stages[5] = newStage;
       newTab.stages[4] = newStage2;
+      newTab.stages[3] = newStage3;
 
       newTab.stages[5].textColor = this.lineStageClass[0];
       newTab.stages[4].textColor = this.lineStageClass[1];
       newTab.stages[3].textColor = this.lineStageClass[2];
-      newTab.stages[2].textColor = this.lineStageClass[3];
+      newTab.stages[2].textColor = this.lineStageClass[2];
       newTab.stages[1].textColor = this.lineStageClass[1];
       newTab.stages[0].textColor = this.lineStageClass[0];
       this.selectedTab = newTab;

@@ -13,11 +13,7 @@ export class ResultStageViewComponent{
     private _stage: DisciplineStage;
    
     constructor(){
-        this.lineStageClass = [];
-        this.lineStageClass.push("first-stage");
-        this.lineStageClass.push("second-stage");
-        this.lineStageClass.push("third-stage");
-        this.lineStageClass.push("fourth-stage");
+        
     }
 
     @Input("stage")
