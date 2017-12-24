@@ -37,7 +37,7 @@ export class DisciplineGroupViewComponent{
     set group(value: DisciplineGroup){
         this._group = value;
         this.calculateOpenMatches();
-        // this.setTables();
+        this.setTables();
     } 
 
     onExpandMatches(){
@@ -72,10 +72,13 @@ export class DisciplineGroupViewComponent{
 
     setTables(){
         var numberArray = [];
-        this._group.tableNumbers.forEach(element =>{
-            if(numberArray.indexOf(element) < 0){
-                numberArray.push(element);
-            }
+        this._group.matches.forEach(element =>{
+            element.table.forEach(tableNumber => {
+                if(numberArray.indexOf(tableNumber) < 0){
+                    numberArray.push(tableNumber);
+                }
+            })
+           
         });
         this.tableNumbers = numberArray;
     }

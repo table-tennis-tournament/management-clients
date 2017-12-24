@@ -4,7 +4,7 @@
             <span dnd-draggable [dragEnabled]="true" [dragData]="group.matches">{{group.name}}</span>
             <span class="right" *ngIf="isComplete" ><i class="material-icons">done</i></span>
             <span class="right" *ngIf="!isComplete">{{openMatches}}/{{allMatchCount}}</span>
-            <!-- <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span> -->
+            <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span> 
         </span>
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable" [materializeActions]="collapsibleActions">
             <li > 

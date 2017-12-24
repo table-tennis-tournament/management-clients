@@ -43,5 +43,9 @@ export class ModalSelectTableComponent extends BaseModal{
         this.currentMatches = event.matches;
         this.loadFreeTables();
     }
+
+    onCancel(){
+        this.closeModal();
+    }
      
 }
