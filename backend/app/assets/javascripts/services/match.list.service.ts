@@ -4,7 +4,7 @@ import {Http, Response, Headers, RequestOptions } from "@angular/http"
 import {Observable} from "rxjs/Rx";
 import { BaseService } from "../services/base.service";
 import { MatchListItem } from "../data/match.list.item";
-import { StatusDto } from "app/assets/javascripts/data/status.dto";
+import { StatusDto } from "../data/status.dto";
 
 
 @Injectable()
@@ -66,7 +66,7 @@ export class MatchListService {
         var url = this.addGroupToTableUrl.replace(regEx, groupId.toString());
         regEx = new RegExp("tableNumber");
         url = url.replace(regEx, tableNumber.toString());
-        return this.http.put(url, JSON.stringify(""), {headers: this.getHeaders()})
+        return this.http.put(url, JSON.stringify(""), this.baseService.getHeaders())
              .map(res => res.json());
     }
 
@@ -78,12 +78,13 @@ export class MatchListService {
 
     getMatchlistActive(): Observable<boolean>{
         return this.http.get(this.matchlistActiveUrl).map((res:Response) => res.json())
-               .catch((error:any) => Observable.throw(error.json().error || "Server error"));
+               .catch(this.baseService.HandleError);
     }
 
-    setMatchlistActive(isActive:boolean):Observable<any>{
-        var query = this.matchlistActiveUrl + "?isActive="+isActive.toString();
-        return this.http.post(query, JSON.stringify({}), {headers: this.getHeaders()});
+    setMatchlistActive(isActive:boolean):Observable<StatusDto>{
+        var query = this.matchlistActiveUrl + "/"+isActive.toString();
+        return this.http.get(query).map((res:Response) => res.json())
+               .catch(this.baseService.HandleError);
     }
 
 }
