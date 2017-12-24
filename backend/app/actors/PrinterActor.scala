@@ -48,6 +48,9 @@ class PrinterActor extends Actor {
         .replaceAll("""\[id\]""", allMatchInfo.ttMatch.id.toString)
         .replaceAll("""\[type\]""", allMatchInfo.ttType.name)
         .replaceAll("""\[matchtype\]""", allMatchInfo.matchType.name)
+
+
+
       val editorPane = new JEditorPane()
       val htmlEditor = new HTMLEditorKit()
       editorPane.setEditorKit(htmlEditor)

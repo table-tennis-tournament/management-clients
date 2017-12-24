@@ -55,7 +55,8 @@ libraryDependencies ++= Seq(
 
   "org.webjars.npm" % "tslint-eslint-rules" % "3.1.0",
   "org.webjars.npm" % "codelyzer" % "0.0.28",
-  "net.sf.cssbox" % "cssbox" % "4.4"
+  "net.sf.cssbox" % "cssbox" % "4.4",
+  "it.innove" % "play2-pdf" % "1.6.0"
 )
 
 dependencyOverrides += "org.webjars.npm" % "minimatch" % "3.0.0"
