@@ -70,6 +70,14 @@ span.circle {
 
 .waiting-list-drop-zone {
     min-height: 100px;
+    width: 200px;
+    height: 100px;
+    position: fixed;
+}
+
+.waiting-list-sorting-area{
+    min-height: 100px;
+    margin-top: 150px;
 }
 
 .waitlist-item-text{

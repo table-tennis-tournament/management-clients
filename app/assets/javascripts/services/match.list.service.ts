@@ -57,7 +57,7 @@ export class MatchListService {
         var url = this.addGroupListItemUrl.replace(regEx, groupId.toString());
         regEx = new RegExp("position");
         url = url.replace(regEx, position.toString());
-        return this.http.put(url, JSON.stringify(""), {headers:  this.getHeaders()})
+        return this.http.put(url, JSON.stringify(""), this.baseService.getHeaders())
              .map(res => res.json());
     }
 
@@ -68,12 +68,6 @@ export class MatchListService {
         url = url.replace(regEx, tableNumber.toString());
         return this.http.put(url, JSON.stringify(""), this.baseService.getHeaders())
              .map(res => res.json());
-    }
-
-    getHeaders():Headers{
-        var headers = new Headers();
-        headers.append("Content-Type", "application/json");
-        return headers;
     }
 
     getMatchlistActive(): Observable<boolean>{

@@ -74,17 +74,21 @@ export class TableComponent implements IResultHandler{
     };
 
     onMatchAssigned(dragData){
-        this.table.matchinfo=[];
-        this.table.matchinfo = dragData.matches;
-        this.onTableAssigned.emit(dragData);
-        this.onTableRefresh();
+        this.toastService.toast("Tisch zugewiesen");
+        // this.table.matchinfo=[];
+        // this.table.matchinfo = dragData.matches;
+        // this.onTableAssigned.emit(dragData);
+        // this.onTableRefresh();
     }
 
     onResult(){
-        var resultEvent = new ResultEvent();
-        resultEvent.handler = this;
-        resultEvent.match = this.table.matchinfo[0];
-        this.onResultForMatch.emit(resultEvent);
+        if(this.isSingleMatch()){
+            var resultEvent = new ResultEvent();
+            resultEvent.handler = this;
+            resultEvent.match = this.table.matchinfo[0];
+            this.onResultForMatch.emit(resultEvent);
+        }
+       
     }
 
     isSingleMatch(){
