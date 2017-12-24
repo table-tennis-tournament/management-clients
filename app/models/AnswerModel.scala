@@ -1,6 +1,8 @@
 package models
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.functional.syntax._
+
+import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
 object AnswerModel{
   implicit val answerWrites = new Writes[Answer] {
@@ -37,5 +39,10 @@ object SettingModel{
       )
     }
   }
+
+  implicit val settingReads: Reads[Setting] = (
+    (JsPath \ "key").read[String] and
+      (JsPath \ "value").read[String]
+    )(Setting.apply _)
 }
 case class Setting(key: String, value: Any)
