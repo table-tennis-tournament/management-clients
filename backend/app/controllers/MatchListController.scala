@@ -99,7 +99,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
   def setActive(isActive: Boolean) = Action {
     this.isActiv = isActive
     pub ! MatchListActive
-    Ok("set to " + isActive.toString)
+    Ok(Json.toJson(Answer(true,"set to " + isActive.toString)))
   }
 
   def isActive = Action {
