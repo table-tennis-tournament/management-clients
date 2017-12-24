@@ -137,6 +137,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
+  def getTTTableFromMatchId(id: Long): Seq[Int] = {
+    ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a)
+  }
+
   class TTTablesTable(tag: Tag) extends Table[TTTableDAO](tag, "tables") {
 
     def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
@@ -266,8 +270,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val g = getGroup(ttMatch.groupId)
     val pl = isPlayable(ttMatch)
     val inML = isInMatchList(ttMatch)
+    val tn = getTTTableFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML))
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
     else
       None
   }

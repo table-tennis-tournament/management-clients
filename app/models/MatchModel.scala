@@ -70,7 +70,8 @@ object MatchModel {
       "type" -> allMatchInfo.ttType,
       "group" -> allMatchInfo.group,
       "isPlayable" -> allMatchInfo.isPlayable,
-      "isInWaitingList" -> allMatchInfo.isInWaitingList
+      "isInWaitingList" -> allMatchInfo.isInWaitingList,
+      "table" -> allMatchInfo.table
     )
   }
 
@@ -106,7 +107,8 @@ case class AllMatchInfo(
     ttType: Type,
     group: Option[Group],
     isPlayable: Boolean,
-    isInWaitingList: Boolean
+    isInWaitingList: Boolean,
+    table: Seq[Int]
   )
 
 case class TTMatch(

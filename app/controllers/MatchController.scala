@@ -34,8 +34,9 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     val g = tables.getGroup(ttMatch.groupId)
     val pl = tables.isPlayable(ttMatch)
     val inML = tables.isInMatchList(ttMatch)
+    val tn = tables.getTTTableFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML))
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
     else
       None
   }
