@@ -14,7 +14,7 @@ export class MatchDto {
 	type: Type;
 	matchType: MatchType;
 	group: Group;
-	table: TableLight;
+	table:  number[];
 	isPlayable: boolean;
 	isInWaitingList: boolean;
 }
