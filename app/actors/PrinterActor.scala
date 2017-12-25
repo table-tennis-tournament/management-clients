@@ -2,7 +2,7 @@ package actors
 
 import java.awt.print.PrinterJob
 import javax.print.PrintServiceLookup
-import javax.print.attribute.HashPrintRequestAttributeSet
+import javax.print.attribute.{Attribute, DocAttributeSet, HashDocAttributeSet, HashPrintRequestAttributeSet}
 import javax.print.attribute.standard.{MediaSizeName, OrientationRequested}
 import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
@@ -40,7 +40,10 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
   var html = scala.io.Source.fromFile("templates/print1.html").mkString
   var aset = new HashPrintRequestAttributeSet
   aset.add(MediaSizeName.ISO_A6)
-  aset.add(OrientationRequested.LANDSCAPE)
+  aset.add(OrientationRequested.PORTRAIT)
+  var docSet = new HashDocAttributeSet()
+  docSet.add(MediaSizeName.ISO_A6)
+
 
   def receive = {
     case Print(allMatchInfo) =>
@@ -55,8 +58,8 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
       val printJob = printService.createPrintJob
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
 
-      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, null)
-      printJob.print(documentToBePrinted, null)
+      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, docSet)
+      printJob.print(documentToBePrinted, aset)
 
     case GetPrinterList =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq

@@ -234,9 +234,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
-  def startMatch(matchId: Long, tableId: Long): Boolean= {
+  def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
     Logger.debug("start match")
-    if(printOnStart) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
     if(ttTablesSeq.filter(_.matchId == matchId).isEmpty) {
       ttMatchSeq = ttMatchSeq map { m =>
         if (m.id == matchId) m.copy(isPlaying = true)
@@ -246,6 +245,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
         if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
         else t
       }
+      if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
       true
     } else {
       false
