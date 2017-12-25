@@ -151,6 +151,11 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(tables.allTypes.filter(_.active).sortBy(_.name)))
   }
 
+  def deleteMatch(id: Long) = Action {
+    tables.deleteMatch(id)
+    Ok(Json.toJson(Answer(true, "delete match")))
+  }
+
   def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true) = Action{ request =>
     request.body.asJson match {
       case Some(matchIdsJson) => {
