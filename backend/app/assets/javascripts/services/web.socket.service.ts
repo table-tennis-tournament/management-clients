@@ -10,6 +10,7 @@ export class WebSocketService {
     public OnTableRefresh: EventEmitter<any> = new EventEmitter<any>();
     public OnWaitinglistRefresh: EventEmitter<any> = new EventEmitter<any>();
     public OnResultRefresh: EventEmitter<any> = new EventEmitter<any>();
+    public OnMatchToTable: EventEmitter<any> = new EventEmitter<any>();
 
     private ws: WebSocket;
 
@@ -53,6 +54,7 @@ export class WebSocketService {
         }
         if(message.action === "MatchToTable"){
             this.OnTableRefresh.emit();
+            this.OnMatchToTable.emit();
         }
         if (message.action === "MatchListAdd" ||
             message.action === "MatchListDelete" ||

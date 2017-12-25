@@ -26,6 +26,7 @@ export class DisciplineMatchListComponent{
         this.colorArray = TypeColors.TYPE_COLORS;
         this.disciplineType = DisciplineShortcuts.TYPE;
         this.websocketService.OnWaitinglistRefresh.subscribe(this.onWaitinglistRefresh.bind(this));
+        this.websocketService.OnMatchToTable.subscribe(this.onRefreshList.bind(this));
     }
 
     private getAllMatches(){
@@ -48,6 +49,8 @@ export class DisciplineMatchListComponent{
             this.getWaitingList();
         }
     }
+
+
 
     public onTableAssigned(dragData: any){
         if(!dragData.matches){
@@ -74,6 +77,10 @@ export class DisciplineMatchListComponent{
 
     onTypeChanged(event){
         this.onDisciplineChanged(event);
+    }
+
+    onRefreshList(){
+        this.onDisciplineChanged(this.selectedDiscipline);
     }
 
     onDisciplineChanged(typeId: any){
