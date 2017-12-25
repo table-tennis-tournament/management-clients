@@ -7,6 +7,7 @@ import { BaseModal } from "../../components/modals/base.modal";
 import { ISelectTableHandler } from "../../handler/select.table.handler";
 import { SelectTableEvent } from "app/assets/javascripts/handler/select.table.event";
 import { MatchDto } from "../../data/match.dto";
+import { ToastService } from "../../services/toast.service";
 
 
 @Component({
@@ -19,7 +20,7 @@ export class ModalSelectTableComponent extends BaseModal{
     public selectedTable: any;
     private currentHandler: ISelectTableHandler;
 
-    constructor(private tableService: TableService){
+    constructor(private tableService: TableService, private toastService: ToastService){
         super();
     }
 
@@ -29,6 +30,10 @@ export class ModalSelectTableComponent extends BaseModal{
 
     onFreeTablesLoaded(tables: TableDto[]){
         this.tables = tables;
+        if(this.tables.length < 1){
+            this.toastService.toast("keine freien Tische");
+            return;
+        }
         this.selectedTable = this.tables[0].table.number;
         this.openModal();
     }
@@ -42,6 +47,10 @@ export class ModalSelectTableComponent extends BaseModal{
         this.currentHandler = event.handler;
         this.currentMatches = event.matches;
         this.loadFreeTables();
+    }
+
+    onCancel(){
+        this.closeModal();
     }
      
 }

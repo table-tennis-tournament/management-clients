@@ -1,5 +1,6 @@
 <span>
         <team-match-item [team]="match.team1" [showDisciplines]="true"></team-match-item> -
         <team-match-item [team]="match.team2" [showDisciplines]="true"></team-match-item>
+        <span *ngIf="match.table[0]" class="circle right">{{match.table[0]}}</span>
         <i *ngIf="match.match.result"  class="material-icons right">done</i>
 </span>

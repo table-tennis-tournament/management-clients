@@ -16,4 +16,8 @@ class Application @Inject()(table: Tables) extends Controller {
     Ok(views.html.index())
   }
 
+  def result = Action {
+    Ok(views.html.result())
+  }
+
 }

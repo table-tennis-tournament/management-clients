@@ -22,7 +22,6 @@ export class DisciplineTab{
         return Array.from(Array(Math.ceil(this.stages.length / 3)).keys());
     }
 
-
     constructor(id: number, name: string, kind: number){
         this.id = id;
         this.name = name;

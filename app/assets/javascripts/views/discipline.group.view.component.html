@@ -4,7 +4,7 @@
             <span dnd-draggable [dragEnabled]="true" [dragData]="group.matches">{{group.name}}</span>
             <span class="right" *ngIf="isComplete" ><i class="material-icons">done</i></span>
             <span class="right" *ngIf="!isComplete">{{openMatches}}/{{allMatchCount}}</span>
-            <!-- <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span> -->
+            <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span> 
         </span>
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable" [materializeActions]="collapsibleActions">
             <li > 
@@ -23,8 +23,16 @@
                     <div class="collection">
                         <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" (dblclick)="onResultClicked(currentMatch)"
                             dnd-draggable [dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList" [dragData]="currentMatch">
-                                {{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}  
+                            <div>
+                                <team-match-item [team]="currentMatch.team1" [showDisciplines]="false"></team-match-item>-
+                                <team-match-item [team]="currentMatch.team2" [showDisciplines]="false"></team-match-item>
+                                <span *ngIf="currentMatch.table[0]" class="circle right">{{currentMatch.table[0]}}</span>
+                                <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i>
+                            </div>  
+                        </a>
+                                <!-- {{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}  
                                 <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a>
+                                <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a> -->
                     </div>
                 </div>
             </li>
