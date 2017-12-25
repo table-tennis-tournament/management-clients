@@ -19,6 +19,8 @@ export class AppResultComponent{
   public selectedTab: DisciplineTab;
   private lineStageClass:string[];
   public colors: string[];
+  private changeTime:number = 10000;
+  private currentIndex:number = 0;
 
   constructor(private matchService: MatchService, private matchHelperService: MatchHelperService){
     this.loadTypes();
@@ -46,13 +48,35 @@ export class AppResultComponent{
     types.forEach((currentType)=> this.currentTabs.push(new DisciplineTab(currentType.id, currentType.name, currentType.kind)));
     this.rowCount = Array.from(Array(Math.ceil(this.currentTabs.length / 12)).keys());
     if(this.currentTabs.length > 0){
-      this.selectedTab = this.currentTabs[0];
-      this.setTabForId(this.selectedTab.id);
+      this.setTabForIndex(this.currentIndex);
     }
+    this.startTimer();
   }
 
-  setTabForId(tabId: number){
-    this.matchService.getMatchesByType(tabId).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
+  startTimer(){
+    setTimeout(this.refreshOrReloadDiscipline.bind(this), this.changeTime);
+  }
+
+  refreshOrReloadDiscipline(){
+    if(this.selectedTab.stages.length > 6){
+      this.selectedTab.stages.splice(0, 6);
+      this.startTimer();
+      return;
+    }
+    if(this.selectedTab.groups.length > 12){
+      this.selectedTab.groups.splice(0, 12);
+      this.startTimer();
+      return;
+    }
+    
+    this.currentIndex = (this.currentIndex +1) % this.currentTabs.length;
+    this.setTabForIndex(this.currentIndex );
+    this.startTimer();
+  }
+
+  setTabForIndex(index: number){
+    this.selectedTab = this.currentTabs[index];
+    this.matchService.getMatchesByType(this.selectedTab.id).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
   }
 
   handleSetSelectedTab(matches: MatchDto[]){
@@ -66,6 +90,9 @@ export class AppResultComponent{
       var newStage2 = this.splitStageInTwo(8, newTab.stages[1]);
       var newStage3 = this.splitStageInTwo(4, newTab.stages[2]);
 
+      newTab.stages[6] = newTab.stages[3];
+      newTab.stages[7] = newTab.stages[4];
+      newTab.stages[8] = newTab.stages[5];
       newTab.stages[5] = newStage;
       newTab.stages[4] = newStage2;
       newTab.stages[3] = newStage3;
@@ -92,8 +119,8 @@ export class AppResultComponent{
   }
 
   onTabSelected(selectedTab: DisciplineTab){
-    this.selectedTab = selectedTab;
-    this.setTabForId(selectedTab.id);
+    this.currentIndex = this.currentTabs.indexOf(selectedTab);
+    this.setTabForIndex(this.currentIndex);
   }
 
 }
