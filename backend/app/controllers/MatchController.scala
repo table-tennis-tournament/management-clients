@@ -151,7 +151,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(tables.allTypes.filter(_.active).sortBy(_.name)))
   }
 
-  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true) = Action{ request =>
+  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true) = Action{ request =>
     request.body.asJson match {
       case Some(matchIdsJson) => {
         matchIdsJson.validate[Seq[Long]].asOpt match {
@@ -181,10 +181,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
                   case Some(mlItem) => {
                     Logger.info("delMatchList")
                     tables.delMatchListItem(mlItem.uuid.get, matchId)
-                    tables.startMatch(matchId, table.id)
+                    tables.startMatch(matchId, table.id, print)
                   }
                   case _ => {
-                    tables.startMatch(matchId, table.id)
+                    tables.startMatch(matchId, table.id, print)
                   }
                 }
               }
