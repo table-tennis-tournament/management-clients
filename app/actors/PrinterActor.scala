@@ -8,6 +8,10 @@ import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
 
 import akka.actor._
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import dao.Tables
+import it.innove.play.pdf.PdfGenerator
 import models.{AllMatchInfo, TTMatch}
 import play.api.Logger
 
@@ -28,7 +32,7 @@ object PrinterActor {
 
 
 
-class PrinterActor extends Actor {
+class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
   import actors.PrinterActor._
 
   Logger.debug("starting PrinterActor")
@@ -40,23 +44,20 @@ class PrinterActor extends Actor {
 
   def receive = {
     case Print(allMatchInfo) =>
-      val newHtml = html
-        .replaceAll("""\[name1\]""", allMatchInfo.player1.map(p => p.lastName + ", " + p.firstName).mkString(" / "))
-        .replaceAll("""\[name2\]""", allMatchInfo.player2.map(p => p.lastName + ", " + p.firstName).mkString(" / "))
-        .replaceAll("""\[club1\]""", allMatchInfo.player1.map(p => p.club.get.clubName).mkString(" / "))
-        .replaceAll("""\[club2\]""", allMatchInfo.player2.map(p => p.club.get.clubName).mkString(" / "))
-        .replaceAll("""\[id\]""", allMatchInfo.ttMatch.id.toString)
-        .replaceAll("""\[type\]""", allMatchInfo.ttType.name)
-        .replaceAll("""\[matchtype\]""", allMatchInfo.matchType.name)
+      Logger.debug("start printing")
+      import javax.print.DocFlavor
+      import javax.print.SimpleDoc
+      import java.io.ByteArrayInputStream
 
+      val docType = DocFlavor.INPUT_STREAM.AUTOSENSE
 
+      //fetch documents to be printed)
+      val printJob = printService.createPrintJob
+      val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
 
-      val editorPane = new JEditorPane()
-      val htmlEditor = new HTMLEditorKit()
-      editorPane.setEditorKit(htmlEditor)
-      editorPane.setDocument(htmlEditor.createDefaultDocument())
-      editorPane.setText(newHtml)
-      editorPane.print(null, null, false, printService, aset, false)
+      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, null)
+      printJob.print(documentToBePrinted, null)
+
     case GetPrinterList =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq
       sender() ! printers
