@@ -252,6 +252,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
+  def deleteMatch(matchId: Long) = ttMatchSeq = ttMatchSeq.filter(_.id != matchId)
+
   def startGroup(matchIds: Seq[Long], tableId: Long) = {
     matchIds foreach { mId =>
       startMatch(mId, tableId)
