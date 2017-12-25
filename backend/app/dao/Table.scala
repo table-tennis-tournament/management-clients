@@ -30,7 +30,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   import PortableJodaSupport._
 
-  var printOnStart: Boolean = false
+  var printOnStart: Boolean = true
 
   // Tables
   private val ttTables = TableQuery[TTTablesTable]
