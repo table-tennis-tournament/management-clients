@@ -13,6 +13,7 @@ import { DisciplineStage } from "../../data/discipline.stage";
   templateUrl:"assets/javascripts/views/results/main_result.component.html"
 })
 export class AppResultComponent{
+  currentTimer: number;
 
   public currentTabs: DisciplineTab[];
   public rowCount: number[];
@@ -54,7 +55,8 @@ export class AppResultComponent{
   }
 
   startTimer(){
-    setTimeout(this.refreshOrReloadDiscipline.bind(this), this.changeTime);
+    clearTimeout(this.currentTimer);
+    this.currentTimer = setTimeout(this.refreshOrReloadDiscipline.bind(this), this.changeTime);
   }
 
   refreshOrReloadDiscipline(){
@@ -63,7 +65,7 @@ export class AppResultComponent{
       this.startTimer();
       return;
     }
-    if(this.selectedTab.groups.length > 12){
+    if(this.selectedTab.groups.length > 12 && !this.selectedTab.stages[0]){
       this.selectedTab.groups.splice(0, 12);
       this.startTimer();
       return;
@@ -81,8 +83,12 @@ export class AppResultComponent{
 
   handleSetSelectedTab(matches: MatchDto[]){
     var newTab = this.matchHelperService.getSingle(matches, this.selectedTab);
+    var that = this;
     if(newTab.stages.length < 6){
       this.selectedTab = newTab;
+      this.selectedTab.stages.forEach((element, elementIndex) =>{
+        element.textColor = that.lineStageClass[elementIndex];
+      })
       return;
     }
     if(newTab.stages.length === 6){
