@@ -13,6 +13,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import akka.pattern.ask
 import akka.util.Timeout
 import dao.Tables
+import it.innove.play.pdf.PdfGenerator
 import models.Answer
 
 import scala.concurrent.duration._
@@ -25,6 +26,7 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
   import models.AnswerModel._
 
   def print(id: Long) = Action {
+    Logger.debug("print")
     tables.getMatch(id) match {
       case Some(ttMatch) => tables.getAllMatchInfo(ttMatch) match {
         case Some(allMatchInfo) =>

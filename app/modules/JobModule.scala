@@ -16,7 +16,7 @@ class JobModule extends AbstractModule with AkkaGuiceSupport {
     bind(classOf[Scheduler]).asEagerSingleton()
     bind(classOf[Tables]).asEagerSingleton()
     bind(classOf[Startup]).asEagerSingleton()
-    bindActor[PrinterActor]("printer_actor", _=>PrinterActor.props)
+    bindActor[PrinterActor]("printer_actor")
     bindActor[Publisher]("publisher_actor", _=>Publisher.props)
   }
 }
