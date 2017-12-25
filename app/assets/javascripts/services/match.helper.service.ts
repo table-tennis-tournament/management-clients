@@ -58,12 +58,6 @@ export class MatchHelperService {
         var currentGroup = currentItemTab.groups[currentItem.group.id];
         currentGroup.matches.push(currentItem);
 
-        if(currentItem.table){
-            if(currentItem.match.isPlayed === false){
-                currentGroup.tableNumbers.push(currentItem.table.number);
-            }
-        }
-        
         var allPlayers = currentItem.team1.concat(currentItem.team2);
         for(var playerIndex = 0; playerIndex < allPlayers.length; playerIndex++){
             if(!allPlayerArray[allPlayers[playerIndex].id]){
