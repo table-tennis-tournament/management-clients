@@ -1,6 +1,21 @@
 <h4>Einstellungen</h4>
 <br/>
 <div class="row">
+  <div class="col s2">
+    <p>
+      <input type="checkbox" class="filled-in" [(ngModel)]="isPrintForAssign" id="filled-in-box" (change)="onIsPrintForAssignChange()" />
+      <label for="filled-in-box">Druck bei Ausruf</label>
+    </p>
+  </div> 
+  <div class="col s2">
+    <p>
+      <input type="checkbox" class="filled-in" [(ngModel)]="assignAutomatically" id="automatically-assign" (change)="onAutomaticallyAssign()" />
+      <label for="automatically-assign">Automatisch Ausrufen</label>
+    </p>
+  </div> 
+  </div>
+
+<div class="row">
   <div class="col s4">
     <select  materialize="material_select" [(ngModel)]="selectedPrinter" >
             <option *ngFor="let printer of printers" [value]="printer">
@@ -12,12 +27,4 @@
   <div class="col s6">
     <a class="waves-effect waves-light btn" (click)="onSaveClicked()"><i class="material-icons left">save</i>Speichern</a>
   </div>
-</div>
-<div class="row">
-  <div>
-    <p>
-      <input type="checkbox" class="filled-in" [(ngModel)]="isPrintForAssign" id="filled-in-box" (change)="onIsPrintForAssignChange()" />
-      <label for="filled-in-box">Druck bei Ausruf</label>
-    </p>
-  </div> 
 </div>

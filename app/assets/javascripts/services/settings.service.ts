@@ -11,6 +11,7 @@ export class SettingsService {
   private setPrinterUrl = "printer/set/printerToSet";
   private setPrintToAssignUrl = "printer/setprintonstart/valueToSet";
   private getAllSettingsUrl = "settings/all ";
+  private matchlistActiveUrl = "/matchlist/active";
 
   constructor(private http: Http, private baseService: BaseService){}
 
@@ -38,5 +39,11 @@ export class SettingsService {
     return this.http.get(this.getAllSettingsUrl).map((res:Response) => res.json())
                 .catch(this.baseService.HandleError);
   }
+
+  setMatchlistActive(isActive:boolean):Observable<StatusDto>{
+    var query = this.matchlistActiveUrl + "/"+isActive.toString();
+    return this.http.get(query).map((res:Response) => res.json())
+           .catch(this.baseService.HandleError);
+}
 
 }

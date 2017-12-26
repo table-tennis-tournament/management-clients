@@ -17,7 +17,7 @@ export class MatchListService {
     private deleteGroupListItemUrl = "matchlist/deleteGroup/itemId ";
     private addGroupListItemUrl = "matchlist/addGroup/groupId/position ";
     private addGroupToTableUrl = "/matchlist/grouptotable/groupId/tableNumber ";
-    private matchlistActiveUrl = "/matchlist/active";
+    
       
     constructor(private http: Http, private baseService: BaseService){}
 
@@ -70,15 +70,11 @@ export class MatchListService {
              .map(res => res.json());
     }
 
-    getMatchlistActive(): Observable<boolean>{
-        return this.http.get(this.matchlistActiveUrl).map((res:Response) => res.json())
-               .catch(this.baseService.HandleError);
-    }
+    // getMatchlistActive(): Observable<boolean>{
+    //     return this.http.get(this.matchlistActiveUrl).map((res:Response) => res.json())
+    //            .catch(this.baseService.HandleError);
+    // }
 
-    setMatchlistActive(isActive:boolean):Observable<StatusDto>{
-        var query = this.matchlistActiveUrl + "/"+isActive.toString();
-        return this.http.get(query).map((res:Response) => res.json())
-               .catch(this.baseService.HandleError);
-    }
+  
 
 }
