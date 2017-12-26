@@ -1,4 +1,4 @@
-import {Component} from "@angular/core"
+import {Component, state} from "@angular/core"
 import { SettingsService } from "../../services/settings.service";
 import { StatusDto } from "../../data/status.dto";
 import { ToastService } from "../../services/toast.service";
@@ -13,6 +13,7 @@ export class SettingsComponent{
     public printers: string[];
     public selectedPrinter: string;
     public isPrintForAssign: boolean;
+    public assignAutomatically: boolean;
 
     constructor(private settingsService:SettingsService, private toastService: ToastService) {
         this.settingsService.getAllPrinters().subscribe(this.onPrinterLoaded.bind(this));
@@ -44,17 +45,29 @@ export class SettingsComponent{
         this.settingsService.setIsPrintForAssign(this.isPrintForAssign).subscribe(this.onSetPrintForAssignComplete.bind(this));
     }
 
+    onAutomaticallyAssign(){
+        this.settingsService.setMatchlistActive(this.assignAutomatically).subscribe(this.onAutomaticAssign.bind(this));
+    }
+
+
     onSetPrintForAssignComplete(status: StatusDto){
-        if(status.successful){
-            this.toastService.toast("Wert gespeichert");
-            return;
-        }
-        this.toastService.toast(status.message);
+        this.printSuccessOrMessage(status, "Druck bei Ausruf gespeichert");
     }
 
     onPrinterSet(status: StatusDto){
+        this.printSuccessOrMessage(status, "Drucker gespeichert");
+    }
+
+    onAutomaticAssign(status: StatusDto){
+        this.printSuccessOrMessage(status, "Warteliste automatisch gespeichert");
+    }
+
+   
+    
+
+    printSuccessOrMessage(status: StatusDto, message: string){
         if(status.successful){
-            this.toastService.toast("Drucker gespeichert");
+            this.toastService.toast(message);
             return;
         }
         this.toastService.toast(status.message);

@@ -16,24 +16,6 @@ export class TableAssignViewComponent{
 
     constructor(private matchListService:MatchListService) {
         this.selectedOption = "2";
-        this.loadActiveWaitingList();
-    }
-
-    loadActiveWaitingList(){
-        this.matchListService.getMatchlistActive().subscribe(this.onMatchlistActiveLoaded.bind(this));
-    }
-
-    onMatchlistActiveLoaded(_isActive){
-        this.isWaitingListActive = _isActive;
-    }
-
-    onMatchlistTypeChange(event){
-        console.log("inside on matchlist changed");
-    }
-
-    onWaitingListActiveChanged(){
-        this.matchListService.setMatchlistActive(this.isWaitingListActive).
-            subscribe(this.onSetWaitingListActiveSuccess.bind(this), this.onError.bind(this));
     }
 
     onTableAssigned($event:ResultEvent){
