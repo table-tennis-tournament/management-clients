@@ -171,7 +171,7 @@ export class TableComponent implements IResultHandler{
     }
 
     onPrinted(status: StatusDto){
-        this.toastService.toastMessageOrShowStatus(status, "An Drucker gesendet.");
+        this.toastService.toastMessageOrShowStatus(status, "An Drucker gesendet");
     }
 
     lockTableAfterRequestSuccessfull(){

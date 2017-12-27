@@ -40,7 +40,7 @@ export class MatchListService {
 
     addMatchListItem(matches: MatchListItem): Observable<StatusDto>{
         return this.http.post(this.addMatchListItemUrl, JSON.stringify(matches), this.baseService.getHeaders())
-             .map(res => res.json());
+             .map(res => res.json()).catch(this.baseService.HandleError);
     }
 
     transferMatchListItem(match: MatchListItem, newPosition: number): Observable<StatusDto>{

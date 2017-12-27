@@ -1,13 +1,22 @@
 import {Injectable} from "@angular/core"
 import {Observable} from "rxjs/Rx";
 import {Http, Response, Headers, RequestOptions, RequestOptionsArgs } from "@angular/http"
+import { StatusDto } from "../data/status.dto";
 
 @Injectable()
 export class BaseService {
 
-    public HandleError(error:any, obs: Observable<any>): Observable<any>{
-        Observable.throw(error.json().error || "Server error")
-        return null;
+    public HandleError(error: Response | any): Observable<StatusDto>{
+        var errMsg = "";
+        var newStatus = new StatusDto();
+        if (error instanceof Response) {
+            newStatus = error.json() || newStatus;
+            return Observable.throw(newStatus);
+            
+        }
+        errMsg = error.message ? error.message : error.toString();
+        newStatus.message = errMsg;
+        return Observable.throw(newStatus);
     }
 
 

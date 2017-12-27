@@ -6,6 +6,7 @@ import {MatchListService} from "../services/match.list.service";
 import { MatchDto } from "../data/match.dto";
 import { StatusDto } from "../data/status.dto";
 import { WebSocketService } from "../services/web.socket.service";
+import { ToastService } from "../services/toast.service";
 
 @Component({
     selector: "match-list",
@@ -17,7 +18,8 @@ export class MatchListComponent{
     public colorArray: string[] = [];
 
     constructor(private matchListService: MatchListService,
-                private websocketService: WebSocketService){
+                private websocketService: WebSocketService,
+                private toastService: ToastService){
        this.loadWaitingList();
        this.colorArray = TypeColors.TYPE_COLORS;
        this.websocketService.OnWaitinglistRefresh.subscribe(this.onWaitinglistRefresh.bind(this));
@@ -62,7 +64,7 @@ export class MatchListComponent{
         matchDto.matchinfo = matchinfo;
         this.matchListService.addMatchListItem(matchListItem).subscribe(
             this.onMatchlistItemAdded.bind(this, matchDto),
-            error =>console.log(error)
+            this.onMatchlistAddError.bind(this)
         );
     }
 
@@ -74,12 +76,16 @@ export class MatchListComponent{
     onDropSuccess($event){
         var matchListItem = $event.match.matchListItem;
         var newPosition = this.getListIndex($event.match.matchListItem.id);
-        this.matchListService.transferMatchListItem(matchListItem, newPosition).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem));
+        this.matchListService.transferMatchListItem(matchListItem, newPosition).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem), this.onMatchlistAddError.bind(this));
     }
 
     onMatchlistAdded(match: MatchListItem, status: StatusDto){
         console.log(status);
         // this.matches[match.position].matchListItem.id = status.data;
+    }
+
+    onMatchlistAddError(status:StatusDto){
+        this.toastService.toast(status.message);
     }
 
     getListIndex(matchListId){
@@ -101,9 +107,9 @@ export class MatchListComponent{
     }
 
     onMatchlistItemDeleted(index){
-        if(index < 0){
-            return;
-        }
-        this.matches.splice(index, 1);
+        // if(index < 0){
+        //     return;
+        // }
+        // this.matches.splice(index, 1);
     }
 }
