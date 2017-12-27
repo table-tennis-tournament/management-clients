@@ -21,6 +21,7 @@ import { StatusDto } from "../data/status.dto";
 import { ToastService } from "../services/toast.service";
 import { SelectTableEvent } from "../handler/select.table.event";
 import { AssignSecondTableHandler } from "../handler/assign.second.table.handler";
+import { PrintMatchHandler } from "../handler/print.match.handler";
 
 @Component({
     selector: "tt-table",
@@ -160,16 +161,17 @@ export class TableComponent implements IResultHandler{
     }
 
     onPrint(){
-        this.tableService.printMatch(this.table.matchinfo[0].match.id).subscribe(this.onPrinted.bind(this));
+        if(this.isSingleMatch()){
+            var matchId = this.table.matchinfo[0].match.id;
+            this.tableService.printMatch(this.table.matchinfo[0].match.id).subscribe(this.onPrinted.bind(this));
+            return;
+        }
+        this.fireSelectMatchEvent(new PrintMatchHandler(this.tableService, this.toastService))
+       
     }
 
     onPrinted(status: StatusDto){
-        if(status.successful){
-            this.toastService.toast("An Drucker gesendet");
-            return;
-        }
-        this.toastService.toast(status.message);
-        
+        this.toastService.toastMessageOrShowStatus(status, "An Drucker gesendet.");
     }
 
     lockTableAfterRequestSuccessfull(){

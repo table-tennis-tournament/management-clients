@@ -14,6 +14,7 @@ import {BaseService} from "./base.service"
 
 @Injectable()
 export class TableService {
+
   private allTablesUrl = "table/all";
   private tableByIdUrl = "table/tableNumber";
   private lockTableUrl = "table/tableNumber/lock";
@@ -99,6 +100,13 @@ export class TableService {
   printMatch(matchId: number):Observable<StatusDto>{
     var regEx = new RegExp("matchId");
     var url = this.printMatchUrl.replace(regEx, matchId.toString());
+    return this.http.get(url).map((res:Response) => res.json())
+            .catch(this.baseService.HandleError);
+  }
+
+  printMatches(matchIds: number[]): Observable<StatusDto> {
+    var regEx = new RegExp("matchId");
+    var url = this.printMatchUrl.replace(regEx, matchIds[0].toString());
     return this.http.get(url).map((res:Response) => res.json())
             .catch(this.baseService.HandleError);
   }
