@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MaterializeDirective, MaterializeAction } from 'angular2-materialize';
+import { StatusDto } from '../data/status.dto';
 
 declare var Materialize:any;
 
@@ -14,6 +15,14 @@ export class ToastService {
 
   toastSuccess(){
     this.toast("Daten geladen.", 1000);
+  }
+
+  toastMessageOrShowStatus(status: StatusDto, message: string){
+    if(status.successful){
+      this.toast(message);
+      return;
+    }
+    this.toast(status.message);
   }
 
 }
