@@ -74,6 +74,7 @@ span.circle {
     width: 200px;
     height: 100px;
     position: fixed;
+    z-index: 999999;
 }
 
 .waiting-list-sorting-area{
