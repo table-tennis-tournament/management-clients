@@ -37,7 +37,6 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
 
   Logger.debug("starting PrinterActor")
   var printService = PrintServiceLookup.lookupDefaultPrintService()
-  var html = scala.io.Source.fromFile("templates/print1.html").mkString
   var aset = new HashPrintRequestAttributeSet
   aset.add(MediaSizeName.ISO_A6)
   aset.add(OrientationRequested.PORTRAIT)
@@ -54,7 +53,6 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
 
       val docType = DocFlavor.INPUT_STREAM.AUTOSENSE
 
-      //fetch documents to be printed)
       val printJob = printService.createPrintJob
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
 
