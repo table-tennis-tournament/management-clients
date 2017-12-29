@@ -2,7 +2,6 @@ import {Component, EventEmitter, Injectable, Input, Output, ElementRef, Renderer
 import {MatchDto} from "../../data/match.dto"
 import {IResult} from "../../data/result"
 import {MatchToStringService} from "../../services/match.toString.service"
-import {Observable} from "rxjs/Rx";
 import {ISelectMatchHandler} from "../../handler/select.match.handler"
 import {SelectMatchEvent} from "../../handler/select.match.event"
 import {MaterializeAction} from "angular2-materialize";

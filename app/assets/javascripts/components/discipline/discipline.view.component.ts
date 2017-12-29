@@ -1,22 +1,22 @@
 import {Component, Input, EventEmitter, ViewChild} from "@angular/core";
-import {DisciplineTab} from "../data/discipline.tab"
-import {DisciplineGroup} from "../data/discipline.group"
-import {DisciplineStage} from "../data/discipline.stage"
-import {MatchDto} from "../data/match.dto"
-import {Type} from "../data/type"
-import {TypeColors} from "../data/typeColors"
-import {RandomMatchService} from "../services/random.match.service"
-import {MatchService} from "../services/match.service"
+import {DisciplineTab} from "../../data/discipline.tab"
+import {DisciplineGroup} from "../../data/discipline.group"
+import {DisciplineStage} from "../../data/discipline.stage"
+import {MatchDto} from "../../data/match.dto"
+import {Type} from "../../data/type"
+import {TypeColors} from "../../data/typeColors"
+import {RandomMatchService} from "../../services/random.match.service"
+import {MatchService} from "../../services/match.service"
 import {MaterializeAction} from "angular2-materialize";
-import { StatusDto } from "../data/status.dto";
-import { ResultModalComponent } from "../components/result.modal.view.component";
-import { ResultMatchHandler } from "../handler/result.match.handler";
-import { ToastService } from "../services/toast.service";
-import { MatchHelperService } from "../services/match.helper.service";
+import { StatusDto } from "../../data/status.dto";
+import { ResultModalComponent } from "../../components/result.modal.view.component";
+import { ResultMatchHandler } from "../../handler/result.match.handler";
+import { ToastService } from "../../services/toast.service";
+import { MatchHelperService } from "../../services/match.helper.service";
 
 @Component({
     selector: "discipline-view",
-    templateUrl : "assets/javascripts/views/discipline.view.component.html"
+    templateUrl : "assets/javascripts/views/discipline/discipline.view.component.html"
 })
 export class DisciplineViewComponent{
     public tabs: DisciplineTab[];

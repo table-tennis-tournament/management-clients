@@ -1,6 +1,6 @@
 import {Component, ViewContainerRef, ViewEncapsulation, ViewChild} from "@angular/core"
 import {MatchListService} from "../services/match.list.service"
-import {DisciplineMatchListComponent} from "./discipline.match.list.view.component"
+import {DisciplineMatchListComponent} from "./discipline/discipline.match.list.view.component"
 import { ResultEvent } from "app/assets/javascripts/handler/result.event";
 
 @Component({

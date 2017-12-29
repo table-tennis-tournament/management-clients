@@ -1,15 +1,15 @@
 import {Component, Input, EventEmitter, Output} from "@angular/core";
-import {DisciplineGroup} from "../data/discipline.group"
-import {TypeColors} from "../data/typeColors"
-import {MatchListService} from "../services/match.list.service"
 import {MaterializeAction} from "angular2-materialize";
-import { RandomMatchService } from "../services/random.match.service";
-import { ResultEvent } from "../handler/result.event";
-import { ResultMatchHandler } from "../handler/result.match.handler";
+import {DisciplineGroup} from "../../data/discipline.group"
+import {TypeColors} from "../../data/typeColors"
+import {MatchListService} from "../../services/match.list.service"
+import { RandomMatchService } from "../../services/random.match.service";
+import { ResultEvent } from "../../handler/result.event";
+import { ResultMatchHandler } from "../../handler/result.match.handler";
 
 @Component({
     selector: "group-view",
-    templateUrl : "assets/javascripts/views/discipline.group.view.component.html"
+    templateUrl : "assets/javascripts/views/discipline/discipline.group.view.component.html"
 })
 export class DisciplineGroupViewComponent{
     typeColors: string[];
@@ -39,6 +39,16 @@ export class DisciplineGroupViewComponent{
         this.calculateOpenMatches();
         this.setTables();
     } 
+
+    isGroupPlayable(){
+        var isPlayable = true;
+        this._group.matches.forEach(element => {
+            if(element.isPlayable === false){
+                isPlayable = false;
+            }
+        })
+        return isPlayable;
+    }
 
     onExpandMatches(){
         this._group.isMatchActive = true;
