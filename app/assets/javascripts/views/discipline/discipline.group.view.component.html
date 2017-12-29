@@ -1,15 +1,15 @@
 <div class="card {{group.bgColor}}">
-    <div class="card-content black-text">
+    <div class="card-content">
         <span class="card-title group-view-header">
             <span dnd-draggable [dragEnabled]="true" [dragData]="group.matches">{{group.name}}</span>
             <span class="right" *ngIf="group.isComplete" ><i class="material-icons">done</i></span>
-            <span class="right" *ngIf="!group.isComplete&&!isGroupPlayable()" ><i class="material-icons">remove_circle_outline</i></span>
+            <span class="right" *ngIf="!group.isComplete&&!isGroupPlayable()&&!tableNumbers" ><i class="material-icons">remove_circle_outline</i></span>
             <span class="right" *ngIf="!group.isComplete">{{openMatches}}/{{allMatchCount}}</span>
             <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span> 
         </span>
         <ul materialize="collapsible" class="collapsible" data-collapsible="expandable" [materializeActions]="collapsibleActions">
             <li > 
-                <div class="collapsible-header"><i class="material-icons">perm_identity</i>Spieler</div>
+                <div class="collapsible-header black-text"><i class="material-icons">perm_identity</i>Spieler</div>
                 <div class="collapsible-body group-view-body">
                     <div class="collection">
                         <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
@@ -19,7 +19,7 @@
                 </div>
             </li>
             <li>
-                <div class="collapsible-header"><i class="material-icons">view_list</i>Spiele</div>
+                <div class="collapsible-header black-text"><i class="material-icons">view_list</i>Spiele</div>
                 <div class="collapsible-body group-view-body">
                     <div class="collection">
                         <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" (dblclick)="onResultClicked(currentMatch)"
