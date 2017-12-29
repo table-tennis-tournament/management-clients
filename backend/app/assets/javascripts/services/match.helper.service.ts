@@ -77,7 +77,7 @@ export class MatchHelperService {
     var allStages:number[] = [];
     var currentIndex:number = 0;
     var allPlayerArray: boolean[] = [];
-    var currentItem = null;
+    var currentItem: MatchDto = null;
     for(var index=0; index < result.length; index++){
         currentItem = result[index];
 
@@ -91,8 +91,12 @@ export class MatchHelperService {
                  currentItemTab.stages[currentIndex] = new DisciplineStage();
                  currentItemTab.stages[currentIndex].name = currentItem.matchType.name;
                  currentItemTab.stages[currentIndex].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
+                 currentItemTab.stages[currentIndex].isComplete = true;
                  currentStage = currentItemTab.stages[currentIndex];
                  currentIndex++;
+             }
+             if(currentItem.match.isPlayed !== true){
+                 currentStage.isComplete = false;
              }
              
              currentStage.matches.push(currentItem);
@@ -105,14 +109,19 @@ export class MatchHelperService {
             currentItemTab.groups[currentItem.group.id].name = "Gruppe " + currentItem.group.name;
             currentItemTab.groups[currentItem.group.id].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
             currentItemTab.groups[currentItem.group.id].tableNumbers = [];
+            currentItemTab.groups[currentItem.group.id].isComplete = true;
             allPlayerArray = [];
         }
         var currentGroup = currentItemTab.groups[currentItem.group.id];
         currentGroup.matches.push(currentItem);
 
-        if(currentItem.table){
+        if(currentItem.match.result == null){
+            currentGroup.isComplete = false;
+        }
+
+        if(currentItem.table[0]){
             if(currentItem.match.isPlayed === false){
-                currentGroup.tableNumbers.push(currentItem.table.number);
+                currentGroup.tableNumbers.push(currentItem.table[0]);
             }
         }
         

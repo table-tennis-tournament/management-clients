@@ -1,13 +1,15 @@
 <ul materialize="collapsible" class="collapsible" data-collapsible="expandable">
     <li >
         <div class="collapsible-header {{stage.bgColor}}" [class.active]="isOpen">
-            <div dnd-draggable [dragEnabled]="true" [dragData]="stage.matches">
-                   
-                <i class="material-icons">view_list</i>
-                {{stage.name}}
-                <span class="left">
+            <div dnd-draggable [dragEnabled]="true" [dragData]="stage.matches" class="header-main-container">
+                <span class="header-center-content">
+                        <i class="material-icons">view_list</i>
+                        {{stage.name}}
+                </span>
+                <span class="header-right-content"  >
                         <a href="javascript:void(0)" class="secondary-content" (click)="onDelete()"><i class="material-icons white-text" >close</i></a>
-                    </span>
+                        <i *ngIf="stage.isComplete" class="material-icons white-text">done</i>
+                </span>
             </div>
            
         </div>

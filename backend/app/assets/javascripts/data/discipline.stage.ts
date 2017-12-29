@@ -6,4 +6,5 @@ export class DisciplineStage{
     matches: MatchDto[]= [];
     bgColor: string;
     textColor: string;
+    isComplete:boolean;
 }

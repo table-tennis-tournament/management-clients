@@ -67,9 +67,6 @@ export class DisciplineGroupViewComponent{
             if(element.match.isPlayed !== true){
                 this.openMatches++;
             }
-            if(element.match.result == null){
-                this.isComplete = false;
-            }
         });
         this.allMatchCount = this._group.matches.length;
     }
