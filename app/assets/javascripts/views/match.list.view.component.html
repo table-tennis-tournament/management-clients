@@ -14,10 +14,14 @@
                 <div class="cut-text" *ngIf="currentMatch.matchinfo[1]&&currentMatch.matchinfo[1].group">
                     <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
                         <li>
-                            <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">Gruppe {{currentMatch.matchinfo[0].group.name}}
-                                <span class="right">
-                                            <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
-                                        </span>
+                            <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">
+                                <span class="header-center-content">
+                                        <i class="material-icons">group</i>
+                                        Gruppe {{currentMatch.matchinfo[0].group.name}}
+                                </span>
+                                <span class="header-right-content-single"  >
+                                        <a href="javascript:void(0)" class="secondary-content" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
+                                </span>
                             </div>
                             <div class="collapsible-body">
                                 <div class="collection">
@@ -34,10 +38,16 @@
                 <div class="cut-text" *ngIf="currentMatch.matchinfo[1]&&!currentMatch.matchinfo[1].group">
                         <ul materialize="collapsible" class="collapsible " data-collapsible="expandable">
                             <li>
-                                <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">{{currentMatch.matchinfo[0].matchType.name}}
-                                    <span class="right">
-                                                <a href="javascript:void(0)" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
+                                <div class="collapsible-header {{colorArray[currentMatch.matchinfo[0].type.id]}}">
+                                    <div class="header-main-container">
+                                            <span class="header-center-content">
+                                                    <i class="material-icons">view_list</i>
+                                                    {{currentMatch.matchinfo[0].matchType.name}}
                                             </span>
+                                            <span class="header-right-content-single"  >
+                                                    <a href="javascript:void(0)" class="secondary-content" (click)="onDelete(i)"><i class="material-icons white-text" >close</i></a>
+                                            </span>
+                                    </div>
                                 </div>
                                 <div class="collapsible-body">
                                     <div class="collection">

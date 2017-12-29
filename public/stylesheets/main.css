@@ -30,6 +30,34 @@ span.circle {
     width: 1.6em;
 }
 
+.header-main-container {
+    display: flex;
+    justify-content: space-between;
+    flex:1;
+}
+.header-center-content {
+    flex: 1;
+    order: 1;
+}
+
+.header-right-content {
+    width: 90px;
+    order: 2;
+}
+
+.header-right-content-single {
+    width: 30px;
+    order: 2;
+}
+
+.group-view-header.card-title{
+    font-size: 20px;
+}
+
+.group-view-body.collapsible-body{
+    padding:0;
+}
+
 .square {
     width: 20px;
     height: 20px;
@@ -119,18 +147,22 @@ span.circle {
 
 .discipline-stage-view .collapsible .first-stage{
     height: 40px;
+    padding-top:5px;
 }
 
 .discipline-stage-view .collapsible .second-stage{
     height: 80px;
+    padding-top:30px;
 }
 
 .discipline-stage-view .collapsible .third-stage{
     height: 160px;
+    padding-top:60px;
 }
 
 .discipline-stage-view .collapsible .fourth-stage{
     height: 320px;
+    padding-top:100px;
 }
 
 

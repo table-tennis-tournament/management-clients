@@ -9,9 +9,15 @@
     </ul>
 </div>
 <div class="row " *ngFor="let i of rowCount" >
-  <div *ngFor="let currentTab of tabs | slice:(i*12):(i+1)*12" class="col no-padding">
-    <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>
-</div>
+    <div *ngFor="let currentTab of tabs | slice:(i*12):(i+1)*12" class="col no-padding">
+        <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>
+    </div>
+    <div *ngIf="i==rowCount" class="col">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="removePlayed" id="remove-played-checkbox" (change)="onRemovePlayedChanged()" />
+            <label for="remove-played-checkbox">Alle</label>
+          </p>
+    </div>
 </div>
 <div *ngIf="selectedTab" class="row">
     <div *ngIf="selectedTab.stages" class="discipline-stage-view">

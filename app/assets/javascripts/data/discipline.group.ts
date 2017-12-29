@@ -10,4 +10,5 @@ export class DisciplineGroup{
     tableNumbers: number[]=[];
     isPlayerActive:boolean = true;
     isMatchActive:boolean = false;
+    isComplete:boolean = false;
 }

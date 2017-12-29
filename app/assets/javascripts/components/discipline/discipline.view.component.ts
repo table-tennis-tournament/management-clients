@@ -24,6 +24,7 @@ export class DisciplineViewComponent{
     public selectedTab: DisciplineTab;
     public modalActions = new EventEmitter<string|MaterializeAction>();
     public rowCount: number[];
+    public removePlayed: boolean = true;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
@@ -47,6 +48,23 @@ export class DisciplineViewComponent{
 
     onFilterSelected(){
         this.matchService.getAllOpenTypes().subscribe(this.allTypesSelected.bind(this))
+    }
+
+    onRemovePlayedChanged(){
+        if(this.removePlayed !== false){
+            this.onRefreshCurrentTab();
+            return;
+        }
+        this.removePlayedItems();
+    }
+
+    removePlayedItems(){
+        if(this.removePlayed === false){
+            var stagesCopy = this.selectedTab.stages.filter(x => x.isComplete === false);
+            this.selectedTab.stages = stagesCopy;
+            var groupsCopy = this.selectedTab.groups.filter(y => y.isComplete === false);
+            this.selectedTab.groups = groupsCopy;
+        }
     }
 
     allTypesSelected(result: Type[]){
@@ -83,6 +101,7 @@ export class DisciplineViewComponent{
     
     handleSetSelectedTab(result: MatchDto[]){
         this.selectedTab = this.matchHelperService.getSingle(result, this.selectedTab);
+        this.removePlayedItems();
     }
    
     onOpenPlayers(){

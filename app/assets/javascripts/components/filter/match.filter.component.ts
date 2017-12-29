@@ -1,9 +1,9 @@
 import {Component, Input} from "@angular/core";
-import {FilterCriteria} from "../data/filterCriteria";
+import {FilterCriteria} from "../../data/filterCriteria";
 
 @Component({
     selector: "match-filter",
-    templateUrl : "assets/javascripts/views/match.filter.component.html"
+    templateUrl : "assets/javascripts/views/filter/match.filter.component.html"
 })
 export class MatchFilterComponent{
 
