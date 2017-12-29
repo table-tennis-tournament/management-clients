@@ -5,10 +5,13 @@ import { BrowserModule }  from "@angular/platform-browser"
 import { FormsModule }    from "@angular/forms"
 import { HttpModule, JsonpModule } from "@angular/http"
 import { CommonModule } from "@angular/common"
-
-import { MaterializeModule } from "angular2-materialize";
-
+import { MaterializeModule } from "angular2-materialize"
 import { RouterModule, Routes } from "@angular/router"
+import { routeConfig } from "./app.routes"
+
+import {APP_BASE_HREF} from "@angular/common";
+
+import {DndModule} from "ng2-dnd";
 
 import {AppComponent} from "./app.component"
 import {PlayerComponent} from "./components/player.component"
@@ -18,14 +21,14 @@ import {SupervisorViewComponent} from "./components/supervisor.view.component"
 import {MatchFilterComponent} from "./components/match.filter.component"
 import {MatchFilterCriteriaComponent} from "./components/match.filter.criteria.component"
 import {MatchListComponent} from "./components/match.list.view.component"
-import {DisciplineViewComponent} from "./components/discipline.view.component"
-import {DisciplineGroupViewComponent} from "./components/discipline.group.view.component"
+import {DisciplineViewComponent} from "./components/discipline/discipline.view.component"
+import {DisciplineGroupViewComponent} from "./components/discipline/discipline.group.view.component"
 import {ResultModalComponent} from "./components/result.modal.view.component"
 import {SelectMatchModalComponent} from "./components/table/table.select.match.modal.component"
 import {TableAssignViewComponent} from "./components/table.assign.view.component"
-import {DisciplineMatchListComponent} from "./components/discipline.match.list.view.component"
+import {DisciplineMatchListComponent} from "./components/discipline/discipline.match.list.view.component"
 import {ResultViewComponent} from "./components/result.view.component"
-import {DisciplineSelectViewComponent} from "./components/discipline.select.view.component"
+import {DisciplineSelectViewComponent} from "./components/discipline/discipline.select.view.component"
 import { SettingsComponent } from "./components/settings/settings.component";
 
 import {DisciplineStageComponent} from "./components/discipline/discipline.stage.view.component"
@@ -50,14 +53,6 @@ import { BaseService } from "./services/base.service"
 import { ToastService } from "./services/toast.service";
 import { SettingsService } from "./services/settings.service";
 import { MatchHelperService } from "./services/match.helper.service";
-
-import { routeConfig } from "./app.routes"
-
-import {APP_BASE_HREF} from "@angular/common";
-
-import {DndModule} from "ng2-dnd";
-
-
 
 @NgModule({
   

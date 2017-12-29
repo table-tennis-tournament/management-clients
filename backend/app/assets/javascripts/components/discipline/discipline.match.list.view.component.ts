@@ -1,16 +1,16 @@
 import {Component, Input} from "@angular/core";
-import {MatchDto} from "../data/match.dto";
-import {MatchListDto} from "../data/match.list.dto";
-import {TypeColors} from "../data/typeColors";
-import {DisciplineShortcuts} from "../data/disciplineShortcuts";
-import {Type} from "../data/type";
-import {MatchListService} from "../services/match.list.service";
-import {MatchService} from "../services/match.service";
-import { WebSocketService } from "../services/web.socket.service";
+import {MatchDto} from "../../data/match.dto";
+import {MatchListDto} from "../../data/match.list.dto";
+import {TypeColors} from "../../data/typeColors";
+import {DisciplineShortcuts} from "../../data/disciplineShortcuts";
+import {Type} from "../../data/type";
+import {MatchListService} from "../../services/match.list.service";
+import {MatchService} from "../../services/match.service";
+import { WebSocketService } from "../../services/web.socket.service";
 
 @Component({
     selector: "discipline-match-list",
-    templateUrl : "assets/javascripts/views/discipline.match.list.view.component.html",
+    templateUrl : "assets/javascripts/views/discipline/discipline.match.list.view.component.html",
 })
 export class DisciplineMatchListComponent{
 
@@ -49,8 +49,6 @@ export class DisciplineMatchListComponent{
             this.getWaitingList();
         }
     }
-
-
 
     public onTableAssigned(dragData: any){
         if(!dragData.matches){

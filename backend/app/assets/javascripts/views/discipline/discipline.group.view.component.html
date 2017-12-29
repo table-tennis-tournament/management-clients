@@ -3,6 +3,7 @@
         <span class="card-title">
             <span dnd-draggable [dragEnabled]="true" [dragData]="group.matches">{{group.name}}</span>
             <span class="right" *ngIf="isComplete" ><i class="material-icons">done</i></span>
+            <span class="right" *ngIf="!isComplete&&!isGroupPlayable()" ><i class="material-icons">remove_circle_outline</i></span>
             <span class="right" *ngIf="!isComplete">{{openMatches}}/{{allMatchCount}}</span>
             <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span> 
         </span>
@@ -30,9 +31,6 @@
                                 <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i>
                             </div>  
                         </a>
-                                <!-- {{currentMatch.team1[0].lastName}} - {{currentMatch.team2[0].lastName}}  
-                                <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a>
-                                <i *ngIf="currentMatch.match.result"  class="material-icons right">done</i></a> -->
                     </div>
                 </div>
             </li>
