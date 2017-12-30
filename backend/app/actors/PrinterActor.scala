@@ -55,7 +55,7 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
 
       val printJob = printService.createPrintJob
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
-
+      val supportedFlavors = printService.getSupportedDocFlavors()
       val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, docSet)
       printJob.print(documentToBePrinted, aset)
 
