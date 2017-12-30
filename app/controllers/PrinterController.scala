@@ -38,6 +38,25 @@ class PrinterController @Inject() (pdfGenerator: PdfGenerator, @Named("printer_a
     }
   }
 
+  def printAll = Action { request =>
+    Logger.debug("print all")
+    val req = request.body.asJson
+    req match {
+      case Some(r) => {
+        r.asOpt[Seq[Long]] match {
+          case Some(ids) => {
+            ids map { id =>
+              print(id)
+            }
+            Ok(Json.toJson(Answer(true, "successful")))
+          }
+          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+        }
+      }
+      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+    }
+  }
+
   def printPDF(id: Long) = Action {
     tables.getMatch(id) match {
       case Some(ttMatch: TTMatch) =>

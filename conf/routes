@@ -53,6 +53,7 @@ GET     /register                       controllers.WebSocketController.socket
 GET     /printer/all                    controllers.PrinterController.allPrinter
 GET     /printer/printpdf/:id           controllers.PrinterController.printPDF(id: Long)
 GET     /printer/print/:id              controllers.PrinterController.print(id: Long)
+POST    /printer/printAll               controllers.PrinterController.printAll
 GET     /printer/set/:name              controllers.PrinterController.setPrinter(name: String)
 GET     /printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
 
