@@ -3,6 +3,8 @@
         <span class="card-title activator truncate">
                 <h5 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
                 <span>{{table.matchinfo[0].type.name}}</span>
+                
+                <a href="javascript:void(0)" (click)="onFree()"><i class="material-icons right white-text">done</i></a>
                 <i class="material-icons right">more_vert</i>
                </h5>
         </span>
@@ -15,11 +17,11 @@
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action">
-            <a href="javascript:void(0)" (click)="onFree()">Freimachen</a>
+            <a href="javascript:void(0)" (click)="onFree()">Frei</a>
             <a *ngIf="isSingleMatch()===true"  href="javascript:void(0)" (click)="onResult()">Eingeben</a>
-            <a href="javascript:void(0)" (click)="onTakeBack()">Zurücknehmen</a>
+            <a href="javascript:void(0)" (click)="onTakeBack()">Zurück</a>
             <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>
-            <a href="javascript:void(0)" (click)="assignToSecondTable()">2. Tisch</a>
+            <a href="javascript:void(0)" (click)="assignToSecondTable()">2.Tisch</a>
             <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="onLock()">Sperren</a>
             <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
         </div>    
