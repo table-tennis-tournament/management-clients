@@ -9,7 +9,6 @@ import { ResultEvent } from "app/assets/javascripts/handler/result.event";
 export class TableAssignViewComponent{
 
     public selectedOption:string;
-    public isWaitingListActive: boolean;
 
     @ViewChild(DisciplineMatchListComponent) matchListComponent: DisciplineMatchListComponent;
 
@@ -22,14 +21,5 @@ export class TableAssignViewComponent{
         this.matchListComponent.onTableAssigned($event);
     }
 
-    onSetWaitingListActiveSuccess(){
-        console.log("waiting list changed success");
-    }
-
-    onError(error){
-        console.log("Get all Tables failed following problems:");
-        console.log(error);
-        this.isWaitingListActive = !this.isWaitingListActive;
-    }
   
 }

@@ -32,7 +32,6 @@ export class TableComponent implements IResultHandler{
     public firstOpponent: string;
     public secondOpponent: string;
     public bgColor: string;
-    public textColor: string;
 
     constructor(private matchToStringService: MatchToStringService, private tableService: TableService,
         private matchService: MatchService, private toastService:ToastService){
@@ -62,7 +61,6 @@ export class TableComponent implements IResultHandler{
     setBgColorAndTextColorDependsOnType(){
         if(this.table.matchinfo && this.table.matchinfo[0]){
             this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo[0].type.id];
-            this.textColor = this.table.matchinfo[0].type.kind ===2?"": "white-text";
         }
     }
 
@@ -71,7 +69,9 @@ export class TableComponent implements IResultHandler{
             return;
         }
         var matchIds = event.dragData.matches.map(x=>x.match.id);;
-        this.matchService.assignMatchToTable(matchIds, this.table.table.number).subscribe(this.onMatchAssigned.bind(this, event.dragData), this.handleErrorsOnService);
+        this.matchService.assignMatchToTable(matchIds, this.table.table.number).subscribe(
+            this.onMatchAssigned.bind(this, event.dragData), 
+            this.handleErrorsOnService.bind(this));
     };
 
     onMatchAssigned(dragData){
@@ -97,17 +97,17 @@ export class TableComponent implements IResultHandler{
     }
 
     onLock(){
-        this.tableService.lockTable(this.table.table.id).subscribe(this.lockTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+        this.tableService.lockTable(this.table.table.id).subscribe(this.lockTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService.bind(this));
     }
 
     onUnLock(){
-        this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+        this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService.bind(this));
     }
    
     onFree(){
         if(this.isSingleMatch()){
             var matchId = this.table.matchinfo[0].match.id;
-            this.tableService.freeTable([matchId]).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService);
+            this.tableService.freeTable([matchId]).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService.bind(this));
             return;
         }
         this.fireSelectMatchEvent(new FreeMatchHandler(this.tableService))
@@ -116,7 +116,7 @@ export class TableComponent implements IResultHandler{
     onTakeBack(){
         if(this.isSingleMatch()){
             var matchId = this.table.matchinfo[0].match.id;
-            this.tableService.takeBackTable([matchId]).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService);
+            this.tableService.takeBackTable([matchId]).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService.bind(this));
             return;
         }
         this.fireSelectMatchEvent(new TakeBackMatchHandler(this.tableService))
@@ -163,7 +163,9 @@ export class TableComponent implements IResultHandler{
     onPrint(){
         if(this.isSingleMatch()){
             var matchId = this.table.matchinfo[0].match.id;
-            this.tableService.printMatch(this.table.matchinfo[0].match.id).subscribe(this.onPrinted.bind(this));
+            this.tableService.printMatch(this.table.matchinfo[0].match.id).subscribe(
+                this.onPrinted.bind(this),
+                this.handleErrorsOnService.bind(this));
             return;
         }
         this.fireSelectMatchEvent(new PrintMatchHandler(this.tableService, this.toastService))
@@ -177,17 +179,17 @@ export class TableComponent implements IResultHandler{
     lockTableAfterRequestSuccessfull(){
         this.table.table.isLocked = true;
         this.bgColor =TypeColors.TYPE_COLORS[0];
-        this.textColor = "white-text";
     }
 
-    handleErrorsOnService(e){
-        console.log("An error ocurred: "+e.Message);
+    handleErrorsOnService(status: StatusDto){
+        this.toastService.toast(status.message);
     }
 
     handleResult(resultToHandle: IResult[]){
         var matchId = this.table.matchinfo[0].match.id;
-        this.matchService.addResult(resultToHandle, matchId).subscribe(this.handleResultAfterRequestSuccessful.bind(this),
-        this.handleErrorsOnService);
+        this.matchService.addResult(resultToHandle, matchId).subscribe(
+            this.handleResultAfterRequestSuccessful.bind(this),
+            this.handleErrorsOnService.bind(this));
     }
 
     handleResultAfterRequestSuccessful(){
