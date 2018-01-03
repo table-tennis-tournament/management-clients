@@ -210,7 +210,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     if (m.team1Id < 100000 && m.team2Id < 100000) {
       Logger.debug("single")
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId, 1)
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId, 1,
+        if(m.matchTypeId == 9) Some(m.roundNumber) else None)
     } else {
       Logger.debug("double")
       val d1 = getDouble(m.team1Id - 100000)
@@ -218,7 +219,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       val x = TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if (d1.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
         if (d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId,
-        2)
+        2, if(m.matchTypeId == 9) Some(m.roundNumber) else None)
       Logger.debug(x.toString)
       x
     }
@@ -227,10 +228,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   def toMatchDAO(m: TTMatch): MatchDAO = {
     if(m.player1Ids.length == 1)
       MatchDAO(m.id, m.isPlaying, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId,
+        m.roundNumber.getOrElse(0))
     else {
       MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, None, m.isPlayed, m.matchTypeId,
-        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId)
+        m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets2, m.sets2, m.nr, m.plannedTableId,
+        m.roundNumber.getOrElse(0))
     }
   }
 
@@ -386,9 +389,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def sets2 = column[Int]("Matc_Sets2")
     def plannedTableId = column[Option[Long]]("Matc_PlannedTable_ID")
     def nr = column[Int]("Matc_Nr")
+    def roundNumber = column[Int]("Matc_RoundNumber")
 
     def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
-      balls1, balls2, sets1, sets2, nr, plannedTableId) <> (MatchDAO.tupled, MatchDAO.unapply _)
+      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber) <> (MatchDAO.tupled, MatchDAO.unapply _)
   }
 
   // Players
