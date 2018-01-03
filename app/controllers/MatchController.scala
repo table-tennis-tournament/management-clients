@@ -200,7 +200,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
             if(res) {
-              pub ! MatchToTable
+              pub ! MatchToTable(tableName)
               pub ! MatchListDelete
               Ok(Json.toJson(Answer(true, "started match")))
             } else
