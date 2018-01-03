@@ -132,7 +132,8 @@ case class TTMatch(
     sets2: Int,
     nr: Int,
     plannedTableId: Option[Long],
-    kindId: Int
+    kindId: Int,
+    roundNumber: Option[Int]
   ) {
   def getResult = {
     if(resultRaw != "") {
@@ -170,7 +171,8 @@ case class MatchDAO(
     sets1: Int,
     sets2: Int,
     nr: Int,
-    plannedTableId: Option[Long]
+    plannedTableId: Option[Long],
+    roundNumber: Int
   ) {
   lazy val getResult = {
     if(resultRaw != "") {
