@@ -159,11 +159,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
     def groupId = column[Option[Long]]("Tabl_Group")
 
-    def isLocked = column[Option[Boolean]]("Tabl_isLocked")
+    //def isLocked = column[Option[Boolean]]("Tabl_isLocked")
 
     //def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply _)
+    def * = (id, name, None) <> (TTTableDAO.tupled, TTTableDAO.unapply _)
   }
 
   // Matches
