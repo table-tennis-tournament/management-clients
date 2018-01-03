@@ -138,6 +138,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def getTTTableFromMatchId(id: Long): Seq[Int] = {
+    Logger.debug("Table: " + ttTablesSeq.toString())
+    Logger.debug("Table: " + ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a).toString())
     ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a)
   }
 
