@@ -162,6 +162,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
         matchIdsJson.validate[Seq[Long]].asOpt match {
           case Some(matchIds) => {
             val table = tables.getTTTableFromName(tableName).get
+            val tableId = table.id
             val matches = tables.allMatches()
             Logger.info("matches: " + matches.toString())
             val m = matchIds.map(id => matches.filter(_.id == id).head)
@@ -200,7 +201,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
             if(res) {
-              pub ! MatchToTable(tableName)
+              pub ! MatchToTable(tableId)
               pub ! MatchListDelete
               Ok(Json.toJson(Answer(true, "started match")))
             } else
