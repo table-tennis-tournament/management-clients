@@ -12,6 +12,8 @@ export class TeamMatchItemComponent{
 
     @Input() showDisciplines:boolean;
 
+    @Input() showClubs: boolean = false;
+
     typeColors:string[];
     
     constructor(){

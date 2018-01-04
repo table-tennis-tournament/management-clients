@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef, ViewEncapsulation, ViewChild, Output, EventEmitter} from "@angular/core"
+import {Component, ViewContainerRef, ViewEncapsulation, ViewChild, Output, EventEmitter, Input, OnDestroy} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
@@ -16,16 +16,22 @@ import { AssignEvent } from "../handler/assign.event";
 import { ToastService } from "../services/toast.service";
 import { ModalSelectTableComponent } from "./modals/select.table.modal";
 import { WebSocketService } from "../services/web.socket.service";
+import { ModalShowMatchComponent } from "./modals/show.match.modal";
+import { ShowMatchEvent } from "../handler/show.match.event";
+import { ActivatedRoute } from "@angular/router"
 
 
 @Component({
   templateUrl:"assets/javascripts/views/table.view.component.html",
   selector: "table-view-component"
 })
-export class TableViewComponent{
-
+export class TableViewComponent implements OnDestroy {
+    
+    currentSubscription: any;
+    
     public tables: TableDto[];
     public rowCount: number[];
+    public currentTablesToCall: any[];
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
     
@@ -33,19 +39,74 @@ export class TableViewComponent{
 
     @ViewChild(ModalSelectTableComponent) selectTable: ModalSelectTableComponent;
 
+    @ViewChild(ModalShowMatchComponent) showMatch: ModalShowMatchComponent;
+
     @Output() onTableAssigned = new EventEmitter<AssignEvent>();
 
-    constructor(private matchService:MatchService, private tableService:TableService, 
+    // @Input() showMatches:boolean = true;
+
+    _showMatches: boolean;
+    get showMatches(): boolean {
+        return this._showMatches;
+    }
+
+    @Input("showMatches")
+    set showMatches(value: boolean){
+        this._showMatches = value;
+        if(this.showMatches !== false && !this.currentSubscription){
+            this.currentTablesToCall = [];
+            this.currentSubscription = this.websocketService.OnMatchToTable.subscribe(this.onMatchToTable.bind(this));
+        }
+    } 
+
+
+    constructor(route: ActivatedRoute, private matchService:MatchService, private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
         private randomMatchService: RandomMatchService,
         private toastService: ToastService,
         private websocketService: WebSocketService) {
+
+        if(route.snapshot.data[0]){
+            this.showMatches = route.snapshot.data[0]['showMatches'];
+        }
         this.loadAllTables();
         
         this.tableService.OnTableChanged.subscribe(
             this.handleMatchChanged.bind(this)
         );
         this.websocketService.OnTableRefresh.subscribe(this.onTableRefresh.bind(this));
+       
+    }
+
+    ngOnDestroy(): void {
+        if(this.currentSubscription){
+            this.currentSubscription.unsubscribe();
+            this.currentSubscription = null;
+        }
+    }
+
+    onMatchToTable(data: any){
+        if(!data || !data.id){
+            return;
+        }
+        this.currentTablesToCall.push(data.id);
+        this.checkTableToCall();
+    }
+
+    checkTableToCall(){
+        if(this.currentTablesToCall.length > 0){
+            var nextTableNumber = this.currentTablesToCall[0];
+            var showMatchEvent = new ShowMatchEvent();
+            showMatchEvent.onRefresh.subscribe(this.onSuccessfullCall.bind(this, nextTableNumber));
+            showMatchEvent.tableId = nextTableNumber;
+            this.showMatch.showMatch(showMatchEvent);
+        }
+    }
+
+    onSuccessfullCall(tableNumber:any){
+        var index = this.currentTablesToCall.indexOf(tableNumber);
+        this.currentTablesToCall.splice(index, 1);
+        this.checkTableToCall();
     }
 
     loadAllTables(){
