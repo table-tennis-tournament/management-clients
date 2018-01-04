@@ -1,18 +1,21 @@
 package actors
 
-import java.awt.print.PrinterJob
+import java.awt.print.{PageFormat, PrinterJob}
 import javax.print.PrintServiceLookup
 import javax.print.attribute.{Attribute, DocAttributeSet, HashDocAttributeSet, HashPrintRequestAttributeSet}
-import javax.print.attribute.standard.{MediaSizeName, OrientationRequested}
+import javax.print.attribute.standard.{MediaSizeName, OrientationRequested, PageRanges}
 import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
 
+import org.apache.pdfbox._
 import akka.actor._
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import dao.Tables
 import it.innove.play.pdf.PdfGenerator
 import models.{AllMatchInfo, TTMatch}
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.xhtmlrenderer.simple.PDFRenderer
 import play.api.Logger
 
 
@@ -39,7 +42,8 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
   var printService = PrintServiceLookup.lookupDefaultPrintService()
   var aset = new HashPrintRequestAttributeSet
   aset.add(MediaSizeName.ISO_A6)
-  aset.add(OrientationRequested.PORTRAIT)
+  aset.add(OrientationRequested.LANDSCAPE)
+  aset.add(new PageRanges(1))
   var docSet = new HashDocAttributeSet()
   docSet.add(MediaSizeName.ISO_A6)
 
@@ -55,9 +59,18 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
 
       val printJob = printService.createPrintJob
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
-      val supportedFlavors = printService.getSupportedDocFlavors()
-      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, docSet)
-      printJob.print(documentToBePrinted, aset)
+      Logger.debug("pdf created")
+      val doc: PDDocument = PDDocument.load(new ByteArrayInputStream(byteStream))
+      val printerJob = PrinterJob.getPrinterJob
+      printerJob.setPrintService(printService)
+      printerJob.setPrintable(doc.getPrintable(0))
+      printerJob.print(aset)
+      doc.close()
+//      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, docSet)
+//      Logger.debug(printService.getSupportedDocFlavors.toSeq.map(_.getMediaSubtype).toString)
+//      Logger.debug("start print job")
+//      printJob.print(documentToBePrinted, aset)
+//      Logger.debug("started")
 
     case GetPrinterList =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq
