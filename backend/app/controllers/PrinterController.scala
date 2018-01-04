@@ -46,7 +46,15 @@ class PrinterController @Inject() (pdfGenerator: PdfGenerator, @Named("printer_a
         r.asOpt[Seq[Long]] match {
           case Some(ids) => {
             ids map { id =>
-              print(id)
+              tables.getMatch(id) match {
+                case Some(ttMatch) => tables.getAllMatchInfo(ttMatch) match {
+                  case Some(allMatchInfo) =>
+                    printerActor ! Print(allMatchInfo)
+                    Ok(Json.toJson(Answer(true, "printing")))
+                  case _ => BadRequest(Json.toJson(Answer(false, "AllMatchInfo not found")))
+                }
+                case _ => BadRequest(Json.toJson(Answer(false, "Match not found")))
+              }
             }
             Ok(Json.toJson(Answer(true, "successful")))
           }
