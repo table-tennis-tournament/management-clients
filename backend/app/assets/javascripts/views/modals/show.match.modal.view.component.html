@@ -1,0 +1,29 @@
+<div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+    <div class="modal-content center-align" *ngIf="currentTable&&currentTable.matchinfo[0]">
+      <h4>Neues Spiel ausrufen</h4>
+      <br/><br/>
+      <div class="col s4">
+        <h5>Tisch Nr:  {{currentTable.table.number}}</h5>
+      <div class="row">
+        <div class="col s4">
+          {{currentTable.matchinfo[0].type.name}}  {{currentTable.matchinfo[0].matchType.name}}
+        </div>
+      </div>
+      <div class="row" *ngIf="!players" >
+        <team-match-item [team]="currentTable.matchinfo[0].team1" [showDisciplines]="false" [showClubs]="true"></team-match-item> 
+        <br/>
+        -
+        <br/>
+        <team-match-item [team]="currentTable.matchinfo[0].team2" [showDisciplines]="false" [showClubs]="true"></team-match-item>
+      </div>
+      <div class="row" *ngIf="players" >
+          <div><h5>Spieler: </h5></div>
+          <span *ngFor="let currentPlayer of players">
+             <team-match-item [team]="currentPlayer" [showDisciplines]="false" [showClubs]="true"></team-match-item> 
+          </span>
+       </div>
+     </div>
+    <div class="modal-footer">
+      <a class="modal-action modal-close waves-effect waves-green btn-flat" (click)="onOK()">OK</a>
+    </div>
+  </div>

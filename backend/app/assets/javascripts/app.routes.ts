@@ -19,7 +19,8 @@ export const routeConfig:Routes = [
     },
     {
         path: "tableView",
-        component: TableViewComponent
+        component: TableViewComponent,
+        data:[{showMatches: true}]
     },
     {
         path: "supervisorView",

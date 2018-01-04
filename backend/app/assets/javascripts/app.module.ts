@@ -53,6 +53,7 @@ import { BaseService } from "./services/base.service"
 import { ToastService } from "./services/toast.service";
 import { SettingsService } from "./services/settings.service";
 import { MatchHelperService } from "./services/match.helper.service";
+import { ModalShowMatchComponent } from "./components/modals/show.match.modal";
 
 @NgModule({
   
@@ -90,6 +91,7 @@ import { MatchHelperService } from "./services/match.helper.service";
     TableMatchItemComponent,
     SelectMatchModalComponent,
     TeamMatchItemComponent,
+    ModalShowMatchComponent,
     ModalSelectTableComponent,
     SettingsComponent
   ],

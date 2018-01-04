@@ -53,8 +53,8 @@ export class WebSocketService {
             return;
         }
         if(message.action === "MatchToTable"){
-            this.OnTableRefresh.emit();
-            this.OnMatchToTable.emit();
+            this.OnTableRefresh.emit(message);
+            this.OnMatchToTable.emit(message);
         }
         if (message.action === "MatchListAdd" ||
             message.action === "MatchListDelete" ||
