@@ -58,18 +58,30 @@ export class ModalShowMatchComponent extends BaseModal{
     }
 
     protected onConfirmAction() {
-        this.closeModal();
-        this.currentEvent.onRefresh.emit("cancel");
-    }
-    
-    public showMatch(event: ShowMatchEvent){
-        this.currentEvent = event;
-        this.loadFreeTables();
+        this.currentTable = null;
+        
     }
 
-    onCancel(){
+    public onCustomOk(){
+        this.currentTable = null;
         this.closeModal();
-        this.currentEvent.onRefresh.emit("cancel");
+        this.currentEvent.onRefreshHandler();
+        this.informRefreshEvent();
+    }
+
+    informRefreshEvent(){
+        var that = this;
+        setTimeout(function(){
+            //that.currentEvent.onRefresh.emit("");
+        }.bind(this));
+    }
+
+    public showMatch(event: ShowMatchEvent){
+        if(this.currentTable){
+            return;
+        }
+        this.currentEvent = event;
+        this.loadFreeTables();
     }
      
 }
