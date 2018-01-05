@@ -40,8 +40,7 @@ export class ModalShowMatchComponent extends BaseModal{
         var that = this
         setTimeout(() => {
             that.onClose.emit(this.currentEvent.tableId);
-        }, 700);
-        
+        }, 500);
     }
 
     public showMatch(event: ShowMatchEvent){
