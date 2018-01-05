@@ -66,12 +66,12 @@ class TableController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
   def lockTable(id: Long) = Action {
     tables.lockTTTable(id)
     pub ! TableLock
-    Ok("OK")
+    Ok(Json.toJson(Answer(true, "table locked")))
   }
 
   def unlockTable(id: Long) = Action {
     tables.unlockTTTable(id)
     pub ! TableUnlock
-    Ok("OK")
+    Ok(Json.toJson(Answer(true, "table unlocked")))
   }
 }

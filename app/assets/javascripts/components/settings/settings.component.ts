@@ -33,6 +33,9 @@ export class SettingsComponent{
             if(setting.key === "alwaysPrint"){
                 that.isPrintForAssign = setting.value;
             }
+            if(setting.key === "autoStart"){
+                that.assignAutomatically = setting.value;
+            }
         });
         this.toastService.toast("Einstellungen geladen");
     }
