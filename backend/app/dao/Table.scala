@@ -80,7 +80,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def getFreeTables(): Seq[TTTable] = {
-    ttTablesSeq.filter(_.matchId.isEmpty)
+    ttTablesSeq.filter(t => t.matchId.isEmpty && !t.isLocked.getOrElse(false))
   }
 
   // def getFreeTable(): Future[Option[TTTable]] = getFreeTable(Seq.empty[Long])
