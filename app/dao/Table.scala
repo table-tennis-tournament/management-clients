@@ -190,7 +190,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def startNextMatch = if(autoStart) {
-    getFreeTables() map { table =>
+    val tl = getFreeTables().sortBy(_.tableNumber)
+    val tl2 = tl.filter(_.tableNumber % 2 == 1) ++ tl.filter(_.tableNumber % 2 == 0)
+    tl2 map { table =>
       Logger.debug("start next Match")
       val ml = getMatchList
       val filteredML = ml.filter(mlItem => isPossibleMatch(mlItem))
