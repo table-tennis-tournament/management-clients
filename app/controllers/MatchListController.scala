@@ -68,6 +68,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
               val newMLAdded = newML ++ Seq(newMLEntry)
               tables.setMatchList(newMLAdded)
               pub ! MatchListAdd
+              tables.startNextMatch
               Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
             } else {
               BadRequest(Json.toJson(Answer(false, "match is already in match list", newMLEntry.uuid)))
@@ -97,13 +98,13 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
   }
 
   def setActive(isActive: Boolean) = Action {
-    this.isActiv = isActive
+    tables.autoStart = isActive
     pub ! MatchListActive
     Ok(Json.toJson(Answer(true,"set to " + isActive.toString)))
   }
 
   def isActive = Action {
-    Ok(isActiv.toString)
+    Ok(tables.autoStart.toString)
   }
 
   def move(uuid: String, pos: Int) = Action {
