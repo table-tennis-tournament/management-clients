@@ -3,6 +3,4 @@ import {EventEmitter} from "@angular/core"
 
 export class ShowMatchEvent {
     public tableId: any;
-    public onRefreshHandler: any;
-
 }

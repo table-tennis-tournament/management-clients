@@ -1,4 +1,4 @@
-import {Component, Input, EventEmitter} from "@angular/core";
+import {Component, Input, EventEmitter, Output} from "@angular/core";
 import {Match} from "../../data/match";
 import { TableService } from "../../services/table.service";
 import { TableDto } from "../../data/table.dto";
@@ -21,12 +21,39 @@ export class ModalShowMatchComponent extends BaseModal{
     private currentTable: TableDto;
     private currentEvent: ShowMatchEvent;
     public players:Player[];
+    private isDialogOpen:boolean = false;
+
+    @Output() onClose = new EventEmitter<string>();
 
     constructor(private tableService: TableService, private toastService: ToastService){
         super();
     }
+   
+    protected onConfirmAction() {
+        this.currentTable = null;
+    }
 
-    loadFreeTables(){
+    public onCustomOk(){
+        this.currentTable = null;
+        this.closeModal();
+        this.isDialogOpen = false;
+        var that = this
+        setTimeout(() => {
+            that.onClose.emit(this.currentEvent.tableId);
+        }, 700);
+        
+    }
+
+    public showMatch(event: ShowMatchEvent){
+        if(this.isDialogOpen){
+            return;
+        }
+        this.isDialogOpen = true;
+        this.currentEvent = event;
+        this.loadTableById();
+    }
+
+    loadTableById(){
         this.tableService.getTableById(this.currentEvent.tableId).subscribe(this.onTableLoaded.bind(this));
     }
 
@@ -57,31 +84,5 @@ export class ModalShowMatchComponent extends BaseModal{
         });
     }
 
-    protected onConfirmAction() {
-        this.currentTable = null;
-        
-    }
-
-    public onCustomOk(){
-        this.currentTable = null;
-        this.closeModal();
-        this.currentEvent.onRefreshHandler();
-        this.informRefreshEvent();
-    }
-
-    informRefreshEvent(){
-        var that = this;
-        setTimeout(function(){
-            //that.currentEvent.onRefresh.emit("");
-        }.bind(this));
-    }
-
-    public showMatch(event: ShowMatchEvent){
-        if(this.currentTable){
-            return;
-        }
-        this.currentEvent = event;
-        this.loadFreeTables();
-    }
      
 }
