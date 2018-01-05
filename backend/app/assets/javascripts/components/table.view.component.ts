@@ -32,6 +32,7 @@ export class TableViewComponent implements OnDestroy {
     public tables: TableDto[];
     public rowCount: number[];
     public currentTablesToCall: any[];
+    private isShowMatchOpen: boolean;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
     
@@ -94,13 +95,14 @@ export class TableViewComponent implements OnDestroy {
     }
 
     checkTableToCall(){
-        if(this.currentTablesToCall.length > 0){
-            var nextTableNumber = this.currentTablesToCall[0];
-            var showMatchEvent = new ShowMatchEvent();
-            showMatchEvent.onRefresh.subscribe(this.onSuccessfullCall.bind(this, nextTableNumber));
-            showMatchEvent.tableId = nextTableNumber;
-            this.showMatch.showMatch(showMatchEvent);
+        if(this.currentTablesToCall.length < 1){
+            return;
         }
+        var nextTableNumber = this.currentTablesToCall[0];
+        var showMatchEvent = new ShowMatchEvent();
+        showMatchEvent.onRefreshHandler = this.onSuccessfullCall.bind(this, nextTableNumber);
+        showMatchEvent.tableId = nextTableNumber;
+        this.showMatch.showMatch(showMatchEvent);
     }
 
     onSuccessfullCall(tableNumber:any){
