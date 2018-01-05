@@ -195,7 +195,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     tl2 map { table =>
       Logger.debug("start next Match")
       val ml = getMatchList
-      val filteredML = ml.filter(mlItem => isPossibleMatch(mlItem))
+      val inverseFilteredML = ml.filterNot(mlItem => isPossibleMatch(mlItem))
+      val filteredML = ml.filter { mlItem =>
+        val m1PlayerIds = mlItem.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
+        isPossibleMatch(mlItem) &&
+        inverseFilteredML.forall{ml =>
+          val m2PlayerIds = ml.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
+          ml.position > mlItem.position && m2PlayerIds.forall(id => m1PlayerIds.contains(id))
+        }
+      }
       filteredML.sortBy(_.position).headOption match {
         case Some(ml) =>
           val matchIds = ml.matchId
