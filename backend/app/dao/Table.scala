@@ -201,7 +201,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
         isPossibleMatch(mlItem) &&
         inverseFilteredML.forall{ml =>
           val m2PlayerIds = ml.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
-          ml.position > mlItem.position && m2PlayerIds.forall(id => m1PlayerIds.contains(id))
+          ml.position < mlItem.position && m2PlayerIds.forall(id => m1PlayerIds.contains(id))
         }
       }
       filteredML.sortBy(_.position).headOption match {
