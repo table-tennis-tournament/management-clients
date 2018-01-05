@@ -27,6 +27,7 @@ class SettingsController @Inject() (tables: Tables, @Named("printer_actor") prin
       var settingSeq = Seq.empty[Setting]
       settingSeq = settingSeq :+ Setting("printerName", printerName)
       settingSeq = settingSeq :+ Setting("alwaysPrint", tables.printOnStart)
+      settingSeq = settingSeq :+ Setting("autoStart", tables.autoStart)
       Ok(Json.toJson(settingSeq))
     }
   }
