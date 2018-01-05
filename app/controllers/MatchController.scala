@@ -47,10 +47,16 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       case Some(r) => {
         r.asOpt[Seq[Long]] match {
           case Some(ids) => {
-            ids map { id =>
+            val tableIds = ids map { id =>
+              val t = tables.getTTTableFromMatchId(id)
               tables.freeTTTable(id)
+              t
             }
             pub ! MatchFree
+            Logger.debug("start Matches on Tables: " + tableIds.toString())
+            tableIds.flatten.distinct map { tableId =>
+              startNextMatch(tableId)
+            }
             Ok(Json.toJson(Answer(true, "successful")).toString())
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
@@ -66,10 +72,15 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       case Some(r) => {
         r.asOpt[Seq[Long]] match {
           case Some(ids) => {
-            ids map { id =>
+            val tableIds = ids map { id =>
+              val t = tables.getTTTableFromMatchId(id)
               tables.takeBackTTTable(id)
+              t
             }
             pub ! MatchTakeBack
+            tableIds.flatten.distinct map { tableId =>
+              startNextMatch(tableId)
+            }
             Ok(Json.toJson(Answer(true, "successful")))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
@@ -156,23 +167,28 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(Answer(true, "delete match")))
   }
 
-  def isPossibleMatch(m: TTMatch) = {
-    if (!(m.isPlayed || m.isPlaying)) {
-      val matches = tables.allMatches()
-      (m.player1Ids ++ m.player2Ids).forall { p =>
-        val ml = matches.filter { ma =>
-          ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+  def isPossibleMatch(ml: MatchList) = {
+    val matches = ml.matchId.map(matchId => tables.getMatch(matchId).get)
+    val p = matches map { m =>
+      if (!(m.isPlayed || m.isPlaying)) {
+        val matches = tables.allMatches()
+        (m.player1Ids ++ m.player2Ids).forall { p =>
+          val ml = matches.filter { ma =>
+            ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+          }
+          ml.isEmpty // p is not playing
         }
-        ml.isEmpty // p is not playing
+      } else {
+        false
       }
-    } else {
-      false
     }
+    p.fold(true)((x, y) => x && y)
   }
 
-  def startNextMatch(id: Long) = {
+  def startNextMatch(id: Long) = if(tables.autoStart) {
+    Logger.debug("start next Match")
     val ml = tables.getMatchList
-    val filteredML = ml.filter(mlItem => mlItem.matchId.size > 1 || isPossibleMatch(tables.getMatch(mlItem.matchId.head).get))
+    val filteredML = ml.filter(mlItem => isPossibleMatch(mlItem))
     filteredML.sortBy(_.position).headOption match {
       case Some(ml) =>
         val matchIds = ml.matchId
