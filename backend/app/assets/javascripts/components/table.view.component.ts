@@ -100,12 +100,11 @@ export class TableViewComponent implements OnDestroy {
         }
         var nextTableNumber = this.currentTablesToCall[0];
         var showMatchEvent = new ShowMatchEvent();
-        showMatchEvent.onRefreshHandler = this.onSuccessfullCall.bind(this, nextTableNumber);
         showMatchEvent.tableId = nextTableNumber;
         this.showMatch.showMatch(showMatchEvent);
     }
 
-    onSuccessfullCall(tableNumber:any){
+    onShowMatchClosed(tableNumber:any){
         var index = this.currentTablesToCall.indexOf(tableNumber);
         this.currentTablesToCall.splice(index, 1);
         this.checkTableToCall();
