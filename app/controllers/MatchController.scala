@@ -158,7 +158,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(Answer(true, "delete match")))
   }
 
-  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true) = Action{ request =>
+  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false) = Action{ request =>
     request.body.asJson match {
       case Some(matchIdsJson) => {
         matchIdsJson.validate[Seq[Long]].asOpt match {
@@ -203,7 +203,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
             if(res) {
-              pub ! MatchToTable(tableId)
+              if(secondTable)
+                pub ! MatchToSecondTable(tableId)
+              else
+                pub ! MatchToTable(tableId)
               pub ! MatchListDelete
               Ok(Json.toJson(Answer(true, "started match")))
             } else

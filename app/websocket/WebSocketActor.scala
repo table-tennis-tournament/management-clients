@@ -19,6 +19,7 @@ object WebSocketActor {
   trait Message
 
   case class MatchToTable(id: Long) extends Message
+  case class MatchToSecondTable(id: Long) extends Message
   object MatchResult extends Message
   object MatchLoadNew extends Message
   object MatchFree extends Message
@@ -49,6 +50,9 @@ class WebSocketActor(out: ActorRef) extends Actor {
       Logger.info("I received your message: " + msg)
       out ! ("I received your message: " + msg)
     case m: MatchToTable =>
+      Logger.debug("send " + m.getClass.getSimpleName.filter(_ != '$'))
+      out ! Json.toJson(WSMessage(m.getClass.getSimpleName.filter(_ != '$'), Some(m.id.toString))).toString()
+    case m: MatchToSecondTable =>
       Logger.debug("send " + m.getClass.getSimpleName.filter(_ != '$'))
       out ! Json.toJson(WSMessage(m.getClass.getSimpleName.filter(_ != '$'), Some(m.id.toString))).toString()
     case m: Message =>

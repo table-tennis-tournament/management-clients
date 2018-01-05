@@ -14,8 +14,8 @@ GET     /player/:id                     controllers.PlayerController.getPlayer(i
 GET     /match/all                      controllers.MatchController.getAllMatches
 GET     /match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
 # GET     /match/filter                   controllers.MatchController.getFilteredMatchList()
-POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true)
-POST    /match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false, print: Boolean = false)
+POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false)
+POST    /match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false, print: Boolean = false, secondTable: Boolean = true)
 GET     /match/open/all                 controllers.MatchController.getOpenMatches
 GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
 GET     /match/played/all               controllers.MatchController.getPlayedMatches
