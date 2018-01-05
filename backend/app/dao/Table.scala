@@ -14,7 +14,9 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.JdbcProfile
 import com.github.tototoshi.slick.MySQLJodaSupport._
+import play.api.libs.json.Json
 import slick.ast.Union
+import websocket.WebSocketActor.{MatchListDelete, MatchToTable}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -22,7 +24,7 @@ import scala.concurrent.duration._
 /**
   * Created by jonas on 29.09.16.
   */
-class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @Named("printer_actor") printerActor: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
+class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @Named("printer_actor") printerActor: ActorRef, @Named("publisher_actor") pub: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
@@ -168,6 +170,78 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   // Matches
+
+  def isPossibleMatch(ml: MatchList) = {
+    val matches = ml.matchId.map(matchId => getMatch(matchId).get)
+    val p = matches map { m =>
+      if (!(m.isPlayed || m.isPlaying)) {
+        val matches = allMatches()
+        (m.player1Ids ++ m.player2Ids).forall { p =>
+          val ml = matches.filter { ma =>
+            ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+          }
+          ml.isEmpty // p is not playing
+        }
+      } else {
+        false
+      }
+    }
+    p.fold(true)((x, y) => x && y)
+  }
+
+  def startNextMatch = if(autoStart) {
+    getFreeTables() map { table =>
+      Logger.debug("start next Match")
+      val ml = getMatchList
+      val filteredML = ml.filter(mlItem => isPossibleMatch(mlItem))
+      filteredML.sortBy(_.position).headOption match {
+        case Some(ml) =>
+          val matchIds = ml.matchId
+          val tableId = table.id
+          val matches = allMatches()
+          Logger.info("matches: " + matches.toString())
+          val m = matchIds.map(id => matches.filter(_.id == id).head)
+          val matchReady = m.forall(m => if (!(m.isPlayed || m.isPlaying)) {
+            (m.player1Ids ++ m.player2Ids).forall { p =>
+              val ml = matches.filter { ma =>
+                ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+              }
+              ml.isEmpty // p is not playing
+            }
+          } else {
+            false
+          })
+          val res = if (matchReady) {
+            val result = matchIds map { matchId =>
+              Logger.info("Set match to Table")
+              Logger.info(getMatchList.toString())
+              Logger.info("matchId: " + matchId)
+              val ml = getMatchList
+              ml.filter(_.matchId.contains(matchId)).headOption match {
+                case Some(mlItem) => {
+                  Logger.info("delMatchList")
+                  delMatchListItem(mlItem.uuid.get, matchId)
+                  startMatch(matchId, table.id, true)
+                }
+                case _ => {
+                  startMatch(matchId, table.id, true)
+                }
+              }
+            }
+            result.forall(x => x)
+          } else {
+            Logger.error("Match not ready")
+            false
+          }
+          Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
+          if(res) {
+            pub ! MatchToTable(tableId)
+            pub ! MatchListDelete
+          }
+        case _ =>
+      }
+    }
+  }
 
   def updateMatches(): Future[Boolean] = {
     dbConfigProvider.get.db.run(matches.result) map { res =>
