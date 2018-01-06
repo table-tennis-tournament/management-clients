@@ -22,7 +22,7 @@
                 <div class="collapsible-header black-text" [class.active]="group.isMatchActive"><i class="material-icons">view_list</i>Spiele</div>
                 <div class="collapsible-body group-view-body">
                     <div class="collection">
-                        <a *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" (dblclick)="onResultClicked(currentMatch)"
+                        <a *ngFor="let currentMatch of group.matches" [class.disabled-item]="currentMatch.isInWaitingList" href="javascript:void(0)" class="collection-item" (dblclick)="onResultClicked(currentMatch)"
                             dnd-draggable [dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList" [dragData]="currentMatch">
                             <div>
                                 <team-match-item [team]="currentMatch.team1" [showDisciplines]="false"></team-match-item>-

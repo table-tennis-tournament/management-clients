@@ -19,6 +19,8 @@ import { WebSocketService } from "../services/web.socket.service";
 import { ModalShowMatchComponent } from "./modals/show.match.modal";
 import { ShowMatchEvent } from "../handler/show.match.event";
 import { ActivatedRoute } from "@angular/router"
+import { MatchListService } from "../services/match.list.service";
+import { StatusDto } from "app/assets/javascripts/data/status.dto";
 
 
 @Component({
@@ -44,8 +46,6 @@ export class TableViewComponent implements OnDestroy {
 
     @Output() onTableAssigned = new EventEmitter<AssignEvent>();
 
-    // @Input() showMatches:boolean = true;
-
     _showMatches: boolean;
     get showMatches(): boolean {
         return this._showMatches;
@@ -61,10 +61,12 @@ export class TableViewComponent implements OnDestroy {
     } 
 
 
-    constructor(route: ActivatedRoute, private matchService:MatchService, private tableService:TableService, 
+    constructor(route: ActivatedRoute, private matchService:MatchService, 
+        private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
         private randomMatchService: RandomMatchService,
         private toastService: ToastService,
+        private matchListService: MatchListService,
         private websocketService: WebSocketService) {
 
         if(route.snapshot.data[0]){
@@ -126,6 +128,14 @@ export class TableViewComponent implements OnDestroy {
 
     onTableRefresh(){
         this.loadAllTables();
+    }
+
+    onSyncWaitingList(){
+        this.matchListService.autoStart().subscribe(this.onWaitingListSyncSuccess.bind(this));
+    }
+
+    onWaitingListSyncSuccess(status: StatusDto){
+        this.toastService.toastMessageOrShowStatus(status, "Autostart");
     }
 
     getAllTablesFailed(error){
