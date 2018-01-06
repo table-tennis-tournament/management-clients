@@ -26,6 +26,11 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
 
   var isActiv = false
 
+  def autoStart = Action {
+    tables.autoStart
+    Ok(Json.toJson(Answer(true, "started matches")))
+  }
+
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
     val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
     val p2 = ttMatch.player2Ids map {id => tables.getPlayer(id)}
