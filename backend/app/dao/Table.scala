@@ -170,21 +170,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   // Matches
 
   def isPossibleMatch(ml: MatchList) = {
-    val matches = ml.matchId.map(matchId => getMatch(matchId).get)
-    val p = matches map { m =>
-      if (!(m.isPlayed || m.isPlaying)) {
-        val matches = allMatches()
-        (m.player1Ids ++ m.player2Ids).forall { p =>
-          val ml = matches.filter { ma =>
-            ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
-          }
-          ml.isEmpty // p is not playing
-        }
-      } else {
-        false
-      }
-    }
-    p.fold(true)((x, y) => x && y)
+    ml.matchId.forall(id => isPlayable(getMatch(id).get))
   }
 
   def startNextMatch = if(autoStart) {
