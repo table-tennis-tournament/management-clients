@@ -291,7 +291,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   def isPlayable(ttMatch: TTMatch): Boolean = {
     val players = ttMatch.player1Ids ++ ttMatch.player2Ids
     val playingSeq = players map {p =>
-      ttMatchSeq.filter(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p)).isEmpty
+      ttMatchSeq.filter(!_.player1Ids.isEmpty).filter(!_.player2Ids.isEmpty).filter(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p)).isEmpty
     }
     playingSeq.forall(x => x)
   }
@@ -380,7 +380,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val matchO = ttMatchSeq.filter(_.id == id).headOption
     matchO match {
       case Some(m) => {
-        val playerIds = ttMatchSeq.filter(_.isPlaying).map(m => m.player1Ids ++ m.player2Ids).flatten
+        val playerIds = ttMatchSeq.filter(!_.player1Ids.isEmpty).filter(!_.player2Ids.isEmpty).filter(_.isPlaying).map(m => m.player1Ids ++ m.player2Ids).flatten
         playerIds.containsAnyOf(m.player1Ids ++ m.player2Ids)
       }
       case _ => false
