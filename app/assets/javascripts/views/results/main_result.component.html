@@ -5,6 +5,13 @@
     <div *ngFor="let currentTab of currentTabs | slice:(i*12):(i+1)*12" class="col no-padding">
       <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>
   </div>
+  <div class="col">
+    <p>
+        <input type="checkbox" class="filled-in" [(ngModel)]="isFixed" id="remove-played-checkbox" (change)="onIsFixedChanged()" />
+        <label for="remove-played-checkbox">Stop</label>
+      </p>
+</div>
+</div>
 
   <div *ngIf="selectedTab" class="row">
     <div *ngIf="selectedTab.stages" class="discipline-stage-view">
