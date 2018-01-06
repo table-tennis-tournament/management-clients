@@ -293,7 +293,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val playingSeq = players map {p =>
       ttMatchSeq.filter(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p)).isEmpty
     }
-    val ml = getMatchList.filter(_.matchId == ttMatch.id).headOption
+    val ml = getMatchList.filter(_.matchId.contains(ttMatch.id)).headOption
     ml match {
       case Some(ml) => {
         Logger.debug("some ml " + ml.toString)
