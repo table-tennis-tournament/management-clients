@@ -289,13 +289,19 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def isPlayable(ttMatch: TTMatch): Boolean = {
-    Logger.debug("isPossible: " + ttMatch.player1Ids.toString() + " " + ttMatch.player2Ids.toString())
     val players = ttMatch.player1Ids ++ ttMatch.player2Ids
     val playingSeq = players map {p =>
       ttMatchSeq.filter(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p)).isEmpty
     }
-    Logger.debug("isPlayable" + !ttMatch.player1Ids.isEmpty + " " + !ttMatch.player2Ids.isEmpty)
-    playingSeq.forall(x => x) && !(ttMatch.player1Ids.headOption.getOrElse(0) == 0) && !(ttMatch.player2Ids.headOption.getOrElse(0) == 0)
+    val ml = getMatchList.filter(_.matchId == ttMatch.id).headOption
+    ml match {
+      case Some(ml) => {
+        val idsBefore = getMatchList.filter(_.position < ml.position).map(_.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids)).flatten.flatten
+        val isPlayerInMatchBefore = (ttMatch.player1Ids ++ ttMatch.player2Ids).forall(id => idsBefore.contains(id))
+        playingSeq.forall(x => x) && !(ttMatch.player1Ids.headOption.getOrElse(0) == 0) && !(ttMatch.player2Ids.headOption.getOrElse(0) == 0) && !isPlayerInMatchBefore
+      }
+      case None => true
+    }
   }
 
   def toMatch(m: MatchDAO): TTMatch = {
