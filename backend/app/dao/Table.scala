@@ -295,7 +295,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       ttMatchSeq.filter(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p)).isEmpty
     }
     Logger.debug("isPlayable" + !ttMatch.player1Ids.isEmpty + " " + !ttMatch.player2Ids.isEmpty)
-    playingSeq.forall(x => x) && !ttMatch.player1Ids.isEmpty && !ttMatch.player2Ids.isEmpty
+    playingSeq.forall(x => x) && !(ttMatch.player1Ids.headOption.getOrElse(0) == 0) && !(ttMatch.player2Ids.headOption.getOrElse(0) == 0)
   }
 
   def toMatch(m: MatchDAO): TTMatch = {
