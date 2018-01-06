@@ -141,8 +141,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def getTTTableFromMatchId(id: Long): Seq[Int] = {
-    Logger.debug("Table: " + ttTablesSeq.toString())
-    Logger.debug("Table: " + ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a).toString())
     ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a)
   }
 
@@ -198,10 +196,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       val inverseFilteredML = ml.filterNot(mlItem => isPossibleMatch(mlItem))
       val filteredML = ml.filter { mlItem =>
         val m1PlayerIds = mlItem.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
+        Logger.debug("m1: " + m1PlayerIds.toString())
         isPossibleMatch(mlItem) &&
         inverseFilteredML.forall{ml =>
           val m2PlayerIds = ml.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
-          ml.position < mlItem.position && m2PlayerIds.forall(id => m1PlayerIds.contains(id))
+          Logger.debug("m2: " + m1PlayerIds.toString())
+          ml.position > mlItem.position || m2PlayerIds.forall(id => !m1PlayerIds.contains(id))
         }
       }
       filteredML.sortBy(_.position).headOption match {
