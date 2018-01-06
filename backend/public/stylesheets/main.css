@@ -64,6 +64,10 @@ span.circle {
     display: inline-block;
 }
 
+.single-bordered{
+    border: 1px solid grey;
+}
+
 .custom-col {
     width: 20%;
     margin-left: auto;
@@ -145,24 +149,30 @@ span.circle {
     opacity: .50;
 }
 
+.match-item-padding{
+    padding: 15px;
+}
+
 .discipline-stage-view .collapsible .first-stage{
-    height: 40px;
-    padding-top:5px;
+    height: 80px;
+    padding:0px;
 }
 
 .discipline-stage-view .collapsible .second-stage{
-    height: 80px;
-    padding-top:30px;
+    height: 160px;
+    padding:0px;
+    padding-top:35px;
 }
 
 .discipline-stage-view .collapsible .third-stage{
-    height: 160px;
-    padding-top:60px;
+    height: 320px;
+    padding:0px;
+    padding-top:110px;
 }
 
 .discipline-stage-view .collapsible .fourth-stage{
-    height: 320px;
-    padding-top:100px;
+    height: 640px;
+    padding:0px;
 }
 
 
