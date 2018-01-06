@@ -16,7 +16,8 @@
         <div class="collapsible-body no-padding">
             <div class="collection">
                 <a *ngFor="let currentMatch of stage.matches" href="javascript:void(0)" class="collection-item {{lineStageClass[index]}}" (dblclick)="onResultClicked(currentMatch)"
-                [class.disabled-item]="currentMatch.isInWaitingList&&!currentMatch.match.result" dnd-draggable [dragEnabled]="!currentMatch.isInWaitingList&&!currentMatch.match.result" [dragData]="currentMatch">
+                [class.disabled-item]="currentMatch.isInWaitingList||currentMatch.table[0]" dnd-draggable 
+                [dragEnabled]="!currentMatch.isInWaitingList&&!currentMatch.match.result&&!currentMatch.table[0]" [dragData]="currentMatch">
                     <div class="match-item-padding">
                         <match-item [match]="currentMatch"></match-item> 
                     </div>    

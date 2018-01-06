@@ -89,16 +89,5 @@ export class DisciplineGroupViewComponent{
         });
         this.tableNumbers = numberArray;
     }
-
-    addTableClicked(){
-        if(isNaN(this.currentTableInput)){
-            alert("Eingabe muss Nummer sein.");
-            return;
-        }
-        if(this.currentTableInput){
-            this.matchListService.setGroupOnTable(this.group.matches[0].group.id, this.currentTableInput).subscribe(x=>alert("Erfolgreich eingetragen."), error=>console.log(error));
-        }
-
-    }
    
 }

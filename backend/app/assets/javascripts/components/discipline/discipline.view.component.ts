@@ -26,8 +26,8 @@ export class DisciplineViewComponent{
     public modalActions = new EventEmitter<string|MaterializeAction>();
     public rowCount: number[];
     public removePlayed: boolean = true;
-    private playersAreOpen: boolean = false;
-    private matchesAreOpen: boolean = false;
+    public playersAreOpen: boolean = true;
+    public matchesAreOpen: boolean = true;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
@@ -88,15 +88,23 @@ export class DisciplineViewComponent{
         this.rowCount = Array.from(Array(Math.ceil(this.tabs.length / 12)).keys());
     }
 
+    setTabForId(tabId: number){
+        this.matchService.getMatchesByType(tabId).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
+    }
+
+    handleSetSelectedTab(result: MatchDto[]){
+        var createdTab = this.matchHelperService.getSingle(result, this.selectedTab, this.playersAreOpen, this.matchesAreOpen);
+        this.selectedTab = createdTab;
+        this.removePlayedItems();
+    }
+
+
     onDeleteStage($event: DisciplineStage){
         var index = this.selectedTab.stages.indexOf($event);
         this.selectedTab.stages.splice(index, 1);
     }
 
-    setTabForId(tabId: number){
-        this.matchService.getMatchesByType(tabId).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
-    }
-
+    
     onResultForMatch($event){
         var resultHandler = new ResultMatchHandler(this.matchService);
         resultHandler.onRefresh.subscribe(this.onRefreshCurrentTab.bind(this));
@@ -105,15 +113,13 @@ export class DisciplineViewComponent{
         this.resultDialog.openModal();
     }
     
-    handleSetSelectedTab(result: MatchDto[]){
-        var createdTab = this.matchHelperService.getSingle(result, this.selectedTab, this.playersAreOpen, this.matchesAreOpen);
-        this.selectedTab = createdTab;
-        this.removePlayedItems();
-    }
    
     onOpenPlayers(){
-        this.playersAreOpen = !this.playersAreOpen;
         this.randomMatchService.expandPlayer();
+    }
+
+    onOpenMatches(){
+        this.randomMatchService.expandMatches();
     }
 
     onSyncMatches(){
@@ -129,8 +135,5 @@ export class DisciplineViewComponent{
         this.modalActions.emit({action:"modal",params:["close"]});
     }
 
-    onOpenAll(){
-        this.matchesAreOpen = !this.matchesAreOpen;
-        this.randomMatchService.expandMatches();
-    }
+    
 }
