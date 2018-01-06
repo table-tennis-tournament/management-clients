@@ -9,6 +9,6 @@ export class DisciplineGroup{
     textColor: string;
     tableNumbers: number[]=[];
     isPlayerActive:boolean = true;
-    isMatchActive:boolean = false;
+    isMatchActive:boolean = true;
     isComplete:boolean = false;
 }
