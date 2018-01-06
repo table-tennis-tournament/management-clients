@@ -173,7 +173,7 @@ case class MatchDAO(
     nr: Int,
     plannedTableId: Option[Long],
     roundNumber: Int,
-    winnerId: Long
+    winnerId: Option[Long]
   ) {
   lazy val getResult = {
     if(resultRaw != "") {
