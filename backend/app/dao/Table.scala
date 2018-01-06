@@ -289,6 +289,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def isPlayable(ttMatch: TTMatch): Boolean = {
+    Logger.debug("isPossible: " + ttMatch.player1Ids.toString() + " " + ttMatch.player2Ids.toString())
     val players = ttMatch.player1Ids ++ ttMatch.player2Ids
     val playingSeq = players map {p =>
       ttMatchSeq.filter(_.isPlaying).filter(m => (m.player1Ids ++ m.player2Ids).contains(p)).isEmpty
@@ -391,15 +392,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val x = result map (r => r.mkString("="))
     val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0)+y(0), x(1)+y(1))}
-    var sets1 = 0
-    var sets2 = 0
-    for(s <- result) {
-      if(s(0) > s(1)){
-        sets1 += 1
-      } else {
-        sets2 += 1
-      }
-    }
+    val sets = result.foldRight(Seq(0,0)){(x,y) => if(y(0)>y(1)) Seq(x(0)+1, x(1)) else Seq(x(0), x(1) + 1)}
     ttTablesSeq = ttTablesSeq map { t =>
       if (t.matchId.contains(id)) t.copy(matchId = t.matchId.filterNot(_ == id))
       else t
@@ -410,11 +403,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
           resultRaw = x.mkString(","),
           isPlaying = false,
           isPlayed = true,
-          result = sets1 + " : " + sets2,
+          result = sets(0) + " : " + sets(1),
           balls1 = balls(0),
           balls2 = balls(1),
-          sets1 = sets1,
-          sets2 = sets2
+          sets1 = sets(0),
+          sets2 = sets(1)
         )
       } else m
     }
