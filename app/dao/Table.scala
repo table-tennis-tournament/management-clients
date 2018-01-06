@@ -265,15 +265,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def loadNewMatches(): Future[Boolean] = {
-    dbConfigProvider.get.db.run(matches.result) map { res =>
-      val x = res map { r =>
-        toMatch(r)
+    updateDoublesSeq flatMap { x =>
+      Logger.debug(x.toString)
+      dbConfigProvider.get.db.run(matches.result) map { res =>
+        val x = res map { r =>
+          toMatch(r)
+        }
+        val matchSeqIds = ttMatchSeq.map(_.id)
+        val newMatches = x.filter(m => !matchSeqIds.contains(m.id))
+        ttMatchSeq = ttMatchSeq ++ newMatches
+        Logger.info("add Matches " + newMatches.size.toString)
+        true
       }
-      val matchSeqIds = ttMatchSeq.map(_.id)
-      val newMatches = x.filter(m => !matchSeqIds.contains(m.id))
-      ttMatchSeq = ttMatchSeq ++ newMatches
-      Logger.info("add Matches " + newMatches.size.toString)
-      true
     }
   }
 
