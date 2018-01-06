@@ -299,11 +299,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
         Logger.debug("some ml " + ml.toString)
         val idsBefore = getMatchList.filter(_.position < ml.position).map(_.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids)).flatten.flatten
         val isPlayerInMatchBefore = (ttMatch.player1Ids ++ ttMatch.player2Ids).forall(id => idsBefore.contains(id))
+        Logger.debug(idsBefore.toString())
+        Logger.debug("isPlayerInMatchBefore " + isPlayerInMatchBefore)
         playingSeq.forall(x => x) && !(ttMatch.player1Ids.headOption.getOrElse(0) == 0) && !(ttMatch.player2Ids.headOption.getOrElse(0) == 0) && !isPlayerInMatchBefore
       }
       case None =>
         Logger.debug("ml = None")
-        true
+        playingSeq.forall(x => x) && !(ttMatch.player1Ids.headOption.getOrElse(0) == 0) && !(ttMatch.player2Ids.headOption.getOrElse(0) == 0)
     }
   }
 
