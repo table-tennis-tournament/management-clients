@@ -21,6 +21,7 @@ export class ResultViewComponent implements IResultHandler{
     public rowCount: number[];
 
     private currentMatchIndex: number;
+    private currentMatch: MatchDto;
     private currentTypeId: string;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
@@ -58,6 +59,7 @@ export class ResultViewComponent implements IResultHandler{
         this.resultDialog.setResultHandler(this);
         this.currentMatchIndex = matchIndex;
         var match = this.matches[matchIndex];
+        this.currentMatch = this.matches[matchIndex];
         this.resultDialog.setMatch(match);
         this.resultDialog.openModal();
     }
@@ -72,7 +74,7 @@ export class ResultViewComponent implements IResultHandler{
     }
 
     handleResult(resultToHandle: [number, number][]) {
-        var match = this.matches[this.currentMatchIndex];
+        var match = this.currentMatch;
         var matchId = match.match.id;
         this.matchService.addResult(resultToHandle, matchId).subscribe(this.handleResultAfterRequestSuccessful.bind(this),
         this.handleErrorsOnService);

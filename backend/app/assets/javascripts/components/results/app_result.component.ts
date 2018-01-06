@@ -20,8 +20,9 @@ export class AppResultComponent{
   public selectedTab: DisciplineTab;
   private lineStageClass:string[];
   public colors: string[];
-  private changeTime:number = 10000;
+  private changeTime:number = 15000;
   private currentIndex:number = 0;
+  public isFixed:boolean = false;
 
   constructor(private matchService: MatchService, private matchHelperService: MatchHelperService){
     this.loadTypes();
@@ -44,6 +45,10 @@ export class AppResultComponent{
     this.matchService.getAllOpenTypes().subscribe(this.onTypesLoaded.bind(this));
   }
 
+  onIsFixedChanged(){
+    this.startTimer();
+  }
+
   onTypesLoaded(types: Type[]){
     this.currentTabs = [];
     types.forEach((currentType)=> this.currentTabs.push(new DisciplineTab(currentType.id, currentType.name, currentType.kind)));
@@ -56,6 +61,9 @@ export class AppResultComponent{
 
   startTimer(){
     clearTimeout(this.currentTimer);
+    if(this.isFixed === true){
+      return;
+    }
     this.currentTimer = setTimeout(this.refreshOrReloadDiscipline.bind(this), this.changeTime);
   }
 
