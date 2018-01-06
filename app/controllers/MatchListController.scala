@@ -27,7 +27,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
   var isActiv = false
 
   def autoStart = Action {
-    tables.autoStart
+    tables.startNextMatch
     Ok(Json.toJson(Answer(true, "started matches")))
   }
 
