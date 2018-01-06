@@ -13,6 +13,7 @@ import { ResultModalComponent } from "../../components/result.modal.view.compone
 import { ResultMatchHandler } from "../../handler/result.match.handler";
 import { ToastService } from "../../services/toast.service";
 import { MatchHelperService } from "../../services/match.helper.service";
+import { WebSocketService } from "../../services/web.socket.service";
 
 @Component({
     selector: "discipline-view",
@@ -31,10 +32,12 @@ export class DisciplineViewComponent{
     constructor(private randomMatchService: RandomMatchService, 
         private matchService: MatchService, 
         private toastService: ToastService,
+        private websocketService: WebSocketService,
         private matchHelperService: MatchHelperService)
     {
         this.onFilterSelected();
         this.colors = TypeColors.TYPE_COLORS;
+        this.websocketService.OnTableRefresh.subscribe(this.onRefreshCurrentTab.bind(this));
     }
 
     onTabSelected(selectedTab: DisciplineTab){
