@@ -26,6 +26,8 @@ export class DisciplineViewComponent{
     public modalActions = new EventEmitter<string|MaterializeAction>();
     public rowCount: number[];
     public removePlayed: boolean = true;
+    private playersAreOpen: boolean = false;
+    private matchesAreOpen: boolean = false;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
@@ -104,11 +106,13 @@ export class DisciplineViewComponent{
     }
     
     handleSetSelectedTab(result: MatchDto[]){
-        this.selectedTab = this.matchHelperService.getSingle(result, this.selectedTab);
+        var createdTab = this.matchHelperService.getSingle(result, this.selectedTab, this.playersAreOpen, this.matchesAreOpen);
+        this.selectedTab = createdTab;
         this.removePlayedItems();
     }
    
     onOpenPlayers(){
+        this.playersAreOpen = !this.playersAreOpen;
         this.randomMatchService.expandPlayer();
     }
 
@@ -126,6 +130,7 @@ export class DisciplineViewComponent{
     }
 
     onOpenAll(){
+        this.matchesAreOpen = !this.matchesAreOpen;
         this.randomMatchService.expandMatches();
     }
 }

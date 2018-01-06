@@ -71,7 +71,7 @@ export class MatchHelperService {
     return endResult;
   }
 
-  getSingle(result: MatchDto[], currentItemTab: DisciplineTab):DisciplineTab{
+  getSingle(result: MatchDto[], currentItemTab: DisciplineTab, isPlayerActive: boolean = true, isMatchActive: boolean = false):DisciplineTab{
     currentItemTab.groups = [];
     currentItemTab.stages = [];
     var allStages:number[] = [];
@@ -110,6 +110,9 @@ export class MatchHelperService {
             currentItemTab.groups[currentItem.group.id].bgColor = TypeColors.TYPE_COLORS[currentItem.type.id];
             currentItemTab.groups[currentItem.group.id].tableNumbers = [];
             currentItemTab.groups[currentItem.group.id].isComplete = true;
+            currentItemTab.groups[currentItem.group.id].isMatchActive = isMatchActive;
+            currentItemTab.groups[currentItem.group.id].isPlayerActive = isPlayerActive;
+            
             allPlayerArray = [];
         }
         var currentGroup = currentItemTab.groups[currentItem.group.id];
