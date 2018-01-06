@@ -393,7 +393,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val x = result map (r => r.mkString("="))
     val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0)+y(0), x(1)+y(1))}
-    val sets = result.foldRight(Seq(0,0)){(x,y) => if(y(0)>y(1)) Seq(x(0)+1, x(1)) else Seq(x(0), x(1) + 1)}
+    val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y(0)>y(1)) Seq(x(0)+1, x(1)) else Seq(x(0), x(1) + 1)}
     ttTablesSeq = ttTablesSeq map { t =>
       if (t.matchId.contains(id)) t.copy(matchId = t.matchId.filterNot(_ == id))
       else t
