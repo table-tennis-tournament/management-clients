@@ -56,6 +56,9 @@ export class WebSocketService {
             this.OnTableRefresh.emit(message);
             this.OnMatchToTable.emit(message);
         }
+        if(message.action=== "MatchToSecondTable"){
+            this.OnTableRefresh.emit(message);
+        }
         if (message.action === "MatchListAdd" ||
             message.action === "MatchListDelete" ||
             message.action === "MatchListMove"){
