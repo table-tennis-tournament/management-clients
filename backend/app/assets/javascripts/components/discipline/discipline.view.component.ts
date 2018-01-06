@@ -38,6 +38,7 @@ export class DisciplineViewComponent{
         this.onFilterSelected();
         this.colors = TypeColors.TYPE_COLORS;
         this.websocketService.OnTableRefresh.subscribe(this.onRefreshCurrentTab.bind(this));
+        this.websocketService.OnMatchResult.subscribe(this.onRefreshCurrentTab.bind(this));
     }
 
     onTabSelected(selectedTab: DisciplineTab){

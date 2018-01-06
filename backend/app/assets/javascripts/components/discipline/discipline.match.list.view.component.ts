@@ -27,6 +27,7 @@ export class DisciplineMatchListComponent{
         this.disciplineType = DisciplineShortcuts.TYPE;
         this.websocketService.OnWaitinglistRefresh.subscribe(this.onWaitinglistRefresh.bind(this));
         this.websocketService.OnTableRefresh.subscribe(this.onRefreshList.bind(this));
+        this.websocketService.OnMatchResult.subscribe(this.onRefreshList.bind(this));
     }
 
     private getAllMatches(){
