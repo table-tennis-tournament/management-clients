@@ -321,11 +321,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     if(m.player1Ids.length == 1)
       MatchDAO(m.id, m.isPlaying, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
-        m.roundNumber.getOrElse(0))
+        m.roundNumber.getOrElse(0), m.getWinnerIds.headOption.getOrElse(0))
     else {
+      val t1 = Seq(getDouble(m.team1Id - 100000).get.player1Id, getDouble(m.team1Id - 100000).get.player2Id)
+      val t2 = Seq(getDouble(m.team2Id - 100000).get.player1Id, getDouble(m.team2Id - 100000).get.player2Id)
       MatchDAO(m.id, m.isPlaying, m.team1Id, m.team2Id, None, m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
-        m.roundNumber.getOrElse(0))
+        m.roundNumber.getOrElse(0), if(t1.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team1Id else if(t2.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team2Id else 0)
     }
   }
 
@@ -474,9 +476,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def plannedTableId = column[Option[Long]]("Matc_PlannedTable_ID")
     def nr = column[Int]("Matc_Nr")
     def roundNumber = column[Int]("Matc_RoundNumber")
+    def winnerId = column[Long]("Matc_Winner_ID")
 
     def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
-      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber) <> (MatchDAO.tupled, MatchDAO.unapply _)
+      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber, winnerId) <> (MatchDAO.tupled, MatchDAO.unapply _)
   }
 
   // Players
