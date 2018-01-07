@@ -137,6 +137,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       tables.setResult(id, resultO.get) map {res =>
         if(res) {
           pub ! MatchResult
+          tables.startNextMatch
           Ok(Json.toJson(Answer(true, "set result")))
         } else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
       }
