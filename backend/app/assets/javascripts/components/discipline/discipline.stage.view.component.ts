@@ -28,7 +28,7 @@ export class DisciplineStageComponent{
     onDelete(){
         this.onDeleteStage.emit(this.stage);
     }
-  
+
     @Input() stage:DisciplineStage;
 
     @Input() index:number;

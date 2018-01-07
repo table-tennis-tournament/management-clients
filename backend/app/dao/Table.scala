@@ -315,7 +315,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
-    if(m.player1Ids.length == 1)
+    if(m.player1Ids.length < 2)
       MatchDAO(m.id, m.isPlaying, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
         m.roundNumber.getOrElse(0), Some(m.getWinnerIds.headOption.getOrElse(0)))
@@ -433,7 +433,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val newNr =  ((nr/1000)-1)*1000+((nr%1000)+1)/2
     Logger.debug("newNr " + newNr)
     val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
-    val teamId = if(ttMatch.getWinnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) ttMatch.team1Id else ttMatch.team2Id
+    val teamId = if(ttMatch.getWinnerIds.size > 1){
+      if(ttMatch.getWinnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) ttMatch.team1Id else ttMatch.team2Id
+    }  else ttMatch.getWinnerIds.head
     val newMatch = if(nr%1000%2 == 1) {
       uMatch.copy(player1Ids = ttMatch.getWinnerIds, team1Id = if(ttMatch.getWinnerIds.size > 1) teamId else ttMatch.getWinnerIds.head)
     } else {
