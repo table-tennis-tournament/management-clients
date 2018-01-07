@@ -433,10 +433,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val newNr =  ((nr/1000)-1)*1000+((nr%1000)+1)/2
     Logger.debug("newNr " + newNr)
     val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
+    val teamId = if(ttMatch.getWinnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) ttMatch.team1Id else ttMatch.team2Id
     val newMatch = if(nr%1000%2 == 1) {
-      uMatch.copy(player1Ids = ttMatch.getWinnerIds, team1Id = if(ttMatch.getWinnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) ttMatch.team1Id else ttMatch.team2Id)
+      uMatch.copy(player1Ids = ttMatch.getWinnerIds, team1Id = if(ttMatch.getWinnerIds.size > 1) teamId else ttMatch.getWinnerIds.head)
     } else {
-      uMatch.copy(player2Ids = ttMatch.getWinnerIds, team2Id = if(ttMatch.getWinnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) ttMatch.team1Id else ttMatch.team2Id)
+      uMatch.copy(player2Ids = ttMatch.getWinnerIds, team2Id = if(ttMatch.getWinnerIds.size > 1) teamId else ttMatch.getWinnerIds.head)
     }
     Logger.debug("writeNextKoMatch" + newMatch.toString)
     ttMatchSeq = ttMatchSeq map { m =>
