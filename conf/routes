@@ -7,58 +7,58 @@ GET     /                               controllers.Application.index
 GET     /result                         controllers.Application.result
 
 # PlayerController
-GET     /player/all                     controllers.PlayerController.getAllPlayer
-GET     /player/:id                     controllers.PlayerController.getPlayer(id: Long)
+GET     /api/player/all                     controllers.PlayerController.getAllPlayer
+GET     /api/player/:id                     controllers.PlayerController.getPlayer(id: Long)
 
 # MatchController:
-GET     /match/all                      controllers.MatchController.getAllMatches
-GET     /match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
-# GET     /match/filter                   controllers.MatchController.getFilteredMatchList()
-POST    /match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false)
-POST    /match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false, print: Boolean = false, secondTable: Boolean = true)
-GET     /match/open/all                 controllers.MatchController.getOpenMatches
-GET     /match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
-GET     /match/played/all               controllers.MatchController.getPlayedMatches
-GET     /match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
-GET     /match/loadnew                  controllers.MatchController.loadNewMatches
-GET     /match/:id                      controllers.MatchController.getMatch(id: Long)
+GET     /api/match/all                      controllers.MatchController.getAllMatches
+GET     /api/match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
+# GET     /api/match/filter                   controllers.MatchController.getFilteredMatchList()
+POST    /api/match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false)
+POST    /api/match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false, print: Boolean = false, secondTable: Boolean = true)
+GET     /api/match/open/all                 controllers.MatchController.getOpenMatches
+GET     /api/match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
+GET     /api/match/played/all               controllers.MatchController.getPlayedMatches
+GET     /api/match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
+GET     /api/match/loadnew                  controllers.MatchController.loadNewMatches
+GET     /api/match/:id                      controllers.MatchController.getMatch(id: Long)
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
-POST    /match/:id/result               controllers.MatchController.setResult(id: Long)
+POST    /api/match/:id/result               controllers.MatchController.setResult(id: Long)
 
-GET     /types/all                      controllers.MatchController.getTypes
-GET     /types/open/all                controllers.MatchController.getActiveTypes
+GET     /api/types/all                      controllers.MatchController.getTypes
+GET     /api/types/open/all                controllers.MatchController.getActiveTypes
 
 # TableController:
-GET     /table/all                      controllers.TableController.getAllTables
-GET     /table/free                     controllers.TableController.getFreeTables
-GET     /table/:id                      controllers.TableController.getTable(id: Long)
-GET     /table/:id/lock                 controllers.TableController.lockTable(id: Long)
-GET     /table/:id/unlock               controllers.TableController.unlockTable(id: Long)
+GET     /api/table/all                      controllers.TableController.getAllTables
+GET     /api/table/free                     controllers.TableController.getFreeTables
+GET     /api/table/:id                      controllers.TableController.getTable(id: Long)
+GET     /api/table/:id/lock                 controllers.TableController.lockTable(id: Long)
+GET     /api/table/:id/unlock               controllers.TableController.unlockTable(id: Long)
 
 # MatchListController:
-GET     /matchlist/all                  controllers.MatchListController.getAllMatchList
-GET     /matchlist/next                 controllers.MatchListController.getNext
-POST    /matchlist/addMatch             controllers.MatchListController.addMatch
-DELETE  /matchlist/deleteMatch/:uuid    controllers.MatchListController.deleteMatch(uuid: String)
-GET     /matchlist/active/:isActive     controllers.MatchListController.setActive(isActive: Boolean)
-GET     /matchlist/move/:uuid/:position controllers.MatchListController.move(uuid: String, position: Int)
-GET     /matchlist/autostart            controllers.MatchListController.autoStart
-POST    /match/free                     controllers.MatchController.freeMatches
-POST    /match/takeBack                 controllers.MatchController.takeBackMatches
-GET     /match/delete/:id               controllers.MatchController.deleteMatch(id: Long)
+GET     /api/matchlist/all                  controllers.MatchListController.getAllMatchList
+GET     /api/matchlist/next                 controllers.MatchListController.getNext
+POST    /api/matchlist/addMatch             controllers.MatchListController.addMatch
+DELETE  /api/matchlist/deleteMatch/:uuid    controllers.MatchListController.deleteMatch(uuid: String)
+GET     /api/matchlist/active/:isActive     controllers.MatchListController.setActive(isActive: Boolean)
+GET     /api/matchlist/move/:uuid/:position controllers.MatchListController.move(uuid: String, position: Int)
+GET     /api/matchlist/autostart            controllers.MatchListController.autoStart
+POST    /api/match/free                     controllers.MatchController.freeMatches
+POST    /api/match/takeBack                 controllers.MatchController.takeBackMatches
+GET     /api/match/delete/:id               controllers.MatchController.deleteMatch(id: Long)
 
 # WebSocket for push messages
 GET     /register                       controllers.WebSocketController.socket
 
 # PrinterController:
-GET     /printer/all                    controllers.PrinterController.allPrinter
-GET     /printer/printpdf/:id           controllers.PrinterController.printPDF(id: Long)
-GET     /printer/print/:id              controllers.PrinterController.print(id: Long)
-POST    /printer/printAll               controllers.PrinterController.printAll
-GET     /printer/set/:name              controllers.PrinterController.setPrinter(name: String)
-GET     /printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
+GET     /api/printer/all                    controllers.PrinterController.allPrinter
+GET     /api/printer/printpdf/:id           controllers.PrinterController.printPDF(id: Long)
+GET     /api/printer/print/:id              controllers.PrinterController.print(id: Long)
+POST    /api/printer/printAll               controllers.PrinterController.printAll
+GET     /api/printer/set/:name              controllers.PrinterController.setPrinter(name: String)
+GET     /api/printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
 
-GET     /settings/all                   controllers.SettingsController.allSettings
+GET     /api/settings/all                   controllers.SettingsController.allSettings
 # POST    /settings                       controllers.SettingsController.setSettings
 
 
