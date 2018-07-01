@@ -1,5 +1,6 @@
-import {TableActionsUnion, TableActionTypes} from './table.actions';
+import {Table} from '../table.model';
 import {TableDto} from '../tabledto.model';
+import {TableActionsUnion, TableActionTypes} from './table.actions';
 
 export interface TableState {
     tables: TableDto[]
@@ -29,6 +30,24 @@ export const reduceTableState = (state: TableState = initialState, action: Table
             return {
                 ...state,
                 tablesLoading: false
+            };
+        case TableActionTypes.LockSuccess:
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    if (table.table.number === action.payload) {
+                        return {
+                            matchinfo: [...table.matchinfo],
+                            table: {
+                                ...table.table,
+                                isLocked: true
+                            }
+
+                        };
+                    }
+                    return table;
+                })
+
             };
         default:
             return state;

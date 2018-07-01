@@ -5,14 +5,14 @@ import {MzToastService} from 'ngx-materialize';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
-import {LoadTablesError, LoadTablesSuccess, TableActionTypes} from './table.actions';
+import {LoadTablesError, LoadTablesSuccess, LockTable, LockTableError, LockTableSuccess, TableActionTypes} from './table.actions';
 import {TableService} from '../table.service';
 
 @Injectable()
 export class TableEffects {
 
     @Effect()
-    search$: Observable<Action> = this.actions$.pipe(
+    loadTables$: Observable<Action> = this.actions$.pipe(
         ofType(TableActionTypes.Load),
         mergeMap(() => {
             return this.tableService
@@ -21,6 +21,21 @@ export class TableEffects {
                     catchError(err => {
                         this.toastService.error('Fehler beim Laden der Tische', 'Error');
                         return of(new LoadTablesError(err))
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    loclTable$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.Lock),
+        mergeMap((action: LockTable) => {
+            return this.tableService
+                .lockTable(action.payload).pipe(
+                    map(() => new LockTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Sperren des Tisches', 'Error');
+                        return of(new LockTableError(err))
                     })
                 );
         })
