@@ -1,1 +1,4 @@
-<toma-table-list [tables]="tables | async"></toma-table-list>
+<toma-table-list
+         [tables]="tables | async"
+         (lockTable)="onLockTable($event)"
+></toma-table-list>

@@ -1,9 +1,11 @@
 <div *ngFor="let currentTable of tables" class="col custom-col">
-    <toma-tt-table [table]="currentTable"
-                      (onTableAssigned)="onTableAssignedHandler($event)"
-                      (onResultForMatch)="onResultForMatch($event)"
-                      (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"
-                      (onSelectTable)="selectTable.selectTable($event)">
+    <toma-tt-table
+            [table]="currentTable"
+            (lockTable)="lockTable.emit($event)"
+            (onTableAssigned)="onTableAssignedHandler($event)"
+            (onResultForMatch)="onResultForMatch($event)"
+            (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"
+            (onSelectTable)="selectTable.selectTable($event)">
     </toma-tt-table>
 </div>
 <div class="fixed-action-btn horizontal">

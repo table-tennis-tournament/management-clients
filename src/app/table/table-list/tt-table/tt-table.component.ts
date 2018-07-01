@@ -1,21 +1,28 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TableDto} from '../../tabledto.model';
 
 @Component({
     selector: 'toma-tt-table',
     templateUrl: './tt-table.component.html'
 })
-export class TtTableComponent implements OnInit {
+export class TtTableComponent {
 
     public bgColor: string = 'blue';
 
-    @Output() onResultForMatch = new EventEmitter<any>();
+    @Output()
+    onResultForMatch = new EventEmitter<any>();
 
-    @Output() onTableAssigned = new EventEmitter<any>();
+    @Output()
+    onTableAssigned = new EventEmitter<any>();
 
-    @Output() onSelectMatch = new EventEmitter<any>();
+    @Output()
+    onSelectMatch = new EventEmitter<any>();
 
-    @Output() onSelectTable = new EventEmitter<any>();
+    @Output()
+    onSelectTable = new EventEmitter<any>();
+
+    @Output()
+    lockTable = new EventEmitter<number>();
 
     _table: TableDto;
 
@@ -26,12 +33,6 @@ export class TtTableComponent implements OnInit {
     @Input('table')
     set table(value: TableDto) {
         this._table = value;
-    }
-
-    constructor() {
-    }
-
-    ngOnInit() {
     }
 
     isSingleMatch() {

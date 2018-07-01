@@ -21,4 +21,8 @@ export class TableListPageComponent implements OnInit {
         this.tables = this.store.select(getTableState);
     }
 
+    onLockTable(tableNr: number) {
+        console.log(tableNr);
+    }
+
 }

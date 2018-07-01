@@ -1,4 +1,4 @@
-<div class="card" *ngIf="table.matchinfo&&table.matchinfo[0]">
+<div class="card" *ngIf="table.matchinfo && table.matchinfo[0]">
     <div class="card-content {{bgColor}} custom-padding">
         <span class="card-title activator truncate">
                 <h5 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<div class="card grey lighten-3" *ngIf="!table||!table.matchinfo[0]" dnd-droppable
+<div class="card grey lighten-3" *ngIf="!table || !table.matchinfo[0]" dnd-droppable
      (onDropSuccess)="onMatchDrop($event)">
     <div class="card-content custom-padding">
         <span class="card-title activator">
@@ -42,7 +42,7 @@
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action" *ngIf="!table.table.isLocked">
-            <a href="javascript:void(0)" (click)="onLock()">Sperren</a>
+            <a href="javascript:void(0)" (click)="lockTable.emit(table.table.number)">Sperren</a>
         </div>
         <div class="card-action" *ngIf="table.table.isLocked">
             <a href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>

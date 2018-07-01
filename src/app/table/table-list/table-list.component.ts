@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TableDto} from '../tabledto.model';
 
 @Component({
@@ -9,6 +9,8 @@ export class TableListComponent {
 
     @Input()
     tables: TableDto[];
-    public rowCount: number[];
+
+    @Output()
+    lockTable = new EventEmitter<number>();
 
 }
