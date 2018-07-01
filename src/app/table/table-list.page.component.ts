@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
-import {getTableState} from '../app-state.reducer';
+import {getTablesLoading, getTableState} from '../app-state.reducer';
 import {LoadTables} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
 
@@ -12,6 +12,7 @@ import {TableDto} from './tabledto.model';
 export class TableListPageComponent implements OnInit {
 
     tables: Observable<TableDto[]>;
+    tablesLoading: Observable<boolean>;
 
     constructor(private store: Store<any>) {
     }
@@ -19,6 +20,7 @@ export class TableListPageComponent implements OnInit {
     ngOnInit() {
         this.store.dispatch(new LoadTables());
         this.tables = this.store.select(getTableState);
+        this.tablesLoading = this.store.select(getTablesLoading);
     }
 
     onLockTable(tableNr: number) {

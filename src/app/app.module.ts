@@ -1,11 +1,13 @@
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {MzButtonModule, MzInputModule} from 'ngx-materialize';
+import {MzButtonModule, MzInputModule, MzSpinnerModule, MzToastModule} from 'ngx-materialize';
+import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -38,9 +40,17 @@ import {TypeviewComponent} from './typeview/typeview.component';
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         AppRoutingModule,
         MzButtonModule,
+        MzSpinnerModule,
         MzInputModule,
+        ToastrModule.forRoot({
+            timeOut: 5000,
+            extendedTimeOut: 2000,
+            closeButton: true,
+            positionClass: 'toast-top-center'
+        }),
         StoreModule.forRoot(reducers, {metaReducers}),
         StoreRouterConnectingModule.forRoot({
             stateKey: 'router',

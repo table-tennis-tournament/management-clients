@@ -2,6 +2,7 @@ import * as fromRouter from '@ngrx/router-store';
 import {ActionReducer, ActionReducerMap, createFeatureSelector, createSelector, MetaReducer,} from '@ngrx/store';
 
 import {storeFreeze} from 'ngrx-store-freeze';
+import {TableState} from './table/redux/table.reducer';
 import * as fromTables from './table/redux/table.reducer';
 import {environment} from '../environments/environment';
 
@@ -20,3 +21,4 @@ export const metaReducers: MetaReducer<State>[] = !environment.production
     : [];
 
 export const getTableState = createSelector((state: State) => state.table, fromTables.getTables);
+export const getTablesLoading = createSelector((state: State) => state.table, fromTables.getTablesLoading);

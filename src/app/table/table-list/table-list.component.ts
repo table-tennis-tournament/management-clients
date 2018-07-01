@@ -10,6 +10,9 @@ export class TableListComponent {
     @Input()
     tables: TableDto[];
 
+    @Input()
+    tablesLoading: boolean;
+
     @Output()
     lockTable = new EventEmitter<number>();
 

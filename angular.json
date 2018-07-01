@@ -28,6 +28,7 @@
             ],
             "styles": [
               "src/styles.scss",
+              "node_modules/ngx-toastr/toastr.css",
               "node_modules/materialize-css/dist/css/materialize.min.css"
             ],
             "scripts": [

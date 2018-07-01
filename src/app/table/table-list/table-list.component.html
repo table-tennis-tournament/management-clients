@@ -1,19 +1,24 @@
-<div *ngFor="let currentTable of tables" class="col custom-col">
-    <toma-tt-table
-            [table]="currentTable"
-            (lockTable)="lockTable.emit($event)"
-            (onTableAssigned)="onTableAssignedHandler($event)"
-            (onResultForMatch)="onResultForMatch($event)"
-            (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"
-            (onSelectTable)="selectTable.selectTable($event)">
-    </toma-tt-table>
+<mz-spinner *ngIf="tablesLoading"></mz-spinner>
+
+<div *ngIf="!tablesLoading">
+    <div *ngFor="let currentTable of tables" class="col custom-col">
+        <toma-tt-table
+                [table]="currentTable"
+                (lockTable)="lockTable.emit($event)"
+                (onTableAssigned)="onTableAssignedHandler($event)"
+                (onResultForMatch)="onResultForMatch($event)"
+                (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"
+                (onSelectTable)="selectTable.selectTable($event)">
+        </toma-tt-table>
+    </div>
+    <div class="fixed-action-btn horizontal">
+        <a class="btn-floating btn-large blue" (click)="onTableRefresh()">
+            <i class="large material-icons">refresh</i>
+        </a>
+        <ul *ngIf="!showMatches">
+            <li><a class="btn-floating blue" href="javascript:void(0)" (click)="onSyncWaitingList()"><i
+                    class="material-icons">autorenew</i></a></li>
+        </ul>
+    </div>
 </div>
-<div class="fixed-action-btn horizontal">
-    <a class="btn-floating btn-large blue" (click)="onTableRefresh()">
-        <i class="large material-icons">refresh</i>
-    </a>
-    <ul *ngIf="!showMatches">
-        <li><a class="btn-floating blue" href="javascript:void(0)" (click)="onSyncWaitingList()"><i
-                class="material-icons">autorenew</i></a></li>
-    </ul>
-</div>
+
