@@ -1,5 +1,5 @@
 export interface Type {
-  id?: number;
-  name?: string;
-  kind?: number;
+    id?: number;
+    name?: string;
+    kind?: number;
 }

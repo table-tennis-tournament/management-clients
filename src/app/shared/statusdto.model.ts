@@ -1,4 +1,4 @@
-export interface StatusDto{
-  message?:string;
+export interface StatusDto {
+    message?: string;
 
 }

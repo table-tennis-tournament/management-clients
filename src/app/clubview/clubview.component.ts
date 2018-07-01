@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'toma-clubview',
-  templateUrl: './clubview.component.html',
-  styleUrls: ['./clubview.component.scss']
+    selector: 'toma-clubview',
+    templateUrl: './clubview.component.html',
+    styleUrls: ['./clubview.component.scss']
 })
 export class ClubviewComponent implements OnInit {
 
-  constructor() { }
+    constructor() {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
 }

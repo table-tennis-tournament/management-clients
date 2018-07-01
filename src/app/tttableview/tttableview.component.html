@@ -1,5 +1,5 @@
 <div class="card" *ngIf="table.matchinfo&&table.matchinfo[0]">
-  <div class="card-content {{bgColor}} custom-padding">
+    <div class="card-content {{bgColor}} custom-padding">
         <span class="card-title activator truncate">
                 <h5 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
                 <span>{{table.matchinfo[0].type.name}}</span>
@@ -8,28 +8,29 @@
                 <i class="material-icons right">more_vert</i>
                </h5>
         </span>
-    <p class="center-align truncate">
-      <b *ngIf="table.table.isLocked">Tisch wird gesperrt. </b>
-      <!--<table-match-item [matches]="table.matchinfo"></table-match-item>-->
-    </p>
-  </div>
-
-  <div class="card-reveal">
-    <span class="card-title">Optionen<i class="material-icons right">close</i></span>
-    <div class="card-action">
-      <a href="javascript:void(0)" (click)="onFree()">Frei</a>
-      <a *ngIf="isSingleMatch()===true"  href="javascript:void(0)" (click)="onResult()">Eingeben</a>
-      <a href="javascript:void(0)" (click)="onTakeBack()">Zurück</a>
-      <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>
-      <a href="javascript:void(0)" (click)="onAssignToSecondTable()">2.Tisch</a>
-      <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="onLock()">Sperren</a>
-      <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
+        <p class="center-align truncate">
+            <b *ngIf="table.table.isLocked">Tisch wird gesperrt. </b>
+            <!--<table-match-item [matches]="table.matchinfo"></table-match-item>-->
+        </p>
     </div>
-  </div>
+
+    <div class="card-reveal">
+        <span class="card-title">Optionen<i class="material-icons right">close</i></span>
+        <div class="card-action">
+            <a href="javascript:void(0)" (click)="onFree()">Frei</a>
+            <a *ngIf="isSingleMatch()===true" href="javascript:void(0)" (click)="onResult()">Eingeben</a>
+            <a href="javascript:void(0)" (click)="onTakeBack()">Zurück</a>
+            <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>
+            <a href="javascript:void(0)" (click)="onAssignToSecondTable()">2.Tisch</a>
+            <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="onLock()">Sperren</a>
+            <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
+        </div>
+    </div>
 </div>
 
-<div class="card grey lighten-3" *ngIf="!table||!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
-  <div class="card-content custom-padding">
+<div class="card grey lighten-3" *ngIf="!table||!table.matchinfo[0]" dnd-droppable
+     (onDropSuccess)="onMatchDrop($event)">
+    <div class="card-content custom-padding">
         <span class="card-title activator">
             <h5><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
                 <span *ngIf="!table.table.isLocked" id="unLockedId">Frei</span>
@@ -37,14 +38,14 @@
                 <i class="material-icons right">more_vert</i>
             </h5>
         </span>
-  </div>
-  <div class="card-reveal">
-    <span class="card-title">Optionen<i class="material-icons right">close</i></span>
-    <div class="card-action" *ngIf="!table.table.isLocked">
-      <a  href="javascript:void(0)" (click)="onLock()">Sperren</a>
     </div>
-    <div class="card-action" *ngIf="table.table.isLocked">
-      <a href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
+    <div class="card-reveal">
+        <span class="card-title">Optionen<i class="material-icons right">close</i></span>
+        <div class="card-action" *ngIf="!table.table.isLocked">
+            <a href="javascript:void(0)" (click)="onLock()">Sperren</a>
+        </div>
+        <div class="card-action" *ngIf="table.table.isLocked">
+            <a href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>
+        </div>
     </div>
-  </div>
 </div>
