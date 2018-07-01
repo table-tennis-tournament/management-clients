@@ -1,4 +1,4 @@
-import {Match} from '../../matchview/match.model';
+import {Match} from '../matchview/match.model';
 import {Table} from './table.model';
 
 export interface TableDto {

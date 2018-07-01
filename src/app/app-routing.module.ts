@@ -1,32 +1,33 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {TableviewComponent} from './table/tableview/tableview.component';
+import {TableListPageComponent} from './table/table-list.page.component';
+import {TableListComponent} from './table/table-list/table-list.component';
 
 const routes: Routes = [
     {
         path: 'playerView',
-        component: TableviewComponent
+        component: TableListComponent
     },
     {
         path: 'assignView',
-        component: TableviewComponent
+        component: TableListComponent
     },
     {
         path: 'tableView',
-        component: TableviewComponent,
+        component: TableListPageComponent,
         data: [{showMatches: true}]
     },
     {
         path: 'supervisorView',
-        component: TableviewComponent
+        component: TableListComponent
     },
     {
         path: 'resultView',
-        component: TableviewComponent
+        component: TableListComponent
     },
     {
         path: 'settingsView',
-        component: TableviewComponent
+        component: TableListComponent
     },
     {
         path: '',

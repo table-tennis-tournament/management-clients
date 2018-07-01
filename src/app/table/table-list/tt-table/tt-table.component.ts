@@ -1,12 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {TableDto} from '../tableview/tabledto.model';
+import {TableDto} from '../../tabledto.model';
 
 @Component({
-    selector: 'toma-tttableview',
-    templateUrl: './tttableview.component.html',
-    styleUrls: ['./tttableview.component.scss']
+    selector: 'toma-tt-table',
+    templateUrl: './tt-table.component.html'
 })
-export class TttableviewComponent implements OnInit {
+export class TtTableComponent implements OnInit {
 
     public bgColor: string = 'blue';
 
