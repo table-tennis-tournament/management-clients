@@ -9,10 +9,11 @@ import {ClubviewComponent} from './clubview/clubview.component';
 import {GroupviewComponent} from './groupview/groupview.component';
 import {MatchviewComponent} from './matchview/matchview.component';
 import {PlayerviewComponent} from './playerview/playerview.component';
-import {TableService} from './tableview/table.service';
-import {TableviewComponent} from './tableview/tableview.component';
-import {TttableviewComponent} from './tttableview/tttableview.component';
+import {TableService} from './table/tableview/table.service';
+import {TableviewComponent} from './table/tableview/tableview.component';
+import {TttableviewComponent} from './table/tttableview/tttableview.component';
 import {TypeviewComponent} from './typeview/typeview.component';
+import { NavigationComponent } from './navigation/navigation.component';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import {TypeviewComponent} from './typeview/typeview.component';
         ClubviewComponent,
         TypeviewComponent,
         GroupviewComponent,
-        TttableviewComponent
+        TttableviewComponent,
+        NavigationComponent,
     ],
     imports: [
         BrowserModule,
