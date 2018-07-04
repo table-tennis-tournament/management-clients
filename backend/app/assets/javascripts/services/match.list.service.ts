@@ -9,15 +9,15 @@ import { StatusDto } from "../data/status.dto";
 
 @Injectable()
 export class MatchListService {
-    private nextMatchUrl = "matchlist/next";
-    private allMatchListUrl = "matchlist/all";
-    private deleteMatchListItemUrl = "matchlist/deleteMatch/itemId ";
-    private addMatchListItemUrl = "/matchlist/addMatch";
-    private moveMatchListItemUrl = "/matchlist/move/itemId/position";
-    private deleteGroupListItemUrl = "matchlist/deleteGroup/itemId ";
-    private addGroupListItemUrl = "matchlist/addGroup/groupId/position ";
-    private addGroupToTableUrl = "/matchlist/grouptotable/groupId/tableNumber ";
-    private autoStartUrl = "/matchlist/autostart";
+    private nextMatchUrl = "api/matchlist/next";
+    private allMatchListUrl = "api/matchlist/all";
+    private deleteMatchListItemUrl = "api/matchlist/deleteMatch/itemId ";
+    private addMatchListItemUrl = "api/matchlist/addMatch";
+    private moveMatchListItemUrl = "api/matchlist/move/itemId/position";
+    private deleteGroupListItemUrl = "api/matchlist/deleteGroup/itemId ";
+    private addGroupListItemUrl = "api/matchlist/addGroup/groupId/position ";
+    private addGroupToTableUrl = "api/matchlist/grouptotable/groupId/tableNumber ";
+    private autoStartUrl = "api/matchlist/autostart";
     
       
     constructor(private http: Http, private baseService: BaseService){}
