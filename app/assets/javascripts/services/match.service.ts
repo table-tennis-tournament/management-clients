@@ -10,24 +10,24 @@ import { StatusDto } from "app/assets/javascripts/data/status.dto";
 @Injectable()
 export class MatchService {
 
-  private allMatchesUrl = "match/all";
-  private allOpenMatchesUrl = "match/open/all";
+  private allMatchesUrl = "api/match/all";
+  private allOpenMatchesUrl = "api/match/open/all";
   
-  private getMatchesByTypeUrl = "match/typeid/typeIdValue";
-  private getOpenMatchesByTypeUrl = "match/open/typeid/typeIdValue";
+  private getMatchesByTypeUrl = "api/match/typeid/typeIdValue";
+  private getOpenMatchesByTypeUrl = "api/open/typeid/typeIdValue";
 
-  private addResultString = "match/matchId/result";
-  private loadNewUrl = "match/loadnew";
+  private addResultString = "api/match/matchId/result";
+  private loadNewUrl = "api/match/loadnew";
 
-  private assignMatchToTableUrl = "match/matchtotable/tableName";
-  private assignGroupToTableUrl = "match/grouptotable/groupId/tableName";
-  private assignSecondMatchToTableUrl = "match/matchtosecondtable/tableName";
+  private assignMatchToTableUrl = "api/match/matchtotable/tableName";
+  private assignGroupToTableUrl = "api/match/grouptotable/groupId/tableName";
+  private assignSecondMatchToTableUrl = "api/match/matchtosecondtable/tableName";
 
-  private getPlayedMatchesUrl = "match/played/all";
-  private getPlayedMatchesByTypeUrl = "match/played/typeid/typeIdValue";
+  private getPlayedMatchesUrl = "api/match/played/all";
+  private getPlayedMatchesByTypeUrl = "api/match/played/typeid/typeIdValue";
 
-  private allTypesUrl = "types/all";
-  private allOpenTypesUrl = "types/open/all ";
+  private allTypesUrl = "api/types/all";
+  private allOpenTypesUrl = "api/types/open/all ";
 
   constructor(private http: Http, private baseService: BaseService){}
 

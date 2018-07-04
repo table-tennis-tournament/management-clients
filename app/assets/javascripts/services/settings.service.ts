@@ -7,11 +7,11 @@ import { SettingDto } from "../data/setting.dto";
 
 @Injectable()
 export class SettingsService {
-  private printerUrl = "printer/all";
-  private setPrinterUrl = "printer/set/printerToSet";
-  private setPrintToAssignUrl = "printer/setprintonstart/valueToSet";
-  private getAllSettingsUrl = "settings/all ";
-  private matchlistActiveUrl = "/matchlist/active";
+  private printerUrl = "api/printer/all";
+  private setPrinterUrl = "api/printer/set/printerToSet";
+  private setPrintToAssignUrl = "api/printer/setprintonstart/valueToSet";
+  private getAllSettingsUrl = "api/settings/all ";
+  private matchlistActiveUrl = "api/matchlist/active";
 
   constructor(private http: Http, private baseService: BaseService){}
 

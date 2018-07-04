@@ -5,7 +5,7 @@ import {Observable} from "rxjs/Rx"
 
 @Injectable()
 export class PlayerService {
-  private playerUrl = "player/all";
+  private playerUrl = "api/player/all";
 
   constructor(private http: Http){}
 

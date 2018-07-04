@@ -15,15 +15,15 @@ import {BaseService} from "./base.service"
 @Injectable()
 export class TableService {
 
-  private allTablesUrl = "table/all";
-  private tableByIdUrl = "table/tableNumber";
-  private lockTableUrl = "table/tableNumber/lock";
-  private freeMatchUrl = "match/free";
-  private takeBackTableUrl = "match/takeBack";
-  private unlockTableUrl = "table/tableNumber/unlock";
-  private printMatchUrl = "printer/print/matchId";
-  private printAllMatchesUrl = "printer/printAll";
-  private freeTablesUrl = "table/free";
+  private allTablesUrl = "api/table/all";
+  private tableByIdUrl = "api/table/tableNumber";
+  private lockTableUrl = "api/table/tableNumber/lock";
+  private freeMatchUrl = "api/match/free";
+  private takeBackTableUrl = "api/match/takeBack";
+  private unlockTableUrl = "api/table/tableNumber/unlock";
+  private printMatchUrl = "api/printer/print/matchId";
+  private printAllMatchesUrl = "api/printer/printAll";
+  private freeTablesUrl = "api/table/free";
   
   public OnTableChanged: Observable<MatchListDto[]>;
   private tableObserver: any;
