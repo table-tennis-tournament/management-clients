@@ -3,7 +3,8 @@ import {TableDto} from '../tabledto.model';
 
 @Component({
     selector: 'toma-table-list',
-    templateUrl: './table-list.component.html'
+    templateUrl: './table-list.component.html',
+    styleUrls: ['./table-list.component.scss']
 })
 export class TableListComponent {
 

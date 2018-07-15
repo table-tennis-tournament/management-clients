@@ -18,7 +18,7 @@ export class TableListPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(new LoadTables());
+        this.store.dispatch(new LoadTables(null));
         this.tables = this.store.select(getTableState);
         this.tablesLoading = this.store.select(getTablesLoading);
     }

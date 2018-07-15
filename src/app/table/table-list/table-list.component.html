@@ -1,7 +1,7 @@
 <mz-spinner *ngIf="tablesLoading"></mz-spinner>
 
-<div *ngIf="!tablesLoading">
-    <div *ngFor="let currentTable of tables" class="col custom-col">
+<div *ngIf="!tablesLoading" class="tttable tttable--5cols">
+    <div *ngFor="let currentTable of tables" class="tttable-cell">
         <toma-tt-table
                 [table]="currentTable"
                 (lockTable)="lockTable.emit($event)"
