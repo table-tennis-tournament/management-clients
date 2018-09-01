@@ -25,6 +25,9 @@ export class TtTableComponent {
     @Output()
     lockTable = new EventEmitter<number>();
 
+    @Output()
+    unLockTable = new EventEmitter<number>();
+
     _table: TableDto;
 
     get table(): TableDto {

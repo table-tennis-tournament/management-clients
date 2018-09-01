@@ -5,6 +5,7 @@
         <toma-tt-table
                 [table]="currentTable"
                 (lockTable)="lockTable.emit($event)"
+                (unLockTable)="unLockTable.emit($event)"
                 (onTableAssigned)="onTableAssignedHandler($event)"
                 (onResultForMatch)="onResultForMatch($event)"
                 (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"

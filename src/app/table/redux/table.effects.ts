@@ -1,11 +1,18 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
-import {MzToastService} from 'ngx-materialize';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
-import {LoadTablesError, LoadTablesSuccess, LockTable, LockTableError, LockTableSuccess, TableActionTypes} from './table.actions';
+import {
+    LoadTablesError,
+    LoadTablesSuccess,
+    LockTable,
+    LockTableError,
+    LockTableSuccess,
+    TableActionTypes,
+    UnLockTable, UnLockTableError, UnLockTableSuccess
+} from './table.actions';
 import {TableService} from '../table.service';
 
 @Injectable()
@@ -27,7 +34,7 @@ export class TableEffects {
     );
 
     @Effect()
-    loclTable$: Observable<Action> = this.actions$.pipe(
+    lockTables$: Observable<Action> = this.actions$.pipe(
         ofType(TableActionTypes.Lock),
         mergeMap((action: LockTable) => {
             return this.tableService
@@ -35,7 +42,22 @@ export class TableEffects {
                     map(() => new LockTableSuccess(action.payload)),
                     catchError(err => {
                         this.toastService.error('Fehler beim Sperren des Tisches', 'Error');
-                        return of(new LockTableError(err))
+                        return of(new LockTableError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    unLockTables$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.UnLock),
+        mergeMap((action: UnLockTable) => {
+            return this.tableService
+                .unLockTable(action.payload).pipe(
+                    map(() => new UnLockTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Entsperren des Tisches', 'Error');
+                        return of(new UnLockTableError(err));
                     })
                 );
         })

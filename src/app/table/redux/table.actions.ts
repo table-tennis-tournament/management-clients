@@ -9,6 +9,9 @@ export enum TableActionTypes {
     Lock = '[Table] Lock',
     LockSuccess = '[Table] Lock Success',
     LockError = '[Table] Lock Error',
+    UnLock = '[Table] UnLock',
+    UnLockSuccess = '[Table] UnLock Success',
+    UnLockError = '[Table] UnLock Error'
 }
 
 export class LoadTables implements Action {
@@ -47,10 +50,31 @@ export class LockTableError implements Action {
     constructor(public payload: any) {}
 }
 
+export class UnLockTable implements Action {
+    readonly type = TableActionTypes.UnLock;
+
+    constructor(public payload: number) {}
+}
+
+export class UnLockTableSuccess implements Action {
+    readonly type = TableActionTypes.UnLockSuccess;
+
+    constructor(public payload: number) {}
+}
+
+export class UnLockTableError implements Action {
+    readonly type = TableActionTypes.UnLockError;
+
+    constructor(public payload: number) {}
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
     | LoadTablesError
     | LockTable
     | LockTableSuccess
-    | LockTableError;
+    | LockTableError
+    | UnLockTable
+    | UnLockTableSuccess
+    | UnLockTableError;

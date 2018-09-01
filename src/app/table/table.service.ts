@@ -19,4 +19,8 @@ export class TableService {
     lockTable(tableNr: number): Observable<StatusDto> {
         return this.http.get<StatusDto>(`api/table/${tableNr}/lock`);
     }
+
+    unLockTable(tableNr: number): Observable<StatusDto> {
+        return this.http.get<StatusDto>(`api/table/${tableNr}/unlock`);
+    }
 }

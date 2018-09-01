@@ -24,6 +24,8 @@ import {TableService} from './table/table.service';
 import {TableListComponent} from './table/table-list/table-list.component';
 import {TtTableComponent} from './table/table-list/tt-table/tt-table.component';
 import {TypeviewComponent} from './typeview/typeview.component';
+import { TtTableOperationsComponent } from './table/table-list/tt-table/tt-table-operations/tt-table-operations.component';
+import { TtTableHeaderComponent } from './table/table-list/tt-table/tt-table-header/tt-table-header.component';
 
 @NgModule({
     declarations: [
@@ -37,6 +39,8 @@ import {TypeviewComponent} from './typeview/typeview.component';
         TtTableComponent,
         NavigationComponent,
         TableListPageComponent,
+        TtTableOperationsComponent,
+        TtTableHeaderComponent,
     ],
     imports: [
         BrowserModule,

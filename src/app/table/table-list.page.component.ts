@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
-import {LoadTables, LockTable} from './redux/table.actions';
+import {LoadTables, LockTable, UnLockTable} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
 
 @Component({
@@ -25,6 +25,10 @@ export class TableListPageComponent implements OnInit {
 
     onLockTable(tableNr: number) {
         this.store.dispatch(new LockTable(tableNr));
+    }
+
+    onUnLockTable(tableNr: number) {
+        this.store.dispatch(new UnLockTable(tableNr));
     }
 
 }
