@@ -3,65 +3,19 @@
     <div class="card-content {{bgColor}} custom-padding">
         <toma-tt-table-header
                 [table]="table" ></toma-tt-table-header>
-        <!--<span class="card-title activator truncate">-->
-                <!--<h5 class="no-margin"> <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>-->
-                <!--<span>{{table.matchinfo[0].type.name}}</span>-->
-
-                <!--<a href="javascript:void(0)" (click)="onFree()"><i class="material-icons right white-text">done</i></a>-->
-                <!--<i class="material-icons right">more_vert</i>-->
-               <!--</h5>-->
-        <!--</span>-->
-        <!--<p class="center-align truncate">-->
-            <!--<b *ngIf="table.table.isLocked">Tisch wird gesperrt. </b>-->
-            <!--&lt;!&ndash;<table-match-item [matches]="table.matchinfo"></table-match-item>&ndash;&gt;-->
-        <!--</p>-->
     </div>
     <div class="card-reveal">
-        <!--<toma-tt-table-operations-->
-                <!--[tableCount]="table?.matchinfo?.length"-->
-                <!--[isLocked]="table.table.isLocked"-->
-                <!--(lockTable)="lockTable.emit(table.table.number)"-->
-                <!--(unLockTable)="unLockTable.emit(table.table.number)"-->
-        <!--&gt;</toma-tt-table-operations>-->
-        <!--<span class="card-title">Optionen<i class="material-icons right">close</i></span>-->
-        <div class="card-action">
-             <span *ngIf="table?.matchinfo?.length > 0">
+        <span class="card-title">Optionen<i class="material-icons right">close</i></span>
+        <div class="card-action flex-style">
+            <span *ngIf="table?.matchinfo?.length > 0" class="flex-style">
                 <a href="javascript:void(0)" (click)="onFree()">Frei</a>
                 <a *ngIf="table?.matchinfo?.length === 1" href="javascript:void(0)" (click)="onResult()">Eingeben</a>
                 <a href="javascript:void(0)" (click)="onTakeBack()">Zurück</a>
                 <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>
                 <a href="javascript:void(0)" (click)="onAssignToSecondTable()">2.Tisch</a>
-             </span>
+            </span>
             <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="lockTable.emit(table.table.number)">Sperren</a>
             <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="unLockTable.emit(table.table.number)">Entsperren</a>
         </div>
     </div>
 </div>
-
-<!--<div class="card grey lighten-3" *ngIf="table?.matchinfo?.length === 0" dnd-droppable-->
-     <!--(onDropSuccess)="onMatchDrop($event)">-->
-    <!--<div class="card-content custom-padding">-->
-        <!--<span class="card-title activator">-->
-            <!--<h5><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>-->
-                <!--<span *ngIf="!table.table.isLocked" id="unLockedId">Frei</span>-->
-                <!--<span *ngIf="table.table.isLocked" id="unLockedId2">Gesperrt</span>-->
-                <!--<i class="material-icons right">more_vert</i>-->
-            <!--</h5>-->
-        <!--</span>-->
-    <!--</div>-->
-    <!--<div class="card-reveal">-->
-        <!--<toma-tt-table-operations-->
-                <!--[tableCount]="table?.matchinfo?.length"-->
-                <!--[isLocked]="table.table.isLocked"-->
-                <!--(lockTable)="lockTable.emit(table.table.number)"-->
-                <!--(unLockTable)="unLockTable.emit(table.table.number)"-->
-        <!--&gt;</toma-tt-table-operations>-->
-        <!--&lt;!&ndash;<span class="card-title">Optionen<i class="material-icons right">close</i></span>&ndash;&gt;-->
-        <!--&lt;!&ndash;<div class="card-action" *ngIf="!table.table.isLocked">&ndash;&gt;-->
-            <!--&lt;!&ndash;<a href="javascript:void(0)" (click)="lockTable.emit(table.table.number)">Sperren</a>&ndash;&gt;-->
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-        <!--&lt;!&ndash;<div class="card-action" *ngIf="table.table.isLocked">&ndash;&gt;-->
-            <!--&lt;!&ndash;<a href="javascript:void(0)" (click)="onUnLock()">Entsperren</a>&ndash;&gt;-->
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--</div>-->
-<!--</div>-->

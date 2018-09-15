@@ -6,7 +6,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {MzButtonModule, MzInputModule, MzSpinnerModule, MzToastModule} from 'ngx-materialize';
+import {MzButtonModule, MzInputModule, MzSpinnerModule} from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
@@ -24,8 +24,9 @@ import {TableService} from './table/table.service';
 import {TableListComponent} from './table/table-list/table-list.component';
 import {TtTableComponent} from './table/table-list/tt-table/tt-table.component';
 import {TypeviewComponent} from './typeview/typeview.component';
-import { TtTableOperationsComponent } from './table/table-list/tt-table/tt-table-operations/tt-table-operations.component';
-import { TtTableHeaderComponent } from './table/table-list/tt-table/tt-table-header/tt-table-header.component';
+import {TtTableHeaderComponent} from './table/table-list/tt-table/tt-table-header/tt-table-header.component';
+import {TtTableMatchItemComponent} from './table/table-list/tt-table/tt-table-match-item/tt-table-match-item.component';
+import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe';
 
 @NgModule({
     declarations: [
@@ -39,8 +40,9 @@ import { TtTableHeaderComponent } from './table/table-list/tt-table/tt-table-hea
         TtTableComponent,
         NavigationComponent,
         TableListPageComponent,
-        TtTableOperationsComponent,
         TtTableHeaderComponent,
+        TtTableMatchItemComponent,
+        TtPlayerNameReducerPipe,
     ],
     imports: [
         BrowserModule,
