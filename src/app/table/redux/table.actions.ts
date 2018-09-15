@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
-import {StatusDto} from '../../shared/statusdto.model';
 import {TableDto} from '../tabledto.model';
+import {FreeTableEvent} from './free.table.event';
 
 export enum TableActionTypes {
     Load = '[Table] Load',
@@ -11,7 +11,10 @@ export enum TableActionTypes {
     LockError = '[Table] Lock Error',
     UnLock = '[Table] UnLock',
     UnLockSuccess = '[Table] UnLock Success',
-    UnLockError = '[Table] UnLock Error'
+    UnLockError = '[Table] UnLock Error',
+    Free = '[Table] Free',
+    FreeSuccess = '[Table] UnLock Success',
+    FreeError = '[Table] UnLock Error'
 }
 
 export class LoadTables implements Action {
@@ -68,6 +71,27 @@ export class UnLockTableError implements Action {
     constructor(public payload: number) {}
 }
 
+export class FreeTable implements Action {
+    readonly type = TableActionTypes.Free;
+
+    constructor(public payload: FreeTableEvent) {
+    }
+}
+
+export class FreeTableSuccess implements Action {
+    readonly type = TableActionTypes.FreeSuccess;
+
+    constructor(public payload: FreeTableEvent) {
+    }
+}
+
+export class FreeTableError implements Action {
+    readonly type = TableActionTypes.FreeError;
+
+    constructor(public payload: FreeTableEvent) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -77,4 +101,7 @@ export type TableActionsUnion =
     | LockTableError
     | UnLockTable
     | UnLockTableSuccess
-    | UnLockTableError;
+    | UnLockTableError
+    | FreeTable
+    | FreeTableSuccess
+    | FreeTableError;

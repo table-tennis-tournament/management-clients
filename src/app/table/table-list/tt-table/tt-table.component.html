@@ -2,13 +2,15 @@
 <div class="card" >
     <div class="card-content {{bgColor}} custom-padding">
         <toma-tt-table-header
-                [table]="table" ></toma-tt-table-header>
+                [table]="table"
+                (freeTable)="freeTable.emit(table.table.number)">
+        </toma-tt-table-header>
     </div>
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action flex-style">
             <span *ngIf="table?.matchinfo?.length > 0" class="flex-style">
-                <a href="javascript:void(0)" (click)="onFree()">Frei</a>
+                <a href="javascript:void(0)" (click)="freeTable.emit(table.table.number)">Frei</a>
                 <a *ngIf="table?.matchinfo?.length === 1" href="javascript:void(0)" (click)="onResult()">Eingeben</a>
                 <a href="javascript:void(0)" (click)="onTakeBack()">Zurück</a>
                 <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>

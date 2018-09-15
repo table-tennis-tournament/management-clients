@@ -1,6 +1,7 @@
 <toma-table-list
-         [tables]="tables | async"
-         [tablesLoading]="tablesLoading | async"
-         (lockTable)="onLockTable($event)"
-         (unLockTable)="onUnLockTable($event)"
+        [tables]="tables | async"
+        [tablesLoading]="tablesLoading | async"
+        (lockTable)="onLockTable($event)"
+        (unLockTable)="onUnLockTable($event)"
+        (freeTable)="onFreeTable($event)"
 ></toma-table-list>

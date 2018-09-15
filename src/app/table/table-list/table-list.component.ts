@@ -20,4 +20,7 @@ export class TableListComponent {
     @Output()
     unLockTable = new EventEmitter<number>();
 
+    @Output()
+    freeTable = new EventEmitter<number>();
+
 }

@@ -2,7 +2,7 @@ import {TableDto} from '../tabledto.model';
 import {TableActionsUnion, TableActionTypes} from './table.actions';
 
 export interface TableState {
-    tables: TableDto[]
+    tables: TableDto[];
     tablesLoading: boolean;
 }
 
@@ -47,7 +47,7 @@ export const reduceTableState = (state: TableState = initialState, action: Table
                 })
 
             };
-            case TableActionTypes.UnLockSuccess:
+        case TableActionTypes.UnLockSuccess:
             return {
                 ...state,
                 tables: state.tables.map(table => {
@@ -61,6 +61,28 @@ export const reduceTableState = (state: TableState = initialState, action: Table
                         };
                     }
                     return table;
+                })
+
+            };
+        case TableActionTypes.FreeSuccess:
+            return {
+                ...state,
+                tables: state.tables.filter(table => table.table.number === action.payload.tableNr).map(table => {
+                    return {
+                        matchinfo: [...table.matchinfo.filter(match => !action.payload.matchIds.indexOf(match.id))],
+                        table: {...table.table}
+                    };
+                    // table.matchinfo.if(table.table.number === action.payload);
+                    // {
+                    //     return {
+                    //         matchinfo: [...table.matchinfo],
+                    //         table: {
+                    //             ...table.table,
+                    //             isLocked: false
+                    //         }
+                    //     };
+                    // }
+                    // return table;
                 })
 
             };

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TableDto} from '../../../tabledto.model';
 
 @Component({
@@ -18,6 +18,9 @@ export class TtTableHeaderComponent implements OnInit {
     set table(value: TableDto) {
         this._table = value;
     }
+
+    @Output()
+    freeTable = new EventEmitter<number>();
 
     constructor() {
     }

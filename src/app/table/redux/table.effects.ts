@@ -5,15 +5,21 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
 import {
+    FreeTable,
+    FreeTableError,
+    FreeTableSuccess,
     LoadTablesError,
     LoadTablesSuccess,
     LockTable,
     LockTableError,
     LockTableSuccess,
     TableActionTypes,
-    UnLockTable, UnLockTableError, UnLockTableSuccess
+    UnLockTable,
+    UnLockTableError,
+    UnLockTableSuccess
 } from './table.actions';
 import {TableService} from '../table.service';
+import {MatchService} from '../../match/match.service';
 
 @Injectable()
 export class TableEffects {
@@ -27,7 +33,7 @@ export class TableEffects {
                     map(tables => new LoadTablesSuccess(tables)),
                     catchError(err => {
                         this.toastService.error('Fehler beim Laden der Tische', 'Error');
-                        return of(new LoadTablesError(err))
+                        return of(new LoadTablesError(err));
                     })
                 );
         })
@@ -63,7 +69,23 @@ export class TableEffects {
         })
     );
 
-    constructor(private actions$: Actions, private tableService: TableService, private toastService: ToastrService) {
+    @Effect()
+    freeTables$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.Free),
+        mergeMap((action: FreeTable) => {
+            return this.matchService
+                .freeMatches(action.payload.matchIds).pipe(
+                    map(() => new FreeTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Freigeben des Tisches', 'Error');
+                        return of(new FreeTableError(err));
+                    })
+                );
+        })
+    );
+
+    constructor(private actions$: Actions, private tableService: TableService,
+                private toastService: ToastrService, private matchService: MatchService) {
 
     }
 
