@@ -65,11 +65,12 @@ export const reduceTableState = (state: TableState = initialState, action: Table
 
             };
         case TableActionTypes.FreeSuccess:
+            const freeTableEvent = action.payload;
             return {
                 ...state,
-                tables: state.tables.filter(table => table.table.number === action.payload.tableNr).map(table => {
+                tables: state.tables.filter(table => table.table.number === freeTableEvent.tableNr).map(table => {
                     return {
-                        matchinfo: [...table.matchinfo.filter(match => !action.payload.matchIds.indexOf(match.id))],
+                        matchinfo: [...table.matchinfo.filter(match => !freeTableEvent.matchIds.indexOf(match.id))],
                         table: {...table.table}
                     };
                     // table.matchinfo.if(table.table.number === action.payload);
