@@ -1,6 +1,5 @@
 import {Action} from '@ngrx/store';
 import {TableDto} from '../tabledto.model';
-import {FreeTableEvent} from './free.table.event';
 
 export enum TableActionTypes {
     Load = '[Table] Load',
@@ -13,8 +12,8 @@ export enum TableActionTypes {
     UnLockSuccess = '[Table] UnLock Success',
     UnLockError = '[Table] UnLock Error',
     Free = '[Table] Free',
-    FreeSuccess = '[Table] UnLock Success',
-    FreeError = '[Table] UnLock Error'
+    FreeSuccess = '[Table] Free Success',
+    FreeError = '[Table] Free Error'
 }
 
 export class LoadTables implements Action {
@@ -74,21 +73,21 @@ export class UnLockTableError implements Action {
 export class FreeTable implements Action {
     readonly type = TableActionTypes.Free;
 
-    constructor(public payload: FreeTableEvent) {
+    constructor(public payload: any) {
     }
 }
 
 export class FreeTableSuccess implements Action {
     readonly type = TableActionTypes.FreeSuccess;
 
-    constructor(public payload: FreeTableEvent) {
+    constructor(public payload: any) {
     }
 }
 
 export class FreeTableError implements Action {
     readonly type = TableActionTypes.FreeError;
 
-    constructor(public payload: FreeTableEvent) {
+    constructor(public payload: any) {
     }
 }
 

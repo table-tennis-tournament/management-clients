@@ -68,24 +68,15 @@ export const reduceTableState = (state: TableState = initialState, action: Table
             const freeTableEvent = action.payload;
             return {
                 ...state,
-                tables: state.tables.filter(table => table.table.number === freeTableEvent.tableNr).map(table => {
-                    return {
-                        matchinfo: [...table.matchinfo.filter(match => !freeTableEvent.matchIds.indexOf(match.id))],
-                        table: {...table.table}
-                    };
-                    // table.matchinfo.if(table.table.number === action.payload);
-                    // {
-                    //     return {
-                    //         matchinfo: [...table.matchinfo],
-                    //         table: {
-                    //             ...table.table,
-                    //             isLocked: false
-                    //         }
-                    //     };
-                    // }
-                    // return table;
+                tables: state.tables.map(table => {
+                    if (table.table.number === action.payload.tableNr) {
+                        return {
+                            matchinfo: [...table.matchinfo.filter(match => !freeTableEvent.matchIds.indexOf(match.id))],
+                            table: {...table.table}
+                        };
+                    }
+                    return table;
                 })
-
             };
         default:
             return state;

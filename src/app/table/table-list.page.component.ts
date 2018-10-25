@@ -22,6 +22,7 @@ export class TableListPageComponent implements OnInit {
         this.store.dispatch(new LoadTables(null));
         this.tables = this.store.select(getTableState);
         this.tablesLoading = this.store.select(getTablesLoading);
+
     }
 
     onLockTable(tableNr: number) {
@@ -33,8 +34,13 @@ export class TableListPageComponent implements OnInit {
     }
 
     onFreeTable(tableNr: number) {
-        const freeTableEvent = new FreeTableEvent([1], tableNr);
-        this.store.dispatch(new FreeTable(freeTableEvent));
+        let currentState;
+        this.store.subscribe(state => currentState = state);
+        const item: TableDto[] = currentState.table.tables.filter(x => x.table.number === tableNr);
+        if (item[0].matchinfo.length === 1) {
+            const freeTableEvent = new FreeTableEvent([item[0].matchinfo[0].match.id], tableNr);
+            this.store.dispatch(new FreeTable(freeTableEvent));
+        }
     }
 
 }
