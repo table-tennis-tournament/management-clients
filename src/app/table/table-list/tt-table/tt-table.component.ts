@@ -31,6 +31,9 @@ export class TtTableComponent {
     @Output()
     freeTable = new EventEmitter<number>();
 
+    @Output()
+    takeBackTable = new EventEmitter<number>();
+
     _table: TableDto;
 
     get table(): TableDto {

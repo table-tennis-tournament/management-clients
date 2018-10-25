@@ -78,6 +78,20 @@ export const reduceTableState = (state: TableState = initialState, action: Table
                     return table;
                 })
             };
+        case TableActionTypes.TakeBackSuccess:
+            const takeBackEvent = action.payload;
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    if (table.table.number === action.payload.tableNr) {
+                        return {
+                            matchinfo: [...table.matchinfo.filter(match => !takeBackEvent.matchIds.indexOf(match.id))],
+                            table: {...table.table}
+                        };
+                    }
+                    return table;
+                })
+            };
         default:
             return state;
     }

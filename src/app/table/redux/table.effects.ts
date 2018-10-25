@@ -14,6 +14,9 @@ import {
     LockTableError,
     LockTableSuccess,
     TableActionTypes,
+    TakeBackTable,
+    TakeBackTableError,
+    TakeBackTableSuccess,
     UnLockTable,
     UnLockTableError,
     UnLockTableSuccess
@@ -79,6 +82,21 @@ export class TableEffects {
                     catchError(err => {
                         this.toastService.error('Fehler beim Freigeben des Tisches', 'Error');
                         return of(new FreeTableError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    takeBackTables$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.TakeBack),
+        mergeMap((action: TakeBackTable) => {
+            return this.matchService
+                .takeBackMatches(action.payload.matchIds).pipe(
+                    map(() => new TakeBackTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Zurücknehmen der Spiele', 'Error');
+                        return of(new TakeBackTableError(err));
                     })
                 );
         })

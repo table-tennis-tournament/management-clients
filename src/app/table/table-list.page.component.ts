@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
-import {FreeTable, LoadTables, LockTable, UnLockTable} from './redux/table.actions';
+import {FreeTable, LoadTables, LockTable, TakeBackTable, UnLockTable} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
-import {FreeTableEvent} from './redux/free.table.event';
+import {TableMatchEvent} from './redux/table.match.event';
 
 @Component({
     selector: 'toma-table-list.page',
@@ -34,13 +34,26 @@ export class TableListPageComponent implements OnInit {
     }
 
     onFreeTable(tableNr: number) {
+        const item = this.getTableByNr(tableNr);
+        if (item[0].matchinfo.length === 1) {
+            const freeTableEvent = new TableMatchEvent([item[0].matchinfo[0].match.id], tableNr);
+            this.store.dispatch(new FreeTable(freeTableEvent));
+        }
+    }
+
+    onTakeBackTable(tableNr: number) {
+        const item = this.getTableByNr(tableNr);
+        if (item[0].matchinfo.length === 1) {
+            const takeBackTableEvent = new TableMatchEvent([item[0].matchinfo[0].match.id], tableNr);
+            this.store.dispatch(new TakeBackTable(takeBackTableEvent));
+        }
+    }
+
+    private getTableByNr(tableNr: number) {
         let currentState;
         this.store.subscribe(state => currentState = state);
         const item: TableDto[] = currentState.table.tables.filter(x => x.table.number === tableNr);
-        if (item[0].matchinfo.length === 1) {
-            const freeTableEvent = new FreeTableEvent([item[0].matchinfo[0].match.id], tableNr);
-            this.store.dispatch(new FreeTable(freeTableEvent));
-        }
+        return item;
     }
 
 }

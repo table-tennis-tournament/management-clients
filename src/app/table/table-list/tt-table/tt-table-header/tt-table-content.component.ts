@@ -2,11 +2,11 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TableDto} from '../../../tabledto.model';
 
 @Component({
-    selector: 'toma-tt-table-header',
-    templateUrl: './tt-table-header.component.html',
-    styleUrls: ['./tt-table-header.component.scss']
+    selector: 'toma-tt-table-content',
+    templateUrl: './tt-table-content.component.html',
+    styleUrls: ['./tt-table-content.component.scss']
 })
-export class TtTableHeaderComponent implements OnInit {
+export class TtTableContentComponent implements OnInit {
 
     _table: TableDto;
 

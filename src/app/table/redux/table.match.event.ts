@@ -1,4 +1,4 @@
-export class FreeTableEvent {
+export class TableMatchEvent {
     constructor(public matchIds: number[], public tableNr: number) {
     }
 }

@@ -24,7 +24,7 @@ import {TableService} from './table/table.service';
 import {TableListComponent} from './table/table-list/table-list.component';
 import {TtTableComponent} from './table/table-list/tt-table/tt-table.component';
 import {TypeviewComponent} from './typeview/typeview.component';
-import {TtTableHeaderComponent} from './table/table-list/tt-table/tt-table-header/tt-table-header.component';
+import {TtTableContentComponent} from './table/table-list/tt-table/tt-table-header/tt-table-content.component';
 import {TtTableMatchItemComponent} from './table/table-list/tt-table/tt-table-match-item/tt-table-match-item.component';
 import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe';
 
@@ -40,7 +40,7 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         TtTableComponent,
         NavigationComponent,
         TableListPageComponent,
-        TtTableHeaderComponent,
+        TtTableContentComponent,
         TtTableMatchItemComponent,
         TtPlayerNameReducerPipe,
     ],

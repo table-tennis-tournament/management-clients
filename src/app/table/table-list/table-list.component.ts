@@ -23,4 +23,7 @@ export class TableListComponent {
     @Output()
     freeTable = new EventEmitter<number>();
 
+    @Output()
+    takeBackTable = new EventEmitter<number>();
+
 }
