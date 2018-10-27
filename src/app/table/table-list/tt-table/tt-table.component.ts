@@ -29,10 +29,10 @@ export class TtTableComponent {
     unLockTable = new EventEmitter<number>();
 
     @Output()
-    freeTable = new EventEmitter<number>();
+    freeTable = new EventEmitter<TableDto>();
 
     @Output()
-    takeBackTable = new EventEmitter<number>();
+    takeBackTable = new EventEmitter<TableDto>();
 
     _table: TableDto;
 
