@@ -38,7 +38,8 @@ build:
   - npm install --silent --unsafe-perm -g @angular/cli@1.1.2
   - npm install --silent
   script:
-  - ng build --prod --progress false
+  - ng build
+  #  - ng build --prod --progress false
   artifacts:
     paths:
     - dist/

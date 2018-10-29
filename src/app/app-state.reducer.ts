@@ -1,14 +1,13 @@
 import * as fromRouter from '@ngrx/router-store';
-import {ActionReducer, ActionReducerMap, createFeatureSelector, createSelector, MetaReducer,} from '@ngrx/store';
+import {ActionReducerMap, createSelector, MetaReducer,} from '@ngrx/store';
 
 import {storeFreeze} from 'ngrx-store-freeze';
-import {TableState} from './table/redux/table.reducer';
 import * as fromTables from './table/redux/table.reducer';
 import {environment} from '../environments/environment';
 
 export interface State {
     router: fromRouter.RouterReducerState;
-    table: fromTables.TableState
+    table: fromTables.TableState;
 }
 
 export const reducers: ActionReducerMap<State> = {
