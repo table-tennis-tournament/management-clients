@@ -12,7 +12,7 @@ const initialState: TableState = {
     tablesLoading: false
 };
 
-export const reduceTableState = (state: TableState = initialState, action: TableActionsUnion) => {
+export function reduceTableState(state: TableState = initialState, action: TableActionsUnion){
     switch (action.type) {
         case TableActionTypes.Load:
             return {
