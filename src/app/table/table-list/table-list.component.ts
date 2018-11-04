@@ -21,9 +21,18 @@ export class TableListComponent {
     unLockTable = new EventEmitter<number>();
 
     @Output()
-    freeTable = new EventEmitter<number>();
+    freeTable = new EventEmitter<TableDto>();
 
     @Output()
-    takeBackTable = new EventEmitter<number>();
+    takeBackTable = new EventEmitter<TableDto>();
+
+    @Output()
+    printTable = new EventEmitter<TableDto>();
+
+    @Output()
+    assignSecondTable = new EventEmitter<TableDto>();
+
+    @Output()
+    resultForTable = new EventEmitter<TableDto>();
 
 }

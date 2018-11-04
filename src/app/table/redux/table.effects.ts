@@ -13,6 +13,7 @@ import {
     LockTable,
     LockTableError,
     LockTableSuccess,
+    PrintTable,
     TableActionTypes,
     TakeBackTable,
     TakeBackTableError,
@@ -91,6 +92,21 @@ export class TableEffects {
     takeBackTables$: Observable<Action> = this.actions$.pipe(
         ofType(TableActionTypes.TakeBack),
         mergeMap((action: TakeBackTable) => {
+            return this.matchService
+                .takeBackMatches(action.payload.matchIds).pipe(
+                    map(() => new TakeBackTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Zurücknehmen der Spiele', 'Error');
+                        return of(new TakeBackTableError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    printTables$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.PrintTable),
+        mergeMap((action: PrintTable) => {
             return this.matchService
                 .takeBackMatches(action.payload.matchIds).pipe(
                     map(() => new TakeBackTableSuccess(action.payload)),

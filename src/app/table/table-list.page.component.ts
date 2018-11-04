@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
-import {FreeTable, LoadTables, LockTable, TakeBackTable, UnLockTable} from './redux/table.actions';
+import {FreeTable, LoadTables, LockTable, PrintTable, TakeBackTable, UnLockTable} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
 import {TableMatchEvent} from './redux/table.match.event';
 
@@ -44,6 +44,13 @@ export class TableListPageComponent implements OnInit {
         if (table.matchinfo.length === 1) {
             const takeBackTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
+        }
+    }
+
+    onPrintTable(table: TableDto) {
+        if (table.matchinfo.length === 1) {
+            const printTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
+            this.store.dispatch(new PrintTable(printTableEvent));
         }
     }
 

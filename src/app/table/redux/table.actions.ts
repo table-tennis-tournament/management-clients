@@ -16,7 +16,10 @@ export enum TableActionTypes {
     FreeError = '[Table] Free Error',
     TakeBack = '[Table] Take Back',
     TakeBackSuccess = '[Table] Take Back Success',
-    TakeBackError = '[Table] Take Back Error'
+    TakeBackError = '[Table] Take Back Error',
+    PrintTable = '[Table] Print',
+    PrintTableError = '[Table] Print Success',
+    PrintTableSuccess = '[Table] Print Error'
 }
 
 export class LoadTables implements Action {
@@ -115,6 +118,27 @@ export class TakeBackTableError implements Action {
     }
 }
 
+export class PrintTable implements Action {
+    readonly type = TableActionTypes.PrintTable;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class PrintTableSuccess implements Action {
+    readonly type = TableActionTypes.PrintTableSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class PrintTableError implements Action {
+    readonly type = TableActionTypes.PrintTableError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -130,4 +154,7 @@ export type TableActionsUnion =
     | FreeTableError
     | TakeBackTable
     | TakeBackTableSuccess
-    | TakeBackTableError;
+    | TakeBackTableError
+    | PrintTable
+    | PrintTableSuccess
+    | PrintTableError;

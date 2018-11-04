@@ -34,6 +34,15 @@ export class TtTableComponent {
     @Output()
     takeBackTable = new EventEmitter<TableDto>();
 
+    @Output()
+    printTable = new EventEmitter<TableDto>();
+
+    @Output()
+    assignSecondTable = new EventEmitter<TableDto>();
+
+    @Output()
+    resultForTable = new EventEmitter<TableDto>();
+
     _table: TableDto;
 
     get table(): TableDto {
