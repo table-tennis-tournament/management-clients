@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<div class="card grey lighten-3" *ngIf="!table||!table.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
+<div class="card grey lighten-3" *ngIf="!table||!table?.matchinfo[0]" dnd-droppable (onDropSuccess)="onMatchDrop($event)">
     <div class="card-content custom-padding">
         <span class="card-title activator">
             <h5><span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
