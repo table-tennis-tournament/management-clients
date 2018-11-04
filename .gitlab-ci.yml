@@ -29,8 +29,8 @@ test:
   # Download Selenium server JAR, drivers for Chrome
   - node ./node_modules/.bin/webdriver-manager update
   script:
-  - ng test --single-run --progress false
-  - ng e2e --progress false
+  - ng test --watch --progress false
+#  - ng e2e --progress false
 
 build:
   stage: build
