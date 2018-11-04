@@ -1,16 +1,18 @@
 <!--*ngIf="table?.matchinfo?.length > 0"-->
 <div class="card" >
     <div class="card-content {{bgColor}} custom-padding">
-        <toma-tt-table-header
-                [table]="table" ></toma-tt-table-header>
+        <toma-tt-table-content
+                [table]="table"
+                (freeTable)="freeTable.emit(table)">
+        </toma-tt-table-content>
     </div>
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action flex-style">
             <span *ngIf="table?.matchinfo?.length > 0" class="flex-style">
-                <a href="javascript:void(0)" (click)="onFree()">Frei</a>
+                <a href="javascript:void(0)" (click)="freeTable.emit(table)">Frei</a>
                 <a *ngIf="table?.matchinfo?.length === 1" href="javascript:void(0)" (click)="onResult()">Eingeben</a>
-                <a href="javascript:void(0)" (click)="onTakeBack()">Zurück</a>
+                <a href="javascript:void(0)" (click)="takeBackTable.emit(table)">Zurück</a>
                 <a href="javascript:void(0)" (click)="onPrint()">Drucken</a>
                 <a href="javascript:void(0)" (click)="onAssignToSecondTable()">2.Tisch</a>
             </span>

@@ -3,10 +3,12 @@
     <h5 class="no-margin">
         <span *ngIf="table.table.number" class="circle">{{table.table.number}}</span>
         <span>{{table.matchinfo[0].type.name}}</span>
-        <a href="javascript:void(0)" (click)="onFree()"><i class="material-icons right white-text">done</i></a>
         <i class="material-icons right">more_vert</i>
    </h5>
-   </span>
+  </span>
+    <a href="javascript:void(0)" (click)="freeTable.emit(table.table.number)">
+        <i class="material-icons right white-text">done</i>
+    </a>
   <p class="center-align truncate">
     <b *ngIf="table.table.isLocked">Tisch wird gesperrt. </b>
       <toma-tt-table-match-item [matches]="table.matchinfo"></toma-tt-table-match-item>

@@ -2,7 +2,7 @@ import {TableDto} from '../tabledto.model';
 import {TableActionsUnion, TableActionTypes} from './table.actions';
 
 export interface TableState {
-    tables: TableDto[]
+    tables: TableDto[];
     tablesLoading: boolean;
 }
 
@@ -12,7 +12,7 @@ const initialState: TableState = {
     tablesLoading: false
 };
 
-export const reduceTableState = (state: TableState = initialState, action: TableActionsUnion) => {
+export function reduceTableState(state: TableState = initialState, action: TableActionsUnion){
     switch (action.type) {
         case TableActionTypes.Load:
             return {
@@ -47,7 +47,7 @@ export const reduceTableState = (state: TableState = initialState, action: Table
                 })
 
             };
-            case TableActionTypes.UnLockSuccess:
+        case TableActionTypes.UnLockSuccess:
             return {
                 ...state,
                 tables: state.tables.map(table => {
@@ -63,6 +63,34 @@ export const reduceTableState = (state: TableState = initialState, action: Table
                     return table;
                 })
 
+            };
+        case TableActionTypes.FreeSuccess:
+            const freeTableEvent = action.payload;
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    if (table.table.number === action.payload.tableNr) {
+                        return {
+                            matchinfo: [...table.matchinfo.filter(match => !freeTableEvent.matchIds.indexOf(match.id))],
+                            table: {...table.table}
+                        };
+                    }
+                    return table;
+                })
+            };
+        case TableActionTypes.TakeBackSuccess:
+            const takeBackEvent = action.payload;
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    if (table.table.number === action.payload.tableNr) {
+                        return {
+                            matchinfo: [...table.matchinfo.filter(match => !takeBackEvent.matchIds.indexOf(match.id))],
+                            table: {...table.table}
+                        };
+                    }
+                    return table;
+                })
             };
         default:
             return state;

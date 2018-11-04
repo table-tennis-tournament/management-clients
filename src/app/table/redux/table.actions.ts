@@ -1,5 +1,4 @@
 import {Action} from '@ngrx/store';
-import {StatusDto} from '../../shared/statusdto.model';
 import {TableDto} from '../tabledto.model';
 
 export enum TableActionTypes {
@@ -11,7 +10,13 @@ export enum TableActionTypes {
     LockError = '[Table] Lock Error',
     UnLock = '[Table] UnLock',
     UnLockSuccess = '[Table] UnLock Success',
-    UnLockError = '[Table] UnLock Error'
+    UnLockError = '[Table] UnLock Error',
+    Free = '[Table] Free',
+    FreeSuccess = '[Table] Free Success',
+    FreeError = '[Table] Free Error',
+    TakeBack = '[Table] Take Back',
+    TakeBackSuccess = '[Table] Take Back Success',
+    TakeBackError = '[Table] Take Back Error'
 }
 
 export class LoadTables implements Action {
@@ -68,6 +73,48 @@ export class UnLockTableError implements Action {
     constructor(public payload: number) {}
 }
 
+export class FreeTable implements Action {
+    readonly type = TableActionTypes.Free;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class FreeTableSuccess implements Action {
+    readonly type = TableActionTypes.FreeSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class FreeTableError implements Action {
+    readonly type = TableActionTypes.FreeError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class TakeBackTable implements Action {
+    readonly type = TableActionTypes.TakeBack;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class TakeBackTableSuccess implements Action {
+    readonly type = TableActionTypes.TakeBackSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class TakeBackTableError implements Action {
+    readonly type = TableActionTypes.TakeBackError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -77,4 +124,10 @@ export type TableActionsUnion =
     | LockTableError
     | UnLockTable
     | UnLockTableSuccess
-    | UnLockTableError;
+    | UnLockTableError
+    | FreeTable
+    | FreeTableSuccess
+    | FreeTableError
+    | TakeBackTable
+    | TakeBackTableSuccess
+    | TakeBackTableError;

@@ -2,8 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
-import {LoadTables, LockTable, UnLockTable} from './redux/table.actions';
+import {FreeTable, LoadTables, LockTable, TakeBackTable, UnLockTable} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
+import {TableMatchEvent} from './redux/table.match.event';
 
 @Component({
     selector: 'toma-table-list.page',
@@ -21,6 +22,7 @@ export class TableListPageComponent implements OnInit {
         this.store.dispatch(new LoadTables(null));
         this.tables = this.store.select(getTableState);
         this.tablesLoading = this.store.select(getTablesLoading);
+
     }
 
     onLockTable(tableNr: number) {
@@ -30,5 +32,20 @@ export class TableListPageComponent implements OnInit {
     onUnLockTable(tableNr: number) {
         this.store.dispatch(new UnLockTable(tableNr));
     }
+
+    onFreeTable(table: TableDto) {
+        if (table.matchinfo.length === 1) {
+            const freeTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
+            this.store.dispatch(new FreeTable(freeTableEvent));
+        }
+    }
+
+    onTakeBackTable(table: TableDto) {
+        if (table.matchinfo.length === 1) {
+            const takeBackTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
+            this.store.dispatch(new TakeBackTable(takeBackTableEvent));
+        }
+    }
+
 
 }

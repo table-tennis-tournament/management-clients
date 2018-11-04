@@ -8,25 +8,31 @@ import {TableDto} from '../../tabledto.model';
 })
 export class TtTableComponent {
 
-    public bgColor: string = 'blue';
+    public bgColor = 'blue';
 
     @Output()
-    onResultForMatch = new EventEmitter<any>();
+    resultForMatch = new EventEmitter<any>();
 
     @Output()
-    onTableAssigned = new EventEmitter<any>();
+    tableAssigned = new EventEmitter<any>();
 
     @Output()
-    onSelectMatch = new EventEmitter<any>();
+    selectMatch = new EventEmitter<any>();
 
     @Output()
-    onSelectTable = new EventEmitter<any>();
+    selectTable = new EventEmitter<any>();
 
     @Output()
     lockTable = new EventEmitter<number>();
 
     @Output()
     unLockTable = new EventEmitter<number>();
+
+    @Output()
+    freeTable = new EventEmitter<TableDto>();
+
+    @Output()
+    takeBackTable = new EventEmitter<TableDto>();
 
     _table: TableDto;
 
