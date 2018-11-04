@@ -1,30 +1,10 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
-    <JSCodeStyleSettings>
-      <option name="USE_DOUBLE_QUOTES" value="false" />
-    </JSCodeStyleSettings>
     <TypeScriptCodeStyleSettings>
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
-      <option name="FIELD_PREFIX" value="" />
       <option name="USE_DOUBLE_QUOTES" value="false" />
       <option name="FORCE_QUOTE_STYlE" value="true" />
-      <option name="IMPORT_SORT_MODULE_NAME" value="true" />
-      <option name="BLACKLIST_IMPORTS" value="rxjs/Rx" />
-      <option name="IMPORT_PREFER_ABSOLUTE_PATH" value="FALSE" />
     </TypeScriptCodeStyleSettings>
-    <XML>
-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-    </XML>
-    <editorconfig>
-      <option name="ENABLED" value="false" />
-    </editorconfig>
-    <codeStyleSettings language="JavaScript">
-      <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
-      <option name="CATCH_ON_NEW_LINE" value="true" />
-      <option name="FINALLY_ON_NEW_LINE" value="true" />
-      <option name="DOWHILE_BRACE_FORCE" value="3" />
-      <option name="FOR_BRACE_FORCE" value="3" />
-    </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
       <option name="RIGHT_MARGIN" value="140" />
     </codeStyleSettings>
