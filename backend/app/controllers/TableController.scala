@@ -35,7 +35,9 @@ class TableController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   def getAllTableInfo(ttTable: TTTable): TableInfo = {
     TableInfo(
-      ttTable,
+      ttTable.id,
+      ttTable.tableNumber,
+      ttTable.isLocked,
       ttTable.matchId.map(id => getAllMatchInfo(tables.getMatch(id).get).get)
     )
   }
@@ -43,7 +45,7 @@ class TableController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
   def getAllTables = Action {
     val t = tables.allTTTables()
     val x = t.map(ttTable => getAllTableInfo(ttTable))
-    val z = x.sortBy(_.ttTable.tableNumber)
+    val z = x.sortBy(_.tableNumber)
     Logger.info("m: " + z.toString())
     Ok(Json.toJson(z))
   }
@@ -51,7 +53,7 @@ class TableController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
   def getFreeTables = Action {
     val t = tables.allTTTables().filter(t => t.matchId.isEmpty && !t.isLocked.getOrElse(false))
     val x = t.map(ttTable => getAllTableInfo(ttTable))
-    val z = x.sortBy(_.ttTable.tableNumber)
+    val z = x.sortBy(_.tableNumber)
     Logger.info("m: " + z.toString())
     Ok(Json.toJson(z))
   }
