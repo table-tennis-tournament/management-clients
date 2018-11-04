@@ -92,8 +92,10 @@ object TableModel {
 
   implicit val tableInfoWrites = new Writes[TableInfo] {
     def writes(tableInfo: TableInfo) = Json.obj(
-      "table" -> tableInfo.ttTable,
-      "matchinfo" -> tableInfo.ttMatch
+      "id" -> tableInfo.id,
+      "number" -> tableInfo.tableNumber,
+      "isLocked" -> tableInfo.isLocked,
+      "matches" -> tableInfo.ttMatch
     )
   }
 }
@@ -108,7 +110,9 @@ case class AllMatchInfoTable(
   )
 
 case class TableInfo(
-    ttTable: TTTable,
+    id: Long,
+    tableNumber: Int,
+    isLocked: Option[Boolean],
     ttMatch: Seq[AllMatchInfoTable]
   )
 
