@@ -1,0 +1,4 @@
+#!/bin/bash
+cd $OPENSHIFT_REPO_DIR
+mkdir -p $OPENSHIFT_REPO_DIR/openshift_fakehome
+./sbt -Duser.home=$OPENSHIFT_REPO_DIR/openshift_fakehome clean stage
