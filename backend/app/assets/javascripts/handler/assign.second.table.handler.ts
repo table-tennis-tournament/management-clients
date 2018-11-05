@@ -1,9 +1,8 @@
 import {MatchDto} from "../data/match.dto"
 import {StatusDto} from "../data/status.dto"
-import {TableService} from "../services/table.service"
 import {EventEmitter} from "@angular/core"
-import { ISelectTableHandler } from "./select.table.handler";
-import { MatchService } from "../services/match.service";
+import {ISelectTableHandler} from "./select.table.handler";
+import {MatchService} from "../services/match.service";
 
 export class AssignSecondTableHandler implements ISelectTableHandler {
     

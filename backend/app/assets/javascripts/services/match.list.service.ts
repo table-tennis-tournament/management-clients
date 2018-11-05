@@ -1,10 +1,10 @@
 import {MatchListDto} from "../data/match.list.dto"
 import {Injectable} from "@angular/core"
-import {Http, Response, Headers, RequestOptions } from "@angular/http"
+import {Http, Response} from "@angular/http"
 import {Observable} from "rxjs/Rx";
-import { BaseService } from "../services/base.service";
-import { MatchListItem } from "../data/match.list.item";
-import { StatusDto } from "../data/status.dto";
+import {BaseService} from "../services/base.service";
+import {MatchListItem} from "../data/match.list.item";
+import {StatusDto} from "../data/status.dto";
 
 
 @Injectable()

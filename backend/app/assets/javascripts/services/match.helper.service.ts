@@ -1,15 +1,9 @@
 import {Injectable} from "@angular/core"
-import {Http, Response, Headers, RequestOptions, RequestOptionsArgs } from "@angular/http"
-import {Observable} from "rxjs/Rx";
-import { BaseService } from "../services/base.service";
-import { StatusDto } from "../data/status.dto";
-import { DisciplineTab } from "../data/discipline.tab";
-import { DisciplineStage } from "../data/discipline.stage";
-import { DisciplineGroup } from "../data/discipline.group";
-import { TypeColors } from "../data/typeColors";
+import {DisciplineTab} from "../data/discipline.tab";
+import {DisciplineStage} from "../data/discipline.stage";
+import {DisciplineGroup} from "../data/discipline.group";
+import {TypeColors} from "../data/typeColors";
 import {MatchDto} from "../data/match.dto"
-import {IResult} from "../data/result"
-import {Type} from "../data/type"
 
 @Injectable()
 export class MatchHelperService {

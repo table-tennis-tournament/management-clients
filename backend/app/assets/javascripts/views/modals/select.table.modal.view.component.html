@@ -4,8 +4,8 @@
       <br/><br/>
       <div class="col s4">
         <select  materialize="material_select" [(ngModel)]="selectedTable" >
-                <option *ngFor="let currentTable of tables" [value]="currentTable.table.number">
-                       Tisch Nr. {{currentTable.table.number}}
+                <option *ngFor="let currentTable of tables" [value]="currentTable.number">
+                       Tisch Nr. {{currentTable.number}}
                 </option>
         </select>
         <label>Tisch</label>

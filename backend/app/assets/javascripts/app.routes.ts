@@ -1,12 +1,12 @@
 // ====== ./app/app.routes.ts ======
 
-import { Routes, RouterModule } from "@angular/router"
+import {Routes} from "@angular/router"
 import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
 import {SupervisorViewComponent} from "./components/supervisor.view.component"
 import {TableAssignViewComponent} from "./components/table.assign.view.component"
 import {ResultViewComponent} from "./components/result.view.component"
-import { SettingsComponent } from "./components/settings/settings.component";
+import {SettingsComponent} from "./components/settings/settings.component";
 
 export const routeConfig:Routes = [
     {

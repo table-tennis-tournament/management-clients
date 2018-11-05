@@ -1,13 +1,11 @@
-import {Component, Input, EventEmitter} from "@angular/core";
-import {Match} from "../../data/match";
-import { TableService } from "../../services/table.service";
-import { TableDto } from "../../data/table.dto";
-import {MaterializeAction} from "angular2-materialize";
-import { BaseModal } from "../../components/modals/base.modal";
-import { ISelectTableHandler } from "../../handler/select.table.handler";
-import { SelectTableEvent } from "app/assets/javascripts/handler/select.table.event";
-import { MatchDto } from "../../data/match.dto";
-import { ToastService } from "../../services/toast.service";
+import {Component} from "@angular/core";
+import {TableService} from "../../services/table.service";
+import {TableDto} from "../../data/table.dto";
+import {BaseModal} from "../../components/modals/base.modal";
+import {ISelectTableHandler} from "../../handler/select.table.handler";
+import {SelectTableEvent} from "app/assets/javascripts/handler/select.table.event";
+import {MatchDto} from "../../data/match.dto";
+import {ToastService} from "../../services/toast.service";
 
 
 @Component({
@@ -34,7 +32,7 @@ export class ModalSelectTableComponent extends BaseModal{
             this.toastService.toast("keine freien Tische");
             return;
         }
-        this.selectedTable = this.tables[0].table.number;
+        this.selectedTable = this.tables[0].number;
         this.openModal();
     }
 

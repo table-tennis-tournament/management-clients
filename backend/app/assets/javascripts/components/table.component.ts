@@ -1,27 +1,22 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core"
-import {Match} from "../data/match"
-import {MatchDto} from "../data/match.dto"
-import {Group} from "../data/group"
+import {Component, EventEmitter, Input, Output} from "@angular/core"
 import {TableDto} from "../data/table.dto"
 import {MatchToStringService} from "../services/match.toString.service"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
-import {Overlay, overlayConfigFactory } from "angular2-modal"
 import {IResultHandler} from "../handler/result.handler"
 import {ResultEvent} from "../handler/result.event"
 import {SelectMatchEvent} from "../handler/select.match.event"
 import {IResult} from "../data/result"
 import {TypeColors} from "../data/typeColors"
-import {MaterializeAction} from "angular2-materialize"
 import {TakeBackMatchHandler} from "../handler/takeBack.match.handler";
 import {FreeMatchHandler} from "../handler/free.match.handler";
-import { ISelectMatchHandler } from "app/assets/javascripts/handler/select.match.handler";
-import { AssignEvent } from "../handler/assign.event";
-import { StatusDto } from "../data/status.dto";
-import { ToastService } from "../services/toast.service";
-import { SelectTableEvent } from "../handler/select.table.event";
-import { AssignSecondTableHandler } from "../handler/assign.second.table.handler";
-import { PrintMatchHandler } from "../handler/print.match.handler";
+import {ISelectMatchHandler} from "app/assets/javascripts/handler/select.match.handler";
+import {AssignEvent} from "../handler/assign.event";
+import {StatusDto} from "../data/status.dto";
+import {ToastService} from "../services/toast.service";
+import {SelectTableEvent} from "../handler/select.table.event";
+import {AssignSecondTableHandler} from "../handler/assign.second.table.handler";
+import {PrintMatchHandler} from "../handler/print.match.handler";
 
 @Component({
     selector: "tt-table",
@@ -59,17 +54,17 @@ export class TableComponent implements IResultHandler{
 
 
     setBgColorAndTextColorDependsOnType(){
-        if(this.table.matchinfo && this.table.matchinfo[0]){
-            this.bgColor =TypeColors.TYPE_COLORS[this.table.matchinfo[0].type.id];
+        if(this.table.matches && this.table.matches[0]){
+            this.bgColor =TypeColors.TYPE_COLORS[this.table.matches[0].type.id];
         }
     }
 
     onMatchDrop(event){
-        if(this.table.matchinfo && this.table.matchinfo[0]){
+        if(this.table.matches && this.table.matches[0]){
             return;
         }
-        var matchIds = event.dragData.matches.map(x=>x.match.id);;
-        this.matchService.assignMatchToTable(matchIds, this.table.table.number).subscribe(
+        const matchIds = event.dragData.matches.map(x => x.match.id);;
+        this.matchService.assignMatchToTable(matchIds, this.table.number).subscribe(
             this.onMatchAssigned.bind(this, event.dragData), 
             this.handleErrorsOnService.bind(this));
     };
@@ -84,29 +79,29 @@ export class TableComponent implements IResultHandler{
 
     onResult(){
         if(this.isSingleMatch()){
-            var resultEvent = new ResultEvent();
+            const resultEvent = new ResultEvent();
             resultEvent.handler = this;
-            resultEvent.match = this.table.matchinfo[0];
+            resultEvent.match = this.table.matches[0];
             this.onResultForMatch.emit(resultEvent);
         }
        
     }
 
     isSingleMatch(){
-        return this.table.matchinfo != null && this.table.matchinfo.length === 1;
+        return this.table.matches != null && this.table.matches.length === 1;
     }
 
     onLock(){
-        this.tableService.lockTable(this.table.table.id).subscribe(this.lockTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService.bind(this));
+        this.tableService.lockTable(this.table.id).subscribe(this.lockTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService.bind(this));
     }
 
     onUnLock(){
-        this.tableService.unlockTable(this.table.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService.bind(this));
+        this.tableService.unlockTable(this.table.id).subscribe(this.unLockTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService.bind(this));
     }
    
     onFree(){
         if(this.isSingleMatch()){
-            var matchId = this.table.matchinfo[0].match.id;
+            const matchId = this.table.matches[0].match.id;
             this.tableService.freeTable([matchId]).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService.bind(this));
             return;
         }
@@ -115,7 +110,7 @@ export class TableComponent implements IResultHandler{
 
     onTakeBack(){
         if(this.isSingleMatch()){
-            var matchId = this.table.matchinfo[0].match.id;
+            const matchId = this.table.matches[0].match.id;
             this.tableService.takeBackTable([matchId]).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService.bind(this));
             return;
         }
@@ -123,10 +118,10 @@ export class TableComponent implements IResultHandler{
     }
 
     fireSelectMatchEvent(selectHandler: ISelectMatchHandler){
-        var selectEvent = new SelectMatchEvent();
+        const selectEvent = new SelectMatchEvent();
         selectEvent.handler = selectHandler;
         selectEvent.handler.onRefresh.subscribe(this.onTableRefresh.bind(this));
-        selectEvent.matches = this._table.matchinfo;
+        selectEvent.matches = this._table.matches;
         this.onSelectMatch.emit(selectEvent);
     }
 
@@ -140,30 +135,30 @@ export class TableComponent implements IResultHandler{
     }
 
     unLockTableAfterRequestSuccessful(){
-        this.table.table.isLocked = false;
+        this.table.isLocked = false;
         this.setBgColorAndTextColorDependsOnType();
     }
 
     freeTableAfterRequestSuccessfull(){
-        this.table.matchinfo = null;
+        this.table.matches = null;
     }
 
     takeBackTableAfterRequestSuccessful(){
-        this.table.matchinfo = null;
+        this.table.matches = null;
     }
 
     assignToSecondTable(){
-        var selectEvent = new SelectTableEvent();
+        const selectEvent = new SelectTableEvent();
         selectEvent.handler = new AssignSecondTableHandler(this.matchService);
         selectEvent.handler.onRefresh.subscribe(this.onTableRefresh.bind(this));
-        selectEvent.matches = this._table.matchinfo;
+        selectEvent.matches = this._table.matches;
         this.onSelectTable.emit(selectEvent);
     }
 
     onPrint(){
         if(this.isSingleMatch()){
-            var matchId = this.table.matchinfo[0].match.id;
-            this.tableService.printMatch(this.table.matchinfo[0].match.id).subscribe(
+            const matchId = this.table.matches[0].match.id;
+            this.tableService.printMatch(matchId).subscribe(
                 this.onPrinted.bind(this),
                 this.handleErrorsOnService.bind(this));
             return;
@@ -177,7 +172,7 @@ export class TableComponent implements IResultHandler{
     }
 
     lockTableAfterRequestSuccessfull(){
-        this.table.table.isLocked = true;
+        this.table.isLocked = true;
         this.bgColor =TypeColors.TYPE_COLORS[0];
     }
 
@@ -186,14 +181,14 @@ export class TableComponent implements IResultHandler{
     }
 
     handleResult(resultToHandle: IResult[]){
-        var matchId = this.table.matchinfo[0].match.id;
+        const matchId = this.table.matches[0].match.id;
         this.matchService.addResult(resultToHandle, matchId).subscribe(
             this.handleResultAfterRequestSuccessful.bind(this),
             this.handleErrorsOnService.bind(this));
     }
 
     handleResultAfterRequestSuccessful(){
-        this.table.matchinfo = null;
+        this.table.matches = null;
     }
    
 }

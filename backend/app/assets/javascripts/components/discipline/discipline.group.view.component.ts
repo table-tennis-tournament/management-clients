@@ -1,11 +1,10 @@
-import {Component, Input, EventEmitter, Output} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {MaterializeAction} from "angular2-materialize";
 import {DisciplineGroup} from "../../data/discipline.group"
 import {TypeColors} from "../../data/typeColors"
 import {MatchListService} from "../../services/match.list.service"
-import { RandomMatchService } from "../../services/random.match.service";
-import { ResultEvent } from "../../handler/result.event";
-import { ResultMatchHandler } from "../../handler/result.match.handler";
+import {RandomMatchService} from "../../services/random.match.service";
+import {ResultEvent} from "../../handler/result.event";
 
 @Component({
     selector: "group-view",
