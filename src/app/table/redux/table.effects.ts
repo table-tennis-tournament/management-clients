@@ -5,6 +5,9 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
 import {
+    AssignToSecondTable,
+    AssignToSecondTableError,
+    AssignToSecondTableSuccess,
     FreeTable,
     FreeTableError,
     FreeTableSuccess,
@@ -116,6 +119,21 @@ export class TableEffects {
                     catchError(err => {
                         this.toastService.error('Fehler beim Drucken des Spiels', 'Error');
                         return of(new PrintTableError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    assignToSecondTable$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.AssignToSecondTable),
+        mergeMap((action: AssignToSecondTable) => {
+            return this.matchService.assignToSecondTable(action.payload.tableNr, action.payload.matchIds)
+                .pipe(
+                    map(() => new AssignToSecondTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim zuweisen des zweiten Tisches', 'Error');
+                        return of(new AssignToSecondTableError(err));
                     })
                 );
         })

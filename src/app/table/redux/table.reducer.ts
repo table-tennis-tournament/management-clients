@@ -68,7 +68,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
                     if (table.number === action.payload.tableNr) {
                         return {
                             ...table,
-                            matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.id))]
+                            matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.match.id))]
                         };
                     }
                     return table;
@@ -82,7 +82,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
                     if (table.number === action.payload.tableNr) {
                         return {
                             ...table,
-                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.id))]
+                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.match.id))]
                         };
                     }
                     return table;

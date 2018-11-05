@@ -6,7 +6,7 @@ import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
 import {of, ReplaySubject, throwError} from 'rxjs';
 import {MatchService} from '../../match/match.service';
 import {TableService} from '../table.service';
-import {LoadTables, LoadTablesSuccess, TableActionTypes} from './table.actions';
+import {AssignToSecondTable, AssignToSecondTableSuccess, LoadTables, LoadTablesSuccess, TableActionTypes} from './table.actions';
 import {TableEffects} from './table.effects';
 
 describe('the table effects', () => {
@@ -61,6 +61,35 @@ describe('the table effects', () => {
             spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
 
             actions.next(new LoadTables(null));
+
+            tableEffects.loadTables$.subscribe((result) => {
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
+
+        it('should return a LoadTableError', (done) => {
+            spyOn(tableService, 'getAllTables').and.returnValue(throwError({msg: 'Error'}));
+
+            actions.next(new LoadTables(null));
+
+            tableEffects.loadTables$.subscribe((result) => {
+                expect(result.type).toEqual(TableActionTypes.LoadError);
+                done();
+            });
+            // expect(toastServiceMock.error).toHaveBeenCalled();
+        });
+
+
+    });
+
+    describe('assign second table', () => {
+
+        it('should return a AssignToSecondTableSuccess', (done) => {
+            const expectedResult = new AssignToSecondTableSuccess(responseTables);
+            spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
+
+            actions.next(new AssignToSecondTable(null));
 
             tableEffects.loadTables$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);

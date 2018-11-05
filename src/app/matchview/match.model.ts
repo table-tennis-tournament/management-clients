@@ -5,7 +5,6 @@ import {MatchState} from './matchstate.model';
 import {MatchType} from './matchtype.model';
 
 export interface Match {
-    id?: number;
     team1?: Player[];
     team2?: Player[];
     type?: Type;

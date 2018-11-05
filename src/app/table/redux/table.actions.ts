@@ -18,8 +18,11 @@ export enum TableActionTypes {
     TakeBackSuccess = '[Table] Take Back Success',
     TakeBackError = '[Table] Take Back Error',
     PrintTable = '[Table] Print',
-    PrintTableError = '[Table] Print Success',
-    PrintTableSuccess = '[Table] Print Error'
+    PrintTableError = '[Table] Print Error',
+    PrintTableSuccess = '[Table] Print Success',
+    AssignToSecondTable = '[Table] Assign to 2nd table',
+    AssignToSecondTableError = '[Table] Assign to 2nd table Error',
+    AssignToSecondTableSuccess = '[Table] Assign to 2nd table Success'
 }
 
 export class LoadTables implements Action {
@@ -139,6 +142,27 @@ export class PrintTableError implements Action {
     }
 }
 
+export class AssignToSecondTable implements Action {
+    readonly type = TableActionTypes.AssignToSecondTable;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignToSecondTableSuccess implements Action {
+    readonly type = TableActionTypes.AssignToSecondTableSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignToSecondTableError implements Action {
+    readonly type = TableActionTypes.AssignToSecondTableError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -157,4 +181,7 @@ export type TableActionsUnion =
     | TakeBackTableError
     | PrintTable
     | PrintTableSuccess
-    | PrintTableError;
+    | PrintTableError
+    | AssignToSecondTable
+    | AssignToSecondTableSuccess
+    | AssignToSecondTableError;

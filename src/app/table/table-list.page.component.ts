@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
-import {FreeTable, LoadTables, LockTable, PrintTable, TakeBackTable, UnLockTable} from './redux/table.actions';
+import {AssignToSecondTable, FreeTable, LoadTables, LockTable, PrintTable, TakeBackTable, UnLockTable} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
 import {TableMatchEvent} from './redux/table.match.event';
 
@@ -40,6 +40,10 @@ export class TableListPageComponent implements OnInit {
         }
     }
 
+    onTableRefresh() {
+        this.store.dispatch(new LoadTables(null));
+    }
+
     onTakeBackTable(table: TableDto) {
         if (table.matches.length === 1) {
             const takeBackTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
@@ -51,6 +55,14 @@ export class TableListPageComponent implements OnInit {
         if (table.matches.length === 1) {
             this.store.dispatch(new PrintTable({matchId: table.matches[0].match.id}));
         }
+    }
+
+    onAssignSecondTable(table: TableDto) {
+        if (table.matches.length < 2) {
+            return;
+        }
+        const selectedMatchIds = table.matches.map(match => match.match.id);
+        this.store.dispatch(new AssignToSecondTable({tableNr: 4, matchIds: selectedMatchIds}));
     }
 
 
