@@ -1,4 +1,5 @@
-import { Directive, ElementRef, Renderer} from "@angular/core";
+import {Directive, ElementRef, Renderer} from "@angular/core";
+
 @Directive({
     selector: "[ModFocus]"
 })

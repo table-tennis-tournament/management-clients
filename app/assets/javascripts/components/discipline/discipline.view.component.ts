@@ -1,6 +1,5 @@
-import {Component, Input, EventEmitter, ViewChild} from "@angular/core";
+import {Component, EventEmitter, ViewChild} from "@angular/core";
 import {DisciplineTab} from "../../data/discipline.tab"
-import {DisciplineGroup} from "../../data/discipline.group"
 import {DisciplineStage} from "../../data/discipline.stage"
 import {MatchDto} from "../../data/match.dto"
 import {Type} from "../../data/type"
@@ -8,12 +7,12 @@ import {TypeColors} from "../../data/typeColors"
 import {RandomMatchService} from "../../services/random.match.service"
 import {MatchService} from "../../services/match.service"
 import {MaterializeAction} from "angular2-materialize";
-import { StatusDto } from "../../data/status.dto";
-import { ResultModalComponent } from "../../components/result.modal.view.component";
-import { ResultMatchHandler } from "../../handler/result.match.handler";
-import { ToastService } from "../../services/toast.service";
-import { MatchHelperService } from "../../services/match.helper.service";
-import { WebSocketService } from "../../services/web.socket.service";
+import {StatusDto} from "../../data/status.dto";
+import {ResultModalComponent} from "../../components/result.modal.view.component";
+import {ResultMatchHandler} from "../../handler/result.match.handler";
+import {ToastService} from "../../services/toast.service";
+import {MatchHelperService} from "../../services/match.helper.service";
+import {WebSocketService} from "../../services/web.socket.service";
 
 @Component({
     selector: "discipline-view",
@@ -67,18 +66,18 @@ export class DisciplineViewComponent{
 
     removePlayedItems(){
         if(this.removePlayed === false){
-            var stagesCopy = this.selectedTab.stages.filter(x => x.isComplete === false);
+            const stagesCopy = this.selectedTab.stages.filter(x => x.isComplete === false);
             this.selectedTab.stages = stagesCopy;
-            var groupsCopy = this.selectedTab.groups.filter(y => y.isComplete === false);
+            const groupsCopy = this.selectedTab.groups.filter(y => y.isComplete === false);
             this.selectedTab.groups = groupsCopy;
         }
     }
 
     allTypesSelected(result: Type[]){
         this.tabs = [];
-        var newTabs = []
-        for(var index = 0; index < result.length; index++){
-            var currentType = result[index];
+        const newTabs = [];
+        for(let index = 0; index < result.length; index++){
+            const currentType = result[index];
             newTabs.push(new DisciplineTab(currentType.id, currentType.name, currentType.kind));
         }
         this.tabs = newTabs;
@@ -94,20 +93,20 @@ export class DisciplineViewComponent{
     }
 
     handleSetSelectedTab(result: MatchDto[]){
-        var createdTab = this.matchHelperService.getSingle(result, this.selectedTab, this.playersAreOpen, this.matchesAreOpen);
+        const createdTab = this.matchHelperService.getSingle(result, this.selectedTab, this.playersAreOpen, this.matchesAreOpen);
         this.selectedTab = createdTab;
         this.removePlayedItems();
     }
 
 
     onDeleteStage($event: DisciplineStage){
-        var index = this.selectedTab.stages.indexOf($event);
+        const index = this.selectedTab.stages.indexOf($event);
         this.selectedTab.stages.splice(index, 1);
     }
 
     
     onResultForMatch($event){
-        var resultHandler = new ResultMatchHandler(this.matchService);
+        const resultHandler = new ResultMatchHandler(this.matchService);
         resultHandler.onRefresh.subscribe(this.onRefreshCurrentTab.bind(this));
         this.resultDialog.setResultHandler(resultHandler);
         this.resultDialog.setMatch($event.match);

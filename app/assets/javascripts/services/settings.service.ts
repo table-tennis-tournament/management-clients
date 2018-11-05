@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core"
-import {Http, Response, Headers, RequestOptions } from "@angular/http"
+import {Http, Response} from "@angular/http"
 import {Observable} from "rxjs/Rx"
-import { StatusDto } from "../data/status.dto";
-import { BaseService } from "./base.service";
-import { SettingDto } from "../data/setting.dto";
+import {StatusDto} from "../data/status.dto";
+import {BaseService} from "./base.service";
+import {SettingDto} from "../data/setting.dto";
 
 @Injectable()
 export class SettingsService {

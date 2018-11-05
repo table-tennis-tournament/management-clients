@@ -2,10 +2,10 @@ import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {Type} from "../data/type"
 import {Injectable} from "@angular/core"
-import {Http, Response, Headers, RequestOptions, RequestOptionsArgs } from "@angular/http"
+import {Http, Response} from "@angular/http"
 import {Observable} from "rxjs/Rx";
-import { BaseService } from "../services/base.service";
-import { StatusDto } from "app/assets/javascripts/data/status.dto";
+import {BaseService} from "../services/base.service";
+import {StatusDto} from "app/assets/javascripts/data/status.dto";
 
 @Injectable()
 export class MatchService {
@@ -14,7 +14,7 @@ export class MatchService {
   private allOpenMatchesUrl = "api/match/open/all";
   
   private getMatchesByTypeUrl = "api/match/typeid/typeIdValue";
-  private getOpenMatchesByTypeUrl = "api/open/typeid/typeIdValue";
+  private getOpenMatchesByTypeUrl = "api/match/open/typeid/typeIdValue";
 
   private addResultString = "api/match/matchId/result";
   private loadNewUrl = "api/match/loadnew";

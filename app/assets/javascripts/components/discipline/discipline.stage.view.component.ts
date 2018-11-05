@@ -1,6 +1,6 @@
-import {Component, Input, EventEmitter, Output} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {DisciplineStage} from "../../data/discipline.stage";
-import { ResultEvent } from "../../handler/result.event";
+import {ResultEvent} from "../../handler/result.event";
 
 
 @Component({

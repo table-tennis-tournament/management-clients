@@ -1,5 +1,4 @@
 import {Component, Input} from "@angular/core";
-import {Match} from "../../data/match";
 import {FilterCriteria} from "../../data/filterCriteria";
 
 @Component({

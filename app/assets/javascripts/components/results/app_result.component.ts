@@ -1,12 +1,12 @@
 import {Component} from "@angular/core"
 import {TypeColors} from "../../data/typeColors"
 import {DisciplineShortcuts} from "../../data/disciplineShortcuts"
-import { MatchService } from "../../services/match.service";
-import { Type } from "../../data/type";
-import { DisciplineTab } from "../../data/discipline.tab";
-import { MatchDto } from "../../data/match.dto";
-import { MatchHelperService } from "../../services/match.helper.service";
-import { DisciplineStage } from "../../data/discipline.stage";
+import {MatchService} from "../../services/match.service";
+import {Type} from "../../data/type";
+import {DisciplineTab} from "../../data/discipline.tab";
+import {MatchDto} from "../../data/match.dto";
+import {MatchHelperService} from "../../services/match.helper.service";
+import {DisciplineStage} from "../../data/discipline.stage";
 
 @Component({
   selector: "tt-result",

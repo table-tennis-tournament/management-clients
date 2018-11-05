@@ -1,15 +1,13 @@
 // ====== ./app/app.module.ts ======
 // Imports
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core"
-import { BrowserModule }  from "@angular/platform-browser"
-import { FormsModule }    from "@angular/forms"
-import { HttpModule, JsonpModule } from "@angular/http"
-import { CommonModule } from "@angular/common"
-import { MaterializeModule } from "angular2-materialize"
-import { RouterModule, Routes } from "@angular/router"
-import { routeConfig } from "./app.routes"
-
-import {APP_BASE_HREF} from "@angular/common";
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from "@angular/core"
+import {BrowserModule} from "@angular/platform-browser"
+import {FormsModule} from "@angular/forms"
+import {HttpModule, JsonpModule} from "@angular/http"
+import {APP_BASE_HREF, CommonModule} from "@angular/common"
+import {MaterializeModule} from "angular2-materialize"
+import {RouterModule} from "@angular/router"
+import {routeConfig} from "./app.routes"
 
 import {DndModule} from "ng2-dnd";
 
@@ -29,10 +27,10 @@ import {TableAssignViewComponent} from "./components/table.assign.view.component
 import {DisciplineMatchListComponent} from "./components/discipline/discipline.match.list.view.component"
 import {ResultViewComponent} from "./components/result.view.component"
 import {DisciplineSelectViewComponent} from "./components/discipline/discipline.select.view.component"
-import { SettingsComponent } from "./components/settings/settings.component";
+import {SettingsComponent} from "./components/settings/settings.component";
 
 import {DisciplineStageComponent} from "./components/discipline/discipline.stage.view.component"
-import { ModalSelectTableComponent } from "./components/modals/select.table.modal";
+import {ModalSelectTableComponent} from "./components/modals/select.table.modal";
 
 import {DisciplineMatchItemComponent} from "./components/items/discipline.match.item.component"
 import {StageMatchItemComponent} from "./components/items/stage.match.item.component"
@@ -42,18 +40,18 @@ import {TableMatchItemComponent} from "./components/items/table.match.item.compo
 
 import {ModalFocusDirective} from "./directives/mod.focus.directive"
 
-import { PlayerService } from "./services/player.service"
-import { MatchService } from "./services/match.service"
-import { TableService } from "./services/table.service"
-import { WebSocketService } from "./services/web.socket.service"
-import { MatchToStringService } from "./services/match.toString.service"
-import { MatchListService } from "./services/match.list.service"
-import { RandomMatchService } from "./services/random.match.service"
-import { BaseService } from "./services/base.service"
-import { ToastService } from "./services/toast.service";
-import { SettingsService } from "./services/settings.service";
-import { MatchHelperService } from "./services/match.helper.service";
-import { ModalShowMatchComponent } from "./components/modals/show.match.modal";
+import {PlayerService} from "./services/player.service"
+import {MatchService} from "./services/match.service"
+import {TableService} from "./services/table.service"
+import {WebSocketService} from "./services/web.socket.service"
+import {MatchToStringService} from "./services/match.toString.service"
+import {MatchListService} from "./services/match.list.service"
+import {RandomMatchService} from "./services/random.match.service"
+import {BaseService} from "./services/base.service"
+import {ToastService} from "./services/toast.service";
+import {SettingsService} from "./services/settings.service";
+import {MatchHelperService} from "./services/match.helper.service";
+import {ModalShowMatchComponent} from "./components/modals/show.match.modal";
 
 @NgModule({
   

@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {TypeColors} from "../../data/typeColors";
 import {DisciplineShortcuts} from "../../data/disciplineShortcuts";
 import {Type} from "../../data/type";

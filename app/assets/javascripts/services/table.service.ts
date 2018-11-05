@@ -1,12 +1,8 @@
 import {MatchListDto} from "../data/match.list.dto"
-import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
-import {Player} from "../data/player"
-import {Club} from "../data/club"
-import {Type} from "../data/type"
 import {StatusDto} from "../data/status.dto"
 import {Injectable} from "@angular/core"
-import {Http, Response, Headers, RequestOptions } from "@angular/http"
+import {Http, Response} from "@angular/http"
 import {Observable} from "rxjs/Rx";
 import {WebSocketService} from "./web.socket.service";
 import {MatchListService} from "./match.list.service"

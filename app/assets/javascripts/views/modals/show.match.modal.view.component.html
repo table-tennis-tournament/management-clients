@@ -1,18 +1,18 @@
 <div id="modal2" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
-    <div class="modal-content center-align" *ngIf="currentTable&&currentTable.matchinfo[0]">
+    <div class="modal-content center-align" *ngIf="currentTable&&currentTable.matches[0]">
       <h4>Neues Spiel ausrufen</h4>
       <br/><br/>
       <div class="col s4">
-        <h5>Tisch Nr:  {{currentTable.table.number}}</h5>
+        <h5>Tisch Nr:  {{currentTable.number}}</h5>
         <br/>
-        <h5>{{currentTable.matchinfo[0].type.name}}  {{currentTable.matchinfo[0].matchType.name}}</h5>  
+        <h5>{{currentTable.matches[0].type.name}}  {{currentTable.matches[0].matchType.name}}</h5>
         <br/><br/>
       <div class="row" *ngIf="!players" >
-        <team-match-item [team]="currentTable.matchinfo[0].team1" [showDisciplines]="false" [showClubs]="true"></team-match-item> 
+        <team-match-item [team]="currentTable.matches[0].team1" [showDisciplines]="false" [showClubs]="true"></team-match-item>
         <br/>
         -
         <br/>
-        <team-match-item [team]="currentTable.matchinfo[0].team2" [showDisciplines]="false" [showClubs]="true"></team-match-item>
+        <team-match-item [team]="currentTable.matches[0].team2" [showDisciplines]="false" [showClubs]="true"></team-match-item>
       </div>
       <div class="row" *ngIf="players" >
           <div><h5>Spieler: </h5></div>

@@ -1,26 +1,23 @@
-import {Component, ViewContainerRef, ViewEncapsulation, ViewChild, Output, EventEmitter, Input, OnDestroy} from "@angular/core"
+import {Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
 import {RandomMatchService} from "../services/random.match.service"
 import {ResultModalComponent} from "./result.modal.view.component"
 
-import {Table} from "../data/table"
 import {TableDto} from "../data/table.dto"
 import {MatchListDto} from "../data/match.list.dto"
-import {MatchDto} from "../data/match.dto"
-import {Match} from "../data/match"
 import {ResultEvent} from "../handler/result.event"
-import { SelectMatchModalComponent } from "../components/table/table.select.match.modal.component";
-import { AssignEvent } from "../handler/assign.event";
-import { ToastService } from "../services/toast.service";
-import { ModalSelectTableComponent } from "./modals/select.table.modal";
-import { WebSocketService } from "../services/web.socket.service";
-import { ModalShowMatchComponent } from "./modals/show.match.modal";
-import { ShowMatchEvent } from "../handler/show.match.event";
-import { ActivatedRoute } from "@angular/router"
-import { MatchListService } from "../services/match.list.service";
-import { StatusDto } from "app/assets/javascripts/data/status.dto";
+import {SelectMatchModalComponent} from "../components/table/table.select.match.modal.component";
+import {AssignEvent} from "../handler/assign.event";
+import {ToastService} from "../services/toast.service";
+import {ModalSelectTableComponent} from "./modals/select.table.modal";
+import {WebSocketService} from "../services/web.socket.service";
+import {ModalShowMatchComponent} from "./modals/show.match.modal";
+import {ShowMatchEvent} from "../handler/show.match.event";
+import {ActivatedRoute} from "@angular/router"
+import {MatchListService} from "../services/match.list.service";
+import {StatusDto} from "app/assets/javascripts/data/status.dto";
 
 
 @Component({
