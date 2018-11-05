@@ -34,13 +34,11 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload) {
+                    if (table.number === action.payload) {
                         return {
-                            matchinfo: [...table.matchinfo],
-                            table: {
-                                ...table.table,
-                                isLocked: true
-                            }
+                            ...table,
+                            matches: [...table.matches],
+                            isLocked: true
                         };
                     }
                     return table;
@@ -51,13 +49,11 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload) {
+                    if (table.number === action.payload) {
                         return {
-                            matchinfo: [...table.matchinfo],
-                            table: {
-                                ...table.table,
-                                isLocked: false
-                            }
+                            ...table,
+                            matches: [...table.matches],
+                            isLocked: false
                         };
                     }
                     return table;
@@ -69,10 +65,10 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload.tableNr) {
+                    if (table.number === action.payload.tableNr) {
                         return {
-                            matchinfo: [...table.matchinfo.filter(match => !freeTableEvent.matchIds.indexOf(match.id))],
-                            table: {...table.table}
+                            ...table,
+                            matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.id))]
                         };
                     }
                     return table;
@@ -83,10 +79,10 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload.tableNr) {
+                    if (table.number === action.payload.tableNr) {
                         return {
-                            matchinfo: [...table.matchinfo.filter(match => !takeBackEvent.matchIds.indexOf(match.id))],
-                            table: {...table.table}
+                            ...table,
+                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.id))]
                         };
                     }
                     return table;

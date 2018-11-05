@@ -14,6 +14,8 @@ import {
     LockTableError,
     LockTableSuccess,
     PrintTable,
+    PrintTableError,
+    PrintTableSuccess,
     TableActionTypes,
     TakeBackTable,
     TakeBackTableError,
@@ -24,6 +26,7 @@ import {
 } from './table.actions';
 import {TableService} from '../table.service';
 import {MatchService} from '../../match/match.service';
+import {PrintService} from '../../shared/print.service';
 
 @Injectable()
 export class TableEffects {
@@ -107,19 +110,19 @@ export class TableEffects {
     printTables$: Observable<Action> = this.actions$.pipe(
         ofType(TableActionTypes.PrintTable),
         mergeMap((action: PrintTable) => {
-            return this.matchService
-                .takeBackMatches(action.payload.matchIds).pipe(
-                    map(() => new TakeBackTableSuccess(action.payload)),
+            return this.printService.printMatch(action.payload.matchId)
+                .pipe(
+                    map(() => new PrintTableSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Zurücknehmen der Spiele', 'Error');
-                        return of(new TakeBackTableError(err));
+                        this.toastService.error('Fehler beim Drucken des Spiels', 'Error');
+                        return of(new PrintTableError(err));
                     })
                 );
         })
     );
 
     constructor(private actions$: Actions, private tableService: TableService,
-                private toastService: ToastrService, private matchService: MatchService) {
+                private toastService: ToastrService, private matchService: MatchService, private printService: PrintService) {
 
     }
 

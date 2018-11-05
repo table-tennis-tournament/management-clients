@@ -34,23 +34,22 @@ export class TableListPageComponent implements OnInit {
     }
 
     onFreeTable(table: TableDto) {
-        if (table.matchinfo.length === 1) {
-            const freeTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
+        if (table.matches.length === 1) {
+            const freeTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new FreeTable(freeTableEvent));
         }
     }
 
     onTakeBackTable(table: TableDto) {
-        if (table.matchinfo.length === 1) {
-            const takeBackTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
+        if (table.matches.length === 1) {
+            const takeBackTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
         }
     }
 
     onPrintTable(table: TableDto) {
-        if (table.matchinfo.length === 1) {
-            const printTableEvent = new TableMatchEvent([table.matchinfo[0].match.id], table.table.number);
-            this.store.dispatch(new PrintTable(printTableEvent));
+        if (table.matches.length === 1) {
+            this.store.dispatch(new PrintTable({matchId: table.matches[0].match.id}));
         }
     }
 

@@ -9,16 +9,16 @@
     <div class="card-reveal">
         <span class="card-title">Optionen<i class="material-icons right">close</i></span>
         <div class="card-action flex-style">
-            <span *ngIf="table?.matchinfo?.length > 0" class="flex-style">
+            <span *ngIf="table?.matches?.length > 0" class="flex-style">
                 <a href="javascript:void(0)" (click)="freeTable.emit(table)">Frei</a>
-                <a *ngIf="table?.matchinfo?.length === 1" href="javascript:void(0)"
+                <a *ngIf="table?.matches?.length === 1" href="javascript:void(0)"
                    (click)="resultForTable.emit(table)">Eingeben</a>
                 <a href="javascript:void(0)" (click)="takeBackTable.emit(table)">Zurück</a>
                 <a href="javascript:void(0)" (click)="printTable.emit(table)">Drucken</a>
                 <a href="javascript:void(0)" (click)="assignSecondTable.emit(table)">2.Tisch</a>
             </span>
-            <a *ngIf="!table.table.isLocked" href="javascript:void(0)" (click)="lockTable.emit(table.table.number)">Sperren</a>
-            <a *ngIf="table.table.isLocked" href="javascript:void(0)" (click)="unLockTable.emit(table.table.number)">Entsperren</a>
+            <a *ngIf="!table.isLocked" href="javascript:void(0)" (click)="lockTable.emit(table.number)">Sperren</a>
+            <a *ngIf="table.isLocked" href="javascript:void(0)" (click)="unLockTable.emit(table.number)">Entsperren</a>
         </div>
     </div>
 </div>

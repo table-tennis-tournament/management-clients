@@ -8,10 +8,9 @@
                 (unLockTable)="unLockTable.emit($event)"
                 (freeTable)="freeTable.emit($event)"
                 (takeBackTable)="takeBackTable.emit($event)"
-                (onTableAssigned)="onTableAssignedHandler($event)"
                 (onResultForTable)="resultForTable.emit($event)"
-                (onSelectMatch)="selectMatch.onSelectMatchEvent($event)"
-                (onSelectTable)="selectTable.selectTable($event)">
+                (printTable)="printTable.emit($event)"
+                (onSelectTable)="selectTable.emit($event)">
         </toma-tt-table>
     </div>
     <div class="fixed-action-btn horizontal">

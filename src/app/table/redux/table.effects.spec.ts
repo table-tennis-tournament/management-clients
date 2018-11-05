@@ -6,22 +6,19 @@ import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
 import {of, ReplaySubject, throwError} from 'rxjs';
 import {MatchService} from '../../match/match.service';
 import {TableService} from '../table.service';
-import {LoadTables, LoadTablesError, LoadTablesSuccess, TableActionTypes} from './table.actions';
+import {LoadTables, LoadTablesSuccess, TableActionTypes} from './table.actions';
 import {TableEffects} from './table.effects';
 
 describe('the table effects', () => {
     let actions: ReplaySubject<any>;
     let tableEffects: TableEffects;
     let tableService: TableService;
-    let responseTables = [
+    const responseTables = [
         {
-            table:
-            {
-                id: 1,
-                number: 1,
-                isLocked: false
-            },
-            matchinfo: [
+            id: 1,
+            number: 1,
+            isLocked: false,
+            matches: [
                 {
                     id: 1,
                     team1: [
@@ -35,7 +32,7 @@ describe('the table effects', () => {
     ];
 
 
-    let toastServiceMock: ToastrService = <ToastrService>{
+    const toastServiceMock: ToastrService = <ToastrService>{
         error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null
     };
 
@@ -60,7 +57,7 @@ describe('the table effects', () => {
     describe('loadTables', () => {
 
         it('should return a LoadTableSuccess', (done) => {
-            let expectedResult = new LoadTablesSuccess(responseTables);
+            const expectedResult = new LoadTablesSuccess(responseTables);
             spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
 
             actions.next(new LoadTables(null));

@@ -1,7 +1,8 @@
 import {Match} from '../matchview/match.model';
-import {Table} from './table.model';
 
 export interface TableDto {
-    table?: Table;
-    matchinfo: Match[];
+    id?: number;
+    number?: number;
+    isLocked?: boolean;
+    matches: Match[];
 }
