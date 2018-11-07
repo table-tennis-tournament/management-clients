@@ -1,0 +1,36 @@
+<mz-modal #bottomSheetModal [fixedFooter]="true" [options]="modalOptions">
+  <mz-modal-header>
+    <h4>{{headerString}}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    <div [class.winner-text]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>
+    <div class="center-align"><h4>  - </h4><br/></div>
+    <div [class.winner-text]="isSecondPlayerWinning">{{secondPlayerString}}</div>
+    <div class="input-field col s4 m2">
+      <input autofocus  id="result" class="form-control" [(ngModel)]="currentInput" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">
+      <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
+    </div>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
+    <button mz-button [flat]="true" mz-modal-close [class.disabled]="!resultIsValid">OK</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<!--<div id="modal1" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">-->
+  <!--<div class="modal-content center-align">-->
+    <!--<h4>{{headerString}}</h4>-->
+    <!--<br/><br/>-->
+    <!--<div [class.winner-text]="isFirstPlayerWinning">{{firstPlayerString}} </div><br/>-->
+    <!--<div class="center-align"><h4>  - </h4><br/></div>-->
+    <!--<div [class.winner-text]="isSecondPlayerWinning">{{secondPlayerString}}</div>-->
+  <!--</div>-->
+  <!--<div class="input-field col s4 m2">-->
+    <!--<input autofocus  id="result" class="form-control" [(ngModel)]="currentInput" type="text" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnterPressed(answer.value)">-->
+    <!--<label for="result">Ergebnis (bsp. -7 8 8 9)</label>-->
+  <!--</div>-->
+  <!--<div class="modal-footer">-->
+    <!--<a class="waves-effect waves-green btn-flat"  (click)="onCancel()">Abbrechen</a>-->
+    <!--<a class="modal-action modal-close waves-effect waves-green btn-flat" [class.disabled]="!resultIsValid" (click)="onOK()">OK</a>-->
+  <!--</div>-->
+<!--</div>-->

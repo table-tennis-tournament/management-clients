@@ -6,7 +6,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {MzButtonModule, MzInputModule, MzSpinnerModule} from 'ngx-materialize';
+import {MzButtonModule, MzInputModule, MzModalModule, MzSpinnerModule} from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
@@ -27,6 +27,8 @@ import {TypeviewComponent} from './typeview/typeview.component';
 import {TtTableContentComponent} from './table/table-list/tt-table/tt-table-content/tt-table-content.component';
 import {TtTableMatchItemComponent} from './table/table-list/tt-table/tt-table-match-item/tt-table-match-item.component';
 import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe';
+import {ResultModalComponent} from './table/table-list/result-modal/result-modal.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -43,6 +45,7 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         TtTableContentComponent,
         TtTableMatchItemComponent,
         TtPlayerNameReducerPipe,
+        ResultModalComponent
     ],
     imports: [
         BrowserModule,
@@ -51,6 +54,8 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         MzButtonModule,
         MzSpinnerModule,
         MzInputModule,
+        MzModalModule,
+        FormsModule,
         ToastrModule.forRoot({
             timeOut: 5000,
             extendedTimeOut: 2000,
@@ -68,8 +73,10 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         EffectsModule.forRoot([TableEffects]),
         HttpClientModule
     ],
+
     providers: [TableService],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [ResultModalComponent]
 })
 export class AppModule {
 }

@@ -5,6 +5,8 @@ import {getTablesLoading, getTableState} from '../app-state.reducer';
 import {AssignToSecondTable, FreeTable, LoadTables, LockTable, PrintTable, TakeBackTable, UnLockTable} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
 import {TableMatchEvent} from './redux/table.match.event';
+import {ResultModalComponent} from './table-list/result-modal/result-modal.component';
+import {MzModalService} from 'ngx-materialize';
 
 @Component({
     selector: 'toma-table-list.page',
@@ -15,7 +17,9 @@ export class TableListPageComponent implements OnInit {
     tables: Observable<TableDto[]>;
     tablesLoading: Observable<boolean>;
 
-    constructor(private store: Store<any>) {
+    // @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
+
+    constructor(private store: Store<any>, private modalService: MzModalService) {
     }
 
     ngOnInit() {
@@ -38,6 +42,7 @@ export class TableListPageComponent implements OnInit {
             const freeTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new FreeTable(freeTableEvent));
         }
+        this.modalService.open(ResultModalComponent);
     }
 
     onTableRefresh() {
