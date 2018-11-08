@@ -13,6 +13,7 @@ describe('the table effects', () => {
     let actions: ReplaySubject<any>;
     let tableEffects: TableEffects;
     let tableService: TableService;
+    let matchService: MatchService;
     const responseTables = [
         {
             id: 1,
@@ -52,6 +53,7 @@ describe('the table effects', () => {
 
         tableEffects = TestBed.get(TableEffects);
         tableService = TestBed.get(TableService);
+        matchService = TestBed.get(MatchService);
     });
 
     describe('loadTables', () => {
@@ -87,23 +89,23 @@ describe('the table effects', () => {
 
         it('should return a AssignToSecondTableSuccess', (done) => {
             const expectedResult = new AssignToSecondTableSuccess(responseTables);
-            spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
+            spyOn(matchService, 'assignToSecondTable').and.returnValue(of(responseTables));
 
             actions.next(new AssignToSecondTable(null));
 
-            tableEffects.loadTables$.subscribe((result) => {
+            tableEffects.assignToSecondTable$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);
                 done();
             });
         });
 
-        it('should return a LoadTableError', (done) => {
-            spyOn(tableService, 'getAllTables').and.returnValue(throwError({msg: 'Error'}));
+        it('should return a AssignToSecondTableError', (done) => {
+            spyOn(matchService, 'assignToSecondTable').and.returnValue(throwError({msg: 'Error'}));
 
-            actions.next(new LoadTables(null));
+            actions.next(new AssignToSecondTable(null));
 
-            tableEffects.loadTables$.subscribe((result) => {
-                expect(result.type).toEqual(TableActionTypes.LoadError);
+            tableEffects.assignToSecondTable$.subscribe((result) => {
+                expect(result.type).toEqual(TableActionTypes.AssignToSecondTableError);
                 done();
             });
             // expect(toastServiceMock.error).toHaveBeenCalled();
