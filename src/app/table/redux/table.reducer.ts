@@ -88,6 +88,17 @@ export function reduceTableState(state: TableState = initialState, action: Table
                     return table;
                 })
             };
+        case TableActionTypes.ResultForMatchSuccess:
+            const resultForMatch = action.payload;
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    return {
+                        ...table,
+                        matches: [...table.matches.filter(match => resultForMatch.matchId !== match.match.id)]
+                    };
+                })
+            };
         default:
             return state;
     }

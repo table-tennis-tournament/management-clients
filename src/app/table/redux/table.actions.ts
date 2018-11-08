@@ -22,61 +22,73 @@ export enum TableActionTypes {
     PrintTableSuccess = '[Table] Print Success',
     AssignToSecondTable = '[Table] Assign to 2nd table',
     AssignToSecondTableError = '[Table] Assign to 2nd table Error',
-    AssignToSecondTableSuccess = '[Table] Assign to 2nd table Success'
+    AssignToSecondTableSuccess = '[Table] Assign to 2nd table Success',
+    ResultForMatch = '[Table] Result for Match',
+    ResultForMatchError = '[Table] Result for Match Error',
+    ResultForMatchSuccess = '[Table] Result for Match Success'
 }
 
 export class LoadTables implements Action {
     readonly type = TableActionTypes.Load;
 
-    constructor(public payload: any) {}
+    constructor(public payload: any) {
+    }
 }
 
 export class LoadTablesSuccess implements Action {
     readonly type = TableActionTypes.LoadSuccess;
 
-    constructor(public payload: TableDto[]) {}
+    constructor(public payload: TableDto[]) {
+    }
 }
 
 export class LoadTablesError implements Action {
     readonly type = TableActionTypes.LoadError;
 
-    constructor(public payload: any) {}
+    constructor(public payload: any) {
+    }
 }
 
 export class LockTable implements Action {
     readonly type = TableActionTypes.Lock;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class LockTableSuccess implements Action {
     readonly type = TableActionTypes.LockSuccess;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class LockTableError implements Action {
     readonly type = TableActionTypes.LockError;
 
-    constructor(public payload: any) {}
+    constructor(public payload: any) {
+    }
 }
 
 export class UnLockTable implements Action {
     readonly type = TableActionTypes.UnLock;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class UnLockTableSuccess implements Action {
     readonly type = TableActionTypes.UnLockSuccess;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class UnLockTableError implements Action {
     readonly type = TableActionTypes.UnLockError;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class FreeTable implements Action {
@@ -163,6 +175,27 @@ export class AssignToSecondTableError implements Action {
     }
 }
 
+export class ResultForMatch implements Action {
+    readonly type = TableActionTypes.ResultForMatch;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ResultForMatchSuccess implements Action {
+    readonly type = TableActionTypes.ResultForMatchSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ResultForMatchError implements Action {
+    readonly type = TableActionTypes.ResultForMatchError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -184,4 +217,7 @@ export type TableActionsUnion =
     | PrintTableError
     | AssignToSecondTable
     | AssignToSecondTableSuccess
-    | AssignToSecondTableError;
+    | AssignToSecondTableError
+    | ResultForMatch
+    | ResultForMatchSuccess
+    | ResultForMatchError;

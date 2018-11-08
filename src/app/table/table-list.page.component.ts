@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
@@ -16,8 +16,6 @@ export class TableListPageComponent implements OnInit {
 
     tables: Observable<TableDto[]>;
     tablesLoading: Observable<boolean>;
-
-    // @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
     constructor(private store: Store<any>, private modalService: MzModalService) {
     }
@@ -41,8 +39,9 @@ export class TableListPageComponent implements OnInit {
         if (table.matches.length === 1) {
             const freeTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new FreeTable(freeTableEvent));
+            return;
         }
-        this.modalService.open(ResultModalComponent);
+
     }
 
     onTableRefresh() {
@@ -68,6 +67,15 @@ export class TableListPageComponent implements OnInit {
         }
         const selectedMatchIds = table.matches.map(match => match.match.id);
         this.store.dispatch(new AssignToSecondTable({tableNr: 4, matchIds: selectedMatchIds}));
+    }
+
+    onResultForTable(table: TableDto) {
+        if (table.matches.length !== 1) {
+            return;
+        }
+        const dialog: ComponentRef<ResultModalComponent> =
+            <ComponentRef<ResultModalComponent>> this.modalService.open(ResultModalComponent);
+        dialog.instance.setMatch(table.matches[0]);
     }
 
 

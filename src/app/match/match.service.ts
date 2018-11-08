@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {StatusDto} from '../shared/statusdto.model';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import {TTResult} from '../table/table-list/result-modal/ttresult.model';
 
 @Injectable({
     providedIn: 'root'
@@ -24,5 +25,9 @@ export class MatchService {
 
     assignToSecondTable(tableNr: number, matchIds: number[]) {
         return this.http.post(`api/match/matchtosecondtable/${tableNr}`, matchIds);
+    }
+
+    resultForMatch(result: TTResult[], matchId: number): Observable<StatusDto> {
+        return this.http.post(`api/match/${matchId}/result`, result);
     }
 }

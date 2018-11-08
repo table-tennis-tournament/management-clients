@@ -19,6 +19,9 @@ import {
     PrintTable,
     PrintTableError,
     PrintTableSuccess,
+    ResultForMatch,
+    ResultForMatchError,
+    ResultForMatchSuccess,
     TableActionTypes,
     TakeBackTable,
     TakeBackTableError,
@@ -134,6 +137,21 @@ export class TableEffects {
                     catchError(err => {
                         this.toastService.error('Fehler beim zuweisen des zweiten Tisches', 'Error');
                         return of(new AssignToSecondTableError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    resultForMatch$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.ResultForMatch),
+        mergeMap((action: ResultForMatch) => {
+            return this.matchService.resultForMatch(action.payload.result, action.payload.matchId)
+                .pipe(
+                    map(() => new ResultForMatchSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler bei der Eingabe des Ergebnisses', 'Error');
+                        return of(new ResultForMatchError(err));
                     })
                 );
         })
