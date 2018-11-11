@@ -3,7 +3,7 @@ import {StatusDto} from "../data/status.dto"
 import {ISelectMatchHandler} from "../handler/select.match.handler"
 import {TableService} from "../services/table.service"
 import {EventEmitter} from "@angular/core"
-import { ToastService } from "../services/toast.service";
+import {ToastService} from "../services/toast.service";
 
 export class PrintMatchHandler implements ISelectMatchHandler {
     

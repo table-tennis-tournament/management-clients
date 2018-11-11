@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component} from "@angular/core";
 import {MatchDto} from "../../data/match.dto";
 import {MatchListDto} from "../../data/match.list.dto";
 import {TypeColors} from "../../data/typeColors";
@@ -6,7 +6,7 @@ import {DisciplineShortcuts} from "../../data/disciplineShortcuts";
 import {Type} from "../../data/type";
 import {MatchListService} from "../../services/match.list.service";
 import {MatchService} from "../../services/match.service";
-import { WebSocketService } from "../../services/web.socket.service";
+import {WebSocketService} from "../../services/web.socket.service";
 
 @Component({
     selector: "discipline-match-list",

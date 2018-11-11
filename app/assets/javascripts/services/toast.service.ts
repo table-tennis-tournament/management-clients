@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
-import { MaterializeDirective, MaterializeAction } from 'angular2-materialize';
-import { StatusDto } from '../data/status.dto';
+import {Injectable} from '@angular/core';
+import {StatusDto} from '../data/status.dto';
 
 declare var Materialize:any;
 

@@ -1,12 +1,11 @@
 import {MatchListItem} from "../data/match.list.item";
-import {Component, Input} from "@angular/core";
+import {Component} from "@angular/core";
 import {MatchListDto} from "../data/match.list.dto";
 import {TypeColors} from "../data/typeColors";
 import {MatchListService} from "../services/match.list.service";
-import { MatchDto } from "../data/match.dto";
-import { StatusDto } from "../data/status.dto";
-import { WebSocketService } from "../services/web.socket.service";
-import { ToastService } from "../services/toast.service";
+import {StatusDto} from "../data/status.dto";
+import {WebSocketService} from "../services/web.socket.service";
+import {ToastService} from "../services/toast.service";
 
 @Component({
     selector: "match-list",
@@ -45,7 +44,7 @@ export class MatchListComponent{
     }
 
     transferDataSuccess($event) {
-        var matchinfo = [];
+        let matchinfo = [];
         if($event.dragData.team1){
             // var matchListItem = new MatchListDto();
             // matchListItem.matchinfo = $event.dragData;
@@ -55,10 +54,10 @@ export class MatchListComponent{
             matchinfo = $event.dragData;
         }
 
-        var matchDto = new MatchListDto();
-        var matchIds = matchinfo.map(x=>x.match.id);
-        
-        var matchListItem = new MatchListItem(matchIds);
+        const matchDto = new MatchListDto();
+        const matchIds = matchinfo.map(x => x.match.id);
+
+        const matchListItem = new MatchListItem(matchIds);
         matchListItem.position = this.matches.length;
         matchDto.matchListItem = matchListItem;
         matchDto.matchinfo = matchinfo;
@@ -74,8 +73,8 @@ export class MatchListComponent{
     }
 
     onDropSuccess($event){
-        var matchListItem = $event.match.matchListItem;
-        var newPosition = this.getListIndex($event.match.matchListItem.id);
+        const matchListItem = $event.match.matchListItem;
+        const newPosition = this.getListIndex($event.match.matchListItem.id);
         this.matchListService.transferMatchListItem(matchListItem, newPosition).subscribe(this.onMatchlistAdded.bind(this, $event.match.matchListItem), this.onMatchlistAddError.bind(this));
     }
 
@@ -89,8 +88,8 @@ export class MatchListComponent{
     }
 
     getListIndex(matchListId){
-        var currentMatch = null;
-        for(var index = 0; index < this.matches.length; index++){
+        let currentMatch = null;
+        for(let index = 0; index < this.matches.length; index++){
             currentMatch = this.matches[index];
             if(currentMatch.matchListItem.id === matchListId){
                 return index;
@@ -101,7 +100,7 @@ export class MatchListComponent{
 
     onDelete(index){
         if (index > -1 && this.matches) {
-            var itemToDelete = this.matches[index];
+            const itemToDelete = this.matches[index];
             this.matchListService.deleteMatchListItem(itemToDelete.matchListItem.id).subscribe(this.onMatchlistItemDeleted.bind(this, index));
         }
     }

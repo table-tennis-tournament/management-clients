@@ -1,7 +1,4 @@
-import {Component, Input, EventEmitter} from "@angular/core";
-import {Match} from "../../data/match";
-import { TableService } from "../../services/table.service";
-import { TableDto } from "../../data/table.dto";
+import {EventEmitter} from "@angular/core";
 import {MaterializeAction} from "angular2-materialize";
 
 export abstract class BaseModal{

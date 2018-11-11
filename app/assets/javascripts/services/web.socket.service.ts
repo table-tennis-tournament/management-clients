@@ -1,6 +1,6 @@
 import {Observable} from "rxjs/Rx";
-import {Injectable, EventEmitter} from "@angular/core"
-import { WebsocketMessage } from "app/assets/javascripts/data/websocket.message";
+import {EventEmitter, Injectable} from "@angular/core"
+import {WebsocketMessage} from "app/assets/javascripts/data/websocket.message";
 
 @Injectable()
 export class WebSocketService {

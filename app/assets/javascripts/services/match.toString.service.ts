@@ -1,6 +1,4 @@
-import {Match} from "../data/match"
 import {Player} from "../data/player"
-import {Club} from "../data/club"
 import {Injectable} from "@angular/core"
 
 @Injectable()

@@ -5,7 +5,7 @@ import {Club} from "../data/club"
 import {Type} from "../data/type"
 
 import {Injectable} from "@angular/core"
-import { Subject } from "rxjs/Subject";
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class RandomMatchService {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Injectable, Input, Output, ElementRef, Renderer, Inject } from "@angular/core";
+import {Component, EventEmitter} from "@angular/core";
 import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
@@ -48,10 +48,10 @@ export class ResultModalComponent{
   }
 
   onEnterPressed(value){
-    if(this.resultIsValid){
-      this.closeDialogAndInformObserversAboutResult();
+        if(this.resultIsValid){
+            this.closeDialogAndInformObserversAboutResult();
+        }
     }
-  }
 
   openModal(){
     this.setInputIfAvailable();

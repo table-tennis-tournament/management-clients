@@ -1,8 +1,8 @@
-import {Component, state} from "@angular/core"
-import { SettingsService } from "../../services/settings.service";
-import { StatusDto } from "../../data/status.dto";
-import { ToastService } from "../../services/toast.service";
-import { SettingDto } from "../../data/setting.dto";
+import {Component} from "@angular/core"
+import {SettingsService} from "../../services/settings.service";
+import {StatusDto} from "../../data/status.dto";
+import {ToastService} from "../../services/toast.service";
+import {SettingDto} from "../../data/setting.dto";
 
 
 @Component({

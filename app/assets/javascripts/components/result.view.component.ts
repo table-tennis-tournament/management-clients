@@ -1,15 +1,12 @@
-import {Component, ViewContainerRef, ViewEncapsulation, ViewChild} from "@angular/core"
+import {Component, ViewChild} from "@angular/core"
 import {MatchService} from "../services/match.service"
 import {MatchToStringService} from "../services/match.toString.service"
 import {ResultModalComponent} from "./result.modal.view.component"
 import {IResultHandler} from "../handler/result.handler"
 
 import {MatchDto} from "../data/match.dto"
-import {Match} from "../data/match"
-import {Type} from "../data/type"
-import {ResultEvent} from "../handler/result.event"
 import {TableService} from "../services/table.service";
-import { WebSocketService } from "../services/web.socket.service";
+import {WebSocketService} from "../services/web.socket.service";
 
 
 @Component({
