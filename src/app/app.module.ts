@@ -30,6 +30,9 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
 import {ResultModalComponent} from './table/table-list/result-modal/result-modal.component';
 import {FormsModule} from '@angular/forms';
 import { TtMatchDisciplinePipe } from './table/pipes/tt-match-discipline.pipe';
+import { SelectMatchModalComponent } from './table/table-list/select-match-modal/select-match-modal.component';
+import { ShowMatchModalComponent } from './table/table-list/show-match-modal/show-match-modal.component';
+import { SelectTableModalComponent } from './table/table-list/select-table-modal/select-table-modal.component';
 
 @NgModule({
     declarations: [
@@ -47,7 +50,10 @@ import { TtMatchDisciplinePipe } from './table/pipes/tt-match-discipline.pipe';
         TtTableMatchItemComponent,
         TtPlayerNameReducerPipe,
         ResultModalComponent,
-        TtMatchDisciplinePipe
+        TtMatchDisciplinePipe,
+        SelectMatchModalComponent,
+        ShowMatchModalComponent,
+        SelectTableModalComponent
     ],
     imports: [
         BrowserModule,

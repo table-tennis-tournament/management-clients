@@ -19,14 +19,7 @@ export class ResultModalComponent extends MzBaseModal {
 
     public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
 
-    public modalOptions: Materialize.ModalOptions = {
-        dismissible: false, // Modal can be dismissed by clicking outside of the modal
-        opacity: .5, // Opacity of modal background
-        inDuration: 30, // Transition in duration
-        outDuration: 20, // Transition out duration
-        startingTop: '5%', // Starting top style attribute
-        endingTop: '10%', // Ending top style attribute
-    };
+    public modalOptions: Materialize.ModalOptions = customModalOptions;
 
     @ViewChild('resultModal') modal: MzModalComponent;
 
@@ -77,14 +70,14 @@ export class ResultModalComponent extends MzBaseModal {
             if (this.isFirstCharAMinus(currentValue)) {
                 const resultWithoutMinus = +currentValue.substring(1);
                 const otherResult = this.getOtherResult(resultWithoutMinus);
-                this.currentResult[index] =  [resultWithoutMinus, otherResult];
+                this.currentResult[index] = [resultWithoutMinus, otherResult];
                 player2++;
                 continue;
             }
             if (currentValue !== '' && !isNaN(currentValue)) {
                 const otherResult = +this.getOtherResult(+currentValue);
                 this.currentResult[index] = [otherResult, +currentValue];
-                player1 ++;
+                player1++;
                 continue;
             }
         }
