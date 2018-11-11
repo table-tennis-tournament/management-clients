@@ -48,10 +48,10 @@ export class ResultModalComponent{
   }
 
   onEnterPressed(value){
-    if(this.resultIsValid){
-      this.closeDialogAndInformObserversAboutResult();
+        if(this.resultIsValid){
+            this.closeDialogAndInformObserversAboutResult();
+        }
     }
-  }
 
   openModal(){
     this.setInputIfAvailable();

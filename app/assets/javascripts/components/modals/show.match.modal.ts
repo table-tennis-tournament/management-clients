@@ -20,7 +20,7 @@ export class ModalShowMatchComponent extends BaseModal{
 
     @Output() onClose = new EventEmitter<string>();
 
-    constructor(private tableService: TableService, private toastService: ToastService){
+    constructor(private tableService: TableService){
         super();
     }
    
