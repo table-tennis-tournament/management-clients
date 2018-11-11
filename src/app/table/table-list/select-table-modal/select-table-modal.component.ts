@@ -1,6 +1,7 @@
 import {Component, EventEmitter, ViewChild} from '@angular/core';
 import {TableDto} from '../../tabledto.model';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
+import {customModalOptions} from '../../../shared/modal.options';
 
 @Component({
     selector: 'toma-select-table-modal',
@@ -11,6 +12,7 @@ export class SelectTableModalComponent extends MzBaseModal {
 
     public tables: TableDto[];
     public selectedTable: TableDto;
+    private modalOptions: Materialize.ModalOptions = customModalOptions;
 
     @ViewChild('selectTableModal') modal: MzModalComponent;
 

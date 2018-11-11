@@ -16,6 +16,7 @@ import {TableDto} from './tabledto.model';
 import {TableMatchEvent} from './redux/table.match.event';
 import {ResultModalComponent} from './table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
+import {SelectMatchModalComponent} from './table-list/select-match-modal/select-match-modal.component';
 
 @Component({
     selector: 'toma-table-list.page',
@@ -50,17 +51,22 @@ export class TableListPageComponent implements OnInit {
             this.store.dispatch(new FreeTable(freeTableEvent));
             return;
         }
-    }
-
-    onTableRefresh() {
-        this.store.dispatch(new LoadTables(null));
+        this.selectMatchAndCallFunction(table, match => this.store.dispatch(
+            new FreeTable(new TableMatchEvent(match.map(x => x.match.id), table.number))));
     }
 
     onTakeBackTable(table: TableDto) {
         if (table.matches.length === 1) {
             const takeBackTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
+            return;
         }
+        this.selectMatchAndCallFunction(table, match => this.store.dispatch(
+            new TakeBackTable(new TableMatchEvent(match.map(x => x.match.id), table.number))));
+    }
+
+    onTableRefresh() {
+        this.store.dispatch(new LoadTables(null));
     }
 
     onPrintTable(table: TableDto) {
@@ -85,6 +91,13 @@ export class TableListPageComponent implements OnInit {
             <ComponentRef<ResultModalComponent>> this.modalService.open(ResultModalComponent);
         dialog.instance.setMatch(table.matches[0]);
         dialog.instance.OnResultForMatch.subscribe(match => this.store.dispatch(new ResultForMatch(match)));
+    }
+
+    private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
+        const dialog: ComponentRef<SelectMatchModalComponent> =
+            <ComponentRef<SelectMatchModalComponent>> this.modalService.open(SelectMatchModalComponent);
+        dialog.instance.setMatches(table.matches);
+        dialog.instance.OnMatchesSelected.subscribe(onMatchSelectedAction);
     }
 
 

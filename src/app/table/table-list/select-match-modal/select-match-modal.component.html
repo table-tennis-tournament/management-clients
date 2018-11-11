@@ -3,12 +3,23 @@
         <h4>Wähle Spiel</h4>
     </mz-modal-header>
     <mz-modal-content>
-        <form materialize class="col s12">
+        <form class="col s12">
             <div class="row">
                 <div class="col s10">
-                    <p *ngFor="let match of matches;">
-                        <input name="inputMatch{{match.match.id}}" type="checkbox" id="inputMatch{{match.match.id}}"
-                               [(ngModel)]="match.match.isPlayed"/>
+                    <p *ngFor="let match of matches; let i= index;">
+                        <!--<mz-checkbox-container *ngFor="let match of matches; let i= index;">-->
+                        <!--<input mz-checkbox-->
+                        <!--name="match{{match.match.id}}"-->
+                        <!--[label]="'Validate as email'"-->
+                        <!--[filledIn]="true"-->
+                        <!--[(ngModel)]="matches[i].isSelected"-->
+                        <!--type="checkbox">-->
+                        <!--</mz-checkbox-container>-->
+                        <!--<mz-input-container>-->
+                        <input name="inputMatch{{match.match.id}}"
+                               type="checkbox"
+                               id="inputMatch{{match.match.id}}"
+                               [(ngModel)]="currentValues[i]"/>
                         <label for="inputMatch{{match.match.id}}">
                             {{match.team1 | ttPlayerNameReducer}}
                             -

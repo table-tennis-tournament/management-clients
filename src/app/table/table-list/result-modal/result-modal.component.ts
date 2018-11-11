@@ -3,6 +3,7 @@ import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
 import {TTResult} from './ttresult.model';
 import {Match} from '../../../matchview/match.model';
 import {TTMatchResult} from './ttmatch-result.model';
+import {customModalOptions} from '../../../shared/modal.options';
 
 @Component({
     selector: 'toma-result-modal',
@@ -12,10 +13,10 @@ import {TTMatchResult} from './ttmatch-result.model';
 export class ResultModalComponent extends MzBaseModal {
 
     private resultIsValid: boolean;
-    private isFirstPlayerWinning: boolean;
-    private isSecondPlayerWinning: boolean;
     private currentResult: TTResult[];
-    private currentMatch: Match;
+    isFirstPlayerWinning: boolean;
+    isSecondPlayerWinning: boolean;
+    currentMatch: Match;
 
     public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
 

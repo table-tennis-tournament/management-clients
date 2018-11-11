@@ -16,4 +16,5 @@ export interface Match {
     table?: number[];
     isPlayable?: boolean;
     isInWaitingList?: boolean;
+    isSelected: boolean;
 }

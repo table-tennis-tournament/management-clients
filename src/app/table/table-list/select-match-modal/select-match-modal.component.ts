@@ -1,6 +1,7 @@
 import {Component, EventEmitter, ViewChild} from '@angular/core';
 import {Match} from '../../../matchview/match.model';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
+import {customModalOptions} from '../../../shared/modal.options';
 
 @Component({
     selector: 'toma-select-match-modal',
@@ -9,8 +10,10 @@ import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
 })
 export class SelectMatchModalComponent extends MzBaseModal {
 
-    private matches: Match[];
-    private modalOptions: Materialize.ModalOptions = customModalOptions;
+    matches: Match[];
+    modalOptions: Materialize.ModalOptions = customModalOptions;
+
+    currentValues: boolean[] = [];
 
     @ViewChild('selectMatchModal') modal: MzModalComponent;
 
@@ -21,7 +24,13 @@ export class SelectMatchModalComponent extends MzBaseModal {
     }
 
     onOk() {
-        const result = this.matches.filter(x => x.match.isPlayed);
+        // ugly solution because of [(ngModel)]=match.match.isPlayable ist not working
+        const result = [];
+        this.currentValues.forEach((x, index) => {
+            if (x) {
+                result.push(this.matches[index]);
+            }
+        });
         this.fireEventAndClose(result);
     }
 

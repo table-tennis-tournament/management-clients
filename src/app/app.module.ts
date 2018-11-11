@@ -6,7 +6,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {MzButtonModule, MzInputModule, MzModalModule, MzSpinnerModule} from 'ngx-materialize';
+import {MzButtonModule, MzCheckboxModule, MzInputModule, MzModalModule, MzSpinnerModule} from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
@@ -29,10 +29,10 @@ import {TtTableMatchItemComponent} from './table/table-list/tt-table/tt-table-ma
 import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe';
 import {ResultModalComponent} from './table/table-list/result-modal/result-modal.component';
 import {FormsModule} from '@angular/forms';
-import { TtMatchDisciplinePipe } from './table/pipes/tt-match-discipline.pipe';
-import { SelectMatchModalComponent } from './table/table-list/select-match-modal/select-match-modal.component';
-import { ShowMatchModalComponent } from './table/table-list/show-match-modal/show-match-modal.component';
-import { SelectTableModalComponent } from './table/table-list/select-table-modal/select-table-modal.component';
+import {TtMatchDisciplinePipe} from './table/pipes/tt-match-discipline.pipe';
+import {SelectMatchModalComponent} from './table/table-list/select-match-modal/select-match-modal.component';
+import {ShowMatchModalComponent} from './table/table-list/show-match-modal/show-match-modal.component';
+import {SelectTableModalComponent} from './table/table-list/select-table-modal/select-table-modal.component';
 
 @NgModule({
     declarations: [
@@ -63,6 +63,7 @@ import { SelectTableModalComponent } from './table/table-list/select-table-modal
         MzSpinnerModule,
         MzInputModule,
         MzModalModule,
+        MzCheckboxModule,
         FormsModule,
         ToastrModule.forRoot({
             timeOut: 5000,
@@ -84,7 +85,7 @@ import { SelectTableModalComponent } from './table/table-list/select-table-modal
 
     providers: [TableService],
     bootstrap: [AppComponent],
-    entryComponents: [ResultModalComponent]
+    entryComponents: [ResultModalComponent, SelectMatchModalComponent, SelectTableModalComponent]
 })
 export class AppModule {
 }
