@@ -146,7 +146,7 @@ export class TableEffects {
     resultForMatch$: Observable<Action> = this.actions$.pipe(
         ofType(TableActionTypes.ResultForMatch),
         mergeMap((action: ResultForMatch) => {
-            return this.matchService.resultForMatch(action.payload.result, action.payload.matchId)
+            return this.matchService.resultForMatch(action.payload)
                 .pipe(
                     map(() => new ResultForMatchSuccess(action.payload)),
                     catchError(err => {

@@ -2,11 +2,21 @@ import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
-import {AssignToSecondTable, FreeTable, LoadTables, LockTable, PrintTable, TakeBackTable, UnLockTable} from './redux/table.actions';
+import {
+    AssignToSecondTable,
+    FreeTable,
+    LoadTables,
+    LockTable,
+    PrintTable,
+    ResultForMatch,
+    TakeBackTable,
+    UnLockTable
+} from './redux/table.actions';
 import {TableDto} from './tabledto.model';
 import {TableMatchEvent} from './redux/table.match.event';
 import {ResultModalComponent} from './table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
+import {TTMatchResult} from './table-list/result-modal/ttmatch-result.model';
 
 @Component({
     selector: 'toma-table-list.page',
@@ -76,6 +86,11 @@ export class TableListPageComponent implements OnInit {
         const dialog: ComponentRef<ResultModalComponent> =
             <ComponentRef<ResultModalComponent>> this.modalService.open(ResultModalComponent);
         dialog.instance.setMatch(table.matches[0]);
+        dialog.instance.OnResultForMatch.subscribe(this.onResultForMatch.bind(this));
+    }
+
+    onResultForMatch(match: TTMatchResult) {
+        this.store.dispatch(new ResultForMatch(match));
     }
 
 

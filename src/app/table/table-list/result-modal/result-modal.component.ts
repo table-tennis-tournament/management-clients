@@ -1,9 +1,8 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, EventEmitter, ViewChild} from '@angular/core';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
 import {TTResult} from './ttresult.model';
 import {Match} from '../../../matchview/match.model';
-import {Store} from '@ngrx/store';
-import {ResultForMatch} from '../../redux/table.actions';
+import {TTMatchResult} from './ttmatch-result.model';
 
 @Component({
     selector: 'toma-result-modal',
@@ -18,6 +17,8 @@ export class ResultModalComponent extends MzBaseModal {
     private currentResult: TTResult[];
     private currentMatch: Match;
 
+    public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
+
     public modalOptions: Materialize.ModalOptions = {
         dismissible: false, // Modal can be dismissed by clicking outside of the modal
         opacity: .5, // Opacity of modal background
@@ -29,7 +30,7 @@ export class ResultModalComponent extends MzBaseModal {
 
     @ViewChild('resultModal') modal: MzModalComponent;
 
-    constructor(private store: Store<any>) {
+    constructor() {
         super();
     }
 
@@ -51,15 +52,14 @@ export class ResultModalComponent extends MzBaseModal {
     }
 
     checkResultAndClose() {
-        if (this.resultIsValid) {
-            this.store.dispatch(new ResultForMatch(
-                {
-                    result: this.currentResult,
-                    matchId: this.currentMatch.match.id
-                }
-            ));
-            this.modal.closeModal();
+        if (!this.resultIsValid) {
+            return;
         }
+        this.OnResultForMatch.emit({
+            result: this.currentResult,
+            match: this.currentMatch
+        });
+        this.modal.closeModal();
     }
 
     checkValidResult(valueToCheck): boolean {

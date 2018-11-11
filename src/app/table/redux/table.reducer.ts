@@ -1,5 +1,6 @@
 import {TableDto} from '../tabledto.model';
 import {TableActionsUnion, TableActionTypes} from './table.actions';
+import {TTMatchResult} from '../table-list/result-modal/ttmatch-result.model';
 
 export interface TableState {
     tables: TableDto[];
@@ -89,13 +90,13 @@ export function reduceTableState(state: TableState = initialState, action: Table
                 })
             };
         case TableActionTypes.ResultForMatchSuccess:
-            const resultForMatch = action.payload;
+            const resultForMatch: TTMatchResult = action.payload;
             return {
                 ...state,
                 tables: state.tables.map(table => {
                     return {
                         ...table,
-                        matches: [...table.matches.filter(match => resultForMatch.matchId !== match.match.id)]
+                        matches: [...table.matches.filter(match => resultForMatch.match.match.id !== match.match.id)]
                     };
                 })
             };

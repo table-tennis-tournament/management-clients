@@ -6,8 +6,17 @@ import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
 import {of, ReplaySubject, throwError} from 'rxjs';
 import {MatchService} from '../../match/match.service';
 import {TableService} from '../table.service';
-import {AssignToSecondTable, AssignToSecondTableSuccess, LoadTables, LoadTablesSuccess, TableActionTypes} from './table.actions';
+import {
+    AssignToSecondTable,
+    AssignToSecondTableSuccess,
+    LoadTables,
+    LoadTablesSuccess,
+    ResultForMatch,
+    ResultForMatchSuccess,
+    TableActionTypes
+} from './table.actions';
 import {TableEffects} from './table.effects';
+import {TTMatchResult} from '../table-list/result-modal/ttmatch-result.model';
 
 describe('the table effects', () => {
     let actions: ReplaySubject<any>;
@@ -29,8 +38,23 @@ describe('the table effects', () => {
                         {}
                     ]
                 }
-            ]},
+            ]
+        },
     ];
+
+    const statusDto = {
+        message: 'success'
+    };
+
+    const assign2ndTablePayload = {
+        tableNr: 1,
+        matchIds: []
+    };
+
+    const resultForMatchPayload: TTMatchResult = {
+        match: {},
+        result: []
+    };
 
 
     const toastServiceMock: ToastrService = <ToastrService>{
@@ -88,10 +112,10 @@ describe('the table effects', () => {
     describe('assign second table', () => {
 
         it('should return a AssignToSecondTableSuccess', (done) => {
-            const expectedResult = new AssignToSecondTableSuccess(responseTables);
-            spyOn(matchService, 'assignToSecondTable').and.returnValue(of(responseTables));
+            const expectedResult = new AssignToSecondTableSuccess(assign2ndTablePayload);
+            spyOn(matchService, 'assignToSecondTable').and.returnValue(of(statusDto));
 
-            actions.next(new AssignToSecondTable(null));
+            actions.next(new AssignToSecondTable(assign2ndTablePayload));
 
             tableEffects.assignToSecondTable$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);
@@ -102,10 +126,39 @@ describe('the table effects', () => {
         it('should return a AssignToSecondTableError', (done) => {
             spyOn(matchService, 'assignToSecondTable').and.returnValue(throwError({msg: 'Error'}));
 
-            actions.next(new AssignToSecondTable(null));
+            actions.next(new AssignToSecondTable(assign2ndTablePayload));
 
             tableEffects.assignToSecondTable$.subscribe((result) => {
                 expect(result.type).toEqual(TableActionTypes.AssignToSecondTableError);
+                done();
+            });
+            // expect(toastServiceMock.error).toHaveBeenCalled();
+        });
+
+
+    });
+
+    describe('on result for table', () => {
+
+        it('should return a ResultForTableSuccess', (done) => {
+            const expectedResult = new ResultForMatchSuccess(resultForMatchPayload);
+            spyOn(matchService, 'resultForMatch').and.returnValue(of(statusDto));
+
+            actions.next(new ResultForMatch(resultForMatchPayload));
+
+            tableEffects.resultForMatch$.subscribe((result) => {
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
+
+        it('should return a ResultForTableError', (done) => {
+            spyOn(matchService, 'resultForMatch').and.returnValue(throwError({msg: 'Error'}));
+
+            actions.next(new ResultForMatch(resultForMatchPayload));
+
+            tableEffects.resultForMatch$.subscribe((result) => {
+                expect(result.type).toEqual(TableActionTypes.ResultForMatchError);
                 done();
             });
             // expect(toastServiceMock.error).toHaveBeenCalled();
