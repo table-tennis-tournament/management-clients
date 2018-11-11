@@ -63,7 +63,10 @@ object MatchModel {
 
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
     def writes(allMatchInfo: AllMatchInfo) = Json.obj(
-      "match" -> allMatchInfo.ttMatch,
+      "id" -> allMatchInfo.ttMatch.id,
+      "startTime" -> allMatchInfo.ttMatch.startTime,
+      "isPlayed" -> allMatchInfo.ttMatch.isPlayed,
+      "result" -> allMatchInfo.ttMatch.result,
       "team1" -> allMatchInfo.player1,
       "team2" -> allMatchInfo.player2,
       "matchType" -> allMatchInfo.matchType,
