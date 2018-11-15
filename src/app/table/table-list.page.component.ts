@@ -17,6 +17,9 @@ import {TableMatchEvent} from './redux/table.match.event';
 import {ResultModalComponent} from './table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
 import {SelectMatchModalComponent} from './table-list/select-match-modal/select-match-modal.component';
+import {TableService} from './table.service';
+import {SelectTableModalComponent} from './table-list/select-table-modal/select-table-modal.component';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
     selector: 'toma-table-list.page',
@@ -27,7 +30,8 @@ export class TableListPageComponent implements OnInit {
     tables: Observable<TableDto[]>;
     tablesLoading: Observable<boolean>;
 
-    constructor(private store: Store<any>, private modalService: MzModalService) {
+    constructor(private store: Store<any>, private modalService: MzModalService,
+                private tableService: TableService, private toastService: ToastrService) {
     }
 
     ngOnInit() {
@@ -77,14 +81,27 @@ export class TableListPageComponent implements OnInit {
 
     onAssignSecondTable(table: TableDto) {
         if (table.matches.length < 2) {
+            this.toastService.error('Ein Spiel kann nich auf zwei Tische gelegt werden.');
             return;
         }
         const selectedMatchIds = table.matches.map(match => match.match.id);
-        this.store.dispatch(new AssignToSecondTable({tableNr: 4, matchIds: selectedMatchIds}));
+        this.tableService.getFreeTables().subscribe(this.onFreeTablesLoaded.bind(this, selectedMatchIds));
+    }
+
+    onFreeTablesLoaded(selectedMatchIds, tables: TableDto[]) {
+        if (!tables || tables.length < 1) {
+            this.toastService.error('Es sind keine freien Tische verfügbar.');
+        }
+        const dialog: ComponentRef<SelectTableModalComponent> =
+            <ComponentRef<SelectTableModalComponent>> this.modalService.open(SelectTableModalComponent);
+        dialog.instance.setTables(tables);
+        dialog.instance.OnTableSelected.subscribe(tableNumber =>
+            this.store.dispatch(new AssignToSecondTable({tableNr: tableNumber, matchIds: selectedMatchIds})));
     }
 
     onResultForTable(table: TableDto) {
         if (table.matches.length !== 1) {
+            this.toastService.error('Ergebnis für zwei Tische kann nicht eingegeben werden.');
             return;
         }
         const dialog: ComponentRef<ResultModalComponent> =

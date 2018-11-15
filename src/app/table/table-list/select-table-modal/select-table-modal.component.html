@@ -3,13 +3,19 @@
         <h4>Freier Tisch auswählen</h4>
     </mz-modal-header>
     <mz-modal-content>
+
         <div class="col s4">
-            <select materialize="material_select" [(ngModel)]="selectedTable">
-                <option *ngFor="let currentTable of tables" [value]="currentTable.number">
-                    Tisch Nr. {{currentTable.number}}
-                </option>
-            </select>
-            <label>Tisch</label>
+            <mz-select-container class="col s12 m6">
+                <select mz-select
+                        id="select-table"
+                        [label]="'Wähle Tisch'"
+                        [placeholder]="'Tisch Nr.'"
+                        [(ngModel)]="selectedTable">
+                    <option *ngFor="let currentTable of tables" [value]="currentTable.number">Tisch Nr.
+                        {{currentTable.number}}
+                    </option>
+                </select>
+            </mz-select-container>
         </div>
     </mz-modal-content>
     <mz-modal-footer>

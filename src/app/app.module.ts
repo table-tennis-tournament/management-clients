@@ -6,7 +6,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {MzButtonModule, MzCheckboxModule, MzInputModule, MzModalModule, MzSpinnerModule} from 'ngx-materialize';
+import {MzButtonModule, MzCheckboxModule, MzInputModule, MzModalModule, MzSelectModule, MzSpinnerModule} from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
@@ -64,6 +64,7 @@ import {SelectTableModalComponent} from './table/table-list/select-table-modal/s
         MzInputModule,
         MzModalModule,
         MzCheckboxModule,
+        MzSelectModule,
         FormsModule,
         ToastrModule.forRoot({
             timeOut: 5000,

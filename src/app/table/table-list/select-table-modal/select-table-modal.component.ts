@@ -11,16 +11,16 @@ import {customModalOptions} from '../../../shared/modal.options';
 export class SelectTableModalComponent extends MzBaseModal {
 
     public tables: TableDto[];
-    public selectedTable: TableDto;
+    public selectedTable: number;
     private modalOptions: Materialize.ModalOptions = customModalOptions;
 
     @ViewChild('selectTableModal') modal: MzModalComponent;
 
-    public OnTableSelected: EventEmitter<TableDto> = new EventEmitter<TableDto>();
+    public OnTableSelected: EventEmitter<number> = new EventEmitter<number>();
 
     setTables(tables: TableDto[]) {
         this.tables = tables;
-        this.selectedTable = this.tables[0];
+        this.selectedTable = this.tables[0].number;
     }
 
     onOk() {
