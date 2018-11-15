@@ -1,4 +1,4 @@
-import {Club} from '../clubview/club.model';
+import {Club} from './club.model';
 
 export interface Player {
     id?: number;
@@ -7,4 +7,6 @@ export interface Player {
     ttr?: number;
     sex?: string;
     club?: Club;
+    hasMatches?: boolean;
+    types?: number[];
 }

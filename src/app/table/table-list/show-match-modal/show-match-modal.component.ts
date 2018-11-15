@@ -1,6 +1,6 @@
 import {Component, EventEmitter, ViewChild} from '@angular/core';
 import {TableDto} from '../../tabledto.model';
-import {Player} from '../../../playerview/player.model';
+import {Player} from '../../../shared/data/player.model';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
 import {customModalOptions} from '../../../shared/modal.options';
 

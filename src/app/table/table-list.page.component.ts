@@ -22,7 +22,7 @@ import {SelectTableModalComponent} from './table-list/select-table-modal/select-
 import {ToastrService} from 'ngx-toastr';
 
 @Component({
-    selector: 'toma-table-list.page',
+    selector: 'toma-table-list-page',
     templateUrl: './table-list.page.component.html'
 })
 export class TableListPageComponent implements OnInit {

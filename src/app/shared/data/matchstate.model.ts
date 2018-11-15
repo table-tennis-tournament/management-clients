@@ -1,6 +1,6 @@
 export interface MatchState {
     id?: number;
-    startTime?: Date;
+    startTime?: number;
     isPlayed?: boolean;
     result?: any;
 }

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Match} from '../../../../matchview/match.model';
+import {Match} from '../../../../shared/data/match.model';
 
 @Component({
     selector: 'toma-tt-table-match-item',

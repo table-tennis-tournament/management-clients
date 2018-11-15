@@ -1,4 +1,4 @@
-import {Match} from '../../../matchview/match.model';
+import {Match} from '../../../shared/data/match.model';
 import {TTResult} from './ttresult.model';
 
 export interface TTMatchResult {
