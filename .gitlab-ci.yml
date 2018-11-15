@@ -1,0 +1,15 @@
+image: hseeberger/scala-sbt
+
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=/cache/maven.repository
+
+stages:
+  - build
+  - test
+  - staging
+  - deploy
+
+build:
+  stage: build
+  script:
+    - sbt compile -Dsbt.ivy.home=/cache/.ivy2 -Dsbt.global.base=/cache/.sbt/0.13 -Dsbt.boot.directory=/cache/.sbt/boot -Dsbt.repository.config=/cache/.sbt/repositories
