@@ -1,9 +1,11 @@
 <div class="row">
-  <div class="col s2">
-    <toma-discipline-match-list></toma-discipline-match-list>
-  </div>
-  <div class="col s10">
-    <toma-table-list-page></toma-table-list-page>
-  </div>
+    <div class="col s2">
+        <toma-discipline-match-list
+                [matches]="matches | async">
+        </toma-discipline-match-list>
+    </div>
+    <div class="col s10">
+        <toma-table-list-page></toma-table-list-page>
+    </div>
 </div>
 

@@ -1,15 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {Match} from '../../shared/data/match.model';
 
 @Component({
   selector: 'toma-discipline-match-list',
   templateUrl: './discipline-match-list.component.html',
   styleUrls: ['./discipline-match-list.component.scss']
 })
-export class DisciplineMatchListComponent implements OnInit {
+export class DisciplineMatchListComponent {
 
-  constructor() { }
+    @Input()
+    matches: Match[];
 
-  ngOnInit() {
-  }
+    currentMatchesToShow: Match[];
+
+    onDisciplineSelected(disciplineId: number) {
+        const filteredMatches = this.matches
+            .filter(x => x.type.id === +disciplineId)
+            .filter(match => !match.match.isPlayed);
+        this.currentMatchesToShow = filteredMatches;
+    }
 
 }

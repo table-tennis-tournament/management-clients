@@ -1,0 +1,25 @@
+.discipline-match-list-item {
+  width: calc(100% - 30px);
+  float: left;
+  line-height: 1rem;
+}
+
+.discipline-match-list-square {
+  width: 25px;
+  height: 25px;
+  float: right;
+  text-align: center
+}
+
+.discipline-match-list-root {
+  height: 25px;
+}
+
+.without-margin {
+  margin-bottom: 0px;
+}
+
+.maxHeight {
+  max-height: 800px;
+  overflow: auto;
+}

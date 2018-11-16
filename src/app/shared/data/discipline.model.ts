@@ -1,4 +1,4 @@
-export interface Type {
+export interface Discipline {
     id?: number;
     name?: string;
     kind?: number;

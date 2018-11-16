@@ -1,15 +1,15 @@
 import {Group} from './group.model';
 import {Player} from './player.model';
-import {Type} from '../../typeview/type.model';
+import {Discipline} from './discipline.model';
 import {MatchState} from './matchstate.model';
-import {MatchType} from '../../matchview/matchtype.model';
+import {StageType} from './stagetype.model';
 
 export interface Match {
     team1?: Player[];
     team2?: Player[];
-    type?: Type;
+    type?: Discipline;
     stage?: string;
-    matchType?: MatchType;
+    matchType?: StageType;
     group?: Group;
     tableNumber?: number;
     match?: MatchState;

@@ -1,5 +1,5 @@
 <!--*ngIf="table?.matchinfo?.length > 0"-->
-<div class="card" >
+<div class="card" cdkDropList #listTwo="cdkDropList" [cdkDropListConnectedTo]="[listOne]">
     <div class="card-content {{bgColor}} custom-padding">
         <toma-tt-table-content
                 [table]="table"
@@ -18,7 +18,8 @@
                 <a href="javascript:void(0)" (click)="assignSecondTable.emit(table)">2.Tisch</a>
             </span>
             <a *ngIf="!table.isLocked" href="javascript:void(0)" (click)="lockTable.emit(table.number)">Sperren</a>
-            <a *ngIf="table.isLocked" href="javascript:void(0)" (click)="unLockTable.emit(table.number)">Entsperren</a>
+            <a *ngIf="table.isLocked" href="javascript:void(0)"
+               (click)="unLockTable.emit(table.number)">Entsperren</a>
         </div>
     </div>
 </div>

@@ -36,5 +36,5 @@ export function reduceMatchState(state: MatchesState = initialState, action: Mat
 
 }
 
-export const getMatchesState = (state: MatchesState) => state.matches;
+export const getMatches = (state: MatchesState) => state.matches;
 export const getMatchesLoading = (state: MatchesState) => state.matchesLoading;
