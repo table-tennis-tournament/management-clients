@@ -3,11 +3,13 @@
     <h4>{{currentMatch | ttMatchDiscipline}}</h4>
   </mz-modal-header>
   <mz-modal-content>
-    <div [class.winner-text]="isFirstPlayerWinning" class="center-align">{{currentMatch.team1 | ttPlayerNameReducer}}
+    <div [class.winner-text]="checkerResult.firstPlayerWinning" class="center-align">
+      {{currentMatch.team1 | ttPlayerNameReducer}}
     </div>
     <br/>
     <div class="center-align"><h4>  - </h4><br/></div>
-    <div [class.winner-text]="isSecondPlayerWinning" class="center-align">{{currentMatch.team2 | ttPlayerNameReducer}}
+    <div [class.winner-text]="checkerResult.secondPlayerWinning" class="center-align">
+      {{currentMatch.team2 | ttPlayerNameReducer}}
     </div>
     <div class="input-field col s4 m2 top-margin">
       <input autofocus id="result" class="form-control" type="text" #answer (keyup)="onKeyUp(answer.value)"
@@ -17,6 +19,10 @@
   </mz-modal-content>
   <mz-modal-footer>
     <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
-    <button mz-button [flat]="true" mz-modal-close [class.disabled]="!resultIsValid" (click)="onOk()">OK</button>
+    <button mz-button [flat]="true" mz-modal-close
+            [class.disabled]="!checkerResult.firstPlayerWinning && !checkerResult.secondPlayerWinning"
+            (click)="onOk()">
+      OK
+    </button>
   </mz-modal-footer>
 </mz-modal>

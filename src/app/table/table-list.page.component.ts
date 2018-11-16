@@ -50,7 +50,7 @@ export class TableListPageComponent implements OnInit {
     }
 
     onFreeTable(table: TableDto) {
-        if (table.matches.length === 1) {
+        if (this.isSingleMatch(table)) {
             const freeTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new FreeTable(freeTableEvent));
             return;
@@ -60,7 +60,7 @@ export class TableListPageComponent implements OnInit {
     }
 
     onTakeBackTable(table: TableDto) {
-        if (table.matches.length === 1) {
+        if (this.isSingleMatch(table)) {
             const takeBackTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
             return;
@@ -74,13 +74,13 @@ export class TableListPageComponent implements OnInit {
     }
 
     onPrintTable(table: TableDto) {
-        if (table.matches.length === 1) {
+        if (this.isSingleMatch(table)) {
             this.store.dispatch(new PrintTable({matchId: table.matches[0].match.id}));
         }
     }
 
     onAssignSecondTable(table: TableDto) {
-        if (table.matches.length < 2) {
+        if (this.isSingleMatch(table)) {
             this.toastService.error('Ein Spiel kann nich auf zwei Tische gelegt werden.');
             return;
         }
@@ -89,31 +89,44 @@ export class TableListPageComponent implements OnInit {
     }
 
     onFreeTablesLoaded(selectedMatchIds, tables: TableDto[]) {
-        if (!tables || tables.length < 1) {
-            this.toastService.error('Es sind keine freien Tische verfügbar.');
+        if (this.freeTablesAvailable(tables)) {
+            const dialog: ComponentRef<SelectTableModalComponent> =
+                <ComponentRef<SelectTableModalComponent>> this.modalService.open(SelectTableModalComponent);
+            dialog.instance.tables = tables;
+            dialog.instance.OnTableSelected.subscribe(tableNumber =>
+                this.store.dispatch(new AssignToSecondTable({tableNr: tableNumber, matchIds: selectedMatchIds})));
+            return;
         }
-        const dialog: ComponentRef<SelectTableModalComponent> =
-            <ComponentRef<SelectTableModalComponent>> this.modalService.open(SelectTableModalComponent);
-        dialog.instance.setTables(tables);
-        dialog.instance.OnTableSelected.subscribe(tableNumber =>
-            this.store.dispatch(new AssignToSecondTable({tableNr: tableNumber, matchIds: selectedMatchIds})));
+        this.toastService.error('Es sind keine freien Tische verfügbar.');
     }
 
     onResultForTable(table: TableDto) {
-        if (table.matches.length !== 1) {
-            this.toastService.error('Ergebnis für zwei Tische kann nicht eingegeben werden.');
+        if (this.isSingleMatch(table)) {
+            const dialog: ComponentRef<ResultModalComponent> =
+                <ComponentRef<ResultModalComponent>> this.modalService.open(ResultModalComponent);
+            dialog.instance.currentMatch = table.matches[0];
+            dialog.instance.OnResultForMatch.subscribe(match => this.store.dispatch(new ResultForMatch(match)));
             return;
         }
-        const dialog: ComponentRef<ResultModalComponent> =
-            <ComponentRef<ResultModalComponent>> this.modalService.open(ResultModalComponent);
-        dialog.instance.setMatch(table.matches[0]);
-        dialog.instance.OnResultForMatch.subscribe(match => this.store.dispatch(new ResultForMatch(match)));
+        this.toastService.error('Ergebnis für zwei Tische kann nicht eingegeben werden.');
+    }
+
+    private freeTablesAvailable(tables: TableDto[]) {
+        return tables && tables.length > 0;
+    }
+
+    private isSingleMatch(table: TableDto) {
+        return table.matches.length === 1;
+    }
+
+    private isSingleMatchOnTable(table: TableDto) {
+        return table.matches.length !== 1;
     }
 
     private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
         const dialog: ComponentRef<SelectMatchModalComponent> =
             <ComponentRef<SelectMatchModalComponent>> this.modalService.open(SelectMatchModalComponent);
-        dialog.instance.setMatches(table.matches);
+        dialog.instance.matches = table.matches;
         dialog.instance.OnMatchesSelected.subscribe(onMatchSelectedAction);
     }
 

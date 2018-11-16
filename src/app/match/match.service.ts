@@ -23,11 +23,11 @@ export class MatchService {
         return this.http.post<StatusDto>(this.takeBackMatchUrl, matchIds);
     }
 
-    assignToSecondTable(tableNr: number, matchIds: number[]) {
-        return this.http.post(`api/match/matchtosecondtable/${tableNr}`, matchIds);
+    assignToSecondTable(tableNr: number, matchIds: number[]): Observable<StatusDto> {
+        return this.http.post<StatusDto>(`api/match/matchtosecondtable/${tableNr}`, matchIds);
     }
 
     resultForMatch(matchResult: TTMatchResult): Observable<StatusDto> {
-        return this.http.post(`api/match/${matchResult.match.match.id}/result`, matchResult.result);
+        return this.http.post<StatusDto>(`api/match/${matchResult.match.match.id}/result`, matchResult.result);
     }
 }

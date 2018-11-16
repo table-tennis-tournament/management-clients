@@ -10,7 +10,7 @@ import {customModalOptions} from '../../../shared/modal.options';
 })
 export class SelectMatchModalComponent extends MzBaseModal {
 
-    matches: Match[];
+    _matches: Match[];
     modalOptions: Materialize.ModalOptions = customModalOptions;
 
     currentValues: boolean[] = [];
@@ -19,8 +19,12 @@ export class SelectMatchModalComponent extends MzBaseModal {
 
     public OnMatchesSelected: EventEmitter<Match[]> = new EventEmitter<Match[]>();
 
-    setMatches(matches: Match[]) {
-        this.matches = matches;
+    set matches(matches: Match[]) {
+        this._matches = matches;
+    }
+
+    get matches(): Match[] {
+        return this._matches;
     }
 
     onOk() {

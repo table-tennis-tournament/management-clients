@@ -9,30 +9,40 @@ import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
     styleUrls: ['./show-match-modal.component.scss']
 })
 export class ShowMatchModalComponent extends MzBaseModal {
-
-    private currentTable: TableDto;
+    private _currentTable: TableDto;
 
     @ViewChild('showMatchModal') modal: MzModalComponent;
 
     public OnTableCalled: EventEmitter<void> = new EventEmitter<void>();
+
     public players: Player[];
 
-    setTable(table: TableDto) {
-        this.currentTable = table;
+    get currentTable(): TableDto {
+        return this._currentTable;
+    }
+
+    set currentTable(value: TableDto) {
+        this._currentTable = value;
         this.players = null;
-        if (this.currentTable.matches && this.currentTable.matches.length > 1) {
+        if (this.isGroupOfMatches()) {
             this.setPlayers();
         }
     }
 
+    private isGroupOfMatches() {
+        return this._currentTable.matches && this._currentTable.matches.length > 1;
+    }
+
     setPlayers() {
         const playerArray = [];
-        this.currentTable.matches.forEach(match => {
-            if (match.team1 && !playerArray[match.team1[0].id]) {
-                playerArray[match.team1[0].id] = match.team1[0];
+        this._currentTable.matches.forEach(match => {
+            const firstPlayer = match.team1;
+            if (firstPlayer && !playerArray[firstPlayer[0].id]) {
+                playerArray[firstPlayer[0].id] = match.team1[0];
             }
-            if (match.team2 && !playerArray[match.team2[0].id]) {
-                playerArray[match.team2[0].id] = match.team2[0];
+            const secondPlayer = match.team2;
+            if (secondPlayer && !playerArray[secondPlayer[0].id]) {
+                playerArray[secondPlayer[0].id] = match.team2[0];
             }
         });
         this.players = [];

@@ -14,6 +14,6 @@ export class PrintService {
     }
 
     public printMatch(matchId: number): Observable<StatusDto> {
-        return this.http.get(`api/printer/print/${matchId}`);
+        return this.http.get<StatusDto>(`api/printer/print/${matchId}`);
     }
 }

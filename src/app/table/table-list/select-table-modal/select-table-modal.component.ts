@@ -9,18 +9,21 @@ import {customModalOptions} from '../../../shared/modal.options';
     styleUrls: ['./select-table-modal.component.scss']
 })
 export class SelectTableModalComponent extends MzBaseModal {
+    private _tables: TableDto[];
 
-    public tables: TableDto[];
     public selectedTable: number;
     private modalOptions: Materialize.ModalOptions = customModalOptions;
-
     @ViewChild('selectTableModal') modal: MzModalComponent;
 
     public OnTableSelected: EventEmitter<number> = new EventEmitter<number>();
 
-    setTables(tables: TableDto[]) {
-        this.tables = tables;
-        this.selectedTable = this.tables[0].number;
+    get tables(): TableDto[] {
+        return this._tables;
+    }
+
+    set tables(value: TableDto[]) {
+        this.selectedTable = value[0].number;
+        this._tables = value;
     }
 
     onOk() {
