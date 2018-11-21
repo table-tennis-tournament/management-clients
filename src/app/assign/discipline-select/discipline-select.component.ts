@@ -33,7 +33,7 @@ export class DisciplineSelectComponent implements OnInit {
 
         }
         result.push({
-            id: -1,
+            id: 0,
             name: 'Alle'
         });
         this.disciplines = result.concat(disciplines);

@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {TTMatchResult} from '../table/table-list/result-modal/ttmatch-result.model';
 import {Match} from '../shared/data/match.model';
+import {MatchToTable} from '../table/table-list/tt-table/tt-table-content/matchtotable.model';
 
 @Injectable({
     providedIn: 'root'
@@ -34,5 +35,9 @@ export class MatchService {
 
     loadAllMatches(): Observable<Match[]> {
         return this.http.get<Match[]>(`api/match/all`);
+    }
+
+    assignMatchToTable(matchToTable: MatchToTable): Observable<StatusDto> {
+        return this.http.post<StatusDto>(`api/match/matchtotable/${matchToTable.tableNr}`, matchToTable.matchIds);
     }
 }

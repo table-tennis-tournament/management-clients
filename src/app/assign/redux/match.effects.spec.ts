@@ -4,7 +4,7 @@ import {provideMockActions} from '@ngrx/effects/testing';
 import {ToastrService} from 'ngx-toastr';
 import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
 import {of, ReplaySubject, throwError} from 'rxjs';
-import {MatchService} from '../../match/match.service';
+import {MatchService} from '../match.service';
 
 import {MatchEffects} from './match.effects';
 import {LoadMatches, LoadMatchesSuccess, MatchActionTypes} from './match.actions';

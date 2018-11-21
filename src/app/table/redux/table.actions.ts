@@ -25,7 +25,10 @@ export enum TableActionTypes {
     AssignToSecondTableSuccess = '[Table] Assign to 2nd table Success',
     ResultForMatch = '[Table] Result for Match',
     ResultForMatchError = '[Table] Result for Match Error',
-    ResultForMatchSuccess = '[Table] Result for Match Success'
+    ResultForMatchSuccess = '[Table] Result for Match Success',
+    AssignMatchToTable = '[Table] Assign match to table',
+    AssignMatchToTableError = '[Table] Assign match to table Error',
+    AssignMatchToTableSuccess = '[Table] Assign match to table Success',
 }
 
 export class LoadTables implements Action {
@@ -196,6 +199,27 @@ export class ResultForMatchError implements Action {
     }
 }
 
+export class AssignMatchToTable implements Action {
+    readonly type = TableActionTypes.AssignMatchToTable;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignMatchToTableSuccess implements Action {
+    readonly type = TableActionTypes.AssignMatchToTableSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignMatchToTableError implements Action {
+    readonly type = TableActionTypes.AssignMatchToTableError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -220,4 +244,7 @@ export type TableActionsUnion =
     | AssignToSecondTableError
     | ResultForMatch
     | ResultForMatchSuccess
-    | ResultForMatchError;
+    | ResultForMatchError
+    | AssignMatchToTable
+    | AssignMatchToTableSuccess
+    | AssignMatchToTableError;

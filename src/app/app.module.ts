@@ -41,7 +41,7 @@ import {DisciplineMatchListComponent} from './assign/discipline-match-list/disci
 import {DisciplineSelectComponent} from './assign/discipline-select/discipline-select.component';
 import {DisciplineTypePipe} from './assign/pipes/discipline-type.pipe';
 import {MatchEffects} from './assign/redux/match.effects';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import {DndModule} from 'ng2-dnd';
 
 @NgModule({
     declarations: [
@@ -74,13 +74,13 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
         MzCheckboxModule,
         MzSelectModule,
         MzCollectionModule,
-        DragDropModule,
+        DndModule.forRoot(),
         FormsModule,
         ToastrModule.forRoot({
             timeOut: 5000,
             extendedTimeOut: 2000,
-            closeButton: true,
-            positionClass: 'toast-top-center'
+            closeButton: false,
+            positionClass: 'toast-bottom-center'
         }),
         StoreModule.forRoot(reducers, {metaReducers}),
         StoreRouterConnectingModule.forRoot({

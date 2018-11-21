@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TableDto} from '../../tabledto.model';
+import {MatchToTable} from './tt-table-content/matchtotable.model';
 
 @Component({
     selector: 'toma-tt-table',
@@ -45,5 +46,8 @@ export class TtTableComponent {
 
     @Output()
     resultForTable = new EventEmitter<TableDto>();
+
+    @Output()
+    assignMatchToTable = new EventEmitter<MatchToTable>();
 
 }

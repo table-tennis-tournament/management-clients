@@ -4,9 +4,12 @@ import {provideMockActions} from '@ngrx/effects/testing';
 import {ToastrService} from 'ngx-toastr';
 import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
 import {of, ReplaySubject, throwError} from 'rxjs';
-import {MatchService} from '../../match/match.service';
+import {MatchService} from '../../assign/match.service';
 import {TableService} from '../table.service';
 import {
+    AssignMatchToTable,
+    AssignMatchToTableError,
+    AssignMatchToTableSuccess,
     AssignToSecondTable,
     AssignToSecondTableSuccess,
     LoadTables,
@@ -17,6 +20,8 @@ import {
 } from './table.actions';
 import {TableEffects} from './table.effects';
 import {TTMatchResult} from '../table-list/result-modal/ttmatch-result.model';
+import {MatchToTable} from '../table-list/tt-table/tt-table-content/matchtotable.model';
+import {StatusDto} from '../../shared/statusdto.model';
 
 describe('the table effects', () => {
     let actions: ReplaySubject<any>;
@@ -43,7 +48,8 @@ describe('the table effects', () => {
     ];
 
     const statusDto = {
-        message: 'success'
+        message: 'success',
+        successful: true
     };
 
     const assign2ndTablePayload = {
@@ -164,6 +170,52 @@ describe('the table effects', () => {
             // expect(toastServiceMock.error).toHaveBeenCalled();
         });
 
+
+    });
+
+    describe('on assign match to table', () => {
+
+        it('should return a AssignMatchToTableSuccess', (done) => {
+            const assignMatchToTable: MatchToTable = {
+                matchIds: [1, 2],
+                tableNr: 1,
+                tableId: 2
+            };
+            const expectedResult = new AssignMatchToTableSuccess(assignMatchToTable);
+            spyOn(matchService, 'assignMatchToTable').and.returnValue(of(statusDto));
+
+            actions.next(new AssignMatchToTable(assignMatchToTable));
+
+            tableEffects.assignMatchToTable$.subscribe((result) => {
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
+
+        it('should return a AssignMatchToTableError', (done) => {
+            spyOn(matchService, 'assignMatchToTable').and.returnValue(throwError({msg: 'Error'}));
+
+            actions.next(new AssignMatchToTable({}));
+
+            tableEffects.assignMatchToTable$.subscribe((result) => {
+                expect(result.type).toEqual(TableActionTypes.AssignMatchToTableError);
+                done();
+            });
+        });
+
+        it('should return a AssignMatchToTableError', (done) => {
+            const failedStatus: StatusDto = {successful: false};
+            const expectedResult = new AssignMatchToTableError(failedStatus);
+            spyOn(matchService, 'assignMatchToTable').and.returnValue(of(failedStatus));
+
+            actions.next(new AssignMatchToTable({}));
+
+            tableEffects.assignMatchToTable$.subscribe((result) => {
+                console.log(result);
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
 
     });
 });
