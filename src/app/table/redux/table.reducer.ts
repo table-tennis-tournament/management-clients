@@ -1,5 +1,6 @@
 import {TableDto} from '../tabledto.model';
 import {TableActionsUnion, TableActionTypes} from './table.actions';
+import {TTMatchResult} from '../table-list/result-modal/ttmatch-result.model';
 
 export interface TableState {
     tables: TableDto[];
@@ -34,13 +35,11 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload) {
+                    if (table.number === action.payload) {
                         return {
-                            matchinfo: [...table.matchinfo],
-                            table: {
-                                ...table.table,
-                                isLocked: true
-                            }
+                            ...table,
+                            matches: [...table.matches],
+                            isLocked: true
                         };
                     }
                     return table;
@@ -51,13 +50,11 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload) {
+                    if (table.number === action.payload) {
                         return {
-                            matchinfo: [...table.matchinfo],
-                            table: {
-                                ...table.table,
-                                isLocked: false
-                            }
+                            ...table,
+                            matches: [...table.matches],
+                            isLocked: false
                         };
                     }
                     return table;
@@ -69,10 +66,10 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload.tableNr) {
+                    if (table.number === action.payload.tableNr) {
                         return {
-                            matchinfo: [...table.matchinfo.filter(match => !freeTableEvent.matchIds.indexOf(match.id))],
-                            table: {...table.table}
+                            ...table,
+                            matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.match.id))]
                         };
                     }
                     return table;
@@ -83,13 +80,24 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return {
                 ...state,
                 tables: state.tables.map(table => {
-                    if (table.table.number === action.payload.tableNr) {
+                    if (table.number === action.payload.tableNr) {
                         return {
-                            matchinfo: [...table.matchinfo.filter(match => !takeBackEvent.matchIds.indexOf(match.id))],
-                            table: {...table.table}
+                            ...table,
+                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.match.id))]
                         };
                     }
                     return table;
+                })
+            };
+        case TableActionTypes.ResultForMatchSuccess:
+            const resultForMatch: TTMatchResult = action.payload;
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    return {
+                        ...table,
+                        matches: [...table.matches.filter(match => resultForMatch.match.match.id !== match.match.id)]
+                    };
                 })
             };
         default:

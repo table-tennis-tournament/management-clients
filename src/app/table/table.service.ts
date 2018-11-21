@@ -23,4 +23,8 @@ export class TableService {
     unLockTable(tableNr: number): Observable<StatusDto> {
         return this.http.get<StatusDto>(`api/table/${tableNr}/unlock`);
     }
+
+    getFreeTables(): Observable<TableDto[]> {
+        return this.http.get<TableDto[]>('api/table/free');
+    }
 }

@@ -6,7 +6,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {MzButtonModule, MzInputModule, MzSpinnerModule} from 'ngx-materialize';
+import {MzButtonModule, MzCheckboxModule, MzInputModule, MzModalModule, MzSelectModule, MzSpinnerModule} from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
@@ -27,6 +27,12 @@ import {TypeviewComponent} from './typeview/typeview.component';
 import {TtTableContentComponent} from './table/table-list/tt-table/tt-table-content/tt-table-content.component';
 import {TtTableMatchItemComponent} from './table/table-list/tt-table/tt-table-match-item/tt-table-match-item.component';
 import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe';
+import {ResultModalComponent} from './table/table-list/result-modal/result-modal.component';
+import {FormsModule} from '@angular/forms';
+import {TtMatchDisciplinePipe} from './table/pipes/tt-match-discipline.pipe';
+import {SelectMatchModalComponent} from './table/table-list/select-match-modal/select-match-modal.component';
+import {ShowMatchModalComponent} from './table/table-list/show-match-modal/show-match-modal.component';
+import {SelectTableModalComponent} from './table/table-list/select-table-modal/select-table-modal.component';
 
 @NgModule({
     declarations: [
@@ -43,6 +49,11 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         TtTableContentComponent,
         TtTableMatchItemComponent,
         TtPlayerNameReducerPipe,
+        ResultModalComponent,
+        TtMatchDisciplinePipe,
+        SelectMatchModalComponent,
+        ShowMatchModalComponent,
+        SelectTableModalComponent
     ],
     imports: [
         BrowserModule,
@@ -51,6 +62,10 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         MzButtonModule,
         MzSpinnerModule,
         MzInputModule,
+        MzModalModule,
+        MzCheckboxModule,
+        MzSelectModule,
+        FormsModule,
         ToastrModule.forRoot({
             timeOut: 5000,
             extendedTimeOut: 2000,
@@ -68,8 +83,10 @@ import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe
         EffectsModule.forRoot([TableEffects]),
         HttpClientModule
     ],
+
     providers: [TableService],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [ResultModalComponent, SelectMatchModalComponent, SelectTableModalComponent]
 })
 export class AppModule {
 }

@@ -16,61 +16,79 @@ export enum TableActionTypes {
     FreeError = '[Table] Free Error',
     TakeBack = '[Table] Take Back',
     TakeBackSuccess = '[Table] Take Back Success',
-    TakeBackError = '[Table] Take Back Error'
+    TakeBackError = '[Table] Take Back Error',
+    PrintTable = '[Table] Print',
+    PrintTableError = '[Table] Print Error',
+    PrintTableSuccess = '[Table] Print Success',
+    AssignToSecondTable = '[Table] Assign to 2nd table',
+    AssignToSecondTableError = '[Table] Assign to 2nd table Error',
+    AssignToSecondTableSuccess = '[Table] Assign to 2nd table Success',
+    ResultForMatch = '[Table] Result for Match',
+    ResultForMatchError = '[Table] Result for Match Error',
+    ResultForMatchSuccess = '[Table] Result for Match Success'
 }
 
 export class LoadTables implements Action {
     readonly type = TableActionTypes.Load;
 
-    constructor(public payload: any) {}
+    constructor(public payload: any) {
+    }
 }
 
 export class LoadTablesSuccess implements Action {
     readonly type = TableActionTypes.LoadSuccess;
 
-    constructor(public payload: TableDto[]) {}
+    constructor(public payload: TableDto[]) {
+    }
 }
 
 export class LoadTablesError implements Action {
     readonly type = TableActionTypes.LoadError;
 
-    constructor(public payload: any) {}
+    constructor(public payload: any) {
+    }
 }
 
 export class LockTable implements Action {
     readonly type = TableActionTypes.Lock;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class LockTableSuccess implements Action {
     readonly type = TableActionTypes.LockSuccess;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class LockTableError implements Action {
     readonly type = TableActionTypes.LockError;
 
-    constructor(public payload: any) {}
+    constructor(public payload: any) {
+    }
 }
 
 export class UnLockTable implements Action {
     readonly type = TableActionTypes.UnLock;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class UnLockTableSuccess implements Action {
     readonly type = TableActionTypes.UnLockSuccess;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class UnLockTableError implements Action {
     readonly type = TableActionTypes.UnLockError;
 
-    constructor(public payload: number) {}
+    constructor(public payload: number) {
+    }
 }
 
 export class FreeTable implements Action {
@@ -115,6 +133,69 @@ export class TakeBackTableError implements Action {
     }
 }
 
+export class PrintTable implements Action {
+    readonly type = TableActionTypes.PrintTable;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class PrintTableSuccess implements Action {
+    readonly type = TableActionTypes.PrintTableSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class PrintTableError implements Action {
+    readonly type = TableActionTypes.PrintTableError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignToSecondTable implements Action {
+    readonly type = TableActionTypes.AssignToSecondTable;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignToSecondTableSuccess implements Action {
+    readonly type = TableActionTypes.AssignToSecondTableSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class AssignToSecondTableError implements Action {
+    readonly type = TableActionTypes.AssignToSecondTableError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ResultForMatch implements Action {
+    readonly type = TableActionTypes.ResultForMatch;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ResultForMatchSuccess implements Action {
+    readonly type = TableActionTypes.ResultForMatchSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ResultForMatchError implements Action {
+    readonly type = TableActionTypes.ResultForMatchError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -130,4 +211,13 @@ export type TableActionsUnion =
     | FreeTableError
     | TakeBackTable
     | TakeBackTableSuccess
-    | TakeBackTableError;
+    | TakeBackTableError
+    | PrintTable
+    | PrintTableSuccess
+    | PrintTableError
+    | AssignToSecondTable
+    | AssignToSecondTableSuccess
+    | AssignToSecondTableError
+    | ResultForMatch
+    | ResultForMatchSuccess
+    | ResultForMatchError;
