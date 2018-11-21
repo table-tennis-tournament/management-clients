@@ -42,6 +42,8 @@ import {DisciplineSelectComponent} from './assign/discipline-select/discipline-s
 import {DisciplineTypePipe} from './assign/pipes/discipline-type.pipe';
 import {MatchEffects} from './assign/redux/match.effects';
 import {DndModule} from 'ng2-dnd';
+import {SupvervisorComponent} from './supvervisor/supvervisor.component';
+import {Supervisor, SupervisorPageComponent} from './supervisor/supervisor.page.component';
 
 @NgModule({
     declarations: [
@@ -61,7 +63,9 @@ import {DndModule} from 'ng2-dnd';
         AssignMatchPageComponent,
         DisciplineMatchListComponent,
         DisciplineSelectComponent,
-        DisciplineTypePipe
+        DisciplineTypePipe,
+        SupvervisorComponent,
+        SupervisorPageComponent
     ],
     imports: [
         BrowserModule,
