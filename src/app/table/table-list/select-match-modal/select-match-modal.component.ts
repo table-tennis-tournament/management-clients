@@ -38,7 +38,7 @@ export class SelectMatchModalComponent extends MzBaseModal {
         this.fireEventAndClose(result);
     }
 
-    private fireEventAndClose(result) {
+    fireEventAndClose(result) {
         this.OnMatchesSelected.emit(result);
         this.modal.closeModal();
     }

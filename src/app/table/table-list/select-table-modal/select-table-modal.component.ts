@@ -12,7 +12,8 @@ export class SelectTableModalComponent extends MzBaseModal {
     private _tables: TableDto[];
 
     public selectedTable: number;
-    private modalOptions: Materialize.ModalOptions = customModalOptions;
+    public modalOptions: Materialize.ModalOptions = customModalOptions;
+
     @ViewChild('selectTableModal') modal: MzModalComponent;
 
     public OnTableSelected: EventEmitter<number> = new EventEmitter<number>();

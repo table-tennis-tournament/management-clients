@@ -2,6 +2,7 @@ import {Component, EventEmitter, ViewChild} from '@angular/core';
 import {TableDto} from '../../tabledto.model';
 import {Player} from '../../../playerview/player.model';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
+import {customModalOptions} from '../../../shared/modal.options';
 
 @Component({
     selector: 'toma-show-match-modal',
@@ -14,6 +15,8 @@ export class ShowMatchModalComponent extends MzBaseModal {
     @ViewChild('showMatchModal') modal: MzModalComponent;
 
     public OnTableCalled: EventEmitter<void> = new EventEmitter<void>();
+
+    public modalOptions: Materialize.ModalOptions = customModalOptions;
 
     public players: Player[];
 

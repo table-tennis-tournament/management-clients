@@ -13,7 +13,7 @@
     </div>
     <div class="input-field col s4 m2 top-margin">
       <input autofocus id="result" class="form-control" type="text" #answer (keyup)="onKeyUp(answer.value)"
-             (keyup.enter)="onEnterPressed(answer.value)">
+             (keyup.enter)="checkResultAndClose()">
       <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
     </div>
   </mz-modal-content>
@@ -21,7 +21,7 @@
     <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
     <button mz-button [flat]="true" mz-modal-close
             [class.disabled]="!checkerResult.firstPlayerWinning && !checkerResult.secondPlayerWinning"
-            (click)="onOk()">
+            (click)="checkResultAndClose()">
       OK
     </button>
   </mz-modal-footer>
