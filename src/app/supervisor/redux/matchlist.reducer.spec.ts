@@ -1,43 +1,52 @@
 import {MatchTestData} from './test-data';
 import {MatchesState, reduceMatchState} from './match.reducer';
-import {LoadMatches, LoadMatchesError, LoadMatchesSuccess} from './matchlist.actions';
+import {
+    LoadMatches,
+    LoadMatchesError,
+    LoadMatchesSuccess,
+    LoadMatchList,
+    LoadMatchListError,
+    LoadMatchListSuccess
+} from './matchlist.actions';
+import {MatchListState, reduceMatchListState} from './matchlist.reducer';
+import {testData} from './test.data';
 
-const initialState: MatchesState = Object.freeze({
-    matches: [],
-    matchesLoading: false
+const initialState: MatchListState = Object.freeze({
+    matchList: [],
+    matchListLoading: false
 });
 
-const matchData = MatchTestData;
+const matchData = testData;
 
-describe('the match reducer', () => {
-    it('should handle the LoadMatches action correctly', () => {
+describe('the matchList reducer', () => {
+    it('should handle the LoadMatchList action correctly', () => {
         const expectedState = {
             ...initialState,
             matchListLoading: true
         };
 
-        const newState = reduceMatchState(initialState, new LoadMatches(null));
+        const newState = reduceMatchListState(initialState, new LoadMatchList(null));
         expect(newState).toEqual(expectedState);
     });
 
-    it('should handle the LoadMatchesSuccess action correctly', () => {
+    it('should handle the LoadMatchListSuccess action correctly', () => {
         const expectedState = {
             ...initialState,
-            matches: matchData,
-            matchesLoading: false
+            matchList: matchData,
+            matchListLoading: false
         };
 
-        const newState = reduceMatchState(initialState, new LoadMatchesSuccess(matchData));
+        const newState = reduceMatchListState(initialState, new LoadMatchListSuccess(matchData));
         expect(newState).toEqual(expectedState);
     });
 
-    it('should handle the LoadMatchesError action correctly', () => {
+    it('should handle the LoadMatchListError action correctly', () => {
         const expectedState = {
             ...initialState,
-            matchesLoading: false
+            matchListLoading: false
         };
 
-        const newState = reduceMatchState(initialState, new LoadMatchesError(null));
+        const newState = reduceMatchListState(initialState, new LoadMatchListError(null));
         expect(newState).toEqual(expectedState);
     });
 

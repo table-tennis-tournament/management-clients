@@ -1,34 +1,34 @@
-import {Match} from '../../shared/data/match.model';
-import {MatchActionsUnion, MatchActionTypes} from './matchlist.actions';
+import {MatchActionsUnion, MatchActionTypes, MatchListActionTypes, MatchListActionUnion} from './matchlist.actions';
+import {MatchList} from '../matchlist.model';
 
-export interface MatchesState {
-    matches: Match[];
-    matchesLoading: boolean;
+export interface MatchListState {
+    matchList: MatchList[];
+    matchListLoading: boolean;
 }
 
 
-const initialState: MatchesState = {
-    matches: [],
-    matchesLoading: false
+const initialState: MatchListState = {
+    matchList: [],
+    matchListLoading: false
 };
 
-export function reduceMatchState(state: MatchesState = initialState, action: MatchActionsUnion) {
+export function reduceMatchListState(state: MatchListState = initialState, action: MatchListActionUnion) {
     switch (action.type) {
-        case MatchActionTypes.Load:
+        case MatchListActionTypes.Load:
             return {
                 ...state,
-                matchesLoading: true
+                matchListLoading: true
             };
-        case MatchActionTypes.LoadSuccess:
+        case MatchListActionTypes.LoadSuccess:
             return {
                 ...state,
-                matchesLoading: false,
-                matches: action.payload
+                matchListLoading: false,
+                matchList: action.payload
             };
-        case MatchActionTypes.LoadError:
+        case MatchListActionTypes.LoadError:
             return {
                 ...state,
-                matchesLoading: false
+                matchListLoading: false
             };
         default:
             return state;
@@ -36,5 +36,5 @@ export function reduceMatchState(state: MatchesState = initialState, action: Mat
 
 }
 
-export const getMatches = (state: MatchesState) => state.matches;
-export const getMatchesLoading = (state: MatchesState) => state.matchesLoading;
+export const getMatchList = (state: MatchListState) => state.matchList;
+export const getMatchesLoading = (state: MatchListState) => state.matchListLoading;

@@ -4,22 +4,29 @@ import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
-import {MatchService} from '../match.service';
-import {LoadMatchesError, LoadMatchesSuccess, MatchActionTypes} from './matchlist.actions';
+import {
+    LoadMatchesError,
+    LoadMatchesSuccess,
+    LoadMatchListError,
+    LoadMatchListSuccess,
+    MatchActionTypes,
+    MatchListActionTypes
+} from './matchlist.actions';
+import {MatchListService} from '../matchlist.service';
 
 @Injectable()
-export class MatchlistEffects {
+export class MatchListEffects {
 
     @Effect()
-    loadMatches$: Observable<Action> = this.actions$.pipe(
-        ofType(MatchActionTypes.Load),
+    loadMatchList$: Observable<Action> = this.actions$.pipe(
+        ofType(MatchListActionTypes.Load),
         mergeMap(() => {
-            return this.matchService
-                .loadAllMatches().pipe(
-                    map(matches => new LoadMatchesSuccess(matches)),
+            return this.matchListService
+                .loadAllMatchListItems().pipe(
+                    map(matches => new LoadMatchListSuccess(matches)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Matches', 'Error');
-                        return of(new LoadMatchesError(err));
+                        this.toastService.error('Fehler beim Laden der MatchList', 'Error');
+                        return of(new LoadMatchListError(err));
                     })
                 );
         })
@@ -27,7 +34,7 @@ export class MatchlistEffects {
 
 
     constructor(private actions$: Actions,
-                private toastService: ToastrService, private matchService: MatchService) {
+                private toastService: ToastrService, private matchListService: MatchListService) {
 
     }
 
