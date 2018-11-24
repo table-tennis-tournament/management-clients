@@ -1,4 +1,4 @@
-import {MatchActionsUnion, MatchActionTypes, MatchListActionTypes, MatchListActionUnion} from './matchlist.actions';
+import {MatchListActionTypes, MatchListActionUnion} from './matchlist.actions';
 import {MatchList} from '../matchlist.model';
 
 export interface MatchListState {
@@ -37,4 +37,4 @@ export function reduceMatchListState(state: MatchListState = initialState, actio
 }
 
 export const getMatchList = (state: MatchListState) => state.matchList;
-export const getMatchesLoading = (state: MatchListState) => state.matchListLoading;
+export const getMatchListLoading = (state: MatchListState) => state.matchListLoading;

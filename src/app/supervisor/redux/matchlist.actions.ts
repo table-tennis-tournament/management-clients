@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Match} from '../../shared/data/match.model';
+import {MatchList} from '../matchlist.model';
 
 export enum MatchListActionTypes {
     Load = '[Matchlist] Load',
@@ -17,7 +17,7 @@ export class LoadMatchList implements Action {
 export class LoadMatchListSuccess implements Action {
     readonly type = MatchListActionTypes.LoadSuccess;
 
-    constructor(public payload: Match[]) {
+    constructor(public payload: MatchList[]) {
     }
 }
 

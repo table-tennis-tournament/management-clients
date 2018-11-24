@@ -1,8 +1,8 @@
 import {MatchActionsUnion, MatchActionTypes} from './match.actions';
-import {MatchList} from '../../supervisor/matchlist.model';
+import {Match} from '../../shared/data/match.model';
 
 export interface MatchesState {
-    matches: MatchList[];
+    matches: Match[];
     matchesLoading: boolean;
 }
 
