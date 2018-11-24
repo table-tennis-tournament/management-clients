@@ -1,5 +1,5 @@
 export interface MatchListItem {
-    id?: number;
+    id?: string;
     matchIds: number[];
     position: number;
     group: number;
