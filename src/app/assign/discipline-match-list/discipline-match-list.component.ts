@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
+import {MatchList} from '../../supervisor/matchlist.model';
 
 @Component({
     selector: 'toma-discipline-match-list',
@@ -14,11 +15,19 @@ export class DisciplineMatchListComponent {
     @Input()
     matchesLoading: boolean;
 
+    @Input()
+    matchList: MatchList[];
+
     currentMatchesToShow: Match[];
 
     onDisciplineSelected(disciplineId: number) {
         if (+disciplineId === 0) {
             this.currentMatchesToShow = Object.assign([], this.matches);
+            return;
+        }
+
+        if (+disciplineId === -1) {
+            this.currentMatchesToShow = [].concat.apply([], this.matchList.map(item => item.matchinfo));
             return;
         }
         const filteredMatches = this.matches

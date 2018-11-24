@@ -1,10 +1,10 @@
 import {Component, EventEmitter, ViewChild} from '@angular/core';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
-import {Match} from '../../../matchview/match.model';
 import {TTMatchResult} from './ttmatch-result.model';
 import {customModalOptions} from '../../../shared/modal.options';
 import {ResultCheckerService} from './result-checker.service';
 import {ResultCheckModel} from './result-check.model';
+import {Match} from '../../../shared/data/match.model';
 
 @Component({
     selector: 'toma-result-modal',

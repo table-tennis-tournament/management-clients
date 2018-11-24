@@ -1,13 +1,6 @@
 import {MatchTestData} from './test-data';
 import {MatchesState, reduceMatchState} from './match.reducer';
-import {
-    LoadMatches,
-    LoadMatchesError,
-    LoadMatchesSuccess,
-    LoadMatchList,
-    LoadMatchListError,
-    LoadMatchListSuccess
-} from './matchlist.actions';
+import {LoadMatchList, LoadMatchListError, LoadMatchListSuccess} from './matchlist.actions';
 import {MatchListState, reduceMatchListState} from './matchlist.reducer';
 import {testData} from './test.data';
 

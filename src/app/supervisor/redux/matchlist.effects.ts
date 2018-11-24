@@ -4,14 +4,7 @@ import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
-import {
-    LoadMatchesError,
-    LoadMatchesSuccess,
-    LoadMatchListError,
-    LoadMatchListSuccess,
-    MatchActionTypes,
-    MatchListActionTypes
-} from './matchlist.actions';
+import {LoadMatchListError, LoadMatchListSuccess, MatchListActionTypes} from './matchlist.actions';
 import {MatchListService} from '../matchlist.service';
 
 @Injectable()
