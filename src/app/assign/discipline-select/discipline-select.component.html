@@ -6,7 +6,7 @@
             [placeholder]="'Konkurrenz'"
             (change)="disciplineChanged.emit(selectedDiscipline)"
             [(ngModel)]="selectedDiscipline">
-      <option *ngFor="let currentDiscipline of disciplines" [value]="currentDiscipline.id">
+      <option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
         {{currentDiscipline.name}}
       </option>
     </select>

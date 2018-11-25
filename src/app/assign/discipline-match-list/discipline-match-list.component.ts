@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {MatchList} from '../../supervisor/matchlist.model';
+import {Discipline} from '../../discipline/discipline.model';
 
 @Component({
     selector: 'toma-discipline-match-list',
@@ -17,6 +18,9 @@ export class DisciplineMatchListComponent {
 
     @Input()
     matchList: MatchList[];
+
+    @Input()
+    disciplines: Discipline[];
 
     currentMatchesToShow: Match[];
 

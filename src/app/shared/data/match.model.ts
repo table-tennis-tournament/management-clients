@@ -1,6 +1,6 @@
 import {Group} from './group.model';
 import {Player} from './player.model';
-import {Discipline} from './discipline.model';
+import {Discipline} from '../../discipline/discipline.model';
 import {MatchState} from './matchstate.model';
 import {StageType} from './stagetype.model';
 

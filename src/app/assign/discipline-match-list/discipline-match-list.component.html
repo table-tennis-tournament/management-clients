@@ -1,6 +1,7 @@
 <div class="row without-margin">
     <div class="input-field col s12">
         <toma-discipline-select (disciplineChanged)="onDisciplineSelected($event)"
+                                [disciplines]="disciplines"
                                 [showWaitingList]="true"></toma-discipline-select>
     </div>
 </div>

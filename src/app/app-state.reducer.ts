@@ -5,6 +5,7 @@ import {storeFreeze} from 'ngrx-store-freeze';
 import * as fromTables from './table/redux/table.reducer';
 import * as fromMatches from './assign/redux/match.reducer';
 import * as fromMatchList from './supervisor/redux/matchlist.reducer';
+import * as fromDisciplines from './discipline/redux/discipline.reducer';
 import {environment} from '../environments/environment';
 
 export interface State {
@@ -12,13 +13,15 @@ export interface State {
     table: fromTables.TableState;
     matches: fromMatches.MatchesState;
     matchList: fromMatchList.MatchListState;
+    disciplines: fromDisciplines.DisciplineState
 }
 
 export const reducers: ActionReducerMap<State> = {
     table: fromTables.reduceTableState,
     router: fromRouter.routerReducer,
     matches: fromMatches.reduceMatchState,
-    matchList: fromMatchList.reduceMatchListState
+    matchList: fromMatchList.reduceMatchListState,
+    disciplines: fromDisciplines.reduceDisciplineState
 };
 
 export const metaReducers: MetaReducer<State>[] = !environment.production
@@ -33,3 +36,6 @@ export const getMatchesLoading = createSelector((state: State) => state.matches,
 
 export const getMatchListState = createSelector((state: State) => state.matchList, fromMatchList.getMatchList);
 export const getMatchListLoading = createSelector((state: State) => state.matchList, fromMatchList.getMatchListLoading);
+
+export const getDisciplineState = createSelector((state: State) => state.disciplines, fromDisciplines.getDisciplines);
+export const getDisciplineLoading = createSelector((state: State) => state.disciplines, fromDisciplines.getDisciplinesLoading);

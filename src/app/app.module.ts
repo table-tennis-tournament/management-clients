@@ -44,6 +44,9 @@ import {MatchEffects} from './assign/redux/match.effects';
 import {DndModule} from 'ng2-dnd';
 import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
 import {MatchListEffects} from './supervisor/redux/matchlist.effects';
+import {DisciplineViewComponent} from './supervisor/discipline-view/discipline-view.component';
+import {MatchlistViewComponent} from './supervisor/matchlist-view/matchlist-view.component';
+import {DisciplineEffects} from './discipline/redux/discipline.effects';
 
 @NgModule({
     declarations: [
@@ -64,7 +67,9 @@ import {MatchListEffects} from './supervisor/redux/matchlist.effects';
         DisciplineMatchListComponent,
         DisciplineSelectComponent,
         DisciplineTypePipe,
-        SupervisorPageComponent
+        SupervisorPageComponent,
+        DisciplineViewComponent,
+        MatchlistViewComponent
     ],
     imports: [
         BrowserModule,
@@ -93,7 +98,7 @@ import {MatchListEffects} from './supervisor/redux/matchlist.effects';
             name: 'Devtools',
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects]),
+        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects]),
         HttpClientModule
     ],
 
