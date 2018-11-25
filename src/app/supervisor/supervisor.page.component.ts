@@ -1,9 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getMatchesLoading, getMatchesState, getMatchListState} from '../app-state.reducer';
+import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState} from '../app-state.reducer';
 import {Match} from '../shared/data/match.model';
 import {Observable} from 'rxjs';
 import {MatchList} from './matchlist.model';
+import {Discipline} from '../discipline/discipline.model';
+import {LoadDiscipline} from '../discipline/redux/discipline.actions';
+import {LoadMatches} from '../assign/redux/match.actions';
 
 @Component({
     selector: 'toma-supervisor.page',
@@ -12,17 +15,21 @@ import {MatchList} from './matchlist.model';
 })
 export class SupervisorPageComponent implements OnInit {
 
-    private matches: Observable<Match[]>;
-    private matchesLoading: Observable<boolean>;
-    private matchList: Observable<MatchList[]>;
+    matches: Observable<Match[]>;
+    matchesLoading: Observable<boolean>;
+    matchList: Observable<MatchList[]>;
+    disciplines: Observable<Discipline[]>;
 
     constructor(private store: Store<any>) {
     }
 
     ngOnInit() {
+        this.store.dispatch(new LoadDiscipline(null));
+        this.store.dispatch(new LoadMatches(null));
         this.matches = this.store.select(getMatchesState);
         this.matchesLoading = this.store.select(getMatchesLoading);
         this.matchList = this.store.select(getMatchListState);
+        this.disciplines = this.store.select(getDisciplineState);
     }
 
 }

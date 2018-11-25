@@ -1,9 +1,12 @@
 <div class="row">
-  <div class="col s10">
-    <toma-discipline-view></toma-discipline-view>
-  </div>
-  <div class="col s2">
-    <h4>Warteschlange: </h4>
-    <toma-matchlist-view></toma-matchlist-view>
-  </div>
+    <div class="col s10">
+        <toma-discipline-view
+                [matches]="matches | async"
+                [disciplines]="disciplines | async"
+                [matchesLoading]="matchesLoading | async"></toma-discipline-view>
+    </div>
+    <div class="col s2">
+        <h4>Warteschlange: </h4>
+        <toma-matchlist-view></toma-matchlist-view>
+    </div>
 </div>

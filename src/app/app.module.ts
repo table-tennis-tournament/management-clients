@@ -9,6 +9,7 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {
     MzButtonModule,
     MzCheckboxModule,
+    MzCollapsibleModule,
     MzCollectionModule,
     MzInputModule,
     MzModalModule,
@@ -47,6 +48,10 @@ import {MatchListEffects} from './supervisor/redux/matchlist.effects';
 import {DisciplineViewComponent} from './supervisor/discipline-view/discipline-view.component';
 import {MatchlistViewComponent} from './supervisor/matchlist-view/matchlist-view.component';
 import {DisciplineEffects} from './discipline/redux/discipline.effects';
+import {DisciplineGroupComponent} from './supervisor/discipline-view/discipline-group/discipline-group.component';
+import {DisciplineStageComponent} from './supervisor/discipline-view/discipline-stage/discipline-stage.component';
+import { DisciplineStageItemComponent } from './supervisor/discipline-view/discipline-stage/discipline-stage-item/discipline-stage-item.component';
+import { TeamItemComponent } from './shared/team-item/team-item.component';
 
 @NgModule({
     declarations: [
@@ -69,7 +74,11 @@ import {DisciplineEffects} from './discipline/redux/discipline.effects';
         DisciplineTypePipe,
         SupervisorPageComponent,
         DisciplineViewComponent,
-        MatchlistViewComponent
+        MatchlistViewComponent,
+        DisciplineGroupComponent,
+        DisciplineStageComponent,
+        DisciplineStageItemComponent,
+        TeamItemComponent
     ],
     imports: [
         BrowserModule,
@@ -82,6 +91,7 @@ import {DisciplineEffects} from './discipline/redux/discipline.effects';
         MzCheckboxModule,
         MzSelectModule,
         MzCollectionModule,
+        MzCollapsibleModule,
         DndModule.forRoot(),
         FormsModule,
         ToastrModule.forRoot({

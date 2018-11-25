@@ -1,3 +1,43 @@
-<p>
-  discipline-view works!
-</p>
+<div class="row">
+    <mz-spinner *ngIf="matchesLoading"></mz-spinner>
+    <div *ngFor="let currentTab of tabs" class="col no-padding">
+        <a mz-button (click)=" setTabForId(currentTab.id)">
+            {{currentTab.name}}
+        </a>
+    </div>
+    <div class="col">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="removePlayed" id="remove-played-checkbox"
+                   (change)="onRemovePlayedChanged()"/>
+            <label for="remove-played-checkbox">Alle</label>
+        </p>
+    </div>
+    <div class="col">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="playersAreOpen" id="open-player-checkbox"
+                   (change)="onOpenPlayers()"/>
+            <label for="open-player-checkbox">Spieler</label>
+        </p>
+    </div>
+    <div class="col">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="matchesAreOpen" id="open-matches-checkbox"
+                   (change)="onOpenMatches()"/>
+            <label for="open-matches-checkbox">Spiele</label>
+        </p>
+    </div>
+</div>
+<div *ngIf="selectedTab" class="row">
+    <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">
+        <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r=index">
+            <toma-discipline-stage [stage]="currentStage" (onResultForMatch)="onResultForMatch($event)" [index]="r"
+                                   (onDeleteStage)="onDeleteStage($event)"></toma-discipline-stage>
+        </div>
+    </div>
+    <div *ngIf="selectedTab.groups" class="disciplineTable disciplineTable--4cols">
+        <div class="row" *ngFor="let currentGroup of selectedTab.groups" class="disciplineTable-cell">
+            <toma-discipline-group [group]="currentGroup"
+                                   (onResultForMatch)="onResultForMatch($event)"></toma-discipline-group>
+        </div>
+    </div>
+</div>

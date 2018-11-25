@@ -18,7 +18,7 @@ export class DisciplineSelectComponent {
     }
 
     @Input('disciplines')
-    set table(value: Discipline[]) {
+    set disciplines(value: Discipline[]) {
         this._disciplines = value;
         const disciplines = this.disciplines.filter(discipline => discipline.active);
         const result = [];
@@ -33,7 +33,7 @@ export class DisciplineSelectComponent {
             name: 'Alle'
         });
         this.openDisciplines = result.concat(disciplines);
-        this.selectedDiscipline = this.disciplines[0].id;
+        this.selectedDiscipline = this.openDisciplines[0].id;
     }
 
     @Input() showWaitingList: boolean;
