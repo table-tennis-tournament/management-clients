@@ -1,5 +1,6 @@
 package models
 
+import org.joda.time.DateTime
 import play.api.libs.json.{Json, Writes}
 
 /**
@@ -8,6 +9,10 @@ import play.api.libs.json.{Json, Writes}
 
 object TableModel {
   import models.PlayerModel._
+  import play.api.libs.json.JodaWrites
+  import models.MatchModel.allMatchInfoWrites
+
+  implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
 
   implicit val playerWrites = new Writes[Player] {
     def writes(player: Player) = Json.obj(
@@ -113,7 +118,7 @@ case class TableInfo(
     id: Long,
     tableNumber: Int,
     isLocked: Option[Boolean],
-    ttMatch: Seq[AllMatchInfoTable]
+    ttMatch: Seq[AllMatchInfo]
   )
 
 case class TTTable(

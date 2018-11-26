@@ -16,7 +16,7 @@ import slick.driver.JdbcProfile
 import com.github.tototoshi.slick.MySQLJodaSupport._
 import play.api.libs.json.Json
 import slick.ast.Union
-import websocket.WebSocketActor.{MatchListDelete, MatchToTable}
+import websocket.WebSocketActor.{UpdateMatchList, UpdateTable}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -61,6 +61,30 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   implicit def seqToContainsAnyOf[T](seq: Seq[T]) = new ContainsAnyOf(seq)
+
+  def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
+    val p1 = ttMatch.player1Ids map {id => getPlayerTypes(getPlayer(id))}
+    val p2 = ttMatch.player2Ids map {id => getPlayerTypes(getPlayer(id))}
+    val mt = getMatchType(ttMatch.matchTypeId)
+    val ty = getType(ttMatch.typeId)
+    val g = getGroup(ttMatch.groupId)
+    val pl = isPlayable(ttMatch)
+    val inML = isInMatchList(ttMatch)
+    val tn = getTTTableFromMatchId(ttMatch.id)
+    if (mt.isDefined && ty.isDefined)
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
+    else
+      None
+  }
+
+  def getAllTableInfo(ttTable: TTTable): TableInfo = {
+    TableInfo(
+      ttTable.id,
+      ttTable.tableNumber,
+      ttTable.isLocked,
+      ttTable.matchId.map(id => getAllMatchInfo(getMatch(id).get).get)
+    )
+  }
 
   def updateTTTables() = {
     Logger.info("update()")
@@ -160,11 +184,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
     def groupId = column[Option[Long]]("Tabl_Group")
 
-    //def isLocked = column[Option[Boolean]]("Tabl_isLocked")
+    def isLocked = column[Option[Boolean]]("Tabl_isLocked")
 
     //def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, None) <> (TTTableDAO.tupled, TTTableDAO.unapply _)
+    def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply _)
   }
 
   // Matches
@@ -231,8 +255,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
           }
           Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
           if(res) {
-            pub ! MatchToTable(tableId)
-            pub ! MatchListDelete
+            pub ! UpdateTable(allTTTables().map(t => getAllTableInfo(t)))
+            pub ! UpdateMatchList(getMatchList)
           }
         case _ =>
       }
@@ -359,21 +383,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def getMatch(id: Long): Option[TTMatch] = {
     ttMatchSeq.filter(_.id == id).headOption
-  }
-
-  def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
-    val p1 = ttMatch.player1Ids map {id => getPlayerTypes(getPlayer(id))}
-    val p2 = ttMatch.player2Ids map {id => getPlayerTypes(getPlayer(id))}
-    val mt = getMatchType(ttMatch.matchTypeId)
-    val ty = getType(ttMatch.typeId)
-    val g = getGroup(ttMatch.groupId)
-    val pl = isPlayable(ttMatch)
-    val inML = isInMatchList(ttMatch)
-    val tn = getTTTableFromMatchId(ttMatch.id)
-    if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
-    else
-      None
   }
 
   def getMatchesInGroup(id: Long): Seq[TTMatch] = {
@@ -671,7 +680,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 //    }
 //  }
 
-  def getMatchList = ttMatchListSeq.sortBy(_.position)
+  def getMatchList = {
+    ttMatchListSeq.sortBy(_.position)
+  }
+
+  def getAllMatchList = {
+    val ml = ttMatchListSeq.sortBy(_.position)
+    ml map {mlEntry =>
+      val m = mlEntry.matchId.map(id => getMatch(id)).filter(_.isDefined).map(_.get)
+      val mi = m.map(m => getAllMatchInfo(m)).filter(_.isDefined).map(_.get)
+      MatchListInfo(mlEntry, mi)
+    }
+  }
 
   def setMatchList(ml: Seq[MatchList]) = {
     ttMatchListSeq = ml

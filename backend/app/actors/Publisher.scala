@@ -8,8 +8,8 @@ import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
 
 import akka.actor._
-import akka.contrib.pattern.DistributedPubSubExtension
-import akka.contrib.pattern.DistributedPubSubMediator.Publish
+import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
+import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import models.{AllMatchInfo, TTMatch}
 import play.api.Logger
 import websocket.WebSocketActor.Message
@@ -23,7 +23,7 @@ class Publisher extends Actor {
 
   // activate the extension
   Logger.debug("Publisher started")
-  val mediator = DistributedPubSubExtension.get(context.system).mediator
+  val mediator = DistributedPubSub(context.system).mediator
 
   def receive = {
     case in =>

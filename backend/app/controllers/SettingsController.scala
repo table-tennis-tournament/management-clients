@@ -1,12 +1,11 @@
 package controllers
 
-import javax.inject.Named
+import javax.inject.{Inject, Named}
 
 import actors.PrinterActor._
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import com.google.inject.Inject
 import dao.Tables
 import models.{Answer, Setting}
 import play.api.libs.json.Json

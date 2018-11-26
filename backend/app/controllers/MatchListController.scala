@@ -1,17 +1,16 @@
 package controllers
 
 import java.util.UUID
-import javax.inject.Named
+import javax.inject.{Inject, Named}
 
 import akka.actor.ActorRef
-import com.google.inject.Inject
 import dao.Tables
 import models._
 import play.api.Logger
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{AbstractController, Action, BaseController, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import websocket.WebSocketActor.{MatchListActive, MatchListAdd, MatchListDelete, MatchListMove}
+import websocket.WebSocketActor.UpdateMatchList
 
 import scala.None
 import scala.concurrent.Future
@@ -31,31 +30,6 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
     Ok(Json.toJson(Answer(true, "started matches")))
   }
 
-  def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
-    val p1 = ttMatch.player1Ids map {id => tables.getPlayer(id)}
-    val p2 = ttMatch.player2Ids map {id => tables.getPlayer(id)}
-    val mt = tables.getMatchType(ttMatch.matchTypeId)
-    val ty = tables.getType(ttMatch.typeId)
-    val g = tables.getGroup(ttMatch.groupId)
-    val pl = tables.isPlayable(ttMatch)
-    val inML = tables.isInMatchList(ttMatch)
-    val tn = tables.getTTTableFromMatchId(ttMatch.id)
-    if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
-    else
-      None
-  }
-
-  def getAllMatchList = Action{
-    val ml = tables.getMatchList
-    val x = ml map {mlEntry =>
-      val m = mlEntry.matchId.map(id => tables.getMatch(id)).filter(_.isDefined).map(_.get)
-      val mi = m.map(m => getAllMatchInfo(m)).filter(_.isDefined).map(_.get)
-      MatchListInfo(mlEntry, mi)
-    }
-    Ok(Json.toJson(x))
-  }
-
   def addMatch = Action{ request =>
     val jsonO = request.body.asJson
     jsonO match {
@@ -72,8 +46,8 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
               }
               val newMLAdded = newML ++ Seq(newMLEntry)
               tables.setMatchList(newMLAdded)
-              pub ! MatchListAdd
               tables.startNextMatch
+              pub ! UpdateMatchList(tables.getMatchList)
               Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
             } else {
               BadRequest(Json.toJson(Answer(false, "match is already in match list", newMLEntry.uuid)))
@@ -90,7 +64,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
     Logger.info(tables.getMatchList.toString())
     Logger.info(uuid)
     if(tables.delMatchList(UUID.fromString(uuid))){
-      pub ! MatchListDelete
+      pub ! UpdateMatchList(tables.getMatchList)
       Ok(Json.toJson(Answer(true, "match deleted")))
     } else {
       BadRequest(Json.toJson(Answer(false, "UUID not found")))
@@ -104,7 +78,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
 
   def setActive(isActive: Boolean) = Action {
     tables.autoStart = isActive
-    pub ! MatchListActive
+    pub ! UpdateMatchList(tables.getMatchList)
     Ok(Json.toJson(Answer(true,"set to " + isActive.toString)))
   }
 
@@ -125,10 +99,14 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
           else m.copy(position = m.position + 1)
         }
         tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
-        pub ! MatchListMove
+        pub ! UpdateMatchList(tables.getMatchList)
         Ok(Json.toJson(Answer(true, "changed match list")))
       }
       case _ => BadRequest(Json.toJson(Answer(false, "UUID not found")))
     }
+  }
+
+  def getAllMatchList = Action {
+     Ok(Json.toJson(tables.getAllMatchList))
   }
 }

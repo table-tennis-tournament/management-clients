@@ -1,11 +1,10 @@
 package modules
 
 import actors.{PrinterActor, Publisher}
-import com.google.inject.AbstractModule
-import play.api.libs.concurrent.AkkaGuiceSupport
 import scheduler.Scheduler
 import dao.Tables
-import play.api.Logger
+import com.google.inject.AbstractModule
+import play.api.libs.concurrent.AkkaGuiceSupport
 
 /**
   * Created by jonas on 06.11.16.

@@ -6,11 +6,15 @@ import org.joda.time.DateTime
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 import play.api.libs.functional.syntax._
 
+
 /**
   * Created by jonas on 29.12.16.
   */
 object MatchModel {
   import models.PlayerModel._
+  import play.api.libs.json.JodaWrites
+
+  implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
 
   implicit val ttTableWrites = new Writes[TTTable] {
     def writes(ttTable: TTTable) = Json.obj(
@@ -225,3 +229,13 @@ case class MatchListInfo(
     matchList: MatchList,
     ttMatch: Seq[AllMatchInfo]
   )
+
+case class DiscilplinMatches(
+    name: String,
+    players: Seq[Player],
+    matches: Seq[AllMatchInfo],
+    tableNumbers: Seq[Int],
+    isPlayerActive: Boolean = true,
+    isMatchActive: Boolean = true,
+    isComplete: Boolean = false
+)
