@@ -50,4 +50,12 @@ export class DisciplineGroupComponent {
         this.tableNumbers = numberArray;
     }
 
+    onResultClicked() {
+
+    }
+
+    isGroupPlayable() {
+        
+    }
+
 }
