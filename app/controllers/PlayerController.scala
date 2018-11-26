@@ -1,6 +1,7 @@
 package controllers
 
-import com.google.inject.Inject
+import javax.inject.Inject
+
 import dao.Tables
 import models.Player
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
