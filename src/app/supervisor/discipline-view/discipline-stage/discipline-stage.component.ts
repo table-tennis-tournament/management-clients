@@ -19,6 +19,9 @@ export class DisciplineStageComponent {
     }
 
     @Input()
+    typeColor: string[];
+
+    @Input()
     stage: DisciplineStage;
 
     @Input() index: number;

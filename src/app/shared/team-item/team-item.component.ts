@@ -14,4 +14,6 @@ export class TeamItemComponent {
 
     @Input() showClubs = false;
 
+    @Input() typeColor: string[];
+
 }

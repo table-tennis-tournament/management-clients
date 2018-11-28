@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState} from '../app-state.reducer';
+import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
 import {Match} from '../shared/data/match.model';
 import {Observable} from 'rxjs';
 import {MatchList} from './matchlist.model';
@@ -19,6 +19,7 @@ export class SupervisorPageComponent implements OnInit {
     matchesLoading: Observable<boolean>;
     matchList: Observable<MatchList[]>;
     disciplines: Observable<Discipline[]>;
+    typeColor: Observable<string[]>;
 
     constructor(private store: Store<any>) {
     }
@@ -30,6 +31,7 @@ export class SupervisorPageComponent implements OnInit {
         this.matchesLoading = this.store.select(getMatchesLoading);
         this.matchList = this.store.select(getMatchListState);
         this.disciplines = this.store.select(getDisciplineState);
+        this.typeColor = this.store.select(getTypeColorsState);
     }
 
 }

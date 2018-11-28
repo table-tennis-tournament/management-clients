@@ -1,10 +1,16 @@
 <div class="header-main-container">
         <span class="header-center-content">
-           <div class="single-bordered"><toma-team-item [team]="match.team1" [showDisciplines]="true"></toma-team-item></div>
-           <div class="single-bordered"><toma-team-item [team]="match.team2" [showDisciplines]="true"></toma-team-item></div>
+           <div class="single-bordered">
+               <toma-team-item [team]="match.team1" [typeColor]="typeColor" class="padding-left"
+                               [showDisciplines]="true"></toma-team-item>
+           </div>
+           <div class="single-bordered">
+               <toma-team-item [team]="match.team2" [typeColor]="typeColor" class="padding-left"
+                               [showDisciplines]="true"></toma-team-item>
+           </div>
         </span>
-  <span class="header-right-content-single">
+    <span class="header-right-content">
                 <span *ngIf="match.table[0]" class="circle right">{{match.table[0]}}</span>
-                <i *ngIf="match.match.result"  class="material-icons right">done</i>
+                <i *ngIf="match.match.result" class="material-icons right">done</i>
         </span>
 </div>

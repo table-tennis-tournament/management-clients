@@ -1,7 +1,7 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
-import {getTablesLoading, getTableState} from '../app-state.reducer';
+import {getTablesLoading, getTableState, getTypeColorsState} from '../app-state.reducer';
 import {
     AssignMatchToTable,
     AssignToSecondTable,
@@ -31,6 +31,7 @@ export class TableListPageComponent implements OnInit {
 
     tables: Observable<TableDto[]>;
     tablesLoading: Observable<boolean>;
+    typeColor: Observable<string[]>;
 
     constructor(private store: Store<any>, private modalService: MzModalService,
                 private tableService: TableService, private toastService: ToastrService) {
@@ -40,6 +41,7 @@ export class TableListPageComponent implements OnInit {
         this.store.dispatch(new LoadTables(null));
         this.tables = this.store.select(getTableState);
         this.tablesLoading = this.store.select(getTablesLoading);
+        this.typeColor = this.store.select(getTypeColorsState);
 
     }
 

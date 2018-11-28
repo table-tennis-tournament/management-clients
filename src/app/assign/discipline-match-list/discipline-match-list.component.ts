@@ -22,6 +22,9 @@ export class DisciplineMatchListComponent {
     @Input()
     disciplines: Discipline[];
 
+    @Input()
+    typeColor: string[];
+
     currentMatchesToShow: Match[];
 
     onDisciplineSelected(disciplineId: number) {

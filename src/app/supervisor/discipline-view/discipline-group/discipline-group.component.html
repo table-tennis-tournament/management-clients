@@ -1,4 +1,4 @@
-<div class="card {{group.bgColor}}">
+<div class="card grey">
     <div class="card-content simple-padding">
          <span class="card-title group-view-header">
             <span dnd-draggable [dragEnabled]="true" [dragData]="group.matches">{{group.name}}</span>
@@ -17,7 +17,8 @@
             <mz-collapsible-item-body class="no-padding">
                 <mz-collection>
                     <mz-collection-item *ngFor="let currentPlayer of group.players">
-                        <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
+                        <toma-team-item [team]="[currentPlayer]" [typeColor]="typeColor"
+                                        [showDisciplines]="true"></toma-team-item>
                     </mz-collection-item>
                 </mz-collection>
             </mz-collapsible-item-body>
@@ -35,9 +36,11 @@
                                         [dragData]="currentMatch">
                         <div>
                             <toma-team-item [team]="currentMatch.team1"
+                                            [typeColor]="typeColor"
                                             [showDisciplines]="false"></toma-team-item>
                             -
                             <toma-team-item [team]="currentMatch.team2"
+                                            [typeColor]="typeColor"
                                             [showDisciplines]="false"></toma-team-item>
                             <span *ngIf="currentMatch.table[0]"
                                   class="circle right">{{currentMatch.table[0]}}</span>

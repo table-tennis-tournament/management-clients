@@ -50,8 +50,10 @@ import {MatchlistViewComponent} from './supervisor/matchlist-view/matchlist-view
 import {DisciplineEffects} from './discipline/redux/discipline.effects';
 import {DisciplineGroupComponent} from './supervisor/discipline-view/discipline-group/discipline-group.component';
 import {DisciplineStageComponent} from './supervisor/discipline-view/discipline-stage/discipline-stage.component';
-import { DisciplineStageItemComponent } from './supervisor/discipline-view/discipline-stage/discipline-stage-item/discipline-stage-item.component';
-import { TeamItemComponent } from './shared/team-item/team-item.component';
+import {DisciplineStageItemComponent} from './supervisor/discipline-view/discipline-stage/discipline-stage-item/discipline-stage-item.component';
+import {TeamItemComponent} from './shared/team-item/team-item.component';
+import {SettingsEffects} from './settings/redux/settings.effects';
+import {SettingsPageComponent} from './settings/settings.page.component';
 
 @NgModule({
     declarations: [
@@ -78,7 +80,8 @@ import { TeamItemComponent } from './shared/team-item/team-item.component';
         DisciplineGroupComponent,
         DisciplineStageComponent,
         DisciplineStageItemComponent,
-        TeamItemComponent
+        TeamItemComponent,
+        SettingsPageComponent
     ],
     imports: [
         BrowserModule,
@@ -108,7 +111,7 @@ import { TeamItemComponent } from './shared/team-item/team-item.component';
             name: 'Devtools',
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects]),
+        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects, SettingsEffects]),
         HttpClientModule
     ],
 

@@ -21,6 +21,9 @@ export class DisciplineViewComponent {
     @Input()
     matches: Match[];
 
+    @Input()
+    typeColor: string[];
+
     _disciplines: Discipline[];
 
     get disciplines() {

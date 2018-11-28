@@ -1,16 +1,16 @@
 <span *ngIf="team[1]&&team[0]">
     <span *ngIf="showDisciplines">
-        <span  *ngFor="let currentType of team[0].types" class="green square"></span>
+        <span *ngFor="let currentType of team[0].types" class="{{typeColor[currentType]}} square"></span>
     </span>
   {{team[0].lastName}}/
     <span *ngIf="showDisciplines">
-        <span *ngFor="let currentType of team[1].types" class="green square"></span>
+        <span *ngFor="let currentType of team[1].types" class="{{typeColor[currentType]}} square"></span>
     </span>
   {{team[1].lastName}}
 </span>
 <span *ngIf="!team[1]&&team[0]">
         <span *ngIf="showDisciplines">
-           <span  *ngFor="let currentType of team[0].types" class="green square"></span>
+           <span *ngFor="let currentType of team[0].types" class="{{typeColor[currentType]}} square"></span>
         </span>
   {{team[0].firstName}} {{team[0].lastName}}
   <span *ngIf="showClubs">

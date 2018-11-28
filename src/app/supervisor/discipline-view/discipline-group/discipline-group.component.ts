@@ -12,6 +12,9 @@ export class DisciplineGroupComponent {
     allMatchCount: number;
     private tableNumbers: any[];
 
+    @Input()
+    typeColor: string[];
+
     constructor() {
     }
 
