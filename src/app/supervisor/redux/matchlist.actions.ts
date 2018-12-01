@@ -12,7 +12,10 @@ export enum MatchListActionTypes {
     AssignError = '[Matchlist] Assign Error',
     DeleteItem = '[Matchlist] Delete item',
     DeleteItemSuccess = '[Matchlist] Delete item Success',
-    DeleteItemError = '[Matchlist] Delete item Error'
+    DeleteItemError = '[Matchlist] Delete item Error',
+    MoveItem = '[Matchlist] Move item',
+    MoveItemSuccess = '[Matchlist] Move item Success',
+    MoveItemError = '[Matchlist] Move item Error'
 }
 
 export class LoadMatchList implements Action {
@@ -79,6 +82,27 @@ export class DeleteMatchListItemError implements Action {
     }
 }
 
+export class MoveMatchListItem implements Action {
+    readonly type = MatchListActionTypes.MoveItem;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class MoveMatchListItemSuccess implements Action {
+    readonly type = MatchListActionTypes.MoveItemSuccess;
+
+    constructor(public payload: StatusDto) {
+    }
+}
+
+export class MoveMatchListItemError implements Action {
+    readonly type = MatchListActionTypes.MoveItemError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type MatchListActionUnion =
     | LoadMatchList
     | LoadMatchListSuccess
@@ -88,4 +112,7 @@ export type MatchListActionUnion =
     | AssignToMatchListError
     | DeleteMatchListItem
     | DeleteMatchListItemSuccess
-    | DeleteMatchListItemError;
+    | DeleteMatchListItemError
+    | MoveMatchListItem
+    | MoveMatchListItemSuccess
+    | MoveMatchListItemError;

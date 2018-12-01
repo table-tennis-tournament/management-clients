@@ -10,7 +10,7 @@ import {
     DeleteMatchListItemSuccess,
     LoadMatchList,
     LoadMatchListSuccess,
-    MatchListActionTypes
+    MatchListActionTypes, MoveMatchListItem, MoveMatchListItemSuccess
 } from './matchlist.actions';
 import {testData} from './test.data';
 import {MatchListService} from '../matchlist.service';
@@ -120,6 +120,33 @@ describe('the match effects', () => {
 
             matchListEffects.deleteMatchListItem$.subscribe((result) => {
                 expect(result.type).toEqual(MatchListActionTypes.DeleteItemError);
+                done();
+            });
+        });
+    });
+
+    describe('moveMatchListItem', () => {
+
+        it('should return a MoveMatchListItemSuccess', (done) => {
+            const result = {}
+            const expectedResult = new MoveMatchListItemSuccess(result);
+            spyOn(matchListService, 'moveMatchListItem').and.returnValue(of(result));
+
+            actions.next(new MoveMatchListItem({}));
+
+            matchListEffects.moveMatchListItem$.subscribe((result) => {
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
+
+        it('should return a MoveMatchListItemError', (done) => {
+            spyOn(matchListService, 'moveMatchListItem').and.returnValue(throwError({msg: 'Error'}));
+
+            actions.next(new MoveMatchListItem(null));
+
+            matchListEffects.moveMatchListItem$.subscribe((result) => {
+                expect(result.type).toEqual(MatchListActionTypes.MoveItemError);
                 done();
             });
         });

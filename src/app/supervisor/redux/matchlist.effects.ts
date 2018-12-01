@@ -9,7 +9,7 @@ import {
     AssignToMatchListSuccess, DeleteMatchListItem, DeleteMatchListItemError, DeleteMatchListItemSuccess,
     LoadMatchListError,
     LoadMatchListSuccess,
-    MatchListActionTypes
+    MatchListActionTypes, MoveMatchListItem, MoveMatchListItemError, MoveMatchListItemSuccess
 } from './matchlist.actions';
 import {MatchListService} from '../matchlist.service';
 import {PrintTable} from '../../table/redux/table.actions';
@@ -57,6 +57,21 @@ export class MatchListEffects {
                     catchError(err => {
                         this.toastService.error('Fehler beim Löschen des Matchlist-items', 'Error');
                         return of(new DeleteMatchListItemError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    moveMatchListItem$: Observable<Action> = this.actions$.pipe(
+        ofType(MatchListActionTypes.MoveItem),
+        switchMap((action: MoveMatchListItem) => {
+            return this.matchListService
+                .moveMatchListItem(action.payload).pipe(
+                    map(status => new MoveMatchListItemSuccess(status)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Verschieben des Matchlist-items', 'Error');
+                        return of(new MoveMatchListItemError(err));
                     })
                 );
         })

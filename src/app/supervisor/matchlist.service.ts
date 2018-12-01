@@ -27,4 +27,8 @@ export class MatchListService {
         return this.http.delete(`api/matchlist/deleteMatch/${matchId}`);
     }
 
+    moveMatchListItem(matchListItem: MatchListItem):Observable<StatusDto> {
+        return this.http.get(`api/matchlist/move/${matchListItem.id}/${matchListItem.position}`);
+    }
+
 }

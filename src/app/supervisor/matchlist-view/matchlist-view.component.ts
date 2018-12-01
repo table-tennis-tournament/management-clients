@@ -21,11 +21,36 @@ export class MatchlistViewComponent {
     @Output()
     assignMatchListItem = new EventEmitter<MatchListItem>();
 
+    @Output()
+    moveMatchListItem = new EventEmitter<MatchListItem>();
+
     constructor() {
     }
 
     onDropSuccess(event) {
-        console.log(event);
+        const matchListItem = event.match.matchListItem;
+        const newPosition = this.getListIndex(matchListItem.id);
+        if(newPosition == null){
+            console.log('new position was not found.')
+            return;
+        }
+        this.moveMatchListItem.emit(
+            {
+                id: matchListItem.id,
+                position: newPosition
+            }
+        );
+    }
+
+    getListIndex(matchListId){
+        let currentMatch = null;
+        for(let index = 0; index < this.matchListMatches.length; index++){
+            currentMatch = this.matchListMatches[index];
+            if(currentMatch.matchListItem.id === matchListId){
+                return index;
+            }
+        }
+        return null;
     }
 
     transferDataSuccess(event){
