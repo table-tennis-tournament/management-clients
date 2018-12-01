@@ -11,7 +11,4 @@ export class DisciplineStageItemComponent {
     @Input()
     match: Match;
 
-    @Input()
-    typeColor: string[];
-
 }

@@ -1,12 +1,14 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Player} from '../data/player.model';
+import {Store} from '@ngrx/store';
+import {getTypeColorsState} from '../../app-state.reducer';
 
 @Component({
     selector: 'toma-team-item',
     templateUrl: './team-item.component.html',
     styleUrls: ['./team-item.component.scss']
 })
-export class TeamItemComponent {
+export class TeamItemComponent implements OnInit {
 
     @Input() team: Player[];
 
@@ -14,6 +16,13 @@ export class TeamItemComponent {
 
     @Input() showClubs = false;
 
-    @Input() typeColor: string[];
+    typeColor: string[];
+
+    constructor(private store: Store<any>) {
+    }
+
+    ngOnInit() {
+        this.store.select(getTypeColorsState).subscribe(x => this.typeColor = x);
+    }
 
 }
