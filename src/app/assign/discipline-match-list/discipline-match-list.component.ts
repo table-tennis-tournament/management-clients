@@ -45,10 +45,8 @@ export class DisciplineMatchListComponent {
     }
 
     isMatchInGroup(groupId: number, currentMatch: Match) {
-        return currentMatch !== null &&
-            currentMatch !== undefined &&
-            currentMatch.group !== null &&
-            currentMatch.group !== undefined &&
+        return currentMatch != null &&
+            currentMatch.group != null &&
             currentMatch.group.id === groupId;
     }
 
