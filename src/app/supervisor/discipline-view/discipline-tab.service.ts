@@ -7,6 +7,7 @@ import {DisciplineGroup} from './models/discipline.group.model';
 @Injectable({
     providedIn: 'root'
 })
+//TODO: do this on server
 export class DisciplineTabService {
 
     isMatchActive = true;

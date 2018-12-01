@@ -8,32 +8,36 @@
             <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span>
         </span>
     </div>
-    <mz-collapsible
-            [mode]="'expandable'">
-        <mz-collapsible-item [active]="group.isPlayerActive" class="no-padding">
+
+    <mz-collapsible [mode]="'expandable'">
+        <mz-collapsible-item [active]="group.isPlayerActive">
             <mz-collapsible-item-header>
-                <i class="material-icons">perm_identity</i>Spieler
+                <div class="black-text">
+                    <i class="material-icons">perm_identity</i>Spieler
+                </div>
             </mz-collapsible-item-header>
-            <mz-collapsible-item-body class="no-padding">
-                <mz-collection>
-                    <mz-collection-item *ngFor="let currentPlayer of group.players">
-                        <toma-team-item [team]="[currentPlayer]"
-                                        [showDisciplines]="true"></toma-team-item>
-                    </mz-collection-item>
-                </mz-collection>
+            <mz-collapsible-item-body>
+                <div class="collection custom-margin black-text">
+                    <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
+                        <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
+                    </a>
+                </div>
             </mz-collapsible-item-body>
         </mz-collapsible-item>
         <mz-collapsible-item [active]="group.isMatchActive">
             <mz-collapsible-item-header>
-                <i class="material-icons">view_list</i>Spiele
+                <div class="black-text">
+                    <i class="material-icons">view_list</i>Spiele
+                </div>
             </mz-collapsible-item-header>
             <mz-collapsible-item-body>
-                <mz-collection>
-                    <mz-collection-item *ngFor="let currentMatch of group.matches"
-                                        (dblclick)="onResultClicked(currentMatch)"
-                                        dnd-draggable
-                                        [dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList"
-                                        [dragData]="currentMatch">
+                <div class="collection custom-margin">
+                    <a *ngFor="let currentMatch of group.matches"
+                       (dblclick)="onResultClicked(currentMatch)"
+                       dnd-draggable
+                       class="collection-item"
+                       [dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList"
+                       [dragData]="currentMatch">
                         <div>
                             <toma-team-item [team]="currentMatch.team1"
                                             [showDisciplines]="false"></toma-team-item>
@@ -44,8 +48,26 @@
                                   class="circle right">{{currentMatch.table[0]}}</span>
                             <i *ngIf="currentMatch.match.result" class="material-icons right">done</i>
                         </div>
-                    </mz-collection-item>
-                </mz-collection>
+                    </a>
+                </div>
+                <!--<mz-collection>-->
+                <!--<mz-collection-item *ngFor="let currentMatch of group.matches"-->
+                <!--(dblclick)="onResultClicked(currentMatch)"-->
+                <!--dnd-draggable-->
+                <!--[dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList"-->
+                <!--[dragData]="currentMatch">-->
+                <!--<div>-->
+                <!--<toma-team-item [team]="currentMatch.team1"-->
+                <!--[showDisciplines]="false"></toma-team-item>-->
+                <!-- - -->
+                <!--<toma-team-item [team]="currentMatch.team2"-->
+                <!--[showDisciplines]="false"></toma-team-item>-->
+                <!--<span *ngIf="currentMatch.table[0]"-->
+                <!--class="circle right">{{currentMatch.table[0]}}</span>-->
+                <!--<i *ngIf="currentMatch.match.result" class="material-icons right">done</i>-->
+                <!--</div>-->
+                <!--</mz-collection-item>-->
+                <!--</mz-collection>-->
             </mz-collapsible-item-body>
         </mz-collapsible-item>
     </mz-collapsible>

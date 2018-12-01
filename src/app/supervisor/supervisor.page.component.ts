@@ -7,6 +7,7 @@ import {MatchList} from './matchlist.model';
 import {Discipline} from '../discipline/discipline.model';
 import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {LoadMatches} from '../assign/redux/match.actions';
+import {AssignToMatchList, DeleteMatchListItem, LoadMatchList} from './redux/matchlist.actions';
 
 @Component({
     selector: 'toma-supervisor.page',
@@ -27,11 +28,20 @@ export class SupervisorPageComponent implements OnInit {
     ngOnInit() {
         this.store.dispatch(new LoadDiscipline(null));
         this.store.dispatch(new LoadMatches(null));
+        this.store.dispatch(new LoadMatchList(null));
         this.matches = this.store.select(getMatchesState);
         this.matchesLoading = this.store.select(getMatchesLoading);
         this.matchList = this.store.select(getMatchListState);
         this.disciplines = this.store.select(getDisciplineState);
         this.typeColor = this.store.select(getTypeColorsState);
+    }
+
+    onMatchListItemDelete(event){
+        this.store.dispatch(new DeleteMatchListItem(event.matchListItem.id))
+    }
+
+    onAssignMatchListItem(event){
+        this.store.dispatch(new AssignToMatchList(event));
     }
 
 }

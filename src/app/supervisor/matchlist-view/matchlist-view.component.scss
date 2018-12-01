@@ -1,0 +1,38 @@
+.waiting-list-drop-zone {
+  min-height: 100px;
+  width: 200px;
+  height: 100px;
+  position: fixed;
+  z-index: 999999;
+}
+
+.waiting-list-sorting-area{
+  min-height: 100px;
+  margin-top: 150px;
+}
+
+.collection.custom-margin{
+  margin: -30px;
+}
+
+.reverse-margin {
+  margin: -1rem;
+}
+
+.header-main-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  flex-grow: 1;
+  min-width: 220px;
+}
+
+.header-center-content {
+  flex: 1;
+  order: 1;
+}
+
+.header-right-content {
+  width: 33px;
+  order: 2;
+}
