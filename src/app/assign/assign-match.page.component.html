@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col s2">
+        <toma-discipline-match-list
+                [matches]="matches | async"
+                [matchesLoading]="matchesLoading | async"
+                [matchList]="matchList | async">
+        </toma-discipline-match-list>
+    </div>
+    <div class="col s10">
+        <toma-table-list-page></toma-table-list-page>
+    </div>
+</div>
+

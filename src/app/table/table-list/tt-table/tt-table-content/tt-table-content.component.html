@@ -15,7 +15,8 @@
   </p>
 </span>
 
-<span class="card-title activator" *ngIf="table?.matches?.length < 1">
+<span class="card-title activator" *ngIf="table?.matches?.length < 1" dnd-droppable
+      (onDropSuccess)="onMatchDrop($event)">
     <h5>
         <span *ngIf="table.number" class="circle">{{table.number}}</span>
         <span *ngIf="!table.isLocked" id="unLockedId">Frei</span>

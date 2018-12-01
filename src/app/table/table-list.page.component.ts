@@ -3,6 +3,7 @@ import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {getTablesLoading, getTableState} from '../app-state.reducer';
 import {
+    AssignMatchToTable,
     AssignToSecondTable,
     FreeTable,
     LoadTables,
@@ -20,9 +21,10 @@ import {SelectMatchModalComponent} from './table-list/select-match-modal/select-
 import {TableService} from './table.service';
 import {SelectTableModalComponent} from './table-list/select-table-modal/select-table-modal.component';
 import {ToastrService} from 'ngx-toastr';
+import {MatchToTable} from './table-list/tt-table/tt-table-content/matchtotable.model';
 
 @Component({
-    selector: 'toma-table-list.page',
+    selector: 'toma-table-list-page',
     templateUrl: './table-list.page.component.html'
 })
 export class TableListPageComponent implements OnInit {
@@ -121,6 +123,10 @@ export class TableListPageComponent implements OnInit {
 
     private isSingleMatchOnTable(table: TableDto) {
         return table.matches.length !== 1;
+    }
+
+    onAssignMatchToTable(event: MatchToTable) {
+        this.store.dispatch(new AssignMatchToTable(event));
     }
 
     private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
