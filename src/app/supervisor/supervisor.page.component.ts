@@ -7,7 +7,7 @@ import {MatchList} from './matchlist.model';
 import {Discipline} from '../discipline/discipline.model';
 import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {LoadMatches} from '../assign/redux/match.actions';
-import {AssignToMatchList, DeleteMatchListItem, LoadMatchList} from './redux/matchlist.actions';
+import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem} from './redux/matchlist.actions';
 
 @Component({
     selector: 'toma-supervisor.page',
@@ -36,12 +36,16 @@ export class SupervisorPageComponent implements OnInit {
         this.typeColor = this.store.select(getTypeColorsState);
     }
 
-    onMatchListItemDelete(event){
-        this.store.dispatch(new DeleteMatchListItem(event.matchListItem.id))
+    onMatchListItemDelete(event) {
+        this.store.dispatch(new DeleteMatchListItem(event.matchListItem.id));
     }
 
-    onAssignMatchListItem(event){
+    onAssignMatchListItem(event) {
         this.store.dispatch(new AssignToMatchList(event));
+    }
+
+    onMatchListItemMove(event) {
+        this.store.dispatch(new MoveMatchListItem(event));
     }
 
 }

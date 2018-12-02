@@ -27,38 +27,24 @@ export class MatchlistViewComponent {
     constructor() {
     }
 
+// {item: CdkDrag, currentIndex: 1, previousIndex: 2, container: CdkDropList, previousContainer: CdkDropList}
     onDropSuccess(event) {
-        const matchListItem = event.match.matchListItem;
-        const newPosition = this.getListIndex(matchListItem.id);
-        if(newPosition == null){
-            console.log('new position was not found.')
-            return;
-        }
+        const matchListItem = this.matchListMatches[event.previousIndex];
+        const newPosition = event.currentIndex;
         this.moveMatchListItem.emit(
             {
-                id: matchListItem.id,
+                id: matchListItem.matchListItem.id,
                 position: newPosition
             }
         );
     }
 
-    getListIndex(matchListId){
-        let currentMatch = null;
-        for(let index = 0; index < this.matchListMatches.length; index++){
-            currentMatch = this.matchListMatches[index];
-            if(currentMatch.matchListItem.id === matchListId){
-                return index;
-            }
-        }
-        return null;
-    }
-
-    transferDataSuccess(event){
+    transferDataSuccess(event) {
         let matchInfo = [];
-        if(this.isSingleDragItem(event)){
+        if (this.isSingleDragItem(event)) {
             matchInfo = [event.dragData];
         }
-        if(this.isGroupDragItem(event)){
+        if (this.isGroupDragItem(event)) {
             matchInfo = event.dragData;
         }
 

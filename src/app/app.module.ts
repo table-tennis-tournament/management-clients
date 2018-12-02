@@ -54,6 +54,7 @@ import {DisciplineStageItemComponent} from './supervisor/discipline-view/discipl
 import {TeamItemComponent} from './shared/team-item/team-item.component';
 import {SettingsEffects} from './settings/redux/settings.effects';
 import {SettingsPageComponent} from './settings/settings.page.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
     declarations: [
@@ -95,6 +96,7 @@ import {SettingsPageComponent} from './settings/settings.page.component';
         MzSelectModule,
         MzCollectionModule,
         MzCollapsibleModule,
+        DragDropModule,
         DndModule.forRoot(),
         FormsModule,
         ToastrModule.forRoot({
