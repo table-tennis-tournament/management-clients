@@ -4,7 +4,9 @@
                 [matches]="matches | async"
                 [disciplines]="disciplines | async"
                 [typeColor]="typeColor | async"
-                [matchesLoading]="matchesLoading | async"></toma-discipline-view>
+                [matchesLoading]="matchesLoading | async"
+                (resultForMatch)="onResultForMatch($event)"
+        ></toma-discipline-view>
     </div>
     <div class="col s2">
         <h4>Warteschlange: </h4>

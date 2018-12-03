@@ -20,4 +20,25 @@ describe('DisciplineTabService', () => {
         const result = service.getTabsForDisciplines(TenDisciplines);
         expect(10).toEqual(result.length);
     }));
+
+    it('should create two tabs for completeData', inject([DisciplineTabService], (service: DisciplineTabService) => {
+        const completeGroup = ThreeMatches.map(match => match);
+        completeGroup.forEach(match => match.match.result = [
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
+            ]
+        ]);
+        const result = service.getTabForMatches(completeGroup);
+        expect(result.groups.length).toEqual(1);
+        expect(result.stages.length).toEqual(0);
+    }));
 });

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
 import {Match} from '../shared/data/match.model';
@@ -8,6 +8,9 @@ import {Discipline} from '../discipline/discipline.model';
 import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {LoadMatches} from '../assign/redux/match.actions';
 import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem} from './redux/matchlist.actions';
+import {MzModalService} from 'ngx-materialize';
+import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
+import {ResultForMatch} from '../table/redux/table.actions';
 
 @Component({
     selector: 'toma-supervisor.page',
@@ -22,7 +25,7 @@ export class SupervisorPageComponent implements OnInit {
     disciplines: Observable<Discipline[]>;
     typeColor: Observable<string[]>;
 
-    constructor(private store: Store<any>) {
+    constructor(private store: Store<any>, private modalService: MzModalService) {
     }
 
     ngOnInit() {
@@ -46,6 +49,14 @@ export class SupervisorPageComponent implements OnInit {
 
     onMatchListItemMove(event) {
         this.store.dispatch(new MoveMatchListItem(event));
+    }
+
+    onResultForMatch(match: Match) {
+        const dialog: ComponentRef<ResultModalComponent> =
+            <ComponentRef<ResultModalComponent>>this.modalService.open(ResultModalComponent);
+        dialog.instance.currentMatch = match;
+        dialog.instance.OnResultForMatch.subscribe(matchResult => this.store.dispatch(new ResultForMatch(matchResult)));
+        return;
     }
 
 }

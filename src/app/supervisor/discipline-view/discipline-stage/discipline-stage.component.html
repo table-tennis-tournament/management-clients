@@ -1,46 +1,34 @@
 <mz-collapsible
         [mode]="'expandable'"
-        [onClose]="onClose()"
-        [onOpen]="onOpen()"
         [popout]="true">
     <mz-collapsible-item [active]="true">
         <mz-collapsible-item-header>
-            <div dnd-draggable [dragEnabled]="true" [dragData]="stage.matches" class="header-main-container">
+            <div dnd-draggable [dragEnabled]="true" [dragData]="stage.matches"
+                 class=" header-main-container">
               <span class="header-center-content">
               <i class="material-icons">view_list</i>
                   {{stage.name}}
               </span>
                 <span class="header-right-content">
-                  <a href="javascript:void(0)" class="secondary-content" (click)="onDelete()"><i
-                          class="material-icons white-text">close</i></a>
-                  <i *ngIf="stage.isComplete" class="material-icons white-text">done</i>
+                    <a href="javascript:void(0)" class="secondary-content" (click)="deleteStage.emit(stage)"><i
+                            class="material-icons">close</i></a>
+                  <i *ngIf="stage.isComplete" class="material-icons">done</i>
               </span>
             </div>
         </mz-collapsible-item-header>
         <mz-collapsible-item-body>
-            <div class="collection">
-                <a *ngFor="let currentMatch of stage.matches" href="javascript:void(0)"
-                   class="collection-item {{lineStageClass[index]}}" (dblclick)="onResultClicked(currentMatch)"
-                   [class.disabled-item]="currentMatch.isInWaitingList||currentMatch.table[0]" dnd-draggable
-                   [dragEnabled]="!currentMatch.isInWaitingList&&!currentMatch.match.result&&!currentMatch.table[0]"
+            <div class="collection {{typeColor[stage.id]}}">
+                <a *ngFor="let currentMatch of stage.matches"
+                   class="collection-item {{lineStageClass[index%3]}}"
+                   (dblclick)="resultForMatch.emit(currentMatch)"
+                   [class.disabled-item]="isInWaitingListOrOnTable(currentMatch)" dnd-draggable
+                   [dragEnabled]="isNotInWaitingListAndNotOnTableAndNotFinished(currentMatch)"
                    [dragData]="currentMatch">
                     <div class="match-item-padding">
                         <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>
-                        </div>
+                    </div>
                 </a>
             </div>
-            <!--<mz-collection>-->
-            <!--<mz-collection-item *ngFor="let currentMatch of stage.matches; let i = index;">-->
-            <!--<a href="javascript:void(0)" class="collection-item {{lineStageClass[i]}}" (dblclick)="onResultClicked(currentMatch)"-->
-            <!--[class.disabled-item]="currentMatch.isInWaitingList||currentMatch.table[0]" dnd-draggable-->
-            <!--[dragEnabled]="!currentMatch.isInWaitingList&&!currentMatch.match.result&&!currentMatch.table[0]" [dragData]="currentMatch">-->
-            <!--<div class="match-item-padding">-->
-            <!--<toma-discipline-stage-item [match]="currentMatch"-->
-            <!--[typeColor]="typeColor"></toma-discipline-stage-item>-->
-            <!--</div>-->
-            <!--</a>-->
-            <!--</mz-collection-item>-->
-            <!--</mz-collection>-->
         </mz-collapsible-item-body>
     </mz-collapsible-item>
 </mz-collapsible>

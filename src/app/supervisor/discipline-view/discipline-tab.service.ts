@@ -7,7 +7,7 @@ import {DisciplineGroup} from './models/discipline.group.model';
 @Injectable({
     providedIn: 'root'
 })
-//TODO: do this on server
+// TODO: do this on server
 export class DisciplineTabService {
 
     isMatchActive = true;
@@ -33,7 +33,8 @@ export class DisciplineTabService {
                     currentItemTab.stages[currentIndex] = {
                         name: currentItem.matchType.name,
                         isComplete: true,
-                        matches: []
+                        matches: [],
+                        id: currentItem.type.id
                     };
                     currentStage = currentItemTab.stages[currentIndex];
                     currentIndex++;

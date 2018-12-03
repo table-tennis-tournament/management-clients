@@ -19,6 +19,8 @@ export class ResultModalComponent extends MzBaseModal {
         currentResult: []
     };
 
+    currentInput: string;
+
     private _currentMatch: Match;
     public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
 
@@ -36,6 +38,7 @@ export class ResultModalComponent extends MzBaseModal {
 
     set currentMatch(value: Match) {
         this._currentMatch = value;
+        this.setInputIfAvailable();
     }
 
     onKeyUp(value) {
@@ -52,4 +55,20 @@ export class ResultModalComponent extends MzBaseModal {
         }
     }
 
+    private setInputIfAvailable() {
+        const matchToSet = this.currentMatch;
+        let resultString = '';
+        if (matchToSet.match.result) {
+            matchToSet.match.result.forEach(element => {
+                if (element[0] > element[1]) {
+                    resultString += element[1] + ' ';
+                } else {
+                    resultString += '-' + element[0] + ' ';
+                }
+            });
+            resultString = resultString.substr(0, resultString.length - 1);
+            this.onKeyUp(resultString);
+        }
+        this.currentInput = resultString;
+    }
 }

@@ -32,15 +32,17 @@
         <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r=index">
             <toma-discipline-stage [stage]="currentStage"
                                    [typeColor]="typeColor"
-                                   (onResultForMatch)="onResultForMatch($event)" [index]="r"
-                                   (onDeleteStage)="onDeleteStage($event)"></toma-discipline-stage>
+                                   (resultForMatch)="resultForMatch.emit($event)" [index]="r"
+                                   (deleteStage)="onDeleteStage($event)"></toma-discipline-stage>
         </div>
     </div>
     <div *ngIf="selectedTab.groups" class="disciplineTable disciplineTable--4cols">
         <div class="row" *ngFor="let currentGroup of selectedTab.groups" class="disciplineTable-cell">
             <toma-discipline-group [group]="currentGroup"
                                    [typeColor]="typeColor"
-                                   (onResultForMatch)="onResultForMatch($event)"></toma-discipline-group>
+                                   [showMatches]="matchesAreOpen"
+                                   [showPlayers]="playersAreOpen"
+                                   (resultForMatch)="resultForMatch.emit($event)"></toma-discipline-group>
         </div>
     </div>
 </div>

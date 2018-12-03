@@ -1,8 +1,9 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {DisciplineTabService} from './discipline-tab.service';
 import {DisciplineTab} from './models/discipline.tab.model';
 import {Discipline} from '../../discipline/discipline.model';
+import {DisciplineStage} from './models/discipline.stage.model';
 
 @Component({
     selector: 'toma-discipline-view',
@@ -11,11 +12,13 @@ import {Discipline} from '../../discipline/discipline.model';
 })
 export class DisciplineViewComponent {
 
+    private currentTabId: number;
     tabs: DisciplineTab[];
-    selectedTab: DisciplineTab;
 
+    selectedTab: DisciplineTab;
     removePlayed = false;
     playersAreOpen = true;
+
     matchesAreOpen = true;
 
     @Input()
@@ -23,7 +26,6 @@ export class DisciplineViewComponent {
 
     @Input()
     typeColor: string[];
-
     _disciplines: Discipline[];
 
     get disciplines() {
@@ -43,17 +45,15 @@ export class DisciplineViewComponent {
     @Input()
     matchesLoading: boolean;
 
+    @Output()
+    resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
+
     constructor(private disciplineTabService: DisciplineTabService) {
     }
 
-    // ngAfterContentChecked(): void {
-    //     this.tabs = this.disciplineTabService.getTabsForDisciplines(this.disciplines);
-    //     if (this.tabs && this.tabs[0] !== null) {
-    //         this.setTabForId(this.tabs[0].id);
-    //     }
-    // }
 
     setTabForId(id: number) {
+        this.currentTabId = id;
         const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter(match => match.type.id === id));
         this.selectedTab = createdTab;
         this.removePlayedItems();
@@ -68,27 +68,15 @@ export class DisciplineViewComponent {
         }
     }
 
-    onOpenPlayers() {
-        // this.randomMatchService.expandPlayer();
-    }
-
-    onOpenMatches() {
-        // this.randomMatchService.expandMatches();
-    }
-
     onRemovePlayedChanged() {
         if (this.removePlayed !== false) {
-            // this.onRefreshCurrentTab();
+            this.setTabForId(this.currentTabId);
             return;
         }
         this.removePlayedItems();
     }
 
-    onResultForMatch() {
-
-    }
-
-    onDeleteStage() {
-
+    onDeleteStage(stageToRemove: DisciplineStage) {
+        this.selectedTab.stages = this.selectedTab.stages.filter(stage => stage !== stageToRemove);
     }
 }

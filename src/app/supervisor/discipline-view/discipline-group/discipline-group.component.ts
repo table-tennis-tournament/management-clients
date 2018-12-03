@@ -1,5 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {DisciplineGroup} from '../models/discipline.group.model';
+import {MzCollapsibleComponent} from 'ngx-materialize';
+import {Match} from '../../../shared/data/match.model';
 
 @Component({
     selector: 'toma-discipline-group',
@@ -12,10 +14,35 @@ export class DisciplineGroupComponent {
     allMatchCount: number;
     private tableNumbers: any[];
 
+    @ViewChild('collapsibleGroup') collapsibleGroup: MzCollapsibleComponent;
+
     @Input()
     typeColor: string[];
 
-    constructor() {
+    @Output()
+    resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
+
+    _showPlayers: boolean;
+    _showMatches: boolean;
+
+    @Input('showMatches')
+    set showMatches(value: boolean) {
+        this._showMatches = value;
+        this.openCloseByIndex(value, 1);
+    }
+
+    get showMatches(): boolean {
+        return this._showMatches;
+    }
+
+    @Input('showPlayers')
+    set showPlayers(value: boolean) {
+        this._showPlayers = value;
+        this.openCloseByIndex(value, 0);
+    }
+
+    get showPlayers(): boolean {
+        return this._showPlayers;
     }
 
     _group: DisciplineGroup;
@@ -43,7 +70,7 @@ export class DisciplineGroupComponent {
 
     setTables() {
         const numberArray = [];
-        this._group.matches.forEach(element => {
+        this.group.matches.forEach(element => {
             element.table.forEach(tableNumber => {
                 if (numberArray.indexOf(tableNumber) < 0) {
                     numberArray.push(tableNumber);
@@ -53,12 +80,21 @@ export class DisciplineGroupComponent {
         this.tableNumbers = numberArray;
     }
 
-    onResultClicked() {
-
+    openCloseByIndex(value: boolean, index: number) {
+        if (value === true) {
+            this.collapsibleGroup.open(index);
+            return;
+        }
+        this.collapsibleGroup.close(index);
     }
 
     isGroupPlayable() {
-        
+        const playableMatches = this.group.matches.filter(match => match.isPlayable === false);
+        return playableMatches.length === 0;
+    }
+
+    groupIsNotPlayable() {
+        return !this.group.isComplete && !this.isGroupPlayable() && this.tableNumbers.length < 1;
     }
 
 }

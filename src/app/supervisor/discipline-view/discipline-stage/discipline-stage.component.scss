@@ -29,6 +29,7 @@
   display: flex;
   justify-content: space-between;
   flex: 1;
+  min-width: 300px;
 }
 
 .header-center-content {
@@ -37,6 +38,6 @@
 }
 
 .header-right-content {
-  width: 33px;
+  width: 6rem;
   order: 2;
 }
