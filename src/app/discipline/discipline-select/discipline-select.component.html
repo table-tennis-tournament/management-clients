@@ -4,7 +4,7 @@
             id="select-discipline"
             [label]="'Wähle Konkurrenz'"
             [placeholder]="'Konkurrenz'"
-            (change)="disciplineChanged.emit(selectedDiscipline)"
+            (change)="disciplineChanged.emit(+selectedDiscipline)"
             [(ngModel)]="selectedDiscipline">
       <option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
         {{currentDiscipline.name}}
@@ -14,7 +14,7 @@
 </div>
 
 <div class="col m1 s2">
-  <a class="btn-floating btn-medium blue" (click)="disciplineChanged.emit(selectedDiscipline)">
+  <a class="btn-floating btn-medium blue" (click)="disciplineChanged.emit(+selectedDiscipline)">
     <i class="medium material-icons">refresh</i>
   </a>
 </div>

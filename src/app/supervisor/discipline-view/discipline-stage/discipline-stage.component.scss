@@ -35,9 +35,18 @@
 .header-center-content {
   flex: 1;
   order: 1;
+
 }
 
 .header-right-content {
   width: 6rem;
   order: 2;
+}
+
+.collection.minus-margin {
+  margin: -2rem;
+}
+
+.collection-item.no-lines {
+  border-bottom: 0px;
 }

@@ -39,3 +39,11 @@
 .disciplineTable--6cols > .disciplineTable-cell {
   width: 16.6%;
 }
+
+.row.no-bottom-margin {
+  margin-bottom: 0px;
+}
+
+label {
+  color: unset;
+}

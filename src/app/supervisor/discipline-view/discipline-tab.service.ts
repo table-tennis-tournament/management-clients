@@ -18,6 +18,10 @@ export class DisciplineTabService {
             groups: [],
             stages: []
         };
+        if (matches == null || matches.length < 1) {
+            return currentItemTab;
+        }
+        currentItemTab.id = matches[0].type.id;
         const allStages: number[] = [];
         let currentIndex = 0;
         let allPlayerArray: boolean[] = [];

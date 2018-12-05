@@ -26,6 +26,7 @@ export class DisciplineViewComponent {
 
     @Input()
     typeColor: string[];
+
     _disciplines: Discipline[];
 
     get disciplines() {

@@ -1,0 +1,51 @@
+<mz-spinner *ngIf="matchesLoading"></mz-spinner>
+<div>
+    <div class="row">
+        <div class="input-field col s10 m6">
+            <toma-discipline-select
+                    (disciplineChanged)="onTypeChanged($event)"
+                    [disciplines]="disciplines"
+                    [showWaitingList]="false">
+            </toma-discipline-select>
+        </div>
+    </div>
+
+    <div class="row">
+        <table class="highlight centered striped">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Nr</th>
+                <th>Spieler 1</th>
+                <th>Spieler 2</th>
+                <th>Typ</th>
+                <th>Konkurrenz</th>
+                <th>Eingabe</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let currentMatch of selectedMatches">
+                <td><a class="btn-floating btn-medium blue" (click)="takeBackMatch.emit(currentMatch)">
+                    <i class="medium material-icons">chevron_left</i>
+                </a></td>
+                <td>{{currentMatch.match.id}}</td>
+                <td>
+                    <toma-team-item [team]="currentMatch.team1"></toma-team-item>
+                </td>
+                <td>
+                    <toma-team-item [team]="currentMatch.team2"></toma-team-item>
+                </td>
+                <td>{{currentMatch | stage}}</td>
+                <td>{{currentMatch | discipline}}</td>
+                <td>
+                    <a class="btn-floating btn-medium blue" (click)="resultForMatch.emit(currentMatch)">
+                        <i class="medium material-icons">chevron_right</i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

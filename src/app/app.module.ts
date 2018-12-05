@@ -39,7 +39,7 @@ import {ShowMatchModalComponent} from './table/table-list/show-match-modal/show-
 import {SelectTableModalComponent} from './table/table-list/select-table-modal/select-table-modal.component';
 import {AssignMatchPageComponent} from './assign/assign-match.page.component';
 import {DisciplineMatchListComponent} from './assign/discipline-match-list/discipline-match-list.component';
-import {DisciplineSelectComponent} from './assign/discipline-select/discipline-select.component';
+import {DisciplineSelectComponent} from './discipline/discipline-select/discipline-select.component';
 import {DisciplineTypePipe} from './assign/pipes/discipline-type.pipe';
 import {MatchEffects} from './assign/redux/match.effects';
 import {DndModule} from 'ng2-dnd';
@@ -55,6 +55,10 @@ import {TeamItemComponent} from './shared/team-item/team-item.component';
 import {SettingsEffects} from './settings/redux/settings.effects';
 import {SettingsPageComponent} from './settings/settings.page.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {ResultListPageComponent} from './result/result-list.page.component';
+import {ResultListComponent} from './result/result-list/result-list.component';
+import {StagePipe} from './result/pipes/stage.pipe';
+import { DisciplinePipe } from './result/pipes/discipline.pipe';
 
 @NgModule({
     declarations: [
@@ -82,7 +86,11 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
         DisciplineStageComponent,
         DisciplineStageItemComponent,
         TeamItemComponent,
-        SettingsPageComponent
+        SettingsPageComponent,
+        ResultListPageComponent,
+        ResultListComponent,
+        StagePipe,
+        DisciplinePipe
     ],
     imports: [
         BrowserModule,

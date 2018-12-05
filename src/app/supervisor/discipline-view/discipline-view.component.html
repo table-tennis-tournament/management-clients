@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row no-bottom-margin {{typeColor[selectedTab?.id]}}">
     <mz-spinner *ngIf="matchesLoading"></mz-spinner>
 
     <div *ngFor="let currentTab of tabs" class="col no-padding">
@@ -27,13 +27,14 @@
         </p>
     </div>
 </div>
-<div *ngIf="selectedTab" class="row">
+<div *ngIf="selectedTab" class="row {{typeColor[selectedTab.id]}}">
     <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">
         <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r=index">
             <toma-discipline-stage [stage]="currentStage"
                                    [typeColor]="typeColor"
                                    (resultForMatch)="resultForMatch.emit($event)" [index]="r"
-                                   (deleteStage)="onDeleteStage($event)"></toma-discipline-stage>
+                                   (deleteStage)="onDeleteStage($event)">
+            </toma-discipline-stage>
         </div>
     </div>
     <div *ngIf="selectedTab.groups" class="disciplineTable disciplineTable--4cols">
@@ -42,7 +43,8 @@
                                    [typeColor]="typeColor"
                                    [showMatches]="matchesAreOpen"
                                    [showPlayers]="playersAreOpen"
-                                   (resultForMatch)="resultForMatch.emit($event)"></toma-discipline-group>
+                                   (resultForMatch)="resultForMatch.emit($event)">
+            </toma-discipline-group>
         </div>
     </div>
 </div>
