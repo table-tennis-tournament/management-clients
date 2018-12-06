@@ -59,6 +59,7 @@ import {ResultListPageComponent} from './result/result-list.page.component';
 import {ResultListComponent} from './result/result-list/result-list.component';
 import {StagePipe} from './result/pipes/stage.pipe';
 import { DisciplinePipe } from './result/pipes/discipline.pipe';
+import { SettingsListComponent } from './settings/settings-list/settings-list.component';
 
 @NgModule({
     declarations: [
@@ -90,7 +91,8 @@ import { DisciplinePipe } from './result/pipes/discipline.pipe';
         ResultListPageComponent,
         ResultListComponent,
         StagePipe,
-        DisciplinePipe
+        DisciplinePipe,
+        SettingsListComponent
     ],
     imports: [
         BrowserModule,

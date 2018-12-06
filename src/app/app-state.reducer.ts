@@ -46,4 +46,5 @@ export const getDisciplineLoading = createSelector((state: State) => state.disci
 export const getSettingsState = createSelector((state: State) => state.settings, fromSettings.getSettings);
 export const getSettingsLoading = createSelector((state: State) => state.settings, fromSettings.getSettingsLoading);
 export const getTypeColorsState = createSelector((state: State) => state.settings, fromSettings.getTypeColor);
+export const getPrintersState = createSelector((state: State) => state.settings, fromSettings.getPrinters);
 
