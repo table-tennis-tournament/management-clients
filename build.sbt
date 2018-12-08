@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   guice,
   "org.scala-sbt" % "librarymanagement_2.10" % "0.1.0-M11",
   "com.typesafe.akka" %% "akka-cluster" % "2.5.17",
+  "com.typesafe.akka" %% "akka-cluster-tools" % "2.5.17",
   "com.typesafe.akka" %% "akka-contrib" % "2.5.17",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "joda-time" % "joda-time"    % "2.10.1",
