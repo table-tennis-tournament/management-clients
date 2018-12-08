@@ -1,7 +1,7 @@
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.20")
 
-//addSbtPlugin("name.de-vries" % "sbt-typescript" % "2.5.2-1")
+addSbtPlugin("name.de-vries" % "sbt-typescript" % "2.6.2")
 
 // checks your typescript code for error prone constructions
 //addSbtPlugin("name.de-vries" % "sbt-tslint" % "5.7.0")

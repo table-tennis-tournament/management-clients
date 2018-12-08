@@ -4,7 +4,7 @@ import {StatusDto} from "../data/status.dto"
 import {Injectable} from "@angular/core"
 import {Http, Response} from "@angular/http"
 import {Observable} from "rxjs/Rx";
-import {WebSocketService} from "./web.socket.service";
+import {WebSocketService} from "./web.socket.service"
 import {MatchListService} from "./match.list.service"
 import {BaseService} from "./base.service"
 
