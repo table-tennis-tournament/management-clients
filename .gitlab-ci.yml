@@ -12,4 +12,4 @@ stages:
 build:
   stage: build
   script:
-    - sbt compile -Dsbt.ivy.home=/cache/.ivy2 -Dsbt.global.base=/cache/.sbt/0.13 -Dsbt.boot.directory=/cache/.sbt/boot -Dsbt.repository.config=/cache/.sbt/repositories
+    - sbt compile -Dsbt.ivy.home=/cache/.ivy2 -Dsbt.global.base=/cache/.sbt/1.0 -Dsbt.boot.directory=/cache/.sbt/boot -Dsbt.repository.config=/cache/.sbt/repositories
