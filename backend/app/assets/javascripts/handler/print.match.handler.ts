@@ -1,9 +1,9 @@
-import {MatchDto} from "../data/match.dto"
 import {StatusDto} from "../data/status.dto"
-import {ISelectMatchHandler} from "../handler/select.match.handler"
+import {ISelectMatchHandler} from "./select.match.handler"
 import {TableService} from "../services/table.service"
 import {EventEmitter} from "@angular/core"
 import {ToastService} from "../services/toast.service";
+import {Match} from '../data/match';
 
 export class PrintMatchHandler implements ISelectMatchHandler {
     
@@ -13,15 +13,15 @@ export class PrintMatchHandler implements ISelectMatchHandler {
         this.onRefresh = new EventEmitter<string>();
     }
 
-    handleSelection(matches: MatchDto[]) {
+    handleSelection(matches: Match[]) {
         if(matches!== null && matches.length > 0){
-            var matchIds = [];
-            matches.map(x=> matchIds.push(x.match.id));
+            const matchIds = [];
+            matches.map(x=> matchIds.push(x.id));
             this.tableService.printMatches(matchIds).subscribe(this.onSuccessfullRefresh.bind(this));
         }
     }
 
-    handleAll(matches: MatchDto[]) {
+    handleAll(matches: Match[]) {
         this.handleSelection(matches);
     }
 

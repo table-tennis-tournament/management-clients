@@ -11,8 +11,8 @@ export class BaseService {
     }
 
     public HandleError(error: Response | any): Observable<StatusDto>{
-        var errMsg = "";
-        var newStatus = new StatusDto();
+        let errMsg = "";
+        let newStatus = new StatusDto();
         if (error instanceof Response) {
             newStatus = error.json() || newStatus;
             return Observable.throw(newStatus);
@@ -25,7 +25,7 @@ export class BaseService {
 
 
     public getHeaders():RequestOptionsArgs{
-        var headers = new Headers();
+        const headers = new Headers();
         headers.append("Content-Type", "application/json");
         return {headers: headers};
     }

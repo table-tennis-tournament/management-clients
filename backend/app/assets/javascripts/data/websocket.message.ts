@@ -1,4 +1,4 @@
-export class WebsocketMessage{
-    action: string;
-    changedId: number;
+export interface WebsocketMessage{
+    action?: string;
+    changedId?: number;
 }

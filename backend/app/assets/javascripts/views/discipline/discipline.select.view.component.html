@@ -1,5 +1,5 @@
 <div class="col m11 s10">
-        <select  materialize="material_select" (change)="onDisciplineChanged()" [(ngModel)]="selectedDiscipline" >
+        <select  materialize="material_select" (change)="onTypeChanged.emit(selectedDiscipline)" [(ngModel)]="selectedDiscipline" >
                 <option *ngFor="let currentDiscipline of disciplines" [value]="currentDiscipline.id">
                         {{currentDiscipline.name}}
                 </option>

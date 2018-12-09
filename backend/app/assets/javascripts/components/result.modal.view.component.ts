@@ -1,10 +1,10 @@
 import {Component, EventEmitter} from "@angular/core";
-import {MatchDto} from "../data/match.dto"
 import {IResult} from "../data/result"
 import {MatchToStringService} from "../services/match.toString.service"
 import {Observable} from "rxjs/Rx";
 import {IResultHandler} from "../handler/result.handler"
 import {MaterializeAction} from "angular2-materialize";
+import {Match} from '../data/match';
 
 @Component({
   selector: "modal-result",
@@ -26,13 +26,13 @@ export class ResultModalComponent{
 
   public currentInput: string;
 
-  private currentMatch: MatchDto;
+  private currentMatch: Match;
   
   constructor(public matchToStringService: MatchToStringService) {
     this.resultIsValid = false;
   }
 
-  setMatch(matchToSet: MatchDto){
+  setMatch(matchToSet: Match){
     this.firstPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team1);
     this.secondPlayerString = this.matchToStringService.getPlayersNamesLong(matchToSet.team2);
     this.headerString = matchToSet.type.name + " " + matchToSet.matchType.name;
@@ -59,10 +59,10 @@ export class ResultModalComponent{
   }
 
   setInputIfAvailable(){
-    var matchToSet = this.currentMatch;
-    var resultString = "";
-    if(matchToSet.match.result){
-      matchToSet.match.result.forEach(element => {
+      const matchToSet = this.currentMatch;
+      let resultString = "";
+      if(matchToSet.result){
+      matchToSet.result.forEach(element => {
         if(element[0]>element[1]){
           resultString += element[1] + " ";
         } else{
@@ -90,27 +90,28 @@ export class ResultModalComponent{
   }
 
   checkValidResult(valueToCheck): boolean{
-    this.isFirstPlayerWinning = false;
+    let otherResult;
+      this.isFirstPlayerWinning = false;
     this.isSecondPlayerWinning = false;
     this.currentResult = [];
-    var splittedValue = valueToCheck.split(" ");
-    if(splittedValue.length < 3){
+      const splittedValue = valueToCheck.split(" ");
+      if(splittedValue.length < 3){
       return false;
     }
-    var player1 = 0;
-    var player2 = 0;
-    for(var index = 0; index < splittedValue.length; index++){
-      var currentValue = splittedValue[index];
-      if(this.isFirstCharAMinus(currentValue)){
-        var resultWithoutMinus = +currentValue.substring(1);
-        var otherResult = this.getOtherResult(resultWithoutMinus);
+      let player1 = 0;
+      let player2 = 0;
+      for(let index = 0; index < splittedValue.length; index++){
+        const currentValue = splittedValue[index];
+        if(this.isFirstCharAMinus(currentValue)){
+          const resultWithoutMinus = +currentValue.substring(1);
+          otherResult = this.getOtherResult(resultWithoutMinus);
         this.currentResult[index] =  [resultWithoutMinus, otherResult];
         player2++;
         continue;
       }
       if(currentValue!== "" && !isNaN(currentValue)){
-        var otherResult = +this.getOtherResult(+currentValue)
-        this.currentResult[index] = [otherResult, +currentValue];
+          otherResult = +this.getOtherResult(+currentValue);
+          this.currentResult[index] = [otherResult, +currentValue];
         player1 ++;
         continue;
       }

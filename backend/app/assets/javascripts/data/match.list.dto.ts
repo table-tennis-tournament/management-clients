@@ -1,7 +1,7 @@
 import {MatchListItem} from "./match.list.item"
-import {MatchDto} from "./match.dto"
+import {Match} from './match';
 
 export class MatchListDto {
     matchListItem: MatchListItem;
-    matchinfo: MatchDto[]
+    matchinfo: Match[]
 }

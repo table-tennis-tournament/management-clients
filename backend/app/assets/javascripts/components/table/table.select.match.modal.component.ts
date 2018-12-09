@@ -1,9 +1,9 @@
 import {Component, EventEmitter} from "@angular/core";
-import {MatchDto} from "../../data/match.dto"
 import {MatchToStringService} from "../../services/match.toString.service"
 import {ISelectMatchHandler} from "../../handler/select.match.handler"
 import {SelectMatchEvent} from "../../handler/select.match.event"
 import {MaterializeAction} from "angular2-materialize";
+import {Match} from '../../data/match';
 
 @Component({
   selector: "modal-select-match",
@@ -12,10 +12,10 @@ import {MaterializeAction} from "angular2-materialize";
 export class SelectMatchModalComponent{
 
   public modalActions = new EventEmitter<string|MaterializeAction>();
-  public matches: MatchDto[];
-  public selectedMatches: MatchDto[];
+  public matches: Match[];
+  public selectedMatches: Match[];
   private selectMatchHandler: ISelectMatchHandler;
-  public selectedMatch: MatchDto;
+  public selectedMatch: Match;
   public checkedMatches: boolean[];
   
   constructor(public matchToStringService: MatchToStringService) {
@@ -37,7 +37,7 @@ export class SelectMatchModalComponent{
   }
 
   closeDialogAndInformObserversAboutResult(){
-    this.selectedMatches = this.matches.filter(x=> x.match.isPlayed === true);
+    this.selectedMatches = this.matches.filter(x=> x.isPlayed === true);
     if(!this.selectedMatches || this.selectedMatches.length < 1){
       alert("Bitte Spiel auswählen.");
       return;

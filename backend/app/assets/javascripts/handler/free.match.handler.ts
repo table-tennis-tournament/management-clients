@@ -1,8 +1,8 @@
-import {MatchDto} from "../data/match.dto"
 import {StatusDto} from "../data/status.dto"
 import {ISelectMatchHandler} from "../handler/select.match.handler"
 import {TableService} from "../services/table.service"
 import {EventEmitter} from "@angular/core"
+import {Match} from '../data/match';
 
 export class FreeMatchHandler implements ISelectMatchHandler {
     
@@ -12,14 +12,14 @@ export class FreeMatchHandler implements ISelectMatchHandler {
         this.onRefresh = new EventEmitter<string>();
     }
 
-    handleSelection(matches: MatchDto[]) {
+    handleSelection(matches: Match[]) {
         if(matches!== null && matches.length > 0){
-            var matchIds = [];
-            matches.map(x=> matchIds.push(x.match.id));
+            const matchIds = [];
+            matches.map(x=> matchIds.push(x.id));
             this.tableService.freeTable(matchIds).subscribe(this.onSuccessfullRefresh.bind(this));
         }
     }
-    handleAll(matches: MatchDto[]) {
+    handleAll(matches: Match[]) {
         this.handleSelection(matches);
     }
 

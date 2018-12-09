@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
-import {MatchDto} from "../../data/match.dto";
 import {TypeColors} from "../../data/typeColors";
 import {MatchToStringService} from "../../services/match.toString.service";
+import {Match} from '../../data/match';
 
 @Component({
     selector: "table-match-item",
@@ -9,7 +9,7 @@ import {MatchToStringService} from "../../services/match.toString.service";
 })
 export class TableMatchItemComponent{
 
-    @Input() matches:MatchDto[];
+    @Input() matches:Match[];
 
     typeColors:string[];
 

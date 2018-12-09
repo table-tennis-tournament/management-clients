@@ -1,4 +1,4 @@
-export class MatchType {
-	id: number;
-	name: string;	
+export interface MatchType {
+	id?: number;
+	name?: string;
 }

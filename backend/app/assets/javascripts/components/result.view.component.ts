@@ -4,9 +4,9 @@ import {MatchToStringService} from "../services/match.toString.service"
 import {ResultModalComponent} from "./result.modal.view.component"
 import {IResultHandler} from "../handler/result.handler"
 
-import {MatchDto} from "../data/match.dto"
 import {TableService} from "../services/table.service";
 import {WebSocketService} from "../services/web.socket.service";
+import {Match} from '../data/match';
 
 
 @Component({
@@ -14,11 +14,11 @@ import {WebSocketService} from "../services/web.socket.service";
 })
 export class ResultViewComponent implements IResultHandler{
 
-    public matches: MatchDto[];
+    public matches: Match[];
     public rowCount: number[];
 
     private currentMatchIndex: number;
-    private currentMatch: MatchDto;
+    private currentMatch: Match;
     private currentTypeId: string;
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
@@ -55,15 +55,15 @@ export class ResultViewComponent implements IResultHandler{
     onResultForMatch(matchIndex){
         this.resultDialog.setResultHandler(this);
         this.currentMatchIndex = matchIndex;
-        var match = this.matches[matchIndex];
+        const match = this.matches[matchIndex];
         this.currentMatch = this.matches[matchIndex];
         this.resultDialog.setMatch(match);
         this.resultDialog.openModal();
     }
 
     onTakeBackForMatch(matchIndex){
-        var match = this.matches[matchIndex];
-        this.tableService.takeBackTable([match.match.id]).subscribe(this.onSuccessfullTakeBack.bind(this));
+        const match = this.matches[matchIndex];
+        this.tableService.takeBackTable([match.id]).subscribe(this.onSuccessfullTakeBack.bind(this));
     }
 
     onSuccessfullTakeBack(){
@@ -71,8 +71,8 @@ export class ResultViewComponent implements IResultHandler{
     }
 
     handleResult(resultToHandle: [number, number][]) {
-        var match = this.currentMatch;
-        var matchId = match.match.id;
+        const match = this.currentMatch;
+        const matchId = match.id;
         this.matchService.addResult(resultToHandle, matchId).subscribe(this.handleResultAfterRequestSuccessful.bind(this),
         this.handleErrorsOnService);
     }

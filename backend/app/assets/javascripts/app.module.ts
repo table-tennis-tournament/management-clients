@@ -16,8 +16,6 @@ import {PlayerComponent} from "./components/player.component"
 import {TableViewComponent} from "./components/table.view.component"
 import {TableComponent} from "./components/table.component"
 import {SupervisorViewComponent} from "./components/supervisor.view.component"
-import {MatchFilterComponent} from "./components/filter/match.filter.component"
-import {MatchFilterCriteriaComponent} from "./components/filter/match.filter.criteria.component"
 import {MatchListComponent} from "./components/match.list.view.component"
 import {DisciplineViewComponent} from "./components/discipline/discipline.view.component"
 import {DisciplineGroupViewComponent} from "./components/discipline/discipline.group.view.component"
@@ -46,7 +44,7 @@ import {TableService} from "./services/table.service"
 import {WebSocketService} from "./services/web.socket.service"
 import {MatchToStringService} from "./services/match.toString.service"
 import {MatchListService} from "./services/match.list.service"
-import {RandomMatchService} from "./services/random.match.service"
+import {ExpandCollapsibleService} from "./services/expand-collapsible.service"
 import {BaseService} from "./services/base.service"
 import {ToastService} from "./services/toast.service";
 import {SettingsService} from "./services/settings.service";
@@ -70,8 +68,6 @@ import {ModalShowMatchComponent} from "./components/modals/show.match.modal";
     PlayerComponent,
     TableViewComponent,
     SupervisorViewComponent,
-    MatchFilterComponent,
-    MatchFilterCriteriaComponent,
     MatchListComponent,
     DisciplineViewComponent,
     DisciplineGroupViewComponent,
@@ -100,7 +96,7 @@ import {ModalShowMatchComponent} from "./components/modals/show.match.modal";
       WebSocketService,
       MatchToStringService,
       MatchListService,
-      RandomMatchService,
+      ExpandCollapsibleService,
       BaseService,
       MatchHelperService,
       ToastService,

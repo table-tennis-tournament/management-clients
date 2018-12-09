@@ -1,10 +1,10 @@
-import {MatchDto} from "./match.dto";
 import {Player} from "./player";
+import {Match} from './match';
 
 export class DisciplineGroup{
     name: string;
     players: Player[] =[];
-    matches: MatchDto[]= [];
+    matches: Match[]= [];
     bgColor: string;
     textColor: string;
     tableNumbers: number[]=[];

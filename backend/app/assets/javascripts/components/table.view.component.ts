@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from "@ang
 import {MatchService} from "../services/match.service"
 import {TableService} from "../services/table.service"
 import {MatchToStringService} from "../services/match.toString.service"
-import {RandomMatchService} from "../services/random.match.service"
+import {ExpandCollapsibleService} from "../services/expand-collapsible.service"
 import {ResultModalComponent} from "./result.modal.view.component"
 
 import {TableDto} from "../data/table.dto"
@@ -61,7 +61,7 @@ export class TableViewComponent implements OnDestroy {
     constructor(route: ActivatedRoute, private matchService:MatchService, 
         private tableService:TableService, 
         public matchToStringService: MatchToStringService, 
-        private randomMatchService: RandomMatchService,
+        private randomMatchService: ExpandCollapsibleService,
         private toastService: ToastService,
         private matchListService: MatchListService,
         private websocketService: WebSocketService) {

@@ -26,7 +26,7 @@
 					<td><a class="btn-floating btn-medium blue" (click)="onTakeBackForMatch(i)">
 							<i class="medium material-icons">chevron_left</i>
 						</a></td>
-					<td>{{currentMatch.match.id}}</td>
+					<td>{{currentMatch.id}}</td>
 					<td><team-match-item [team]="currentMatch.team1"></team-match-item></td>
 					<td><team-match-item [team]="currentMatch.team2"></team-match-item></td>
 					<td><stage-match-item [stage]="currentMatch.matchType" [group]="currentMatch.group"></stage-match-item></td>

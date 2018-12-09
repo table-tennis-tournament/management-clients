@@ -4,8 +4,8 @@ import {TableDto} from "../../data/table.dto";
 import {BaseModal} from "../../components/modals/base.modal";
 import {ISelectTableHandler} from "../../handler/select.table.handler";
 import {SelectTableEvent} from "app/assets/javascripts/handler/select.table.event";
-import {MatchDto} from "../../data/match.dto";
 import {ToastService} from "../../services/toast.service";
+import {Match} from '../../data/match';
 
 
 @Component({
@@ -13,7 +13,7 @@ import {ToastService} from "../../services/toast.service";
     templateUrl : "assets/javascripts/views/modals/select.table.modal.view.component.html"
 })
 export class ModalSelectTableComponent extends BaseModal{
-    private currentMatches: MatchDto[];
+    private currentMatches: Match[];
     public tables: TableDto[];
     public selectedTable: any;
     private currentHandler: ISelectTableHandler;

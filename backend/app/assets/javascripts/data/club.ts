@@ -1,8 +1,4 @@
-export class Club {
-	id: number;
-	clubName: string;	
-
-	constructor(clubName: string){
-		this.clubName = clubName;
-	}
+export interface Club {
+	id?: number;
+	clubName?: string;
 }
