@@ -1,6 +1,6 @@
-import {MatchDto} from "../data/match.dto"
+import {Match} from '../data/match';
 
 export class AssignEvent {
     isGroup: boolean;
-    matches: MatchDto[];
+    matches: Match[];
 }

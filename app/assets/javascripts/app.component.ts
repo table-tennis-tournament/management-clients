@@ -10,7 +10,7 @@ import {DisciplineShortcuts} from "./data/disciplineShortcuts"
 export class AppComponent{
 
   constructor(private webSocketService: WebSocketService){
-    this.webSocketService.initializeWebSocket("ws://192.168.1.10:9000/register");
+    this.webSocketService.initializeWebSocket("ws://127.0.0.1:9000/register");
     new TypeColors();
     new DisciplineShortcuts();
   }

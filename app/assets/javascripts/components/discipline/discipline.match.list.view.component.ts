@@ -1,5 +1,4 @@
 import {Component} from "@angular/core";
-import {MatchDto} from "../../data/match.dto";
 import {MatchListDto} from "../../data/match.list.dto";
 import {TypeColors} from "../../data/typeColors";
 import {DisciplineShortcuts} from "../../data/disciplineShortcuts";
@@ -7,6 +6,7 @@ import {Type} from "../../data/type";
 import {MatchListService} from "../../services/match.list.service";
 import {MatchService} from "../../services/match.service";
 import {WebSocketService} from "../../services/web.socket.service";
+import {Match} from '../../data/match';
 
 @Component({
     selector: "discipline-match-list",
@@ -14,7 +14,7 @@ import {WebSocketService} from "../../services/web.socket.service";
 })
 export class DisciplineMatchListComponent{
 
-    public matches: Array<MatchDto>;
+    public matches: Match[];
     public colorArray: string[];
     public disciplines:Array<Type>;
     public selectedDiscipline:any;
@@ -37,7 +37,7 @@ export class DisciplineMatchListComponent{
         );
     }
 
-    private getAllMatchesSuccess(matches: MatchDto[]){
+    private getAllMatchesSuccess(matches: Match[]){
         this.matches = matches;
     }
     private getAllMatchesError(error){
@@ -52,24 +52,21 @@ export class DisciplineMatchListComponent{
     }
 
     public onTableAssigned(dragData: any){
-        if(!dragData.matches){
-            return;
+        if (dragData.matches) {
+            this.onDisciplineChanged(this.selectedDiscipline);
         }
-        this.onDisciplineChanged(this.selectedDiscipline);
     }
 
-    isMatchInGroup(groupId: number, currentMatch: MatchDto){
-        return  currentMatch !== null && 
-        currentMatch !== undefined && 
-        currentMatch.group !== null &&
-        currentMatch.group !== undefined &&
+    isMatchInGroup(groupId: number, currentMatch: Match){
+        return  currentMatch != null &&
+        currentMatch.group != null &&
         currentMatch.group.id === groupId;
     }
 
     public onDragStart($event){
         if($event.dragData.isGroup === true){
-            var groupId = $event.dragData.matches[0].group.id
-            var groupMatches = this.matches.filter(x=> this.isMatchInGroup(groupId, x));
+            const groupId = $event.dragData.matches[0].group.id;
+            const groupMatches = this.matches.filter(x => this.isMatchInGroup(groupId, x));
             $event.dragData.matches = groupMatches; 
         }
     }
@@ -113,7 +110,7 @@ export class DisciplineMatchListComponent{
         });
     }
 
-    matchesChanged(matches: MatchDto[]){
+    matchesChanged(matches: Match[]){
         this.matches = matches;
     }
 

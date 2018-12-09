@@ -4,9 +4,9 @@ import {DisciplineShortcuts} from "../../data/disciplineShortcuts"
 import {MatchService} from "../../services/match.service";
 import {Type} from "../../data/type";
 import {DisciplineTab} from "../../data/discipline.tab";
-import {MatchDto} from "../../data/match.dto";
 import {MatchHelperService} from "../../services/match.helper.service";
 import {DisciplineStage} from "../../data/discipline.stage";
+import {Match} from '../../data/match';
 
 @Component({
   selector: "tt-result",
@@ -89,10 +89,10 @@ export class AppResultComponent{
     this.matchService.getMatchesByType(this.selectedTab.id).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
   }
 
-  handleSetSelectedTab(matches: MatchDto[]){
-    var newTab = this.matchHelperService.getSingle(matches, this.selectedTab);
-    var that = this;
-    if(newTab.stages.length < 6){
+  handleSetSelectedTab(matches: Match[]){
+      const newTab = this.matchHelperService.getSingle(matches, this.selectedTab);
+      const that = this;
+      if(newTab.stages.length < 6){
       this.selectedTab = newTab;
       this.selectedTab.stages.forEach((element, elementIndex) =>{
         element.textColor = that.lineStageClass[elementIndex];
@@ -100,11 +100,11 @@ export class AppResultComponent{
       return;
     }
     if(newTab.stages.length === 6){
-      var newStage = this.splitStageInTwo(16, newTab.stages[0]);
-      var newStage2 = this.splitStageInTwo(8, newTab.stages[1]);
-      var newStage3 = this.splitStageInTwo(4, newTab.stages[2]);
+        const newStage = this.splitStageInTwo(16, newTab.stages[0]);
+        const newStage2 = this.splitStageInTwo(8, newTab.stages[1]);
+        const newStage3 = this.splitStageInTwo(4, newTab.stages[2]);
 
-      newTab.stages[6] = newTab.stages[3];
+        newTab.stages[6] = newTab.stages[3];
       newTab.stages[7] = newTab.stages[4];
       newTab.stages[8] = newTab.stages[5];
       newTab.stages[5] = newStage;
@@ -124,8 +124,8 @@ export class AppResultComponent{
   }
 
   splitStageInTwo(count:number, firstGroup:DisciplineStage){
-    var newDisciplineTab = new DisciplineStage();
-    newDisciplineTab.bgColor = firstGroup.bgColor;
+      const newDisciplineTab = new DisciplineStage();
+      newDisciplineTab.bgColor = firstGroup.bgColor;
     newDisciplineTab.name = firstGroup.name;
     newDisciplineTab.matches = firstGroup.matches.slice(count, firstGroup.matches.length);
     firstGroup.matches.splice(count, count);

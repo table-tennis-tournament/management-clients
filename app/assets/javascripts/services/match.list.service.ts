@@ -33,8 +33,8 @@ export class MatchListService {
     }
 
     deleteMatchListItem(matchId: any): Observable<any>{
-        var regEx = new RegExp("itemId");
-        var url = this.deleteMatchListItemUrl.replace(regEx, matchId);
+        const regEx = new RegExp("itemId");
+        const url = this.deleteMatchListItemUrl.replace(regEx, matchId);
         return this.http.delete(url).map((res:Response) => res.json())
                .catch(this.baseService.HandleError);
     }
@@ -45,8 +45,8 @@ export class MatchListService {
     }
 
     transferMatchListItem(match: MatchListItem, newPosition: number): Observable<StatusDto>{
-        var regEx = new RegExp("itemId");
-        var url = this.moveMatchListItemUrl.replace(regEx, match.id);
+        let regEx = new RegExp("itemId");
+        let url = this.moveMatchListItemUrl.replace(regEx, match.id);
         regEx = new RegExp("position");
         url = url.replace(regEx, newPosition.toString());
         return this.http.get(url)
@@ -54,8 +54,8 @@ export class MatchListService {
     }
 
     addGroupListItem(groupId: number, position:number): Observable<any>{
-        var regEx = new RegExp("groupId");
-        var url = this.addGroupListItemUrl.replace(regEx, groupId.toString());
+        let regEx = new RegExp("groupId");
+        let url = this.addGroupListItemUrl.replace(regEx, groupId.toString());
         regEx = new RegExp("position");
         url = url.replace(regEx, position.toString());
         return this.http.put(url, JSON.stringify(""), this.baseService.getHeaders())
@@ -63,8 +63,8 @@ export class MatchListService {
     }
 
     setGroupOnTable(groupId: number, tableNumber:number):Observable<any>{
-        var regEx = new RegExp("groupId");
-        var url = this.addGroupToTableUrl.replace(regEx, groupId.toString());
+        let regEx = new RegExp("groupId");
+        let url = this.addGroupToTableUrl.replace(regEx, groupId.toString());
         regEx = new RegExp("tableNumber");
         url = url.replace(regEx, tableNumber.toString());
         return this.http.put(url, JSON.stringify(""), this.baseService.getHeaders())

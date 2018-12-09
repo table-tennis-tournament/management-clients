@@ -22,16 +22,16 @@ export class SettingsService {
   }
 
   setPrinter(printerToSet: string): Observable<StatusDto>{
-    var regEx = new RegExp("printerToSet");
-    var url = this.setPrinterUrl.replace(regEx, printerToSet);
-    return this.http.get(url).map((res:Response) => res.json())
+      const regEx = new RegExp("printerToSet");
+      const url = this.setPrinterUrl.replace(regEx, printerToSet);
+      return this.http.get(url).map((res:Response) => res.json())
                .catch(this.baseService.HandleError);
   }
 
   setIsPrintForAssign(isSetToAssign:boolean){
-    var regEx = new RegExp("valueToSet");
-    var url = this.setPrintToAssignUrl.replace(regEx, isSetToAssign.toString());
-    return this.http.get(url).map((res:Response) => res.json())
+      const regEx = new RegExp("valueToSet");
+      const url = this.setPrintToAssignUrl.replace(regEx, isSetToAssign.toString());
+      return this.http.get(url).map((res:Response) => res.json())
                 .catch(this.baseService.HandleError);
   }
 
@@ -41,8 +41,8 @@ export class SettingsService {
   }
 
   setMatchlistActive(isActive:boolean):Observable<StatusDto>{
-    var query = this.matchlistActiveUrl + "/"+isActive.toString();
-    return this.http.get(query).map((res:Response) => res.json())
+      const query = this.matchlistActiveUrl + "/" + isActive.toString();
+      return this.http.get(query).map((res:Response) => res.json())
            .catch(this.baseService.HandleError);
 }
 

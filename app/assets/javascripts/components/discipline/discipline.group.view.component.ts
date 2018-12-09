@@ -3,12 +3,12 @@ import {MaterializeAction} from "angular2-materialize";
 import {DisciplineGroup} from "../../data/discipline.group"
 import {TypeColors} from "../../data/typeColors"
 import {MatchListService} from "../../services/match.list.service"
-import {RandomMatchService} from "../../services/random.match.service";
+import {ExpandCollapsibleService} from "../../services/expand-collapsible.service";
 import {ResultEvent} from "../../handler/result.event";
 
 @Component({
     selector: "group-view",
-    templateUrl : "assets/javascripts/views/discipline/discipline.group.view.component.html"
+    templateUrl : "assets/javascripts/components/discipline/discipline.group.view.component.html"
 })
 export class DisciplineGroupViewComponent{
     typeColors: string[];
@@ -21,7 +21,7 @@ export class DisciplineGroupViewComponent{
 
     @Output() onResultForMatch = new EventEmitter<ResultEvent>();
     
-    constructor(private matchListService: MatchListService, private randomMatchService: RandomMatchService){
+    constructor(private matchListService: MatchListService, private randomMatchService: ExpandCollapsibleService){
         this.typeColors = TypeColors.TYPE_COLORS;
         this.randomMatchService.expandMatches$.subscribe(this.onExpandMatches.bind(this));
         this.randomMatchService.expandPlayers$.subscribe(this.onExpandPlayers.bind(this));
@@ -40,7 +40,7 @@ export class DisciplineGroupViewComponent{
     } 
 
     isGroupPlayable(){
-        var isPlayable = true;
+        let isPlayable = true;
         this._group.matches.forEach(element => {
             if(element.isPlayable === false){
                 isPlayable = false;
@@ -63,7 +63,7 @@ export class DisciplineGroupViewComponent{
         this.openMatches = 0;
         this.isComplete = true;
         this._group.matches.forEach(element => {
-            if(element.match.isPlayed !== true){
+            if(element.isPlayed !== true){
                 this.openMatches++;
             }
         });
@@ -71,13 +71,13 @@ export class DisciplineGroupViewComponent{
     }
 
     onResultClicked(currentMatch){
-        var resultEvent = new ResultEvent();
-        resultEvent.match = currentMatch;
-        this.onResultForMatch.emit(resultEvent);
+        this.onResultForMatch.emit({
+            match: currentMatch
+        });
     }
 
     setTables(){
-        var numberArray = [];
+        const numberArray = [];
         this._group.matches.forEach(element =>{
             element.table.forEach(tableNumber => {
                 if(numberArray.indexOf(tableNumber) < 0){

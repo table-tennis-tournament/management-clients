@@ -26,19 +26,20 @@ export class DisciplineSelectViewComponent{
     }
 
     private allTypesSelected(allTypes: Type[]){
-        var result = []
+        let result = [];
         if(this.showWaitingList){
-            result.push(new Type("Warteschlange", -1));
-
+            result.push({
+                id: -1,
+                name: "Warteschlange"
+            });
         }
-        result.push(new Type("Alle", 0));
+        result.push({
+            id: 0,
+            name: "Alle"
+        });
         result = result.concat(allTypes);
         this.disciplines = result;
         this.selectedDiscipline = this.disciplines[0].id;
-    }
-
-    onDisciplineChanged(){
-       this.onTypeChanged.emit(this.selectedDiscipline);
     }
 
 }

@@ -76,8 +76,8 @@ export class TableService {
   }
 
   getTableById(id: any): Observable<TableDto[]>{
-    var url = this.replaceTableNumer(id, this.tableByIdUrl);
-    return this.baseService.get(url);
+      const url = this.replaceTableNumer(id, this.tableByIdUrl);
+      return this.baseService.get(url);
   }
 
   freeTable(matchIds: number[]):Observable<StatusDto>{
@@ -97,9 +97,9 @@ export class TableService {
   }
 
   printMatch(matchId: number):Observable<StatusDto>{
-    var regEx = new RegExp("matchId");
-    var url = this.printMatchUrl.replace(regEx, matchId.toString());
-    return this.baseService.get(url);
+      const regEx = new RegExp("matchId");
+      const url = this.printMatchUrl.replace(regEx, matchId.toString());
+      return this.baseService.get(url);
   }
 
   printMatches(matchIds: number[]): Observable<StatusDto> {
@@ -113,7 +113,7 @@ export class TableService {
   
 
   replaceTableNumer(tableNumber: number, url: string): string{
-      var regEx = new RegExp("tableNumber");
+      const regEx = new RegExp("tableNumber");
       return url.replace(regEx, tableNumber.toString());
   }
 

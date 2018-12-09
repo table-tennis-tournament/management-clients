@@ -44,12 +44,12 @@ export class WebSocketService {
         };
     }
 
-    onWebsocketConnected(e){
+    onWebsocketConnected(){
         console.log("WebSocket was successfully registered.");
     }
 
     onMessageFromWebserviceGot(e){
-        var message = this.tryGetMessageFromWebsocket(e);
+        const message = this.tryGetMessageFromWebsocket(e);
         if(message === null){
             return;
         }

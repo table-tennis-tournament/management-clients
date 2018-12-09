@@ -8,7 +8,6 @@ import {TypeColors} from "../../data/typeColors"
 })
 export class ResultGroupViewComponent{
     typeColors: string[];
-    currentTableInput:any;
     openMatches:number;
     isComplete:boolean;
     allMatchCount:number;
@@ -35,10 +34,10 @@ export class ResultGroupViewComponent{
         this.openMatches = 0;
         this.isComplete = true;
         this._group.matches.forEach(element => {
-            if(element.match.isPlayed !== true){
+            if(element.isPlayed !== true){
                 this.openMatches++;
             }
-            if(element.match.result == null){
+            if(element.result == null){
                 this.isComplete = false;
             }
         });

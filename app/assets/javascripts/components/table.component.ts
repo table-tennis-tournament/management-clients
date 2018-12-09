@@ -101,7 +101,7 @@ export class TableComponent implements IResultHandler{
    
     onFree(){
         if(this.isSingleMatch()){
-            const matchId = this.table.matches[0].match.id;
+            const matchId = this.table.matches[0].id;
             this.tableService.freeTable([matchId]).subscribe(this.freeTableAfterRequestSuccessfull.bind(this), this.handleErrorsOnService.bind(this));
             return;
         }
@@ -110,7 +110,7 @@ export class TableComponent implements IResultHandler{
 
     onTakeBack(){
         if(this.isSingleMatch()){
-            const matchId = this.table.matches[0].match.id;
+            const matchId = this.table.matches[0].id;
             this.tableService.takeBackTable([matchId]).subscribe(this.takeBackTableAfterRequestSuccessful.bind(this), this.handleErrorsOnService.bind(this));
             return;
         }
@@ -157,7 +157,7 @@ export class TableComponent implements IResultHandler{
 
     onPrint(){
         if(this.isSingleMatch()){
-            const matchId = this.table.matches[0].match.id;
+            const matchId = this.table.matches[0].id;
             this.tableService.printMatch(matchId).subscribe(
                 this.onPrinted.bind(this),
                 this.handleErrorsOnService.bind(this));
@@ -181,7 +181,7 @@ export class TableComponent implements IResultHandler{
     }
 
     handleResult(resultToHandle: IResult[]){
-        const matchId = this.table.matches[0].match.id;
+        const matchId = this.table.matches[0].id;
         this.matchService.addResult(resultToHandle, matchId).subscribe(
             this.handleResultAfterRequestSuccessful.bind(this),
             this.handleErrorsOnService.bind(this));

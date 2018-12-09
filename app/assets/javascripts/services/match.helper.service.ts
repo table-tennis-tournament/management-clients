@@ -3,7 +3,7 @@ import {DisciplineTab} from "../data/discipline.tab";
 import {DisciplineStage} from "../data/discipline.stage";
 import {DisciplineGroup} from "../data/discipline.group";
 import {TypeColors} from "../data/typeColors";
-import {MatchDto} from "../data/match.dto"
+import {Match} from '../data/match';
 
 @Injectable()
 export class MatchHelperService {
@@ -11,25 +11,25 @@ export class MatchHelperService {
 
   constructor(){}
 
-  createTabsFromMatches(result: MatchDto[]):DisciplineTab[]{
-    var endResult = new Array<DisciplineTab>();
-    var tabList: DisciplineTab[] = [];
-    var allPlayerArray: boolean[] = [];
-    var allStages:number[] = [];
-    var currentIndex:number = 0;
-    for(var index=0; index < result.length; index++){
-        var currentItem = result[index];
-       
+  createTabsFromMatches(result: Match[]):DisciplineTab[]{
+      let endResult: DisciplineTab[];
+      const tabList: DisciplineTab[] = [];
+      let allPlayerArray: boolean[] = [];
+      let allStages: number[] = [];
+      let currentIndex: number = 0;
+      for(let index=0; index < result.length; index++){
+        const currentItem = result[index];
+
         if(!tabList[currentItem.type.id]){
             allStages = [];
             currentIndex = 0;
             tabList[currentItem.type.id] = new DisciplineTab(currentItem.type.id, currentItem.type.name, currentItem.type.kind);
         }
-        var currentItemTab = tabList[currentItem.type.id];
+        const currentItemTab = tabList[currentItem.type.id];
 
-         if(!currentItem.group){
-             var localIndex = allStages[currentItem.matchType.name];
-             var currentStage = currentItemTab.stages[localIndex];
+        if(!currentItem.group){
+             const localIndex = allStages[currentItem.matchType.name];
+             let currentStage = currentItemTab.stages[localIndex];
              if(!currentStage){
                  allStages[currentItem.matchType.name] = currentIndex;
                  currentItemTab.stages[currentIndex] = new DisciplineStage();
@@ -49,11 +49,11 @@ export class MatchHelperService {
             currentItemTab.groups[currentItem.group.id].tableNumbers = [];
             allPlayerArray = [];
         }
-        var currentGroup = currentItemTab.groups[currentItem.group.id];
+        const currentGroup = currentItemTab.groups[currentItem.group.id];
         currentGroup.matches.push(currentItem);
 
-        var allPlayers = currentItem.team1.concat(currentItem.team2);
-        for(var playerIndex = 0; playerIndex < allPlayers.length; playerIndex++){
+        const allPlayers = currentItem.team1.concat(currentItem.team2);
+        for(let playerIndex = 0; playerIndex < allPlayers.length; playerIndex++){
             if(!allPlayerArray[allPlayers[playerIndex].id]){
                 currentGroup.players.push(allPlayers[playerIndex]);
                 allPlayerArray[allPlayers[playerIndex].id] = true;
@@ -65,21 +65,21 @@ export class MatchHelperService {
     return endResult;
   }
 
-  getSingle(result: MatchDto[], currentItemTab: DisciplineTab, isPlayerActive: boolean = true, isMatchActive: boolean = false):DisciplineTab{
+  getSingle(result: Match[], currentItemTab: DisciplineTab, isPlayerActive: boolean = true, isMatchActive: boolean = false):DisciplineTab{
     currentItemTab.groups = [];
     currentItemTab.stages = [];
-    var allStages:number[] = [];
-    var currentIndex:number = 0;
-    var allPlayerArray: boolean[] = [];
-    var currentItem: MatchDto = null;
-    for(var index=0; index < result.length; index++){
+      const allStages: number[] = [];
+      let currentIndex: number = 0;
+      let allPlayerArray: boolean[] = [];
+      let currentItem: Match = null;
+      for(let index=0; index < result.length; index++){
         currentItem = result[index];
 
         if(!currentItem.group)
         {
-             var localIndex = allStages[currentItem.matchType.name];
-             var currentStage = currentItemTab.stages[localIndex];
-             if(!currentStage)
+            const localIndex = allStages[currentItem.matchType.name];
+            let currentStage = currentItemTab.stages[localIndex];
+            if(!currentStage)
              {
                  allStages[currentItem.matchType.name] = currentIndex;
                  currentItemTab.stages[currentIndex] = new DisciplineStage();
@@ -89,7 +89,7 @@ export class MatchHelperService {
                  currentStage = currentItemTab.stages[currentIndex];
                  currentIndex++;
              }
-             if(currentItem.match.isPlayed !== true){
+             if(currentItem.isPlayed !== true){
                  currentStage.isComplete = false;
              }
              
@@ -109,21 +109,21 @@ export class MatchHelperService {
             
             allPlayerArray = [];
         }
-        var currentGroup = currentItemTab.groups[currentItem.group.id];
+        const currentGroup = currentItemTab.groups[currentItem.group.id];
         currentGroup.matches.push(currentItem);
 
-        if(currentItem.match.result == null){
+        if(currentItem.result == null){
             currentGroup.isComplete = false;
         }
 
         if(currentItem.table[0]){
-            if(currentItem.match.isPlayed === false){
+            if(currentItem.isPlayed === false){
                 currentGroup.tableNumbers.push(currentItem.table[0]);
             }
         }
-        
-        var allPlayers = currentItem.team1.concat(currentItem.team2);
-        for(var playerIndex = 0; playerIndex < allPlayers.length; playerIndex++){
+
+        const allPlayers = currentItem.team1.concat(currentItem.team2);
+        for(let playerIndex = 0; playerIndex < allPlayers.length; playerIndex++){
             if(!allPlayerArray[allPlayers[playerIndex].id]){
                 currentGroup.players.push(allPlayers[playerIndex]);
                 allPlayerArray[allPlayers[playerIndex].id] = true;
@@ -136,8 +136,8 @@ export class MatchHelperService {
   }
 
   clearTabList(tabListToClean: DisciplineTab[]): DisciplineTab[]{
-    var cleanedResult: DisciplineTab[] = [];
-    tabListToClean.forEach(element => {
+      const cleanedResult: DisciplineTab[] = [];
+      tabListToClean.forEach(element => {
        if(element){
            element.groups = this.getCleanedGroups(element.groups);
            element.stages = this.getCleanedStages(element.stages);
@@ -148,7 +148,7 @@ export class MatchHelperService {
 }
 
 getCleanedStages(stagesToClean: DisciplineStage[]){
-    var cleanedResult: DisciplineStage[] = [];
+    const cleanedResult: DisciplineStage[] = [];
     stagesToClean.forEach(element => {
        if(element){
            cleanedResult.push(element);
@@ -158,7 +158,7 @@ getCleanedStages(stagesToClean: DisciplineStage[]){
 }
 
 getCleanedGroups(groupsToClean: DisciplineGroup[]){
-    var cleanedResult: DisciplineGroup[] = [];
+    const cleanedResult: DisciplineGroup[] = [];
     groupsToClean.forEach(element => {
        if(element){
            cleanedResult.push(element);

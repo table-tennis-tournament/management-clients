@@ -1,10 +1,9 @@
 import {Component, EventEmitter, ViewChild} from "@angular/core";
 import {DisciplineTab} from "../../data/discipline.tab"
 import {DisciplineStage} from "../../data/discipline.stage"
-import {MatchDto} from "../../data/match.dto"
 import {Type} from "../../data/type"
 import {TypeColors} from "../../data/typeColors"
-import {RandomMatchService} from "../../services/random.match.service"
+import {ExpandCollapsibleService} from "../../services/expand-collapsible.service"
 import {MatchService} from "../../services/match.service"
 import {MaterializeAction} from "angular2-materialize";
 import {StatusDto} from "../../data/status.dto";
@@ -13,6 +12,7 @@ import {ResultMatchHandler} from "../../handler/result.match.handler";
 import {ToastService} from "../../services/toast.service";
 import {MatchHelperService} from "../../services/match.helper.service";
 import {WebSocketService} from "../../services/web.socket.service";
+import {Match} from '../../data/match';
 
 @Component({
     selector: "discipline-view",
@@ -30,7 +30,7 @@ export class DisciplineViewComponent{
 
     @ViewChild(ResultModalComponent) resultDialog: ResultModalComponent;
 
-    constructor(private randomMatchService: RandomMatchService, 
+    constructor(private randomMatchService: ExpandCollapsibleService,
         private matchService: MatchService, 
         private toastService: ToastService,
         private websocketService: WebSocketService,
@@ -82,7 +82,7 @@ export class DisciplineViewComponent{
         }
         this.tabs = newTabs;
         this.selectedTab = this.tabs[0];
-        if(this.tabs && this.tabs[0]!== null){
+        if(this.tabs && this.tabs[0]!= null){
             this.setTabForId(this.tabs[0].id);
         }
         this.rowCount = Array.from(Array(Math.ceil(this.tabs.length / 12)).keys());
@@ -92,7 +92,7 @@ export class DisciplineViewComponent{
         this.matchService.getMatchesByType(tabId).subscribe(this.handleSetSelectedTab.bind(this), error => console.log(error));
     }
 
-    handleSetSelectedTab(result: MatchDto[]){
+    handleSetSelectedTab(result: Match[]){
         const createdTab = this.matchHelperService.getSingle(result, this.selectedTab, this.playersAreOpen, this.matchesAreOpen);
         this.selectedTab = createdTab;
         this.removePlayedItems();

@@ -1,8 +1,8 @@
-import {MatchDto} from "./match.dto";
+import {Match} from './match';
 
 export class DisciplineStage{
     name: string;
-    matches: MatchDto[]= [];
+    matches: Match[]= [];
     bgColor: string;
     textColor: string;
     isComplete:boolean;

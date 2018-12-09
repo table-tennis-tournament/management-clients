@@ -6,8 +6,8 @@
       <div class="row">
           <div class="col s10">
               <p *ngFor="let match of matches; let i = index;">
-                <input name="test{{match.match.id}}" type="checkbox" id="test{{match.match.id}}" [(ngModel)]="match.match.isPlayed"  [disabled]="isDisabled?true:null"/>
-                <label for="test{{match.match.id}}"><team-match-item [team]="match.team1"></team-match-item> - <team-match-item [team]="match.team2"></team-match-item></label>
+                <input name="test{{match.id}}" type="checkbox" id="test{{match.id}}" [(ngModel)]="match.isPlayed"  [disabled]="isDisabled?true:null"/>
+                <label for="test{{match.id}}"><team-match-item [team]="match.team1"></team-match-item> - <team-match-item [team]="match.team2"></team-match-item></label>
               </p>
           </div>
       </div>

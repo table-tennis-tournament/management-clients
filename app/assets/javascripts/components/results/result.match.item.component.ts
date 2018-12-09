@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
-import {MatchDto} from "../../data/match.dto";
 import {TypeColors} from "../../data/typeColors";
+import {Match} from '../../data/match';
 
 @Component({
     selector: "result-match-item",
@@ -8,7 +8,7 @@ import {TypeColors} from "../../data/typeColors";
 })
 export class ResultMatchItemComponent{
 
-    @Input() match:MatchDto;
+    @Input() match:Match;
 
     typeColors:string[];
 

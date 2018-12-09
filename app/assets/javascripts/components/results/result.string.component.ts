@@ -21,8 +21,8 @@ export class ResultStringItemComponent{
             this.resultString = "";
             return;
         }
-        var firstPlayerSets = 0;
-        var secondPlayerSets = 0;
+        let firstPlayerSets = 0;
+        let secondPlayerSets = 0;
         this._result.forEach((element) => {
             if(element[0]>element[1]){
                 firstPlayerSets++;

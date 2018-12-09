@@ -1,8 +1,8 @@
-import {MatchDto} from "./match.dto"
+import {Match} from './match';
 
-export class TableDto{
-    id: number;
-    number: number;
-    isLocked: boolean;
-    matches: MatchDto[];
+export interface TableDto{
+    id?: number;
+    number?: number;
+    isLocked?: boolean;
+    matches?: Match[];
 }

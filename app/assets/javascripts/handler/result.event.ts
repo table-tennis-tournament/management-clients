@@ -1,7 +1,7 @@
-import {MatchDto} from "../data/match.dto"
 import {IResultHandler} from "../handler/result.handler"
+import {Match} from '../data/match';
 
-export class ResultEvent {
-    handler: IResultHandler;
-    match: MatchDto;
+export interface ResultEvent {
+    handler?: IResultHandler;
+    match?: Match;
 }

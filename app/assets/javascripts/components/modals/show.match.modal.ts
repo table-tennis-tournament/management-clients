@@ -2,7 +2,6 @@ import {Component, EventEmitter, Output} from "@angular/core";
 import {TableService} from "../../services/table.service";
 import {TableDto} from "../../data/table.dto";
 import {BaseModal} from "../../components/modals/base.modal";
-import {ToastService} from "../../services/toast.service";
 import {ShowMatchEvent} from "../../handler/show.match.event";
 import {Player} from "../../data/player";
 
