@@ -184,7 +184,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
     def groupId = column[Option[Long]]("Tabl_Group")
 
-    def isLocked = column[Option[Boolean]]("Tabl_isLocked")
+    def isLocked = Option(false)
 
     //def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
