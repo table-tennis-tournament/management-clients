@@ -112,7 +112,7 @@ export class MatchHelperService {
         const currentGroup = currentItemTab.groups[currentItem.group.id];
         currentGroup.matches.push(currentItem);
 
-        if(currentItem.result == null){
+        if(currentItem.result == null || currentItem.result === ""){
             currentGroup.isComplete = false;
         }
 

@@ -55,7 +55,7 @@ export class MatchListComponent{
         }
 
         const matchDto = new MatchListDto();
-        const matchIds = matchinfo.map(x => x.match.id);
+        const matchIds = matchinfo.map(x => x.id);
 
         const matchListItem = {
             matchIds: matchIds,

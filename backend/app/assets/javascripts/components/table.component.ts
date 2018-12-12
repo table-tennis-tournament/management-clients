@@ -63,7 +63,7 @@ export class TableComponent implements IResultHandler{
         if(this.table.matches && this.table.matches[0]){
             return;
         }
-        const matchIds = event.dragData.matches.map(x => x.match.id);;
+        const matchIds = event.dragData.matches.map(x => x.id);;
         this.matchService.assignMatchToTable(matchIds, this.table.number).subscribe(
             this.onMatchAssigned.bind(this, event.dragData), 
             this.handleErrorsOnService.bind(this));
@@ -79,9 +79,10 @@ export class TableComponent implements IResultHandler{
 
     onResult(){
         if(this.isSingleMatch()){
-            const resultEvent = new ResultEvent();
-            resultEvent.handler = this;
-            resultEvent.match = this.table.matches[0];
+            const resultEvent = {
+                handler: this,
+                match: this.table.matches[0]
+            };
             this.onResultForMatch.emit(resultEvent);
         }
        
