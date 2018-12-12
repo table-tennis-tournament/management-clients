@@ -34,8 +34,9 @@ export class DisciplineStageComponent{
     @Input() index:number;
 
     onResultClicked(currentMatch){
-        const resultEvent = new ResultEvent();
-        resultEvent.match = currentMatch;
+        const resultEvent = {
+            match: currentMatch
+        }
         this.onResultForMatch.emit(resultEvent);
     }
 }
