@@ -14,20 +14,19 @@ export class MatchListService {
     constructor(private http: HttpClient) {
     }
 
-
     loadAllMatchListItems(): Observable<MatchList[]> {
         return this.http.get<MatchList[]>(`api/matchlist/all`);
     }
 
-    assignToMatchList(matches: MatchListItem):Observable<StatusDto> {
+    assignToMatchList(matches: MatchListItem): Observable<StatusDto> {
         return this.http.post<StatusDto>(`api/matchlist/addMatch`, matches);
     }
 
-    deleteMatchListItem(matchId: any): Observable<StatusDto>{
+    deleteMatchListItem(matchId: any): Observable<StatusDto> {
         return this.http.delete(`api/matchlist/deleteMatch/${matchId}`);
     }
 
-    moveMatchListItem(matchListItem: MatchListItem):Observable<StatusDto> {
+    moveMatchListItem(matchListItem: MatchListItem): Observable<StatusDto> {
         return this.http.get(`api/matchlist/move/${matchListItem.id}/${matchListItem.position}`);
     }
 

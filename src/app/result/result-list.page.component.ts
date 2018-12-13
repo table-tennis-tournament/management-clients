@@ -12,8 +12,7 @@ import {MzModalService} from 'ngx-materialize';
 
 @Component({
     selector: 'toma-result-list-page',
-    templateUrl: './result-list.page.component.html',
-    styleUrls: ['./result-list.page.component.scss']
+    templateUrl: './result-list.page.component.html'
 })
 export class ResultListPageComponent implements OnInit {
 
@@ -35,7 +34,7 @@ export class ResultListPageComponent implements OnInit {
     }
 
     onTakeBackMatch(match: Match) {
-        this.store.dispatch(new TakeBackTable({matchIds: [match.match.id]}));
+        this.store.dispatch(new TakeBackTable({matchIds: [match.id]}));
     }
 
     onResultForMatch(match: Match) {

@@ -2,25 +2,23 @@ import {Match} from '../../shared/data/match.model';
 
 export const MatchTestData: Match [] = [
     {
-        'match': {
-            'id': 1,
-            'startTime': -2209165200000,
-            'isPlayed': true,
-            'result': [
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ]
+        'id': 1,
+        'startTime': -2209165200000,
+        'isPlayed': true,
+        'result': [
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
             ]
-        },
+        ],
         'team1': [
             {
                 'id': 272,

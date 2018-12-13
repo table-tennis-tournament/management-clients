@@ -43,7 +43,7 @@ export class DisciplineTabService {
                     currentStage = currentItemTab.stages[currentIndex];
                     currentIndex++;
                 }
-                if (currentItem.match.isPlayed !== true) {
+                if (currentItem.isPlayed !== true) {
                     currentStage.isComplete = false;
                 }
 
@@ -95,14 +95,14 @@ export class DisciplineTabService {
     }
 
     private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-        if (currentItem.table[0] && currentItem.match.isPlayed === false) {
+        if (currentItem.table[0] && currentItem.isPlayed === false) {
             currentGroup.tableNumbers.push(currentItem.table[0]);
         }
         return currentGroup;
     }
 
     private checkCompleteness(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-        if (currentItem.match.result == null) {
+        if (currentItem.result == null || currentItem.result === []) {
             currentGroup.isComplete = false;
         }
         return currentGroup;

@@ -50,7 +50,7 @@ export class ResultListComponent {
 
 
     private matchIsReadyForResult() {
-        return match => match.match.isPlayed === true && match.match.result == null;
+        return match => match.isPlayed === true && match.result == null;
     }
 
 

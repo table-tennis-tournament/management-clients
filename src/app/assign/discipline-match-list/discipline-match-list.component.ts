@@ -39,7 +39,7 @@ export class DisciplineMatchListComponent {
         }
         const filteredMatches = this.matches
             .filter(x => x.type.id === +disciplineId)
-            .filter(match => !match.match.isPlayed);
+            .filter(match => !match.isPlayed);
         this.currentMatchesToShow = filteredMatches;
     }
 

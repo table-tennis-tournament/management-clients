@@ -39,7 +39,7 @@ export class DisciplineStageComponent {
     }
 
     isNotInWaitingListAndNotOnTableAndNotFinished(currentMatch: Match) {
-        return !this.isInWaitingListOrOnTable(currentMatch) && !currentMatch.match.result;
+        return !this.isInWaitingListOrOnTable(currentMatch) && !currentMatch.result;
     }
 
 }

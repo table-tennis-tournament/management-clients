@@ -61,7 +61,7 @@ export class DisciplineGroupComponent {
         this.openMatches = 0;
         this.isComplete = true;
         this._group.matches.forEach(element => {
-            if (element.match.isPlayed !== true) {
+            if (element.isPlayed !== true) {
                 this.openMatches++;
             }
         });

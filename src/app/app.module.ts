@@ -58,8 +58,9 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {ResultListPageComponent} from './result/result-list.page.component';
 import {ResultListComponent} from './result/result-list/result-list.component';
 import {StagePipe} from './result/pipes/stage.pipe';
-import { DisciplinePipe } from './result/pipes/discipline.pipe';
-import { SettingsListComponent } from './settings/settings-list/settings-list.component';
+import {DisciplinePipe} from './result/pipes/discipline.pipe';
+import {SettingsListComponent} from './settings/settings-list/settings-list.component';
+import {WebsocketService} from './shared/websocket.service';
 
 @NgModule({
     declarations: [
@@ -127,7 +128,7 @@ import { SettingsListComponent } from './settings/settings-list/settings-list.co
         HttpClientModule
     ],
 
-    providers: [TableService],
+    providers: [TableService, WebsocketService],
     bootstrap: [AppComponent],
     entryComponents: [ResultModalComponent, SelectMatchModalComponent, SelectTableModalComponent]
 })

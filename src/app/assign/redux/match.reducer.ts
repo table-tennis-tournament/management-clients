@@ -21,7 +21,6 @@ export function reduceMatchState(state: MatchesState = initialState, action: Mat
             };
         case MatchActionTypes.LoadSuccess:
             return {
-                ...state,
                 matchesLoading: false,
                 matches: action.payload
             };

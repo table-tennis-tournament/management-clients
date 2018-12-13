@@ -13,7 +13,7 @@ const initialState: TableState = {
     tablesLoading: false
 };
 
-export function reduceTableState(state: TableState = initialState, action: TableActionsUnion){
+export function reduceTableState(state: TableState = initialState, action: TableActionsUnion) {
     switch (action.type) {
         case TableActionTypes.Load:
             return {
@@ -69,7 +69,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
                     if (table.number === action.payload.tableNr) {
                         return {
                             ...table,
-                            matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.match.id))]
+                            matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.id))]
                         };
                     }
                     return table;
@@ -83,7 +83,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
                     if (table.number === action.payload.tableNr) {
                         return {
                             ...table,
-                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.match.id))]
+                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.id))]
                         };
                     }
                     return table;
@@ -96,7 +96,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
                 tables: state.tables.map(table => {
                     return {
                         ...table,
-                        matches: [...table.matches.filter(match => resultForMatch.match.match.id !== match.match.id)]
+                        matches: [...table.matches.filter(match => resultForMatch.match.id !== match.id)]
                     };
                 })
             };
@@ -104,7 +104,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
             return state;
     }
 
-};
+}
 
 export const getTables = (state: TableState) => state.tables;
 export const getTablesLoading = (state: TableState) => state.tablesLoading;

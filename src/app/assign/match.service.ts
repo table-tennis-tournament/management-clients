@@ -30,7 +30,7 @@ export class MatchService {
     }
 
     resultForMatch(matchResult: TTMatchResult): Observable<StatusDto> {
-        return this.http.post<StatusDto>(`api/match/${matchResult.match.match.id}/result`, matchResult.result);
+        return this.http.post<StatusDto>(`api/match/${matchResult.match.id}/result`, matchResult.result);
     }
 
     loadAllMatches(): Observable<Match[]> {
