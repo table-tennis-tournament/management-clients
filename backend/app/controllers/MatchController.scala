@@ -42,6 +42,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
   }
 
   def freeMatches = Action { request =>
+    Logger.info("freeMatches")
     val req = request.body.asJson
     req match {
       case Some(r) => {
@@ -50,7 +51,8 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             ids map { id =>
               tables.freeTTTable(id)
             }
-            pub ! UpdateMatches(tables.allMatches().map(m => tables.getAllMatchInfo(m).get))
+            pub ! UpdateMatches(tables.allMatchesInfo)
+            pub ! UpdateTable(tables.allTableInfo)
             tables.startNextMatch
             Ok(Json.toJson(Answer(true, "successful")).toString())
           }
@@ -70,7 +72,8 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             ids map { id =>
               tables.takeBackTTTable(id)
             }
-            pub ! UpdateMatches(tables.allMatches().map(m => tables.getAllMatchInfo(m).get))
+            pub ! UpdateMatches(tables.allMatchesInfo)
+            pub ! UpdateTable(tables.allTableInfo)
             tables.startNextMatch
             Ok(Json.toJson(Answer(true, "successful")))
           }
@@ -136,7 +139,8 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.setResult(id, resultO.get) map {res =>
         if(res) {
-          pub ! UpdateMatches(tables.allMatches().map(m => tables.getAllMatchInfo(m).get))
+          pub ! UpdateMatches(tables.allMatchesInfo)
+          pub ! UpdateTable(tables.allTableInfo)
           tables.startNextMatch
           Ok(Json.toJson(Answer(true, "set result")))
         } else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
@@ -204,11 +208,9 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
             if(res) {
-              if(secondTable)
-                pub ! UpdateMatches(tables.allMatches().map(m => tables.getAllMatchInfo(m).get))
-              else
-                pub ! UpdateMatches(tables.allMatches().map(m => tables.getAllMatchInfo(m).get))
-              pub ! UpdateMatchList(tables.getMatchList)
+              pub ! UpdateMatches(tables.allMatchesInfo)
+              pub ! UpdateTable(tables.allTableInfo)
+              pub ! UpdateMatchList(tables.getAllMatchList)
               Ok(Json.toJson(Answer(true, "started match")))
             } else
               BadRequest(Json.toJson(Answer(false, "not all matches started")))
@@ -231,7 +233,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
                 tables.updatePlayerList map { i =>
                   val x = n && b && d && e && f && g && i
                   if(x) {
-                    pub ! UpdateMatches(tables.allMatches().map(m => tables.getAllMatchInfo(m).get))
+                    pub ! UpdateMatches(tables.allMatchesInfo)
                     Ok(Json.toJson(Answer(true, "load new matches")))
                   } else BadRequest(Json.toJson(Answer(false, "error loading new matches")))
                 }

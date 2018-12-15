@@ -63,6 +63,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   implicit def seqToContainsAnyOf[T](seq: Seq[T]) = new ContainsAnyOf(seq)
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
+    Logger.info(ttMatch.toString)
     val p1 = ttMatch.player1Ids map {id => getPlayerTypes(getPlayer(id))}
     val p2 = ttMatch.player2Ids map {id => getPlayerTypes(getPlayer(id))}
     val mt = getMatchType(ttMatch.matchTypeId)
@@ -73,9 +74,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val tn = getTTTableFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
       Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
-    else
+    else {
+      Logger.info("None: " + mt + ty)
       None
+    }
   }
+
+  def allTableInfo = allTTTables().map(t => getAllTableInfo(t)).sortBy(_.tableNumber)
 
   def getAllTableInfo(ttTable: TTTable): TableInfo = {
     TableInfo(
@@ -254,10 +259,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
             false
           }
           Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
-          if(res) {
-            pub ! UpdateTable(allTTTables().map(t => getAllTableInfo(t)))
-            pub ! UpdateMatchList(getMatchList)
-          }
         case _ =>
       }
     }
@@ -293,6 +294,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   def allMatches(): Seq[TTMatch] = {
     ttMatchSeq
   }
+
+  def allMatchesInfo = allMatches().map(m => getAllMatchInfo(m).get)
 
   def getMatchesOnTable(id: Long): Seq[TTMatch] = {
     ttMatchSeq.filter( m => ttTablesSeq.filter(_.id == id).head.matchId.contains(m.id))

@@ -1,8 +1,8 @@
 package controllers
 
 import java.util.UUID
-import javax.inject.{Inject, Named}
 
+import javax.inject.{Inject, Named}
 import akka.actor.ActorRef
 import dao.Tables
 import models._
@@ -10,7 +10,7 @@ import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{AbstractController, Action, BaseController, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import websocket.WebSocketActor.UpdateMatchList
+import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
 
 import scala.None
 import scala.concurrent.Future
@@ -47,7 +47,8 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
               val newMLAdded = newML ++ Seq(newMLEntry)
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
-              pub ! UpdateMatchList(tables.getMatchList)
+              pub ! UpdateMatches(tables.allMatchesInfo)
+              pub ! UpdateMatchList(tables.getAllMatchList)
               Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
             } else {
               BadRequest(Json.toJson(Answer(false, "match is already in match list", newMLEntry.uuid)))
@@ -64,7 +65,8 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
     Logger.info(tables.getMatchList.toString())
     Logger.info(uuid)
     if(tables.delMatchList(UUID.fromString(uuid))){
-      pub ! UpdateMatchList(tables.getMatchList)
+      pub ! UpdateMatches(tables.allMatchesInfo)
+      pub ! UpdateMatchList(tables.getAllMatchList)
       Ok(Json.toJson(Answer(true, "match deleted")))
     } else {
       BadRequest(Json.toJson(Answer(false, "UUID not found")))
@@ -78,7 +80,6 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
 
   def setActive(isActive: Boolean) = Action {
     tables.autoStart = isActive
-    pub ! UpdateMatchList(tables.getMatchList)
     Ok(Json.toJson(Answer(true,"set to " + isActive.toString)))
   }
 
@@ -99,7 +100,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
           else m.copy(position = m.position + 1)
         }
         tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
-        pub ! UpdateMatchList(tables.getMatchList)
+        pub ! UpdateMatchList(tables.getAllMatchList)
         Ok(Json.toJson(Answer(true, "changed match list")))
       }
       case _ => BadRequest(Json.toJson(Answer(false, "UUID not found")))

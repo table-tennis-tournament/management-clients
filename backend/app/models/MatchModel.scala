@@ -70,7 +70,7 @@ object MatchModel {
       "id" -> allMatchInfo.ttMatch.id,
       "startTime" -> allMatchInfo.ttMatch.startTime,
       "isPlayed" -> allMatchInfo.ttMatch.isPlayed,
-      "result" -> allMatchInfo.ttMatch.result,
+      "result" -> allMatchInfo.ttMatch.getResult,
       "team1" -> allMatchInfo.player1,
       "team2" -> allMatchInfo.player2,
       "matchType" -> allMatchInfo.matchType,
