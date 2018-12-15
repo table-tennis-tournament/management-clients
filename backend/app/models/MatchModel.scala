@@ -3,7 +3,7 @@ package models
 import java.util.UUID
 
 import org.joda.time.DateTime
-import play.api.libs.json.{JsPath, Json, Reads, Writes}
+import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 
@@ -65,6 +65,17 @@ object MatchModel {
     )
   }
 
+  implicit val stateWrites = new Writes[MatchState] {
+    def writes(matchState: MatchState) = matchState match {
+      case Open => Json.toJson("Open")
+      case InWaitingList => Json.toJson("InWaitingList")
+      case Callable => Json.toJson("Callable")
+      case OnTable => Json.toJson("OnTable")
+      case Finished => Json.toJson("Finished")
+      case Completed => Json.toJson("Completed")
+    }
+  }
+
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
     def writes(allMatchInfo: AllMatchInfo) = Json.obj(
       "id" -> allMatchInfo.ttMatch.id,
@@ -77,7 +88,7 @@ object MatchModel {
       "type" -> allMatchInfo.ttType,
       "group" -> allMatchInfo.group,
       "isPlayable" -> allMatchInfo.isPlayable,
-      "isInWaitingList" -> allMatchInfo.isInWaitingList,
+      "state" -> allMatchInfo.state,
       "table" -> allMatchInfo.table
     )
   }
@@ -114,7 +125,7 @@ case class AllMatchInfo(
     ttType: Type,
     group: Option[Group],
     isPlayable: Boolean,
-    isInWaitingList: Boolean,
+    state: MatchState,
     table: Seq[Int]
   )
 
@@ -140,7 +151,8 @@ case class TTMatch(
     nr: Int,
     plannedTableId: Option[Long],
     kindId: Int,
-    roundNumber: Option[Int]
+    roundNumber: Option[Int],
+    state: MatchState
   ) {
   def getResult = {
     if(resultRaw != "") {
@@ -239,3 +251,11 @@ case class DiscilplinMatches(
     isMatchActive: Boolean = true,
     isComplete: Boolean = false
 )
+
+sealed trait MatchState
+case object Open extends MatchState
+case object InWaitingList extends MatchState
+case object Callable extends MatchState
+case object OnTable extends MatchState
+case object Finished extends MatchState
+case object Completed extends MatchState

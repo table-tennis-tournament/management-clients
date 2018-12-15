@@ -70,10 +70,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     val ty = getType(ttMatch.typeId)
     val g = getGroup(ttMatch.groupId)
     val pl = isPlayable(ttMatch)
-    val inML = isInMatchList(ttMatch)
+    val state = ttMatch.state
     val tn = getTTTableFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, state, tn))
     else {
       Logger.info("None: " + mt + ty)
       None
@@ -327,7 +327,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       Logger.debug("single")
       TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId, 1,
-        if(m.matchTypeId == 9) Some(m.roundNumber) else None)
+        if(m.matchTypeId == 9) Some(m.roundNumber) else None, if(m.isPlayed) Completed else Open)
     } else {
       Logger.debug("double")
       val d1 = getDouble(m.team1Id - 100000)
@@ -335,7 +335,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       val x = TTMatch(m.id, m.isPlaying, m.team1Id, m.team2Id, if (d1.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
         if (d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.isPlayed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
-        2, if(m.matchTypeId == 9) Some(m.roundNumber) else None)
+        2, if(m.matchTypeId == 9) Some(m.roundNumber) else None, if(m.isPlayed) Completed else Open)
       Logger.debug(x.toString)
       x
     }
@@ -361,6 +361,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
     Logger.debug("start match")
     if(ttTablesSeq.filter(_.matchId == matchId).isEmpty) {
+      updateMatchState(Callable, matchId)
       ttMatchSeq = ttMatchSeq map { m =>
         if (m.id == matchId) m.copy(isPlaying = true)
         else m
@@ -390,6 +391,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def getMatchesInGroup(id: Long): Seq[TTMatch] = {
     ttMatchSeq.filter(_.groupId.getOrElse(0) == id)
+  }
+
+  def updateMatchState(matchState: MatchState, matchId: Long) = {
+    ttMatchSeq = ttMatchSeq.map {m =>
+      if(m.id == matchId) m.copy(state = matchState)
+      else m
+    }
   }
 
   def isPossibleMatch(id: Long): Boolean = {
@@ -704,6 +712,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     ttMatchListSeq.filter(_.uuid == Some(uuid)).headOption match {
       case Some(mlItem) => {
         Logger.debug("del: " + mlItem.toString)
+        mlItem.matchId.map(id => updateMatchState(Open, id))
         ttMatchListSeq = ttMatchListSeq.filterNot(_.uuid == Some(uuid)) map {mlEntry =>
           if (mlEntry.position > mlItem.position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
         }
