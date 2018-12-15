@@ -61,6 +61,7 @@ import {StagePipe} from './result/pipes/stage.pipe';
 import {DisciplinePipe} from './result/pipes/discipline.pipe';
 import {SettingsListComponent} from './settings/settings-list/settings-list.component';
 import {WebsocketService} from './shared/websocket.service';
+import {WebSocketEffects} from './websocket/redux/websocket.effects';
 
 @NgModule({
     declarations: [
@@ -124,7 +125,7 @@ import {WebsocketService} from './shared/websocket.service';
             name: 'Devtools',
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects, SettingsEffects]),
+        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects, SettingsEffects, WebSocketEffects]),
         HttpClientModule
     ],
 
