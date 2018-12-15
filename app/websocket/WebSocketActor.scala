@@ -20,7 +20,7 @@ object WebSocketActor {
 
   case class UpdateTable(table: Seq[TableInfo]) extends Message
   case class UpdateMatches(matches: Seq[AllMatchInfo]) extends Message
-  case class UpdateMatchList(matchList: Seq[MatchList]) extends Message
+  case class UpdateMatchList(matchList: Seq[MatchListInfo]) extends Message
 }
 
 
@@ -30,9 +30,9 @@ class WebSocketActor(out: ActorRef) extends Actor {
   import models.WSMessageModel._
   import models.TableModel.tableInfoWrites
   import models.MatchModel.allMatchInfoWrites
-  import models.MatchModel.matchListWrites
+  import models.MatchModel.matchListInfoWrites
 
-  Logger.debug("subscribe...")
+  Logger.info("subscribe...")
   val mediator = DistributedPubSub(context.system).mediator
   val topic = "Websocket"
   mediator ! Subscribe(topic, self)
@@ -45,13 +45,13 @@ class WebSocketActor(out: ActorRef) extends Actor {
 
   implicit val updateMatchesWrites = new Writes[UpdateMatches] {
     def writes(updateMatches: UpdateMatches) = Json.obj(
-      "UpdateTable" -> updateMatches.matches
+      "UpdateMatches" -> updateMatches.matches
     )
   }
 
   implicit val updateMatchList = new Writes[UpdateMatchList] {
     def writes(updateMatchList: UpdateMatchList) = Json.obj(
-      "UpdateTable" -> updateMatchList.matchList
+      "UpdateMatchList" -> updateMatchList.matchList
     )
   }
 
@@ -60,16 +60,16 @@ class WebSocketActor(out: ActorRef) extends Actor {
       Logger.info("I received your message: " + msg)
       out ! ("I received your message: " + msg)
     case m: UpdateTable =>
-      Logger.debug("send UpdateTable)")
+      Logger.info("send UpdateTable)")
       out ! Json.toJson(m).toString()
     case m: UpdateMatches =>
-      Logger.debug("send UpdateMatches)")
+      Logger.info("send UpdateMatches)")
       out ! Json.toJson(m).toString()
     case m: UpdateMatchList =>
-      Logger.debug("send UpdateMatchList)")
+      Logger.info("send UpdateMatchList)")
       out ! Json.toJson(m).toString()
     case SubscribeAck(Subscribe("Websocket", None, `self`)) ⇒
-      Logger.debug("subscribing")
+      Logger.info("subscribing")
     case e => Logger.info("error: " + e.toString)
   }
 }

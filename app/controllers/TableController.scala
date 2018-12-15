@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.{Inject, Named}
-
 import akka.actor.ActorRef
 import dao.Tables
 import models._
@@ -11,7 +10,7 @@ import play.api.mvc._
 import play.api.libs.json.JodaWrites
 import play.api.libs.json.JodaReads
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import websocket.WebSocketActor.UpdateTable
+import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
 
 
 /**
@@ -47,13 +46,13 @@ class TableController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   def lockTable(id: Long) = Action {
     tables.lockTTTable(id)
-    pub ! UpdateTable(tables.allTTTables().map(t => tables.getAllTableInfo(t)))
+    pub ! UpdateTable(tables.allTableInfo)
     Ok(Json.toJson(Answer(true, "table locked")))
   }
 
   def unlockTable(id: Long) = Action {
     tables.unlockTTTable(id)
-    pub ! UpdateTable(tables.allTTTables().map(t => tables.getAllTableInfo(t)))
+    pub ! UpdateTable(tables.allTableInfo)
     Ok(Json.toJson(Answer(true, "table unlocked")))
   }
 }

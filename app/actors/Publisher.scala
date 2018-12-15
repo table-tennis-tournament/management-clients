@@ -27,7 +27,7 @@ class Publisher extends Actor {
 
   def receive = {
     case in =>
-      Logger.debug("Publischer reseived message: " + in.getClass.getCanonicalName)
+      Logger.info("Publisher received message: " + in.getClass.getCanonicalName)
       mediator ! Publish("Websocket", in)
   }
 }
