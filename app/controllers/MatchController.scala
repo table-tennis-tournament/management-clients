@@ -227,6 +227,11 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   }
 
+  def matchCalled(id: Long) = Action {
+    tables.updateMatchState(OnTable, id)
+    Ok("State updated")
+  }
+
   def loadNewMatches = Action.async {
     tables.loadNewMatches() flatMap { n =>
       tables.updateDoublesSeq flatMap { b =>
