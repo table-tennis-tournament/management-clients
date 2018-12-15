@@ -15,6 +15,7 @@ val ngVersion = "4.4.4"
 //  "io.circe" %% "circe-parser"
 //).map(_ % circeVersion)
 
+
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
@@ -33,8 +34,9 @@ libraryDependencies ++= Seq(
   "org.joda"  % "joda-convert" % "1.8.1",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
   "it.innove" % "play2-pdf" % "1.8.0",
-  "org.apache.pdfbox" % "pdfbox" % "2.0.12",
+  "org.apache.pdfbox" % "pdfbox" % "2.0.13",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
+  "net.glxn" % "qrgen" % "1.4",
 
 
 ////angular2 dependencies

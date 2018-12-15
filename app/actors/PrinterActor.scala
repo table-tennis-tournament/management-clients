@@ -1,22 +1,26 @@
 package actors
 
 import java.awt.print.{PageFormat, Pageable, PrinterJob}
+
 import javax.inject.Inject
 import javax.print.PrintServiceLookup
 import javax.print.attribute.{Attribute, DocAttributeSet, HashDocAttributeSet, HashPrintRequestAttributeSet}
 import javax.print.attribute.standard.{MediaSizeName, OrientationRequested, PageRanges}
 import javax.swing.JEditorPane
 import javax.swing.text.html.HTMLEditorKit
-
 import org.apache.pdfbox._
 import akka.actor._
+import controllers.AssetsFinder
 import dao.Tables
 import it.innove.play.pdf.PdfGenerator
 import models.{AllMatchInfo, TTMatch}
+import net.glxn.qrgen.QRCode
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.printing.PDFPageable
 import org.xhtmlrenderer.simple.PDFRenderer
-import play.api.Logger
+import play.api.{Environment, Logger}
+import play.api.libs.Files
+import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 
 
 
@@ -35,7 +39,7 @@ object PrinterActor {
 
 
 
-class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
+class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: AssetsFinder) extends Actor {
   import actors.PrinterActor._
 
   Logger.debug("starting PrinterActor")
@@ -55,9 +59,9 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator) extends Actor {
       import javax.print.SimpleDoc
       import java.io.ByteArrayInputStream
 
+
       val docType = DocFlavor.INPUT_STREAM.AUTOSENSE
 
-      val printJob = printService.createPrintJob
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
       Logger.debug("pdf created")
       val doc: PDDocument = PDDocument.load(new ByteArrayInputStream(byteStream))

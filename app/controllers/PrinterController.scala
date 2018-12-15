@@ -4,9 +4,8 @@ import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter}
 import akka.actor.{ActorRef, ActorSystem}
 import javax.inject._
 import javax.swing.JEditorPane
-
 import actors.PrinterActor
-import play.api.Logger
+import play.api.{Configuration, Environment, Logger}
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -15,11 +14,16 @@ import akka.util.Timeout
 import dao.Tables
 import it.innove.play.pdf.PdfGenerator
 import models.{AllMatchInfo, Answer, TTMatch}
+import net.glxn.qrgen.QRCode
+import play.api.http.{DefaultFileMimeTypesProvider, FileMimeTypesConfiguration}
+import play.api.http.HttpConfiguration.HttpConfigurationProvider
+import play.mvc.FileMimeTypes
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.duration._
+import scala.reflect.io.File
 
 class PrinterController @Inject() (pdfGenerator: PdfGenerator, @Named("printer_actor") printerActor: ActorRef, @Named("publisher_actor") pubActor: ActorRef, tables: Tables) extends Controller{
   implicit val timeout: Timeout = 5.seconds
@@ -95,4 +99,9 @@ class PrinterController @Inject() (pdfGenerator: PdfGenerator, @Named("printer_a
     Ok(Json.toJson(Answer(true, "set printOnStart = " + printOnStart)))
   }
 
+  def getQrCode(content: String) = Action {
+    implicit val fileMimeTypes = new DefaultFileMimeTypesProvider(FileMimeTypesConfiguration(Map("png" -> "image/png"))).get
+    val file = QRCode.from(content).file("test.png")
+    Ok.sendFile(new java.io.File(file.getPath))
+  }
 }
