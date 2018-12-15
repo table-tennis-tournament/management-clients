@@ -45,6 +45,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
                 if (mlEntry.position >= filteredMatchList.position) mlEntry.copy(position = mlEntry.position + 1) else mlEntry
               }
               val newMLAdded = newML ++ Seq(newMLEntry)
+              newMLEntry.matchId.map(id => tables.updateMatchState(OnTable, id))
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
               pub ! UpdateMatches(tables.allMatchesInfo)

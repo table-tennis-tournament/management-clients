@@ -33,10 +33,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     val ty = tables.getType(ttMatch.typeId)
     val g = tables.getGroup(ttMatch.groupId)
     val pl = tables.isPlayable(ttMatch)
-    val inML = tables.isInMatchList(ttMatch)
+    val state = ttMatch.state
     val tn = tables.getTTTableFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, inML, tn))
+      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, state, tn))
     else
       None
   }
@@ -50,6 +50,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
           case Some(ids) => {
             ids map { id =>
               tables.freeTTTable(id)
+              tables.updateMatchState(Finished, id)
             }
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
@@ -71,6 +72,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
           case Some(ids) => {
             ids map { id =>
               tables.takeBackTTTable(id)
+              tables.updateMatchState(Open, id)
             }
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
@@ -139,6 +141,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.setResult(id, resultO.get) map {res =>
         if(res) {
+          tables.updateMatchState(Completed, id)
           pub ! UpdateMatches(tables.allMatchesInfo)
           pub ! UpdateTable(tables.allTableInfo)
           tables.startNextMatch
@@ -190,6 +193,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
                 Logger.info(tables.getMatchList.toString())
                 Logger.info("matchId: " + matchId)
                 val ml = tables.getMatchList
+                tables.updateMatchState(Callable, matchId)
                 ml.filter(_.matchId.contains(matchId)).headOption match {
                   case Some(mlItem) => {
                     Logger.info("delMatchList")
