@@ -38,10 +38,10 @@ export class DisciplineViewComponent {
         this._disciplines = value;
         this.tabs = this.disciplineTabService.getTabsForDisciplines(this.disciplines.filter(discipline => discipline.active));
         if (this.tabs && this.tabs.length > 0) {
-            this.setTabForId(this.tabs[0].id);
+            let firstTabDisciplineId = this.tabs[0].id;
+            this.setTabForId(firstTabDisciplineId);
         }
     }
-
 
     @Input()
     matchesLoading: boolean;
@@ -49,15 +49,18 @@ export class DisciplineViewComponent {
     @Output()
     resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
 
+    @Output()
+    selectDiscipline: EventEmitter<number> = new EventEmitter<number>();
+
     constructor(private disciplineTabService: DisciplineTabService) {
     }
-
 
     setTabForId(id: number) {
         this.currentTabId = id;
         const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter(match => match.type.id === id));
         this.selectedTab = createdTab;
         this.removePlayedItems();
+        this.selectDiscipline.emit(this.selectedTab.id);
     }
 
     removePlayedItems() {

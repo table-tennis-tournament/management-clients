@@ -4,6 +4,10 @@ import {Observable} from 'rxjs';
 import {Match} from './data/match.model';
 import {LoadMatchesSuccess} from '../assign/redux/match.actions';
 import {WebSocketSubject} from 'rxjs/webSocket';
+import {TableDto} from '../table/tabledto.model';
+import {LoadTablesSuccess} from '../table/redux/table.actions';
+import {MatchList} from '../supervisor/matchlist.model';
+import {LoadMatchListSuccess} from '../supervisor/redux/matchlist.actions';
 
 
 @Injectable({
@@ -11,7 +15,7 @@ import {WebSocketSubject} from 'rxjs/webSocket';
 })
 export class WebsocketService {
 
-    private SERVER_URL = 'ws://127.0.0.1:9000/register';
+    private SERVER_URL = 'ws://192.168.0.213:9000/register';
     private socket: number;
     private websocketObservable: Observable<object>;
     private ws: WebSocket;
@@ -27,7 +31,10 @@ export class WebsocketService {
         this.socket$.subscribe(
             (event) => this.handleData(event),
             (err) => console.log(err),
-            () => console.warn('websocket completed')
+            () => {
+                console.warn('websocket completed');
+                console.log('try to reconnect ...');
+            }
         );
         // this.socket$.next({data: {}});
 
@@ -71,8 +78,16 @@ export class WebsocketService {
 
     private handleData(data: any) {
         if (data.UpdateTable && data.UpdateTable.length > 0) {
-            const newMatchData: Match[] = data.UpdateTable;
+            const newTables: TableDto[] = data.UpdateTable;
+            this.store.dispatch(new LoadTablesSuccess(newTables));
+        }
+        if (data.UpdateMatches && data.UpdateMatches.length > 0) {
+            const newMatchData: Match[] = data.UpdateMatches;
             this.store.dispatch(new LoadMatchesSuccess(newMatchData));
+        }
+        if (data.UpdateMatchList && data.UpdateMatchList.length > 0) {
+            const newMatchlistItems: MatchList[] = data.UpdateMatchList;
+            this.store.dispatch(new LoadMatchListSuccess(newMatchlistItems));
         }
     }
 

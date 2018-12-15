@@ -12,6 +12,6 @@ export class AppComponent implements OnInit {
 
 
     ngOnInit(): void {
-        this.websocketService.initializeWebSocket('ws://127.0.0.1:9000/register');
+        this.websocketService.initializeWebSocket();
     }
 }

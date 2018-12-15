@@ -1,21 +1,24 @@
-<div class="row">
-    <div class="col no-padding s10">
-        <toma-discipline-view
-                [matches]="matches | async"
-                [disciplines]="disciplines | async"
-                [typeColor]="typeColor | async"
-                [matchesLoading]="matchesLoading | async"
-                (resultForMatch)="onResultForMatch($event)"
-        ></toma-discipline-view>
-    </div>
-    <div class="col s2">
-        <h4>Warteschlange: </h4>
-        <toma-matchlist-view
-                [matchListMatches]="matchList |async"
-                [typeColor]="typeColor | async"
-                (matchListItemDelete)="onMatchListItemDelete($event)"
-                (assignMatchListItem)="onAssignMatchListItem($event)"
-                (moveMatchListItem)="onMatchListItemMove($event)"
-        ></toma-matchlist-view>
+<div class="{{currentColor}}">
+    <div class="row">
+        <div class="col no-padding s10">
+            <toma-discipline-view
+                    [matches]="matches | async"
+                    [disciplines]="disciplines | async"
+                    [typeColor]="typeColor | async"
+                    [matchesLoading]="matchesLoading | async"
+                    (resultForMatch)="onResultForMatch($event)"
+                    (selectDiscipline)="onSelectedDisciplineChanged($event)"
+            ></toma-discipline-view>
+        </div>
+        <div class="col s2">
+            <h4>Warteschlange: </h4>
+            <toma-matchlist-view
+                    [matchListMatches]="matchList |async"
+                    [typeColor]="typeColor | async"
+                    (matchListItemDelete)="onMatchListItemDelete($event)"
+                    (assignMatchListItem)="onAssignMatchListItem($event)"
+                    (moveMatchListItem)="onMatchListItemMove($event)"
+            ></toma-matchlist-view>
+        </div>
     </div>
 </div>

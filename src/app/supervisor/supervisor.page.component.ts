@@ -24,6 +24,8 @@ export class SupervisorPageComponent implements OnInit {
     matchList: Observable<MatchList[]>;
     disciplines: Observable<Discipline[]>;
     typeColor: Observable<string[]>;
+    private colors: string[];
+    currentColor: string;
 
     constructor(private store: Store<any>, private modalService: MzModalService) {
     }
@@ -37,6 +39,7 @@ export class SupervisorPageComponent implements OnInit {
         this.matchList = this.store.select(getMatchListState);
         this.disciplines = this.store.select(getDisciplineState);
         this.typeColor = this.store.select(getTypeColorsState);
+        this.typeColor.subscribe(color => this.colors = color );
     }
 
     onMatchListItemDelete(event) {
@@ -57,6 +60,12 @@ export class SupervisorPageComponent implements OnInit {
         dialog.instance.currentMatch = match;
         dialog.instance.OnResultForMatch.subscribe(matchResult => this.store.dispatch(new ResultForMatch(matchResult)));
         return;
+    }
+
+    onSelectedDisciplineChanged(selectedDisciplineId: number){
+        if(this.colors != null) {
+            this.currentColor = this.colors[selectedDisciplineId];
+        }
     }
 
 }
