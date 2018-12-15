@@ -15,8 +15,9 @@ export class WebSocketEffects {
         ofType(WebSocketActionTypes.Connect),
         mergeMap((action: ConnectWebSocket) => {
             return this.websocketService
-                .connectSocket(action.payload).pipe(
+                .connectSocket().pipe(
                     map(() => {
+                        this.websocketService.registerListeners(action.payload);
                         return new ConnectWebSocketSuccess(true);
                     },
                     catchError(err => {

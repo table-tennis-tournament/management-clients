@@ -20,9 +20,17 @@ export class DisciplineViewComponent {
     playersAreOpen = true;
 
     matchesAreOpen = true;
+    private _matches: Match [];
 
     @Input()
-    matches: Match[];
+    set matches(value: Match[]) {
+        this._matches = value;
+        this.setTabForId(this.currentTabId);
+    }
+
+    get matches() {
+        return this._matches;
+    }
 
     @Input()
     typeColor: string[];
@@ -38,7 +46,7 @@ export class DisciplineViewComponent {
         this._disciplines = value;
         this.tabs = this.disciplineTabService.getTabsForDisciplines(this.disciplines.filter(discipline => discipline.active));
         if (this.tabs && this.tabs.length > 0) {
-            let firstTabDisciplineId = this.tabs[0].id;
+            const firstTabDisciplineId = this.tabs[0].id;
             this.setTabForId(firstTabDisciplineId);
         }
     }
@@ -56,6 +64,9 @@ export class DisciplineViewComponent {
     }
 
     setTabForId(id: number) {
+        if (id < 1) {
+            return;
+        }
         this.currentTabId = id;
         const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter(match => match.type.id === id));
         this.selectedTab = createdTab;

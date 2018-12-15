@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
 
 
     ngOnInit(): void {
-        this.store.dispatch(new ConnectWebSocket(this.handleWebsocketMessage.bind(this)));
+        this.connectToWebsocket();
     }
 
     handleWebsocketMessage(data: any) {
@@ -37,5 +37,14 @@ export class AppComponent implements OnInit {
             const newMatchlistItems: MatchList[] = data.UpdateMatchList;
             this.store.dispatch(new LoadMatchListSuccess(newMatchlistItems));
         }
+    }
+
+    connectToWebsocket() {
+        console.log('connect to socket');
+        this.store.dispatch(new ConnectWebSocket(
+            {
+                connected: this.handleWebsocketMessage.bind(this),
+                disconnected: this.connectToWebsocket.bind(this)
+            }));
     }
 }

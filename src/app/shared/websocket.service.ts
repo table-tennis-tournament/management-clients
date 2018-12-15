@@ -9,52 +9,46 @@ import {PartialObserver} from 'rxjs/src/internal/types';
 })
 export class WebsocketService {
 
-    // private SERVER_URL = 'ws://192.168.0.213:9000/register';
-    // private socket: SocketIOClient.Socket;
     connected$ = new BehaviorSubject<any>({});
-    private websocketObservable: Observable<object> = new Observable();
-    private ws: WebSocket;
+    disconnected$ = new BehaviorSubject<any>({});
 
     private socket$: WebSocketSubject<any>;
 
     constructor() {
-        // this.socket = socketio(environment.socket.baseUrl, environment.socket.config);
-        // this.socket.on('connect', () => this.connected$.next(true));
-        // this.socket.on('disconnect', () => this.connected$.next(false));
-        this.socket$ = new WebSocketSubject(environment.socket.baseUrl);
-        this.socket$.subscribe(
-            (event) => this.connected$.next(event),
-            (err) => console.log(err),
-            () => {
-                console.warn('websocket completed');
-                console.log('try to reconnect ...');
-            }
-        );
-        // this.connected$.subscribe(test => console.log(test));
     }
 
-    public connectSocket(subscriber: any): Observable<string> {
-        this.connected$.subscribe(subscriber);
-        return new Observable();
-        // return new Observable( observer => {
-        //     observer.next(this.connected$);
-        // });
-        // return this.connected$;
-        // return new Observable( observer => {
+    public connectSocket(): Observable<any> {
+        this.socket$ = new WebSocketSubject(environment.socket.baseUrl);
+        return Observable.create(complete => {
+            this.socket$.subscribe(
+                (event) => {
+                    this.connected$.next(event);
+                    complete.next('open');
+                },
+                (err) => {
+                    console.log('websocket error event');
+                    console.log(err);
+                    this.connected$.complete();
+                    this.connected$ = new BehaviorSubject<any>({});
+                    this.disconnected$.next(err);
+                    this.disconnected$.complete();
+                    this.disconnected$ = new BehaviorSubject<any>({});
+                },
+                () => {
+                    console.warn('websocket completed');
+                    console.log('try to reconnect ...');
+                }
+                );
+            }
+        );
+        // const resolveConnectedObserver = Observable.create(observer => this.resolveFunction = observer);
         //
-        //     this.socket.on(event, data => {
-        //
-        //         console.group();
-        //         console.log('----- SOCKET INBOUND -----');
-        //         console.log('Action: ', event);
-        //         console.log('Payload: ', data);
-        //         console.groupEnd();
-        //
-        //         observer.next(data);
-        //     });
-        //     // dispose of the event listener when unsubscribed
-        //     return () => this.socket.off(event);
-        // });
+        // return resolveConnectedObserver;
+    }
+
+    registerListeners(listeners: any) {
+        this.connected$.subscribe(listeners.connected);
+        this.disconnected$.subscribe(listeners.disconnected);
     }
 
     disconnect() {

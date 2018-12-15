@@ -10,8 +10,21 @@ import {Discipline} from '../../discipline/discipline.model';
 })
 export class DisciplineMatchListComponent {
 
+    private _matches: Match[];
+    private currentDisciplineId: number;
+
     @Input()
-    matches: Match[];
+    set matches(value: Match[]) {
+        this._matches = value;
+        if (this.currentDisciplineId == null) {
+            return;
+        }
+        this.onDisciplineSelected(this.currentDisciplineId == null ? 0 : this.currentDisciplineId);
+    }
+
+    get matches() {
+        return this._matches;
+    }
 
     @Input()
     matchesLoading: boolean;
@@ -28,6 +41,7 @@ export class DisciplineMatchListComponent {
     currentMatchesToShow: Match[];
 
     onDisciplineSelected(disciplineId: number) {
+        this.currentDisciplineId = disciplineId;
         if (+disciplineId === 0) {
             this.currentMatchesToShow = Object.assign([], this.matches);
             return;
