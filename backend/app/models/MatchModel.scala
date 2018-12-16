@@ -58,7 +58,7 @@ object MatchModel {
     def writes(ttMatch: TTMatch) = Json.obj(
       "id" -> ttMatch.id,
       "startTime" -> ttMatch.startTime,
-      "isPlayed" -> ttMatch.isPlayed,
+      //"isPlayed" -> ttMatch.isPlayed,
       //"allowedTableGroups" -> ttMatch.allowedTableGroups,
       "result" -> ttMatch.getResult
       //"colorId" -> ttMatch.colorId
@@ -80,7 +80,7 @@ object MatchModel {
     def writes(allMatchInfo: AllMatchInfo) = Json.obj(
       "id" -> allMatchInfo.ttMatch.id,
       "startTime" -> allMatchInfo.ttMatch.startTime,
-      "isPlayed" -> allMatchInfo.ttMatch.isPlayed,
+      //"isPlayed" -> allMatchInfo.ttMatch.isPlayed,
       "result" -> allMatchInfo.ttMatch.getResult,
       "team1" -> allMatchInfo.player1,
       "team2" -> allMatchInfo.player2,
@@ -131,13 +131,13 @@ case class AllMatchInfo(
 
 case class TTMatch(
     id: Long,
-    isPlaying: Boolean,
+    //isPlaying: Boolean,
     team1Id: Long,
     team2Id: Long,
     player1Ids: Seq[Long],
     player2Ids: Seq[Long],
     //ttTableId: Option[Long],
-    isPlayed: Boolean,
+    //isPlayed: Boolean,
     matchTypeId: Long,
     typeId: Long,
     groupId: Option[Long],
@@ -242,7 +242,7 @@ case class MatchListInfo(
     ttMatch: Seq[AllMatchInfo]
   )
 
-case class DiscilplinMatches(
+case class DisciplinMatches(
     name: String,
     players: Seq[Player],
     matches: Seq[AllMatchInfo],

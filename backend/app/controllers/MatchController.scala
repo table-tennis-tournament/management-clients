@@ -100,21 +100,21 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   def getOpenMatches  = Action {
     val matches = tables.allMatches()
-    val openMatches = matches.filter(m => !m.isPlaying && !m.isPlayed)
+    val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
     val x = openMatches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
 
   def getPlayedMatches  = Action {
     val matches = tables.allMatches()
-    val playedMatches = matches.filter(m => m.isPlayed && m.getResult.isEmpty)
+    val playedMatches = matches.filter(_.state == Finished)
     val x = playedMatches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
 
   def getPlayedMatchesByTypeId(typeid: Long)  = Action {
     val matches = tables.allMatches()
-    val playedMatches = matches.filter(m => m.isPlayed && m.getResult.isEmpty)
+    val playedMatches = matches.filter(_.state == Finished)
     val playedMatchesByType = playedMatches.filter(_.typeId == typeid)
     val x = playedMatchesByType.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
@@ -122,7 +122,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   def getOpenMatchesByTypeId(typeid: Long)  = Action {
     val matches = tables.allMatches()
-    val openMatches = matches.filter(m => !m.isPlaying && !m.isPlayed)
+    val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
     val openMatchesByType = openMatches.filter(_.typeId == typeid)
     val x = openMatchesByType.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
@@ -176,11 +176,11 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             val matches = tables.allMatches()
             Logger.info("matches: " + matches.toString())
             val m = matchIds.map(id => matches.filter(_.id == id).head)
-            Logger.debug(checkPlayable.toString)
-            val matchReady = !checkPlayable || m.forall(m => if (!(m.isPlayed || m.isPlaying)) {
+            Logger.info(checkPlayable.toString)
+            val matchReady = !checkPlayable || m.forall(m => if (m.state == Open || m.state == InWaitingList) {
                 (m.player1Ids ++ m.player2Ids).forall { p =>
                   val ml = matches.filter { ma =>
-                    ma.isPlaying && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+                    (ma.state == Callable || ma.state == OnTable) && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
                   }
                   ml.isEmpty // p is not playing
                 }
@@ -207,7 +207,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
               }
               result.forall(x => x)
             } else {
-              Logger.error("Match not ready")
+              Logger.error("Match not ready" + m.toString())
               false
             }
             Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
