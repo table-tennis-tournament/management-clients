@@ -49,8 +49,7 @@ export class ResultListComponent implements OnInit {
     onTypeChanged(disciplineId) {
         this.selectedDisciplineId = disciplineId;
         if (disciplineId === 0) {
-            this.selectedMatches = this.matches
-                .filter(match => match.state === MatchState[MatchState.Finished]);
+            this.selectedMatches = this.matches.filter(this.matchIsReadyForResult);
             return;
         }
         this.selectedMatches = this.matches
