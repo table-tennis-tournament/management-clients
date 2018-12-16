@@ -11,11 +11,12 @@ import {MatchState} from '../../shared/data/matchstate.model';
 export class ResultListComponent {
 
     private _matches: Match[];
+    private selectedDisciplineId = 0;
 
     @Input('matches')
     set matches(value: Match[]) {
         this._matches = value;
-        this.selectedMatches = this.matches.filter(this.matchIsReadyForResult());
+        this.onTypeChanged(this.selectedDisciplineId);
     }
 
     get matches() {
@@ -40,13 +41,15 @@ export class ResultListComponent {
     }
 
     onTypeChanged(disciplineId) {
+        this.selectedDisciplineId = disciplineId;
         if (disciplineId === 0) {
-            this.selectedMatches = this.matches.filter(this.matchIsReadyForResult);
+            this.selectedMatches = this.matches
+                .filter(match => match.state === MatchState[MatchState.Finished]);
             return;
         }
         this.selectedMatches = this.matches
             .filter(match => match.type.id === disciplineId)
-            .filter(this.matchIsReadyForResult);
+            .filter(match => match.state === MatchState[MatchState.Finished]);
     }
 
 
