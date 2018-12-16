@@ -3,8 +3,8 @@
 # ~~~~
 
 # Home page
-GET     /                               controllers.Application.index
-GET     /result                         controllers.Application.result
+GET     /                                   controllers.Application.index
+GET     /result                             controllers.Application.result
 
 # PlayerController
 GET     /api/player/all                     controllers.PlayerController.getAllPlayer
@@ -26,7 +26,7 @@ GET     /api/match/:id                      controllers.MatchController.getMatch
 POST    /api/match/:id/result               controllers.MatchController.setResult(id: Long)
 
 GET     /api/types/all                      controllers.MatchController.getTypes
-GET     /api/types/open/all                controllers.MatchController.getActiveTypes
+GET     /api/types/open/all                 controllers.MatchController.getActiveTypes
 
 # TableController:
 GET     /api/table/all                      controllers.TableController.getAllTables
@@ -49,7 +49,7 @@ GET     /api/match/delete/:id               controllers.MatchController.deleteMa
 GET     /api/match/called/:id               controllers.MatchController.matchCalled(id: Long)
 
 # WebSocket for push messages
-GET     /register                       controllers.WebSocketController.socket
+GET     /register                           controllers.WebSocketController.socket
 
 # PrinterController:
 GET     /api/printer/all                    controllers.PrinterController.allPrinter
@@ -65,5 +65,5 @@ GET     /api/settings/all                   controllers.SettingsController.allSe
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                       controllers.Assets.versioned(path="/public", file: Asset)
 
