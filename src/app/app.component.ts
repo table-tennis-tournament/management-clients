@@ -2,11 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ConnectWebSocket} from './websocket/redux/websocket.actions';
 import {TableDto} from './table/tabledto.model';
-import {LoadTablesSuccess} from './table/redux/table.actions';
+import {LoadTables, LoadTablesSuccess} from './table/redux/table.actions';
 import {Match} from './shared/data/match.model';
-import {LoadMatchesSuccess} from './assign/redux/match.actions';
+import {LoadMatches, LoadMatchesSuccess} from './assign/redux/match.actions';
 import {MatchList} from './supervisor/matchlist.model';
-import {LoadMatchListSuccess} from './supervisor/redux/matchlist.actions';
+import {LoadMatchList, LoadMatchListSuccess} from './supervisor/redux/matchlist.actions';
+import {LoadDiscipline} from './discipline/redux/discipline.actions';
 
 @Component({
     selector: 'toma-root',
@@ -19,6 +20,10 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         this.connectToWebsocket();
+        this.store.dispatch(new LoadDiscipline(null));
+        this.store.dispatch(new LoadMatches(null));
+        this.store.dispatch(new LoadTables(null));
+        this.store.dispatch(new LoadMatchList(null));
     }
 
     handleWebsocketMessage(data: any) {
@@ -45,9 +50,5 @@ export class AppComponent implements OnInit {
                 connected: this.handleWebsocketMessage.bind(this),
                 disconnected: this.connectToWebsocket.bind(this)
             }));
-    }
-
-    reconnectEvent() {
-        console.log('reconnect');
     }
 }

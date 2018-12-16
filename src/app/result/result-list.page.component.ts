@@ -1,11 +1,9 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {LoadMatches} from '../assign/redux/match.actions';
 import {getDisciplineLoading, getDisciplineState, getMatchesLoading, getMatchesState} from '../app-state.reducer';
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Discipline} from '../discipline/discipline.model';
-import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
@@ -25,8 +23,6 @@ export class ResultListPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(new LoadMatches(null));
-        this.store.dispatch(new LoadDiscipline(null));
         this.matches = this.store.select(getMatchesState);
         this.matchesLoading = this.store.select(getMatchesLoading);
         this.disciplines = this.store.select(getDisciplineState);

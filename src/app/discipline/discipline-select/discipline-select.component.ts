@@ -12,6 +12,7 @@ export class DisciplineSelectComponent {
     openDisciplines: Discipline[];
 
     _disciplines: Discipline[];
+    private _showWaitingList: boolean;
 
     get disciplines(): Discipline[] {
         return this._disciplines;
@@ -20,6 +21,10 @@ export class DisciplineSelectComponent {
     @Input('disciplines')
     set disciplines(value: Discipline[]) {
         this._disciplines = value;
+        this.refreshSelectBox();
+    }
+
+    private refreshSelectBox() {
         const disciplines = this.disciplines.filter(discipline => discipline.active);
         const result = [];
         if (this.showWaitingList) {
@@ -34,11 +39,21 @@ export class DisciplineSelectComponent {
         });
         this.openDisciplines = result.concat(disciplines);
         this.selectedDiscipline = this.openDisciplines[0].id;
+        this.disciplineChanged.emit(this.selectedDiscipline);
     }
 
-    @Input() showWaitingList: boolean;
+    @Input('showWaitingList')
+    set showWaitingList(value: boolean) {
+        this._showWaitingList = value;
+        this.refreshSelectBox();
+    }
 
-    @Output() disciplineChanged = new EventEmitter<number>();
+    get showWaitingList() {
+        return this._showWaitingList;
+    }
+
+    @Output()
+    disciplineChanged = new EventEmitter<number>();
 
     constructor() {
     }

@@ -41,7 +41,7 @@ export class ResultListComponent {
 
     onTypeChanged(disciplineId) {
         if (disciplineId === 0) {
-            this.selectedMatches = this.matches.filter(this.matchIsReadyForResult());
+            this.selectedMatches = this.matches.filter(this.matchIsReadyForResult);
             return;
         }
         this.selectedMatches = this.matches

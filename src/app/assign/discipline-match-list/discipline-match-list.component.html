@@ -1,8 +1,9 @@
 <div class="row without-margin">
     <div class="input-field col s12">
         <toma-discipline-select (disciplineChanged)="onDisciplineSelected($event)"
+                                [showWaitingList]="true"
                                 [disciplines]="disciplines"
-                                [showWaitingList]="true"></toma-discipline-select>
+                                ></toma-discipline-select>
     </div>
 </div>
 <div class="row maxHeight">

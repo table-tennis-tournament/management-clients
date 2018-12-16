@@ -25,9 +25,6 @@ export class AssignMatchPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(new LoadMatches(null));
-        this.store.dispatch(new LoadMatchList(null));
-        this.store.dispatch(new LoadDiscipline(null));
         this.matches = this.store.select(getMatchesState);
         this.matchesLoading = this.store.select(getMatchesLoading);
         this.matchList = this.store.select(getMatchListState);
