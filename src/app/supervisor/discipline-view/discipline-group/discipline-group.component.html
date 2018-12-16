@@ -36,7 +36,7 @@
                        (dblclick)="resultForMatch.emit(currentMatch)"
                        dnd-draggable
                        class="collection-item"
-                       [dragEnabled]="!currentMatch.isPlayed&&!currentMatch.isInWaitingList"
+                       [dragEnabled]="currentMatch.state === openMatchState"
                        [dragData]="currentMatch">
                         <div>
                             <toma-team-item [team]="currentMatch.team1"

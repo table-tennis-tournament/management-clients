@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {DisciplineStage} from '../models/discipline.stage.model';
 import {Match} from '../../../shared/data/match.model';
+import {MatchState} from '../../../shared/data/matchstate.model';
 
 @Component({
     selector: 'toma-discipline-stage',
@@ -35,11 +36,11 @@ export class DisciplineStageComponent {
 
 
     isInWaitingListOrOnTable(currentMatch: Match) {
-        return currentMatch.isInWaitingList || currentMatch.table.length > 0;
+        return currentMatch.state === MatchState[MatchState.InWaitingList] || currentMatch.table.length > 0;
     }
 
-    isNotInWaitingListAndNotOnTableAndNotFinished(currentMatch: Match) {
-        return !this.isInWaitingListOrOnTable(currentMatch) && !currentMatch.result;
+    isMatchOpen(currentMatch: Match) {
+        return currentMatch.state === MatchState[MatchState.Open];
     }
 
 }

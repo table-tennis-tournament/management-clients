@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {DisciplineGroup} from '../models/discipline.group.model';
 import {MzCollapsibleComponent} from 'ngx-materialize';
 import {Match} from '../../../shared/data/match.model';
+import {MatchState} from '../../../shared/data/matchstate.model';
 
 @Component({
     selector: 'toma-discipline-group',
@@ -12,7 +13,8 @@ export class DisciplineGroupComponent {
     openMatches: number;
     isComplete: boolean;
     allMatchCount: number;
-    private tableNumbers: any[];
+    openMatchState: string = MatchState[MatchState.Open];
+    tableNumbers: any[];
 
     @ViewChild('collapsibleGroup') collapsibleGroup: MzCollapsibleComponent;
 

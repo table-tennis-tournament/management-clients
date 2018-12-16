@@ -20,6 +20,7 @@ export const ThreeMatches: Match[] = [
                 5
             ]
         ],
+        'state': 'Open',
         'team1': [
             {
                 'id': 272,
@@ -88,6 +89,7 @@ export const ThreeMatches: Match[] = [
                 5
             ]
         ],
+        'state': 'Open',
         'team1': [
             {
                 'id': 272,
@@ -142,6 +144,7 @@ export const ThreeMatches: Match[] = [
         'id': 3,
         'startTime': -2209165200000,
         'isPlayed': true,
+        'state': 'Open',
         'result': [
             [
                 11,

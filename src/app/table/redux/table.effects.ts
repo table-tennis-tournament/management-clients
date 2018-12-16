@@ -3,7 +3,7 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
-import {catchError, map, mergeMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {
     AssignMatchToTable,
     AssignMatchToTableError,
@@ -43,7 +43,7 @@ export class TableEffects {
     @Effect()
     loadTables$: Observable<Action> = this.actions$.pipe(
         ofType(TableActionTypes.Load),
-        mergeMap(() => {
+        switchMap(() => {
             return this.tableService
                 .getAllTables().pipe(
                     map(tables => new LoadTablesSuccess(tables)),

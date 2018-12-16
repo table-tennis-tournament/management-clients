@@ -21,8 +21,8 @@
                 <a *ngFor="let currentMatch of stage.matches"
                    class="collection-item no-lines {{lineStageClass[index%3]}}"
                    (dblclick)="resultForMatch.emit(currentMatch)"
-                   [class.disabled-item]="isInWaitingListOrOnTable(currentMatch)" dnd-draggable
-                   [dragEnabled]="isNotInWaitingListAndNotOnTableAndNotFinished(currentMatch)"
+                   [class.disabled-item]="!isMatchOpen(currentMatch)" dnd-draggable
+                   [dragEnabled]="isMatchOpen(currentMatch)"
                    [dragData]="currentMatch">
                     <div class="match-item-padding">
                         <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>

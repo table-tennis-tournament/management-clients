@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {Discipline} from '../../discipline/discipline.model';
+import {MatchState} from '../../shared/data/matchstate.model';
 
 @Component({
     selector: 'toma-result-list',
@@ -45,12 +46,12 @@ export class ResultListComponent {
         }
         this.selectedMatches = this.matches
             .filter(match => match.type.id === disciplineId)
-            .filter(this.matchIsReadyForResult());
+            .filter(this.matchIsReadyForResult);
     }
 
 
     private matchIsReadyForResult() {
-        return match => match.isPlayed === true && match.result == null;
+        return match => match.state === MatchState[MatchState.Finished];
     }
 
 

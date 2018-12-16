@@ -19,6 +19,7 @@ export const MatchTestData: Match [] = [
                 5
             ]
         ],
+        'state': 'Open',
         'team1': [
             {
                 'id': 272,

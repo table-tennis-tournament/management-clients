@@ -17,7 +17,6 @@ export class AppComponent implements OnInit {
     constructor(private store: Store<any>) {
     }
 
-
     ngOnInit(): void {
         this.connectToWebsocket();
     }
@@ -40,11 +39,15 @@ export class AppComponent implements OnInit {
     }
 
     connectToWebsocket() {
-        console.log('connect to socket');
+        console.log('start connecting to socket');
         this.store.dispatch(new ConnectWebSocket(
             {
                 connected: this.handleWebsocketMessage.bind(this),
                 disconnected: this.connectToWebsocket.bind(this)
             }));
+    }
+
+    reconnectEvent() {
+        console.log('reconnect');
     }
 }
