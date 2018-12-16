@@ -52,10 +52,4 @@ export class ResultListComponent {
             .filter(match => match.state === MatchState[MatchState.Finished]);
     }
 
-
-    private matchIsReadyForResult() {
-        return match => match.state === MatchState[MatchState.Finished];
-    }
-
-
 }
