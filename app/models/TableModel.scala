@@ -77,7 +77,7 @@ object TableModel {
     def writes(ttMatch: TTMatch) = Json.obj(
       "id" -> ttMatch.id,
       "startTime" -> ttMatch.startTime,
-      "isPlayed" -> ttMatch.isPlayed
+      //"isPlayed" -> ttMatch.isPlayed
       // "allowedTableGroups" -> ttMatch.allowedTableGroups,
       // "result" -> ttMatch.getResult
       // "colorId" -> ttMatch.colorId

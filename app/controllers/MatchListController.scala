@@ -36,7 +36,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
       case Some(json) => {
         json.validate[MatchList].asOpt match {
           case Some(matchList) => {
-            val filteredMatchList = matchList.copy(matchId = matchList.matchId.filter(id => !tables.getMatch(id).get.isPlayed && !tables.getMatch(id).get.isPlaying))
+            val filteredMatchList = matchList.copy(matchId = matchList.matchId.filter(id => tables.getMatch(id).get.state == Open))
             Logger.info("addMatch")
             val newMLEntry = filteredMatchList.copy(uuid = Some(filteredMatchList.uuid.getOrElse(UUID.randomUUID())), matchId = filteredMatchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
             val ml = tables.getMatchList
@@ -46,6 +46,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
               }
               val newMLAdded = newML ++ Seq(newMLEntry)
               newMLEntry.matchId.map(id => tables.updateMatchState(OnTable, id))
+              matchList.matchId.foreach(m => tables.updateMatchState(InWaitingList, m))
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
               pub ! UpdateMatches(tables.allMatchesInfo)

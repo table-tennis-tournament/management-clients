@@ -78,3 +78,21 @@ case class Club(
     id: Long,
     clubName: String
   )
+
+case class PlayerPerGroup(
+  id: Long,
+  playerId: Long,
+  groupId: Long,
+  groupPos: Long,
+  matchesWon: Long,
+  matchesLost: Long,
+  setsWon: Long,
+  setsLost: Long,
+  pointsWon: Long,
+  pointsLost: Long,
+  games: String,
+  sets: String,
+  points: String,
+  checked: Boolean,   // all matches played
+  setsDiff: Long
+)
