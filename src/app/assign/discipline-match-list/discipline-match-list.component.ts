@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {MatchList} from '../../supervisor/matchlist.model';
 import {Discipline} from '../../discipline/discipline.model';
+import {MatchState} from '../../shared/data/matchstate.model';
 
 @Component({
     selector: 'toma-discipline-match-list',
@@ -43,7 +44,8 @@ export class DisciplineMatchListComponent {
     onDisciplineSelected(disciplineId: number) {
         this.currentDisciplineId = disciplineId;
         if (+disciplineId === 0) {
-            this.currentMatchesToShow = Object.assign([], this.matches);
+            this.currentMatchesToShow = Object.assign([], this.matches
+                .filter(match => this.isMatchOpen(match)));
             return;
         }
 
@@ -52,10 +54,16 @@ export class DisciplineMatchListComponent {
             return;
         }
         const filteredMatches = this.matches
-            .filter(x => x.type.id === +disciplineId)
-            .filter(match => !match.isPlayed);
+            .filter(match => match.type.id === +disciplineId)
+            .filter(match => this.isMatchOpen(match));
         this.currentMatchesToShow = filteredMatches;
     }
+
+    private isMatchOpen(match) {
+        return match.state === MatchState[MatchState.Open];
+    }
+
+
 
     onDragStart($event) {
         if ($event.dragData.isGroup === true) {

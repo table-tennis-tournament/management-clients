@@ -20,6 +20,10 @@ export class DisciplineStageItemComponent {
         return this.match.state === MatchState[MatchState.InWaitingList];
     }
 
+    isCalled() {
+        return this.match.state === MatchState[MatchState.Callable];
+    }
+
     isMatchFinished() {
         return this.match.state === MatchState[MatchState.Finished];
     }

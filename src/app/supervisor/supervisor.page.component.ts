@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
 import {MatchList} from './matchlist.model';
 import {Discipline} from '../discipline/discipline.model';
 import {LoadDiscipline} from '../discipline/redux/discipline.actions';
-import {LoadMatches} from '../assign/redux/match.actions';
+import {LoadMatches, ReloadMatches} from '../assign/redux/match.actions';
 import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem} from './redux/matchlist.actions';
 import {MzModalService} from 'ngx-materialize';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
@@ -43,6 +43,10 @@ export class SupervisorPageComponent implements OnInit {
         this.store.dispatch(new LoadDiscipline(null));
         this.store.dispatch(new LoadMatches(null));
         this.store.dispatch(new LoadMatchList(null));
+    }
+
+    onSyncMatches() {
+        this.store.dispatch(new ReloadMatches(null));
     }
 
     onMatchListItemDelete(event) {

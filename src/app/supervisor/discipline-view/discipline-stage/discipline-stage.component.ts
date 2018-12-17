@@ -35,12 +35,20 @@ export class DisciplineStageComponent {
     deleteStage: EventEmitter<DisciplineStage> = new EventEmitter<DisciplineStage>();
 
 
-    isInWaitingListOrOnTable(currentMatch: Match) {
-        return currentMatch.state === MatchState[MatchState.InWaitingList] || currentMatch.table.length > 0;
+    isInWaitingListOrOnTableOrCallable(currentMatch: Match) {
+        return currentMatch.state === MatchState[MatchState.InWaitingList]
+            || currentMatch.state === MatchState[MatchState.Callable]
+            || currentMatch.state === MatchState[MatchState.OnTable];
     }
 
     isMatchOpen(currentMatch: Match) {
         return currentMatch.state === MatchState[MatchState.Open];
+    }
+
+    isOnTableOrCallable(currentMatch: Match) {
+        console.log('state: ' + currentMatch.state);
+        return currentMatch.state === MatchState[MatchState.OnTable]
+            || currentMatch.state === MatchState[MatchState.Callable];
     }
 
 }

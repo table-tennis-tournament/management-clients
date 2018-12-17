@@ -16,10 +16,11 @@ export class DisciplineViewComponent {
     tabs: DisciplineTab[];
 
     selectedTab: DisciplineTab;
-    removePlayed = false;
-    playersAreOpen = true;
 
+    showAllMatches = true;
+    playersAreOpen = true;
     matchesAreOpen = true;
+
     private _matches: Match [];
 
     @Input()
@@ -75,7 +76,7 @@ export class DisciplineViewComponent {
     }
 
     removePlayedItems() {
-        if (this.removePlayed === false) {
+        if (this.showAllMatches === false) {
             const stagesCopy = this.selectedTab.stages.filter(x => x.isComplete === false);
             this.selectedTab.stages = stagesCopy;
             const groupsCopy = this.selectedTab.groups.filter(y => y.isComplete === false);
@@ -84,7 +85,7 @@ export class DisciplineViewComponent {
     }
 
     onRemovePlayedChanged() {
-        if (this.removePlayed !== false) {
+        if (this.showAllMatches !== false) {
             this.setTabForId(this.currentTabId);
             return;
         }

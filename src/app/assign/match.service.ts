@@ -40,4 +40,8 @@ export class MatchService {
     assignMatchToTable(matchToTable: MatchToTable): Observable<StatusDto> {
         return this.http.post<StatusDto>(`api/match/matchtotable/${matchToTable.tableNr}`, matchToTable.matchIds);
     }
+
+    reloadMatchesFromDb(): Observable<StatusDto> {
+        return this.http.get<StatusDto>(`/api/match/loadnew`);
+    }
 }
