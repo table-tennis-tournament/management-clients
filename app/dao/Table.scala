@@ -296,7 +296,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     ttMatchSeq
   }
 
-  def allMatchesInfo = allMatches().map(m => getAllMatchInfo(m).get)
+  def allMatchesInfo = allMatches().map(m => getAllMatchInfo(m).get).sortBy(_.ttMatch.id)
 
   def getMatchesOnTable(id: Long): Seq[TTMatch] = {
     ttMatchSeq.filter( m => ttTablesSeq.filter(_.id == id).head.matchId.contains(m.id))
