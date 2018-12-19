@@ -27,8 +27,6 @@ export class AppComponent implements OnInit {
     }
 
     handleWebsocketMessage(data: any) {
-        console.log('message received');
-        console.log(data);
         if (data.UpdateTable && data.UpdateTable.length > 0) {
             const newTables: TableDto[] = data.UpdateTable;
             this.store.dispatch(new LoadTablesSuccess(newTables));

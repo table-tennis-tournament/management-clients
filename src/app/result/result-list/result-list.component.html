@@ -8,6 +8,15 @@
                     [showWaitingList]="false">
             </toma-discipline-select>
         </div>
+        <div class="col s2 m6">
+            <qr-scanner
+                    [debug]="true"
+                    [canvasWidth]="400"
+                    [canvasHeight]="400"
+                    [stopAfterScan]="false"
+                    [updateTime]="500">
+            </qr-scanner>
+        </div>
     </div>
 
     <div class="row">

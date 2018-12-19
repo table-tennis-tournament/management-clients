@@ -1,36 +1,38 @@
 <div class="row">
-  <div class="col s2">
-    <p>
-      <input type="checkbox" class="filled-in" [(ngModel)]="isPrintForAssign" id="filled-in-box"
-             (change)="printForAssign.emit(isPrintForAssign)"/>
-      <label for="filled-in-box">Druck bei Ausruf</label>
-    </p>
-  </div>
-  <div class="col s2">
-    <p>
-      <input type="checkbox" class="filled-in" [(ngModel)]="assignAutomatically" id="automatically-assign"
-             (change)="automaticallyAssign.emit(assignAutomatically)"/>
-      <label for="automatically-assign">Automatisch Ausrufen</label>
-    </p>
-  </div>
+    <div class="col s2">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="isPrintForAssign" id="filled-in-box"
+                   (change)="printForAssign.emit(isPrintForAssign)"/>
+            <label for="filled-in-box">Druck bei Ausruf</label>
+        </p>
+    </div>
+    <div class="col s2">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="assignAutomatically" id="automatically-assign"
+                   (change)="automaticallyAssign.emit(assignAutomatically)"/>
+            <label for="automatically-assign">Automatisch Ausrufen</label>
+        </p>
+    </div>
 </div>
 
 <div class="row">
-  <div class="col s4">
-    <mz-select-container>
-      <select mz-select
-              id="select-printer"
-              [label]="'Wähle Drucker'"
-              [placeholder]="'Drucker'"
-              [(ngModel)]="selectedPrinter">
-        <option *ngFor="let printer of printers" [value]="printer">
-          {{printer}}
-        </option>
-      </select>
-    </mz-select-container>
-  </div>
-  <div class="col s6">
-    <a class="waves-effect waves-light btn" (click)="savePrinter.emit(selectedPrinter)"><i
-            class="material-icons left">save</i>Speichern</a>
-  </div>
+    <div class="col s4">
+        <mz-select-container>
+            <select mz-select
+                    id="select-printer"
+                    [label]="'Wähle Drucker'"
+                    [placeholder]="'Drucker'"
+                    [(ngModel)]="selectedPrinter">
+                <option *ngFor="let printer of printers" [value]="printer">
+                    {{printer}}
+                </option>
+            </select>
+        </mz-select-container>
+    </div>
+    <div class="col s6">
+        <a class="waves-effect waves-light btn" (click)="savePrinter.emit(selectedPrinter)"><i
+                class="material-icons left">save</i>Speichern</a>
+    </div>
 </div>
+
+

@@ -25,6 +25,7 @@
     "@ngrx/router-store": "6.0.1",
     "@ngrx/store": "6.0.1",
     "@ngrx/store-devtools": "6.0.1",
+    "angular2-qrscanner": "^1.0.7",
     "core-js": "2.5.4",
     "ng2-dnd": "^5.0.2",
     "ngx-materialize": "6.1.3",

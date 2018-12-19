@@ -62,6 +62,7 @@ import {DisciplinePipe} from './result/pipes/discipline.pipe';
 import {SettingsListComponent} from './settings/settings-list/settings-list.component';
 import {WebsocketService} from './shared/websocket.service';
 import {WebSocketEffects} from './websocket/redux/websocket.effects';
+import {NgQrScannerModule} from 'angular2-qrscanner';
 
 @NgModule({
     declarations: [
@@ -126,6 +127,7 @@ import {WebSocketEffects} from './websocket/redux/websocket.effects';
             logOnly: environment.production,
         }),
         EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects, SettingsEffects, WebSocketEffects]),
+        NgQrScannerModule,
         HttpClientModule
     ],
 
