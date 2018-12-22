@@ -14,6 +14,9 @@ export class ResultListComponent implements OnInit {
     private _matches: Match[];
     private selectedDisciplineId = 0;
 
+    @Output()
+    freeMatch: EventEmitter<number> = new EventEmitter();
+
     @ViewChild(QrScannerComponent) qrScannerComponent: QrScannerComponent;
 
     @Input('matches')
@@ -71,7 +74,7 @@ export class ResultListComponent implements OnInit {
                         choosenDev = dev;
                         break;
                     }
-                    if (dev.label.includes('e27830bfb1bb4285810e9e9a5ee355af17a9e5e8b38bd1e9f7f1e58ea8adac05')) {
+                    if (dev.deviceId.includes('0fc8c39985c48189a20ec62b287901081e613fc33fda912085a3635d814a952d')) {
                         choosenDev = dev;
                         break;
                     }
@@ -85,6 +88,10 @@ export class ResultListComponent implements OnInit {
         });
 
         this.qrScannerComponent.capturedQr.subscribe(result => {
+            if(+result > 0){
+                this.freeMatch.emit(+result);
+            }
+            console.log('found image');
             console.log(result);
         });
     }

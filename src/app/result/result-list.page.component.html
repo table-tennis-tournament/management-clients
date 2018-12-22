@@ -3,5 +3,6 @@
         [matchesLoading]="matchesLoading | async"
         [disciplines]="disciplines | async"
         (takeBackMatch)="onTakeBackMatch($event)"
+        (freeMatch)="onFreeMatch($event)"
         (resultForMatch)="onResultForMatch($event)"
 ></toma-result-list>

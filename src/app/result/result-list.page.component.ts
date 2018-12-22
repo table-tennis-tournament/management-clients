@@ -4,7 +4,7 @@ import {getDisciplineLoading, getDisciplineState, getMatchesLoading, getMatchesS
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Discipline} from '../discipline/discipline.model';
-import {ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
+import {FreeTable, ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
 
@@ -38,7 +38,10 @@ export class ResultListPageComponent implements OnInit {
             <ComponentRef<ResultModalComponent>>this.modalService.open(ResultModalComponent);
         dialog.instance.currentMatch = match;
         dialog.instance.OnResultForMatch.subscribe(matchResult => this.store.dispatch(new ResultForMatch(matchResult)));
-        return;
+    }
+
+    onFreeMatch(matchId: number) {
+        this.store.dispatch(new FreeTable({matchIds: [matchId]}));
     }
 
 }
