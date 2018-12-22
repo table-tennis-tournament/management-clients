@@ -15,6 +15,9 @@ export class TableListComponent {
     @Input()
     tablesLoading: boolean;
 
+    @Input()
+    typeColor: string[];
+
     @Output()
     lockTable = new EventEmitter<number>();
 

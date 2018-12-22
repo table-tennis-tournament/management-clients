@@ -1,0 +1,29 @@
+.single-bordered {
+  border: 1px solid grey;
+  border-radius: 25px;
+  height: 25px;
+}
+
+.collapsible-body .collection .collection-item {
+  padding: 10px 4px;
+}
+
+.padding-left {
+  padding-left: 10px;
+}
+
+.header-main-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.header-center-content {
+  flex: 1;
+  order: 1;
+}
+
+.header-right-content {
+  width: 33px;
+  order: 2;
+}

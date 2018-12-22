@@ -9,10 +9,11 @@ import {MatchToTable} from './tt-table-content/matchtotable.model';
 })
 export class TtTableComponent {
 
-    public bgColor = 'blue';
-
     @Input()
     table: TableDto;
+
+    @Input()
+    typeColor: string[];
 
     @Output()
     resultForMatch = new EventEmitter<any>();

@@ -9,6 +9,7 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {
     MzButtonModule,
     MzCheckboxModule,
+    MzCollapsibleModule,
     MzCollectionModule,
     MzInputModule,
     MzModalModule,
@@ -44,6 +45,16 @@ import {MatchEffects} from './assign/redux/match.effects';
 import {DndModule} from 'ng2-dnd';
 import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
 import {MatchListEffects} from './supervisor/redux/matchlist.effects';
+import {DisciplineViewComponent} from './supervisor/discipline-view/discipline-view.component';
+import {MatchlistViewComponent} from './supervisor/matchlist-view/matchlist-view.component';
+import {DisciplineEffects} from './discipline/redux/discipline.effects';
+import {DisciplineGroupComponent} from './supervisor/discipline-view/discipline-group/discipline-group.component';
+import {DisciplineStageComponent} from './supervisor/discipline-view/discipline-stage/discipline-stage.component';
+import {DisciplineStageItemComponent} from './supervisor/discipline-view/discipline-stage/discipline-stage-item/discipline-stage-item.component';
+import {TeamItemComponent} from './shared/team-item/team-item.component';
+import {SettingsEffects} from './settings/redux/settings.effects';
+import {SettingsPageComponent} from './settings/settings.page.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
     declarations: [
@@ -64,7 +75,14 @@ import {MatchListEffects} from './supervisor/redux/matchlist.effects';
         DisciplineMatchListComponent,
         DisciplineSelectComponent,
         DisciplineTypePipe,
-        SupervisorPageComponent
+        SupervisorPageComponent,
+        DisciplineViewComponent,
+        MatchlistViewComponent,
+        DisciplineGroupComponent,
+        DisciplineStageComponent,
+        DisciplineStageItemComponent,
+        TeamItemComponent,
+        SettingsPageComponent
     ],
     imports: [
         BrowserModule,
@@ -77,6 +95,8 @@ import {MatchListEffects} from './supervisor/redux/matchlist.effects';
         MzCheckboxModule,
         MzSelectModule,
         MzCollectionModule,
+        MzCollapsibleModule,
+        DragDropModule,
         DndModule.forRoot(),
         FormsModule,
         ToastrModule.forRoot({
@@ -93,7 +113,7 @@ import {MatchListEffects} from './supervisor/redux/matchlist.effects';
             name: 'Devtools',
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects]),
+        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects, SettingsEffects]),
         HttpClientModule
     ],
 

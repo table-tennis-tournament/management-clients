@@ -1,16 +1,17 @@
 <div class="row without-margin">
     <div class="input-field col s12">
         <toma-discipline-select (disciplineChanged)="onDisciplineSelected($event)"
+                                [disciplines]="disciplines"
                                 [showWaitingList]="true"></toma-discipline-select>
     </div>
 </div>
 <div class="row maxHeight">
     <mz-spinner *ngIf="matchesLoading"></mz-spinner>
     <mz-collection>
-        <mz-collection-item class="green ngx-dnd-container"
+        <mz-collection-item class="{{typeColor[currentMatch.type.id]}}"
                             *ngFor="let currentMatch of currentMatchesToShow; let i = index;"
                             [class.disabled-item]="!currentMatch.isPlayable">
-            <div class="cut-text discipline-match-list-root" *ngIf="currentMatch">
+            <div class="cut-text discipline-match-list-root " *ngIf="currentMatch">
                 <div class="discipline-match-list-item" dnd-draggable [dragEnabled]="currentMatch.isPlayable"
                      [dragData]="{matches:[currentMatch], isGroup: false, index: i}">
                     <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
