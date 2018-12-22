@@ -6,6 +6,7 @@ import {AssignMatchPageComponent} from './assign/assign-match.page.component';
 import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
 import {ResultListPageComponent} from './result/result-list.page.component';
 import {SettingsPageComponent} from './settings/settings.page.component';
+import {CallerPageComponent} from './caller/caller.page.component';
 
 const routes: Routes = [
     {
@@ -32,6 +33,10 @@ const routes: Routes = [
     {
         path: 'settingsView',
         component: SettingsPageComponent
+    },
+    {
+        path: 'callerView',
+        component: CallerPageComponent
     },
     {
         path: '',

@@ -64,6 +64,11 @@ import {WebsocketService} from './shared/websocket.service';
 import {WebSocketEffects} from './websocket/redux/websocket.effects';
 import {NgQrScannerModule} from 'angular2-qrscanner';
 import {WebsocketHandlerService} from './websocket/websocket.handler.service';
+import {CallerPageComponent} from './caller/caller.page.component';
+import {CallerMatchListComponent} from './caller/caller-match-list/caller-match-list.component';
+import {CallerMatchDetailComponent} from './caller/caller-match-detail/caller-match-detail.component';
+import {RefereesListComponent} from './caller/referees-list/referees-list.component';
+import {CallerEffects} from './caller/redux/caller.effects';
 
 @NgModule({
     declarations: [
@@ -96,7 +101,11 @@ import {WebsocketHandlerService} from './websocket/websocket.handler.service';
         ResultListComponent,
         StagePipe,
         DisciplinePipe,
-        SettingsListComponent
+        SettingsListComponent,
+        CallerPageComponent,
+        CallerMatchListComponent,
+        CallerMatchDetailComponent,
+        RefereesListComponent
     ],
     imports: [
         BrowserModule,
@@ -127,7 +136,8 @@ import {WebsocketHandlerService} from './websocket/websocket.handler.service';
             name: 'Devtools',
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects, DisciplineEffects, SettingsEffects, WebSocketEffects]),
+        EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects,
+            DisciplineEffects, SettingsEffects, WebSocketEffects, CallerEffects]),
         NgQrScannerModule,
         HttpClientModule
     ],

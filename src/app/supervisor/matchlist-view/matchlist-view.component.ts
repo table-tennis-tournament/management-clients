@@ -27,7 +27,6 @@ export class MatchlistViewComponent {
     constructor() {
     }
 
-// {item: CdkDrag, currentIndex: 1, previousIndex: 2, container: CdkDropList, previousContainer: CdkDropList}
     onDropSuccess(event) {
         const matchListItem = this.matchListMatches[event.previousIndex];
         const newPosition = event.currentIndex;

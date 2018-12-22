@@ -1,7 +1,7 @@
 import {inject, TestBed} from '@angular/core/testing';
 
 import {DisciplineTabService} from './discipline-tab.service';
-import {TenDisciplines, ThreeMatches} from './match.test.data';
+import {TenDisciplines, ThreeMatches} from '../../shared/data/match.test.data';
 
 describe('DisciplineTabService', () => {
     beforeEach(() => {
