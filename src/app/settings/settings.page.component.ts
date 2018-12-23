@@ -18,8 +18,8 @@ export class SettingsPageComponent implements OnInit {
     }
 
   ngOnInit() {
-      this.store.dispatch(new LoadSettings(null));
-      this.store.dispatch(new LoadPrinters(null));
+      this.store.dispatch(new LoadSettings());
+      this.store.dispatch(new LoadPrinters());
       this.settings = this.store.select(getSettingsState);
       this.printers = this.store.select(getPrintersState);
   }

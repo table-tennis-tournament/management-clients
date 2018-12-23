@@ -21,7 +21,7 @@ export enum SettingsActionTypes {
 export class LoadSettings implements Action {
     readonly type = SettingsActionTypes.Load;
 
-    constructor(public payload: any) {
+    constructor() {
     }
 }
 
@@ -42,7 +42,7 @@ export class LoadSettingsError implements Action {
 export class LoadPrinters implements Action {
     readonly type = SettingsActionTypes.LoadPrinters;
 
-    constructor(public payload: any) {
+    constructor() {
     }
 }
 

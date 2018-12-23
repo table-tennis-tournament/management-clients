@@ -46,7 +46,7 @@ export class SupervisorPageComponent implements OnInit {
     }
 
     onSyncMatches() {
-        this.store.dispatch(new ReloadMatches(null));
+        this.store.dispatch(new ReloadMatches());
     }
 
     onMatchListItemDelete(event) {

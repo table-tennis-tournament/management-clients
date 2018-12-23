@@ -52,7 +52,7 @@ describe('the settings effects', () => {
             const expectedResult = new LoadSettingsSuccess(settingsTestData);
             spyOn(settingsService, 'loadSettings').and.returnValue(of(settingsTestData));
 
-            actions.next(new LoadSettings(null));
+            actions.next(new LoadSettings());
 
             settingsEffects.loadSettings$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);
@@ -63,7 +63,7 @@ describe('the settings effects', () => {
         it('should return a LoadSettingsError', (done) => {
             spyOn(settingsService, 'loadSettings').and.returnValue(throwError({msg: 'Error'}));
 
-            actions.next(new LoadSettings(null));
+            actions.next(new LoadSettings());
 
             settingsEffects.loadSettings$.subscribe((result) => {
                 expect(result.type).toEqual(SettingsActionTypes.LoadError);
@@ -81,7 +81,7 @@ describe('the settings effects', () => {
             const expectedResult = new LoadPrintersSuccess(printers);
             spyOn(settingsService, 'loadPrinters').and.returnValue(of(printers));
 
-            actions.next(new LoadPrinters(null));
+            actions.next(new LoadPrinters());
 
             settingsEffects.loadPrinters$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);
@@ -92,7 +92,7 @@ describe('the settings effects', () => {
         it('should return a LoadPrintersError', (done) => {
             spyOn(settingsService, 'loadPrinters').and.returnValue(throwError({msg: 'Error'}));
 
-            actions.next(new LoadPrinters(null));
+            actions.next(new LoadPrinters());
 
             settingsEffects.loadPrinters$.subscribe((result) => {
                 expect(result.type).toEqual(SettingsActionTypes.LoadPrintersError);

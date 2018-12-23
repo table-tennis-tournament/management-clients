@@ -34,7 +34,7 @@ export class LoadMatchesError implements Action {
 export class ReloadMatches implements Action {
     readonly type = MatchActionTypes.Reload;
 
-    constructor(public payload: any) {
+    constructor() {
     }
 }
 

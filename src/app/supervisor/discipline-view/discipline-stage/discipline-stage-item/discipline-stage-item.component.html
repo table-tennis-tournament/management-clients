@@ -12,7 +12,7 @@
     <span class="header-right-content">
                 <span *ngIf="match.table[0]" class="circle right">{{match.table[0]}}</span>
                 <span *ngIf="isMatchInWaitingList()" class="circle right">W</span>
-                <span *ngIf="isCalled()" class="circle right">A</span>
+                <span *ngIf="isMatchCallable()" class="circle right">A</span>
                 <span *ngIf="isMatchFinished()" class="circle right">F</span>
                 <i *ngIf="isMatchComplete()" class="material-icons right">done</i>
         </span>

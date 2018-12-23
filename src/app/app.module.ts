@@ -63,6 +63,7 @@ import {SettingsListComponent} from './settings/settings-list/settings-list.comp
 import {WebsocketService} from './shared/websocket.service';
 import {WebSocketEffects} from './websocket/redux/websocket.effects';
 import {NgQrScannerModule} from 'angular2-qrscanner';
+import {WebsocketHandlerService} from './websocket/websocket.handler.service';
 
 @NgModule({
     declarations: [
@@ -131,7 +132,7 @@ import {NgQrScannerModule} from 'angular2-qrscanner';
         HttpClientModule
     ],
 
-    providers: [TableService, WebsocketService],
+    providers: [TableService, WebsocketService, WebsocketHandlerService],
     bootstrap: [AppComponent],
     entryComponents: [ResultModalComponent, SelectMatchModalComponent, SelectTableModalComponent]
 })
