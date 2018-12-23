@@ -91,7 +91,10 @@ export class TableEffects {
         mergeMap((action: FreeTable) => {
             return this.matchService
                 .freeMatches(action.payload.matchIds).pipe(
-                    map(() => new FreeTableSuccess(action.payload)),
+                    map(() => {
+                        this.toastService.success(`SpielNr. ${action.payload.matchIds} zurück genommen`);
+                        return new FreeTableSuccess(action.payload);
+                    }),
                     catchError(err => {
                         this.toastService.error('Fehler beim Freigeben des Tisches', 'Error');
                         return of(new FreeTableError(err));

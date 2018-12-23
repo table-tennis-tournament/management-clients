@@ -1,23 +1,22 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {Discipline} from '../../discipline/discipline.model';
 import {MatchState} from '../../shared/data/matchstate.model';
-import {QrScannerComponent} from 'angular2-qrscanner';
+import {ResultCheckerService} from '../../table/table-list/result-modal/result-checker.service';
+import {ResultCheckModel} from '../../table/table-list/result-modal/result-check.model';
 
 @Component({
     selector: 'toma-result-list',
     templateUrl: './result-list.component.html',
     styleUrls: ['./result-list.component.scss']
 })
-export class ResultListComponent implements OnInit {
+export class ResultListComponent {
 
     private _matches: Match[];
     private selectedDisciplineId = 0;
 
-    @Output()
-    freeMatch: EventEmitter<number> = new EventEmitter();
 
-    @ViewChild(QrScannerComponent) qrScannerComponent: QrScannerComponent;
+    checkerResultList: ResultCheckModel[] = [];
 
     @Input('matches')
     set matches(value: Match[]) {
@@ -38,12 +37,15 @@ export class ResultListComponent implements OnInit {
     @Output()
     resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
 
+    @Output()
+    resultCompleteForMatch: EventEmitter<any> = new EventEmitter<any>();
+
     @Input()
     matchesLoading: boolean;
 
     selectedMatches: Match[];
 
-    constructor() {
+    constructor(private resultChecker: ResultCheckerService) {
     }
 
     onTypeChanged(disciplineId) {
@@ -54,45 +56,27 @@ export class ResultListComponent implements OnInit {
         }
         this.selectedMatches = this.matches
             .filter(match => match.type.id === disciplineId)
-            .filter(match => match.state === MatchState[MatchState.Finished]);
+            .filter(this.matchIsReadyForResult);
     }
 
-    ngOnInit() {
-        this.qrScannerComponent.getMediaDevices().then(devices => {
-            console.log(devices);
-            const videoDevices: MediaDeviceInfo[] = [];
-            for (const device of devices) {
-                if (device.kind.toString() === 'videoinput') {
-                    videoDevices.push(device);
-                }
-            }
-            if (videoDevices.length > 0) {
-                let choosenDev;
-                for (const dev of videoDevices) {
-                    if (dev.label.includes('front')) {
-                        choosenDev = dev;
-                        break;
-                    }
-                    if (dev.deviceId.includes('0fc8c39985c48189a20ec62b287901081e613fc33fda912085a3635d814a952d')) {
-                        choosenDev = dev;
-                        break;
-                    }
-                }
-                if (choosenDev) {
-                    this.qrScannerComponent.chooseCamera.next(choosenDev);
-                } else {
-                    this.qrScannerComponent.chooseCamera.next(videoDevices[0]);
-                }
-            }
-        });
+    matchIsReadyForResult(match: Match) {
+        return match.state === MatchState[MatchState.Finished];
+    }
 
-        this.qrScannerComponent.capturedQr.subscribe(result => {
-            if(+result > 0){
-                this.freeMatch.emit(+result);
-            }
-            console.log('found image');
-            console.log(result);
-        });
+    onKeyUp(input: string, index: number) {
+        const result = this.resultChecker.checkResult(input);
+        this.checkerResultList[index] = result;
+    }
+
+    checkResultAndClose(checkerResult: ResultCheckModel, match: Match) {
+        if (checkerResult.secondPlayerWinning
+            || checkerResult.firstPlayerWinning) {
+            this.resultCompleteForMatch.emit({
+                result: checkerResult.currentResult,
+                match: match
+            });
+            this.checkerResultList = [];
+        }
     }
 
 }

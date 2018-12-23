@@ -7,6 +7,7 @@ import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
 import {ResultListPageComponent} from './result/result-list.page.component';
 import {SettingsPageComponent} from './settings/settings.page.component';
 import {CallerPageComponent} from './caller/caller.page.component';
+import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-scanner.component';
 
 const routes: Routes = [
     {
@@ -37,6 +38,10 @@ const routes: Routes = [
     {
         path: 'callerView',
         component: CallerPageComponent
+    },
+    {
+        path: 'qrView',
+        component: QrResultScannerComponent
     },
     {
         path: '',

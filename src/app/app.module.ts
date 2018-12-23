@@ -14,7 +14,8 @@ import {
     MzInputModule,
     MzModalModule,
     MzSelectModule,
-    MzSpinnerModule
+    MzSpinnerModule,
+    MzTabModule
 } from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
@@ -69,6 +70,7 @@ import {CallerMatchListComponent} from './caller/caller-match-list/caller-match-
 import {CallerMatchDetailComponent} from './caller/caller-match-detail/caller-match-detail.component';
 import {RefereesListComponent} from './caller/referees-list/referees-list.component';
 import {CallerEffects} from './caller/redux/caller.effects';
+import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-scanner.component';
 
 @NgModule({
     declarations: [
@@ -105,7 +107,8 @@ import {CallerEffects} from './caller/redux/caller.effects';
         CallerPageComponent,
         CallerMatchListComponent,
         CallerMatchDetailComponent,
-        RefereesListComponent
+        RefereesListComponent,
+        QrResultScannerComponent
     ],
     imports: [
         BrowserModule,
@@ -119,6 +122,7 @@ import {CallerEffects} from './caller/redux/caller.effects';
         MzSelectModule,
         MzCollectionModule,
         MzCollapsibleModule,
+        MzTabModule,
         DragDropModule,
         DndModule.forRoot(),
         FormsModule,
