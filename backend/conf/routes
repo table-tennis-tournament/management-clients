@@ -49,7 +49,7 @@ GET     /api/match/delete/:id               controllers.MatchController.deleteMa
 GET     /api/match/called/:id               controllers.MatchController.matchCalled(id: Long)
 
 # WebSocket for push messages
-GET     /register                           controllers.WebSocketController.socket
+GET     /api/register                           controllers.WebSocketController.socket
 
 # PrinterController:
 GET     /api/printer/all                    controllers.PrinterController.allPrinter

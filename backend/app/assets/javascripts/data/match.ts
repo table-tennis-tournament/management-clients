@@ -8,12 +8,12 @@ export interface Match {
     startTime?: Date;
     isPlayed?: boolean;
     result?: any;
+    isPlayable?: boolean;
+    isInWaitingList?:boolean;
+    table?:number[];
     team1?: Player[];
     team2?: Player[];
     matchType?: MatchType;
     type?: Type;
     group?: Group;
-    isPlayable?: boolean;
-    isInWaitingList?:boolean;
-    table?:number[];
 }

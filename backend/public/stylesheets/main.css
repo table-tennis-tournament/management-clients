@@ -263,6 +263,23 @@ h4.no-margin{
 .inline-block-root{
     display:inline-block;
 }
+
+.single-bordered {
+    border: 1px solid grey;
+    border-radius: 25px;
+    height: 25px;
+    padding-left: 5px;
+}
+
+.collection a.collection-item.minimal-padding{
+    padding-left: 5px;
+    border-bottom: none;
+}
+
+span.right-float-padding {
+    float: right;
+    padding-right: 5px;
+}
 /* .toast.toast-middle{
     right: 100%;
     top: 95%;
