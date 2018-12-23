@@ -22,7 +22,7 @@ export class TtTableContentComponent {
     onMatchDrop(event) {
         if (this.isDropDataValid(event)) {
             this.assignMatchToTable.emit({
-                matchIds: event.dragData.matches.map(x => x.match.id),
+                matchIds: event.dragData.matches.map(match => match.id),
                 tableId: this.table.id,
                 tableNr: this.table.number
             });

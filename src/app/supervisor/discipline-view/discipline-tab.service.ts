@@ -3,6 +3,7 @@ import {Match} from '../../shared/data/match.model';
 import {DisciplineTab} from './models/discipline.tab.model';
 import {Discipline} from '../../discipline/discipline.model';
 import {DisciplineGroup} from './models/discipline.group.model';
+import {MatchState} from '../../shared/data/matchstate.model';
 
 @Injectable({
     providedIn: 'root'
@@ -18,6 +19,10 @@ export class DisciplineTabService {
             groups: [],
             stages: []
         };
+        if (matches == null || matches.length < 1) {
+            return currentItemTab;
+        }
+        currentItemTab.id = matches[0].type.id;
         const allStages: number[] = [];
         let currentIndex = 0;
         let allPlayerArray: boolean[] = [];
@@ -39,9 +44,7 @@ export class DisciplineTabService {
                     currentStage = currentItemTab.stages[currentIndex];
                     currentIndex++;
                 }
-                if (currentItem.match.isPlayed !== true) {
-                    currentStage.isComplete = false;
-                }
+                currentStage.isComplete = currentStage.isComplete && this.isMatchComplete(currentItem);
 
                 currentStage.matches.push(currentItem);
                 continue;
@@ -62,7 +65,7 @@ export class DisciplineTabService {
             }
             let currentGroup = currentItemTab.groups[currentItem.group.id];
             currentGroup.matches.push(currentItem);
-            currentGroup = this.checkCompleteness(currentItem, currentGroup);
+            currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
             currentGroup = this.addTableNumbers(currentItem, currentGroup);
 
             const allPlayers = currentItem.team1.concat(currentItem.team2);
@@ -78,6 +81,10 @@ export class DisciplineTabService {
         return currentItemTab;
     }
 
+    private isMatchComplete(currentItem: Match) {
+        return MatchState[currentItem.state] === MatchState.Completed;
+    }
+
     public getTabsForDisciplines(disciplines: Discipline[]): DisciplineTab[] {
         return disciplines.map(discipline => {
             return {
@@ -91,15 +98,8 @@ export class DisciplineTabService {
     }
 
     private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-        if (currentItem.table[0] && currentItem.match.isPlayed === false) {
+        if (currentItem.table[0] && !this.isMatchComplete(currentItem)) {
             currentGroup.tableNumbers.push(currentItem.table[0]);
-        }
-        return currentGroup;
-    }
-
-    private checkCompleteness(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-        if (currentItem.match.result == null) {
-            currentGroup.isComplete = false;
         }
         return currentGroup;
     }

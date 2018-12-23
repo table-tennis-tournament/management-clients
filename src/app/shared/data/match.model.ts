@@ -1,19 +1,21 @@
 import {Group} from './group.model';
 import {Player} from './player.model';
 import {Discipline} from '../../discipline/discipline.model';
-import {MatchState} from './matchstate.model';
 import {StageType} from './stagetype.model';
+import {MatchState} from './matchstate.model';
 
 export interface Match {
+    id?: number;
+    startTime?: number;
+    result?: any;
+    isInWaitingList?: boolean;
+    state?: string;
+    table?: number[];
     team1?: Player[];
     team2?: Player[];
-    type?: Discipline;
-    stage?: string;
     matchType?: StageType;
+    type?: Discipline;
     group?: Group;
-    tableNumber?: number;
-    match?: MatchState;
-    table?: number[];
     isPlayable?: boolean;
-    isInWaitingList?: boolean;
+    isPlayed?: boolean;
 }

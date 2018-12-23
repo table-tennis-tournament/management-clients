@@ -16,16 +16,26 @@ export class DisciplineViewComponent {
     tabs: DisciplineTab[];
 
     selectedTab: DisciplineTab;
-    removePlayed = false;
-    playersAreOpen = true;
 
+    showAllMatches = true;
+    playersAreOpen = true;
     matchesAreOpen = true;
 
+    private _matches: Match [];
+
     @Input()
-    matches: Match[];
+    set matches(value: Match[]) {
+        this._matches = value;
+        this.setTabForId(this.currentTabId);
+    }
+
+    get matches() {
+        return this._matches;
+    }
 
     @Input()
     typeColor: string[];
+
     _disciplines: Discipline[];
 
     get disciplines() {
@@ -37,10 +47,10 @@ export class DisciplineViewComponent {
         this._disciplines = value;
         this.tabs = this.disciplineTabService.getTabsForDisciplines(this.disciplines.filter(discipline => discipline.active));
         if (this.tabs && this.tabs.length > 0) {
-            this.setTabForId(this.tabs[0].id);
+            const firstTabDisciplineId = this.tabs[0].id;
+            this.setTabForId(firstTabDisciplineId);
         }
     }
-
 
     @Input()
     matchesLoading: boolean;
@@ -48,19 +58,25 @@ export class DisciplineViewComponent {
     @Output()
     resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
 
+    @Output()
+    selectDiscipline: EventEmitter<number> = new EventEmitter<number>();
+
     constructor(private disciplineTabService: DisciplineTabService) {
     }
 
-
     setTabForId(id: number) {
+        if (id < 1) {
+            return;
+        }
         this.currentTabId = id;
         const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter(match => match.type.id === id));
         this.selectedTab = createdTab;
         this.removePlayedItems();
+        this.selectDiscipline.emit(this.selectedTab.id);
     }
 
     removePlayedItems() {
-        if (this.removePlayed === false) {
+        if (this.showAllMatches === false) {
             const stagesCopy = this.selectedTab.stages.filter(x => x.isComplete === false);
             this.selectedTab.stages = stagesCopy;
             const groupsCopy = this.selectedTab.groups.filter(y => y.isComplete === false);
@@ -69,7 +85,7 @@ export class DisciplineViewComponent {
     }
 
     onRemovePlayedChanged() {
-        if (this.removePlayed !== false) {
+        if (this.showAllMatches !== false) {
             this.setTabForId(this.currentTabId);
             return;
         }

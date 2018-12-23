@@ -49,7 +49,7 @@ export class MatchlistViewComponent {
         }
 
         const matchListItem = {
-            matchIds: matchInfo.map(x => x.match.id),
+            matchIds: matchInfo.map(x => x.id),
             position: this.matchListMatches.length
         };
         this.assignMatchListItem.emit(matchListItem);

@@ -23,7 +23,7 @@ describe('DisciplineTabService', () => {
 
     it('should create two tabs for completeData', inject([DisciplineTabService], (service: DisciplineTabService) => {
         const completeGroup = ThreeMatches.map(match => match);
-        completeGroup.forEach(match => match.match.result = [
+        completeGroup.forEach(match => match.result = [
             [
                 11,
                 5

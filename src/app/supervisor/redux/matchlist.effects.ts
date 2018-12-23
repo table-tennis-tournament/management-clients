@@ -20,7 +20,7 @@ export class MatchListEffects {
     @Effect()
     loadMatchList$: Observable<Action> = this.actions$.pipe(
         ofType(MatchListActionTypes.Load),
-        mergeMap(() => {
+        switchMap(() => {
             return this.matchListService
                 .loadAllMatchListItems().pipe(
                     map(matches => new LoadMatchListSuccess(matches)),

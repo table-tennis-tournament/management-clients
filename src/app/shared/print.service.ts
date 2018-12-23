@@ -8,8 +8,6 @@ import {StatusDto} from './statusdto.model';
 })
 export class PrintService {
 
-    private printMatchUrl = 'api/printer/print/';
-
     constructor(private http: HttpClient) {
     }
 

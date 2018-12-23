@@ -3,25 +3,24 @@ import {Discipline} from '../../discipline/discipline.model';
 
 export const ThreeMatches: Match[] = [
     {
-        'match': {
-            'id': 1,
-            'startTime': -2209165200000,
-            'isPlayed': true,
-            'result': [
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ]
+        'id': 1,
+        'startTime': -2209165200000,
+        'isPlayed': true,
+        'result': [
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
             ]
-        },
+        ],
+        'state': 'Open',
         'team1': [
             {
                 'id': 272,
@@ -73,25 +72,24 @@ export const ThreeMatches: Match[] = [
         'table': []
     },
     {
-        'match': {
-            'id': 2,
-            'startTime': -2209165200000,
-            'isPlayed': true,
-            'result': [
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ]
+        'id': 2,
+        'startTime': -2209165200000,
+        'isPlayed': true,
+        'result': [
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
             ]
-        },
+        ],
+        'state': 'Open',
         'team1': [
             {
                 'id': 272,
@@ -143,25 +141,24 @@ export const ThreeMatches: Match[] = [
         'table': []
     },
     {
-        'match': {
-            'id': 3,
-            'startTime': -2209165200000,
-            'isPlayed': true,
-            'result': [
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ],
-                [
-                    11,
-                    5
-                ]
+        'id': 3,
+        'startTime': -2209165200000,
+        'isPlayed': true,
+        'state': 'Open',
+        'result': [
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
+            ],
+            [
+                11,
+                5
             ]
-        },
+        ],
         'team1': [
             {
                 'id': 55,

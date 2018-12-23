@@ -38,11 +38,9 @@ export class TableListPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(new LoadTables(null));
         this.tables = this.store.select(getTableState);
         this.tablesLoading = this.store.select(getTablesLoading);
         this.typeColor = this.store.select(getTypeColorsState);
-
     }
 
     onLockTable(tableNr: number) {
@@ -55,22 +53,22 @@ export class TableListPageComponent implements OnInit {
 
     onFreeTable(table: TableDto) {
         if (this.isSingleMatch(table)) {
-            const freeTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
+            const freeTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
             this.store.dispatch(new FreeTable(freeTableEvent));
             return;
         }
         this.selectMatchAndCallFunction(table, match => this.store.dispatch(
-            new FreeTable(new TableMatchEvent(match.map(x => x.match.id), table.number))));
+            new FreeTable(new TableMatchEvent(match.map(nextMatch => nextMatch.id), table.number))));
     }
 
     onTakeBackTable(table: TableDto) {
         if (this.isSingleMatch(table)) {
-            const takeBackTableEvent = new TableMatchEvent([table.matches[0].match.id], table.number);
+            const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
             return;
         }
         this.selectMatchAndCallFunction(table, match => this.store.dispatch(
-            new TakeBackTable(new TableMatchEvent(match.map(x => x.match.id), table.number))));
+            new TakeBackTable(new TableMatchEvent(match.map(nextMatch => nextMatch.id), table.number))));
     }
 
     onTableRefresh() {
@@ -79,7 +77,7 @@ export class TableListPageComponent implements OnInit {
 
     onPrintTable(table: TableDto) {
         if (this.isSingleMatch(table)) {
-            this.store.dispatch(new PrintTable({matchId: table.matches[0].match.id}));
+            this.store.dispatch(new PrintTable({matchId: table.matches[0].id}));
         }
     }
 
@@ -88,7 +86,7 @@ export class TableListPageComponent implements OnInit {
             this.toastService.error('Ein Spiel kann nich auf zwei Tische gelegt werden.');
             return;
         }
-        const selectedMatchIds = table.matches.map(match => match.match.id);
+        const selectedMatchIds = table.matches.map(match => match.id);
         this.tableService.getFreeTables().subscribe(this.onFreeTablesLoaded.bind(this, selectedMatchIds));
     }
 

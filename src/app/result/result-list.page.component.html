@@ -1,0 +1,8 @@
+<toma-result-list
+        [matches]="matches | async"
+        [matchesLoading]="matchesLoading | async"
+        [disciplines]="disciplines | async"
+        (takeBackMatch)="onTakeBackMatch($event)"
+        (freeMatch)="onFreeMatch($event)"
+        (resultForMatch)="onResultForMatch($event)"
+></toma-result-list>

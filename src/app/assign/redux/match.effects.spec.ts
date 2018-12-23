@@ -7,7 +7,7 @@ import {of, ReplaySubject, throwError} from 'rxjs';
 import {MatchService} from '../match.service';
 
 import {MatchEffects} from './match.effects';
-import {LoadMatches, LoadMatchesSuccess, MatchActionTypes} from './match.actions';
+import {LoadMatches, LoadMatchesSuccess, MatchActionTypes, ReloadMatches, ReloadMatchesSuccess} from './match.actions';
 import {MatchTestData} from './test-data';
 
 describe('the match effects', () => {
@@ -18,7 +18,8 @@ describe('the match effects', () => {
 
 
     const toastServiceMock: ToastrService = <ToastrService>{
-        error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null
+        error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+        success: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null
     };
 
     beforeEach(() => {
@@ -59,6 +60,36 @@ describe('the match effects', () => {
 
             matchEffects.loadMatches$.subscribe((result) => {
                 expect(result.type).toEqual(MatchActionTypes.LoadError);
+                done();
+            });
+            // expect(toastServiceMock.error).toHaveBeenCalled();
+        });
+
+
+    });
+
+    describe('reloadMatches', () => {
+
+        it('should return a ReloadMatchesSuccess', (done) => {
+            const statusDto = {success: true};
+            const expectedResult = new ReloadMatchesSuccess(statusDto);
+            spyOn(matchService, 'reloadMatchesFromDb').and.returnValue(of(statusDto));
+
+            actions.next(new ReloadMatches());
+
+            matchEffects.reloadMatches$.subscribe((result) => {
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
+
+        it('should return a ReloadMatchesError', (done) => {
+            spyOn(matchService, 'reloadMatchesFromDb').and.returnValue(throwError({msg: 'Error'}));
+
+            actions.next(new ReloadMatches());
+
+            matchEffects.reloadMatches$.subscribe((result) => {
+                expect(result.type).toEqual(MatchActionTypes.ReloadError);
                 done();
             });
             // expect(toastServiceMock.error).toHaveBeenCalled();

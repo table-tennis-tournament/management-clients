@@ -4,7 +4,7 @@
     <mz-collapsible-item [active]="true">
         <mz-collapsible-item-header>
             <div dnd-draggable [dragEnabled]="true" [dragData]="stage.matches"
-                 class=" header-main-container">
+                 class=" header-main-container black-text">
               <span class="header-center-content">
               <i class="material-icons">view_list</i>
                   {{stage.name}}
@@ -17,12 +17,12 @@
             </div>
         </mz-collapsible-item-header>
         <mz-collapsible-item-body>
-            <div class="collection {{typeColor[stage.id]}}">
+            <div class="collection minus-margin">
                 <a *ngFor="let currentMatch of stage.matches"
-                   class="collection-item {{lineStageClass[index%3]}}"
+                   class="collection-item no-lines {{lineStageClass[index%3]}}"
                    (dblclick)="resultForMatch.emit(currentMatch)"
-                   [class.disabled-item]="isInWaitingListOrOnTable(currentMatch)" dnd-draggable
-                   [dragEnabled]="isNotInWaitingListAndNotOnTableAndNotFinished(currentMatch)"
+                   [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)" dnd-draggable
+                   [dragEnabled]="isMatchOpen(currentMatch)"
                    [dragData]="currentMatch">
                     <div class="match-item-padding">
                         <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>

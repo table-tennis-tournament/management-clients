@@ -36,7 +36,7 @@
                        (dblclick)="resultForMatch.emit(currentMatch)"
                        dnd-draggable
                        class="collection-item"
-                       [dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList"
+                       [dragEnabled]="currentMatch.state === openMatchState"
                        [dragData]="currentMatch">
                         <div>
                             <toma-team-item [team]="currentMatch.team1"
@@ -46,7 +46,7 @@
                                             [showDisciplines]="false"></toma-team-item>
                             <span *ngIf="currentMatch.table[0]"
                                   class="circle right">{{currentMatch.table[0]}}</span>
-                            <i *ngIf="currentMatch.match.result" class="material-icons right">done</i>
+                            <i *ngIf="currentMatch.result" class="material-icons right">done</i>
                         </div>
                     </a>
                 </div>

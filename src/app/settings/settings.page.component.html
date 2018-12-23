@@ -1,3 +1,9 @@
-<p>
-  settings works!
-</p>
+<h4>Einstellungen</h4>
+<br/>
+<toma-settings-list
+        [printers]="printers | async"
+        [settings]="settings | async"
+        (automaticallyAssign)="assignAutomatically($event)"
+        (printForAssign)="printOnAssign($event)"
+        (savePrinter)="savePrinter($event)"
+></toma-settings-list>

@@ -58,8 +58,8 @@ export class ResultModalComponent extends MzBaseModal {
     private setInputIfAvailable() {
         const matchToSet = this.currentMatch;
         let resultString = '';
-        if (matchToSet.match.result) {
-            matchToSet.match.result.forEach(element => {
+        if (matchToSet.result) {
+            matchToSet.result.forEach(element => {
                 if (element[0] > element[1]) {
                     resultString += element[1] + ' ';
                 } else {

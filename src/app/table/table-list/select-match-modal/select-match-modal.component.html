@@ -7,20 +7,11 @@
             <div class="row">
                 <div class="col s10">
                     <p *ngFor="let match of matches; let i= index;">
-                        <!--<mz-checkbox-container *ngFor="let match of matches; let i= index;">-->
-                        <!--<input mz-checkbox-->
-                        <!--name="match{{match.match.id}}"-->
-                        <!--[label]="'Validate as email'"-->
-                        <!--[filledIn]="true"-->
-                        <!--[(ngModel)]="matches[i].isSelected"-->
-                        <!--type="checkbox">-->
-                        <!--</mz-checkbox-container>-->
-                        <!--<mz-input-container>-->
-                        <input name="inputMatch{{match.match.id}}"
+                        <input name="inputMatch{{match.id}}"
                                type="checkbox"
-                               id="inputMatch{{match.match.id}}"
+                               id="inputMatch{{match.id}}"
                                [(ngModel)]="currentValues[i]"/>
-                        <label for="inputMatch{{match.match.id}}">
+                        <label for="inputMatch{{match.id}}">
                             {{match.team1 | ttPlayerNameReducer}}
                             -
                             {{match.team2 | ttPlayerNameReducer}}
