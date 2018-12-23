@@ -79,4 +79,12 @@ export class DisciplineViewComponent {
     onDeleteStage(stageToRemove: DisciplineStage) {
         this.selectedTab.stages = this.selectedTab.stages.filter(stage => stage !== stageToRemove);
     }
+
+    onOpenPlayers() {
+
+    }
+
+    onOpenMatches() {
+
+    }
 }
