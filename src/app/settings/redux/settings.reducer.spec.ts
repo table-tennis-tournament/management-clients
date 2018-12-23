@@ -27,7 +27,7 @@ describe('the settings reducer', () => {
             settingsLoading: true
         };
 
-        const newState = reduceSettingsState(initialState, new LoadSettings(null));
+        const newState = reduceSettingsState(initialState, new LoadSettings());
         expect(newState).toEqual(expectedState);
     });
 

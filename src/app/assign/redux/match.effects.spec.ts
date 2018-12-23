@@ -75,7 +75,7 @@ describe('the match effects', () => {
             const expectedResult = new ReloadMatchesSuccess(statusDto);
             spyOn(matchService, 'reloadMatchesFromDb').and.returnValue(of(statusDto));
 
-            actions.next(new ReloadMatches(null));
+            actions.next(new ReloadMatches());
 
             matchEffects.reloadMatches$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);
@@ -86,7 +86,7 @@ describe('the match effects', () => {
         it('should return a ReloadMatchesError', (done) => {
             spyOn(matchService, 'reloadMatchesFromDb').and.returnValue(throwError({msg: 'Error'}));
 
-            actions.next(new ReloadMatches(null));
+            actions.next(new ReloadMatches());
 
             matchEffects.reloadMatches$.subscribe((result) => {
                 expect(result.type).toEqual(MatchActionTypes.ReloadError);
