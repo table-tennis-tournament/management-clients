@@ -1,6 +1,3 @@
-<!-- <div>
-    <h2>Albgauturnier Ergebnisse</h2>
-</div> -->
 <div class="row " *ngFor="let i of rowCount" >
     <div *ngFor="let currentTab of currentTabs | slice:(i*12):(i+1)*12" class="col no-padding">
       <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>

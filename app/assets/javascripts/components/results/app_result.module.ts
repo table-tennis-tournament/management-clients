@@ -22,37 +22,39 @@ import {ResultMatchItemComponent} from "../../components/results/result.match.it
 import {TeamMatchItemComponent} from "../../components/items/team.match.item.component";
 import {MatchHelperService} from "../../services/match.helper.service";
 import {ResultStringItemComponent} from "../../components/results/result.string.component";
+import {ResultPipe} from '../../views/results/result.pipe';
 
 
 @NgModule({
-  
-  imports: [
-    BrowserModule,
-    FormsModule,
-    CommonModule,
-    HttpModule,
-    JsonpModule,
-    MaterializeModule
-  ],
-  declarations: [
-    AppResultComponent,
-    ResultGroupViewComponent,
-    ResultStageViewComponent,
-    ResultMatchItemComponent,
-    ResultStringItemComponent,
-    TeamMatchItemComponent
-  ],
-  providers: [
-      MatchService,
-      TableService,
-      BaseService,
-      MatchToStringService,
-      ToastService,
-      MatchHelperService,
-      {provide: APP_BASE_HREF, useValue : "/" }
+
+    imports: [
+        BrowserModule,
+        FormsModule,
+        CommonModule,
+        HttpModule,
+        JsonpModule,
+        MaterializeModule
     ],
-  bootstrap: [AppResultComponent],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+    declarations: [
+        AppResultComponent,
+        ResultGroupViewComponent,
+        ResultStageViewComponent,
+        ResultMatchItemComponent,
+        ResultStringItemComponent,
+        TeamMatchItemComponent,
+        ResultPipe
+    ],
+    providers: [
+        MatchService,
+        TableService,
+        BaseService,
+        MatchToStringService,
+        ToastService,
+        MatchHelperService,
+        {provide: APP_BASE_HREF, useValue: "/"}
+    ],
+    bootstrap: [AppResultComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppResultModule {
     // Module class

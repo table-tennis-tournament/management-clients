@@ -1,7 +1,10 @@
 <span>
-       <div><team-match-item [team]="match.team1" [showDisciplines]="false"></team-match-item>- </div>
-        <div> 
+       <div class="single-bordered">
+           <team-match-item [team]="match.team1" [showDisciplines]="false"></team-match-item>
+           <span class="right-float-padding">{{match.result |resultPipe:true}}</span>
+       </div>
+        <div class="single-bordered">
                 <team-match-item [team]="match.team2" [showDisciplines]="false"></team-match-item>
-                <result-string-item [result]="match.result" class="result-string-min-width"></result-string-item>
+            <span class="right-float-padding">{{match.result |resultPipe:false}}</span>
         </div>
 </span>
