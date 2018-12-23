@@ -1,4 +1,4 @@
-import {Match} from '../matchview/match.model';
+import {Match} from '../shared/data/match.model';
 
 export interface TableDto {
     id?: number;

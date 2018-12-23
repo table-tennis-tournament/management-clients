@@ -1,8 +1,9 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
-import {getTablesLoading, getTableState} from '../app-state.reducer';
+import {getTablesLoading, getTableState, getTypeColorsState} from '../app-state.reducer';
 import {
+    AssignMatchToTable,
     AssignToSecondTable,
     FreeTable,
     LoadTables,
@@ -20,15 +21,17 @@ import {SelectMatchModalComponent} from './table-list/select-match-modal/select-
 import {TableService} from './table.service';
 import {SelectTableModalComponent} from './table-list/select-table-modal/select-table-modal.component';
 import {ToastrService} from 'ngx-toastr';
+import {MatchToTable} from './table-list/tt-table/tt-table-content/matchtotable.model';
 
 @Component({
-    selector: 'toma-table-list.page',
+    selector: 'toma-table-list-page',
     templateUrl: './table-list.page.component.html'
 })
 export class TableListPageComponent implements OnInit {
 
     tables: Observable<TableDto[]>;
     tablesLoading: Observable<boolean>;
+    typeColor: Observable<string[]>;
 
     constructor(private store: Store<any>, private modalService: MzModalService,
                 private tableService: TableService, private toastService: ToastrService) {
@@ -38,6 +41,7 @@ export class TableListPageComponent implements OnInit {
         this.store.dispatch(new LoadTables(null));
         this.tables = this.store.select(getTableState);
         this.tablesLoading = this.store.select(getTablesLoading);
+        this.typeColor = this.store.select(getTypeColorsState);
 
     }
 
@@ -121,6 +125,10 @@ export class TableListPageComponent implements OnInit {
 
     private isSingleMatchOnTable(table: TableDto) {
         return table.matches.length !== 1;
+    }
+
+    onAssignMatchToTable(event: MatchToTable) {
+        this.store.dispatch(new AssignMatchToTable(event));
     }
 
     private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {

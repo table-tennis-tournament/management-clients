@@ -2,6 +2,8 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {TableListPageComponent} from './table/table-list.page.component';
 import {TableListComponent} from './table/table-list/table-list.component';
+import {AssignMatchPageComponent} from './assign/assign-match.page.component';
+import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
 
 const routes: Routes = [
     {
@@ -10,7 +12,7 @@ const routes: Routes = [
     },
     {
         path: 'assignView',
-        component: TableListComponent
+        component: AssignMatchPageComponent
     },
     {
         path: 'tableView',
@@ -19,7 +21,7 @@ const routes: Routes = [
     },
     {
         path: 'supervisorView',
-        component: TableListComponent
+        component: SupervisorPageComponent
     },
     {
         path: 'resultView',

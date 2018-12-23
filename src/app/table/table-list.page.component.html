@@ -1,6 +1,7 @@
 <toma-table-list
         [tables]="tables | async"
         [tablesLoading]="tablesLoading | async"
+        [typeColor]="typeColor | async"
         (lockTable)="onLockTable($event)"
         (unLockTable)="onUnLockTable($event)"
         (freeTable)="onFreeTable($event)"
@@ -8,6 +9,7 @@
         (printTable)="onPrintTable($event)"
         (assignSecondTable)="onAssignSecondTable($event)"
         (resultForTable)="onResultForTable($event)"
+        (assignMatchToTable)="onAssignMatchToTable($event)"
 ></toma-table-list>
 <div class="fixed-action-btn horizontal">
     <a class="btn-floating btn-large blue" (click)="onTableRefresh()">

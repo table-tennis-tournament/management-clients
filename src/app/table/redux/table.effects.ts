@@ -5,6 +5,9 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
 import {
+    AssignMatchToTable,
+    AssignMatchToTableError,
+    AssignMatchToTableSuccess,
     AssignToSecondTable,
     AssignToSecondTableError,
     AssignToSecondTableSuccess,
@@ -31,7 +34,7 @@ import {
     UnLockTableSuccess
 } from './table.actions';
 import {TableService} from '../table.service';
-import {MatchService} from '../../match/match.service';
+import {MatchService} from '../../assign/match.service';
 import {PrintService} from '../../shared/print.service';
 
 @Injectable()
@@ -152,6 +155,31 @@ export class TableEffects {
                     catchError(err => {
                         this.toastService.error('Fehler bei der Eingabe des Ergebnisses', 'Error');
                         return of(new ResultForMatchError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    assignMatchToTable$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.AssignMatchToTable),
+        mergeMap((action: AssignMatchToTable) => {
+            return this.matchService.assignMatchToTable(action.payload)
+                .pipe(
+                    map(status => {
+                        if (status.successful === true) {
+                            return new AssignMatchToTableSuccess(action.payload);
+                        }
+                        this.toastService.error(status.message);
+                        return new AssignMatchToTableError(status);
+                    }),
+                    catchError(err => {
+                        let errorMessage = 'Fehler beim Zuweisen des Spiels zum Tisch';
+                        if (err.error && err.error.message) {
+                            errorMessage = err.error.message;
+                        }
+                        this.toastService.error(errorMessage, 'Error');
+                        return of(new AssignMatchToTableError(err));
                     })
                 );
         })

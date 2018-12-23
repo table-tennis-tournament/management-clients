@@ -1,0 +1,56 @@
+<div class="card {{typeColor[group?.matches[0]?.type.id]}}">
+    <div class="card-content simple-padding">
+         <span class="card-title group-view-header">
+            <span dnd-draggable [dragData]="group.matches">{{group.name}}</span>
+            <span class="right" *ngIf="group.isComplete"><i class="material-icons">done</i></span>
+            <span class="right" *ngIf="groupIsNotPlayable()"><i class="material-icons">remove_circle_outline</i></span>
+            <span class="right" *ngIf="!group.isComplete">{{openMatches}}/{{allMatchCount}}</span>
+            <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span>
+        </span>
+    </div>
+
+    <mz-collapsible [mode]="'expandable'" #collapsibleGroup>
+        <mz-collapsible-item [active]="showPlayers">
+            <mz-collapsible-item-header>
+                <div class="black-text">
+                    <i class="material-icons">perm_identity</i>Spieler
+                </div>
+            </mz-collapsible-item-header>
+            <mz-collapsible-item-body>
+                <div class="collection custom-margin black-text">
+                    <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
+                        <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
+                    </a>
+                </div>
+            </mz-collapsible-item-body>
+        </mz-collapsible-item>
+        <mz-collapsible-item [active]="showMatches">
+            <mz-collapsible-item-header>
+                <div class="black-text">
+                    <i class="material-icons">view_list</i>Spiele
+                </div>
+            </mz-collapsible-item-header>
+            <mz-collapsible-item-body>
+                <div class="collection custom-margin">
+                    <a *ngFor="let currentMatch of group.matches"
+                       (dblclick)="resultForMatch.emit(currentMatch)"
+                       dnd-draggable
+                       class="collection-item"
+                       [dragEnabled]="!currentMatch.match.isPlayed&&!currentMatch.isInWaitingList"
+                       [dragData]="currentMatch">
+                        <div>
+                            <toma-team-item [team]="currentMatch.team1"
+                                            [showDisciplines]="false"></toma-team-item>
+                            -
+                            <toma-team-item [team]="currentMatch.team2"
+                                            [showDisciplines]="false"></toma-team-item>
+                            <span *ngIf="currentMatch.table[0]"
+                                  class="circle right">{{currentMatch.table[0]}}</span>
+                            <i *ngIf="currentMatch.match.result" class="material-icons right">done</i>
+                        </div>
+                    </a>
+                </div>
+            </mz-collapsible-item-body>
+        </mz-collapsible-item>
+    </mz-collapsible>
+</div>

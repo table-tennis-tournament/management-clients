@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TableDto} from '../tabledto.model';
+import {MatchToTable} from './tt-table/tt-table-content/matchtotable.model';
 
 @Component({
     selector: 'toma-table-list',
@@ -13,6 +14,9 @@ export class TableListComponent {
 
     @Input()
     tablesLoading: boolean;
+
+    @Input()
+    typeColor: string[];
 
     @Output()
     lockTable = new EventEmitter<number>();
@@ -34,5 +38,8 @@ export class TableListComponent {
 
     @Output()
     resultForTable = new EventEmitter<TableDto>();
+
+    @Output()
+    assignMatchToTable = new EventEmitter<MatchToTable>();
 
 }

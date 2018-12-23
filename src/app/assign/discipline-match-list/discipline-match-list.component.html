@@ -1,0 +1,34 @@
+<div class="row without-margin">
+    <div class="input-field col s12">
+        <toma-discipline-select (disciplineChanged)="onDisciplineSelected($event)"
+                                [disciplines]="disciplines"
+                                [showWaitingList]="true"></toma-discipline-select>
+    </div>
+</div>
+<div class="row maxHeight">
+    <mz-spinner *ngIf="matchesLoading"></mz-spinner>
+    <mz-collection>
+        <mz-collection-item class="{{typeColor[currentMatch.type.id]}}"
+                            *ngFor="let currentMatch of currentMatchesToShow; let i = index;"
+                            [class.disabled-item]="!currentMatch.isPlayable">
+            <div class="cut-text discipline-match-list-root " *ngIf="currentMatch">
+                <div class="discipline-match-list-item" dnd-draggable [dragEnabled]="currentMatch.isPlayable"
+                     [dragData]="{matches:[currentMatch], isGroup: false, index: i}">
+                    <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
+                    <span *ngIf="currentMatch.team1[1]">/{{currentMatch.team1[1].lastName}}</span>
+                    <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
+                    <span *ngIf="currentMatch.team2[1]">/{{currentMatch.team2[1].lastName}}</span>
+                </div>
+                <div *ngIf="currentMatch.group"
+                     class="discipline-match-list-square indigo white-text" dnd-draggable
+                     [dragEnabled]="currentMatch.isPlayable" (onDragStart)="onDragStart($event)"
+                     [dragData]="{matches: [currentMatch], isGroup: true}">
+                    {{currentMatch.group.name}}
+                </div>
+                <div *ngIf="!currentMatch.group" class="discipline-match-list-square indigo white-text">
+                    {{currentMatch.matchType |disciplineType}}
+                </div>
+            </div>
+        </mz-collection-item>
+    </mz-collection>
+</div>

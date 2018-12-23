@@ -1,0 +1,43 @@
+.single-bordered {
+  border: 1px solid grey;
+  padding: 2px 0px;
+}
+
+.collection .collection-item.first-stage {
+  height: 80px;
+  padding: 0px;
+}
+
+.collection .collection-item.second-stage {
+  height: 160px;
+  padding: 0px;
+  padding-top: 35px;
+}
+
+.collection .collection-item.third-stage {
+  height: 320px;
+  padding: 0px;
+  padding-top: 110px;
+}
+
+.collection .collection-item.fourth-stage {
+  height: 640px;
+  padding: 0px;
+}
+
+.header-main-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 300px;
+}
+
+.header-center-content {
+  flex: 1;
+  order: 1;
+}
+
+.header-right-content {
+  width: 6rem;
+  order: 2;
+}

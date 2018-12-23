@@ -12,42 +12,42 @@ const secondTableLocked = TableTestData.twoTablesSecondLocked;
 
 describe('the table reducer', () => {
     it('should handle the LoadTable action correctly', () => {
-        let expectedState = {
+        const expectedState = {
             ...initialState,
             tablesLoading: true
         };
 
-        let newState = reduceTableState(initialState, new LoadTables(null));
+        const newState = reduceTableState(initialState, new LoadTables(null));
         expect(newState).toEqual(expectedState);
     });
 
     it('should handle the LoadTablesSuccess action correctly', () => {
-        let expectedState = {
+        const expectedState = {
             ...initialState,
             tables: someTableTestData,
             tablesLoading: false
         };
 
-        let newState = reduceTableState(initialState, new LoadTablesSuccess(someTableTestData));
+        const newState = reduceTableState(initialState, new LoadTablesSuccess(someTableTestData));
         expect(newState).toEqual(expectedState);
     });
 
     it('should handle the LoadTablesError action correctly', () => {
-        let expectedState = {
+        const expectedState = {
             ...initialState,
             tablesLoading: false
         };
 
-        let newState = reduceTableState(initialState, new LoadTablesError(null));
+        const newState = reduceTableState(initialState, new LoadTablesError(null));
         expect(newState).toEqual(expectedState);
     });
 
     it('should handle the LockTable action correctly', () => {
-        let expectedState = {
+        const expectedState = {
             ...initialState
         };
 
-        let newState = reduceTableState(initialState, new LockTable(null));
+        const newState = reduceTableState(initialState, new LockTable(null));
         expect(newState).toEqual(expectedState);
     });
 
@@ -56,21 +56,21 @@ describe('the table reducer', () => {
             tables : someTableTestData,
             tablesLoading: false
         };
-        let expectedState = {
+        const expectedState = {
             ...initialState,
             tables: secondTableLocked,
         };
 
-        let newState = reduceTableState(twoTableState, new LockTableSuccess(5));
+        const newState = reduceTableState(twoTableState, new LockTableSuccess(5));
         expect(newState).toEqual(expectedState);
     });
 
     it('should handle the LockTablesError action correctly', () => {
-        let expectedState = {
+        const expectedState = {
             ...initialState,
         };
 
-        let newState = reduceTableState(initialState, new LockTableError(null));
+        const newState = reduceTableState(initialState, new LockTableError(null));
         expect(newState).toEqual(expectedState);
     });
 });
