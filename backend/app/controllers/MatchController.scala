@@ -227,9 +227,25 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   }
 
-  def matchCalled(id: Long) = Action {
-    tables.updateMatchState(OnTable, id)
-    Ok("State updated")
+  def callMatches = Action { request =>
+    Logger.info("callMatches")
+    val req = request.body.asJson
+    req match {
+      case Some(r) => {
+        r.asOpt[Seq[Long]] match {
+          case Some(ids) => {
+            ids map { id =>
+              tables.updateMatchState(OnTable, id)
+            }
+            pub ! UpdateMatches(tables.allMatchesInfo)
+            pub ! UpdateTable(tables.allTableInfo)
+            Ok(Json.toJson(Answer(true, "successful")).toString())
+          }
+          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+        }
+      }
+      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+    }
   }
 
   def loadNewMatches = Action.async {
