@@ -17,6 +17,6 @@ export class CallerService {
     }
 
     callMatch(matchIds: number[]): Observable<StatusDto> {
-        return this.http.get<StatusDto>(`/api/match/called/${matchIds[0]}`);
+        return this.http.post<StatusDto>('/api/match/call', matchIds);
     }
 }
