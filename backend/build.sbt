@@ -1,6 +1,6 @@
 name := """TurnierManager"""
 
-version := "1.0-SNAPSHOT"
+version := "1.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
 
@@ -102,4 +102,10 @@ resolveFromWebjarsNodeModulesDir := true
 routesGenerator := InjectedRoutesGenerator
 
 // fork in run := true
+
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+enablePlugins(AshScriptPlugin)
+
+dockerBaseImage       := "openjdk:jre-alpine"
 
