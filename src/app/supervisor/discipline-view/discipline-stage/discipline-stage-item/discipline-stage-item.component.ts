@@ -16,6 +16,10 @@ export class DisciplineStageItemComponent {
         return this.match.state === MatchState[MatchState.Completed];
     }
 
+    isMatchOpen() {
+        return this.match.state === MatchState[MatchState.Open];
+    }
+
     isMatchInWaitingList() {
         return this.match.state === MatchState[MatchState.InWaitingList];
     }
@@ -26,6 +30,10 @@ export class DisciplineStageItemComponent {
 
     isMatchFinished() {
         return this.match.state === MatchState[MatchState.Finished];
+    }
+
+    isMatchBlocked() {
+        return (this.isMatchInWaitingList() || this.isMatchOpen()) && !this.match.isPlayable;
     }
 
 }
