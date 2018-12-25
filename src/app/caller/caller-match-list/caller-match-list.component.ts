@@ -23,9 +23,8 @@ export class CallerMatchListComponent {
         this.matchAggregates = this.matchAggregateService
             .getMatchAggregateForMatches(this.matches
                 .filter(match => match.state === MatchState[MatchState.Callable]));
-        if (this.matchAggregates.length > 0) {
-            this.matchesSelected.emit(this.matchAggregates[0]);
-        }
+        const firstOrDefault = this.matchAggregates[0] || null;
+        this.matchesSelected.emit(firstOrDefault);
     }
 
     get matches() {

@@ -36,7 +36,7 @@ export class SupervisorPageComponent implements OnInit {
         this.matchList = this.store.select(getMatchListState);
         this.disciplines = this.store.select(getDisciplineState);
         this.typeColor = this.store.select(getTypeColorsState);
-        this.typeColor.subscribe(color => this.colors = color );
+        this.typeColor.subscribe(color => this.colors = color);
     }
 
     onSupervisorRefresh() {
@@ -69,8 +69,8 @@ export class SupervisorPageComponent implements OnInit {
         return;
     }
 
-    onSelectedDisciplineChanged(selectedDisciplineId: number){
-        if(this.colors != null) {
+    onSelectedDisciplineChanged(selectedDisciplineId: number) {
+        if (this.colors != null) {
             this.currentColor = this.colors[selectedDisciplineId];
         }
     }

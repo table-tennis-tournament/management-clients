@@ -13,6 +13,7 @@ export class DisciplineMatchListComponent {
 
     private _matches: Match[];
     private currentDisciplineId: number;
+    private _matchList: MatchList[];
 
     @Input()
     set matches(value: Match[]) {
@@ -30,8 +31,19 @@ export class DisciplineMatchListComponent {
     @Input()
     matchesLoading: boolean;
 
+
     @Input()
-    matchList: MatchList[];
+    set matchList(value: MatchList[]) {
+        this._matchList = value;
+        if (this.currentDisciplineId == null) {
+            return;
+        }
+        this.onDisciplineSelected(this.currentDisciplineId == null ? 0 : this.currentDisciplineId);
+    }
+
+    get matchList() {
+        return this._matchList;
+    }
 
     @Input()
     disciplines: Discipline[];
@@ -45,7 +57,7 @@ export class DisciplineMatchListComponent {
         this.currentDisciplineId = disciplineId;
         if (+disciplineId === 0) {
             this.currentMatchesToShow = Object.assign([], this.matches
-                .filter(match => this.isMatchOpen(match)));
+                .filter(match => this.isMatchOpenOrInWaitingList(match)));
             return;
         }
 
@@ -55,12 +67,13 @@ export class DisciplineMatchListComponent {
         }
         const filteredMatches = this.matches
             .filter(match => match.type.id === +disciplineId)
-            .filter(match => this.isMatchOpen(match));
+            .filter(match => this.isMatchOpenOrInWaitingList(match));
         this.currentMatchesToShow = filteredMatches;
     }
 
-    private isMatchOpen(match) {
-        return match.state === MatchState[MatchState.Open];
+    private isMatchOpenOrInWaitingList(match) {
+        return match.state === MatchState[MatchState.Open]
+            || match.state === MatchState[MatchState.InWaitingList];
     }
 
 
@@ -76,7 +89,8 @@ export class DisciplineMatchListComponent {
     isMatchInGroup(groupId: number, currentMatch: Match) {
         return currentMatch != null &&
             currentMatch.group != null &&
-            currentMatch.group.id === groupId;
+            currentMatch.group.id === groupId &&
+            this.isMatchOpenOrInWaitingList(currentMatch);
     }
 
 }

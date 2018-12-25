@@ -5,14 +5,20 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {
-    AssignToMatchList, AssignToMatchListError,
-    AssignToMatchListSuccess, DeleteMatchListItem, DeleteMatchListItemError, DeleteMatchListItemSuccess,
+    AssignToMatchList,
+    AssignToMatchListError,
+    AssignToMatchListSuccess,
+    DeleteMatchListItem,
+    DeleteMatchListItemError,
+    DeleteMatchListItemSuccess,
     LoadMatchListError,
     LoadMatchListSuccess,
-    MatchListActionTypes, MoveMatchListItem, MoveMatchListItemError, MoveMatchListItemSuccess
+    MatchListActionTypes,
+    MoveMatchListItem,
+    MoveMatchListItemError,
+    MoveMatchListItemSuccess
 } from './matchlist.actions';
 import {MatchListService} from '../matchlist.service';
-import {PrintTable} from '../../table/redux/table.actions';
 
 @Injectable()
 export class MatchListEffects {
@@ -35,7 +41,7 @@ export class MatchListEffects {
     @Effect()
     assignToMatchList$: Observable<Action> = this.actions$.pipe(
         ofType(MatchListActionTypes.Assign),
-        switchMap((action: AssignToMatchList) => {
+        mergeMap((action: AssignToMatchList) => {
             return this.matchListService
                 .assignToMatchList(action.payload).pipe(
                     map(status => new AssignToMatchListSuccess(status)),

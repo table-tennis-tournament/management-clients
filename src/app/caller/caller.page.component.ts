@@ -2,10 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Store} from '@ngrx/store';
-import {getMatchesLoading, getMatchesState, getRefereesState, getTypeColorsState} from '../app-state.reducer';
+import {getMatchesLoading, getMatchesState, getRefereesLoading, getRefereesState, getTypeColorsState} from '../app-state.reducer';
 import {MatchAggregate} from '../shared/data/match.aggregate';
 import {Player} from '../shared/data/player.model';
-import {getRefereesLoading} from './redux/caller.reducer';
 import {CallMatch} from './redux/caller.actions';
 
 @Component({
@@ -34,7 +33,6 @@ export class CallerPageComponent implements OnInit {
 
     onMatchesSelected(selectedItem: MatchAggregate) {
         this.selectedItem = selectedItem;
-
     }
 
     onMatchCalled(matchIds: number[]) {

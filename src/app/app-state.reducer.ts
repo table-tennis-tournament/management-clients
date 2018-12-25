@@ -57,5 +57,5 @@ export const getPrintersState = createSelector((state: State) => state.settings,
 export const getWebSocketState = createSelector((state: State) => state.websocket, fromWebSocket.getWebsocketConnectedState);
 
 export const getRefereesState = createSelector((state: State) => state.caller, fromCaller.getReferees);
-export const getRefereesLoadingState = createSelector((state: State) => state.caller, fromCaller.getRefereesLoading);
+export const getRefereesLoading = createSelector((state: State) => state.caller, fromCaller.getRefereesLoading);
 

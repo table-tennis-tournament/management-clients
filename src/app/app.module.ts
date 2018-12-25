@@ -71,6 +71,8 @@ import {CallerMatchDetailComponent} from './caller/caller-match-detail/caller-ma
 import {RefereesListComponent} from './caller/referees-list/referees-list.component';
 import {CallerEffects} from './caller/redux/caller.effects';
 import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-scanner.component';
+import {ResultPipe} from './shared/result/result.pipe';
+import {PlayerresultPipe} from './shared/result/playerresult.pipe';
 
 @NgModule({
     declarations: [
@@ -102,13 +104,15 @@ import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-s
         ResultListPageComponent,
         ResultListComponent,
         StagePipe,
+        ResultPipe,
         DisciplinePipe,
         SettingsListComponent,
         CallerPageComponent,
         CallerMatchListComponent,
         CallerMatchDetailComponent,
         RefereesListComponent,
-        QrResultScannerComponent
+        QrResultScannerComponent,
+        PlayerresultPipe
     ],
     imports: [
         BrowserModule,
