@@ -12,6 +12,8 @@ export class QrResultScannerComponent implements OnInit {
 
     @ViewChild(QrScannerComponent) qrScannerComponent: QrScannerComponent;
 
+    VIDEO_ID = '2749f10c624e65d7edb09017fc4df28c697e63bb56057e241bebc92045c192f6';
+
     @Output()
     freeMatch: EventEmitter<number> = new EventEmitter();
 
@@ -20,32 +22,22 @@ export class QrResultScannerComponent implements OnInit {
 
     ngOnInit() {
         this.qrScannerComponent.getMediaDevices().then(devices => {
-            console.log(devices);
-            const videoDevices: MediaDeviceInfo[] = [];
-            for (const device of devices) {
-                if (device.kind.toString() === 'videoinput') {
-                    videoDevices.push(device);
-                }
-            }
+            const videoDevices: MediaDeviceInfo[] = devices.filter(device => device.kind.toString() === 'videoinput');
             console.log(videoDevices);
             if (videoDevices.length > 0) {
-                let choosenDev;
-                for (const dev of videoDevices) {
-                    if (dev.label.includes('front')) {
-                        choosenDev = dev;
-                        break;
-                    }
-                    if (dev.deviceId.includes('2749f10c624e65d7edb09017fc4df28c697e63bb56057e241bebc92045c192f6')) {
-                        choosenDev = dev;
+                let chosenDevice;
+                for (const device of videoDevices) {
+                    if (device.deviceId.includes(this.VIDEO_ID)) {
+                        chosenDevice = device;
                         break;
                     }
                 }
-                if (choosenDev) {
-                    this.qrScannerComponent.chooseCamera.next(choosenDev);
-                } else {
-                    console.log(videoDevices[0]);
-                    this.qrScannerComponent.chooseCamera.next(videoDevices[0]);
+                if (chosenDevice) {
+                    this.qrScannerComponent.chooseCamera.next(chosenDevice);
+                    return;
                 }
+                console.log(videoDevices[0]);
+                this.qrScannerComponent.chooseCamera.next(videoDevices[0]);
             }
         });
 

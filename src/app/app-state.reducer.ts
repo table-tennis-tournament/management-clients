@@ -58,4 +58,5 @@ export const getWebSocketState = createSelector((state: State) => state.websocke
 
 export const getRefereesState = createSelector((state: State) => state.caller, fromCaller.getReferees);
 export const getRefereesLoading = createSelector((state: State) => state.caller, fromCaller.getRefereesLoading);
+export const getSelectedMatchAggregateState = createSelector((state: State) => state.caller, fromCaller.getSelectedMatchAggregate);
 

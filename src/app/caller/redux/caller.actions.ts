@@ -8,7 +8,8 @@ export enum CallerActionTypes {
     LoadError = '[Referees] Load Error',
     CallMatch = '[CallMatch]',
     CallMatchSuccess = '[CallMatch] Success',
-    CallMatchError = '[CallMatch] Error'
+    CallMatchError = '[CallMatch] Error',
+    SetSelectedMatchAggregate = '[CallMatch] Set Selected Match'
 }
 
 export class LoadRefereesList implements Action {
@@ -53,10 +54,18 @@ export class CallMatchError implements Action {
     }
 }
 
+export class SetSelectedMatchAggregate implements Action {
+    readonly type = CallerActionTypes.SetSelectedMatchAggregate;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type CallerActionUnion =
     | LoadRefereesList
     | LoadRefereesListSuccess
     | LoadRefereesListError
     | CallMatch
     | CallMatchSuccess
-    | CallMatchError;
+    | CallMatchError
+    | SetSelectedMatchAggregate;

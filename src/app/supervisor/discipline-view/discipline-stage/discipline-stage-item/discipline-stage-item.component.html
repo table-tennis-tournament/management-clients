@@ -3,12 +3,12 @@
            <div class="single-bordered">
                <toma-team-item [team]="match.team1" class="padding-left"
                                [showDisciplines]="true"></toma-team-item>
-               <span *ngIf="match.result" class="right padding-right">{{match.result | playerresult:true}}</span>
+               <span *ngIf="match.result" class="right padding-right">{{match.result | resultPipe:1}}</span>
            </div>
            <div class="single-bordered">
                <toma-team-item [team]="match.team2" class="padding-left"
                                [showDisciplines]="true"></toma-team-item>
-               <span *ngIf="match.result" class="right padding-right">{{match.result | playerresult:false}}</span>
+               <span *ngIf="match.result" class="right padding-right">{{match.result | resultPipe:2}}</span>
            </div>
         </span>
     <span class="header-right-content">

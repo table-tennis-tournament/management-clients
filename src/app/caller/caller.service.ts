@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Player} from '../shared/data/player.model';
 import {HttpClient} from '@angular/common/http';
 import {StatusDto} from '../shared/statusdto.model';
@@ -13,7 +13,7 @@ export class CallerService {
     }
 
     loadAvailableReferees(): Observable<Player[]> {
-        return new BehaviorSubject([]);
+        return Observable.create([]);
     }
 
     callMatch(matchIds: number[]): Observable<StatusDto> {

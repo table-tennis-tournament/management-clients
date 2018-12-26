@@ -48,7 +48,7 @@ export class MatchAggregateService {
 
     private getDistinctedPlayers(currentPlayers: Player[], playersToAdd: Player[]): Player[] {
         const result = [];
-        currentPlayers.concat(playersToAdd).forEach(player => {
+        [...currentPlayers, ...playersToAdd].forEach(player => {
                 if (!result[player.id]) {
                     result[player.id] = player;
                 }

@@ -6,7 +6,10 @@ import {TTResult} from '../../table/table-list/result-modal/ttresult.model';
 })
 export class ResultPipe implements PipeTransform {
 
-    transform(value: TTResult[]): any {
+    FIRST_PLAYER_SETS = 1;
+    SECOND_PLAYER_SETS = 2;
+
+    transform(value: TTResult[], setsForPlayer: number): any {
         if (value == null || value.length < 1) {
             return '';
         }
@@ -15,11 +18,16 @@ export class ResultPipe implements PipeTransform {
         value.forEach((element) => {
             if (element[0] > element[1]) {
                 firstPlayerSets++;
-            } else {
-                secondPlayerSets++;
+                return;
             }
+            secondPlayerSets++;
         });
-
+        if (setsForPlayer === this.FIRST_PLAYER_SETS) {
+            return firstPlayerSets;
+        }
+        if (setsForPlayer === this.SECOND_PLAYER_SETS) {
+            return secondPlayerSets;
+        }
         return firstPlayerSets + ' : ' + secondPlayerSets;
     }
 }
