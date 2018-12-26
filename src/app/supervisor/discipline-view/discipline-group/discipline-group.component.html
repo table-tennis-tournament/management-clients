@@ -6,6 +6,7 @@
             <span class="right" *ngIf="groupIsNotPlayable()"><i class="material-icons">remove_circle_outline</i></span>
             <span class="right" *ngIf="!group.isComplete">{{openMatches}}/{{allMatchCount}}</span>
             <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span>
+            <span class="circle right" *ngIf="isGroupInWaitingList()">W</span>
         </span>
     </div>
 
@@ -46,7 +47,7 @@
                                             [showDisciplines]="false"></toma-team-item>
                             <span *ngIf="currentMatch.table[0]"
                                   class="circle right">{{currentMatch.table[0]}}</span>
-                            <i *ngIf="currentMatch.result" class="material-icons right">done</i>
+                            <span *ngIf="currentMatch.result" class="right">{{currentMatch.result|resultPipe}}</span>
                         </div>
                     </a>
                 </div>

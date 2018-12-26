@@ -61,20 +61,6 @@ export function reduceTableState(state: TableState = initialState, action: Table
                 })
 
             };
-        // case TableActionTypes.FreeSuccess:
-        //     const freeTableEvent = action.payload;
-        //     return {
-        //         ...state,
-        //         tables: state.tables.map(table => {
-        //             if (table.number === action.payload.tableNr) {
-        //                 return {
-        //                     ...table,
-        //                     matches: [...table.matches.filter(match => !freeTableEvent.matchIds.indexOf(match.id))]
-        //                 };
-        //             }
-        //             return table;
-        //         })
-        //     };
         case TableActionTypes.TakeBackSuccess:
             const takeBackEvent = action.payload;
             return {

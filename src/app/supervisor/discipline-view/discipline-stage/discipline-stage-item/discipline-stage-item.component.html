@@ -3,10 +3,12 @@
            <div class="single-bordered">
                <toma-team-item [team]="match.team1" class="padding-left"
                                [showDisciplines]="true"></toma-team-item>
+               <span *ngIf="match.result" class="right padding-right">{{match.result | resultPipe:1}}</span>
            </div>
            <div class="single-bordered">
                <toma-team-item [team]="match.team2" class="padding-left"
                                [showDisciplines]="true"></toma-team-item>
+               <span *ngIf="match.result" class="right padding-right">{{match.result | resultPipe:2}}</span>
            </div>
         </span>
     <span class="header-right-content">
@@ -15,5 +17,6 @@
                 <span *ngIf="isMatchCallable()" class="circle right">A</span>
                 <span *ngIf="isMatchFinished()" class="circle right">F</span>
                 <i *ngIf="isMatchComplete()" class="material-icons right">done</i>
+                <i *ngIf="isMatchBlocked()" class="material-icons right">remove_circle_outline</i>
         </span>
 </div>

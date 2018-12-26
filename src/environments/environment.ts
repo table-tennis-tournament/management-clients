@@ -3,7 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+    production: false,
+    socket: {
+        // baseUrl: 'ws://localhost:9000/register',
+        baseUrl: 'ws://localhost:9000/api/register',
+        config: {
+            path: '/api/register'
+        },
+        upgrade: false,
+        transports: ['websocket']
+    }
 };
 
 /*

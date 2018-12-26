@@ -2,11 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Store} from '@ngrx/store';
-import {LoadMatches} from './redux/match.actions';
 import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
-import {LoadMatchList} from '../supervisor/redux/matchlist.actions';
 import {MatchList} from '../supervisor/matchlist.model';
-import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {Discipline} from '../discipline/discipline.model';
 
 @Component({

@@ -95,6 +95,11 @@ export class DisciplineGroupComponent {
         return playableMatches.length === 0;
     }
 
+    isGroupInWaitingList() {
+        const playableMatches = this.group.matches.filter(match => match.state === MatchState[MatchState.InWaitingList]);
+        return playableMatches.length === this.group.matches.length;
+    }
+
     groupIsNotPlayable() {
         return !this.group.isComplete && !this.isGroupPlayable() && this.tableNumbers.length < 1;
     }

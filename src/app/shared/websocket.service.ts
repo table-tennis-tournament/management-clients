@@ -1,7 +1,7 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {WebSocketSubject} from 'rxjs/webSocket';
-import {environment} from '../environments/environment';
+import {environment} from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'

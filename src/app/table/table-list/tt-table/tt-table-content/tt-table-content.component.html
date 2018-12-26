@@ -1,11 +1,14 @@
 <span *ngIf="table?.matches?.length > 0">
-  <span class="card-title activator truncate">
     <h5 class="no-margin">
-        <span *ngIf="table.number" class="circle">{{table.number}}</span>
-        <span>{{table.matches[0].type.name}}</span>
-        <i class="material-icons right">more_vert</i>
-   </h5>
-  </span>
+         <span class="card-title activator truncate">
+             <div class=" grid-container">
+                 <span *ngIf="table.number" class="circle">{{table.number}}</span>
+            <div class="truncate">{{table.matches[0].type.name}}</div>
+            <div><i class="material-icons right no-left-margin">more_vert</i></div>
+             </div>
+
+        </span>
+    </h5>
     <a href="javascript:void(0)" (click)="freeTable.emit(table.number)">
         <i class="material-icons right white-text">done</i>
     </a>

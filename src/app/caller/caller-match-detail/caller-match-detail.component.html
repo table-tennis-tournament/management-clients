@@ -1,0 +1,44 @@
+<div *ngIf="matchAggregate">
+    <div class="card {{typeColor[matchAggregate.discipline.id]}} center-align">
+        <div class="card-content simple-padding">
+            <span class="card-title ">
+            <h4>{{matchAggregate.discipline.name}}</h4>
+            </span>
+            <br/>
+            <h5>{{matchAggregate.name}}</h5>
+            <br/><br/>
+            <h5>Tisch
+                <span class="circle" *ngFor="let tableNumber of matchAggregate.tableNumbers">{{tableNumber}}</span>
+            </h5>
+            <br/><br/>
+            <div class="row" *ngIf="matchAggregate?.matches?.length === 1">
+                <div>
+                    Schiedsrichter: ?
+                </div>
+                <br/><br/>
+                <div *ngFor="let currentPlayer of matchAggregate.matches[0].team1">{{[currentPlayer]| ttPlayerNameReducer}}</div>
+                <br/>
+                -
+                <br/>
+                <br/>
+                <div *ngFor="let currentPlayer of matchAggregate.matches[0].team2">{{[currentPlayer]| ttPlayerNameReducer}}</div>
+            </div>
+            <div class="row" *ngIf="matchAggregate?.matches?.length > 1">
+                <div><h5>Spieler: </h5></div>
+                <div *ngFor="let currentPlayer of matchAggregate.players">
+                    {{[currentPlayer] | ttPlayerNameReducer}}
+                </div>
+            </div>
+        </div>
+        <div class="card-action white">
+            <button mz-button (click)="onMatchCalled()">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+<div class="center-align" *ngIf="!matchAggregate">
+    <h2>Keine Spiele zum Ausrufen</h2>
+    <i class="large material-icons">beach_access</i>
+</div>
+

@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatchList} from '../matchlist.model';
 import {MatchListItem} from '../matchlistitem.model';
+import {Match} from '../../shared/data/match.model';
+import {MatchState} from '../../shared/data/matchstate.model';
 
 @Component({
     selector: 'toma-matchlist-view',
@@ -27,7 +29,6 @@ export class MatchlistViewComponent {
     constructor() {
     }
 
-// {item: CdkDrag, currentIndex: 1, previousIndex: 2, container: CdkDropList, previousContainer: CdkDropList}
     onDropSuccess(event) {
         const matchListItem = this.matchListMatches[event.previousIndex];
         const newPosition = event.currentIndex;
@@ -47,9 +48,10 @@ export class MatchlistViewComponent {
         if (this.isGroupDragItem(event)) {
             matchInfo = event.dragData;
         }
-
         const matchListItem = {
-            matchIds: matchInfo.map(x => x.id),
+            matchIds: matchInfo
+                .filter(match => this.isMatchOpen(match))
+                .map(match => match.id),
             position: this.matchListMatches.length
         };
         this.assignMatchListItem.emit(matchListItem);
@@ -61,5 +63,9 @@ export class MatchlistViewComponent {
 
     private isSingleDragItem(event) {
         return event.dragData.team1;
+    }
+
+    private isMatchOpen(match: Match) {
+        return match.state === MatchState[MatchState.Open];
     }
 }

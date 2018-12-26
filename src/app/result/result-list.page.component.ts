@@ -40,6 +40,10 @@ export class ResultListPageComponent implements OnInit {
         dialog.instance.OnResultForMatch.subscribe(matchResult => this.store.dispatch(new ResultForMatch(matchResult)));
     }
 
+    onResultCompleteForMatch(matchResult: any) {
+        this.store.dispatch(new ResultForMatch(matchResult));
+    }
+
     onFreeMatch(matchId: number) {
         this.store.dispatch(new FreeTable({matchIds: [matchId]}));
     }
