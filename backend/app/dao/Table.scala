@@ -304,7 +304,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def isPlayable(ttMatch: TTMatch): Boolean = {
     val ids = ttMatch.player1Ids ++ ttMatch.player2Ids
-    val res = ttMatchSeq.filter(m => (m.player1Ids ++ m.player2Ids).forall(ids.contains(_)) && (m.state == Callable || m.state == OnTable)).isEmpty
+    val res = ttMatchSeq.filter(m => (m.player1Ids.containsAnyOf(ids) || m.player2Ids.containsAnyOf(ids)) && (m.state == Callable || m.state == OnTable)).isEmpty
     Logger.info("isPlayable " + res + " " + ttMatch)
     res
   }
