@@ -24,6 +24,13 @@
             <label for="open-matches-checkbox">Spiele</label>
         </p>
     </div>
+    <div class="col">
+        <p>
+            <input type="checkbox" class="filled-in" [(ngModel)]="stopRefresh"
+                   (change)="this.setTabForId(this.currentTabId)" id="stop-refresh-checkbox"/>
+            <label for="stop-refresh-checkbox">Stop</label>
+        </p>
+    </div>
 </div>
 <div *ngIf="selectedTab" class="row {{typeColor[selectedTab.id]}}">
     <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">

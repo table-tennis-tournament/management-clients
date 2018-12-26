@@ -1,6 +1,6 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getDisciplineLoading, getDisciplineState, getMatchesLoading, getMatchesState} from '../app-state.reducer';
+import {getDisciplineLoading, getDisciplineState, getResultMatchesLoading, getResultMatchesState} from '../app-state.reducer';
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Discipline} from '../discipline/discipline.model';
@@ -23,8 +23,8 @@ export class ResultListPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.matches = this.store.select(getMatchesState);
-        this.matchesLoading = this.store.select(getMatchesLoading);
+        this.matches = this.store.select(getResultMatchesState);
+        this.matchesLoading = this.store.select(getResultMatchesLoading);
         this.disciplines = this.store.select(getDisciplineState);
         this.disciplinesLoading = this.store.select(getDisciplineLoading);
     }

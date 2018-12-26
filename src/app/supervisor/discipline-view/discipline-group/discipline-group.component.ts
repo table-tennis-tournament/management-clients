@@ -24,6 +24,9 @@ export class DisciplineGroupComponent {
     @Output()
     resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
 
+    @Input()
+    stopRefresh: boolean;
+
     _showPlayers: boolean;
     _showMatches: boolean;
 

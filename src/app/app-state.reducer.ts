@@ -9,6 +9,7 @@ import * as fromDisciplines from './discipline/redux/discipline.reducer';
 import * as fromSettings from './settings/redux/settings.reducer';
 import * as fromWebSocket from './websocket/redux/websocket.reducer';
 import * as fromCaller from './caller/redux/caller.reducer';
+import * as fromResult from './result/redux/result.reducer';
 import {environment} from '../environments/environment';
 
 export interface State {
@@ -20,6 +21,7 @@ export interface State {
     settings: fromSettings.SettingsState;
     websocket: fromWebSocket.WebSocketState;
     caller: fromCaller.CallerState;
+    result: fromResult.ResultState;
 }
 
 export const reducers: ActionReducerMap<State> = {
@@ -30,7 +32,8 @@ export const reducers: ActionReducerMap<State> = {
     disciplines: fromDisciplines.reduceDisciplineState,
     settings: fromSettings.reduceSettingsState,
     websocket: fromWebSocket.reduceWebsocketState,
-    caller: fromCaller.reduceCallerState
+    caller: fromCaller.reduceCallerState,
+    result: fromResult.reduceResultState
 };
 
 export const metaReducers: MetaReducer<State>[] = !environment.production
@@ -45,6 +48,9 @@ export const getMatchesLoading = createSelector((state: State) => state.matches,
 
 export const getMatchListState = createSelector((state: State) => state.matchList, fromMatchList.getMatchList);
 export const getMatchListLoading = createSelector((state: State) => state.matchList, fromMatchList.getMatchListLoading);
+
+export const getResultMatchesState = createSelector((state: State) => state.result, fromResult.getResultMatches);
+export const getResultMatchesLoading = createSelector((state: State) => state.result, fromResult.getResultMatchesLoading);
 
 export const getDisciplineState = createSelector((state: State) => state.disciplines, fromDisciplines.getDisciplines);
 export const getDisciplineLoading = createSelector((state: State) => state.disciplines, fromDisciplines.getDisciplinesLoading);

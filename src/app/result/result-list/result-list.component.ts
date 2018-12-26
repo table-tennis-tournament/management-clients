@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {Discipline} from '../../discipline/discipline.model';
 import {MatchState} from '../../shared/data/matchstate.model';
@@ -10,11 +10,10 @@ import {ResultCheckModel} from '../../table/table-list/result-modal/result-check
     templateUrl: './result-list.component.html',
     styleUrls: ['./result-list.component.scss']
 })
-export class ResultListComponent {
+export class ResultListComponent implements AfterViewInit {
 
     private _matches: Match[];
-    private selectedDisciplineId = 0;
-
+    selectedDisciplineId = 0;
 
     checkerResultList: ResultCheckModel[] = [];
 
@@ -40,10 +39,12 @@ export class ResultListComponent {
     @Output()
     resultCompleteForMatch: EventEmitter<any> = new EventEmitter<any>();
 
+    @ViewChild('answer') private elementRef: ElementRef;
+
     @Input()
     matchesLoading: boolean;
 
-    selectedMatches: Match[];
+    selectedMatches: Match[] = [];
 
     constructor(private resultChecker: ResultCheckerService) {
     }
@@ -51,12 +52,20 @@ export class ResultListComponent {
     onTypeChanged(disciplineId) {
         this.selectedDisciplineId = disciplineId;
         if (disciplineId === 0) {
-            this.selectedMatches = this.matches.filter(this.matchIsReadyForResult);
+            this.setSelectedMatchesOnChange(this.matches.filter(this.matchIsReadyForResult));
             return;
         }
-        this.selectedMatches = this.matches
+        const filteredMatches = this.matches
             .filter(match => match.type.id === disciplineId)
             .filter(this.matchIsReadyForResult);
+        this.setSelectedMatchesOnChange(filteredMatches);
+    }
+
+    private setSelectedMatchesOnChange(filteredMatches) {
+        if (filteredMatches.length !== this.selectedMatches.length) {
+            this.selectedMatches = filteredMatches;
+        }
+        this.selectedMatches = filteredMatches;
     }
 
     matchIsReadyForResult(match: Match) {
@@ -76,6 +85,12 @@ export class ResultListComponent {
                 match: match
             });
             this.checkerResultList = [];
+        }
+    }
+
+    ngAfterViewInit(): void {
+        if (this.elementRef != null) {
+            this.elementRef.nativeElement.focus();
         }
     }
 

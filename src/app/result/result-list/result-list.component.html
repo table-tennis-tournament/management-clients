@@ -8,7 +8,6 @@
                     [showWaitingList]="false">
             </toma-discipline-select>
         </div>
-
     </div>
 
     <div class="row">
@@ -42,7 +41,7 @@
                 <td>{{currentMatch | discipline}}</td>
                 <td>
                     <div>
-                        <input autofocus id="result" class="form-control" type="text" #answer
+                        <input id="result" class="form-control" type="text" #answer
                                (keyup)="onKeyUp(answer.value, i)"
                                [(ngModel)]="currentMatch.result"
                                (keyup.enter)="checkResultAndClose(checkerResultList[i], currentMatch)">

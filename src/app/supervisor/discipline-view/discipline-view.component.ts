@@ -12,7 +12,7 @@ import {DisciplineStage} from './models/discipline.stage.model';
 })
 export class DisciplineViewComponent {
 
-    private currentTabId: number;
+    currentTabId: number;
     tabs: DisciplineTab[];
 
     selectedTab: DisciplineTab;
@@ -20,12 +20,16 @@ export class DisciplineViewComponent {
     showAllMatches = true;
     playersAreOpen = true;
     matchesAreOpen = true;
+    stopRefresh = false;
 
     private _matches: Match [];
 
     @Input()
     set matches(value: Match[]) {
         this._matches = value;
+        if (this.stopRefresh) {
+            return;
+        }
         this.setTabForId(this.currentTabId);
     }
 
@@ -94,13 +98,5 @@ export class DisciplineViewComponent {
 
     onDeleteStage(stageToRemove: DisciplineStage) {
         this.selectedTab.stages = this.selectedTab.stages.filter(stage => stage !== stageToRemove);
-    }
-
-    onOpenPlayers() {
-
-    }
-
-    onOpenMatches() {
-
     }
 }

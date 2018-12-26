@@ -2,32 +2,37 @@
     <div class="card {{typeColor[matchAggregate.discipline.id]}} center-align">
         <div class="card-content simple-padding">
             <span class="card-title ">
-            <h4>{{matchAggregate.discipline.name}}</h4>
+            <h3>{{matchAggregate.discipline.name}}</h3>
             </span>
             <br/>
-            <h5>{{matchAggregate.name}}</h5>
+            <h4>{{matchAggregate.name}}</h4>
             <br/><br/>
-            <h5>Tisch
+            <h4>Tisch
                 <span class="circle" *ngFor="let tableNumber of matchAggregate.tableNumbers">{{tableNumber}}</span>
-            </h5>
+            </h4>
             <br/><br/>
             <div class="row" *ngIf="matchAggregate?.matches?.length === 1">
-                <div>
-                    Schiedsrichter: ?
-                </div>
-                <br/><br/>
-                <div *ngFor="let currentPlayer of matchAggregate.matches[0].team1">{{[currentPlayer]| ttPlayerNameReducer}}</div>
-                <br/>
-                -
-                <br/>
-                <br/>
-                <div *ngFor="let currentPlayer of matchAggregate.matches[0].team2">{{[currentPlayer]| ttPlayerNameReducer}}</div>
+                <h5>
+                    <div>
+                        Schiedsrichter: ?
+                    </div>
+                    <br/><br/>
+                    <div *ngFor="let currentPlayer of matchAggregate.matches[0].team1">{{[currentPlayer]| ttPlayerNameReducer}}</div>
+                    <br/>
+                    -
+                    <br/>
+                    <br/>
+                    <div *ngFor="let currentPlayer of matchAggregate.matches[0].team2">{{[currentPlayer]| ttPlayerNameReducer}}</div>
+                </h5>
             </div>
             <div class="row" *ngIf="matchAggregate?.matches?.length > 1">
-                <div><h5>Spieler: </h5></div>
-                <div *ngFor="let currentPlayer of matchAggregate.players">
-                    {{[currentPlayer] | ttPlayerNameReducer}}
-                </div>
+                <div><h3>Spieler: </h3></div>
+                <h5>
+                    <div *ngFor="let currentPlayer of matchAggregate.players">
+                        {{[currentPlayer] | ttPlayerNameReducer}}
+                    </div>
+                </h5>
+
             </div>
         </div>
         <div class="card-action white">

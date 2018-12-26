@@ -7,6 +7,8 @@ import {MatchList} from '../supervisor/matchlist.model';
 import {LoadMatchListSuccess} from '../supervisor/redux/matchlist.actions';
 import {ConnectWebSocket} from './redux/websocket.actions';
 import {Store} from '@ngrx/store';
+import {LoadResultsSuccess} from '../result/redux/result.actions';
+import {MatchState} from '../shared/data/matchstate.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +34,8 @@ export class WebsocketHandlerService {
         if (data.UpdateMatches && data.UpdateMatches.length > 0) {
             const newMatchData: Match[] = data.UpdateMatches;
             this.store.dispatch(new LoadMatchesSuccess(newMatchData));
+            this.store.dispatch(new LoadResultsSuccess(
+                newMatchData.filter(match => match.state === MatchState[MatchState.Finished])));
         }
         if (data.UpdateMatchList) {
             const newMatchlistItems: MatchList[] = data.UpdateMatchList;
