@@ -63,7 +63,6 @@ import {DisciplinePipe} from './result/pipes/discipline.pipe';
 import {SettingsListComponent} from './settings/settings-list/settings-list.component';
 import {WebsocketService} from './shared/websocket.service';
 import {WebSocketEffects} from './websocket/redux/websocket.effects';
-import {NgQrScannerModule} from 'angular2-qrscanner';
 import {WebsocketHandlerService} from './websocket/websocket.handler.service';
 import {CallerPageComponent} from './caller/caller.page.component';
 import {CallerMatchListComponent} from './caller/caller-match-list/caller-match-list.component';
@@ -72,6 +71,7 @@ import {RefereesListComponent} from './caller/referees-list/referees-list.compon
 import {CallerEffects} from './caller/redux/caller.effects';
 import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-scanner.component';
 import {ResultPipe} from './shared/result/result.pipe';
+import {ZXingScannerModule} from '@zxing/ngx-scanner';
 
 @NgModule({
     declarations: [
@@ -128,6 +128,7 @@ import {ResultPipe} from './shared/result/result.pipe';
         DragDropModule,
         DndModule.forRoot(),
         FormsModule,
+        ZXingScannerModule.forRoot(),
         ToastrModule.forRoot({
             timeOut: 5000,
             extendedTimeOut: 2000,
@@ -144,7 +145,6 @@ import {ResultPipe} from './shared/result/result.pipe';
         }),
         EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects,
             DisciplineEffects, SettingsEffects, WebSocketEffects, CallerEffects]),
-        NgQrScannerModule,
         HttpClientModule
     ],
 

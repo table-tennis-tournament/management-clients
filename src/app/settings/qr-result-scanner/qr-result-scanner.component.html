@@ -1,13 +1,24 @@
-<div class="row center-align">
-    <h3>Spiel zurück</h3>
+<div class="row">
+    <div col="s12 m4">
+        <mz-select-container>
+            <select mz-select
+                    id="select-camerar"
+                    [label]="'Wähle Kamera'"
+                    [placeholder]="'Kamera'"
+                    [(ngModel)]="selectedDevice"
+                    (select)="onDeviceSelectChange($event)">
+                <option *ngFor="let device of availableDevices" [value]="device.deviceId">
+                    {{device.label}}
+                </option>
+            </select>
+        </mz-select-container>
+    </div>
+
 </div>
 <div class="row scanner-width">
-    <qr-scanner
-            [debug]="true"
-            [canvasWidth]="500"
-            [canvasHeight]="500"
-            [stopAfterScan]="false"
-            [updateTime]="500">
-    </qr-scanner>
+    <zxing-scanner #scanner class="test-class" start="true"
+                   [device]="selectedMediaDevice"
+                   (scanSuccess)="handleQrCodeResult($event)"
+    ></zxing-scanner>
 </div>
 

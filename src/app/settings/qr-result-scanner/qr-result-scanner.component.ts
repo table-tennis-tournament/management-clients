@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import {QrScannerComponent} from 'angular2-qrscanner';
 import {Store} from '@ngrx/store';
+import {ZXingScannerComponent} from '@zxing/ngx-scanner';
 import {FreeTable} from '../../table/redux/table.actions';
 
 @Component({
@@ -10,46 +10,52 @@ import {FreeTable} from '../../table/redux/table.actions';
 })
 export class QrResultScannerComponent implements OnInit {
 
-    @ViewChild(QrScannerComponent) qrScannerComponent: QrScannerComponent;
-
-    VIDEO_ID = '2749f10c624e65d7edb09017fc4df28c697e63bb56057e241bebc92045c192f6';
-
     @Output()
     freeMatch: EventEmitter<number> = new EventEmitter();
+
+    @ViewChild('scanner')
+    scanner: ZXingScannerComponent;
+
+    private hasCameras: boolean;
+    availableDevices: MediaDeviceInfo[];
+
+    private _selectedDevice: string;
+    selectedMediaDevice: MediaDeviceInfo;
+
+    set selectedDevice(value: string) {
+        this._selectedDevice = value;
+        this.selectedMediaDevice = this.scanner.getDeviceById(value);
+    }
+
+    get selectedDevice(): string {
+        return this._selectedDevice;
+    }
 
     constructor(private store: Store<any>) {
     }
 
     ngOnInit() {
-        this.qrScannerComponent.getMediaDevices().then(devices => {
-            const videoDevices: MediaDeviceInfo[] = devices.filter(device => device.kind.toString() === 'videoinput');
-            console.log(videoDevices);
-            if (videoDevices.length > 0) {
-                let chosenDevice;
-                for (const device of videoDevices) {
-                    if (device.deviceId.includes(this.VIDEO_ID)) {
-                        chosenDevice = device;
-                        break;
-                    }
-                }
-                if (chosenDevice) {
-                    this.qrScannerComponent.chooseCamera.next(chosenDevice);
-                    return;
-                }
-                console.log(videoDevices[0]);
-                this.qrScannerComponent.chooseCamera.next(videoDevices[0]);
-            }
-        });
+        this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
+            this.hasCameras = true;
 
-        this.qrScannerComponent.capturedQr.subscribe(result => {
-            if (+result > 0) {
-                this.store.dispatch(new FreeTable({
-                        matchIds: [+result]
-                    }));
-            }
-            console.log('found image');
-            console.log(result);
+            console.log('Devices: ', devices);
+            this.availableDevices = devices;
         });
+    }
+
+    handleQrCodeResult(result) {
+        if (+result > 0) {
+            this.store.dispatch(new FreeTable({
+                matchIds: [+result]
+            }));
+        }
+        console.log('found image');
+        console.log(result);
+    }
+
+    onDeviceSelectChange(selectedDevice) {
+        console.log(selectedDevice);
+
     }
 
 }
