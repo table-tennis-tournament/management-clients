@@ -1,5 +1,5 @@
 <div class="row">
-    <div col="s12 m4">
+    <div class="col s12 m4">
         <mz-select-container>
             <select mz-select
                     id="select-camerar"
@@ -15,10 +15,12 @@
     </div>
 
 </div>
-<div class="row scanner-width">
-    <zxing-scanner #scanner class="test-class" start="true"
-                   [device]="selectedMediaDevice"
-                   (scanSuccess)="handleQrCodeResult($event)"
-    ></zxing-scanner>
+<div class="row">
+    <div class="col s12 m12 l12">
+        <zxing-scanner #scanner class="test-class" start="true"
+                       [device]="selectedMediaDevice"
+                       (scanSuccess)="handleQrCodeResult($event)"
+        ></zxing-scanner>
+    </div>
 </div>
 
