@@ -36,3 +36,16 @@
   width: 33px;
   order: 2;
 }
+
+.discipline-match-list-square {
+  width: 25px;
+  height: 25px;
+  float: right;
+  text-align: center
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto 30px;
+  grid-template-rows: auto;
+}

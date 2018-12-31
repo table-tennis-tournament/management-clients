@@ -33,7 +33,7 @@ export class SettingsEffects {
                 .loadSettings().pipe(
                     map(settings => new LoadSettingsSuccess(settings)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Settings', 'Error');
+                        this.toastService.error('Fehler beim Laden der Settings');
                         return of(new LoadSettingsError(err));
                     })
                 );
@@ -48,7 +48,7 @@ export class SettingsEffects {
                 .loadPrinters().pipe(
                     map(printers => new LoadPrintersSuccess(printers)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Drucker', 'Error');
+                        this.toastService.error('Fehler beim Laden der Drucker');
                         return of(new LoadPrintersError(err));
                     })
                 );
@@ -63,7 +63,7 @@ export class SettingsEffects {
                 .saveAssignAutomatically(action.payload).pipe(
                     map(() => new SaveAssignAutomaticallySuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Speichern des automatischen zuweisens', 'Error');
+                        this.toastService.error('Fehler beim Speichern des automatischen zuweisens');
                         return of(new SaveAssignAutomaticallyError(err));
                     })
                 );
@@ -78,7 +78,7 @@ export class SettingsEffects {
                 .savePrintOnAssign(action.payload).pipe(
                     map(() => new SavePrintOnAssignSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Speichern des druckens bei aufruf', 'Error');
+                        this.toastService.error('Fehler beim Speichern des druckens bei aufruf');
                         return of(new SavePrintOnAssignError(err));
                     })
                 );
@@ -93,7 +93,7 @@ export class SettingsEffects {
                 .setPrinter(action.payload).pipe(
                     map(() => new SetPrinterSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim setzen des Druckers', 'Error');
+                        this.toastService.error('Fehler beim setzen des Druckers');
                         return of(new SetPrinterError(err));
                     })
                 );

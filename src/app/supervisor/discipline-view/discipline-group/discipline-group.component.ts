@@ -107,4 +107,9 @@ export class DisciplineGroupComponent {
         return !this.group.isComplete && !this.isGroupPlayable() && this.tableNumbers.length < 1;
     }
 
+    groupIsDraggable() {
+        const openMatches = this.group.matches.filter(match => match.state === MatchState[MatchState.Open]);
+        return openMatches.length > 0;
+    }
+
 }

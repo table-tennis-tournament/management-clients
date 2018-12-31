@@ -1,7 +1,7 @@
 <div class="card {{typeColor[group?.matches[0]?.type.id]}}">
     <div class="card-content simple-padding white black-text">
          <span class="card-title group-view-header">
-            <span dnd-draggable [dragData]="group.matches">{{group.name}}</span>
+            <span dnd-draggable [dragData]="group.matches" [dragEnabled]="groupIsDraggable()">{{group.name}} </span>
             <span class="right" *ngIf="group.isComplete"><i class="material-icons">done</i></span>
             <span class="right" *ngIf="groupIsNotPlayable()"><i class="material-icons">remove_circle_outline</i></span>
             <span class="right" *ngIf="!group.isComplete">{{openMatches}}/{{allMatchCount}}</span>

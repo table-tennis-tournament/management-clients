@@ -1,4 +1,4 @@
-import {Component, EventEmitter, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, ViewChild} from '@angular/core';
 import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
 import {TTMatchResult} from './ttmatch-result.model';
 import {customModalOptions} from '../../../shared/modal.options';
@@ -28,8 +28,16 @@ export class ResultModalComponent extends MzBaseModal {
 
     @ViewChild('resultModal') modal: MzModalComponent;
 
+    @ViewChild('answer') private elementRef: ElementRef;
+
     constructor(private resultCheckerService: ResultCheckerService) {
         super();
+    }
+
+    focusElement() {
+        if (this.elementRef != null) {
+            this.elementRef.nativeElement.focus();
+        }
     }
 
     get currentMatch(): Match {
@@ -39,6 +47,7 @@ export class ResultModalComponent extends MzBaseModal {
     set currentMatch(value: Match) {
         this._currentMatch = value;
         this.setInputIfAvailable();
+        setTimeout(this.focusElement.bind(this), 200);
     }
 
     onKeyUp(value) {

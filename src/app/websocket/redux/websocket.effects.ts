@@ -21,7 +21,7 @@ export class WebSocketEffects {
                         return new ConnectWebSocketSuccess(true);
                     },
                     catchError(err => {
-                        this.toastService.error('Fehler beim Verbinden via WebSocket', 'Error');
+                        this.toastService.error('Fehler beim Verbinden via WebSocket');
                         return of(new ConnectWebSocketError(err));
                     })
                 ));

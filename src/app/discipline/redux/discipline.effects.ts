@@ -18,7 +18,7 @@ export class DisciplineEffects {
                 .loadAllDisciplines().pipe(
                     map(disciplines => new LoadDisciplineSuccess(disciplines)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Konkurrenzen', 'Error');
+                        this.toastService.error('Fehler beim Laden der Konkurrenzen');
                         return of(new LoadDisciplineError(err));
                     })
                 );

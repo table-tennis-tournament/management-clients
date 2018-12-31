@@ -25,7 +25,7 @@ export class CallerEffects {
                 .loadAvailableReferees().pipe(
                     map(matches => new LoadRefereesListSuccess(matches)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Schiedsrichter', 'Error');
+                        this.toastService.error('Fehler beim Laden der Schiedsrichter');
                         return of(new LoadRefereesListError(err));
                     })
                 );
@@ -40,7 +40,7 @@ export class CallerEffects {
                 .callMatch(action.payload).pipe(
                     map(state => new CallMatchSuccess(state)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Ausrufen des Matches', '');
+                        this.toastService.error('Fehler beim Ausrufen des Matches');
                         return of(new CallMatchError(err));
                     })
                 );

@@ -48,7 +48,7 @@ export class TableEffects {
                 .getAllTables().pipe(
                     map(tables => new LoadTablesSuccess(tables)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Tische', 'Error');
+                        this.toastService.error('Fehler beim Laden der Tische', '');
                         return of(new LoadTablesError(err));
                     })
                 );
@@ -63,7 +63,7 @@ export class TableEffects {
                 .lockTable(action.payload).pipe(
                     map(() => new LockTableSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Sperren des Tisches', 'Error');
+                        this.toastService.error('Fehler beim Sperren des Tisches', '');
                         return of(new LockTableError(err));
                     })
                 );
@@ -78,7 +78,7 @@ export class TableEffects {
                 .unLockTable(action.payload).pipe(
                     map(() => new UnLockTableSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Entsperren des Tisches', 'Error');
+                        this.toastService.error('Fehler beim Entsperren des Tisches', '');
                         return of(new UnLockTableError(err));
                     })
                 );
@@ -96,7 +96,7 @@ export class TableEffects {
                         return new FreeTableSuccess(action.payload);
                     }),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Freigeben des Tisches', 'Error');
+                        this.toastService.error('Fehler beim Freigeben des Tisches', '');
                         return of(new FreeTableError(err));
                     })
                 );
@@ -111,7 +111,7 @@ export class TableEffects {
                 .takeBackMatches(action.payload.matchIds).pipe(
                     map(() => new TakeBackTableSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Zurücknehmen der Spiele', 'Error');
+                        this.toastService.error('Fehler beim Zurücknehmen der Spiele', '');
                         return of(new TakeBackTableError(err));
                     })
                 );
@@ -126,7 +126,7 @@ export class TableEffects {
                 .pipe(
                     map(() => new PrintTableSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Drucken des Spiels', 'Error');
+                        this.toastService.error('Fehler beim Drucken des Spiels', '');
                         return of(new PrintTableError(err));
                     })
                 );
@@ -141,7 +141,7 @@ export class TableEffects {
                 .pipe(
                     map(() => new AssignToSecondTableSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim zuweisen des zweiten Tisches', 'Error');
+                        this.toastService.error('Fehler beim zuweisen des zweiten Tisches', '');
                         return of(new AssignToSecondTableError(err));
                     })
                 );
@@ -156,7 +156,7 @@ export class TableEffects {
                 .pipe(
                     map(() => new ResultForMatchSuccess(action.payload)),
                     catchError(err => {
-                        this.toastService.error('Fehler bei der Eingabe des Ergebnisses', 'Error');
+                        this.toastService.error('Fehler bei der Eingabe des Ergebnisses', '');
                         return of(new ResultForMatchError(err));
                     })
                 );
@@ -181,7 +181,7 @@ export class TableEffects {
                         if (err.error && err.error.message) {
                             errorMessage = err.error.message;
                         }
-                        this.toastService.error(errorMessage, 'Error');
+                        this.toastService.error(errorMessage, '');
                         return of(new AssignMatchToTableError(err));
                     })
                 );

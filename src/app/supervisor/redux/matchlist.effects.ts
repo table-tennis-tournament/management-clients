@@ -31,7 +31,7 @@ export class MatchListEffects {
                 .loadAllMatchListItems().pipe(
                     map(matches => new LoadMatchListSuccess(matches)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Laden der MatchList', 'Error');
+                        this.toastService.error('Fehler beim Laden der MatchList');
                         return of(new LoadMatchListError(err));
                     })
                 );
@@ -46,7 +46,7 @@ export class MatchListEffects {
                 .assignToMatchList(action.payload).pipe(
                     map(status => new AssignToMatchListSuccess(status)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Hinzufügen des Matchlist-items', 'Error');
+                        this.toastService.error('Fehler beim Hinzufügen des Matchlist-items');
                         return of(new AssignToMatchListError(err));
                     })
                 );
@@ -61,7 +61,7 @@ export class MatchListEffects {
                 .deleteMatchListItem(action.payload).pipe(
                     map(status => new DeleteMatchListItemSuccess(status)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Löschen des Matchlist-items', 'Error');
+                        this.toastService.error('Fehler beim Löschen des Matchlist-items');
                         return of(new DeleteMatchListItemError(err));
                     })
                 );
@@ -76,7 +76,7 @@ export class MatchListEffects {
                 .moveMatchListItem(action.payload).pipe(
                     map(status => new MoveMatchListItemSuccess(status)),
                     catchError(err => {
-                        this.toastService.error('Fehler beim Verschieben des Matchlist-items', 'Error');
+                        this.toastService.error('Fehler beim Verschieben des Matchlist-items');
                         return of(new MoveMatchListItemError(err));
                     })
                 );
