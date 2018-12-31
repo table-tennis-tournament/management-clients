@@ -2,7 +2,7 @@
 
 <html>
     <style>
-            table, th, td{border: 1px solid black;}
+            table.bordered, table.bordered th, table.bordered td{border: 1px solid black;}
             table {
                 border-collapse: collapse;
             }
@@ -22,22 +22,9 @@
                 height:100px;
                 width: 100px;
             }
-            .half-width{
-                width:50%;
-            }
             .seventy-percent{
                 width: 70%;
             }
-            .match-number{
-                float: right;
-                width: 20%;
-            }
-
-            .table-number{
-                float: right;
-                width: 30%;
-            }
-
             td{
                 height: 30px;
             }
@@ -63,7 +50,7 @@
                 <h3>Tisch: @allMatchInfo.table.headOption.map(_.toString).getOrElse("")</h3>
             </td>
         </table>
-        <table class="full-width">
+        <table class="full-width bordered">
             <thead>
                 <td class="first-column">
                     Spieler
@@ -141,7 +128,7 @@
             </tbody>
         </table>
         <br/>
-        <table class="full-width">
+        <table class="full-width bordered">
             <tr>
                 <td class="thirty-percent">Sieger:</td><td class="seventy-percent"></td>
             </tr>
