@@ -14,6 +14,7 @@ import {
     MzInputModule,
     MzModalModule,
     MzSelectModule,
+    MzSidenavModule,
     MzSpinnerModule,
     MzTabModule
 } from 'ngx-materialize';
@@ -121,6 +122,7 @@ import {ZXingScannerModule} from '@zxing/ngx-scanner';
         MzInputModule,
         MzModalModule,
         MzCheckboxModule,
+        MzSidenavModule,
         MzSelectModule,
         MzCollectionModule,
         MzCollapsibleModule,
