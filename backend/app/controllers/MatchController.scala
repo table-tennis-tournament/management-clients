@@ -144,6 +144,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
           tables.updateMatchState(Completed, id)
           pub ! UpdateMatches(tables.allMatchesInfo)
           pub ! UpdateTable(tables.allTableInfo)
+          pub ! UpdateMatchList(tables.getAllMatchList)
           tables.startNextMatch
           Ok(Json.toJson(Answer(true, "set result")))
         } else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
@@ -154,11 +155,16 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
   }
 
   def getTypes = Action {
-    Ok(Json.toJson(tables.allTypes.sortBy(_.name)))
+    Ok(Json.toJson(tables.allTypes.map(addDoubleName(_)).sortBy(_.name)))
   }
 
   def getActiveTypes = Action {
-    Ok(Json.toJson(tables.allTypes.filter(_.active).sortBy(_.name)))
+    Ok(Json.toJson(tables.allTypes.filter(_.active).map(addDoubleName(_)).sortBy(_.name)))
+  }
+
+  private def addDoubleName(discipline: Type) = {
+    if (discipline.kind == 2) discipline.copy(name = discipline.name + "-Doppel")
+    else discipline
   }
 
   def deleteMatch(id: Long) = Action {
