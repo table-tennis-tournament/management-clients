@@ -4,6 +4,8 @@ import {DisciplineTabService} from './discipline-tab.service';
 import {DisciplineTab} from './models/discipline.tab.model';
 import {Discipline} from '../../discipline/discipline.model';
 import {DisciplineStage} from './models/discipline.stage.model';
+import {DisciplineGroup} from './models/discipline.group.model';
+import * as deepEqual from 'deep-equal';
 
 @Component({
     selector: 'toma-discipline-view',
@@ -73,10 +75,48 @@ export class DisciplineViewComponent {
             return;
         }
         this.currentTabId = id;
-        const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter(match => match.type.id === id));
-        this.selectedTab = createdTab;
+        this.mergeMatches(id);
         this.removePlayedItems();
         this.selectDiscipline.emit(this.selectedTab.id);
+    }
+
+    private mergeMatches(id: number) {
+        const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter(match => match.type.id === id));
+        if (this.isBigChange(createdTab)) {
+            this.selectedTab = createdTab;
+            return;
+        }
+        this.mergeStage(this.selectedTab.stages, createdTab.stages);
+        this.mergeGroups(this.selectedTab.groups, createdTab.groups);
+        // this.selectedTab = createdTab;
+    }
+
+    private mergeStage(existingStages: DisciplineStage[], newStages: DisciplineStage[]) {
+        for (let index = 0; index < existingStages.length; index++) {
+            const existingStage = existingStages[index];
+            const newStage = newStages[index];
+            if (deepEqual(existingStage, newStage) === false) {
+                existingStages[index] = newStage;
+            }
+        }
+    }
+
+    private mergeGroups(existingGroups: DisciplineGroup[], newGroups: DisciplineGroup[]) {
+        for (let index = 0; index < existingGroups.length; index++) {
+            const existingGroup = existingGroups[index];
+            const newGroup = newGroups[index];
+            if (deepEqual(existingGroup, newGroup) === false) {
+                existingGroups[index] = newGroup;
+            }
+        }
+    }
+
+    private isBigChange(createdTab) {
+        return createdTab == null
+            || this.selectedTab == null
+            || createdTab.id !== this.selectedTab.id
+            || this.selectedTab.groups.length !== createdTab.groups.length
+            || this.selectedTab.stages.length !== createdTab.stages.length;
     }
 
     removePlayedItems() {

@@ -21,6 +21,7 @@ export class ResultListComponent implements AfterViewInit {
     set matches(value: Match[]) {
         this._matches = value;
         this.onTypeChanged(this.selectedDisciplineId);
+        setTimeout(this.ngAfterViewInit.bind(this), 200);
     }
 
     get matches() {

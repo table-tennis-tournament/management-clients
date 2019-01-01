@@ -45,10 +45,4 @@ export class DisciplineStageComponent {
         return currentMatch.state === MatchState[MatchState.Open];
     }
 
-    isOnTableOrCallable(currentMatch: Match) {
-        console.log('state: ' + currentMatch.state);
-        return currentMatch.state === MatchState[MatchState.OnTable]
-            || currentMatch.state === MatchState[MatchState.Callable];
-    }
-
 }
