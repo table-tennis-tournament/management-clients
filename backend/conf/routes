@@ -32,8 +32,8 @@ GET     /api/types/open/all                 controllers.MatchController.getActiv
 GET     /api/table/all                      controllers.TableController.getAllTables
 GET     /api/table/free                     controllers.TableController.getFreeTables
 GET     /api/table/:id                      controllers.TableController.getTable(id: Long)
-GET     /api/table/:id/lock                 controllers.TableController.lockTable(id: Long)
-GET     /api/table/:id/unlock               controllers.TableController.unlockTable(id: Long)
+GET     /api/table/:id/lock                 controllers.TableController.lockTable(nr: Long)
+GET     /api/table/:id/unlock               controllers.TableController.unlockTable(nr: Long)
 
 # MatchListController:
 GET     /api/matchlist/all                  controllers.MatchListController.getAllMatchList
