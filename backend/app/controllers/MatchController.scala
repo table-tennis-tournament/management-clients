@@ -52,9 +52,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
               tables.freeTTTable(id)
               tables.updateMatchState(Finished, id)
             }
+            tables.startNextMatch
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
-            tables.startNextMatch
+            pub ! UpdateMatchList(tables.getAllMatchList)
             Ok(Json.toJson(Answer(true, "successful")).toString())
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
@@ -74,9 +75,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
               tables.takeBackTTTable(id)
               tables.updateMatchState(Open, id)
             }
+            tables.startNextMatch
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
-            tables.startNextMatch
+            pub ! UpdateMatchList(tables.getAllMatchList)
             Ok(Json.toJson(Answer(true, "successful")))
           }
           case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
@@ -142,10 +144,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       tables.setResult(id, resultO.get) map {res =>
         if(res) {
           tables.updateMatchState(Completed, id)
+          tables.startNextMatch
           pub ! UpdateMatches(tables.allMatchesInfo)
           pub ! UpdateTable(tables.allTableInfo)
           pub ! UpdateMatchList(tables.getAllMatchList)
-          tables.startNextMatch
           Ok(Json.toJson(Answer(true, "set result")))
         } else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
       }
