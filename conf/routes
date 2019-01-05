@@ -46,6 +46,7 @@ GET     /api/matchlist/autostart            controllers.MatchListController.auto
 POST    /api/match/free                     controllers.MatchController.freeMatches
 POST    /api/match/takeBack                 controllers.MatchController.takeBackMatches
 GET     /api/match/delete/:id               controllers.MatchController.deleteMatch(id: Long)
+GET     /api/match/deleteType/:id           controllers.MatchController.deleteType(id: Long)
 POST    /api/match/call                     controllers.MatchController.callMatches
 
 # WebSocket for push messages
