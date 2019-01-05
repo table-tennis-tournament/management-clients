@@ -1,9 +1,9 @@
 package dao
 
 import java.util.UUID
+
 import javax.inject.{Inject, Named}
 import javax.print.{PrintService, PrintServiceLookup}
-
 import actors.PrinterActor.Print
 import akka.actor.ActorRef
 import com.github.tototoshi.slick.MySQLJodaSupport
@@ -16,7 +16,7 @@ import slick.driver.JdbcProfile
 import com.github.tototoshi.slick.MySQLJodaSupport._
 import play.api.libs.json.Json
 import slick.ast.Union
-import websocket.WebSocketActor.{UpdateMatchList, UpdateTable}
+import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._

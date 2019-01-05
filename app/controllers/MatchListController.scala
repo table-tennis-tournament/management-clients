@@ -50,6 +50,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
               pub ! UpdateMatches(tables.allMatchesInfo)
+              pub ! UpdateTable(tables.allTableInfo)
               pub ! UpdateMatchList(tables.getAllMatchList)
               Ok(Json.toJson(Answer(true, "match added", newMLEntry.uuid)))
             } else {
@@ -68,6 +69,7 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
     Logger.info(uuid)
     if(tables.delMatchList(UUID.fromString(uuid))){
       pub ! UpdateMatches(tables.allMatchesInfo)
+      pub ! UpdateTable(tables.allTableInfo)
       pub ! UpdateMatchList(tables.getAllMatchList)
       Ok(Json.toJson(Answer(true, "match deleted")))
     } else {
@@ -102,6 +104,8 @@ class MatchListController @Inject() (tables: Tables, @Named("publisher_actor") p
           else m.copy(position = m.position + 1)
         }
         tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
+        pub ! UpdateMatches(tables.allMatchesInfo)
+        pub ! UpdateTable(tables.allTableInfo)
         pub ! UpdateMatchList(tables.getAllMatchList)
         Ok(Json.toJson(Answer(true, "changed match list")))
       }
