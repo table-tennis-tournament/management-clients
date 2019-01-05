@@ -203,12 +203,30 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     ml.matchId.forall(id => isPlayable(getMatch(id).get))
   }
 
+  def filterFirst(ls: List[MatchList]) = {
+    def loop(set: Set[Long], ls: List[MatchList]): List[MatchList] = ls match {
+      case hd :: tail if containsPlayer(set, hd) => loop(set, tail)
+      case hd :: tail => hd :: loop(set ++ getPlayerIds(hd), tail)
+      case Nil => Nil
+    }
+
+    def getPlayerIds(ml: MatchList) = {
+      ml.matchId.map(id => getMatch(id).get).map(m => m.player1Ids ++ m.player2Ids).flatten
+    }
+
+    def containsPlayer(set: Set[Long], ml: MatchList) = {
+      set.intersect(getPlayerIds(ml).toSet).nonEmpty
+    }
+
+    loop(Set(), ls)
+  }
+
   def startNextMatch = if(autoStart) {
     val tl = getFreeTables().sortBy(_.tableNumber)
     val tl2 = tl.filter(_.tableNumber % 2 == 1) ++ tl.filter(_.tableNumber % 2 == 0)
     tl2 map { table =>
       Logger.debug("start next Match")
-      val ml = getMatchList
+      val ml = filterFirst(getMatchList.toList)
       val inverseFilteredML = ml.filterNot(mlItem => isPossibleMatch(mlItem))
       val filteredML = ml.filter { mlItem =>
         val m1PlayerIds = mlItem.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
