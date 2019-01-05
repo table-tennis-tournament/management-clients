@@ -10,9 +10,7 @@ import {MatchState} from '../../../shared/data/matchstate.model';
     styleUrls: ['./discipline-group.component.scss']
 })
 export class DisciplineGroupComponent {
-    openMatches: number;
-    isComplete: boolean;
-    allMatchCount: number;
+
     openMatchState: string = MatchState[MatchState.Open];
     tableNumbers: any[];
 
@@ -40,6 +38,14 @@ export class DisciplineGroupComponent {
         return this._showMatches;
     }
 
+    get allMatchCount(): number {
+        return this.group.matches.length;
+    }
+
+    get openMatches() {
+        return this.group.matches.filter(match => match.state !== MatchState[MatchState.Completed]).length;
+    }
+
     @Input('showPlayers')
     set showPlayers(value: boolean) {
         this._showPlayers = value;
@@ -58,19 +64,7 @@ export class DisciplineGroupComponent {
     @Input('group')
     set group(value: DisciplineGroup) {
         this._group = value;
-        this.calculateOpenMatches();
         this.setTables();
-    }
-
-    calculateOpenMatches() {
-        this.openMatches = 0;
-        this.isComplete = true;
-        this._group.matches.forEach(element => {
-            if (element.isPlayed !== true) {
-                this.openMatches++;
-            }
-        });
-        this.allMatchCount = this._group.matches.length;
     }
 
     setTables() {
@@ -105,6 +99,11 @@ export class DisciplineGroupComponent {
 
     groupIsNotPlayable() {
         return !this.group.isComplete && !this.isGroupPlayable() && this.tableNumbers.length < 1;
+    }
+
+    groupIsNotComplete() {
+        const notFinishedMatches = this.group.matches.filter(match => match.state !== MatchState[MatchState.Completed]);
+        return notFinishedMatches.length > 0;
     }
 
     groupIsDraggable() {

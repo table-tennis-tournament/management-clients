@@ -6,30 +6,30 @@
            (click)="setTabForId(currentTab.id)">{{currentTab.name}}</a>
     </div>
     <div class="col">
-        <p>
+        <div class="simple-padding">
             <input type="checkbox" class="filled-in" [(ngModel)]="showAllMatches" id="remove-played-checkbox"
                    (change)="onRemovePlayedChanged()"/>
             <label for="remove-played-checkbox">Alle</label>
-        </p>
+        </div>
     </div>
     <div class="col">
-        <p>
+        <div class="simple-padding">
             <input type="checkbox" class="filled-in" [(ngModel)]="playersAreOpen" id="open-player-checkbox"/>
             <label for="open-player-checkbox">Spieler</label>
-        </p>
+        </div>
     </div>
     <div class="col">
-        <p>
+        <div class="simple-padding">
             <input type="checkbox" class="filled-in" [(ngModel)]="matchesAreOpen" id="open-matches-checkbox"/>
             <label for="open-matches-checkbox">Spiele</label>
-        </p>
+        </div>
     </div>
     <div class="col">
-        <p>
+        <div class="simple-padding">
             <input type="checkbox" class="filled-in" [(ngModel)]="stopRefresh"
                    (change)="this.setTabForId(this.currentTabId)" id="stop-refresh-checkbox"/>
             <label for="stop-refresh-checkbox">Stop</label>
-        </p>
+        </div>
     </div>
 </div>
 <div *ngIf="selectedTab" class="row {{typeColor[selectedTab.id]}}">

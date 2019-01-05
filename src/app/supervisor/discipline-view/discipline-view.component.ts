@@ -19,7 +19,7 @@ export class DisciplineViewComponent {
 
     selectedTab: DisciplineTab;
 
-    showAllMatches = true;
+    showAllMatches = false;
     playersAreOpen = true;
     matchesAreOpen = true;
     stopRefresh = false;
@@ -139,4 +139,6 @@ export class DisciplineViewComponent {
     onDeleteStage(stageToRemove: DisciplineStage) {
         this.selectedTab.stages = this.selectedTab.stages.filter(stage => stage !== stageToRemove);
     }
+
+
 }

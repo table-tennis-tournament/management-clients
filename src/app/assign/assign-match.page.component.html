@@ -5,7 +5,8 @@
                 [matchesLoading]="matchesLoading | async"
                 [matchList]="matchList | async"
                 [disciplines]="disciplines | async"
-                [typeColor]="typeColor | async">
+                [typeColor]="typeColor | async"
+                (disciplineRefresh)="onDisciplineRefresh($event)">
         </toma-discipline-match-list>
     </div>
     <div class="col s10">

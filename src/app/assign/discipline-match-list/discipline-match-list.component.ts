@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {MatchList} from '../../supervisor/matchlist.model';
 import {Discipline} from '../../discipline/discipline.model';
@@ -50,6 +50,9 @@ export class DisciplineMatchListComponent {
 
     @Input()
     typeColor: string[];
+
+    @Output()
+    disciplineRefresh = new EventEmitter<number>();
 
     currentMatchesToShow: Match[];
 

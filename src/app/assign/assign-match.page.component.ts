@@ -5,6 +5,8 @@ import {Store} from '@ngrx/store';
 import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
 import {MatchList} from '../supervisor/matchlist.model';
 import {Discipline} from '../discipline/discipline.model';
+import {LoadMatchList} from '../supervisor/redux/matchlist.actions';
+import {LoadMatches} from './redux/match.actions';
 
 @Component({
     selector: 'toma-assign-match.page',
@@ -27,6 +29,14 @@ export class AssignMatchPageComponent implements OnInit {
         this.matchList = this.store.select(getMatchListState);
         this.disciplines = this.store.select(getDisciplineState);
         this.typeColor = this.store.select(getTypeColorsState);
+    }
+
+    onDisciplineRefresh(disciplineId: number) {
+        if (disciplineId === -1) {
+            this.store.dispatch(new LoadMatchList(null));
+            return;
+        }
+        this.store.dispatch(new LoadMatches(null));
     }
 
 }

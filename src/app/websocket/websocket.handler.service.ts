@@ -31,7 +31,7 @@ export class WebsocketHandlerService {
             const newTables: TableDto[] = data.UpdateTable;
             this.store.dispatch(new LoadTablesSuccess(newTables));
         }
-        if (data.UpdateMatches && data.UpdateMatches.length > 0) {
+        if (data.UpdateMatches) {
             const newMatchData: Match[] = data.UpdateMatches;
             this.store.dispatch(new LoadMatchesSuccess(newMatchData));
             this.store.dispatch(new LoadResultsSuccess(
