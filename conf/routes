@@ -22,6 +22,7 @@ GET     /api/match/played/all               controllers.MatchController.getPlaye
 GET     /api/match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
 GET     /api/match/loadnew                  controllers.MatchController.loadNewMatches
 GET     /api/match/:id                      controllers.MatchController.getMatch(id: Long)
+GET     /api/matchaggregate/caller          controllers.MatchController.getMatchAggregateForCaller
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /api/match/:id/result               controllers.MatchController.setResult(id: Long)
 

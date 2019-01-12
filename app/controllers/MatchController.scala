@@ -1,30 +1,25 @@
 package controllers
 
-import actors.PrinterActor.{GetPrinterList, Print}
-import akka.actor.{ActorRef, ActorSystem}
-import javax.inject._
-
+import akka.actor.ActorRef
+import akka.util.Timeout
 import dao.Tables
+import javax.inject._
 import models._
 import play.api.Logger
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json
-import akka.pattern.ask
-import akka.util.Timeout
 import websocket.WebSocketActor._
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success, Try}
 /**
   * Created by jonas on 10.10.16.
   */
 class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: ActorRef) extends Controller{
   implicit val timeout: Timeout = 5.seconds
-  import models.MatchModel._
   import models.AnswerModel._
+  import models.MatchModel._
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
     val p1 = ttMatch.player1Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
@@ -105,6 +100,27 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
     val x = openMatches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
+  }
+
+
+  def getMatchAggregateNameFromMatch(head: TTMatch): String = {
+    def fullMatch = getAllMatchInfo(head)
+    if(!fullMatch.isDefined) return "";
+    val completeMatch = fullMatch.get
+    val resultString = completeMatch.matchType.name
+    if(completeMatch.group.isDefined){
+      return resultString + " " + completeMatch.group.get.name;
+    }
+    resultString
+  }
+
+  def getMatchAggregateForCaller = Action {
+    val matches = tables.allMatches()
+    val callableMatches = matches.filter(_.state == Callable).groupBy(_.startTime);
+    val matchAggregates = callableMatches map {
+      case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head), key, tables.getType(value.head.typeId).get ,value.map(getAllMatchInfo(_)).filter(_.isDefined).map(_.get))
+    }
+    Ok(Json.toJson(matchAggregates))
   }
 
   def getPlayedMatches  = Action {
@@ -201,12 +217,14 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
                 false
               })
             val res = if (matchReady) {
+              val currentStartTime = new org.joda.time.DateTime()
               val result = matchIds map { matchId =>
                 Logger.info("Set match to Table")
                 Logger.info(tables.getMatchList.toString())
                 Logger.info("matchId: " + matchId)
                 val ml = tables.getMatchList
                 tables.updateMatchState(Callable, matchId)
+                tables.setStartTime(matchId, currentStartTime)
                 ml.filter(_.matchId.contains(matchId)).headOption match {
                   case Some(mlItem) => {
                     Logger.info("delMatchList")

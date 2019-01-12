@@ -410,6 +410,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
+  def setStartTime(matchId: Long, startTime: DateTime) = {
+    ttMatchSeq = ttMatchSeq.map {m =>
+      if(m.id == matchId) m.copy(startTime = startTime)
+      else m
+    }
+  }
+
   def isPossibleMatch(id: Long): Boolean = {
     val matchO = ttMatchSeq.filter(_.id == id).headOption
     matchO match {
