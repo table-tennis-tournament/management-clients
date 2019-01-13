@@ -5,6 +5,7 @@ import akka.util.Timeout
 import dao.Tables
 import javax.inject._
 import models._
+import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
@@ -114,13 +115,25 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     resultString
   }
 
+  def getPlayersFromMatches(value: Seq[TTMatch]): Seq[Player] = {
+    value.map(currentMatch => currentMatch.player1Ids++currentMatch.player2Ids).reduce((first, second)=> first ++ second).distinct
+      .map( id => tables.getPlayerTypes(tables.getPlayer(id)).get)
+  }
+
+  implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore  _)
+
   def getMatchAggregateForCaller = Action {
     val matches = tables.allMatches()
     val callableMatches = matches.filter(_.state == Callable).groupBy(_.startTime);
     val matchAggregates = callableMatches map {
-      case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head), key, tables.getType(value.head.typeId).get ,value.map(getAllMatchInfo(_)).filter(_.isDefined).map(_.get))
+      case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head),
+        key,
+        tables.getType(value.head.typeId).get ,
+        getPlayersFromMatches(value),
+        value.map(getAllMatchInfo(_)).filter(_.isDefined).map(_.get)
+      )
     }
-    Ok(Json.toJson(matchAggregates))
+    Ok(Json.toJson(matchAggregates.toList.sortBy(_.startTime)))
   }
 
   def getPlayedMatches  = Action {
@@ -195,13 +208,14 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(Answer(true, "delete type")))
   }
 
+
+
   def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false) = Action{ request =>
     request.body.asJson match {
       case Some(matchIdsJson) => {
         matchIdsJson.validate[Seq[Long]].asOpt match {
           case Some(matchIds) => {
             val table = tables.getTTTableFromName(tableName).get
-            val tableId = table.id
             val matches = tables.allMatches()
             Logger.info("matches: " + matches.toString())
             val m = matchIds.map(id => matches.filter(_.id == id).head)
