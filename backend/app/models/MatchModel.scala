@@ -121,6 +121,7 @@ object MatchModel {
       "name" -> matchAggregate.name,
       "startTime" -> matchAggregate.startTime,
       "discipline" -> matchAggregate.ttType,
+      "players" -> matchAggregate.players,
       "matches" -> matchAggregate.matches
     )
   }
@@ -142,6 +143,7 @@ case class MatchAggregate(
    name: String,
    startTime: DateTime,
    ttType: Type,
+   players: Seq[Player],
    matches: Seq[AllMatchInfo]
  )
 
