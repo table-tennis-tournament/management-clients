@@ -46,3 +46,7 @@ enablePlugins(AshScriptPlugin)
 
 dockerBaseImage       := "openjdk:jre-alpine"
 
+// Docker fix
+javaOptions in Universal ++= Seq(
+  "-Dpidfile.path=/dev/null"
+)
