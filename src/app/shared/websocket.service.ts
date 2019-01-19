@@ -1,7 +1,8 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {EventEmitter, Inject, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {WebSocketSubject} from 'rxjs/webSocket';
 import {environment} from '../../environments/environment';
+import {DOCUMENT} from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -13,13 +14,16 @@ export class WebsocketService {
 
     private socket$: WebSocketSubject<any>;
 
-    constructor() {
+    constructor(@Inject(DOCUMENT) private document) {
     }
 
     public connectSocket(): Observable<any> {
+        const myLocation = this.document.location.hostname;
+        const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}`;
+        console.log('connect to: ' + url);
         return Observable.create(complete => {
             this.socket$ = new WebSocketSubject({
-                url: environment.socket.baseUrl,
+                url: url,
                 openObserver: {
                     next: value => {
                         complete.next(value);
