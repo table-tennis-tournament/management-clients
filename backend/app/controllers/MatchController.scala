@@ -120,6 +120,10 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       .map( id => tables.getPlayerTypes(tables.getPlayer(id)).get)
   }
 
+  def getTableNumbersFromMatches(value: Seq[TTMatch]): Seq[Int] = {
+    value.map(currentMatch => tables.getTTTableFromMatchId(currentMatch.id)).reduce((first, second) => first ++ second).distinct
+  }
+
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore  _)
 
   def getMatchAggregateForCaller = Action {
@@ -128,6 +132,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     val matchAggregates = callableMatches map {
       case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head),
         key,
+        getTableNumbersFromMatches(value),
         tables.getType(value.head.typeId).get ,
         getPlayersFromMatches(value),
         value.map(getAllMatchInfo(_)).filter(_.isDefined).map(_.get)
