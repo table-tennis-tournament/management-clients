@@ -3,8 +3,6 @@ package websocket
 /**
   * Created by jonas on 20.11.16.
   */
-import java.util.UUID
-
 import akka.actor._
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.{Subscribe, SubscribeAck}
@@ -26,11 +24,9 @@ object WebSocketActor {
 
 
 class WebSocketActor(out: ActorRef) extends Actor {
-  import websocket.WebSocketActor._
-  import models.WSMessageModel._
+  import models.MatchModel.{allMatchInfoWrites, matchListInfoWrites}
   import models.TableModel.tableInfoWrites
-  import models.MatchModel.allMatchInfoWrites
-  import models.MatchModel.matchListInfoWrites
+  import websocket.WebSocketActor._
 
   Logger.info("subscribe...")
   val mediator = DistributedPubSub(context.system).mediator
