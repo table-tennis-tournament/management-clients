@@ -120,6 +120,7 @@ object MatchModel {
     def writes(matchAggregate: MatchAggregate) = Json.obj(
       "name" -> matchAggregate.name,
       "startTime" -> matchAggregate.startTime,
+      "tableNumbers" -> matchAggregate.tableNumbers,
       "discipline" -> matchAggregate.ttType,
       "players" -> matchAggregate.players,
       "matches" -> matchAggregate.matches
@@ -142,6 +143,7 @@ case class AllMatchInfo(
 case class MatchAggregate(
    name: String,
    startTime: DateTime,
+   tableNumbers: Seq[Int],
    ttType: Type,
    players: Seq[Player],
    matches: Seq[AllMatchInfo]
