@@ -37,6 +37,7 @@
                        (dblclick)="resultForMatch.emit(currentMatch)"
                        dnd-draggable
                        class="collection-item"
+                       [class.disabled-item]="currentMatch.state === inWaitingListState"
                        [dragEnabled]="currentMatch.state === openMatchState"
                        [dragData]="currentMatch">
                         <div>
@@ -48,6 +49,7 @@
                             <span *ngIf="currentMatch.table[0]"
                                   class="circle right">{{currentMatch.table[0]}}</span>
                             <span *ngIf="currentMatch.result" class="right">{{currentMatch.result|resultPipe}}</span>
+                            <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>
                         </div>
                     </a>
                 </div>

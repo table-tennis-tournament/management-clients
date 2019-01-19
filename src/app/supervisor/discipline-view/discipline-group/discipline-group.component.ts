@@ -12,6 +12,7 @@ import {MatchState} from '../../../shared/data/matchstate.model';
 export class DisciplineGroupComponent {
 
     openMatchState: string = MatchState[MatchState.Open];
+    inWaitingListState: string = MatchState[MatchState.InWaitingList];
     tableNumbers: any[];
 
     @ViewChild('collapsibleGroup') collapsibleGroup: MzCollapsibleComponent;

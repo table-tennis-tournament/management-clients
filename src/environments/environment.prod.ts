@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
     socket: {
-        baseUrl: 'ws://192.168.1.10:9000/api/register'
+        baseUrl: 'wss://turnier-manager.cloud.nikio.io/api/register'
     }
 };
