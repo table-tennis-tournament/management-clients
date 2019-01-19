@@ -6,7 +6,15 @@ import {of, ReplaySubject, throwError} from 'rxjs';
 import {IndividualConfig, ToastrService} from 'ngx-toastr';
 import {CallerEffects} from './caller.effects';
 import {CallerService} from '../caller.service';
-import {CallerActionTypes, CallMatch, CallMatchSuccess, LoadRefereesList, LoadRefereesListSuccess} from './caller.actions';
+import {
+    CallerActionTypes,
+    CallMatch,
+    CallMatchSuccess,
+    Load,
+    LoadRefereesList,
+    LoadRefereesListSuccess,
+    LoadSuccess
+} from './caller.actions';
 
 describe('the match effects', () => {
     let actions: ReplaySubject<any>;
@@ -33,6 +41,32 @@ describe('the match effects', () => {
         callerEffects = TestBed.get(CallerEffects);
     });
 
+    describe('load', () => {
+
+        it('should return a LoadSuccess', (done) => {
+            const expectedResult = new LoadSuccess([]);
+            spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(of([]));
+
+            actions.next(new Load());
+
+            callerEffects.load$.subscribe((result) => {
+                expect(result).toEqual(expectedResult);
+                done();
+            });
+        });
+
+        it('should return a LoadError', (done) => {
+            spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(throwError({msg: 'Error'}));
+
+            actions.next(new Load());
+
+            callerEffects.load$.subscribe((result) => {
+                expect(result.type).toEqual(CallerActionTypes.LoadError);
+                done();
+            });
+        });
+    });
+
     describe('loadReferees', () => {
 
         it('should return a LoadRefereesListSuccess', (done) => {
@@ -53,7 +87,7 @@ describe('the match effects', () => {
             actions.next(new LoadRefereesList(null));
 
             callerEffects.loadRefereeList$.subscribe((result) => {
-                expect(result.type).toEqual(CallerActionTypes.LoadError);
+                expect(result.type).toEqual(CallerActionTypes.LoadRefereesError);
                 done();
             });
         });

@@ -9,6 +9,7 @@ import {ConnectWebSocket} from './redux/websocket.actions';
 import {Store} from '@ngrx/store';
 import {LoadResultsSuccess} from '../result/redux/result.actions';
 import {MatchState} from '../shared/data/matchstate.model';
+import {Load} from '../caller/redux/caller.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,7 @@ export class WebsocketHandlerService {
         if (data.UpdateMatches) {
             const newMatchData: Match[] = data.UpdateMatches;
             this.store.dispatch(new LoadMatchesSuccess(newMatchData));
+            this.store.dispatch(new Load());
             this.store.dispatch(new LoadResultsSuccess(
                 newMatchData.filter(match => match.state === MatchState[MatchState.Finished])));
         }

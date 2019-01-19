@@ -5,14 +5,14 @@ import {MatchAggregate} from '../../shared/data/match.aggregate';
 export interface CallerState {
     referees: Player[];
     refereesLoading: boolean;
-    selectedMatchAggregate: MatchAggregate;
+    callerMatches: MatchAggregate[];
 }
 
 
 const initialState: CallerState = {
     referees: [],
     refereesLoading: false,
-    selectedMatchAggregate: null
+    callerMatches: []
 };
 
 export function reduceCallerState(state: CallerState = initialState, action: CallerActionUnion) {
@@ -26,9 +26,25 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
             return {
                 ...state,
                 refereesLoading: false,
-                referees: action.payload
+                callerMatches: action.payload
             };
         case CallerActionTypes.LoadError:
+            return {
+                ...state,
+                refereesLoading: false
+            };
+        case CallerActionTypes.LoadReferees:
+            return {
+                ...state,
+                refereesLoading: true
+            };
+        case CallerActionTypes.LoadRefereesSuccess:
+            return {
+                ...state,
+                refereesLoading: false,
+                referees: action.payload
+            };
+        case CallerActionTypes.LoadRefereesError:
             return {
                 ...state,
                 refereesLoading: false
@@ -46,4 +62,4 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
 
 export const getReferees = (state: CallerState) => state.referees;
 export const getRefereesLoading = (state: CallerState) => state.refereesLoading;
-export const getSelectedMatchAggregate = (state: CallerState) => state.selectedMatchAggregate;
+export const getCallerMatchAggregates = (state: CallerState) => state.callerMatches;

@@ -10,16 +10,33 @@ import {
     CallMatch,
     CallMatchError,
     CallMatchSuccess,
+    LoadError,
     LoadRefereesListError,
-    LoadRefereesListSuccess
+    LoadRefereesListSuccess,
+    LoadSuccess
 } from './caller.actions';
 
 @Injectable()
 export class CallerEffects {
 
     @Effect()
-    loadRefereeList$: Observable<Action> = this.actions$.pipe(
+    load$: Observable<Action> = this.actions$.pipe(
         ofType(CallerActionTypes.Load),
+        switchMap(() => {
+            return this.callerService
+                .loadMatchAggregateForCaller().pipe(
+                    map(matches => new LoadSuccess(matches)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Laden der Ausrufermatches');
+                        return of(new LoadError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    loadRefereeList$: Observable<Action> = this.actions$.pipe(
+        ofType(CallerActionTypes.LoadReferees),
         switchMap(() => {
             return this.callerService
                 .loadAvailableReferees().pipe(

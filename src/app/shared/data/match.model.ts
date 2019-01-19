@@ -2,11 +2,10 @@ import {Group} from './group.model';
 import {Player} from './player.model';
 import {Discipline} from '../../discipline/discipline.model';
 import {StageType} from './stagetype.model';
-import {MatchState} from './matchstate.model';
 
 export interface Match {
     id?: number;
-    startTime?: number;
+    startTime?: string;
     result?: any;
     isInWaitingList?: boolean;
     state?: string;

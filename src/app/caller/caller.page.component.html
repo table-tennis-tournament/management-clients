@@ -2,15 +2,15 @@
     <div class="col s2 m3">
         <toma-caller-match-list
                 [typeColor]="typeColor | async"
-                [matchAggregates]="matchAggregates"
+                [matchAggregates]="matchAggregates | async"
                 (matchesSelected)="onMatchesSelected($event)"
-                [matchesLoading]="matchesLoading | async">
+                [matchesLoading]="refereesLoading | async">
         </toma-caller-match-list>
     </div>
     <div class="col s8 m6">
         <toma-caller-match-detail
                 [typeColor]="typeColor | async"
-                [matchAggregate]="selectedItem | async"
+                [matchAggregate]="selectedItem"
                 (matchCalled)="onMatchCalled($event)">
         </toma-caller-match-detail>
     </div>
