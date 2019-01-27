@@ -115,6 +115,17 @@ object MatchModel {
       "matchinfo" -> matchListInfo.ttMatch
     )
   }
+
+  implicit val matchAggregateWrites = new Writes[MatchAggregate] {
+    def writes(matchAggregate: MatchAggregate) = Json.obj(
+      "name" -> matchAggregate.name,
+      "startTime" -> matchAggregate.startTime,
+      "tableNumbers" -> matchAggregate.tableNumbers,
+      "discipline" -> matchAggregate.ttType,
+      "players" -> matchAggregate.players,
+      "matches" -> matchAggregate.matches
+    )
+  }
 }
 
 case class AllMatchInfo(
@@ -128,6 +139,15 @@ case class AllMatchInfo(
     state: MatchState,
     table: Seq[Int]
   )
+
+case class MatchAggregate(
+   name: String,
+   startTime: DateTime,
+   tableNumbers: Seq[Int],
+   ttType: Type,
+   players: Seq[Player],
+   matches: Seq[AllMatchInfo]
+ )
 
 case class TTMatch(
     id: Long,
