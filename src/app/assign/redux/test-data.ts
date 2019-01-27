@@ -3,7 +3,6 @@ import {Match} from '../../shared/data/match.model';
 export const MatchTestData: Match [] = [
     {
         'id': 1,
-        'startTime': -2209165200000,
         'isPlayed': true,
         'result': [
             [

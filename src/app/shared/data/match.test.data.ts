@@ -3,7 +3,6 @@ import {Discipline} from '../../discipline/discipline.model';
 
 export const oneMatch: Match = {
     'id': 1,
-    'startTime': -2209165200000,
     'isPlayed': true,
     'result': [
         [
@@ -74,7 +73,6 @@ export const oneMatch: Match = {
 export const ThreeMatches: Match[] = [
     {
         'id': 1,
-        'startTime': -2209165200000,
         'isPlayed': true,
         'result': [
             [
@@ -143,7 +141,6 @@ export const ThreeMatches: Match[] = [
     },
     {
         'id': 2,
-        'startTime': -2209165200000,
         'isPlayed': true,
         'result': [
             [
@@ -212,7 +209,6 @@ export const ThreeMatches: Match[] = [
     },
     {
         'id': 3,
-        'startTime': -2209165200000,
         'isPlayed': true,
         'state': 'Open',
         'result': [
