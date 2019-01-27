@@ -1,12 +1,10 @@
 package controllers
 
-import javax.inject.Inject
-
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.streams.ActorFlow
-import play.api.libs.ws.WSClient
 import play.api.mvc.WebSocket
 import websocket.WebSocketActor
 
@@ -16,7 +14,7 @@ import websocket.WebSocketActor
 class WebSocketController @Inject() (implicit system: ActorSystem, materializer: Materializer) {
   Logger.info("Websocket!!!")
 
-  def socket = WebSocket.accept[String, String] { request =>
+  def socket: WebSocket = WebSocket.accept[String, String] { _ =>
     Logger.info("websocket request")
     ActorFlow.actorRef(out => WebSocketActor.props(out))
   }

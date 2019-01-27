@@ -1,24 +1,21 @@
 package controllers
 
-import javax.inject.Inject
-
 import dao.Tables
-import models.Player
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Action, Controller}
+import javax.inject.Inject
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 
 /**
   * Created by jonas on 09.10.16.
   */
-class PlayerController @Inject() (tables: Tables) extends Controller{
+class PlayerController @Inject() (tables: Tables,val controllerComponents: ControllerComponents) extends BaseController{
   import models.PlayerModel._
 
-  def getAllPlayer = Action {
+  def getAllPlayer: Action[AnyContent] = Action {
     Ok(Json.toJson(tables.allPlayer))
   }
 
-  def getPlayer(id: Long) = Action {
+  def getPlayer(id: Long): Action[AnyContent] = Action {
     Ok(Json.toJson(tables.getPlayer(id)))
   }
 }

@@ -29,29 +29,23 @@ class WebSocketActor(out: ActorRef) extends Actor {
   import websocket.WebSocketActor._
 
   Logger.info("subscribe...")
-  val mediator = DistributedPubSub(context.system).mediator
+  val mediator: ActorRef = DistributedPubSub(context.system).mediator
   val topic = "Websocket"
   mediator ! Subscribe(topic, self)
 
-  implicit val updateTableWrites = new Writes[UpdateTable] {
-    def writes(updateTable: UpdateTable) = Json.obj(
-      "UpdateTable" -> updateTable.table
-    )
-  }
+  implicit val updateTableWrites: Writes[UpdateTable] = (updateTable: UpdateTable) => Json.obj(
+    "UpdateTable" -> updateTable.table
+  )
 
-  implicit val updateMatchesWrites = new Writes[UpdateMatches] {
-    def writes(updateMatches: UpdateMatches) = Json.obj(
-      "UpdateMatches" -> updateMatches.matches
-    )
-  }
+  implicit val updateMatchesWrites: Writes[UpdateMatches] = (updateMatches: UpdateMatches) => Json.obj(
+    "UpdateMatches" -> updateMatches.matches
+  )
 
-  implicit val updateMatchList = new Writes[UpdateMatchList] {
-    def writes(updateMatchList: UpdateMatchList) = Json.obj(
-      "UpdateMatchList" -> updateMatchList.matchList
-    )
-  }
+  implicit val updateMatchList: Writes[UpdateMatchList] = (updateMatchList: UpdateMatchList) => Json.obj(
+    "UpdateMatchList" -> updateMatchList.matchList
+  )
 
-  def receive = {
+  def receive: PartialFunction[Any, Unit] = {
     case msg: String =>
       Logger.info("I received your message: " + msg)
       out ! ("I received your message: " + msg)

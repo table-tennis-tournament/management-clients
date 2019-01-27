@@ -12,12 +12,8 @@ import scala.concurrent.duration._
 
 class Application @Inject()(table: Tables) extends Controller {
 
-  def index = Action {
+  def index: Action[AnyContent] = Action {
     Ok(views.html.index())
-  }
-
-  def result = Action {
-    Ok(views.html.result())
   }
 
 }
