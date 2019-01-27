@@ -1,31 +1,23 @@
 package actors
 
-import java.awt.print.{PageFormat, Pageable, PrinterJob}
+import java.awt.print.PrinterJob
 
-import javax.inject.Inject
-import javax.print.PrintServiceLookup
-import javax.print.attribute.{Attribute, DocAttributeSet, HashDocAttributeSet, HashPrintRequestAttributeSet}
-import javax.print.attribute.standard.{MediaSizeName, OrientationRequested, PageRanges}
-import javax.swing.JEditorPane
-import javax.swing.text.html.HTMLEditorKit
-import org.apache.pdfbox._
 import akka.actor._
 import controllers.AssetsFinder
-import dao.Tables
 import it.innove.play.pdf.PdfGenerator
-import models.{AllMatchInfo, TTMatch}
-import net.glxn.qrgen.QRCode
+import javax.inject.Inject
+import javax.print.attribute.standard.{MediaSizeName, OrientationRequested, PageRanges}
+import javax.print.attribute.{HashDocAttributeSet, HashPrintRequestAttributeSet}
+import javax.print.{PrintService, PrintServiceLookup}
+import models.AllMatchInfo
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.printing.PDFPageable
-import org.xhtmlrenderer.simple.PDFRenderer
 import play.api.{Environment, Logger}
-import play.api.libs.Files
-import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 
 
 
 object PrinterActor {
-  def props = Props[PrinterActor]
+  def props: Props = Props[PrinterActor]
 
   case class Print(allMatchInfo: AllMatchInfo)
   case class GetPrinterList()
@@ -43,24 +35,20 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
   import actors.PrinterActor._
 
   Logger.debug("starting PrinterActor")
-  var printService = PrintServiceLookup.lookupDefaultPrintService()
-  var aset = new HashPrintRequestAttributeSet
-  aset.add(MediaSizeName.ISO_A6)
-  aset.add(OrientationRequested.LANDSCAPE)
-  aset.add(new PageRanges(1))
+  var printService: PrintService = PrintServiceLookup.lookupDefaultPrintService()
+  var aSet = new HashPrintRequestAttributeSet
+  aSet.add(MediaSizeName.ISO_A6)
+  aSet.add(OrientationRequested.LANDSCAPE)
+  aSet.add(new PageRanges(1))
   var docSet = new HashDocAttributeSet()
   docSet.add(MediaSizeName.ISO_A6)
 
 
-  def receive = {
+  def receive: PartialFunction[Any, Unit] = {
     case Print(allMatchInfo) =>
       Logger.debug("start printing")
-      import javax.print.DocFlavor
-      import javax.print.SimpleDoc
       import java.io.ByteArrayInputStream
 
-
-      val docType = DocFlavor.INPUT_STREAM.AUTOSENSE
 
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
       Logger.debug("pdf created")
@@ -68,7 +56,7 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
       val printerJob = PrinterJob.getPrinterJob
       printerJob.setPrintService(printService)
       printerJob.setPageable(new PDFPageable(doc))
-      printerJob.print(aset)
+      printerJob.print(aSet)
       doc.close()
 //      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, docSet)
 //      Logger.debug(printService.getSupportedDocFlavors.toSeq.map(_.getMediaSubtype).toString)
@@ -84,10 +72,9 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
     case SetPrinter(name: String) =>
       val psO = PrintServiceLookup.lookupPrintServices(null, null).find(_.getName == name)
       psO match {
-        case Some(ps) => {
+        case Some(ps) =>
           printService = ps
           sender ! PrinterFound
-        }
         case _ => sender ! PrinterNotFound
       }
 
