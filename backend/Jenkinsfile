@@ -3,14 +3,14 @@ pipeline {
         label 'sbt'
     }
     stages {
-        stage('checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('clean') {
             steps {
                 sh "rm -rf *"
+            }
+        }
+        stage('checkout') {
+            steps {
+                checkout scm
             }
         }
         stage('Build') {
