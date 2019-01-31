@@ -1,5 +1,5 @@
 
-USE `${MYSQL_DATABASE}`;
+USE `$MYSQL_DATABASE`;
 
 -- Exportiere Struktur von Tabelle mktt_sonntag_dev.bezirkekreise
 CREATE TABLE IF NOT EXISTS `bezirkekreise` (
