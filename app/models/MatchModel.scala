@@ -5,6 +5,7 @@ import java.util.UUID
 import org.joda.time.DateTime
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import play.api.libs.json.Json._
 
 
 /**
@@ -32,12 +33,14 @@ object MatchModel {
     "name" -> matchType.name
   )
 
-  implicit val typeWrites: Writes[Type] = (ttType: Type) => Json.obj(
-    "id" -> ttType.id,
-    "name" -> ttType.name,
-    "kind" -> ttType.kind,
-    "active" -> ttType.active
-  )
+  implicit val typeWrites = new Writes[Type] {
+    def writes(ttType: Type) = Json.obj(
+      "id" -> ttType.id,
+      "name" -> ttType.name,
+      "kind" -> ttType.kind,
+      "active" -> ttType.active
+    )
+  }
 
   implicit val groupWrites: Writes[Group] = (group: Group) => Json.obj(
     "id" -> group.id,
@@ -62,20 +65,22 @@ object MatchModel {
     case Completed => Json.toJson("Completed")
   }
 
-  implicit val allMatchInfoWrites: Writes[AllMatchInfo] = (allMatchInfo: AllMatchInfo) => Json.obj(
-    "id" -> allMatchInfo.ttMatch.id,
-    "startTime" -> allMatchInfo.ttMatch.startTime,
-    //"isPlayed" -> allMatchInfo.ttMatch.isPlayed,
-    "result" -> allMatchInfo.ttMatch.getResult,
-    "team1" -> allMatchInfo.player1,
-    "team2" -> allMatchInfo.player2,
-    "matchType" -> allMatchInfo.matchType,
-    "type" -> allMatchInfo.ttType,
-    "group" -> allMatchInfo.group,
-    "isPlayable" -> allMatchInfo.isPlayable,
-    "state" -> allMatchInfo.state,
-    "table" -> allMatchInfo.table
-  )
+  implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
+    def writes(allMatchInfo: AllMatchInfo) = Json.obj(
+      "id" -> allMatchInfo.ttMatch.id,
+      "startTime" -> allMatchInfo.ttMatch.startTime,
+      //"isPlayed" -> allMatchInfo.ttMatch.isPlayed,
+      "result" -> allMatchInfo.ttMatch.getResult,
+      "team1" -> allMatchInfo.player1,
+      "team2" -> allMatchInfo.player2,
+      "matchType" -> allMatchInfo.matchType,
+      "type" -> allMatchInfo.ttType,
+      "group" -> allMatchInfo.group,
+      "isPlayable" -> allMatchInfo.isPlayable,
+      "state" -> allMatchInfo.state,
+      "table" -> allMatchInfo.table
+    )
+  }
 
   implicit val matchListWrites: Writes[MatchList] = (matchList: MatchList) => Json.obj(
     "id" -> matchList.uuid,
@@ -96,14 +101,16 @@ object MatchModel {
     "matchinfo" -> matchListInfo.ttMatch
   )
 
-  implicit val matchAggregateWrites: Writes[MatchAggregate] = (matchAggregate: MatchAggregate) => Json.obj(
-    "name" -> matchAggregate.name,
-    "startTime" -> matchAggregate.startTime,
-    "tableNumbers" -> matchAggregate.tableNumbers,
-    "discipline" -> matchAggregate.ttType,
-    "players" -> matchAggregate.players,
-    "matches" -> matchAggregate.matches
-  )
+  implicit val matchAggregateWrites = new Writes[MatchAggregate] {
+    def writes(matchAggregate: MatchAggregate) = Json.obj(
+      "name" -> matchAggregate.name,
+      "startTime" -> matchAggregate.startTime,
+      "tableNumbers" -> matchAggregate.tableNumbers,
+      "discipline" -> matchAggregate.ttType,
+      "players" -> matchAggregate.players,
+      "matches" -> matchAggregate.matches
+    )
+  }
 }
 
 case class AllMatchInfo(
