@@ -2,33 +2,28 @@ package dao
 
 import java.util.UUID
 
-import javax.inject.{Inject, Named}
-import javax.print.{PrintService, PrintServiceLookup}
 import actors.PrinterActor.Print
 import akka.actor.ActorRef
-import com.github.tototoshi.slick.MySQLJodaSupport
+import javax.inject.{Inject, Named}
 import models._
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import slick.driver.JdbcProfile
-import com.github.tototoshi.slick.MySQLJodaSupport._
-import play.api.libs.json.Json
-import slick.ast.Union
-import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
-import scala.concurrent.duration._
 
 /**
   * Created by jonas on 29.09.16.
   */
-class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @Named("printer_actor") printerActor: ActorRef, @Named("publisher_actor") pub: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
+class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
+                       @Named("printer_actor") printerActor: ActorRef,
+                       @Named("publisher_actor") pub: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
 
-  import driver.api._
+  import profile.api._
 
-  object PortableJodaSupport extends com.github.tototoshi.slick.GenericJodaSupport(dbConfigProvider.get.driver)
+  object PortableJodaSupport extends com.github.tototoshi.slick.GenericJodaSupport(dbConfigProvider.get.profile)
 
   import PortableJodaSupport._
 
@@ -113,28 +108,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     ttTablesSeq.filter(t => t.matchId.isEmpty && !t.isLocked.getOrElse(false))
   }
 
-  // def getFreeTable(): Future[Option[TTTable]] = getFreeTable(Seq.empty[Long])
-
   def getFreeTable(tableIds: Seq[Long]): Option[TTTable] = {
     val freeTables = getFreeTables
     if (tableIds.isEmpty) {
       freeTables.headOption
-    } else {
-      freeTables.filter(t => tableIds.contains(t.id)).headOption
-    }
+    } else freeTables.find(t => tableIds.contains(t.id))
   }
 
   def getTTTable(id: Option[Long]): Option[TTTable] = {
     if (id.isDefined) getTTTable(id.get) else None
   }
 
-  def getTTTableFromName(name: Int): Option[TTTable] = {
-    ttTablesSeq.filter(_.tableNumber == name).headOption
-  }
+  def getTTTableFromName(name: Int): Option[TTTable] = ttTablesSeq.find(_.tableNumber == name)
 
-  def getTTTable(id: Long): Option[TTTable] = {
-    ttTablesSeq.filter(_.id == id).headOption
-  }
+  def getTTTable(id: Long): Option[TTTable] = ttTablesSeq.find(_.id == id)
 
   def freeTTTable(matchId: Long): Unit = {
     ttTablesSeq = ttTablesSeq map { t =>
@@ -194,7 +181,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
     //def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
-    def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply _)
+    def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply)
   }
 
   // Matches
@@ -210,9 +197,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       case Nil => Nil
     }
 
-    def getPlayerIds(ml: MatchList) = {
-      ml.matchId.map(id => getMatch(id).get).map(m => m.player1Ids ++ m.player2Ids).flatten
-    }
+    def getPlayerIds(ml: MatchList) = ml.matchId.map(id => getMatch(id).get).flatMap(m => m.player1Ids ++ m.player2Ids)
 
     def containsPlayer(set: Set[Long], ml: MatchList) = {
       set.intersect(getPlayerIds(ml).toSet).nonEmpty
@@ -229,11 +214,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       val ml = filterFirst(getMatchList.toList)
       val inverseFilteredML = ml.filterNot(mlItem => isPossibleMatch(mlItem))
       val filteredML = ml.filter { mlItem =>
-        val m1PlayerIds = mlItem.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
+        val m1PlayerIds = mlItem.matchId.flatMap(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).distinct
         Logger.debug("m1: " + m1PlayerIds.toString())
         isPossibleMatch(mlItem) &&
         inverseFilteredML.forall{ml =>
-          val m2PlayerIds = ml.matchId.map(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).flatten.distinct
+          val m2PlayerIds = ml.matchId.flatMap(id => getMatch(id).get.player1Ids ++ getMatch(id).get.player2Ids).distinct
           Logger.debug("m2: " + m1PlayerIds.toString())
           ml.position > mlItem.position || m2PlayerIds.forall(id => !m1PlayerIds.contains(id))
         }
@@ -261,15 +246,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
               Logger.info(getMatchList.toString())
               Logger.info("matchId: " + matchId)
               val ml = getMatchList
-              ml.filter(_.matchId.contains(matchId)).headOption match {
-                case Some(mlItem) => {
+              ml.find(_.matchId.contains(matchId)) match {
+                case Some(mlItem) =>
                   Logger.info("delMatchList")
                   delMatchListItem(mlItem.uuid.get, matchId)
                   startMatch(matchId, table.id, true)
-                }
-                case _ => {
+                case _ =>
                   startMatch(matchId, table.id, true)
-                }
               }
             }
             result.forall(x => x)
@@ -322,10 +305,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def isPlayable(ttMatch: TTMatch): Boolean = {
     val ids = ttMatch.player1Ids ++ ttMatch.player2Ids
-    val noOpenMatchesForPlayers = ttMatchSeq.filter(m =>
+    val noOpenMatchesForPlayers = !ttMatchSeq.exists(m =>
       (m.player1Ids.containsAnyOf(ids) || m.player2Ids.containsAnyOf(ids))
-        && (m.state == Callable || m.state == OnTable)
-    ).isEmpty
+        && (m.state == Callable || m.state == OnTable))
     Logger.info("isPlayable " + noOpenMatchesForPlayers + " " + ttMatch)
     noOpenMatchesForPlayers && ttMatch.team2Id != 0 && ttMatch.team1Id != 0
   }
@@ -368,7 +350,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
     Logger.debug("start match")
-    if(ttTablesSeq.filter(_.matchId == matchId).isEmpty) {
+    if(!ttTablesSeq.exists(_.matchId.contains(matchId))) {
       updateMatchState(Callable, matchId)
       ttMatchSeq = ttMatchSeq map { m =>
         if (m.id == matchId) m.copy(state = Callable)
@@ -395,9 +377,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
-  def getMatch(id: Long): Option[TTMatch] = {
-    ttMatchSeq.filter(_.id == id).headOption
-  }
+  def getMatch(id: Long): Option[TTMatch] = ttMatchSeq.find(_.id == id)
 
   def getMatchesInGroup(id: Long): Seq[TTMatch] = {
     ttMatchSeq.filter(_.groupId.getOrElse(0) == id)
@@ -418,12 +398,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def isPossibleMatch(id: Long): Boolean = {
-    val matchO = ttMatchSeq.filter(_.id == id).headOption
+    val matchO = ttMatchSeq.find(_.id == id)
     matchO match {
-      case Some(m) => {
-        val playerIds = ttMatchSeq.filter(m => m.state == Open || m.state == InWaitingList).map(m => m.player1Ids ++ m.player2Ids).flatten
-        playerIds.containsAnyOf(m.player1Ids ++ m.player2Ids) && !m.player1Ids.isEmpty && !m.player2Ids.isEmpty
-      }
+      case Some(m) =>
+        val playerIds = ttMatchSeq.filter(m => m.state == Open || m.state == InWaitingList).flatMap(m => m.player1Ids ++ m.player2Ids)
+        playerIds.containsAnyOf(m.player1Ids ++ m.player2Ids) && m.player1Ids.nonEmpty && m.player2Ids.nonEmpty
       case _ => false
     }
   }
@@ -431,8 +410,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
     val x = result map (r => r.mkString("="))
     val resultRaw = x.mkString(",")
-    val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x(0)+y(0), x(1)+y(1))}
-    val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y(0)>y(1)) Seq(x(0)+1, x(1)) else Seq(x(0), x(1) + 1)}
+    val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
+    val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y.head>y(1)) Seq(x.head+1, x(1)) else Seq(x.head, x(1) + 1)}
     ttTablesSeq = ttTablesSeq map { t =>
       if (t.matchId.contains(id)) t.copy(matchId = t.matchId.filterNot(_ == id))
       else t
@@ -441,10 +420,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
       if (m.id == id) {
         m.copy(
           resultRaw = x.mkString(","),
-          result = sets(0) + " : " + sets(1),
-          balls1 = balls(0),
+          result = sets.head + " : " + sets(1),
+          balls1 = balls.head,
           balls2 = balls(1),
-          sets1 = sets(0),
+          sets1 = sets.head,
           sets2 = sets(1),
           state = Completed
         )
@@ -521,7 +500,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def winnerId = column[Option[Long]]("Matc_Winner_ID")
 
     def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
-      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber, winnerId) <> (MatchDAO.tupled, MatchDAO.unapply _)
+      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber, winnerId) <> (MatchDAO.tupled, MatchDAO.unapply)
   }
 
   // Players
@@ -545,17 +524,14 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     ttPlayerSeq
   }
 
-  def getPlayer(id: Long): Option[Player] = {
-    ttPlayerSeq.filter(_.id == id).headOption
-  }
+  def getPlayer(id: Long): Option[Player] = ttPlayerSeq.find(_.id == id)
 
   def getPlayerTypes(playerO: Option[Player]): Option[Player] = {
     playerO match {
-      case Some(player) => {
-        val types = ttMatchSeq.filter(m => (!m.getResult.isDefined && (m.player1Ids.contains(player.id) || m.player2Ids.contains(player.id))))
+      case Some(player) =>
+        val types = ttMatchSeq.filter(m => (m.getResult.isEmpty && (m.player1Ids.contains(player.id) || m.player2Ids.contains(player.id))))
           .map(_.typeId).distinct
         Some(player.copy(typeIds = types))
-      }
       case _ => None
     }
 
@@ -566,7 +542,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def id = column[Long]("Club_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Club_Name")
 
-    def * = (id, name) <> (Club.tupled, Club.unapply _)
+    def * = (id, name) <> (Club.tupled, Club.unapply)
   }
 
   def updateClubList: Future[Boolean] = {
@@ -577,9 +553,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
-  def getClub(id: Long): Option[Club] = {
-    ttClubsSeq.filter(_.id == id).headOption
-  }
+  def getClub(id: Long): Option[Club] = ttClubsSeq.find(_.id == id)
 
   class PlayerTable(tag: Tag) extends Table[PlayerDAO](tag, "player") {
     def id = column[Long]("Play_ID", O.PrimaryKey, O.AutoInc)
@@ -605,7 +579,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def id = column[Long]("MaTy_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("MaTy_Name")
 
-    def * = (id, name) <> (MatchType.tupled, MatchType.unapply _)
+    def * = (id, name) <> (MatchType.tupled, MatchType.unapply)
   }
 
   def updateMatchTypeList: Future[Boolean] = {
@@ -616,9 +590,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
-  def getMatchType(id: Long): Option[MatchType] = {
-    ttMatchTypeSeq.filter(_.id == id).headOption
-  }
+  def getMatchType(id: Long): Option[MatchType] = ttMatchTypeSeq.find(_.id == id)
 
   class TypeTable(tag: Tag) extends Table[Type](tag, "type") {
 
@@ -627,7 +599,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def kind = column[Int]("Type_Kind")
     def active = column[Boolean]("Type_Active")
 
-    def * = (id, name, kind, active) <> (Type.tupled, Type.unapply _)
+    def * = (id, name, kind, active) <> (Type.tupled, Type.unapply)
   }
 
   def updateTypesList: Future[Boolean] = {
@@ -638,9 +610,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     }
   }
 
-  def getType(id: Long): Option[Type] = {
-    ttTypeSeq.filter(_.id == id).headOption
-  }
+  def getType(id: Long): Option[Type] = ttTypeSeq.find(_.id == id)
 
   def allTypes: Seq[Type] = {
     ttTypeSeq
@@ -651,7 +621,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def id = column[Long]("Grou_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Grou_Name")
 
-    def * = (id, name) <> (Group.tupled, Group.unapply _)
+    def * = (id, name) <> (Group.tupled, Group.unapply)
   }
 
   def updateGroupsSeq: Future[Boolean] = {
@@ -664,9 +634,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def getGroup(id: Option[Long]): Option[Group] = if(id.isDefined) getGroup(id.get) else None
 
-  def getGroup(id: Long): Option[Group] = {
-    ttGroupsSeq.filter(_.id == id).headOption
-  }
+  def getGroup(id: Long): Option[Group] = ttGroupsSeq.find(_.id == id)
 
   class DoubleTable(tag: Tag) extends Table[Double](tag, "doubles") {
 
@@ -675,7 +643,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def player2Id = column[Long]("Doub_Play2_ID")
     def kindId = column[Int]("Doub_Kind")
 
-    def * = (id, player1Id, player2Id, kindId) <> (Double.tupled, Double.unapply _)
+    def * = (id, player1Id, player2Id, kindId) <> (Double.tupled, Double.unapply)
   }
 
   def updateDoublesSeq: Future[Boolean] = {
@@ -688,9 +656,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
 
   def getAllDoubles: Seq[Double] = ttDoublesSeq
 
-  def getDouble(id: Long): Option[Double] = {
-    ttDoublesSeq.filter(_.id == id).headOption
-  }
+  def getDouble(id: Long): Option[Double] = ttDoublesSeq.find(_.id == id)
 
 //  class MatchListTable(tag: Tag) extends Table[MatchList](tag, "match_list") {
 //
@@ -728,22 +694,21 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
   }
 
   def delMatchList(uuid: UUID): Boolean = {
-    ttMatchListSeq.filter(_.uuid == Some(uuid)).headOption match {
-      case Some(mlItem) => {
+    ttMatchListSeq.find(_.uuid.contains(uuid)) match {
+      case Some(mlItem) =>
         Logger.debug("del: " + mlItem.toString)
-        mlItem.matchId.map(id => updateMatchState(Open, id))
-        ttMatchListSeq = ttMatchListSeq.filterNot(_.uuid == Some(uuid)) map {mlEntry =>
+        mlItem.matchId.foreach(id => updateMatchState(Open, id))
+        ttMatchListSeq = ttMatchListSeq.filterNot(_.uuid.contains(uuid)) map { mlEntry =>
           if (mlEntry.position > mlItem.position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
         }
         true
-      }
       case _ => false
     }
   }
 
   def delMatchListItem(uuid: UUID, id: Long): Unit = {
     ttMatchListSeq = ttMatchListSeq map { mlItem =>
-      if (mlItem.uuid == Some(uuid)) {
+      if (mlItem.uuid.contains(uuid)) {
         val newMlItem = mlItem.copy(matchId = mlItem.matchId.filterNot(_ == id))
         newMlItem
       }
@@ -756,9 +721,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     ttMatchListSeq = ml
   }
 
-  def isInMatchList(ttMatch: TTMatch): Boolean = {
-    ttMatchListSeq.filter(_.matchId.contains(ttMatch.id)).nonEmpty
-  }
+  def isInMatchList(ttMatch: TTMatch): Boolean = ttMatchListSeq.exists(_.matchId.contains(ttMatch.id))
 //  def startMatch(ttMatch: TTMatch) = {
 //    ttMatchSeq = ttMatchSeq map {m =>
 //      if (m.id == ttMatch.id) m.copy(isPlaying = true)
@@ -783,20 +746,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
     def checked = column[Boolean]("PPGR_Checked")    // all matches played
     def setsDiff = column[Long]("PPGr_SetDiff")
 
-    def * = (id, playerId, groupId, groupPos, matchesWon, matchesLost, setsWon, setsLost, pointsWon, pointsLost, games, sets, points, checked, setsDiff) <> (PlayerPerGroup.tupled, PlayerPerGroup.unapply _)
+    def * = (id, playerId, groupId, groupPos, matchesWon, matchesLost, setsWon, setsLost, pointsWon, pointsLost, games, sets, points, checked, setsDiff) <> (PlayerPerGroup.tupled, PlayerPerGroup.unapply)
   }
 
   def allPlayerPerGroup: Future[Seq[PlayerPerGroup]] = db.run(playerPerGroup.result)
 
-  def isGroupCompleted(groupID: Long): Boolean = ttMatchSeq.filter(m => m.state == Completed && m.groupId == groupID).isEmpty
+  def isGroupCompleted(groupID: Long): Boolean = !ttMatchSeq.exists(m => m.state == Completed && m.groupId.get == groupID)
 
   def updatePlayerPerGroup(groupId: Long): Future[Future[Int]] = {
     allPlayerPerGroup map { ppg =>
       val filteredPlayerPerGroup = ppg.filter(_.groupId == groupId)
       val ppgRes = filteredPlayerPerGroup map {ppg =>
         val p = ttPlayerSeq.filter(_.id == ppg.playerId).head
-        val m1 = ttMatchSeq.filter(m => m.player1Ids.contains(p.id) && m.groupId == Some(groupId) && m.state == Completed)
-        val m2 = ttMatchSeq.filter(m => m.player2Ids.contains(p.id) && m.groupId == Some(groupId) && m.state == Completed)
+        val m1 = ttMatchSeq.filter(m => m.player1Ids.contains(p.id) && m.groupId.contains(groupId) && m.state == Completed)
+        val m2 = ttMatchSeq.filter(m => m.player2Ids.contains(p.id) && m.groupId.contains(groupId) && m.state == Completed)
         var ballsWon = 0
         var ballsLost = 0
         var setsWon = 0
@@ -828,11 +791,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, @
           pointsWon = ballsWon,
           pointsLost = ballsLost,
           setsDiff = setsWon - setsLost,
-          checked = ttMatchSeq.filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id) && m.groupId == Some(groupId)).forall(_.state == Completed)
+          checked = ttMatchSeq.filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id) && m.groupId.contains(groupId)).forall(_.state == Completed)
         )
       }
       val res = ppgRes.sortBy(ppg => (-ppg.matchesWon, -ppg.setsDiff, -ppg.pointsWon)).zipWithIndex.map(p => p._1.copy(groupPos = p._2 + 1))
-      Future.sequence(res.map(p => db.run(playerPerGroup.insertOrUpdate(p)))).map(_.foldLeft(0)((a, b) => a+b))
+      Future.sequence(res.map(p => db.run(playerPerGroup.insertOrUpdate(p)))).map(_.sum)
     }
   }
 }
