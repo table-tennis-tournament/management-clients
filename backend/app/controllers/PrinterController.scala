@@ -2,8 +2,9 @@ package controllers
 
 import actors.PrinterActor
 import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter}
-import akka.actor.ActorRef
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
+import akka.stream.Materializer
 import akka.util.Timeout
 import dao.Tables
 import it.innove.play.pdf.PdfGenerator
@@ -18,11 +19,13 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-class PrinterController @Inject() (implicit ec: ExecutionContext, pdfGenerator: PdfGenerator,
+class PrinterController @Inject() (pdfGenerator: PdfGenerator,
                                    @Named("printer_actor") printerActor: ActorRef,
                                    @Named("publisher_actor") pubActor: ActorRef,
                                    tables: Tables,
-                                   val controllerComponents: ControllerComponents) extends BaseController {
+                                   val controllerComponents: ControllerComponents)
+                                  (implicit ec: ExecutionContext, system: ActorSystem, materializer: Materializer
+                                        ) extends BaseController {
   implicit val timeout: Timeout = 5.seconds
   import models.AnswerModel._
 

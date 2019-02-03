@@ -68,14 +68,16 @@ object TableModel {
     // "colorId" -> ttMatch.colorId
   )
 
-  implicit val allMatchInfoTableWrites: Writes[AllMatchInfoTable] = (allMatchInfo: AllMatchInfoTable) => Json.obj(
-    "match" -> allMatchInfo.ttMatch,
-    "team1" -> allMatchInfo.player1,
-    "team2" -> allMatchInfo.player2,
-    "matchType" -> allMatchInfo.matchType,
-    "type" -> allMatchInfo.ttType,
-    "group" -> allMatchInfo.group
-  )
+  implicit val allMatchInfoTableWrites = new Writes[AllMatchInfoTable] {
+    def writes(allMatchInfo: AllMatchInfoTable) = Json.obj(
+      "match" -> allMatchInfo.ttMatch,
+      "team1" -> allMatchInfo.player1,
+      "team2" -> allMatchInfo.player2,
+      "matchType" -> allMatchInfo.matchType,
+      "type" -> allMatchInfo.ttType,
+      "group" -> allMatchInfo.group
+    )
+  }
 
   implicit val tableInfoWrites: Writes[TableInfo] = (tableInfo: TableInfo) => Json.obj(
     "id" -> tableInfo.id,
