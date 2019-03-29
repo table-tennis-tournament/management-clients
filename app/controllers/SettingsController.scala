@@ -1,27 +1,26 @@
 package controllers
 
-import javax.inject.{Inject, Named}
-
 import actors.PrinterActor._
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import dao.Tables
+import javax.inject.{Inject, Named}
 import models.{Answer, Setting}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 
 import scala.concurrent.duration._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.concurrent.{ExecutionContext, Future}
 
-import scala.concurrent.Future
-
-class SettingsController @Inject() (tables: Tables, @Named("printer_actor") printerActor: ActorRef) extends Controller{
+class SettingsController @Inject() (implicit ec: ExecutionContext,
+                                    tables: Tables, @Named("printer_actor") printerActor: ActorRef,
+                                    val controllerComponents: ControllerComponents) extends BaseController{
   implicit val timeout: Timeout = 5.seconds
-  import models.SettingModel._
   import models.AnswerModel._
+  import models.SettingModel._
 
-  def allSettings = Action.async {
+  def allSettings: Action[AnyContent] = Action.async {
     (printerActor ? GetPrinter).mapTo[String] map {printerName =>
       var settingSeq = Seq.empty[Setting]
       settingSeq = settingSeq :+ Setting("printerName", printerName)
@@ -31,28 +30,24 @@ class SettingsController @Inject() (tables: Tables, @Named("printer_actor") prin
     }
   }
 
-  def setSettings = Action.async { request =>
+  def setSettings: Action[AnyContent] = Action.async { request =>
     val jsonO = request.body.asJson
     jsonO match {
-      case Some(json) => {
+      case Some(json) =>
         json.validate[Seq[Setting]].asOpt match {
-          case Some(settingSeq) => {
-            settingSeq map {setting =>
-              setting match {
-                case Setting("printerName", printer: String) =>
-                  (printerActor ? SetPrinter(printer)).mapTo[PrinterAnswer] map {
-                    case PrinterFound =>
+          case Some(settingSeq) =>
+            settingSeq map {
+              case Setting("printerName", printer: String) =>
+                (printerActor ? SetPrinter(printer)).mapTo[PrinterAnswer] map {
+                  case PrinterFound =>
 
-                    case _ => BadRequest(Json.toJson(Answer(false, "Printer not Found")))
-                  }
-              }
+                  case _ => BadRequest(Json.toJson(Answer(successful = false, "Printer not Found")))
+                }
             }
-            Future.successful(Ok(Json.toJson(Answer(true, "set settings"))))
-          }
-          case _ => Future.successful(BadRequest(Json.toJson(Answer(false, "wrong request format"))))
+            Future.successful(Ok(Json.toJson(Answer(successful = true, "set settings"))))
+          case _ => Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
         }
-      }
-      case _ => Future.successful(BadRequest(Json.toJson(Answer(false, "wrong request format"))))
+      case _ => Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
     }
   }
 

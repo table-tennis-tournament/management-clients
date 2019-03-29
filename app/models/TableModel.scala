@@ -8,81 +8,65 @@ import play.api.libs.json.{Json, Writes}
   */
 
 object TableModel {
+  import models.MatchModel.allMatchInfoWrites
   import models.PlayerModel._
   import play.api.libs.json.JodaWrites
-  import models.MatchModel.allMatchInfoWrites
 
   implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
 
-  implicit val playerWrites = new Writes[Player] {
-    def writes(player: Player) = Json.obj(
-      "id" -> player.id,
-      "firstName" -> player.firstName,
-      "lastName" -> player.lastName,
-      "ttr" -> player.ttr,
-      "sex" -> player.sex,
-      "club" -> player.club
-    )
-  }
+  implicit val playerWrites: Writes[Player] = (player: Player) => Json.obj(
+    "id" -> player.id,
+    "firstName" -> player.firstName,
+    "lastName" -> player.lastName,
+    "ttr" -> player.ttr,
+    "sex" -> player.sex,
+    "club" -> player.club
+  )
 
-  implicit val playerDAOWrites = new Writes[PlayerDAO] {
-    def writes(player: PlayerDAO) = Json.obj(
-      "id" -> player.id,
-      "firstName" -> player.firstName,
-      "lastName" -> player.lastName,
-      "ttr" -> player.ttr,
-      "sex" -> player.sex
-      //"club" -> player.club
-    )
-  }
+  implicit val playerDAOWrites: Writes[PlayerDAO] = (player: PlayerDAO) => Json.obj(
+    "id" -> player.id,
+    "firstName" -> player.firstName,
+    "lastName" -> player.lastName,
+    "ttr" -> player.ttr,
+    "sex" -> player.sex
+    //"club" -> player.club
+  )
 
-  implicit val ttTableWrites = new Writes[TTTable] {
-    def writes(ttTable: TTTable) = Json.obj(
-      "id" -> ttTable.id,
-      "number" -> ttTable.tableNumber,
-      "isLocked" -> ttTable.isLocked
-    )
-  }
+  implicit val ttTableWrites: Writes[TTTable] = (ttTable: TTTable) => Json.obj(
+    "id" -> ttTable.id,
+    "number" -> ttTable.tableNumber,
+    "isLocked" -> ttTable.isLocked
+  )
 
-  implicit val resultWrites = new Writes[(Int, Int)] {
-    def writes(result: (Int, Int)) = Json.obj(
-      "player1" -> result._1,
-      "player2" -> result._2
-    )
-  }
+  implicit val resultWrites: Writes[(Int, Int)] = (result: (Int, Int)) => Json.obj(
+    "player1" -> result._1,
+    "player2" -> result._2
+  )
 
-  implicit val matchTypeWrites = new Writes[MatchType] {
-    def writes(matchType: MatchType) = Json.obj(
-      "id" -> matchType.id,
-      "name" -> matchType.name
-    )
-  }
+  implicit val matchTypeWrites: Writes[MatchType] = (matchType: MatchType) => Json.obj(
+    "id" -> matchType.id,
+    "name" -> matchType.name
+  )
 
-  implicit val typeWrites = new Writes[Type] {
-    def writes(ttType: Type) = Json.obj(
-      "id" -> ttType.id,
-      "name" -> ttType.name,
-      "kind" -> ttType.kind
-    )
-  }
+  implicit val typeWrites: Writes[Type] = (ttType: Type) => Json.obj(
+    "id" -> ttType.id,
+    "name" -> ttType.name,
+    "kind" -> ttType.kind
+  )
 
-  implicit val groupWrites = new Writes[Group] {
-    def writes(group: Group) = Json.obj(
-      "id" -> group.id,
-      "name" -> group.name
-    )
-  }
+  implicit val groupWrites: Writes[Group] = (group: Group) => Json.obj(
+    "id" -> group.id,
+    "name" -> group.name
+  )
 
-  implicit val ttMatchWrites = new Writes[TTMatch] {
-    def writes(ttMatch: TTMatch) = Json.obj(
-      "id" -> ttMatch.id,
-      "startTime" -> ttMatch.startTime,
-      //"isPlayed" -> ttMatch.isPlayed
-      // "allowedTableGroups" -> ttMatch.allowedTableGroups,
-      // "result" -> ttMatch.getResult
-      // "colorId" -> ttMatch.colorId
-    )
-  }
+  implicit val ttMatchWrites: Writes[TTMatch] = (ttMatch: TTMatch) => Json.obj(
+    "id" -> ttMatch.id,
+    "startTime" -> ttMatch.startTime,
+    //"isPlayed" -> ttMatch.isPlayed
+    // "allowedTableGroups" -> ttMatch.allowedTableGroups,
+    // "result" -> ttMatch.getResult
+    // "colorId" -> ttMatch.colorId
+  )
 
   implicit val allMatchInfoTableWrites = new Writes[AllMatchInfoTable] {
     def writes(allMatchInfo: AllMatchInfoTable) = Json.obj(
@@ -95,14 +79,12 @@ object TableModel {
     )
   }
 
-  implicit val tableInfoWrites = new Writes[TableInfo] {
-    def writes(tableInfo: TableInfo) = Json.obj(
-      "id" -> tableInfo.id,
-      "number" -> tableInfo.tableNumber,
-      "isLocked" -> tableInfo.isLocked,
-      "matches" -> tableInfo.ttMatch
-    )
-  }
+  implicit val tableInfoWrites: Writes[TableInfo] = (tableInfo: TableInfo) => Json.obj(
+    "id" -> tableInfo.id,
+    "number" -> tableInfo.tableNumber,
+    "isLocked" -> tableInfo.isLocked,
+    "matches" -> tableInfo.ttMatch
+  )
 }
 
 case class AllMatchInfoTable(

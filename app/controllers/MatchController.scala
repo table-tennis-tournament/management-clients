@@ -7,17 +7,19 @@ import javax.inject._
 import models._
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc._
 import websocket.WebSocketActor._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 /**
   * Created by jonas on 10.10.16.
   */
-class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: ActorRef) extends Controller{
+class MatchController @Inject() (implicit ec: ExecutionContext,
+                                 tables: Tables,
+                                 @Named("publisher_actor") pub: ActorRef,
+                                 val controllerComponents: ControllerComponents) extends BaseController {
   implicit val timeout: Timeout = 5.seconds
   import models.AnswerModel._
   import models.MatchModel._
@@ -37,14 +39,14 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       None
   }
 
-  def freeMatches = Action { request =>
+  def freeMatches: Action[AnyContent] = Action { request =>
     Logger.info("freeMatches")
     val req = request.body.asJson
     req match {
-      case Some(r) => {
+      case Some(r) =>
         r.asOpt[Seq[Long]] match {
-          case Some(ids) => {
-            ids map { id =>
+          case Some(ids) =>
+            ids foreach { id =>
               tables.freeTTTable(id)
               tables.updateMatchState(Finished, id)
             }
@@ -52,22 +54,20 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
             pub ! UpdateMatchList(tables.getAllMatchList)
-            Ok(Json.toJson(Answer(true, "successful")).toString())
-          }
-          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+            Ok(Json.toJson(Answer(successful = true, "successful")).toString())
+          case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
-      }
-      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+      case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
   }
 
-  def takeBackMatches = Action { request =>
+  def takeBackMatches: Action[AnyContent] = Action { request =>
     val req = request.body.asJson
     req match {
-      case Some(r) => {
+      case Some(r) =>
         r.asOpt[Seq[Long]] match {
-          case Some(ids) => {
-            ids map { id =>
+          case Some(ids) =>
+            ids foreach { id =>
               tables.takeBackTTTable(id)
               tables.updateMatchState(Open, id)
             }
@@ -75,28 +75,26 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
             pub ! UpdateMatchList(tables.getAllMatchList)
-            Ok(Json.toJson(Answer(true, "successful")))
-          }
-          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+            Ok(Json.toJson(Answer(successful = true, "successful")))
+          case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
-      }
-      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+      case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
   }
 
-  def getMatchesByType(typeId: Long) = Action {
+  def getMatchesByType(typeId: Long): Action[AnyContent] = Action {
     val matches = tables.allMatches()
     val m = matches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(m.filter(_.ttMatch.typeId == typeId).sortBy(_.ttMatch.id)))
   }
 
-  def getAllMatches = Action {
+  def getAllMatches: Action[AnyContent] = Action {
     val matches = tables.allMatches()
     val x = matches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
 
-  def getOpenMatches  = Action {
+  def getOpenMatches: Action[AnyContent] = Action {
     val matches = tables.allMatches()
     val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
     val x = openMatches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
@@ -106,11 +104,11 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   def getMatchAggregateNameFromMatch(head: TTMatch): String = {
     def fullMatch = getAllMatchInfo(head)
-    if(!fullMatch.isDefined) return "";
+    if(fullMatch.isEmpty) return ""
     val completeMatch = fullMatch.get
     val resultString = completeMatch.matchType.name
     if(completeMatch.group.isDefined){
-      return resultString + " " + completeMatch.group.get.name;
+      return resultString + " " + completeMatch.group.get.name
     }
     resultString
   }
@@ -126,29 +124,29 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
 
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore  _)
 
-  def getMatchAggregateForCaller = Action {
+  def getMatchAggregateForCaller: Action[AnyContent] = Action {
     val matches = tables.allMatches()
-    val callableMatches = matches.filter(_.state == Callable).groupBy(_.startTime);
+    val callableMatches = matches.filter(_.state == Callable).groupBy(_.startTime)
     val matchAggregates = callableMatches map {
       case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head),
         key,
         getTableNumbersFromMatches(value),
         tables.getType(value.head.typeId).get ,
         getPlayersFromMatches(value),
-        value.map(getAllMatchInfo(_)).filter(_.isDefined).map(_.get)
+        value.map(getAllMatchInfo).filter(_.isDefined).map(_.get)
       )
     }
     Ok(Json.toJson(matchAggregates.toList.sortBy(_.startTime)))
   }
 
-  def getPlayedMatches  = Action {
+  def getPlayedMatches: Action[AnyContent] = Action {
     val matches = tables.allMatches()
     val playedMatches = matches.filter(_.state == Finished)
     val x = playedMatches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
 
-  def getPlayedMatchesByTypeId(typeid: Long)  = Action {
+  def getPlayedMatchesByTypeId(typeid: Long): Action[AnyContent] = Action {
     val matches = tables.allMatches()
     val playedMatches = matches.filter(_.state == Finished)
     val playedMatchesByType = playedMatches.filter(_.typeId == typeid)
@@ -156,7 +154,7 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
 
-  def getOpenMatchesByTypeId(typeid: Long)  = Action {
+  def getOpenMatchesByTypeId(typeid: Long): Action[AnyContent] = Action {
     val matches = tables.allMatches()
     val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
     val openMatchesByType = openMatches.filter(_.typeId == typeid)
@@ -164,38 +162,40 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
 
-  def getMatch(id: Long) = Action {
+  def getMatch(id: Long): Action[AnyContent] = Action {
     val ttMatch = tables.getMatch(id)
     val ami = if(ttMatch.isDefined) getAllMatchInfo(ttMatch.get) else None
     Ok(Json.toJson(ami))
   }
 
-  def setResult(id: Long) = Action.async { request =>
+  def setResult(id: Long): Action[AnyContent] = Action.async { request =>
     Logger.info(request.body.asJson.get.toString())
     val res = request.body.asJson
     if(res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.setResult(id, resultO.get) map {res =>
-        if(res) {
-          tables.updateMatchState(Completed, id)
-          tables.startNextMatch
-          pub ! UpdateMatches(tables.allMatchesInfo)
-          pub ! UpdateTable(tables.allTableInfo)
-          pub ! UpdateMatchList(tables.getAllMatchList)
-          Ok(Json.toJson(Answer(true, "set result")))
-        } else BadRequest(Json.toJson(Answer(false, "error writing result to database")))
+        {
+          if(res) {
+            tables.updateMatchState(Completed, id)
+            tables.startNextMatch
+            pub ! UpdateMatches(tables.allMatchesInfo)
+            pub ! UpdateTable(tables.allTableInfo)
+            pub ! UpdateMatchList(tables.getAllMatchList)
+            Ok(Json.toJson(Answer(successful = true, "set result")))
+          } else BadRequest(Json.toJson(Answer(successful = false, "error writing result to database")))
+        }
       }
     } else {
-      Future.successful(BadRequest(Json.toJson(Answer(false, "wrong request format"))))
+      Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
     }
   }
 
-  def getTypes = Action {
-    Ok(Json.toJson(tables.allTypes.map(addDoubleName(_)).sortBy(_.name)))
+  def getTypes: Action[AnyContent] = Action {
+    Ok(Json.toJson(tables.allTypes.map(addDoubleName).sortBy(_.name)))
   }
 
-  def getActiveTypes = Action {
-    Ok(Json.toJson(tables.allTypes.filter(_.active).map(addDoubleName(_)).sortBy(_.name)))
+  def getActiveTypes: Action[AnyContent] = Action {
+    Ok(Json.toJson(tables.allTypes.filter(_.active).map(addDoubleName).sortBy(_.name)))
   }
 
   private def addDoubleName(discipline: Type) = {
@@ -203,23 +203,23 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
     else discipline
   }
 
-  def deleteMatch(id: Long) = Action {
+  def deleteMatch(id: Long): Action[AnyContent] = Action {
     tables.deleteMatch(id)
-    Ok(Json.toJson(Answer(true, "delete match")))
+    Ok(Json.toJson(Answer(successful = true, "delete match")))
   }
 
-  def deleteType(id: Long) = Action {
+  def deleteType(id: Long): Action[AnyContent] = Action {
     tables.deleteType(id)
-    Ok(Json.toJson(Answer(true, "delete type")))
+    Ok(Json.toJson(Answer(successful = true, "delete type")))
   }
 
 
 
-  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false) = Action{ request =>
+  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false): Action[AnyContent] = Action{ request =>
     request.body.asJson match {
-      case Some(matchIdsJson) => {
+      case Some(matchIdsJson) =>
         matchIdsJson.validate[Seq[Long]].asOpt match {
-          case Some(matchIds) => {
+          case Some(matchIds) =>
             val table = tables.getTTTableFromName(tableName).get
             val matches = tables.allMatches()
             Logger.info("matches: " + matches.toString())
@@ -244,15 +244,13 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
                 val ml = tables.getMatchList
                 tables.updateMatchState(Callable, matchId)
                 tables.setStartTime(matchId, currentStartTime)
-                ml.filter(_.matchId.contains(matchId)).headOption match {
-                  case Some(mlItem) => {
+                ml.find(_.matchId.contains(matchId)) match {
+                  case Some(mlItem) =>
                     Logger.info("delMatchList")
                     tables.delMatchListItem(mlItem.uuid.get, matchId)
                     tables.startMatch(matchId, table.id, print)
-                  }
-                  case _ => {
+                  case _ =>
                     tables.startMatch(matchId, table.id, print)
-                  }
                 }
               }
               result.forall(x => x)
@@ -260,45 +258,41 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
               Logger.error("Match not ready" + m.toString())
               false
             }
-            Logger.info("result: " + res.toString() + " " + table.toString + " " + m.toString())
+            Logger.info("result: " + res.toString + " " + table.toString + " " + m.toString)
             if(res) {
               pub ! UpdateMatches(tables.allMatchesInfo)
               pub ! UpdateTable(tables.allTableInfo)
               pub ! UpdateMatchList(tables.getAllMatchList)
-              Ok(Json.toJson(Answer(true, "started match")))
+              Ok(Json.toJson(Answer(successful = true, "started match")))
             } else
-              BadRequest(Json.toJson(Answer(false, "not all matches started")))
-          }
-          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+              BadRequest(Json.toJson(Answer(successful = false, "not all matches started")))
+          case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
-      }
-      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+      case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
 
   }
 
-  def callMatches = Action { request =>
+  def callMatches: Action[AnyContent] = Action { request =>
     Logger.info("callMatches")
     val req = request.body.asJson
     req match {
-      case Some(r) => {
+      case Some(r) =>
         r.asOpt[Seq[Long]] match {
-          case Some(ids) => {
-            ids map { id =>
+          case Some(ids) =>
+            ids foreach { id =>
               tables.updateMatchState(OnTable, id)
             }
             pub ! UpdateMatches(tables.allMatchesInfo)
             pub ! UpdateTable(tables.allTableInfo)
-            Ok(Json.toJson(Answer(true, "successful")).toString())
-          }
-          case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+            Ok(Json.toJson(Answer(successful = true, "successful")).toString())
+          case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
-      }
-      case _ => BadRequest(Json.toJson(Answer(false, "wrong request format")))
+      case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
   }
 
-  def loadNewMatches = Action.async {
+  def loadNewMatches: Action[AnyContent] = Action.async {
     tables.loadNewMatches() flatMap { n =>
       tables.updateDoublesSeq flatMap { b =>
         tables.updateClubList flatMap { d =>
@@ -309,8 +303,8 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
                   val x = n && b && d && e && f && g && i
                   if(x) {
                     pub ! UpdateMatches(tables.allMatchesInfo)
-                    Ok(Json.toJson(Answer(true, "load new matches")))
-                  } else BadRequest(Json.toJson(Answer(false, "error loading new matches")))
+                    Ok(Json.toJson(Answer(successful = true, "load new matches")))
+                  } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
                 }
               }
             }
@@ -319,4 +313,5 @@ class MatchController @Inject() (tables: Tables, @Named("publisher_actor") pub: 
       }
     }
   }
+
 }

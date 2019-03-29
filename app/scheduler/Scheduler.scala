@@ -1,12 +1,10 @@
 package scheduler
 
-import javax.inject.{Inject, Named}
-
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
+import javax.inject.Inject
 import play.api.Configuration
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
 
 /**
   * Created by jonas on 06.11.16.

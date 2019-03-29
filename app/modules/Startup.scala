@@ -1,12 +1,12 @@
 package modules
 
-import javax.inject.Inject
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-
 import dao.Tables
+import javax.inject.Inject
 import play.api.Logger
 
-class Startup @Inject()(table: Tables){
+import scala.concurrent.ExecutionContext
+
+class Startup @Inject()(implicit ec: ExecutionContext, table: Tables){
   table.updateTTTables flatMap { a =>
     table.updateDoublesSeq flatMap { b =>
       table.updateMatches flatMap { c =>

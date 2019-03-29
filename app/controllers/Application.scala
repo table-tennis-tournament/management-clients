@@ -1,23 +1,14 @@
 package controllers
 
-import javax.inject.Inject
-
 import dao.Tables
-import play.api._
+import javax.inject.Inject
 import play.api.mvc._
-import play.api.libs.concurrent.Execution.Implicits._
-
-import scala.concurrent.duration._
 
 
-class Application @Inject()(table: Tables) extends Controller {
+class Application @Inject()(table: Tables, val controllerComponents: ControllerComponents) extends BaseController {
 
-  def index = Action {
+  def index: Action[AnyContent] = Action {
     Ok(views.html.index())
-  }
-
-  def result = Action {
-    Ok(views.html.result())
   }
 
 }
