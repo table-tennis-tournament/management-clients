@@ -29,8 +29,7 @@ before_script:
   - npm install
 
 script:
-  - npm run test -- --watch=false
-  - npm run e2e
+  - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
 after_success:
   - export COMMIT=${TRAVIS_COMMIT::7}
@@ -48,4 +47,4 @@ after_success:
 
 cache:
   directories:
-    - '$HOME/node_modules'
+    - ./node_modules
