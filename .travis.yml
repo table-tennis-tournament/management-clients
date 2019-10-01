@@ -6,11 +6,16 @@ node_js:
 services:
   - docker
 
-apt:
-  sources:
-    - google-chrome
-  packages:
-    - google-chrome-stable
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+cache:
+  directories:
+    - ./node_modules
 
 env:
   global:
@@ -21,11 +26,11 @@ env:
 
 before_install:
   - docker pull bitnami/nginx:1.16
-  - export CHROME_BIN=chromium-browser
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+#  - export CHROME_BIN=chromium-browser
+#  - export DISPLAY=:99.0
+#  - sh -e /etc/init.d/xvfb start
 
-before_script:
+install:
   - npm install
 
 script:
@@ -45,6 +50,4 @@ after_success:
   - export GIT_LOG=`git log -1 --pretty=%B $COMMIT`
   - export TEXT="[build version] $TAG<br />[datetime] $TIMESTAMP<br />[changelog] $GIT_LOG<br />"
 
-cache:
-  directories:
-    - ./node_modules
+
