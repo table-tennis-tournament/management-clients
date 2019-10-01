@@ -20,7 +20,6 @@ env:
     - COMMIT=${TRAVIS_COMMIT::7}
 
 before_install:
-  - chmod +x mvnw
   - docker pull bitnami/nginx:1.16
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
