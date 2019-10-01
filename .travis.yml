@@ -19,10 +19,10 @@ cache:
 
 env:
   global:
-    - secure: "Qq956WlmLjkwQWGr4fTSiIXxkUBRYA1eE9kLh3wi/hPWfEpPth91cp2WUj961q+Xss4fiNeEayOMB4mItGS1djE58EhIAovsqJhs/EmvupDhGA5SUwV1igVVUSwwpIO/EddNzqaIP/0i30ptbieaqEnwlA/3woQVpVLC2wXlLLJAFeVidGJzV0XERhWwz5b5Muve79YDjMNdtLLD2I1qPWN/rHXcswhWzmnB8a0ifCm2p4vPkXOTq0DCVmM1mOouBBJUTs+JgNHHACKP1WbottP+ofspEXbpnQg71mEv+28FHfbvu2XYGu0yLpMx5RvUy/8ZK+3wZn5ppaYTybyFXOToh7QxJb1xIY9dbVs7LAvjFSPrAlTnfuHgQWu2+++GbHUusbtn23B9w8E87y9tHDYwp5ZaKsLLZ4q2RL4i3QuDUl4WyY1dKl7ruSQ/5SAN2JFCs6zVCX478X13oTk4PpaQGM5HXD17sGqFKo99eDZqQmwuWtlbTKKG89gayMyBxt4MZuihrIOgjn5fdWtUN2eDcpcgMeCCg3rRDBC99yf4WjIzg6vT+rp9Dy2Bjggy7Ek5XEwIF1qXnlgDq/zyxDd0uiCuSR7bvs1Afh+xr7of7R4yGneg/MBk87COh+oSrzuue+39pDugWRXJHXuTClu84No3EF17bu3LctY/9Xc="
-    - secure: "EQOTsrEbVvurV3Ufsicuy0Mxyr5QwFECHC5hyTC2Hp0iVqJNeGBJ/yOjB118fPCx7CPFBFZSJs2BXvZQgOTQYSlY+7iKfqjintXQMYKdBKqwvI/hBx8lrHWbYQUml3N/ViY8tX56dkfOTezB1dC+cJHhhmynZUN8Ixwm5GMQIEtMCp9dixNXx46uH/P6sCW7xaYjJIyXb0A91uxX2u+xmbf8G8lqYx/cXDIkcpdqoKkXQEDHUfetbl4K11nm5V3u7RYSbMax2dl/tX38e7A8qAKl04bK9gEx9G5x8nn2YjVPhIPcras0vI91Rqg1GfDcLwja3RJFdVdxiqkg9pjZEuFl32FH6mPbsmxMQ6tLjGXPk6zbujLYr+4sgxUM4G5C/qVz58qX/c8WQwbgH6dzw1+d3W6sdqZqxZS3p4HLiNAKHUEdXsvabakU2edGF2A3eFHrf9Yp+s/ZH5C9ubW++xyEHj77prU55E7QLeVsFP5rLUEbJFUB3E60QOPiMKNCOwiU2DgGw1XA4PLl2sRqmJk3udDH3cpo+WzwvHhiKfhGsn+d8xFgiEPEVV7zWDxY3UcPwfmXvDcEJh3Mbu3Du6Ez7gu77YGjFOk3VBKlRNXenVTTCQ4dk9WcJj16sN8PvUaL56VuMGOH5BZovvB7HSga6xyNKQu7Av36yKK/mQk="
-    - secure: "TTM8Zu3Ywyd8cWsoR+RxPzixXKViFQq96lfPQT0l5CQqoL857l2w/qkJNNgAUA0xqJAYeREkAgASI+ByKDECCrcXvtdoXj7A8M3pmVNzflbiqKts9Am3HgQfrZHhIEWH+VeLYRpU1UX3DZWN0WOMnHeLdN+qIkv5WUD75Mscg6eYOEtpluEGeQ53yyIXWsNEBF+thg6AxTH4O2ssHRZPw/ARrBf3w1Lh/yl8cwFT7yiqPP5qe/XqH6sRYrhQoDZTsHlBDVkpv+3g9TFUpLQFQqcHcq+hQyGP+kAgR83obXEMaPz7QWOKbAgin6VmKnrPEIqdhT6ZGAWp6LN6tCdFmMGok9SPiHKxXGPPw4H5wWSynN67zd/Y1lCuHFT+hDb069drLPd/e4wJXOWyD6gMnd/YcTzQP00kgfJAMXkHaxvRoyV8Ar0qjEx/061ZcL86+CqgJEdGBEEmBJ1HpGZEigqxujQDcmIcYVin/MjqiRd3lISqmTRk3WhaMEckDkMtUkpF6cl6zrMCg5BWfqiq52PrtuKi4a8i9cAUTpUscFyJ0cy/aiLxKueb3LSsWzrxxaDO+uuJW9WmMtHqdoZejl8VLn9r0tFqH6xi5btOcknivbJDpnWJ9fNBwYekhmSmhaXK0TQK1U8FxUtfm9rNrF1rTXR/5p9+RwnVuof7Cyc="
+    - secure: "JvVsC1TVa1FlMtHNLio5FlMSZhemGEFechMeP77tc0xCq2lSlPirrragKF5saC1CCe9MDDx9gQnA6FCydHLhDYGMsT1lPeVZWHgd3/Imf8gKM/baNxSK9rjlafQsW2lxnFsouW8/LKoFQLQvbM7oFEizTbKwbFQCYbLaSY1G6aVqHtrYqZaBF5SIcL9b6Jv0W/9kHeji5HEgS9d+fj93Zkk9Y18jvOTuOJAEUm//VxgL/kv8lpcPcR9I9TJxEPL0hBeozTHANwtWAI/ES5Gue10QcNwxWehybR98j/vyE1wRwFkrEt2sJpv62Lz7/rKvpj+CTpE2Oxyr5o3TrkhodhitVtZ8EIME41ylru1VOD2mVtlpfUE95tPICtaZgbnJub/ucAVYPCdRfd2jwxZ4RNGIRZBKLFI3CyzBMXxtJyTrZpcjjo3XMkIGdORo5iX6mKIotGmz1KczWIYGMTJGcOAOAQus2FGUwRvXsxgr6OnTFJv61OdZ1L5cY7c9NaLBnhdQzl914627DlCZdIHBb/l8unYaloRNfZRednRZAbL1bK+2235pB3DIuQkX5XXzi4YFG+Lv70NiqDNjSGLAx8oU5qmJFH7M9aJ8T4j7ToHG0ahIE/mT1+18GG8h2ayulWu4MnZvWxVQ/4ph16VQiFeVLAeYnUmpI1kieBGZjdw="
+    - secure: "rQt7RAw1QT05D1xMsve2VeCeABr2SWtEaHVaZo5kH3yLzLviFOgMDC7Wx2rTq+qdvhuqJ3H+Xxg9jPXygmmZ5h/D9fFtiH08d7JNoaKQolYmR5tExn40Hjnse2uVlHpfuaEmQXpt3gNoHTNvM5kopw5eIAtZl951JvzoCwHN9x2P7pDWNBpYJ5vunenGrhpwxBm/Lu+AsV5zKPMs1RXIPM0nkWIqZ5n+EJf89Q7PUQ3gc7PDhsnKEbB1f5deJrzQNm3rh32egScpOUv0Cv9Wvq5GoQdEQr5LUCqxFLVmUEtR4Yk528mO3Ch1rwQBB+GcLxdJdQcvaHD9e8b8rFIk9MiGHe94+1VwvLsPWX00XTFcujXdY+ZeUGyYTYcjlTbQpDFJgu/x2vFToH9JRy46cHLIJ2K7tiqKKmaIfkbn8Hy7xzFu4pg5M3x1SNTgITsGwbt/BRXT6ZZHmh+pBqqne0gxS4T2wuh6P7jYr+3ZzxZnvmPBH84UCo+z0frdjwpV2Vj3StKGAyj2XS6hSKTLN6mC8bt/PU80qgd7sjYTcOEyZ5IBMheGRiK2XtjbM15SaTYI4zCn0xqg4O/Skblw/o3OWCiNdWBFLkf0SrUoBqIlrjD+PsFrJA4YvajP4ZlZhIBtrEKfhMOcEFicsryW88Z/x7o3z81XJucY07tuYKA="
     - COMMIT=${TRAVIS_COMMIT::7}
+    - IMAGE_NAME=tabletennistournament/match-management-client
 
 before_install:
   - docker pull bitnami/nginx:1.16
@@ -37,15 +37,13 @@ script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
 after_success:
-  - export COMMIT=${TRAVIS_COMMIT::7}
-  - export NEW_IMAGE_NAME=tabletennistournament/match-management-client
   - export TAG=`if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi`
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-  - docker build . -t $NEW_IMAGE_NAME:latest
-  - docker tag $NEW_IMAGE_NAME:latest $NEW_IMAGE_NAME:$TAG
-  - docker push $NEW_IMAGE_NAME:latest
-  - docker push $NEW_IMAGE_NAME:$TAG
-  - export TITLE="$NEW_IMAGE_NAME:$TAG is built properly and pushed to Dockerhub"
+  - docker build . -t $IMAGE_NAME:latest
+  - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
+  - docker push $IMAGE_NAME:latest
+  - docker push $IMAGE_NAME:$TAG
+  - export TITLE="$IMAGE_NAME:$TAG is built properly and pushed to Dockerhub"
   - export TIMESTAMP=`date`
   - export GIT_LOG=`git log -1 --pretty=%B $COMMIT`
   - export TEXT="[build version] $TAG<br />[datetime] $TIMESTAMP<br />[changelog] $GIT_LOG<br />"
