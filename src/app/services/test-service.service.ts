@@ -11,10 +11,10 @@ export class TestServiceService {
   }
 
   call1(): Observable<string>{
-    return this.http.get<string>('api/test1');
+    return this.http.get<string>('api/hello');
   }
 
   call2(): Observable<string>{
-    return this.http.get<string>('api/test2');
+    return this.http.get<string>('api/actuator/health');
   }
 }
