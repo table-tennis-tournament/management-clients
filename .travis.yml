@@ -7,7 +7,7 @@ services:
   - docker
 matrix:
   fast_finish: true
-  
+
 addons:
   apt:
     sources:
@@ -38,7 +38,7 @@ install:
 script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
   - npm run build
-  - export TAG=`if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi`
+  - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi | sed 's/\//-/')
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   - docker build . -t $IMAGE_NAME:latest
   - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
