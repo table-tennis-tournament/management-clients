@@ -41,8 +41,10 @@ script:
   - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi | sed 's/\//-/')
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   - docker build . -t $IMAGE_NAME:latest
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:master; fi
   - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
   - docker push $IMAGE_NAME:latest
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker push $IMAGE_NAME:master; fi
   - docker push $IMAGE_NAME:$TAG
   - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG tabletennistournament/gitops-deploy
 
