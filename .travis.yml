@@ -23,8 +23,10 @@ env:
   global:
     - secure: "U4onCmRz9xpGjr27VO/TqDU/Lu75rRcw/s9kINYiJpDxay/pRm5cy3ZVJqquE4j4EsoT3KRQwkqfw8bx145zAFrJ8QRVWqTC2/MoAgaqzpWArR+moV0V8iQ/uEa1bDAVTWwx/2CdHS64rxpVD7w32NzC1PeyEc4nlnVADktoUzsZg2yd2XMo2GEc/MC2v3Hr4IN7CZoWiBD2XKxSwbSFJY1wugg1GCLj8ztYjERmI0BUzhYlLviCZlRY5RaSut4rJG6otdDSjnsJ9RiNcXujcSEFSnPW3RnvgBkUIro8aMdCC9KWkqdTf8H8yJekKAjUI5pWkcR9FCClzcMq7pBAlxPWiWAC38ffStoEM9it7eUp2EVnd8SrrE8AqLG1x53p5fXmbhXEvORkfah20CdqZ1Ad7epDR+c/b7PKWispaO0nEDpDcwyofMpnvU99Q+4BSoHHigeVf+M0t+ieGIagECrnsZKfYvAuubrWxV8wBoT/MFni8nVrU4dev9tcFqz2Lrg/2x7w9CcgCKuG6yiHVYZYaFR0NdGgxxVcdWylc99p4BgLMyiY5saAxb/GgrwJkh2iv8i3WyTtoPbO6Yuqud78v4ZvkQOORUL5yH/GYQxdYiX90kGeAv+T1oe0i6mz3rJBaJPlVSz0/KnjOzbM4l3YQIMD6ujCgFbHpc3YY8k="
     - secure: "Xd6mcg4GmVwg80kKof1qJIgbYbL588FnglpgozS+UXziOT7ShRtF3auEj7etPuv8ZW+9ncynodEsHuV8iKuEkxtRhSccRqPGIfnusNLJ78yEG1jhAm7gBGeZLynLK17lTxZmlQNLH3e6/4cHJEK0xT1F2x17PYN79sNr6OzxxO3qDECOWv5RFHKVGLCeYbjrSVsCnIuHDV5Epn/baaLiAerNbh1k/bkaIFJfz0/ukwGGTaI0yy7/zCoHOYnN1rLa+24UNCNBmPGCXmy+n7W0RddL9/ybHWOJjXpmnDY8UxFepKFgtrECqb2TSSlStSMdGQLAijCFI1r70gFrZ7IHE7PdC4dT+sAkJAHY/M+7U9ai2nPqddl2/n6cdA20wn5Ia58lFPKuq7N6ILQX5F/UdjEEbJnRNfPORmfvJvxvSFW0GkbT6D9lx5ITqH16VwQpGHAhf26q1hAyu05MGEVcNMzvJYnX3H/5wFV5dUrsb7QVo3IPqkVSc9v2J58dj/PmVSaL91Oa8rtGLT2Bgcv79catEXVy6YVQfV06i/EAun1BX7/am6G2EMYncmVPoMOle2eHGN7sc7RiL5bd/GrHFvf+DiBDCvpDaGM9vfcPey26F8itJpmGUircCk4D4YUxiw/DWtmqbPKIR3a0c8VXxvzQfJbGzVdNr/NYafn2omc="
-   # CONFIG_REPOSITORY
+    # CONFIG_REPOSITORY
     - secure: "E8Ja+SxO4xIGokWQTs4gCprc1t2g/+mWVu4qH707oDjX0nGkv+wytaFmwpdn2xXF1//wE5wNSz8SdBxyTNMQmyZq+jwOHtPnUFXjfxe+dTT+dnwT+h1jXDWLh1rtsGtqJJsAi9D87GZY5cqtMtevuqydnTLLKOiBX5j+3N5gpsl2b6xfkHlhs+Gwjl4VacSHHkWVIuABMlJKL9bAzdueqsza2H98cr4My3eW3gkMDOeyhX9+rmaagHpegkwUig2VNB1Gy2oLz3KAzIpOUIdsliG98vZM9dGXAdQqfqtHhQ/94eUoyFqfm9lUVIPr10hLe1xzRGiZRBOidTPvLgtfJTTJ9YQZjVksKqGlOZA632gxYMEWc0ZsdecQrMNJtvtbEksiOO0dsYv7eSI3teL4qSn7OPHqSzW+xSXQxj80aJ5u7cs97OIAih3o6CJC4UQHjCUgrt5vJKd+0NHgBuLvVUwzai8O4eJD1wbGCRvUd4VEgz7DDHehXAj+EWzvRCYvo0JRnvc+jrW5jy/saHWcnnBW5kgjgE/uzSYZbUBYzurMbg6NjSc/knyhn2YHux5olANAKMog14aM3PL20QzkpHZsFlAaaXibz0HJB+A69FHVdZ+aEzn/5SBNLPmRYQcfRttjLVrd2UscLAsGlEVdPK+9NLow7rHqdjMDdvobEDY="
+    # GITHUB_API_TOKEN
+    secure: "M9j47d/EaPr642sfC7JjD6a+I8x5CXF++qiXOgJIi09W1Q6pxJqAm4Jvh6hOjOmYWmP2KbH0GwVEgm5uAXUiPPWGIICNkBk0hebG3U0pg9J/ybuiPM82c1B0Ia8CHxnDq6QU74R9yCRHWoogar5oZwvVVgnXRbckgsyRbOghq2DDvw6JVgxIUG/HfhA7CLddqxu4lPa1CsfcsztH2He4/SsSBl9ywIs4yoDNTOEQWJWNJvfJuxIEPqA7WmBTm+g9xzKuhP0WHHNq63gGYWmXliUB8uwMNiL5UrDoycCA19QiKFLumX7RBGUdXE2T6TwousBgEjc3vf0Az2D6QRc9nL7cH9VYhG6J1wbpzS57cbjFqHZD53lJsTpGG+wqH+enodt0XnvHxzDtVNGXf0W+dUGGvZXN08wTEIoviNguenn287XGLSN2nO3+W/rOyUKUCqEt3kyepKAuVPa0gZKI+J4lP9qv1CceIR5drPfcB6eqU3UNIQCJPfabOg3hWNnwY0OkLfNMFHPOKozSjGX5hD87PsKDpOpTlhB4vwhRr+zx33QVPHOk1J4AEpiQNd8qAjYhuUEyUXDw1Mq6MK+BWck94zS4Gagumy76oYyZS66VaWj7TQJSAepglcnp+y8UCJ9NDB4quryQMoG8tkyGEMgnuks0YA2uw9g+4uIsFtI="
     - APP_NAME=ttt-staging  
     - COMMIT=${TRAVIS_COMMIT::7}
     - IMAGE_NAME=tabletennistournament/match-management-client
@@ -41,12 +43,12 @@ script:
   - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi | sed 's/\//-/')
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   - docker build . -t $IMAGE_NAME:latest
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:master; fi
+  - if [ $TRAVIS_BRANCH = "master" ]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:master; fi
   - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
   - docker push $IMAGE_NAME:latest
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker push $IMAGE_NAME:master; fi
+  - if [ $TRAVIS_BRANCH = "master" ]; then docker push $IMAGE_NAME:master; fi
   - docker push $IMAGE_NAME:$TAG
-  - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG -e GIT_BRANCH=$TRAVIS_BRANCH -e BRANCH_TEMPLATE=app-template tabletennistournament/gitops-deploy
+  - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG -e GIT_BRANCH=$TRAVIS_BRANCH -e BRANCH_TEMPLATE=app-template -e REPO_SLUG=$TRAVIS_REPO_SLUG -e GITHUB_TOKEN=$GITHUB_API_TOKEN -e PR_ID=$TRAVIS_PULL_REQUEST -e TRAVIS_JOB_URL=$TRAVIS_JOB_WEB_URL tabletennistournament/gitops-deploy
 
 
 
