@@ -27,12 +27,11 @@ env:
     - secure: "E8Ja+SxO4xIGokWQTs4gCprc1t2g/+mWVu4qH707oDjX0nGkv+wytaFmwpdn2xXF1//wE5wNSz8SdBxyTNMQmyZq+jwOHtPnUFXjfxe+dTT+dnwT+h1jXDWLh1rtsGtqJJsAi9D87GZY5cqtMtevuqydnTLLKOiBX5j+3N5gpsl2b6xfkHlhs+Gwjl4VacSHHkWVIuABMlJKL9bAzdueqsza2H98cr4My3eW3gkMDOeyhX9+rmaagHpegkwUig2VNB1Gy2oLz3KAzIpOUIdsliG98vZM9dGXAdQqfqtHhQ/94eUoyFqfm9lUVIPr10hLe1xzRGiZRBOidTPvLgtfJTTJ9YQZjVksKqGlOZA632gxYMEWc0ZsdecQrMNJtvtbEksiOO0dsYv7eSI3teL4qSn7OPHqSzW+xSXQxj80aJ5u7cs97OIAih3o6CJC4UQHjCUgrt5vJKd+0NHgBuLvVUwzai8O4eJD1wbGCRvUd4VEgz7DDHehXAj+EWzvRCYvo0JRnvc+jrW5jy/saHWcnnBW5kgjgE/uzSYZbUBYzurMbg6NjSc/knyhn2YHux5olANAKMog14aM3PL20QzkpHZsFlAaaXibz0HJB+A69FHVdZ+aEzn/5SBNLPmRYQcfRttjLVrd2UscLAsGlEVdPK+9NLow7rHqdjMDdvobEDY="
     # GITHUB_API_TOKEN
     - secure: "M9j47d/EaPr642sfC7JjD6a+I8x5CXF++qiXOgJIi09W1Q6pxJqAm4Jvh6hOjOmYWmP2KbH0GwVEgm5uAXUiPPWGIICNkBk0hebG3U0pg9J/ybuiPM82c1B0Ia8CHxnDq6QU74R9yCRHWoogar5oZwvVVgnXRbckgsyRbOghq2DDvw6JVgxIUG/HfhA7CLddqxu4lPa1CsfcsztH2He4/SsSBl9ywIs4yoDNTOEQWJWNJvfJuxIEPqA7WmBTm+g9xzKuhP0WHHNq63gGYWmXliUB8uwMNiL5UrDoycCA19QiKFLumX7RBGUdXE2T6TwousBgEjc3vf0Az2D6QRc9nL7cH9VYhG6J1wbpzS57cbjFqHZD53lJsTpGG+wqH+enodt0XnvHxzDtVNGXf0W+dUGGvZXN08wTEIoviNguenn287XGLSN2nO3+W/rOyUKUCqEt3kyepKAuVPa0gZKI+J4lP9qv1CceIR5drPfcB6eqU3UNIQCJPfabOg3hWNnwY0OkLfNMFHPOKozSjGX5hD87PsKDpOpTlhB4vwhRr+zx33QVPHOk1J4AEpiQNd8qAjYhuUEyUXDw1Mq6MK+BWck94zS4Gagumy76oYyZS66VaWj7TQJSAepglcnp+y8UCJ9NDB4quryQMoG8tkyGEMgnuks0YA2uw9g+4uIsFtI="
-    - APP_NAME=ttt-staging  
+    # ARGOCD_AUTH_TOKEN
+    - secure: "q0QvbMSZYOkoAzkdWVR8ov4zt/wVLYNVaJZrfNNhPHDu1NB3anPvEr0Dk1uuqeNHA4fd9n7kDDyMHm0nTOQC57t2Y23s0y8SfB+V82cI0fMrztIUj0KWN8/R+CIgHw7DgQ/F6ABgh6mgMJ0Wzg51kWiHP3EV4/EOc82prcuUy5CaxeJkkktnCg64pYVv8NhkhW6BdHRRkSuteRJJaqwTTF36XyAZCothaZUTCmS2aLxv6EDyqXd8hTNMKSlcs8d6youWbG793VueAYVGy9aDyP3Psuna2ea6suYkO3Nlx1xkk7PxpjSBcEOOecIEf9YNsEi9TBWk3ax6bcrFjeclSIrbxeZ8boUzUKjBoZ0ztIORwHR3qz6U4ERFzY30+MpdR9xeZ76Lxyl1B+zTdvE/mEr6qvg2PkKurhefI/7uvmL+ggKocCAKT9E1GSG+Vn8mKoegGd5Vnm7vaLhbqMMxqlzlTUGOsJru0vU8xPX1FN7I1RmNYWjlvP8MJNWpWlBsmZXsnbiU1/eFUjEjI+de1ryG1fCTU4fqWXm5mYwbctAIo+bXSh73sDiaO6/TxHwyHh4nka6lOMXDrm8HgNepvcq9K2TJ/+zXJh+M8McjFrkbbKNxVeSY6KyWX/9NprEdqjI1xBBP9R65UWOGJlbYUilNUpHy8T8VAQ+4mBDUK2w="
+    - APP_NAME=ttt-staging
     - COMMIT=${TRAVIS_COMMIT::7}
     - IMAGE_NAME=tabletennistournament/match-management-client
-
-before_install:
-  - docker pull bitnami/nginx:1.16
 
 install:
   - npm install
@@ -41,14 +40,12 @@ script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
   - npm run build
   - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi | sed 's/\//-/')
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   - docker build . -t $IMAGE_NAME:latest
-  - if [ $TRAVIS_BRANCH = "master" ]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:master; fi
+  - if [ $BRANCH = "master" ]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:master; fi
   - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
   - docker push $IMAGE_NAME:latest
-  - if [ $TRAVIS_BRANCH = "master" ]; then docker push $IMAGE_NAME:master; fi
+  - if [ $BRANCH = "master" ]; then docker push $IMAGE_NAME:master; fi
   - docker push $IMAGE_NAME:$TAG
-  - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG -e GIT_BRANCH=$TRAVIS_BRANCH -e BRANCH_TEMPLATE=app-template -e REPO_SLUG=$TRAVIS_REPO_SLUG -e GITHUB_TOKEN=$GITHUB_API_TOKEN -e PR_ID=$TRAVIS_PULL_REQUEST -e TRAVIS_JOB_URL=$TRAVIS_JOB_WEB_URL tabletennistournament/gitops-deploy
-
-
-
+  - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG -e GIT_BRANCH=$BRANCH -e BRANCH_TEMPLATE=app-template -e REPO_SLUG=$TRAVIS_REPO_SLUG -e GITHUB_TOKEN=$GITHUB_API_TOKEN -e PR_ID=$TRAVIS_PULL_REQUEST -e TRAVIS_JOB_URL=$TRAVIS_JOB_WEB_URL -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN tabletennistournament/gitops-deploy
