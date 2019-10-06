@@ -39,8 +39,8 @@ install:
 script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
   - npm run build
-  - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH-$COMMIT"; fi | sed 's/\//-/')
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$BRANCH-$COMMIT"; fi | sed 's/\//-/')
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   - docker build . -t $IMAGE_NAME:latest
   - if [ $BRANCH = "master" ]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:master; fi
