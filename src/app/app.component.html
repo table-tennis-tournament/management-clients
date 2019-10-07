@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<!--mat-toolbar color="primary">
   <mat-toolbar-row>
     <button mat-icon-button>
       <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
@@ -18,5 +18,11 @@
   <mat-toolbar-row>
     Result: {{result | json}}
   </mat-toolbar-row>
-</mat-toolbar>
+</mat-toolbar-->
 
+<mat-sidenav-content>
+  <app-navigation></app-navigation>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</mat-sidenav-content>
