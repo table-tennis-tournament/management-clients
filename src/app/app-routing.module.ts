@@ -5,7 +5,7 @@ import { TableListComponent } from './table-list/table-list.component';
 
 
 const routes: Routes = [
-  { path: '', component: AppComponent},
+  { path: '', component: TableListComponent},
   { path: 'tablemanager', component: TableListComponent}
 ];
 

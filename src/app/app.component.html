@@ -1,28 +1,3 @@
-<!--mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <button mat-icon-button>
-      <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
-    </button>
-    <h1>Match-Management</h1>
-    <span class="menu-spacer"></span>
-    <div>
-      <a mat-button [routerLink]="'/Start'"> Start </a>
 
-    </div>
-  </mat-toolbar-row>
-
-  <mat-toolbar-row>
-    <button (click)="onApiCall1()">API-Call 1</button>
-    <button (click)="onApiCall2()">API-Call 2</button>
-  </mat-toolbar-row>
-  <mat-toolbar-row>
-    Result: {{result | json}}
-  </mat-toolbar-row>
-</mat-toolbar-->
-
-<mat-sidenav-content>
-  <app-navigation></app-navigation>
-  <main>
-    <router-outlet></router-outlet>
-  </main>
-</mat-sidenav-content>
+<app-navigation></app-navigation>
+<router-outlet></router-outlet>
