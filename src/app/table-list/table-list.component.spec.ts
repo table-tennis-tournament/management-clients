@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { TableService } from '../services/table.service';
+import { TableService } from './table.service';
 import { TableListComponent } from './table-list.component';
 describe('TableListComponent', () => {
   let component: TableListComponent;

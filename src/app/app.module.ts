@@ -9,13 +9,15 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { TableListComponent } from './table-list/table-list.component';
 import { MaterialModule } from './material/material.module';
 import { TtTableComponent } from './table-list/tt-table/tt-table.component';
+import { PlayerNamePipe } from './table-list/player-name.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationComponent,
     TableListComponent,
-    TtTableComponent
+    TtTableComponent,
+    PlayerNamePipe
   ],
   imports: [
     BrowserModule,
