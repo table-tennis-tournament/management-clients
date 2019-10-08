@@ -4,7 +4,6 @@ import {
   HttpTestingController
 } from '@angular/common/http/testing';
 import { TableService } from './table.service';
-import {Club} from './club.model';
 import {Player} from './player.model';
 import {Match} from './match.model';
 import {Table} from './table.model';
@@ -36,19 +35,13 @@ xdescribe('TableService', () => {
             player_id: 1,
             first_name: 'Hans',
             last_name: 'Muster',
-            club: {
-              club_id: 1,
-              name: 'BTV Basel'
-            } as Club
+            club: 'BTV Basel'
           } as Player,
           player_b: {
             player_id: 2,
             first_name: 'Gabi',
             last_name: 'Meier',
-            club: {
-              club_id: 2,
-              name: 'TTT Mühlhausen'
-            } as Club
+            club: 'TTT Mühlhausen'
           } as Player,
           classification: 'beginners',
         } as Match
