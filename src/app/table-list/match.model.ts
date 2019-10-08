@@ -6,5 +6,5 @@ export interface Match {
     result?: any;
     player_a?: Player;
     player_b?: Player;
-    classification?: Classification;
+    classification?: string;
 }
