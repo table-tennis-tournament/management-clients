@@ -15,7 +15,7 @@ export class TableListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.service.getTables().subscribe(tables => {
+        this.service.getTables(22).subscribe(tables => {
             this.tables = tables;
         });
     }

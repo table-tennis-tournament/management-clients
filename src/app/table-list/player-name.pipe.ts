@@ -7,7 +7,7 @@ import {Player} from './player.model';
 export class PlayerNamePipe implements PipeTransform {
 
   transform(value: Player, ...args: any[]): any {
-    return value.firstName + ' ' + value.lastName;
+    return value.first_name + ' ' + value.last_ame;
   }
 
 }

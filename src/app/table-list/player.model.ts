@@ -1,8 +1,8 @@
 import {Club} from './club.model';
 
 export interface Player {
-    id?: number;
-    firstName?: string;
-    lastName?: string;
+    player_id?: number;
+    first_name?: string;
+    last_ame?: string;
     club?: Club;
 }
