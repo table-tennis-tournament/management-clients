@@ -1,5 +1,4 @@
 import {Player} from './player.model';
-import {Classification} from './classification.model';
 
 export interface Match {
     match_id?: number;
