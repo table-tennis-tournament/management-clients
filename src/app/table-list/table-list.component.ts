@@ -1,6 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Table} from './table.model';
-import { TableService } from './table.service';
+import {select, Store} from '@ngrx/store';
+import {Observable} from 'rxjs';
+import * as TableActions from './redux/table-list.actions';
+import * as MatchActions from './match/redux/match.actions';
+import {getTables, TablesState} from './redux/table-list.reducer';
+import {Table} from './tt-table/table.model';
 
 @Component({
     selector: 'app-table-list',
@@ -9,15 +13,17 @@ import { TableService } from './table.service';
 })
 export class TableListComponent implements OnInit {
 
-    tables: Table[];
+    tables$: Observable<Table[]>;
 
-    constructor(public service: TableService) {
+    constructor(private store: Store<TablesState>) {
+        this.tables$ = store.pipe(select(getTables));
     }
 
     ngOnInit() {
-        this.service.getTables(22).subscribe(tables => {
-            this.tables = tables;
-        });
+        this.store.dispatch(TableActions.loadTables({tableManagerId: 1}));
     }
 
+    onUpdateMatchResult($event: any) {
+        this.store.dispatch(MatchActions.updateMatchResult(100, {}))
+    }
 }
