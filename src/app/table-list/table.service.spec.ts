@@ -29,7 +29,7 @@ xdescribe('TableService', () => {
    // httpMock.expectOne('/api/tables?table_manager=22');
     const dummyTables = [
       {
-        table_id: 4711,
+        table_id: '4711',
         current_match: {
           match_id: 815,
           player_a: {
