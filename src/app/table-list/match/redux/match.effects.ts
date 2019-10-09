@@ -21,7 +21,7 @@ export class MatchEffects {
     ));
 
     updateMatchResultError$ = createEffect(() => this.actions$.pipe(
-        ofType(TableActions.loadTablesError),
+        ofType(MatchActions.updateMatchResultError),
         tap(() => {
             this.snackBar.open('Match could not be updated.');
         })
