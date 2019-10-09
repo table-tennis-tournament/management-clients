@@ -24,6 +24,6 @@ export class TableListComponent implements OnInit {
     }
 
     onUpdateMatchResult($event: any) {
-        this.store.dispatch(MatchActions.updateMatchResult(100, {}))
+        this.store.dispatch(MatchActions.updateMatchResult({matchId: 100,  result: {games: []}}));
     }
 }

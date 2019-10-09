@@ -69,7 +69,7 @@ export abstract class WebsocketService {
         let host = location.host;
         const path = '/'; // location.pathname;
         const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-        let apiPath = 'api/tables/ws';
+        const apiPath = 'api/tables/ws';
 
         host = (protocol + '//' + host + path).replace('index.html', '');
 
