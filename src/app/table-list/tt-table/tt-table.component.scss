@@ -7,3 +7,40 @@
 .tt-table{
   margin: 10px;
 }
+.full-width {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+}
+
+.padding-right {
+  padding-right: 15px;
+}
+
+.game-width {
+  width:60px;
+  padding: 5px;
+}
+.scorefield {
+  width: 100%;
+}
+
+.valuedisplay {
+  text-align: center;
+  background: lightblue;
+  font-size: 30pt;
+  padding-bottom: 5px;
+}
