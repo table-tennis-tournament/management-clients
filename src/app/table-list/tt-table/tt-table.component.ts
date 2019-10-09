@@ -17,7 +17,6 @@ export class TtTableComponent {
     updateMatchResult = new EventEmitter();
 
     constructor(public dialog: MatDialog) {
-
     }
 
     openDialog() {
@@ -27,7 +26,12 @@ export class TtTableComponent {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.updateMatchResult.emit(result);
+            if (!!result) {
+                this.updateMatchResult.emit({
+                    matchId: this.table.current_match.match_id,
+                    result
+                });
+            }
         });
     }
 }
