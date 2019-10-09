@@ -1,9 +1,9 @@
 import {createAction, props} from '@ngrx/store';
-import {Result} from '../result.model';
+import {Game} from '../game.model';
 
 export const updateMatchResult = createAction(
     '[Match] Update Match Result',
-    props<{ matchId: number, result: Result }>()
+    props<{ matchId: number, game: Game }>()
 );
 
 export const updateMatchResultSuccess = createAction(
