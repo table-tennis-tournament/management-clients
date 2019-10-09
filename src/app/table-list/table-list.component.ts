@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {select, Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
+import {Match} from './match/match.model';
 import * as MatchActions from './match/redux/match.actions';
 import {Result} from './match/result.model';
 import * as TableActions from './redux/table-list.actions';
@@ -33,5 +34,9 @@ export class TableListComponent implements OnInit {
 
     onUpdateMatchResult(matchResult: any) {
         this.store.dispatch(MatchActions.updateMatchResult(matchResult));
+    }
+
+    onFinishMatch(match: Match) {
+        this.store.dispatch(MatchActions.finishMatch({matchId: match.match_id}));
     }
 }

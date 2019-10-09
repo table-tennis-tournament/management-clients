@@ -13,4 +13,8 @@ export class MatchService {
     updateMatchResult(matchId: number, result: Result): Observable<any> {
         return this.http.put<any>(`api/matches/${matchId}/result`, result);
     }
+
+    finishMatch(matchId: number) {
+        return this.http.put<any>(`api/matches/${matchId}/state`, {state: 'FINISHED'});
+    }
 }

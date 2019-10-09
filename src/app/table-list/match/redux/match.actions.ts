@@ -17,3 +17,18 @@ export const updateMatchResultError = createAction(
     props<{}>()
 );
 
+export const finishMatch = createAction(
+    '[Match] Finish Match',
+    props<{ matchId: number}>()
+);
+
+export const finishMatchSuccess = createAction(
+    '[Match] Finish Match Success',
+    props<{}>()
+);
+
+export const finishMatchError = createAction(
+    '[Match] Finish Match Error',
+    props<{}>()
+);
+
