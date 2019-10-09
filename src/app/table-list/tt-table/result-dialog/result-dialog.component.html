@@ -1,0 +1,47 @@
+<h1 mat-dialog-title>Match Nr. {{match.match_id}}</h1>
+<div mat-dialog-content >
+    <div class="some-page-wrapper">
+        <div class="row">
+            <div class="column">
+            </div>
+            <div class="column">
+                1. Satz
+            </div>
+            <div class="column">
+                2. Satz
+            </div>
+            <div class="column">
+                3. Satz
+            </div>
+            <div class="column">
+                4. Satz
+            </div>
+            <div class="column">
+                5. Satz
+            </div>
+        </div>
+        <div class="row dialog-main-center">
+            <div class="column padding-right">
+                <div class="mat-body-strong">{{match.player_a | playerName}}</div>
+                <div>({{match.player_a.club}})</div>
+                <div class="mat-body-strong">-</div>
+                <div class="mat-body-strong">{{match.player_b | playerName}}</div>
+                <div>({{match.player_b.club}})</div>
+            </div>
+
+            <div class="column game-width" *ngFor="let game of games; let i = index">
+                <mat-form-field>
+                    <input matInput  [(ngModel)]="game.score_player_a">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput  [(ngModel)]="game.score_player_b">
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-button (click)="onOk()" cdkFocusInitial>Ok</button>
+</div>

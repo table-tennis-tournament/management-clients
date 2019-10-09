@@ -1,6 +1,7 @@
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
 import {Table} from '../tt-table/table.model';
 import * as TableActions from './table-list.actions';
+import { matchAssignedToTable } from './table-list.actions';
 
 export interface TablesState {
     tables: Table[];
@@ -19,6 +20,16 @@ export const tableReducer = createReducer(
     on(TableActions.loadTablesSuccess, (state, {tables}) => ({
         ...state,
         tables
+    })),
+    on(TableActions.matchAssignedToTable, (state, {table}) => ({
+        ...state,
+        tables: state.tables.map(existingTable => {
+            if(existingTable.table_id === table.table_id) {
+                return table;
+            } else {
+                return existingTable;
+            }
+        })
     })),
 );
 
