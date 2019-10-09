@@ -45,4 +45,12 @@ export class TtTableComponent {
             }
         });
     }
+
+    playerAWon(game: Game) {
+        return game.score_player_a > game.score_player_b;
+    }
+
+    playerBWon(game: Game) {
+        return game.score_player_b > game.score_player_a;
+    }
 }

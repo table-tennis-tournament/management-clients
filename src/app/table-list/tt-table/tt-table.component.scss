@@ -43,4 +43,8 @@
   background: lightblue;
   font-size: 30pt;
   padding-bottom: 5px;
+  &.won {
+    color: green;
+    font-weight: bold;
+  }
 }

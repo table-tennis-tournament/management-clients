@@ -32,8 +32,8 @@
                         <div>({{table.current_match.player_b.club}})</div>
                     </div>
                 <div class="column game-width " *ngFor="let game of allGames()">
-                        <div class="scorefield valuedisplay">{{game.score_player_a}}</div>
-                        <div class="scorefield valuedisplay">{{game.score_player_b}}</div>
+                        <div [ngClass]="{'won': playerAWon(game)}" class="scorefield valuedisplay">{{game.score_player_a}}</div>
+                        <div [ngClass]="{'won': playerBWon(game)}" class="scorefield valuedisplay">{{game.score_player_b}}</div>
                     </div>
         </div>
 
