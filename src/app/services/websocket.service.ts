@@ -67,6 +67,7 @@ export class WebsocketService {
 
         this.websocket = new SockJS(this.backendUrl);
         this.stompClient = Stomp.over(this.websocket);
+        this.stompClient.debug = () => {};
         this.stompClient.connect({}, frame => {
             this.connectedState = true;
             this.stompClient.subscribe('/topic/table', evt => {
