@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
@@ -21,7 +22,8 @@ const matModules = [
     MatFormFieldModule,
     MatDialogModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
+    MatSnackBarModule
 ];
 
 @NgModule({
@@ -29,6 +31,15 @@ const matModules = [
     imports: [
         CommonModule,
         ...matModules
+    ],
+    providers: [
+        {
+            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
+                politeness: 'assertive',
+                verticalPosition: 'top',
+                duration: 3000
+            }
+        }
     ],
     exports: [...matModules]
 })
