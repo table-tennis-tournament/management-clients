@@ -16,16 +16,13 @@ export class TableListComponent implements OnInit {
 
     tables$: Observable<Table[]>;
 
-    eventmessages: any;
-
     constructor(private store: Store<AppState>, private events: WebsocketService) {
         this.tables$ = store.pipe(select(getTables));
     }
 
     ngOnInit() {
         this.store.dispatch(TableActions.loadTables({tableManagerId: 1}));
-        this.events.activeTables.subscribe(tables => this.eventmessages = tables);
-        this.events.initWebsocket();
+        this.events.startListening();
     }
 
     onUpdateMatchResult($event: any) {

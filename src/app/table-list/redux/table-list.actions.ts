@@ -11,6 +11,11 @@ export const loadTablesSuccess = createAction(
     props<{ tables: Table[] }>()
 );
 
+export const matchAssignedToTable = createAction(
+    '[Tables] MatchAssignedToTable',
+    props<{ table: Table }>()
+);
+
 export const loadTablesError = createAction(
     '[Tables] Load Tables Error',
     props<{}>()
