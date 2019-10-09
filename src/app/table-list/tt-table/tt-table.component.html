@@ -4,13 +4,40 @@
         <mat-card-subtitle><mat-chip-list><mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip></mat-chip-list></mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-        <div class="flex flex-horizontal-center card-main-center">
-            <div class="mat-body-strong">{{table.current_match.player_a | playerName}}</div>
-            <div>({{table.current_match.player_a.club}})</div>
-            <div>-</div>
-            <div class="mat-body-strong">{{table.current_match.player_b | playerName}}</div>
-            <div>({{table.current_match.player_b.club}})</div>
+        <div class="row">
+            <div class="column">
+            </div>
+            <div class="column">
+                1. Satz
+            </div>
+            <div class="column">
+                2. Satz
+            </div>
+            <div class="column">
+                3. Satz
+            </div>
+            <div class="column">
+                4. Satz
+            </div>
+            <div class="column">
+                5. Satz
+            </div>
         </div>
+        <div class="row">
+                <div class="column flex flex-horizontal-center card-main-center">
+                        <div class="mat-body-strong">{{table.current_match.player_a | playerName}}</div>
+                        <div>({{table.current_match.player_a.club}})</div>
+                        <div>-</div>
+                        <div class="mat-body-strong">{{table.current_match.player_b | playerName}}</div>
+                        <div>({{table.current_match.player_b.club}})</div>
+                    </div>
+                <div class="column game-width " *ngFor="let game of allGames()">
+                        <div [ngClass]="{'won': playerAWon(game)}" class="scorefield valuedisplay">{{game.score_player_a}}</div>
+                        <div [ngClass]="{'won': playerBWon(game)}" class="scorefield valuedisplay">{{game.score_player_b}}</div>
+                    </div>
+        </div>
+
+        
     </mat-card-content>
     <mat-card-actions>
         <button mat-raised-button color="accent" (click)="openDialog()">Ergebnis erfassen</button>
