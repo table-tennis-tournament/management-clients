@@ -5,3 +5,4 @@ $PRODUCT_WORKSPACE_FILE$
 modules.xml
 libraries/**
 /shelf/**
+sonarlint/
