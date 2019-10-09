@@ -10,7 +10,7 @@ export class MatchService {
     constructor(private http: HttpClient) {
     }
 
-    updateMatchResult(matchId: number, game: Result): Observable<any> {
-        return this.http.post<any>(`api/matches/${matchId}/games`, game);
+    updateMatchResult(matchId: number, result: Result): Observable<any> {
+        return this.http.put<any>(`api/matches/${matchId}/result`, result);
     }
 }

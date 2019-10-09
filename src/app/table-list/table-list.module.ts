@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {ReactiveFormsModule} from '@angular/forms';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreModule} from '@ngrx/store';
 import {SharedModule} from '../shared/shared.module';
@@ -22,7 +23,8 @@ import {TtTableComponent} from './tt-table/tt-table.component';
     imports: [
         SharedModule,
         StoreModule.forFeature('tables', fromTables.tableReducer),
-        EffectsModule.forFeature([MatchEffects, TableListEffects])
+        EffectsModule.forFeature([MatchEffects, TableListEffects]),
+        ReactiveFormsModule
     ],
     exports: [TableListComponent],
     entryComponents: [

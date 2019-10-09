@@ -1,4 +1,4 @@
 export class Game {
-    player_ascore?: number;
-    player_bscore?: number;
+    score_player_a?: number;
+    score_player_b?: number;
 }

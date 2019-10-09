@@ -20,7 +20,7 @@
                 5. Satz
             </div>
         </div>
-        <div class="row dialog-main-center" >
+        <div class="row dialog-main-center">
             <div class="column padding-right">
                 <div class="mat-body-strong">{{match.player_a | playerName}}</div>
                 <div>({{match.player_a.club}})</div>
@@ -28,23 +28,18 @@
                 <div class="mat-body-strong">{{match.player_b | playerName}}</div>
                 <div>({{match.player_b.club}})</div>
             </div>
-            <div class="column">
-                <app-game [game]="match.result?.games[0]"></app-game>
-            </div>
-            <div class="column">
-                <app-game [game]="match.result?.games[1]"></app-game>
-            </div>
-            <div class="column">
-                <app-game [game]="match.result?.games[2]"></app-game>
-            </div>
-            <div class="column">
-                <app-game [game]="match.result?.games[3]"></app-game>
-            </div>
-            <div class="column">
-                <app-game [game]="match.result?.games[4]"></app-game>
+
+            <div class="column game-width" *ngFor="let game of games; let i = index">
+                <mat-form-field>
+                    <input matInput  [(ngModel)]="game.score_player_a">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput  [(ngModel)]="game.score_player_b">
+                </mat-form-field>
             </div>
         </div>
     </div>
+
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="onCancel()">Abbrechen</button>
