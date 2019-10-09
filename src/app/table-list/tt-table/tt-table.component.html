@@ -1,8 +1,7 @@
 <mat-card class="tt-table">
     <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>Tisch Nr. {{table.table_id}}</mat-card-title>
-        <mat-card-subtitle>{{table.current_match.classification}}</mat-card-subtitle>
+        <mat-card-title><span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch Nr: {{table.table_id}}</span></mat-card-title>
+        <mat-card-subtitle><mat-chip-list><mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip></mat-chip-list></mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
         <div class="flex flex-horizontal-center card-main-center">
@@ -14,6 +13,6 @@
         </div>
     </mat-card-content>
     <mat-card-actions>
-        <button mat-button (click)="openDialog()">Ergebnis erfassen</button>
+        <button mat-raised-button color="accent" (click)="openDialog()">Ergebnis erfassen</button>
     </mat-card-actions>
 </mat-card>

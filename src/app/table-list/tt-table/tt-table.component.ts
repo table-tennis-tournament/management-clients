@@ -16,7 +16,7 @@ export class TtTableComponent {
     @Output()
     updateMatchResult = new EventEmitter();
 
-    constructor(public dialog: MatDialog){
+    constructor(public dialog: MatDialog) {
 
     }
 
