@@ -10,7 +10,7 @@ export class MatchEffects {
 
     updateMatchResult$ = createEffect(() => this.actions$.pipe(
         ofType(MatchActions.updateMatchResult),
-        switchMap(({matchId, game}) => this.matchService.updateMatchResult(matchId, game)
+        switchMap(({matchId, result}) => this.matchService.updateMatchResult(matchId, result)
             .pipe(
                 map(() => MatchActions.updateMatchResultSuccess({})),
                 catchError(() => of(MatchActions.updateMatchResultError({})))

@@ -1,5 +1,4 @@
 export class Game {
-
-    gameId: string;
-
+    player_ascore?: number;
+    player_bscore?: number;
 }

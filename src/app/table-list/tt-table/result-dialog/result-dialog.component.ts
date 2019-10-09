@@ -4,18 +4,16 @@ import {Match} from '../../match/match.model';
 
 @Component({
     selector: 'app-result-dialog',
-    templateUrl: './result-dialog.component.html'
+    templateUrl: './result-dialog.component.html',
+    styleUrls: ['./result-dialog.component.scss']
 })
-export class ResultDialogComponent implements OnInit {
+export class ResultDialogComponent {
     currentResult: any;
 
     constructor(
         public dialogRef: MatDialogRef<ResultDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: Match) {
-    }
-
-
-    ngOnInit() {
+        @Inject(MAT_DIALOG_DATA) public match: Match) {
+        console.log(this.match);
     }
 
     onOk() {

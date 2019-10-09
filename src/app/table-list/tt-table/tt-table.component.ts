@@ -22,8 +22,8 @@ export class TtTableComponent {
 
     openDialog() {
         const dialogRef = this.dialog.open(ResultDialogComponent, {
-            width: '250px',
-            data: {result: this.table.current_match}
+            width: '700px',
+            data: this.table.current_match
         });
 
         dialogRef.afterClosed().subscribe(result => {
