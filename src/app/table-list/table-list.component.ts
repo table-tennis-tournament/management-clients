@@ -31,7 +31,7 @@ export class TableListComponent implements OnInit {
         this.events.startListening();
     }
 
-    onUpdateMatchResult($event: Result) {
-        this.store.dispatch(MatchActions.updateMatchResult({matchId: 100, result: $event}));
+    onUpdateMatchResult(matchResult: any) {
+        this.store.dispatch(MatchActions.updateMatchResult(matchResult));
     }
 }

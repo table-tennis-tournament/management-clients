@@ -27,7 +27,10 @@ export class TtTableComponent {
 
         dialogRef.afterClosed().subscribe(result => {
             if (!!result) {
-                this.updateMatchResult.emit(result);
+                this.updateMatchResult.emit({
+                    matchId: this.table.current_match.match_id,
+                    result
+                });
             }
         });
     }
