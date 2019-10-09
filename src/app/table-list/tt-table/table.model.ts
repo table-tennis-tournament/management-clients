@@ -1,4 +1,4 @@
-import {Match} from './match.model';
+import {Match} from '../match/match.model';
 
 export interface Table {
     table_id?: string;
