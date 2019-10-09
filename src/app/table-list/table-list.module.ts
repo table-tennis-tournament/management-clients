@@ -8,7 +8,6 @@ import {PlayerNamePipe} from './player-name.pipe';
 import {TableListEffects} from './redux/table-list.effects';
 import * as fromTables from './redux/table-list.reducer';
 import {TableListComponent} from './table-list.component';
-import {GameComponent} from './tt-table/result-dialog/game/game.component';
 import {ResultDialogComponent} from './tt-table/result-dialog/result-dialog.component';
 import {TtTableComponent} from './tt-table/tt-table.component';
 
@@ -17,8 +16,7 @@ import {TtTableComponent} from './tt-table/tt-table.component';
         TtTableComponent,
         TableListComponent,
         PlayerNamePipe,
-        ResultDialogComponent,
-        GameComponent
+        ResultDialogComponent
     ],
     imports: [
         SharedModule,
