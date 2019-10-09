@@ -4,3 +4,4 @@ $CACHE_FILE$
 $PRODUCT_WORKSPACE_FILE$
 modules.xml
 libraries/**
+/shelf/**
