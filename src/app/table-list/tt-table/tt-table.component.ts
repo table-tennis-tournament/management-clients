@@ -21,7 +21,7 @@ export class TtTableComponent {
     }
 
     allGames(): Game[] {
-        return [1, 2, 3, 4, 5].map(index =>
+        return [0, 1, 2, 3, 4].map(index =>
             this.table.current_match.result.games.length > index
             ? this.table.current_match.result.games[index]
             : {
