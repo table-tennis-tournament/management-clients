@@ -8,12 +8,14 @@ import {TableListEffects} from './redux/table-list.effects';
 import * as fromTables from './redux/table-list.reducer';
 import {TableListComponent} from './table-list.component';
 import {TtTableComponent} from './tt-table/tt-table.component';
+import { ResultDialogComponent } from './tt-table/result-dialog/result-dialog.component';
 
 @NgModule({
     declarations: [
         TtTableComponent,
         TableListComponent,
-        PlayerNamePipe
+        PlayerNamePipe,
+        ResultDialogComponent
     ],
     imports: [
         SharedModule,
