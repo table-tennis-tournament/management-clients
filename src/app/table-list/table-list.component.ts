@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {select, Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import * as MatchActions from './match/redux/match.actions';
@@ -17,12 +18,16 @@ export class TableListComponent implements OnInit {
 
     tables$: Observable<Table[]>;
 
-    constructor(private store: Store<AppState>, private events: WebsocketService) {
+    constructor(private store: Store<AppState>, private events: WebsocketService, private route: ActivatedRoute) {
+
         this.tables$ = store.pipe(select(getTables));
     }
 
     ngOnInit() {
-        this.store.dispatch(TableActions.loadTables({tableManagerId: 1}));
+        this.route.params
+            .subscribe(
+                params => this.store.dispatch(
+                    TableActions.loadTables({tableManagerId: params.managerId})) );
         this.events.startListening();
     }
 
