@@ -41,7 +41,11 @@ export class ResultDialogComponent implements OnInit {
     }
 
     onOk() {
-        this.dialogRef.close({games: this.gamesForm.value.result});
+        this.dialogRef.close({games: this.gamesForm.value.result
+                .filter(game =>  game.score_player_a !== undefined &&
+                    game.score_player_a !== null &&
+                    game.score_player_b !== null &&
+                    game.score_player_b !== undefined)});
     }
 
     onCancel() {
