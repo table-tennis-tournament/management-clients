@@ -29,12 +29,12 @@
                 <div>({{match.player_b.club}})</div>
             </div>
 
-            <div class="column game-width" *ngFor="let game of games; let i = index">
+            <div class="column game-width" *ngFor="let gameControl of gameControls.controls; let i = index">
                 <mat-form-field>
-                    <input matInput  [(ngModel)]="game.score_player_a">
+                    <input matInput  [formControl]="gameControl.get('score_player_a')">
                 </mat-form-field>
                 <mat-form-field>
-                    <input matInput  [(ngModel)]="game.score_player_b">
+                    <input matInput  [formControl]="gameControl.get('score_player_b')">
                 </mat-form-field>
             </div>
         </div>
