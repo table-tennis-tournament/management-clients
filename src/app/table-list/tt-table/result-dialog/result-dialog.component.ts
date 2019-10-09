@@ -1,10 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Game} from '../../match/game.model';
 import {Match} from '../../match/match.model';
-import {Player} from '../../match/player.model';
-import {Result} from '../../match/result.model';
+import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-result-dialog',
@@ -14,27 +12,39 @@ import {Result} from '../../match/result.model';
 export class ResultDialogComponent implements OnInit {
     games: Game[];
 
+    gameControls: FormArray;
+    gamesForm: FormGroup;
+
     constructor(
         public dialogRef: MatDialogRef<ResultDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public match: Match, private fb: FormBuilder) {
+        private fb: FormBuilder,
+        @Inject(MAT_DIALOG_DATA) public match: Match) {
+        console.log(this.match);
+    }
+
+    ngOnInit(): void {
+        const gameFormConfig = {
+            score_player_a: [],
+            score_player_b: []
+        };
+        this.gameControls = this.fb.array([1, 2, 3, 4, 5].map(index =>
+            this.fb.group(gameFormConfig)
+        ));
+        this.gamesForm = this.fb.group({
+            result: this.gameControls
+        });
+        if (!!this.match.result) {
+            this.match.result.games.forEach((game, index) => {
+                this.gameControls.controls[index].patchValue(game);
+            });
+        }
     }
 
     onOk() {
-        this.dialogRef.close({games: this.games});
+        this.dialogRef.close({games: this.gamesForm.value.result});
     }
 
     onCancel() {
         this.dialogRef.close();
-    }
-
-    ngOnInit(): void {
-        this.games = [];
-        for (let index = 0; index < 5; index++) {
-            this.games[index] = {};
-            if (this.match.result[index]) {
-                this.games[index].score_player_a = this.match.result.games[index].score_player_a;
-                this.games[index].score_player_b = this.match.result.games[index].score_player_b;
-            }
-        }
     }
 }
