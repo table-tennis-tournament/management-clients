@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Game} from '../../match/game.model';
 import {Match} from '../../match/match.model';
-import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-result-dialog',
@@ -10,8 +10,6 @@ import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
     styleUrls: ['./result-dialog.component.scss']
 })
 export class ResultDialogComponent implements OnInit {
-    games: Game[];
-
     gameControls: FormArray;
     gamesForm: FormGroup;
 
@@ -41,11 +39,13 @@ export class ResultDialogComponent implements OnInit {
     }
 
     onOk() {
-        this.dialogRef.close({games: this.gamesForm.value.result
-                .filter(game =>  game.score_player_a !== undefined &&
+        this.dialogRef.close({
+            games: this.gamesForm.value.result
+                .filter(game => game.score_player_a !== undefined &&
                     game.score_player_a !== null &&
                     game.score_player_b !== null &&
-                    game.score_player_b !== undefined)});
+                    game.score_player_b !== undefined)
+        });
     }
 
     onCancel() {
