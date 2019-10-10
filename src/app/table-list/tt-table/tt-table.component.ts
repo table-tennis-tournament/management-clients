@@ -21,7 +21,7 @@ export class TtTableComponent {
     @Output()
     finishMatch = new EventEmitter();
 
-    maxGames = [1, 2, 3, 4, 5];
+    maxGames = [0, 1, 2, 3, 4];
 
     constructor(public dialog: MatDialog) {
     }
