@@ -48,7 +48,7 @@
                 <p [ngClass]="{'won': playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
             </div>
             <div class="col-1">
-                <p [ngClass]="{'match-won': playerAWonMatch(currentMatch().result)}" class="mat-body">{{currentMatch().result.games_won_player_a}}</p>
+                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body">{{currentMatch().result.games_won_player_a}}</p>
             </div>
         </div>
         <div class="row">
@@ -60,7 +60,7 @@
                 <p [ngClass]="{'won': playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
             </div>
             <div class="col-1">
-                <p [ngClass]="{'match-won': playerBWonMatch(currentMatch().result)}" class="mat-body">{{currentMatch().result.games_won_player_b}}</p>
+                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body">{{currentMatch().result.games_won_player_b}}</p>
             </div>
         </div>
     </mat-card-content>
