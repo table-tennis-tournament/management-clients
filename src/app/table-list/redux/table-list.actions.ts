@@ -11,8 +11,8 @@ export const loadTablesSuccess = createAction(
     props<{ tables: Table[] }>()
 );
 
-export const matchAssignedToTable = createAction(
-    '[Tables] MatchAssignedToTable',
+export const updatedMatchToTable = createAction(
+    '[Tables] UpdatedMatchToTable',
     props<{ table: Table }>()
 );
 

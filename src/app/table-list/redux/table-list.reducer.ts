@@ -20,7 +20,7 @@ const tableReducer = createReducer(
         ...state,
         tables
     })),
-    on(TableActions.matchAssignedToTable, (state, {table}) => ({
+    on(TableActions.updatedMatchToTable, (state, {table}) => ({
         ...state,
         tables: state.tables.map(existingTable => {
             if (existingTable.table_id === table.table_id) {

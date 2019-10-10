@@ -26,14 +26,22 @@ export class TtTableComponent {
     constructor(public dialog: MatDialog) {
     }
 
+    tableHasMatch(): boolean {
+        return !!this.table.current_match;
+    }
+
     allGames(): Game[] {
-        return this.maxGames.map(index =>
-            this.table.current_match.result.games.length > index
-                ? this.table.current_match.result.games[index]
-                : {
-                    score_player_a: 0,
-                    score_player_b: 0
-                } as Game);
+        if (this.tableHasMatch()) {
+            return this.maxGames.map(index =>
+                this.table.current_match.result.games.length > index
+                    ? this.table.current_match.result.games[index]
+                    : {
+                        score_player_a: 0,
+                        score_player_b: 0
+                    } as Game);
+        } else {
+            return [];
+        }
     }
 
     openDialog() {
