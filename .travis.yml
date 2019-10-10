@@ -1,23 +1,7 @@
-sudo: required
-dist: trusty
-language: node_js
-node_js:
-  - '10.16.3'
 services:
   - docker
 matrix:
   fast_finish: true
-
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
-
-cache:
-  directories:
-    - ./node_modules
 
 env:
   global:
@@ -35,12 +19,8 @@ env:
     - COMMIT=${TRAVIS_COMMIT::7}
     - IMAGE_NAME=tabletennistournament/match-management-client
 
-install:
-  - npm install
-
 script:
   # We do not have tests - why execute them? - npm run test-ci
-  - npm run build
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - export TAG=$(if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$BRANCH-$COMMIT"; fi | sed 's/\//-/')
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
@@ -50,4 +30,4 @@ script:
   - docker push $IMAGE_NAME:latest
   - if [ $BRANCH = "master" ]; then docker push $IMAGE_NAME:master; fi
   - docker push $IMAGE_NAME:$TAG
-  - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG -e GIT_BRANCH=$BRANCH -e BRANCH_TEMPLATE=app-template -e REPO_SLUG=$TRAVIS_REPO_SLUG -e GITHUB_TOKEN=$GITHUB_API_TOKEN -e PR_ID=$TRAVIS_PULL_REQUEST -e TRAVIS_JOB_URL=$TRAVIS_JOB_WEB_URL -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN -e SLACK_API_TOKEN=$SLACK_API_TOKEN -e TRAVIS_COMMIT=$TRAVIS_COMMIT tabletennistournament/gitops-deploy
+  - docker run -e APP_NAME=$APP_NAME -e CONFIG_REPOSITORY=$CONFIG_REPOSITORY -e YAML_PATH="app.frontend.image.tag" -e NEW_VALUE=$TAG -e GIT_BRANCH=$BRANCH -e BRANCH_TEMPLATE=app-template -e REPO_SLUG=$TRAVIS_REPO_SLUG -e GITHUB_TOKEN=$GITHUB_API_TOKEN -e PR_ID=$TRAVIS_PULL_REQUEST -e TRAVIS_JOB_URL=$TRAVIS_JOB_WEB_URL -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN -e SLACK_API_TOKEN=$SLACK_API_TOKEN -e TRAVIS_COMMIT=$TRAVIS_COMMIT tabletennistournament/gitops-deploy:master-6343fd4
