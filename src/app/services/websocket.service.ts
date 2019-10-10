@@ -3,7 +3,7 @@ import {Store} from '@ngrx/store';
 import {BehaviorSubject} from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
-import {matchAssignedToTable} from '../table-list/redux/table-list.actions';
+import {updatedMatchToTable} from '../table-list/redux/table-list.actions';
 import {AppState} from '../table-list/redux/table-list.reducer';
 import {Table} from '../table-list/tt-table/table.model';
 
@@ -75,7 +75,7 @@ export class WebsocketService {
                 try {
                     console.log('Received WS event: {} ' + evt);
                     const jsonMessage = JSON.parse(evt.body);
-                    this.store.dispatch(matchAssignedToTable({table: jsonMessage as Table}));
+                    this.store.dispatch(updatedMatchToTable({table: jsonMessage as Table}));
                 } catch (e) {
                     this.logMessages.next(e + ': ' + evt.data);
                 }
