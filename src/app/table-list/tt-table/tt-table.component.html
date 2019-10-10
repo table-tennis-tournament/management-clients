@@ -1,35 +1,53 @@
-<mat-card class="tt-table">
+<mat-card>
     <mat-card-header>
-        <mat-card-title><span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch</span></mat-card-title>
-        <mat-card-subtitle>
-            <mat-chip-list>
-                <mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip>
-            </mat-chip-list>
-        </mat-card-subtitle>
+        <mat-card-title>
+            <div class="row">
+                <div class="col-3">
+                    <span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch</span>
+                </div>
+                <div class="col-9">
+                    <mat-chip-list>
+                        <mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+        </mat-card-title>
     </mat-card-header>
     <mat-card-content>
         <div class="row">
-            <div class="column">
+            <div class="col-5">
             </div>
-            <div class="column" *ngFor="let game of maxGames">
-                <p>{{game}}. Satz</p>
+            <div class="col-1 mat-small" *ngFor="let game of maxGames">
+                <p>{{game}}</p>
+            </div>
+            <div class="col-1 mat-small">
+                <p>Total</p>
             </div>
         </div>
         <div class="row">
-            <div class="column flex flex-horizontal-center card-main-center">
-                <p class="mat-body-strong">{{table.current_match.player_a | playerName}}</p>
+            <div class="col-5">
+                <p class="mat-body-strong mb-0">{{table.current_match.player_a | playerName}}</p>
                 <p>({{table.current_match.player_a.club}})</p>
-                <p>-</p>
-                <p class="mat-body-strong">{{table.current_match.player_b | playerName}}</p>
-                <p>({{table.current_match.player_b.club}})</p>
             </div>
-            <div class="column game-width " *ngFor="let game of allGames()">
-                <p [ngClass]="{'won': playerAWon(game)}" class="mat-display-1 valuedisplay">{{game.score_player_a}}</p>
-                <p [ngClass]="{'won': playerBWon(game)}" class="mat-display-1 valuedisplay">{{game.score_player_b}}</p>
+            <div class="col-1" *ngFor="let game of allGames()">
+                <p [ngClass]="{'won': playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
+            </div>
+            <div class="col-1">
+                <p [ngClass]="{'match-won': playerAWonMatch(table.current_match.result)}" class="mat-body">{{table.current_match.result.games_won_player_a}}</p>
             </div>
         </div>
-
-
+        <div class="row">
+            <div class="col-5">
+                <p class="mat-body-strong mb-0">{{table.current_match.player_b | playerName}}</p>
+                <p>({{table.current_match.player_b.club}})</p>
+            </div>
+            <div class="col-1" *ngFor="let game of allGames()">
+                <p [ngClass]="{'won': playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
+            </div>
+            <div class="col-1">
+                <p [ngClass]="{'match-won': playerBWonMatch(table.current_match.result)}" class="mat-body">{{table.current_match.result.games_won_player_b}}</p>
+            </div>
+        </div>
     </mat-card-content>
     <mat-card-actions>
         <button mat-raised-button color="accent" (click)="openDialog()">Ergebnis erfassen</button>

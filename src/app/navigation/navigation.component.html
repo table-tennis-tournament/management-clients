@@ -4,26 +4,18 @@
             <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
         </button>
         <h1>Match-Management</h1>
-        <span class="menu-spacer"></span>
-        <div>
-            <a *ngFor="let manager of managers" mat-button routerLinkActive="active" [routerLink]="'/tablemanager/' + manager">
-                Manager {{manager}}
-            </a>
-        </div>
     </mat-toolbar-row>
 
 </mat-toolbar>
 <mat-sidenav-container>
     <mat-sidenav #sidenav>
         <mat-nav-list>
-            <a *ngFor="let manager of managers" mat-list-item [routerLink]="'/tablemanager/' + manager">
+            <a *ngFor="let manager of managers" routerLinkActive="active" mat-list-item [routerLink]="'/tablemanager/' + manager">
                 Manager {{manager}}
             </a>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-        <div style="height: 88vh;">
             <router-outlet></router-outlet>
-        </div>
     </mat-sidenav-content>
 </mat-sidenav-container>

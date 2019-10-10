@@ -1,9 +1,5 @@
-<div class="tttable tttable--5cols">
-    <div *ngFor="let currentTable of tables$ | async" class="tttable-cell">
-        <app-tt-table
-                [table]=currentTable
-                (updateMatchResult)="onUpdateMatchResult($event)"
-                (finishMatch)="onFinishMatch($event)"
-        ></app-tt-table>
-    </div>
-</div>
+<app-tt-table *ngFor="let currentTable of tables$ | async"
+              [table]=currentTable
+              (updateMatchResult)="onUpdateMatchResult($event)"
+              (finishMatch)="onFinishMatch($event)"
+></app-tt-table>

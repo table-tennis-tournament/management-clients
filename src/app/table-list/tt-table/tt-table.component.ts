@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Game} from '../match/game.model';
+import {Result} from '../match/result.model';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {Table} from './table.model';
 
@@ -53,6 +54,14 @@ export class TtTableComponent {
 
     playerAWon(game: Game) {
         return game.score_player_a > game.score_player_b;
+    }
+
+    playerAWonMatch(result: Result) {
+        return result.games_won_player_a === 3;
+    }
+
+    playerBWonMatch(result: Result) {
+        return result.games_won_player_b === 3;
     }
 
     playerBWon(game: Game) {

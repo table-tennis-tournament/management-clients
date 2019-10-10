@@ -1,47 +1,13 @@
-.card-main-center {
-  text-align: center;
-  margin: 0 0 3em 0;
-  padding: 0;
+mat-card-header {
+  display: inline;
 }
 
-.tt-table{
-  margin: 10px;
+.won {
+  color: #f44336;
+  font-weight: bold;
 }
 
-.full-width {
-  display: flex;
-  flex-direction: column;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.column {
-  display: flex;
-  flex-direction: column;
-  flex-basis: 100%;
-  flex: 1;
-}
-
-.padding-right {
-  padding-right: 15px;
-}
-
-.game-width {
-  width: 60px;
-  padding: 5px;
-}
-
-.valuedisplay {
-  width: 100%;
-  text-align: center;
-  background: lightblue;
-  &.won {
-    color: #f44336;
-    font-weight: bold;
-  }
+.match-won {
+  color: green;
+  font-weight: bold;
 }
