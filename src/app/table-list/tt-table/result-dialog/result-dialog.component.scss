@@ -23,8 +23,20 @@
   flex: 1;
 }
 
+.double-column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 3;
+}
+
 .padding-right {
   padding-right: 15px;
+}
+
+.result-box {
+  height: 60px;
+  font-size: 20pt;
 }
 
 .game-width {
