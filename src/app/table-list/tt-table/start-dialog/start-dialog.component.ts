@@ -3,23 +3,23 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Match} from '../../match/match.model';
 
 @Component({
-  selector: 'app-start-dialog',
-  templateUrl: './start-dialog.component.html',
-  styleUrls: ['./start-dialog.component.scss']
+    selector: 'app-start-dialog',
+    templateUrl: './start-dialog.component.html',
+    styleUrls: ['./start-dialog.component.scss']
 })
 export class StartDialogComponent {
     selected: any;
 
-  constructor(
-      public dialogRef: MatDialogRef<StartDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public matches: Match[]) {
-  }
-
-    onCancel() {
-      this.dialogRef.close();
+    constructor(
+        public dialogRef: MatDialogRef<StartDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public matches: Match[]) {
     }
 
-  onOk() {
-      this.dialogRef.close(this.matches[this.selected].match_id);
-  }
+    onCancel() {
+        this.dialogRef.close();
+    }
+
+    onOk() {
+        this.dialogRef.close(this.matches[this.selected].match_id);
+    }
 }
