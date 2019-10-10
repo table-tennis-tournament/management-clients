@@ -7,6 +7,7 @@
 .tt-table{
   margin: 10px;
 }
+
 .full-width {
   display: flex;
   flex-direction: column;
@@ -31,20 +32,16 @@
 }
 
 .game-width {
-  width:60px;
+  width: 60px;
   padding: 5px;
-}
-.scorefield {
-  width: 100%;
 }
 
 .valuedisplay {
+  width: 100%;
   text-align: center;
   background: lightblue;
-  font-size: 30pt;
-  padding-bottom: 5px;
   &.won {
-    color: #BD362F;
+    color: #f44336;
     font-weight: bold;
   }
 }

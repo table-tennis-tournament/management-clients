@@ -1,31 +1,35 @@
 <mat-card class="tt-table">
     <mat-card-header>
         <mat-card-title><span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch</span></mat-card-title>
-        <mat-card-subtitle><mat-chip-list><mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip></mat-chip-list></mat-card-subtitle>
+        <mat-card-subtitle>
+            <mat-chip-list>
+                <mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip>
+            </mat-chip-list>
+        </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
         <div class="row">
             <div class="column">
             </div>
             <div class="column" *ngFor="let game of maxGames">
-                {{game}}. Satz
+                <p>{{game}}. Satz</p>
             </div>
         </div>
         <div class="row">
-                <div class="column flex flex-horizontal-center card-main-center">
-                        <div class="mat-body-strong">{{table.current_match.player_a | playerName}}</div>
-                        <div>({{table.current_match.player_a.club}})</div>
-                        <div>-</div>
-                        <div class="mat-body-strong">{{table.current_match.player_b | playerName}}</div>
-                        <div>({{table.current_match.player_b.club}})</div>
-                    </div>
-                <div class="column game-width " *ngFor="let game of allGames()">
-                        <div [ngClass]="{'won': playerAWon(game)}" class="scorefield valuedisplay">{{game.score_player_a}}</div>
-                        <div [ngClass]="{'won': playerBWon(game)}" class="scorefield valuedisplay">{{game.score_player_b}}</div>
-                    </div>
+            <div class="column flex flex-horizontal-center card-main-center">
+                <p class="mat-body-strong">{{table.current_match.player_a | playerName}}</p>
+                <p>({{table.current_match.player_a.club}})</p>
+                <p>-</p>
+                <p class="mat-body-strong">{{table.current_match.player_b | playerName}}</p>
+                <p>({{table.current_match.player_b.club}})</p>
+            </div>
+            <div class="column game-width " *ngFor="let game of allGames()">
+                <p [ngClass]="{'won': playerAWon(game)}" class="mat-display-1 valuedisplay">{{game.score_player_a}}</p>
+                <p [ngClass]="{'won': playerBWon(game)}" class="mat-display-1 valuedisplay">{{game.score_player_b}}</p>
+            </div>
         </div>
 
-        
+
     </mat-card-content>
     <mat-card-actions>
         <button mat-raised-button color="accent" (click)="openDialog()">Ergebnis erfassen</button>
