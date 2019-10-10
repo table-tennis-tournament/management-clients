@@ -1,11 +1,10 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Game} from '../match/game.model';
-import {Result} from '../match/result.model';
+import {Match} from '../match/match.model';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {StartDialogComponent} from './start-dialog/start-dialog.component';
 import {Table} from './table.model';
-import { Match } from '../match/match.model';
 
 @Component({
     selector: 'app-tt-table',
@@ -79,16 +78,12 @@ export class TtTableComponent {
         return game.score_player_a > game.score_player_b;
     }
 
-    playerAWonMatch(result: Result) {
-        return result.games_won_player_a === 3;
-    }
-
-    playerBWonMatch(result: Result) {
-        return result.games_won_player_b === 3;
-    }
-
     playerBWon(game: Game) {
         return game.score_player_b > game.score_player_a;
+    }
+
+    playerWonMatch(gamesWonPlayer: number) {
+        return gamesWonPlayer === 3;
     }
 
     endMatch() {

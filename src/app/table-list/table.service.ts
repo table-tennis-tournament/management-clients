@@ -15,11 +15,4 @@ export class TableService {
         return this.http.get<Table[]>(`/api/tables?table_manager=${managerId}`);
     }
 
-    startGame() {
-
-    }
-
-    finishGame() {
-
-    }
 }

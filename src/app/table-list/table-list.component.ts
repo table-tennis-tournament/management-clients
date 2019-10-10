@@ -19,7 +19,6 @@ export class TableListComponent implements OnInit {
     tables$: Observable<Table[]>;
 
     constructor(private store: Store<AppState>, private events: WebsocketService, private route: ActivatedRoute) {
-
         this.tables$ = store.pipe(select(getTables));
     }
 

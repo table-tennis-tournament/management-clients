@@ -21,8 +21,8 @@ export class ResultDialogComponent implements OnInit {
         this.resultString = '';
         this.match.result.games.forEach(game => {
             game.score_player_b < game.score_player_a ?
-                this.resultString += '-' + game.score_player_b + ' ' :
-                this.resultString += game.score_player_a + ' ';
+                this.resultString += game.score_player_b + ' ' :
+                this.resultString += '-' + game.score_player_a + ' ';
         });
     }
 

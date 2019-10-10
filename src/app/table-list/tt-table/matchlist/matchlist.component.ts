@@ -1,19 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Match } from '../../match/match.model';
+import {Component, Input} from '@angular/core';
+import {Match} from '../../match/match.model';
 
 @Component({
-  selector: 'app-matchlist',
-  templateUrl: './matchlist.component.html',
-  styleUrls: ['./matchlist.component.scss']
+    selector: 'app-matchlist',
+    templateUrl: './matchlist.component.html',
+    styleUrls: ['./matchlist.component.scss']
 })
-export class MatchlistComponent implements OnInit {
+export class MatchlistComponent {
 
-  @Input()
-  matches: Match[];
-
-  constructor() { }
-
-  ngOnInit() {
-  }
+    @Input()
+    matches: Match[];
 
 }

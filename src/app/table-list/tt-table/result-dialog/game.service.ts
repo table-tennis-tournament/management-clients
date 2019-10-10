@@ -9,11 +9,10 @@ export class GameService {
     public getGames(valueToCheck: string): Game[] {
         const result: Game[] = [];
         const splitValue = valueToCheck.split(' ');
-        for (let index = 0; index < splitValue.length; index++) {
-            const currentValue = splitValue[index];
+        for (const currentValue of splitValue) {
             if (this.isFirstCharAMinus(currentValue)) {
                 const resultWithoutMinus = Math.abs(Number(currentValue));
-                const otherValue = this.getOtherValue(resultWithoutMinus);
+                const otherValue = this.getOtherResult(resultWithoutMinus);
                 result.push({
                     score_player_a: resultWithoutMinus,
                     score_player_b: otherValue
@@ -31,13 +30,6 @@ export class GameService {
         }
         return result;
 
-    }
-
-    private getOtherValue(currentValue: number) {
-        if (currentValue < 10) {
-            return 11;
-        }
-        return currentValue + 2;
     }
 
     isFirstCharAMinus(resultToCheck) {
