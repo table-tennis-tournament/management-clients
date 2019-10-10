@@ -1,23 +1,7 @@
-sudo: required
-dist: trusty
-language: node_js
-node_js:
-  - '10.16.3'
 services:
   - docker
 matrix:
   fast_finish: true
-
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
-
-cache:
-  directories:
-    - ./node_modules
 
 env:
   global:
