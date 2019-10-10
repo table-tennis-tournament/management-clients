@@ -39,6 +39,10 @@ export class TtTableComponent {
         return this.currentMatch() !== undefined;
     }
 
+    tableHasNoStartedAndAtLeastOneMatch(): boolean {
+        return this.table.matches.length > 0 && !this.currentMatch();
+    }
+
     allGames(): Game[] {
         if (this.tableHasStartedMatch()) {
             const match = this.currentMatch();
@@ -94,7 +98,7 @@ export class TtTableComponent {
     startMatch() {
         const dialogRef = this.dialog.open(StartDialogComponent, {
             width: '400px',
-            data: this.table.matches
+            data: this.table.matches.filter(match => match.state === 'ASSIGNED')
         });
 
         dialogRef.afterClosed().subscribe(result => {
