@@ -11,6 +11,7 @@ import {TableListComponent} from './table-list.component';
 import {ResultDialogComponent} from './tt-table/result-dialog/result-dialog.component';
 import {StartDialogComponent} from './tt-table/start-dialog/start-dialog.component';
 import {TtTableComponent} from './tt-table/tt-table.component';
+import { MatchlistComponent } from './tt-table/matchlist/matchlist.component';
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import {TtTableComponent} from './tt-table/tt-table.component';
         TableListComponent,
         PlayerNamePipe,
         ResultDialogComponent,
-        StartDialogComponent
+        StartDialogComponent,
+        MatchlistComponent
     ],
     imports: [
         SharedModule,

@@ -8,4 +8,5 @@ export interface Match {
     player_b?: Player;
     stage?: string;
     classification?: string;
+    state?: string;
 }
