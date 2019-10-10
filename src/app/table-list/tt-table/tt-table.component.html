@@ -7,20 +7,8 @@
         <div class="row">
             <div class="column">
             </div>
-            <div class="column">
-                1. Satz
-            </div>
-            <div class="column">
-                2. Satz
-            </div>
-            <div class="column">
-                3. Satz
-            </div>
-            <div class="column">
-                4. Satz
-            </div>
-            <div class="column">
-                5. Satz
+            <div class="column" *ngFor="let game of maxGames">
+                {{game}}. Satz
             </div>
         </div>
         <div class="row">

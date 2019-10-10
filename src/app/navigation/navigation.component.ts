@@ -6,6 +6,6 @@ import {Component, OnInit} from '@angular/core';
     styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent {
-    constructor() {
-    }
+
+    managers = [1, 2, 3, 4, 5];
 }

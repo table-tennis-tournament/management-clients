@@ -19,12 +19,14 @@ export class TtTableComponent {
 
     @Output()
     finishMatch = new EventEmitter();
+    
+    maxGames = [1, 2, 3, 4, 5];
 
     constructor(public dialog: MatDialog) {
     }
 
     allGames(): Game[] {
-        return [0, 1, 2, 3, 4].map(index =>
+        return this.maxGames.map(index =>
             this.table.current_match.result.games.length > index
                 ? this.table.current_match.result.games[index]
                 : {
