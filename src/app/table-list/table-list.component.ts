@@ -2,18 +2,17 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {select, Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
+import {WebsocketService} from '../services/websocket.service';
 import {Match} from './match/match.model';
 import * as MatchActions from './match/redux/match.actions';
-import {Result} from './match/result.model';
 import * as TableActions from './redux/table-list.actions';
 import {AppState, getTables} from './redux/table-list.reducer';
 import {Table} from './tt-table/table.model';
-import { WebsocketService } from '../services/websocket.service';
 
 @Component({
     selector: 'app-table-list',
     templateUrl: './table-list.component.html',
-    styleUrls: ['./table-list.component.sass']
+    styleUrls: ['./table-list.component.scss']
 })
 export class TableListComponent implements OnInit {
 
@@ -28,7 +27,7 @@ export class TableListComponent implements OnInit {
         this.route.params
             .subscribe(
                 params => this.store.dispatch(
-                    TableActions.loadTables({tableManagerId: params.managerId})) );
+                    TableActions.loadTables({tableManagerId: params.managerId})));
         this.events.startListening();
     }
 

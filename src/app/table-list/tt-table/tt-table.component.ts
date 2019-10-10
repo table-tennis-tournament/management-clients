@@ -35,7 +35,7 @@ export class TtTableComponent {
 
     openDialog() {
         const dialogRef = this.dialog.open(ResultDialogComponent, {
-            width: '700px',
+            width: '400px',
             data: this.table.current_match
         });
 
