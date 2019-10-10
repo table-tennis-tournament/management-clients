@@ -7,6 +7,6 @@ COPY . .
 
 RUN npm run build
 
-FROM registry.hub.docker.com/bitnami/nginx:1.16
+FROM bitnami/nginx:1.16
 COPY --from=builder /ng-app/dist /app/
 COPY my_server_block.conf /opt/bitnami/nginx/conf/server_blocks/my_server_block.conf
