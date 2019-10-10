@@ -5,7 +5,7 @@ RUN npm i && mkdir /ng-app && mv ./node_modules ./ng-app
 WORKDIR /ng-app
 COPY . .
 
-RUN $(npm bin)/run build
+RUN npm run build
 
 FROM registry.hub.docker.com/bitnami/nginx:1.16
 COPY --from=builder /ng-app/dist /app/
