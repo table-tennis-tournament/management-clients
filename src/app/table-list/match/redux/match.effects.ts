@@ -43,6 +43,23 @@ export class MatchEffects {
         })
     ), {dispatch: false});
 
+    startMatch = createEffect(() => this.actions$.pipe(
+        ofType(MatchActions.startMatchOnTable),
+        switchMap(({tableId, matchId}) => this.matchService.startMatch(tableId, matchId)
+            .pipe(
+                map(() => MatchActions.startMatchOnTableSuccess({})),
+                catchError(() => of(MatchActions.startMatchOnTableError({})))
+            )
+        )
+    ));
+
+    startMatchError$ = createEffect(() => this.actions$.pipe(
+        ofType(MatchActions.startMatchOnTableError),
+        tap(() => {
+            this.snackBar.open('Match could not be started.');
+        })
+    ), {dispatch: false});
+
 
     constructor(
         private actions$: Actions,

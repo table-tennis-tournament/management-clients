@@ -16,4 +16,8 @@ export class MatchService {
     finishMatch(matchId: number) {
         return this.http.put<any>(`api/matches/${matchId}/state`, {state: 'FINISHED'});
     }
+
+    startMatch(tableId: number, matchId: number) {
+        return this.http.put<any>(`api/matches/${matchId}/state`, {state: 'STARTED'});
+    }
 }

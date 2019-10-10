@@ -31,3 +31,18 @@ export const finishMatchError = createAction(
     props<{}>()
 );
 
+export const startMatchOnTable = createAction(
+    '[Match] Start Match',
+    props<{ tableId: number, matchId: number }>()
+);
+
+export const startMatchOnTableSuccess = createAction(
+    '[Match] Start Match Success',
+    props<{}>()
+);
+
+export const startMatchOnTableError = createAction(
+    '[Match] Start Match Error',
+    props<{}>()
+);
+

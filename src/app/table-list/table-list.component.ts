@@ -38,4 +38,8 @@ export class TableListComponent implements OnInit {
     onFinishMatch(match: Match) {
         this.store.dispatch(MatchActions.finishMatch({matchId: match.match_id}));
     }
+
+    onMatchOnTableStarted($event: any) {
+        this.store.dispatch(MatchActions.startMatchOnTable($event));
+    }
 }

@@ -1,5 +1,4 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Match} from '../../match/match.model';
 import {GameService} from './game.service';
@@ -14,7 +13,6 @@ export class ResultDialogComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<ResultDialogComponent>,
-        private fb: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public match: Match,
         public gameService: GameService) {
     }

@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Gruppe 3</h1>
+<div mat-dialog-content>
+    <div *ngFor="let match of matches; let i = index;">
+        <mat-checkbox [checked]="selected === i" (change)="selected = i">
+            <div class="mat-body-strong mb-0">{{match.player_a | playerName}} - {{match.player_b | playerName}}</div>
+        </mat-checkbox>
+    </div>
+<!--    <div class="row" *ngFor="let match of matches">-->
+<!--        <mat-checkbox >-->
+<!--            <div class="mat-body-strong mb-0">{{match.player_a | playerName}} - {{match.player_b | playerName}}</div>-->
+<!--        </mat-checkbox>-->
+<!--    </div>-->
+<!--    <mat-radio-group aria-label="Wähle ein Spiel" *ngIf="matches">-->
+<!--        <mat-radio-button *ngFor="let match of matches" value="{{match.match_id}}">-->
+<!--            <div class="mat-body-strong mb-0">{{match.player_a | playerName}}</div>-->
+<!--            - -->
+<!--            <div class="mat-body-strong mb-0">{{match.player_b | playerName}}</div>-->
+<!--        </mat-radio-button>-->
+<!--    </mat-radio-group>-->
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-button (click)="onOk()" cdkFocusInitial>Ok</button>
+</div>

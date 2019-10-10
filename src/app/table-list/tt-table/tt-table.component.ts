@@ -3,6 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {Game} from '../match/game.model';
 import {Result} from '../match/result.model';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
+import {StartDialogComponent} from './start-dialog/start-dialog.component';
 import {Table} from './table.model';
 
 @Component({
@@ -20,6 +21,9 @@ export class TtTableComponent {
 
     @Output()
     finishMatch = new EventEmitter();
+
+    @Output()
+    startMatchOnTable = new EventEmitter();
 
     maxGames = [0, 1, 2, 3, 4];
 
@@ -78,5 +82,21 @@ export class TtTableComponent {
 
     endMatch() {
         this.finishMatch.emit(this.table.current_match);
+    }
+
+    startMatch() {
+        const dialogRef = this.dialog.open(StartDialogComponent, {
+            width: '400px',
+            data: this.table.matches
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!!result) {
+                this.startMatchOnTable.emit({
+                    tableId: this.table.table_id,
+                    matchId: result
+                });
+            }
+        });
     }
 }

@@ -63,6 +63,7 @@
     </mat-card-content>
     <mat-card-actions *ngIf="tableHasMatch()">
         <button mat-raised-button color="accent" (click)="openDialog()">Ergebnis erfassen</button>
+        <button mat-raised-button color="accent" (click)="startMatch()">Spiel starten</button>
         <button mat-raised-button color="accent" (click)="endMatch()">Spiel beenden</button>
     </mat-card-actions>
 </mat-card>
