@@ -35,9 +35,6 @@ env:
     - COMMIT=${TRAVIS_COMMIT::7}
     - IMAGE_NAME=tabletennistournament/match-management-client
 
-install:
-  - npm install
-
 script:
   # We do not have tests - why execute them? - npm run test-ci
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
