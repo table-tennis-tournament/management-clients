@@ -2,12 +2,17 @@
     <mat-card-header>
         <mat-card-title>
             <div class="row">
-                <div class="col-3">
+                <div class="col-4">
                     <span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch</span>
                 </div>
-                <div class="col-9">
-                    <mat-chip-list *ngIf="tableHasMatch()">
+                <div class="col-4" *ngIf="tableHasMatch()">
+                    <mat-chip-list>
                         <mat-chip selected color="primary">{{table.current_match.classification}}</mat-chip>
+                    </mat-chip-list>
+                </div>
+                <div class="col-4" *ngIf="tableHasMatch()">
+                    <mat-chip-list>
+                        <mat-chip selected color="primary">{{table.current_match.stage}}</mat-chip>
                     </mat-chip-list>
                 </div>
             </div>
