@@ -5,6 +5,7 @@ import {Result} from '../match/result.model';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {StartDialogComponent} from './start-dialog/start-dialog.component';
 import {Table} from './table.model';
+import { Match } from '../match/match.model';
 
 @Component({
     selector: 'app-tt-table',
@@ -30,15 +31,24 @@ export class TtTableComponent {
     constructor(public dialog: MatDialog) {
     }
 
-    tableHasMatch(): boolean {
-        return !!this.table.current_match;
+    currentMatch(): Match {
+        return this.table.matches.find(match => match.state === 'STARTED');
+    }
+
+    tableHasStartedMatch(): boolean {
+        return this.currentMatch() !== undefined;
+    }
+
+    tableHasNoStartedAndAtLeastOneMatch(): boolean {
+        return this.table.matches.length > 0 && !this.currentMatch();
     }
 
     allGames(): Game[] {
-        if (this.tableHasMatch()) {
+        if (this.tableHasStartedMatch()) {
+            const match = this.currentMatch();
             return this.maxGames.map(index =>
-                this.table.current_match.result.games.length > index
-                    ? this.table.current_match.result.games[index]
+                match.result.games.length > index
+                    ? match.result.games[index]
                     : {
                         score_player_a: 0,
                         score_player_b: 0
@@ -49,15 +59,16 @@ export class TtTableComponent {
     }
 
     openDialog() {
+        const match = this.currentMatch();
         const dialogRef = this.dialog.open(ResultDialogComponent, {
             width: '400px',
-            data: this.table.current_match
+            data: match
         });
 
         dialogRef.afterClosed().subscribe(result => {
             if (!!result) {
                 this.updateMatchResult.emit({
-                    matchId: this.table.current_match.match_id,
+                    matchId: match.match_id,
                     result
                 });
             }
@@ -81,13 +92,13 @@ export class TtTableComponent {
     }
 
     endMatch() {
-        this.finishMatch.emit(this.table.current_match);
+        this.finishMatch.emit(this.currentMatch());
     }
 
     startMatch() {
         const dialogRef = this.dialog.open(StartDialogComponent, {
             width: '400px',
-            data: this.table.matches
+            data: this.table.matches.filter(match => match.state === 'ASSIGNED')
         });
 
         dialogRef.afterClosed().subscribe(result => {
