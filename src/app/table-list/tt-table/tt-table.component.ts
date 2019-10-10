@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
+import {Game} from '../match/game.model';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {Table} from './table.model';
-import {Game} from '../match/game.model';
 
 @Component({
     selector: 'app-tt-table',
@@ -20,11 +20,13 @@ export class TtTableComponent {
     @Output()
     finishMatch = new EventEmitter();
 
+    maxGames = [1, 2, 3, 4, 5];
+
     constructor(public dialog: MatDialog) {
     }
 
     allGames(): Game[] {
-        return [0, 1, 2, 3, 4].map(index =>
+        return this.maxGames.map(index =>
             this.table.current_match.result.games.length > index
                 ? this.table.current_match.result.games[index]
                 : {
