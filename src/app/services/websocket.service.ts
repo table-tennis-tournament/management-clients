@@ -85,7 +85,7 @@ export class WebsocketService {
     }
 
     errorCallBack(error) {
-        console.log('errorCallBack -> ' + error);
+        console.error('errorCallBack -> ' + error);
         setTimeout(() => {
             this.connect();
         }, 5000);
