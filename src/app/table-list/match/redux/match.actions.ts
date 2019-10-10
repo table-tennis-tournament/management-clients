@@ -1,5 +1,4 @@
 import {createAction, props} from '@ngrx/store';
-import {Game} from '../game.model';
 import {Result} from '../result.model';
 
 export const updateMatchResult = createAction(
@@ -19,7 +18,7 @@ export const updateMatchResultError = createAction(
 
 export const finishMatch = createAction(
     '[Match] Finish Match',
-    props<{ matchId: number}>()
+    props<{ matchId: number }>()
 );
 
 export const finishMatchSuccess = createAction(

@@ -20,7 +20,7 @@ import {TtTableComponent} from './tt-table/tt-table.component';
     ],
     imports: [
         SharedModule,
-        StoreModule.forFeature('tables', fromTables.tableReducer),
+        StoreModule.forFeature('tables', fromTables.reducer),
         EffectsModule.forFeature([MatchEffects, TableListEffects]),
         ReactiveFormsModule
     ],
