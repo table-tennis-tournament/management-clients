@@ -7,12 +7,12 @@
                 </div>
                 <div class="col-4" *ngIf="tableHasStartedMatch()">
                     <mat-chip-list>
-                        <mat-chip selected color="primary">{{currentMatch().classification}}</mat-chip>
+                        <mat-chip class="m-0" selected color="primary">{{currentMatch().classification}}</mat-chip>
                     </mat-chip-list>
                 </div>
                 <div class="col-4" *ngIf="tableHasStartedMatch()">
                     <mat-chip-list>
-                        <mat-chip selected color="primary">{{currentMatch().stage}}</mat-chip>
+                        <mat-chip class="m-0" selected color="primary">{{currentMatch().stage}}</mat-chip>
                     </mat-chip-list>
                 </div>
             </div>
@@ -41,7 +41,7 @@
         </div>
         <div class="row">
             <div class="col-5">
-                <p class="mat-body-strong mb-0">{{currentMatch().player_a | playerName}}</p>
+                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body-strong mb-0">{{currentMatch().player_a | playerName}}</p>
                 <p>({{currentMatch().player_a.club}})</p>
             </div>
             <div class="col-1" *ngFor="let game of allGames()">
@@ -53,7 +53,7 @@
         </div>
         <div class="row">
             <div class="col-5">
-                <p class="mat-body-strong mb-0">{{currentMatch().player_b | playerName}}</p>
+                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0">{{currentMatch().player_b | playerName}}</p>
                 <p>({{currentMatch().player_b.club}})</p>
             </div>
             <div class="col-1" *ngFor="let game of allGames()">
