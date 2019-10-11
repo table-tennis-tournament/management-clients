@@ -8,7 +8,7 @@ import {Match} from '../../match/match.model';
     styleUrls: ['./start-dialog.component.scss']
 })
 export class StartDialogComponent {
-    selected: any;
+    selectedMatch: Match;
 
     constructor(
         public dialogRef: MatDialogRef<StartDialogComponent>,
@@ -20,6 +20,6 @@ export class StartDialogComponent {
     }
 
     onOk() {
-        this.dialogRef.close(this.matches[this.selected].match_id);
+        this.dialogRef.close(this.selectedMatch.match_id);
     }
 }
