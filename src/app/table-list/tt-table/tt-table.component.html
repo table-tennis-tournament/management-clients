@@ -5,12 +5,12 @@
                 <div class="col-4">
                     <span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch</span>
                 </div>
-                <div class="col-4" *ngIf="tableHasStartedMatch()">
+                <div class="col-4 p-0" *ngIf="tableHasStartedMatch()">
                     <mat-chip-list>
                         <mat-chip class="m-0" selected color="primary">{{currentMatch().classification}}</mat-chip>
                     </mat-chip-list>
                 </div>
-                <div class="col-4" *ngIf="tableHasStartedMatch()">
+                <div class="col-4 p-0" *ngIf="tableHasStartedMatch()">
                     <mat-chip-list>
                         <mat-chip class="m-0" selected color="primary">{{currentMatch().stage}}</mat-chip>
                     </mat-chip-list>
