@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Rufe Spieler aus</h1>
+<div mat-dialog-content>
+  <form [formGroup]="playersFormGroup">
+    <ng-container formArrayName="players">
+      <div *ngFor="let player of players; let i = index" >
+        <mat-checkbox [formControlName]="i">
+          {{player | playerName}}
+        </mat-checkbox>
+      </div>
+    </ng-container>
+  </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-raised-button color="primary" (click)="onOk()" cdkFocusInitial>Ausrufen</button>
+</div>
