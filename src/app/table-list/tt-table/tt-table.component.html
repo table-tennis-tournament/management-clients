@@ -65,8 +65,9 @@
         </div>
     </mat-card-content>
     <mat-card-actions>
-        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="primary" (click)="openDialog()">Ergebnis erfassen</button>
-        <button *ngIf="tableHasNoStartedAndAtLeastOneMatch()" mat-raised-button color="warn" (click)="startMatch()">Spiel starten</button>
-        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="accent" (click)="endMatch()">Spiel beenden</button>
+        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="primary" (click)="openDialog()">Erfassen</button>
+        <button *ngIf="tableHasNoStartedAndAtLeastOneMatch()" mat-raised-button color="warn" (click)="startMatch()">Starten</button>
+        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="accent" (click)="endMatch()">Beenden</button>
+        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="accent" (click)="callPlayer()">Melden</button>
     </mat-card-actions>
 </mat-card>

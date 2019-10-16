@@ -11,28 +11,31 @@ import {TableListComponent} from './table-list.component';
 import {ResultDialogComponent} from './tt-table/result-dialog/result-dialog.component';
 import {StartDialogComponent} from './tt-table/start-dialog/start-dialog.component';
 import {TtTableComponent} from './tt-table/tt-table.component';
-import { MatchlistComponent } from './tt-table/matchlist/matchlist.component';
+import {MatchlistComponent} from './tt-table/matchlist/matchlist.component';
+import {PlayerDialogComponent} from './tt-table/player-dialog/player-dialog.component';
 
 @NgModule({
-    declarations: [
-        TtTableComponent,
-        TableListComponent,
-        PlayerNamePipe,
-        ResultDialogComponent,
-        StartDialogComponent,
-        MatchlistComponent
-    ],
-    imports: [
-        SharedModule,
-        StoreModule.forFeature('tables', fromTables.reducer),
-        EffectsModule.forFeature([MatchEffects, TableListEffects]),
-        ReactiveFormsModule
-    ],
-    exports: [TableListComponent],
-    entryComponents: [
-        ResultDialogComponent,
-        StartDialogComponent
-    ]
+  declarations: [
+    TtTableComponent,
+    TableListComponent,
+    PlayerNamePipe,
+    ResultDialogComponent,
+    StartDialogComponent,
+    MatchlistComponent,
+    PlayerDialogComponent
+  ],
+  imports: [
+    SharedModule,
+    StoreModule.forFeature('tables', fromTables.reducer),
+    EffectsModule.forFeature([MatchEffects, TableListEffects]),
+    ReactiveFormsModule
+  ],
+  exports: [TableListComponent],
+  entryComponents: [
+    ResultDialogComponent,
+    StartDialogComponent,
+    PlayerDialogComponent
+  ]
 })
 export class TableListModule {
 }
