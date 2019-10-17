@@ -9,7 +9,7 @@ import {Player} from '../../match/player.model';
   styleUrls: ['./player-dialog.component.scss']
 })
 export class PlayerDialogComponent implements OnInit {
-  private playersFormGroup: any;
+  public playersFormGroup: any;
 
   constructor(
     public dialogRef: MatDialogRef<PlayerDialogComponent>,
