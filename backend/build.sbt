@@ -5,7 +5,6 @@ version := "1.0"
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
 
 scalaVersion := "2.12.7"
-val ngVersion = "4.4.4"
 
 
 libraryDependencies ++= Seq(
@@ -45,6 +44,7 @@ enablePlugins(DockerPlugin)
 enablePlugins(AshScriptPlugin)
 
 dockerBaseImage       := "openjdk:jre-alpine"
+packageName in Docker := "holzleube/turniermanager"
 
 // Docker fix
 javaOptions in Universal ++= Seq(
