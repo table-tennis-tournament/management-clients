@@ -4,8 +4,9 @@ import {Player} from './player.model';
 
 export interface MatchAggregate {
     name?: string;
+    startTime?: string;
     discipline?: Discipline;
-    matches?: Match[];
     players?: Player[];
+    matches?: Match[];
     tableNumbers?: number[];
 }
