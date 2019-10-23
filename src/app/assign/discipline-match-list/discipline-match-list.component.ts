@@ -79,21 +79,15 @@ export class DisciplineMatchListComponent {
             || match.state === MatchState[MatchState.InWaitingList];
     }
 
-
-
-    onDragStart($event) {
-        if ($event.dragData.isGroup === true) {
-            const groupId = $event.dragData.matches[0].group.id;
-            const matches = this.matches.filter(x => this.isMatchInGroup(groupId, x));
-            $event.dragData.matches = matches;
-        }
-    }
-
     isMatchInGroup(groupId: number, currentMatch: Match) {
         return currentMatch != null &&
             currentMatch.group != null &&
             currentMatch.group.id === groupId &&
             this.isMatchOpenOrInWaitingList(currentMatch);
+    }
+
+    getMatch(groupId: number) {
+        return this.matches.filter(x => this.isMatchInGroup(groupId, x));
     }
 
 }
