@@ -1,57 +1,52 @@
-<div class="row">
-    <ul class="collection waiting-list-drop-zone" dnd-droppable (onDropSuccess)="transferDataSuccess($event)"></ul>
-</div>
-<div class="row waiting-list-sorting-area">
-    <div cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
-        <ul class="collection">
-            <li *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
-                class="collection-item {{typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]}}">
-                <div class="cut-text grid-container" *ngIf="!currentMatch.matchinfo[1]&&currentMatch.matchinfo[0]">
-                    <div>
-                        <toma-team-item [team]="currentMatch.matchinfo[0].team1"></toma-team-item>
-                        - <br/>
-                        <toma-team-item [team]="currentMatch.matchinfo[0].team2"></toma-team-item>
-                    </div>
-                    <div>
-                        <div class="discipline-match-list-square indigo white-text">
-                            {{currentMatch.matchinfo[0].matchType| disciplineType}}
-                        </div>
-                        <a href="javascript:void(0)" class="secondary-content"
-                           (click)="matchListItemDelete.emit(currentMatch)">
-                            <i class="material-icons white-text">close</i>
-                        </a>
-                    </div>
+<div class="row waiting-list-drop-zone" >
+    <ul class="collection waiting-list-sorting-area" cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
+        <li *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
+            class="collection-item {{typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]}}">
+            <div class="cut-text grid-container" *ngIf="!currentMatch.matchinfo[1]&&currentMatch.matchinfo[0]">
+                <div>
+                    <toma-team-item [team]="currentMatch.matchinfo[0].team1"></toma-team-item>
+                    - <br/>
+                    <toma-team-item [team]="currentMatch.matchinfo[0].team2"></toma-team-item>
                 </div>
-                <div class="cut-text {{typeColor[currentMatch.matchinfo[0].type.id]}}"
-                     *ngIf="currentMatch.matchinfo[1]&&currentMatch.matchinfo[1].group">
-                    <mz-collapsible [mode]="accordion">
-                        <mz-collapsible-item>
-                            <mz-collapsible-item-header>
-                                <div class="black-text header-main-container">
+                <div>
+                    <div class="discipline-match-list-square indigo white-text">
+                        {{currentMatch.matchinfo[0].matchType| disciplineType}}
+                    </div>
+                    <a href="javascript:void(0)" class="secondary-content"
+                       (click)="matchListItemDelete.emit(currentMatch)">
+                        <i class="material-icons white-text">close</i>
+                    </a>
+                </div>
+            </div>
+            <div class="cut-text {{typeColor[currentMatch.matchinfo[0].type.id]}}"
+                 *ngIf="currentMatch.matchinfo[1]&&currentMatch.matchinfo[1].group">
+                <mz-collapsible [mode]="accordion">
+                    <mz-collapsible-item>
+                        <mz-collapsible-item-header>
+                            <div class="black-text header-main-container">
                   <span class="header-center-content">
                     <i class="material-icons">group</i>
                     Gruppe {{currentMatch.matchinfo[0].group.name}}
                   </span>
-                                    <span class="header-right-content">
+                                <span class="header-right-content">
                     <a href="javascript:void(0)" (click)="matchListItemDelete.emit(currentMatch)">
                     <i class="material-icons">close</i></a>
                   </span>
-                                </div>
-                            </mz-collapsible-item-header>
-                            <mz-collapsible-item-body>
-                                <div class="collection custom-margin">
-                                    <a *ngFor="let matchGroup of currentMatch.matchinfo" href="javascript:void(0)"
-                                       class="collection-item">
-                                        <toma-team-item [team]="matchGroup.team1"></toma-team-item>
-                                        -
-                                        <toma-team-item [team]="matchGroup.team2"></toma-team-item>
-                                    </a>
-                                </div>
-                            </mz-collapsible-item-body>
-                        </mz-collapsible-item>
-                    </mz-collapsible>
-                </div>
-            </li>
-        </ul>
-    </div>
+                            </div>
+                        </mz-collapsible-item-header>
+                        <mz-collapsible-item-body>
+                            <div class="collection custom-margin">
+                                <a *ngFor="let matchGroup of currentMatch.matchinfo" href="javascript:void(0)"
+                                   class="collection-item">
+                                    <toma-team-item [team]="matchGroup.team1"></toma-team-item>
+                                    -
+                                    <toma-team-item [team]="matchGroup.team2"></toma-team-item>
+                                </a>
+                            </div>
+                        </mz-collapsible-item-body>
+                    </mz-collapsible-item>
+                </mz-collapsible>
+            </div>
+        </li>
+    </ul>
 </div>

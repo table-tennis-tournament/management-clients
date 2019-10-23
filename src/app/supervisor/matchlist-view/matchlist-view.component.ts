@@ -30,24 +30,29 @@ export class MatchlistViewComponent {
     }
 
     onDropSuccess(event) {
-        const matchListItem = this.matchListMatches[event.previousIndex];
+        const currentMatch: Match = event.item.data;
         const newPosition = event.currentIndex;
-        this.moveMatchListItem.emit(
-            {
-                id: matchListItem.matchListItem.id,
-                position: newPosition
-            }
-        );
+
+        if(this.matchIsInList(currentMatch)) {
+            const matchListItem = this.matchListMatches[event.previousIndex];
+            this.moveMatchListItem.emit(
+                {
+                    id: matchListItem.matchListItem.id,
+                    position: newPosition
+                }
+            );
+            return;
+        }
+        this.transferDataSuccess(currentMatch);
+
     }
 
-    transferDataSuccess(event) {
-        let matchInfo = [];
-        if (this.isSingleDragItem(event)) {
-            matchInfo = [event.dragData];
-        }
-        if (this.isGroupDragItem(event)) {
-            matchInfo = event.dragData;
-        }
+    private matchIsInList(currentMatch: Match) {
+        return false;
+    }
+
+    transferDataSuccess(currentMatch: Match) {
+        const matchInfo = [currentMatch];
         const matchListItem = {
             matchIds: matchInfo
                 .filter(match => this.isMatchOpen(match))

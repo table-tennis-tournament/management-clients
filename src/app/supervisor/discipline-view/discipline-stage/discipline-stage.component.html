@@ -17,13 +17,13 @@
             </div>
         </mz-collapsible-item-header>
         <mz-collapsible-item-body>
-            <div class="collection minus-margin">
+            <div class="collection minus-margin" cdkDropList>
                 <a *ngFor="let currentMatch of stage.matches"
                    class="collection-item no-lines {{lineStageClass[index%3]}}"
                    (dblclick)="resultForMatch.emit(currentMatch)"
-                   [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)" dnd-draggable
-                   [dragEnabled]="isMatchOpen(currentMatch)"
-                   [dragData]="currentMatch">
+                   [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)"
+                   cdkDrag [cdkDragDisabled]="!isMatchOpen(currentMatch)"
+                   [cdkDragData]="currentMatch">
                     <div class="match-item-padding">
                         <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>
                     </div>
