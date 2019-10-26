@@ -30,44 +30,34 @@ export class MatchlistViewComponent {
     }
 
     onDropSuccess(event) {
-        const currentMatch: Match = event.item.data;
-        const newPosition = event.currentIndex;
 
-        if(this.matchIsInList(currentMatch)) {
-            const matchListItem = this.matchListMatches[event.previousIndex];
-            this.moveMatchListItem.emit(
-                {
-                    id: matchListItem.matchListItem.id,
-                    position: newPosition
-                }
-            );
+        if (this.isMatchData(event.item.data)) {
+            this.assignMatchesToMatchList(event.item.data, event.currentIndex);
             return;
         }
-        this.transferDataSuccess(currentMatch);
+
+        const matchListItem = this.matchListMatches[event.previousIndex];
+        this.moveMatchListItem.emit(
+            {
+                id: matchListItem.matchListItem.id,
+                position: event.currentIndex
+            }
+        );
 
     }
 
-    private matchIsInList(currentMatch: Match) {
-        return false;
+    private isMatchData(data: any): data is Match[] {
+        return data && data[0] && data[0].state !== undefined;
     }
 
-    transferDataSuccess(currentMatch: Match) {
-        const matchInfo = [currentMatch];
+    assignMatchesToMatchList(matches: Match[], index: number) {
         const matchListItem = {
-            matchIds: matchInfo
+            matchIds: matches
                 .filter(match => this.isMatchOpen(match))
                 .map(match => match.id),
-            position: this.matchListMatches.length
+            position: index
         };
         this.assignMatchListItem.emit(matchListItem);
-    }
-
-    private isGroupDragItem(event) {
-        return event.dragData[0];
-    }
-
-    private isSingleDragItem(event) {
-        return event.dragData.team1;
     }
 
     private isMatchOpen(match: Match) {
