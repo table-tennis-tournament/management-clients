@@ -44,7 +44,6 @@ import {DisciplineMatchListComponent} from './assign/discipline-match-list/disci
 import {DisciplineSelectComponent} from './discipline/discipline-select/discipline-select.component';
 import {DisciplineTypePipe} from './assign/pipes/discipline-type.pipe';
 import {MatchEffects} from './assign/redux/match.effects';
-import {DndModule} from 'ng2-dnd';
 import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
 import {MatchListEffects} from './supervisor/redux/matchlist.effects';
 import {DisciplineViewComponent} from './supervisor/discipline-view/discipline-view.component';
@@ -73,6 +72,8 @@ import {CallerEffects} from './caller/redux/caller.effects';
 import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-scanner.component';
 import {ResultPipe} from './shared/result/result.pipe';
 import {ZXingScannerModule} from '@zxing/ngx-scanner';
+import { MatchlistGroupItemComponent } from './supervisor/matchlist-view/matchlist-group-item/matchlist-group-item.component';
+import { MatchlistSingleItemComponent } from './supervisor/matchlist-view/matchlist-single-item/matchlist-single-item.component';
 
 @NgModule({
     declarations: [
@@ -111,7 +112,9 @@ import {ZXingScannerModule} from '@zxing/ngx-scanner';
         CallerMatchListComponent,
         CallerMatchDetailComponent,
         RefereesListComponent,
-        QrResultScannerComponent
+        QrResultScannerComponent,
+        MatchlistGroupItemComponent,
+        MatchlistSingleItemComponent
     ],
     imports: [
         BrowserModule,
@@ -128,7 +131,6 @@ import {ZXingScannerModule} from '@zxing/ngx-scanner';
         MzCollapsibleModule,
         MzTabModule,
         DragDropModule,
-        DndModule.forRoot(),
         FormsModule,
         ZXingScannerModule.forRoot(),
         ToastrModule.forRoot({

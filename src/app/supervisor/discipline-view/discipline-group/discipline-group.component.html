@@ -1,7 +1,7 @@
 <div class="card {{typeColor[group?.matches[0]?.type.id]}}">
     <div class="card-content simple-padding white black-text">
-         <span class="card-title group-view-header">
-            <span dnd-draggable [dragData]="group.matches" [dragEnabled]="groupIsDraggable()">{{group.name}} </span>
+         <span class="card-title group-view-header" cdkDropList>
+            <span cdkDrag [cdkDragDisabled]="!groupIsDraggable()" [cdkDragData]="group.matches">{{group.name}} </span>
             <span class="right" *ngIf="group.isComplete"><i class="material-icons">done</i></span>
             <span class="right" *ngIf="groupIsNotPlayable()"><i class="material-icons">remove_circle_outline</i></span>
             <span class="right" *ngIf="groupIsNotComplete()">{{openMatches}}/{{allMatchCount}}</span>
@@ -32,14 +32,13 @@
                 </div>
             </mz-collapsible-item-header>
             <mz-collapsible-item-body>
-                <div class="collection custom-margin">
+                <div class="collection custom-margin" cdkDropList>
                     <a *ngFor="let currentMatch of group.matches"
                        (dblclick)="resultForMatch.emit(currentMatch)"
-                       dnd-draggable
+                       cdkDrag [cdkDragDisabled]="currentMatch.state !== openMatchState"
+                       [cdkDragData]="[currentMatch]"
                        class="collection-item"
-                       [class.disabled-item]="currentMatch.state === inWaitingListState"
-                       [dragEnabled]="currentMatch.state === openMatchState"
-                       [dragData]="currentMatch">
+                       [class.disabled-item]="currentMatch.state === inWaitingListState">
                         <div>
                             <toma-team-item [team]="currentMatch.team1"
                                             [showDisciplines]="false"></toma-team-item>

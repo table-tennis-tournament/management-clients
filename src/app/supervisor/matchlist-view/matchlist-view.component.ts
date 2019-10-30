@@ -30,39 +30,34 @@ export class MatchlistViewComponent {
     }
 
     onDropSuccess(event) {
+
+        if (this.isMatchData(event.item.data)) {
+            this.assignMatchesToMatchList(event.item.data, event.currentIndex);
+            return;
+        }
+
         const matchListItem = this.matchListMatches[event.previousIndex];
-        const newPosition = event.currentIndex;
         this.moveMatchListItem.emit(
             {
                 id: matchListItem.matchListItem.id,
-                position: newPosition
+                position: event.currentIndex
             }
         );
+
     }
 
-    transferDataSuccess(event) {
-        let matchInfo = [];
-        if (this.isSingleDragItem(event)) {
-            matchInfo = [event.dragData];
-        }
-        if (this.isGroupDragItem(event)) {
-            matchInfo = event.dragData;
-        }
+    private isMatchData(data: any): data is Match[] {
+        return data && data[0] && data[0].state !== undefined;
+    }
+
+    assignMatchesToMatchList(matches: Match[], index: number) {
         const matchListItem = {
-            matchIds: matchInfo
+            matchIds: matches
                 .filter(match => this.isMatchOpen(match))
                 .map(match => match.id),
-            position: this.matchListMatches.length
+            position: index
         };
         this.assignMatchListItem.emit(matchListItem);
-    }
-
-    private isGroupDragItem(event) {
-        return event.dragData[0];
-    }
-
-    private isSingleDragItem(event) {
-        return event.dragData.team1;
     }
 
     private isMatchOpen(match: Match) {
