@@ -1,0 +1,21 @@
+.header-main-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  flex-grow: 1;
+  min-width: 135px;
+}
+
+.collection.custom-margin{
+  margin: -30px;
+}
+
+.header-center-content {
+  flex: 1;
+  order: 1;
+}
+
+.header-right-content {
+  width: 33px;
+  order: 2;
+}

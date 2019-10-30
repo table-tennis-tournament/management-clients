@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-content {{typeColor[table?.matches[0]?.type.id]}} custom-padding">
+    <div class="card-content custom-padding" [ngClass]="typeColor[table?.matches[0]?.type.id]">
         <toma-tt-table-content
                 [table]="table"
                 (freeTable)="freeTable.emit(table)"

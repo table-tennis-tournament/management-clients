@@ -3,7 +3,7 @@
   <div *ngIf="!matchesLoading&&matchAggregates?.length>0">
     <mz-collection>
       <mz-collection-header><h4>Spiele zum Ausrufen:</h4></mz-collection-header>
-      <mz-collection-item class="{{typeColor[currentMatch?.discipline?.id]}}"
+      <mz-collection-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
                           (click)="matchesSelected.emit(currentMatch)"
                           *ngFor="let currentMatch of matchAggregates" >
         <div class="cut-text" *ngIf="currentMatch">

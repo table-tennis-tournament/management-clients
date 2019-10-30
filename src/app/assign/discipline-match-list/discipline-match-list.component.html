@@ -10,11 +10,13 @@
 <div class="row maxHeight">
     <mz-spinner *ngIf="matchesLoading"></mz-spinner>
     <mz-collection>
-        <mz-collection-item cdkDropList class="{{typeColor[currentMatch.type.id]}}"
+        <mz-collection-item cdkDropList
+                            [ngClass]="typeColor[currentMatch.type.id]"
                             *ngFor="let currentMatch of currentMatchesToShow; let i = index;"
                             [class.disabled-item]="!currentMatch.isPlayable">
             <div class="cut-text discipline-match-list-root " *ngIf="currentMatch">
                 <div class="discipline-match-list-item" [cdkDragDisabled]="!currentMatch.isPlayable" cdkDrag [cdkDragData]="[currentMatch]" >
+                    <i *cdkDragPreview class="material-icons">perm_identity</i>
                     <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
                     <span *ngIf="currentMatch.team1[1]">/{{currentMatch.team1[1].lastName}}</span>
                     <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
@@ -24,6 +26,7 @@
                      cdkDrag [cdkDragData]="getMatch(currentMatch.group.id)"
                      [cdkDragDisabled]="!currentMatch.isPlayable"
                      class="discipline-match-list-square indigo white-text">
+                    <i *cdkDragPreview class="material-icons">group</i>
                     {{currentMatch.group.name}}
                 </div>
                 <div *ngIf="!currentMatch.group" class="discipline-match-list-square indigo white-text">
