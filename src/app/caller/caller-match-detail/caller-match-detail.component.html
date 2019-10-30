@@ -1,5 +1,5 @@
 <div *ngIf="matchAggregate">
-    <div class="card {{typeColor[matchAggregate.discipline.id]}} center-align">
+    <div class="card center-align" [ngClass]="typeColor[matchAggregate.discipline.id]">
         <div class="card-content simple-padding">
             <span class="card-title ">
             <h3>{{matchAggregate.discipline.name}}</h3>

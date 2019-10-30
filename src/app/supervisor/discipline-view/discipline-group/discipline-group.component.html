@@ -1,4 +1,4 @@
-<div class="card {{typeColor[group?.matches[0]?.type.id]}}">
+<div class="card" [ngClass]="typeColor[group?.matches[0]?.type.id]">
     <div class="card-content simple-padding white black-text">
          <span class="card-title group-view-header" cdkDropList>
             <span cdkDrag [cdkDragDisabled]="!groupIsDraggable()" [cdkDragData]="group.matches">{{group.name}} </span>

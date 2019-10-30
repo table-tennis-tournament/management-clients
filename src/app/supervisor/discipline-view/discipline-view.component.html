@@ -2,7 +2,8 @@
     <mz-spinner *ngIf="matchesLoading"></mz-spinner>
 
     <div *ngFor="let currentTab of tabs" class="col no-padding">
-        <a class="waves-effect waves-light btn {{typeColor[currentTab.id]}}"
+        <a class="waves-effect waves-light btn"
+           [ngClass]="typeColor[currentTab.id]"
            (click)="setTabForId(currentTab.id)">{{currentTab.name}}</a>
     </div>
     <div class="col">
@@ -32,7 +33,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="selectedTab" class="row {{typeColor[selectedTab.id]}}" >
+<div *ngIf="selectedTab" class="row" [ngClass]="typeColor[selectedTab.id]" >
     <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">
         <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r=index">
             <toma-discipline-stage [stage]="currentStage"
