@@ -418,19 +418,37 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     }
   }
 
+  def updateResult(id: Long, result: Seq[Seq[Int]]) = {
+    val x = result map (r => r.mkString("="))
+    val resultRaw = x.mkString(",")
+    val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
+    val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y.head>y(1)) Seq(x.head+1, x(1)) else Seq(x.head, x(1) + 1)}
+    ttMatchSeq = ttMatchSeq map { m =>
+      if (m.id == id) {
+        m.copy(
+          resultRaw = x.mkString(","),
+          result = sets.head + " : " + sets(1),
+          balls1 = balls.head,
+          balls2 = balls(1),
+          sets1 = sets.head,
+          sets2 = sets(1),
+          state = Completed
+        )
+      } else m
+    }
+    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
+  }
+
   def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
     val x = result map (r => r.mkString("="))
     val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
     val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y.head>y(1)) Seq(x.head+1, x(1)) else Seq(x.head, x(1) + 1)}
     ttTablesSeq = ttTablesSeq map { t =>
-      if (t.matchId.contains(id)){
-        val updatedTable = t.copy(matchId = t.matchId.filterNot(_ == id))
-        pub ! UpdateTable(allTableInfo.filter(_.id == id))
-        updatedTable
-      }
+      if (t.matchId.contains(id)) t.copy(matchId = t.matchId.filterNot(_ == id))
       else t
     }
+    pub ! UpdateTable(allTableInfo.filter(_.id == id))
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == id) {
         m.copy(
