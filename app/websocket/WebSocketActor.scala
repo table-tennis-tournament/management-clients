@@ -12,7 +12,7 @@ import play.api.libs.json.{Json, Writes}
 
 
 object WebSocketActor {
-  def props(out: ActorRef) = Props(new WebSocketActor(out))
+  def props(out: ActorRef, topic: String) = Props(new WebSocketActor(out, topic))
 
   trait Message
 
@@ -23,15 +23,17 @@ object WebSocketActor {
 
 
 
-class WebSocketActor(out: ActorRef) extends Actor {
+class WebSocketActor(out: ActorRef, topic: String) extends Actor {
   import models.MatchModel.{allMatchInfoWrites, matchListInfoWrites}
   import models.TableModel.tableInfoWrites
   import websocket.WebSocketActor._
 
   Logger.info("subscribe...")
   val mediator: ActorRef = DistributedPubSub(context.system).mediator
-  val topic = "Websocket"
+
+  Logger.info("subscribe topic: " + topic)
   mediator ! Subscribe(topic, self)
+  Logger.info("subscribed")
 
   implicit val updateTableWrites: Writes[UpdateTable] = (updateTable: UpdateTable) => Json.obj(
     "UpdateTable" -> updateTable.table
@@ -58,8 +60,8 @@ class WebSocketActor(out: ActorRef) extends Actor {
     case m: UpdateMatchList =>
       Logger.info("send UpdateMatchList)")
       out ! Json.toJson(m).toString()
-    case SubscribeAck(Subscribe("Websocket", None, `self`)) ⇒
-      Logger.info("subscribing")
+    case SubscribeAck(Subscribe(topic, None, `self`)) ⇒
+      Logger.info("subscribing " + topic)
     case e => Logger.info("error: " + e.toString)
   }
 }
