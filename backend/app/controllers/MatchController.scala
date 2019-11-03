@@ -18,10 +18,16 @@ import scala.concurrent.duration._
   */
 class MatchController @Inject() (implicit ec: ExecutionContext,
                                  tables: Tables,
+                                 @Named("publisher_actor") pub: ActorRef,
                                  val controllerComponents: ControllerComponents) extends BaseController {
   implicit val timeout: Timeout = 5.seconds
   import models.AnswerModel._
   import models.MatchModel._
+
+  def testSocket = Action{
+    pub ! UpdateMatches(tables.allMatchesInfo)
+    Ok("send")
+  }
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
     val p1 = ttMatch.player1Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
