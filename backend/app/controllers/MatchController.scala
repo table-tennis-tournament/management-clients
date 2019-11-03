@@ -18,7 +18,6 @@ import scala.concurrent.duration._
   */
 class MatchController @Inject() (implicit ec: ExecutionContext,
                                  tables: Tables,
-                                 @Named("publisher_actor") pub: ActorRef,
                                  val controllerComponents: ControllerComponents) extends BaseController {
   implicit val timeout: Timeout = 5.seconds
   import models.AnswerModel._
@@ -51,9 +50,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
               tables.updateMatchState(Finished, id)
             }
             tables.startNextMatch
-            pub ! UpdateMatches(tables.allMatchesInfo)
-            pub ! UpdateTable(tables.allTableInfo)
-            pub ! UpdateMatchList(tables.getAllMatchList)
             Ok(Json.toJson(Answer(successful = true, "successful")).toString())
           case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
@@ -72,9 +68,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
               tables.updateMatchState(Open, id)
             }
             tables.startNextMatch
-            pub ! UpdateMatches(tables.allMatchesInfo)
-            pub ! UpdateTable(tables.allTableInfo)
-            pub ! UpdateMatchList(tables.getAllMatchList)
             Ok(Json.toJson(Answer(successful = true, "successful")))
           case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
@@ -178,9 +171,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
           if(res) {
             tables.updateMatchState(Completed, id)
             tables.startNextMatch
-            pub ! UpdateMatches(tables.allMatchesInfo)
-            pub ! UpdateTable(tables.allTableInfo)
-            pub ! UpdateMatchList(tables.getAllMatchList)
             Ok(Json.toJson(Answer(successful = true, "set result")))
           } else BadRequest(Json.toJson(Answer(successful = false, "error writing result to database")))
         }
@@ -260,9 +250,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
             }
             Logger.info("result: " + res.toString + " " + table.toString + " " + m.toString)
             if(res) {
-              pub ! UpdateMatches(tables.allMatchesInfo)
-              pub ! UpdateTable(tables.allTableInfo)
-              pub ! UpdateMatchList(tables.getAllMatchList)
               Ok(Json.toJson(Answer(successful = true, "started match")))
             } else
               BadRequest(Json.toJson(Answer(successful = false, "not all matches started")))
@@ -283,8 +270,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
             ids foreach { id =>
               tables.updateMatchState(OnTable, id)
             }
-            pub ! UpdateMatches(tables.allMatchesInfo)
-            pub ! UpdateTable(tables.allTableInfo)
             Ok(Json.toJson(Answer(successful = true, "successful")).toString())
           case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
@@ -302,7 +287,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
                 tables.updatePlayerList map { i =>
                   val x = n && b && d && e && f && g && i
                   if(x) {
-                    pub ! UpdateMatches(tables.allMatchesInfo)
                     Ok(Json.toJson(Answer(successful = true, "load new matches")))
                   } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
                 }

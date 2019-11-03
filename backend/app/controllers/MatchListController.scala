@@ -15,7 +15,6 @@ import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
   * Created by jonas on 24.11.16.
   */
 class MatchListController @Inject() (tables: Tables,
-                                     @Named("publisher_actor") pub: ActorRef,
                                      val controllerComponents: ControllerComponents) extends BaseController {
 
   import models.AnswerModel._
@@ -47,9 +46,6 @@ class MatchListController @Inject() (tables: Tables,
               matchList.matchId.foreach(m => tables.updateMatchState(InWaitingList, m))
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
-              pub ! UpdateMatches(tables.allMatchesInfo)
-              pub ! UpdateTable(tables.allTableInfo)
-              pub ! UpdateMatchList(tables.getAllMatchList)
               Ok(Json.toJson(Answer(successful = true, "match added", newMLEntry.uuid)))
             } else {
               BadRequest(Json.toJson(Answer(successful = false, "match is already in match list", newMLEntry.uuid)))
@@ -64,9 +60,6 @@ class MatchListController @Inject() (tables: Tables,
     Logger.info(tables.getMatchList.toString())
     Logger.info(uuid)
     if(tables.delMatchList(UUID.fromString(uuid))){
-      pub ! UpdateMatches(tables.allMatchesInfo)
-      pub ! UpdateTable(tables.allTableInfo)
-      pub ! UpdateMatchList(tables.getAllMatchList)
       Ok(Json.toJson(Answer(successful = true, "match deleted")))
     } else {
       BadRequest(Json.toJson(Answer(successful = false, "UUID not found")))
@@ -100,9 +93,6 @@ class MatchListController @Inject() (tables: Tables,
           else m.copy(position = m.position + 1)
         }
         tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
-        pub ! UpdateMatches(tables.allMatchesInfo)
-        pub ! UpdateTable(tables.allTableInfo)
-        pub ! UpdateMatchList(tables.getAllMatchList)
         Ok(Json.toJson(Answer(successful = true, "changed match list")))
       case _ => BadRequest(Json.toJson(Answer(successful = false, "UUID not found")))
     }
