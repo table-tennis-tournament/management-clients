@@ -714,7 +714,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def delMatchList(uuid: UUID): Boolean = {
-    ttMatchListSeq.find(_.uuid.contains(uuid)) match {
+    val result = ttMatchListSeq.find(_.uuid.contains(uuid)) match {
       case Some(mlItem) =>
         Logger.debug("del: " + mlItem.toString)
         mlItem.matchId.foreach(id => updateMatchState(Open, id))
@@ -725,6 +725,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       case _ => false
     }
     pub ! UpdateMatchList(getAllMatchList)
+    result
   }
 
   def delMatchListItem(uuid: UUID, id: Long): Unit = {
