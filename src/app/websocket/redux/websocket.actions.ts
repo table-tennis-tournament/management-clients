@@ -1,27 +1,51 @@
 import {Action} from '@ngrx/store';
 
 export enum WebSocketActionTypes {
-    Connect = '[WebSocket] Connect',
-    ConnectSuccess = '[WebSocket] Connect Success',
-    ConnectError = '[WebSocket] Connect Error'
+    ConnectMatch = '[WebSocket] Match Connect',
+    ConnectMatchSuccess = '[WebSocket] Match Connect Success',
+    ConnectMatchError = '[WebSocket] Match Connect Error',
+    ConnectTable = '[WebSocket] Table Connect',
+    ConnectTableSuccess = '[WebSocket] Table Connect Success',
+    ConnectTableError = '[WebSocket] Table Connect Error'
 }
 
-export class ConnectWebSocket implements Action {
-    readonly type = WebSocketActionTypes.Connect;
+export class ConnectMatchWebSocket implements Action {
+    readonly type = WebSocketActionTypes.ConnectMatch;
 
     constructor(public payload: any) {
     }
 }
 
-export class ConnectWebSocketSuccess implements Action {
-    readonly type = WebSocketActionTypes.ConnectSuccess;
+export class ConnectMatchWebSocketSuccess implements Action {
+    readonly type = WebSocketActionTypes.ConnectMatchSuccess;
 
     constructor(public payload: any) {
     }
 }
 
-export class ConnectWebSocketError implements Action {
-    readonly type = WebSocketActionTypes.ConnectError;
+export class ConnectMatchWebSocketError implements Action {
+    readonly type = WebSocketActionTypes.ConnectMatchError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ConnectTableWebSocket implements Action {
+    readonly type = WebSocketActionTypes.ConnectTable;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ConnectTableWebSocketSuccess implements Action {
+    readonly type = WebSocketActionTypes.ConnectTableSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ConnectTableWebSocketError implements Action {
+    readonly type = WebSocketActionTypes.ConnectTableError;
 
     constructor(public payload: any) {
     }
@@ -29,6 +53,9 @@ export class ConnectWebSocketError implements Action {
 
 
 export type WebSocketActionsUnion =
-    | ConnectWebSocket
-    | ConnectWebSocketSuccess
-    | ConnectWebSocketError;
+    | ConnectMatchWebSocket
+    | ConnectMatchWebSocketSuccess
+    | ConnectMatchWebSocketError
+    | ConnectTableWebSocket
+    | ConnectTableWebSocketSuccess
+    | ConnectTableWebSocketError;

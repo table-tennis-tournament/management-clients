@@ -1,5 +1,6 @@
 import {MatchActionsUnion, MatchActionTypes} from './match.actions';
 import {Match} from '../../shared/data/match.model';
+import {TableActionTypes} from '../../table/redux/table.actions';
 
 export interface MatchesState {
     matches: Match[];
@@ -28,6 +29,17 @@ export function reduceMatchState(state: MatchesState = initialState, action: Mat
             return {
                 ...state,
                 matchesLoading: false
+            };
+        case MatchActionTypes.UpdateSuccess:
+            return {
+                ...state,
+                matches: state.matches.map(match => {
+                    const matches = action.payload.filter(item => item.id === match.id)
+                    if (matches.length > 0) {
+                        return matches[0];
+                    }
+                    return match;
+                })
             };
         default:
             return state;

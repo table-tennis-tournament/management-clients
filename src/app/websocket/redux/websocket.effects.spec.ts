@@ -6,7 +6,7 @@ import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
 import {of, ReplaySubject, throwError} from 'rxjs';
 import {WebSocketEffects} from './websocket.effects';
 import {WebsocketService} from '../../shared/websocket.service';
-import {ConnectWebSocket, ConnectWebSocketSuccess, WebSocketActionTypes} from './websocket.actions';
+import {ConnectMatchWebSocket, ConnectMatchWebSocketSuccess, WebSocketActionTypes} from './websocket.actions';
 
 describe('the websocket effects', () => {
     let actions: ReplaySubject<any>;
@@ -38,11 +38,11 @@ describe('the websocket effects', () => {
     describe('connectWebsocket', () => {
 
         it('should return a ConnectWebSocketSuccess', (done) => {
-            const expectedResult = new ConnectWebSocketSuccess(true);
+            const expectedResult = new ConnectMatchWebSocketSuccess(true);
             spyOn(webSocketService, 'connectSocket').and.returnValue(of({}));
             spyOn(webSocketService, 'registerListeners');
 
-            actions.next(new ConnectWebSocket(null));
+            actions.next(new ConnectMatchWebSocket(null));
 
             webSocketEffects.connectWebSocket$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);

@@ -18,8 +18,16 @@ export class WebsocketService {
     }
 
     public connectSocket(): Observable<any> {
+        return this.connect('tables');
+    }
+
+    connectTable(): Observable<any>{
+        return this.connect('tables');
+    }
+
+    private connect(topicName: string): Observable<any> {
         const myLocation = this.document.location.hostname;
-        const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}`;
+        const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}${topicName}`;
         console.log('connect to: ' + url);
         return Observable.create(complete => {
             this.socket$ = new WebSocketSubject({

@@ -10,16 +10,16 @@ const initialState: WebSocketState = {
 
 export function reduceWebsocketState(state: WebSocketState = initialState, action: WebSocketActionsUnion) {
     switch (action.type) {
-        case WebSocketActionTypes.Connect:
+        case WebSocketActionTypes.ConnectMatch:
             return {
                 ...state,
                 connected: false
             };
-        case WebSocketActionTypes.ConnectSuccess:
+        case WebSocketActionTypes.ConnectMatchSuccess:
             return {
                 connected: true
             };
-        case WebSocketActionTypes.ConnectError:
+        case WebSocketActionTypes.ConnectMatchError:
             return {
                 ...state,
                 connected: false

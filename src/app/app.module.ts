@@ -72,8 +72,8 @@ import {CallerEffects} from './caller/redux/caller.effects';
 import {QrResultScannerComponent} from './settings/qr-result-scanner/qr-result-scanner.component';
 import {ResultPipe} from './shared/result/result.pipe';
 import {ZXingScannerModule} from '@zxing/ngx-scanner';
-import { MatchlistGroupItemComponent } from './supervisor/matchlist-view/matchlist-group-item/matchlist-group-item.component';
-import { MatchlistSingleItemComponent } from './supervisor/matchlist-view/matchlist-single-item/matchlist-single-item.component';
+import {MatchlistGroupItemComponent} from './supervisor/matchlist-view/matchlist-group-item/matchlist-group-item.component';
+import {MatchlistSingleItemComponent} from './supervisor/matchlist-view/matchlist-single-item/matchlist-single-item.component';
 
 @NgModule({
     declarations: [

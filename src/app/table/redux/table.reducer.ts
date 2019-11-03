@@ -26,6 +26,18 @@ export function reduceTableState(state: TableState = initialState, action: Table
                 tablesLoading: false,
                 tables: action.payload
             };
+        case TableActionTypes.UpdateSuccess:
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    const tables = action.payload.filter(item => item.number === table.number)
+                    if (tables.length > 0) {
+                        return tables[0];
+                    }
+                    return table;
+                })
+
+            };
         case TableActionTypes.LoadError:
             return {
                 ...state,

@@ -6,11 +6,11 @@ export const environment = {
     production: false,
     socket: {
         // baseUrl: 'ws://localhost:9000/register',
-        baseUrl: '/api/register',
+        baseUrl: '/api/ws/',
         protocol: 'ws',
         port: ':9000',
         config: {
-            path: '/api/register'
+            path: '/api/ws/'
         },
         upgrade: false,
         transports: ['websocket']

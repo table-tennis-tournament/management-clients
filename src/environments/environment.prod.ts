@@ -1,7 +1,7 @@
 export const environment = {
     production: true,
     socket: {
-        baseUrl: '/api/register',
+        baseUrl: '/api/ws/',
         protocol: 'wss',
         port: ''
     }

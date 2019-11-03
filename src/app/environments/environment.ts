@@ -9,7 +9,7 @@ export const environment = {
         // baseUrl: 'ws://localhost:9000/register',
         baseUrl: 'ws://192.168.0.213:9000/register',
         config: {
-            path: '/api/register'
+            path: '/api/ws/'
         },
         upgrade: false,
         transports: ['websocket']
