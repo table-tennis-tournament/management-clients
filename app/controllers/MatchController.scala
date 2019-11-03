@@ -192,8 +192,9 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
     if(res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.updateResult(id, resultO.get)
+      Ok(Json.toJson(Answer(successful = true, "updated match")))
     } else {
-      Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
+      BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
   }
 
