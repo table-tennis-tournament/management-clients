@@ -24,7 +24,8 @@ GET     /api/match/loadnew                  controllers.MatchController.loadNewM
 GET     /api/match/:id                      controllers.MatchController.getMatch(id: Long)
 GET     /api/matchaggregate/caller          controllers.MatchController.getMatchAggregateForCaller
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
-POST    /api/match/:id/result               controllers.MatchController.setResult(id: Long)
+POST    /api/match/:id/setResult            controllers.MatchController.setResult(id: Long)
+POST    /api/match/:id/updateResult         controllers.MatchController.updateResult(id: Long)
 
 GET     /api/types/all                      controllers.MatchController.getTypes
 GET     /api/types/open/all                 controllers.MatchController.getActiveTypes

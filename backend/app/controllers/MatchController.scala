@@ -186,6 +186,18 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
     }
   }
 
+  def updateResult(id: Long): Action[AnyContent] = Action { request =>
+    Logger.info(request.body.asJson.get.toString())
+    val res = request.body.asJson
+    if(res.isDefined) {
+      val resultO = res.get.validate[Seq[Seq[Int]]]
+      tables.updateResult(id, resultO.get)
+    } else {
+      Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
+    }
+  }
+
+
   def getTypes: Action[AnyContent] = Action {
     Ok(Json.toJson(tables.allTypes.map(addDoubleName).sortBy(_.name)))
   }
