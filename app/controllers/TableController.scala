@@ -14,7 +14,6 @@ import websocket.WebSocketActor.UpdateTable
   * Created by jonas on 09.10.16.
   */
 class TableController @Inject() (tables: Tables,
-                                 @Named("publisher_actor") pub: ActorRef,
                                  val controllerComponents: ControllerComponents) extends BaseController {
 
   import models.AnswerModel._
@@ -45,13 +44,11 @@ class TableController @Inject() (tables: Tables,
 
   def lockTable(nr: Long): Action[AnyContent] = Action {
     tables.lockTTTable(nr)
-    pub ! UpdateTable(tables.allTableInfo)
     Ok(Json.toJson(Answer(successful = true, "table locked")))
   }
 
   def unlockTable(nr: Long): Action[AnyContent] = Action {
     tables.unlockTTTable(nr)
-    pub ! UpdateTable(tables.allTableInfo)
     Ok(Json.toJson(Answer(successful = true, "table unlocked")))
   }
 }

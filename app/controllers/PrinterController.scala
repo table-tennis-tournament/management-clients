@@ -21,7 +21,6 @@ import scala.concurrent.duration._
 
 class PrinterController @Inject() (pdfGenerator: PdfGenerator,
                                    @Named("printer_actor") printerActor: ActorRef,
-                                   @Named("publisher_actor") pubActor: ActorRef,
                                    tables: Tables,
                                    val controllerComponents: ControllerComponents)
                                   (implicit ec: ExecutionContext, system: ActorSystem, materializer: Materializer
