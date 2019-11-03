@@ -14,8 +14,18 @@ import websocket.WebSocketActor
 class WebSocketController @Inject() (implicit system: ActorSystem, materializer: Materializer) {
   Logger.info("Websocket!!!")
 
-  def socket: WebSocket = WebSocket.accept[String, String] { _ =>
-    Logger.info("websocket request")
-    ActorFlow.actorRef(out => WebSocketActor.props(out))
+  def tablesSocket: WebSocket = WebSocket.accept[String, String] { _ =>
+    Logger.info("websocket request tables")
+    ActorFlow.actorRef(out => WebSocketActor.props(out, "UpdateTable"))
+  }
+
+  def matchesSocket: WebSocket = WebSocket.accept[String, String] { _ =>
+    Logger.info("websocket request matches")
+    ActorFlow.actorRef(out => WebSocketActor.props(out, "UpdateMatches"))
+  }
+
+  def matchListSocket: WebSocket = WebSocket.accept[String, String] { _ =>
+    Logger.info("websocket request matches")
+    ActorFlow.actorRef(out => WebSocketActor.props(out, "UpdateMatchList"))
   }
 }
