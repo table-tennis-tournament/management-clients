@@ -6,7 +6,10 @@ export enum WebSocketActionTypes {
     ConnectMatchError = '[WebSocket] Match Connect Error',
     ConnectTable = '[WebSocket] Table Connect',
     ConnectTableSuccess = '[WebSocket] Table Connect Success',
-    ConnectTableError = '[WebSocket] Table Connect Error'
+    ConnectTableError = '[WebSocket] Table Connect Error',
+    ConnectMatchList = '[WebSocket] MatchList Connect',
+    ConnectMatchListSuccess = '[WebSocket] MatchList Connect Success',
+    ConnectMatchListError = '[WebSocket] MatchList Connect Error'
 }
 
 export class ConnectMatchWebSocket implements Action {
@@ -51,6 +54,27 @@ export class ConnectTableWebSocketError implements Action {
     }
 }
 
+export class ConnectMatchListWebSocket implements Action {
+    readonly type = WebSocketActionTypes.ConnectMatchList;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ConnectMatchListWebSocketSuccess implements Action {
+    readonly type = WebSocketActionTypes.ConnectMatchListSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class ConnectMatchListWebSocketError implements Action {
+    readonly type = WebSocketActionTypes.ConnectMatchListError;
+
+    constructor(public payload: any) {
+    }
+}
+
 
 export type WebSocketActionsUnion =
     | ConnectMatchWebSocket
@@ -58,4 +82,7 @@ export type WebSocketActionsUnion =
     | ConnectMatchWebSocketError
     | ConnectTableWebSocket
     | ConnectTableWebSocketSuccess
-    | ConnectTableWebSocketError;
+    | ConnectTableWebSocketError
+    | ConnectMatchListWebSocket
+    | ConnectMatchListWebSocketSuccess
+    | ConnectMatchListWebSocketError;

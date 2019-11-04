@@ -5,7 +5,7 @@ import {Match} from '../shared/data/match.model';
 import {LoadMatchesSuccess, UpdateMatchesSuccess} from '../assign/redux/match.actions';
 import {MatchList} from '../supervisor/matchlist.model';
 import {LoadMatchListSuccess} from '../supervisor/redux/matchlist.actions';
-import {ConnectTableWebSocket, ConnectMatchWebSocket} from './redux/websocket.actions';
+import {ConnectTableWebSocket, ConnectMatchWebSocket, ConnectMatchListWebSocket} from './redux/websocket.actions';
 import {Store} from '@ngrx/store';
 import {LoadResultsSuccess} from '../result/redux/result.actions';
 import {MatchState} from '../shared/data/matchstate.model';
@@ -24,6 +24,7 @@ export class WebsocketHandlerService {
         console.log('start connecting to socket');
         this.connectToTableWebsocket();
         this.connectToMatchWebsocket();
+        this.connectToMatchListWebsocket();
     }
 
     private connectToTableWebsocket() {
@@ -35,10 +36,18 @@ export class WebsocketHandlerService {
     }
 
     private connectToMatchWebsocket() {
-        this.store.dispatch(new ConnectTableWebSocket(
+        this.store.dispatch(new ConnectMatchWebSocket(
             {
                 connected: this.handleMatchWebsocketMessage.bind(this),
                 disconnected: this.connectToMatchWebsocket.bind(this)
+            }));
+    }
+
+    private connectToMatchListWebsocket() {
+        this.store.dispatch(new ConnectMatchListWebSocket(
+            {
+                connected: this.handleMatchListWebsocketMessage.bind(this),
+                disconnected: this.connectToMatchListWebsocket.bind(this)
             }));
     }
 
@@ -46,8 +55,8 @@ export class WebsocketHandlerService {
         console.log('handle match websocker message: ' + data);
         console.log(data);
         if (data.UpdateMatches) {
-            const newMatchData: Match[] = data.UpdateMatches;
-            this.store.dispatch(new UpdateMatchesSuccess(newMatchData));
+            const updatedMatches: Match[] = data.UpdateMatches;
+            this.store.dispatch(new UpdateMatchesSuccess(updatedMatches));
             // this.store.dispatch(new Load());
             // this.store.dispatch(new LoadResultsSuccess(
             //     newMatchData.filter(match => match.state === MatchState[MatchState.Finished])));
@@ -58,8 +67,17 @@ export class WebsocketHandlerService {
         console.log('handle table websocker message: ');
         console.log(data);
         if (data.UpdateTable && data.UpdateTable.length > 0) {
-            const newTables: TableDto[] = data.UpdateTable;
-            this.store.dispatch(new UpdateTablesSuccess(newTables));
+            const updatedTables: TableDto[] = data.UpdateTable;
+            this.store.dispatch(new UpdateTablesSuccess(updatedTables));
+        }
+    }
+
+    private handleMatchListWebsocketMessage(data: any) {
+        console.log('handle matchList websocker message: ');
+        console.log(data);
+        if (data.UpdateMatchList) {
+            const newMatchlistItems: MatchList[] = data.UpdateMatchList;
+            this.store.dispatch(new LoadMatchListSuccess(newMatchlistItems));
         }
     }
 

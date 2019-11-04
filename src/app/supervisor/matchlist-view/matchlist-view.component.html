@@ -7,7 +7,7 @@
                                             (matchListItemDelete)="matchListItemDelete.emit($event)">
                 </toma-matchlist-single-item>
             </div>
-            <div class="cut-text" [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]" ]
+            <div class="cut-text" [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
                  *ngIf="currentMatch.matchinfo[1]">
                 <toma-matchlist-group-item [matchListItem]="currentMatch"
                 (matchListItemDelete)="matchListItemDelete.emit($event)"></toma-matchlist-group-item>

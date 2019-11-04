@@ -5,9 +5,12 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
 import {catchError, map, mergeMap} from 'rxjs/operators';
 import {
+    ConnectMatchListWebSocket,
+    ConnectMatchListWebSocketError,
+    ConnectMatchListWebSocketSuccess,
     ConnectMatchWebSocket,
     ConnectMatchWebSocketError,
-    ConnectMatchWebSocketSuccess,
+    ConnectMatchWebSocketSuccess, ConnectTableWebSocket,
     ConnectTableWebSocketError,
     ConnectTableWebSocketSuccess,
     WebSocketActionTypes
@@ -22,9 +25,8 @@ export class WebSocketEffects {
         ofType(WebSocketActionTypes.ConnectMatch),
         mergeMap((action: ConnectMatchWebSocket) => {
             return this.websocketService
-                .connectSocket().pipe(
+                .connectMatchSocket(action.payload).pipe(
                     map(() => {
-                        this.websocketService.registerListeners(action.payload);
                         return new ConnectMatchWebSocketSuccess(true);
                     },
                     catchError(err => {
@@ -38,16 +40,32 @@ export class WebSocketEffects {
     @Effect()
     connectTableWebSocket$: Observable<Action> = this.actions$.pipe(
         ofType(WebSocketActionTypes.ConnectTable),
-        mergeMap((action: ConnectMatchWebSocket) => {
+        mergeMap((action: ConnectTableWebSocket) => {
             return this.websocketService
-                .connectTable().pipe(
+                .connectTable(action.payload).pipe(
                     map(() => {
-                        this.websocketService.registerListeners(action.payload);
                         return new ConnectTableWebSocketSuccess(true);
                     },
                     catchError(err => {
                         this.toastService.error('Fehler beim Verbinden auf Tables Websocket');
                         return of(new ConnectTableWebSocketError(err));
+                    })
+                ));
+        })
+    );
+
+    @Effect()
+    connectMatchListWebSocket$: Observable<Action> = this.actions$.pipe(
+        ofType(WebSocketActionTypes.ConnectMatchList),
+        mergeMap((action: ConnectMatchListWebSocket) => {
+            return this.websocketService
+                .connectMatchList(action.payload).pipe(
+                    map(() => {
+                        return new ConnectMatchListWebSocketSuccess(true);
+                    },
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Verbinden auf MatchList Websocket');
+                        return of(new ConnectMatchListWebSocketError(err));
                     })
                 ));
         })

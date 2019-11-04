@@ -39,7 +39,7 @@ describe('the websocket effects', () => {
 
         it('should return a ConnectWebSocketSuccess', (done) => {
             const expectedResult = new ConnectMatchWebSocketSuccess(true);
-            spyOn(webSocketService, 'connectSocket').and.returnValue(of({}));
+            spyOn(webSocketService, 'connectMatchSocket').and.returnValue(of({}));
             spyOn(webSocketService, 'registerListeners');
 
             actions.next(new ConnectMatchWebSocket(null));

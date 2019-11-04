@@ -9,61 +9,60 @@ import {DOCUMENT} from '@angular/common';
 })
 export class WebsocketService {
 
-    connected$ = new BehaviorSubject<any>({});
-    disconnected$: EventEmitter<any> = new EventEmitter<any>();
 
     private socket$: WebSocketSubject<any>;
 
     constructor(@Inject(DOCUMENT) private document) {
     }
 
-    public connectSocket(): Observable<any> {
-        return this.connect('tables');
+    public connectMatchSocket(listeners: any): Observable<any> {
+        return this.connect('matches', listeners);
     }
 
-    connectTable(): Observable<any>{
-        return this.connect('tables');
+    public connectTable(listeners: any): Observable<any> {
+        return this.connect('tables', listeners);
     }
 
-    private connect(topicName: string): Observable<any> {
+    public connectMatchList(listeners: any): Observable<any> {
+        return this.connect('matchList', listeners);
+    }
+
+    private connect(topicName: string, listeners: any): Observable<any> {
         const myLocation = this.document.location.hostname;
         const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}${topicName}`;
         console.log('connect to: ' + url);
+        const connectListener = new BehaviorSubject<any>({});
+        const disconnectListener = new EventEmitter<any>();
+        connectListener.subscribe(listeners.connected);
+        disconnectListener.subscribe(listeners.disconnected);
         return Observable.create(complete => {
-            this.socket$ = new WebSocketSubject({
-                url: url,
-                openObserver: {
-                    next: value => {
-                        complete.next(value);
+                this.socket$ = new WebSocketSubject({
+                    url: url,
+                    openObserver: {
+                        next: value => {
+                            complete.next(value);
+                        }
                     }
-                }
-            });
+                });
 
-            this.socket$.subscribe(
-                (event) => {
-                    this.connected$.next(event);
-                },
-                (err) => {
-                    console.log('websocket error event');
-                    console.log(err);
-                    this.socket$.unsubscribe();
-                    this.connected$.complete();
-                    this.connected$ = new BehaviorSubject<any>({});
-                    this.disconnected$.next(err);
-                    this.disconnected$.complete();
-                    this.disconnected$ = new EventEmitter();
-                },
-                () => {
-                    console.warn('websocket completed');
-                    console.log('try to reconnect ...');
-                }
-            );
+                this.socket$.subscribe(
+                    (event) => {
+                        connectListener.next(event);
+                    },
+                    (err) => {
+                        console.log('websocket error event');
+                        console.log(err);
+                        this.socket$.unsubscribe();
+                        connectListener.complete();
+                        disconnectListener.next(err);
+                        disconnectListener.complete();
+                    },
+                    () => {
+                        console.warn('websocket completed');
+                        console.log('try to reconnect ...');
+                    }
+                );
             }
         );
-    }
-
-    registerListeners(listeners: any) {
-        this.connected$.subscribe(listeners.connected);
-        this.disconnected$.subscribe(listeners.disconnected);
     }
 }
