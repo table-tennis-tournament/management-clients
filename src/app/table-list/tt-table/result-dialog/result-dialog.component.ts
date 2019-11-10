@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Match} from '../../match/match.model';
-import {GameService} from './game.service';
+import {GameService} from '../game.service';
 
 @Component({
     selector: 'app-result-dialog',

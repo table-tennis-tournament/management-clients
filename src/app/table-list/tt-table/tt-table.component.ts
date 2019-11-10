@@ -2,6 +2,9 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Game} from '../match/game.model';
 import {Match} from '../match/match.model';
+import {Player} from '../match/player.model';
+import {GameDialogComponent} from './game-dialog/game-dialog.component';
+import {GameService} from './game.service';
 import {PlayerDialogComponent} from './player-dialog/player-dialog.component';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {StartDialogComponent} from './start-dialog/start-dialog.component';
@@ -31,7 +34,7 @@ export class TtTableComponent {
 
   maxGames = [0, 1, 2, 3, 4];
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, public gameService: GameService) {
   }
 
   currentMatch(): Match {
@@ -61,7 +64,7 @@ export class TtTableComponent {
     }
   }
 
-  openDialog() {
+  openResultDialog() {
     const match = this.currentMatch();
     const dialogRef = this.dialog.open(ResultDialogComponent, {
       width: '400px',
@@ -78,20 +81,28 @@ export class TtTableComponent {
     });
   }
 
-  playerAWon(game: Game) {
-    return game.score_player_a > game.score_player_b;
-  }
+  openGameDialog(playerWon: Player, isPlayerA: boolean) {
+    const dialogRef = this.dialog.open(GameDialogComponent, {
+      width: '400px',
+      data: {
+        player: playerWon,
+        gameNr: this.getGameNumber(),
+        isPlayerA
+      }
+    });
 
-  playerBWon(game: Game) {
-    return game.score_player_b > game.score_player_a;
-  }
-
-  playerWonMatch(gamesWonPlayer: number) {
-    return gamesWonPlayer === 3;
-  }
-
-  endMatch() {
-    this.finishMatch.emit(this.currentMatch());
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        const newGame = this.gameService.createResult(result.result, result.isPlayerA);
+        const newGames = this.currentMatch().result.games.concat(newGame);
+        this.updateMatchResult.emit({
+          matchId: this.currentMatch().match_id,
+          result: {
+            games: newGames
+          }
+        });
+      }
+    });
   }
 
   startMatch() {
@@ -111,18 +122,34 @@ export class TtTableComponent {
   }
 
   callPlayer() {
+    const players = this.table.matches.map(match => [match.player_a, match.player_b]).reduce((first, second) => first.concat(second));
     const dialogRef = this.dialog.open(PlayerDialogComponent, {
       width: '400px',
-      data: [this.currentMatch().player_a, this.currentMatch().player_b]
+      data: players
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
-        this.callPlayersForMatch.emit({
+        this.updateMatchResult.emit({
           playerIds: result,
           matchId: this.currentMatch().match_id
         });
       }
     });
+  }
+
+
+  endMatch() {
+    this.finishMatch.emit(this.currentMatch());
+  }
+
+  private getGameNumber() {
+    const games = this.currentMatch().result.games;
+    for (let index = 0; index < games.length; index++) {
+      if (this.gameService.gameHasNoResult(games[index])) {
+        return index;
+      }
+    }
+    return 0;
   }
 }

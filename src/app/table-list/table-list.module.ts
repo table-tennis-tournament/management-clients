@@ -13,6 +13,7 @@ import {StartDialogComponent} from './tt-table/start-dialog/start-dialog.compone
 import {TtTableComponent} from './tt-table/tt-table.component';
 import {MatchlistComponent} from './tt-table/matchlist/matchlist.component';
 import {PlayerDialogComponent} from './tt-table/player-dialog/player-dialog.component';
+import { GameDialogComponent } from './tt-table/game-dialog/game-dialog.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {PlayerDialogComponent} from './tt-table/player-dialog/player-dialog.comp
     ResultDialogComponent,
     StartDialogComponent,
     MatchlistComponent,
-    PlayerDialogComponent
+    PlayerDialogComponent,
+    GameDialogComponent
   ],
   imports: [
     SharedModule,
@@ -34,7 +36,8 @@ import {PlayerDialogComponent} from './tt-table/player-dialog/player-dialog.comp
   entryComponents: [
     ResultDialogComponent,
     StartDialogComponent,
-    PlayerDialogComponent
+    PlayerDialogComponent,
+    GameDialogComponent
   ]
 })
 export class TableListModule {
