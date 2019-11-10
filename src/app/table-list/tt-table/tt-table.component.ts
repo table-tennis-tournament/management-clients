@@ -106,6 +106,13 @@ export class TtTableComponent {
   }
 
   startMatch() {
+    if (this.table.matches.length === 1) {
+      this.startMatchOnTable.emit({
+        tableId: this.table.table_id,
+        matchId: this.table.matches[0].match_id
+      });
+      return;
+    }
     const dialogRef = this.dialog.open(StartDialogComponent, {
       width: '400px',
       data: this.table.matches.filter(match => match.state === 'ASSIGNED')
