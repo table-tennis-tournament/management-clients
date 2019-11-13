@@ -129,7 +129,9 @@ export class TtTableComponent {
   }
 
   callPlayer() {
-    const players = this.table.matches.map(match => [match.player_a, match.player_b]).reduce((first, second) => first.concat(second));
+    const players = this.table.matches
+      .map(match => match.players_a.concat(match.players_b))
+      .reduce((first, second) => first.concat(second));
     const dialogRef = this.dialog.open(PlayerDialogComponent, {
       width: '400px',
       data: players
