@@ -4,7 +4,7 @@
     <ng-container formArrayName="players">
       <div *ngFor="let player of players; let i = index" >
         <mat-checkbox [formControlName]="i">
-          {{player | playerName}}
+          {{[player] | playerName}}
         </mat-checkbox>
       </div>
     </ng-container>

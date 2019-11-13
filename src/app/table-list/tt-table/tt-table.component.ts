@@ -81,7 +81,7 @@ export class TtTableComponent {
     });
   }
 
-  openGameDialog(playerWon: Player, isPlayerA: boolean) {
+  openGameDialog(playerWon: Player[], isPlayerA: boolean) {
     const dialogRef = this.dialog.open(GameDialogComponent, {
       width: '400px',
       data: {
