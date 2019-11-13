@@ -1,7 +1,7 @@
 import {Player} from '../../match/player.model';
 
 export interface GameData {
-  player: Player;
+  player: Player[];
   gameNr: number;
   isPlayerA: boolean;
 }
