@@ -2,8 +2,8 @@
 <div mat-dialog-content>
     <div class="row">
         <div class="col-8">
-            <div class="mat-body-strong mb-0">{{match.player_a | playerName}}</div>
-            <div>({{match.player_a.club}})</div>
+            <div class="mat-body-strong mb-0">{{match.players_a | playerName}}</div>
+            <div>({{match.players_a.club}})</div>
         </div>
         <div class="col-4">
             <div class="mat-display-1 mb-0">{{match.result.games_won_player_a}}</div>
@@ -12,8 +12,8 @@
     <mat-divider></mat-divider>
     <div class="row">
         <div class="col-8">
-            <div class="mat-body-strong mb-0">{{match.player_b | playerName}}</div>
-            <div>({{match.player_a.club}})</div>
+            <div class="mat-body-strong mb-0">{{match.players_b | playerName}}</div>
+            <div>({{match.players_a.club}})</div>
         </div>
         <div class="col-4">
             <div class="mat-display-1 mb-0">{{match.result.games_won_player_b}}</div>

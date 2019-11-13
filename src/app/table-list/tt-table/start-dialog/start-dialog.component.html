@@ -4,7 +4,7 @@
             class="example-radio-group"
             [(ngModel)]="selectedMatch">
         <mat-radio-button class="example-radio-button" *ngFor="let match of matches; let i = index;" [value]="match">
-            {{match.player_a | playerName}} - {{match.player_b | playerName}}
+            {{match.players_a | playerName}} - {{match.players_b | playerName}}
         </mat-radio-button>
     </mat-radio-group>
 </div>

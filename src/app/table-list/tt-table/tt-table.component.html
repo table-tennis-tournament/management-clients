@@ -42,7 +42,7 @@
         <div class="row">
             <a  mat-button class="col-5" (click)="openGameDialog(currentMatch().player_a, true)" >
                 <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body-strong mb-0">{{currentMatch().player_a | playerName}}</p>
-                <p>({{currentMatch().player_a.club}})</p>
+              <p>{{currentMatch().players_a | clubName}}</p>
             </a>
             <div class="col-1" *ngFor="let game of allGames()">
                 <p [ngClass]="{'won': this.gameService.playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
@@ -54,7 +54,7 @@
         <div class="row">
             <a mat-button class="col-5" (click)="openGameDialog(currentMatch().player_b, false)">
                 <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0">{{currentMatch().player_b | playerName}}</p>
-                <p>({{currentMatch().player_b.club}})</p>
+              <p>{{currentMatch().players_b | clubName}}</p>
             </a>
             <div class="col-1" *ngFor="let game of allGames()">
                 <p [ngClass]="{'won': this.gameService.playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
