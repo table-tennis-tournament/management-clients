@@ -36,37 +36,38 @@
                 <p>{{game + 1}}</p>
             </div>
             <div class="col-1 mat-small">
-                <p>Total</p>
+                <p>Tot</p>
             </div>
         </div>
         <div class="row">
-            <div class="col-5">
-                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body-strong mb-0">{{currentMatch().player_a | playerName}}</p>
+            <a  mat-button class="col-5" (click)="openGameDialog(currentMatch().player_a, true)" >
+                <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body-strong mb-0">{{currentMatch().player_a | playerName}}</p>
                 <p>({{currentMatch().player_a.club}})</p>
-            </div>
+            </a>
             <div class="col-1" *ngFor="let game of allGames()">
-                <p [ngClass]="{'won': playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
+                <p [ngClass]="{'won': this.gameService.playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
             </div>
             <div class="col-1">
-                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body">{{currentMatch().result.games_won_player_a}}</p>
+                <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body">{{currentMatch().result.games_won_player_a}}</p>
             </div>
         </div>
         <div class="row">
-            <div class="col-5">
-                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0">{{currentMatch().player_b | playerName}}</p>
+            <a mat-button class="col-5" (click)="openGameDialog(currentMatch().player_b, false)">
+                <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0">{{currentMatch().player_b | playerName}}</p>
                 <p>({{currentMatch().player_b.club}})</p>
-            </div>
+            </a>
             <div class="col-1" *ngFor="let game of allGames()">
-                <p [ngClass]="{'won': playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
+                <p [ngClass]="{'won': this.gameService.playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
             </div>
             <div class="col-1">
-                <p [ngClass]="{'match-won': playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body">{{currentMatch().result.games_won_player_b}}</p>
+                <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body">{{currentMatch().result.games_won_player_b}}</p>
             </div>
         </div>
     </mat-card-content>
     <mat-card-actions>
-        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="primary" (click)="openDialog()">Ergebnis erfassen</button>
-        <button *ngIf="tableHasNoStartedAndAtLeastOneMatch()" mat-raised-button color="warn" (click)="startMatch()">Spiel starten</button>
-        <button *ngIf="tableHasStartedMatch()" mat-raised-button color="accent" (click)="endMatch()">Spiel beenden</button>
+      <button *ngIf="tableHasNoStartedAndAtLeastOneMatch()" mat-raised-button color="warn" (click)="startMatch()">Starten</button>
+      <button *ngIf="tableHasNoStartedAndAtLeastOneMatch()" mat-raised-button color="accent" (click)="callPlayer()">Melden</button>
+      <button *ngIf="tableHasStartedMatch()" mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
+      <button *ngIf="tableHasStartedMatch()" mat-raised-button color="accent" (click)="endMatch()">Beenden</button>
     </mat-card-actions>
 </mat-card>

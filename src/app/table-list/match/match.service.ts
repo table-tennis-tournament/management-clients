@@ -20,4 +20,8 @@ export class MatchService {
     startMatch(tableId: number, matchId: number) {
         return this.http.put<any>(`api/matches/${matchId}/state`, {state: 'STARTED'});
     }
+
+  callPlayersForMatch(playerIds: number[], matchId: number) {
+    return this.http.post<any>(`api/playercall/${matchId}`, {player_ids: playerIds});
+  }
 }

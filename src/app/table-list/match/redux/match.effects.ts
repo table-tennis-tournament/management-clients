@@ -9,61 +9,79 @@ import * as MatchActions from './match.actions';
 @Injectable()
 export class MatchEffects {
 
-    updateMatchResult$ = createEffect(() => this.actions$.pipe(
-        ofType(MatchActions.updateMatchResult),
-        switchMap(({matchId, result}) => this.matchService.updateMatchResult(matchId, result)
-            .pipe(
-                map(() => MatchActions.updateMatchResultSuccess({})),
-                catchError(() => of(MatchActions.updateMatchResultError({})))
-            )
-        )
-    ));
+  updateMatchResult$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.updateMatchResult),
+    switchMap(({matchId, result}) => this.matchService.updateMatchResult(matchId, result)
+      .pipe(
+        map(() => MatchActions.updateMatchResultSuccess({})),
+        catchError(() => of(MatchActions.updateMatchResultError({})))
+      )
+    )
+  ));
 
-    updateMatchResultError$ = createEffect(() => this.actions$.pipe(
-        ofType(MatchActions.updateMatchResultError),
-        tap(() => {
-            this.snackBar.open('Match could not be updated.');
-        })
-    ), {dispatch: false});
+  updateMatchResultError$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.updateMatchResultError),
+    tap(() => {
+      this.snackBar.open('Match could not be updated.');
+    })
+  ), {dispatch: false});
 
-    finishMatch = createEffect(() => this.actions$.pipe(
-        ofType(MatchActions.finishMatch),
-        switchMap(({matchId}) => this.matchService.finishMatch(matchId)
-            .pipe(
-                map(() => MatchActions.finishMatchSuccess({})),
-                catchError(() => of(MatchActions.finishMatchError({})))
-            )
-        )
-    ));
+  finishMatch = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.finishMatch),
+    switchMap(({matchId}) => this.matchService.finishMatch(matchId)
+      .pipe(
+        map(() => MatchActions.finishMatchSuccess({})),
+        catchError(() => of(MatchActions.finishMatchError({})))
+      )
+    )
+  ));
 
-    finishMatchError$ = createEffect(() => this.actions$.pipe(
-        ofType(MatchActions.finishMatchError),
-        tap(() => {
-            this.snackBar.open('Match could not be finished.');
-        })
-    ), {dispatch: false});
+  finishMatchError$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.finishMatchError),
+    tap(() => {
+      this.snackBar.open('Match could not be finished.');
+    })
+  ), {dispatch: false});
 
-    startMatch = createEffect(() => this.actions$.pipe(
-        ofType(MatchActions.startMatchOnTable),
-        switchMap(({tableId, matchId}) => this.matchService.startMatch(tableId, matchId)
-            .pipe(
-                map(() => MatchActions.startMatchOnTableSuccess({})),
-                catchError(() => of(MatchActions.startMatchOnTableError({})))
-            )
-        )
-    ));
+  startMatch = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.startMatchOnTable),
+    switchMap(({tableId, matchId}) => this.matchService.startMatch(tableId, matchId)
+      .pipe(
+        map(() => MatchActions.startMatchOnTableSuccess({})),
+        catchError(() => of(MatchActions.startMatchOnTableError({})))
+      )
+    )
+  ));
 
-    startMatchError$ = createEffect(() => this.actions$.pipe(
-        ofType(MatchActions.startMatchOnTableError),
-        tap(() => {
-            this.snackBar.open('Match could not be started.');
-        })
-    ), {dispatch: false});
+  startMatchError$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.startMatchOnTableError),
+    tap(() => {
+      this.snackBar.open('Match could not be started.');
+    })
+  ), {dispatch: false});
 
 
-    constructor(
-        private actions$: Actions,
-        private snackBar: MatSnackBar,
-        private matchService: MatchService) {
-    }
+  callPlayerForMatch = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.callPlayerForMatch),
+    switchMap(({playerIds, matchId}) => this.matchService.callPlayersForMatch(playerIds, matchId)
+      .pipe(
+        map(() => MatchActions.callPlayerForMatchSuccess({})),
+        catchError(() => of(MatchActions.callPlayerForMatchError({})))
+      )
+    )
+  ));
+
+  callPlayerForMatchError$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.callPlayerForMatchError),
+    tap(() => {
+      this.snackBar.open('Player couldnt be called.');
+    })
+  ), {dispatch: false});
+
+
+  constructor(
+    private actions$: Actions,
+    private snackBar: MatSnackBar,
+    private matchService: MatchService) {
+  }
 }
