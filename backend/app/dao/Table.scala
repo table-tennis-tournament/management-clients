@@ -125,10 +125,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def getTTTable(id: Long): Option[TTTable] = ttTablesSeq.find(_.id == id)
 
   def freeTTTable(matchId: Long): Unit = {
+    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId)).head
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
-    pub ! UpdateTable(allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId)))
+    pub ! UpdateTable(Seq(tableInfo.copy(ttMatch = Seq.empty[AllMatchInfo])))
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId) m.copy(state = Finished)
       else m
