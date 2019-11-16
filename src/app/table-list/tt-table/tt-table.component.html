@@ -65,8 +65,9 @@
             </div>
         </div>
     </mat-card-content>
-    <mat-card-actions>
-      <button *ngIf="tableHasStartedMatch()" mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
-      <button *ngIf="tableHasStartedMatch()" mat-raised-button color="accent" (click)="endMatch()">Beenden</button>
+    <mat-card-actions *ngIf="tableHasStartedMatch()">
+      <button  mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
+      <button  mat-raised-button color="primary" (click)="takeBack()">Zurück</button>
+      <button  mat-raised-button color="accent" (click)="endMatch()" class="float-right">Beenden</button>
     </mat-card-actions>
 </mat-card>

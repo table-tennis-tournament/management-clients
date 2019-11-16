@@ -22,7 +22,7 @@ export class MatchEffects {
   updateMatchResultError$ = createEffect(() => this.actions$.pipe(
     ofType(MatchActions.updateMatchResultError),
     tap(() => {
-      this.snackBar.open('Match could not be updated.');
+      this.snackBar.open('Ergebnis konnte nicht eingetragen werden.');
     })
   ), {dispatch: false});
 
@@ -39,7 +39,7 @@ export class MatchEffects {
   finishMatchError$ = createEffect(() => this.actions$.pipe(
     ofType(MatchActions.finishMatchError),
     tap(() => {
-      this.snackBar.open('Match could not be finished.');
+      this.snackBar.open('Ergebnis nicht vollständig.');
     })
   ), {dispatch: false});
 
@@ -56,7 +56,7 @@ export class MatchEffects {
   startMatchError$ = createEffect(() => this.actions$.pipe(
     ofType(MatchActions.startMatchOnTableError),
     tap(() => {
-      this.snackBar.open('Match could not be started.');
+      this.snackBar.open('Spiel konnte nicht gestartet werden');
     })
   ), {dispatch: false});
 
@@ -74,9 +74,28 @@ export class MatchEffects {
   callPlayerForMatchError$ = createEffect(() => this.actions$.pipe(
     ofType(MatchActions.callPlayerForMatchError),
     tap(() => {
-      this.snackBar.open('Player couldnt be called.');
+      this.snackBar.open('Spieler konnte nicht ausgerufen werden');
     })
   ), {dispatch: false});
+
+
+  takeBackMatch$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.takeBackMatch),
+    switchMap(({matchId}) => this.matchService.takeBackMatch(matchId)
+      .pipe(
+        map(() => MatchActions.takeBackMatchSuccess({})),
+        catchError(() => of(MatchActions.takeBackMatchError({})))
+      )
+    )
+  ));
+
+  takeBackMatchError$ = createEffect(() => this.actions$.pipe(
+    ofType(MatchActions.takeBackMatchError),
+    tap(() => {
+      this.snackBar.open('Spiel konnte nicht zurück genommen werden.');
+    })
+  ), {dispatch: false});
+
 
 
   constructor(

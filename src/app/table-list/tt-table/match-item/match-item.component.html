@@ -1,9 +1,9 @@
 <div class="row">
   <div class="col-6 col-md-5 col-sm-5">
-    <span matBadge="{{match.players_a[0].call_count}}" [matBadgeHidden]="match.players_a[0].call_count<2" matBadgeOverlap="false">{{match.players_a | playerName}}</span>
+    <span matBadge="{{match.players_a[0].call_count}}" [matBadgeHidden]="match.players_a[0].call_count<2" matBadgeColor="warn" matBadgeOverlap="false">{{match.players_a | playerName}}</span>
   </div>
   <div class="col-6 col-md-5 col-sm-5">
-    <span matBadge="{{match.players_b[0].call_count}}" [matBadgeHidden]="match.players_b[0].call_count<2" matBadgeOverlap="false">{{match.players_b | playerName}} </span>
+    <span matBadge="{{match.players_b[0].call_count}}" [matBadgeHidden]="match.players_b[0].call_count<2" matBadgeColor="warn" matBadgeOverlap="false">{{match.players_b | playerName}} </span>
   </div>
   <div class="col-md-2 col-sm-2">
     <button mat-mini-fab color="accent" (click)="callPlayers()">
