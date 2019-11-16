@@ -29,6 +29,10 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
     Ok("send")
   }
 
+  def startMatch(id: Long) = Action {
+    Ok("")
+  }
+
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
     val p1 = ttMatch.player1Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
     val p2 = ttMatch.player2Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
