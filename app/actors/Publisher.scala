@@ -21,8 +21,8 @@ class Publisher extends Actor {
       Logger.info("Publisher received message: " + in.getClass.getCanonicalName)
       in match {
         case UpdateTable(_) => mediator ! Publish("UpdateTable", in)
-        case UpdateMatches(_) => mediator ! Publish("UpdateMatches", in)
-        case UpdateMatchList(_) => mediator ! Publish("UpdateMatchList", in)
+        case UpdateMatches(_) => mediator ! Publish("UpdateTable", in)
+        case UpdateMatchList(_) => mediator ! Publish("UpdateTable", in)
         case _ => Logger.error("unknown message")
       }
 
