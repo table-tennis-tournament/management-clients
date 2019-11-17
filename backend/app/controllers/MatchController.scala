@@ -30,7 +30,8 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
   }
 
   def startMatch(id: Long) = Action {
-    Ok("")
+    tables.setMatchState(id, Started)
+    Ok("started Match")
   }
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {

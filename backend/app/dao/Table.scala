@@ -214,6 +214,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     loop(Set(), ls)
   }
 
+  def setMatchState(id: Long, state: MatchState): Unit = {
+    ttMatchSeq = ttMatchSeq map {m =>
+      if (m.id == id)
+        m.copy(state = state)
+      else
+        m
+    }
+    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
+  }
+
   def startNextMatch = if(autoStart) {
     val tl = getFreeTables().sortBy(_.tableNumber)
     val tl2 = tl.filter(_.tableNumber % 2 == 1) ++ tl.filter(_.tableNumber % 2 == 0)
