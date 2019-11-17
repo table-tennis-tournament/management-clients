@@ -134,14 +134,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       if (m.id == matchId) m.copy(state = Finished)
       else m
     }
-    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == matchId))
+    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+    val ids = m.player1 ++ m.player2
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
   }
 
   def takeBackTTTable(matchId: Long): Unit = {
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
-    pub ! UpdateTable(allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId)))
+    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+    val ids = m.player1 ++ m.player2
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId)m.copy(state = Open)
       else m
@@ -251,7 +255,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           val matchReady = m.forall(m => if (m.state == Open || m.state == InWaitingList) {
             (m.player1Ids ++ m.player2Ids).forall { p =>
               val ml = matches.filter { ma =>
-                (ma.state == Callable || ma.state == OnTable)  && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+                (ma.state == Callable || ma.state == OnTable || ma.state == Started)  && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
               }
               ml.isEmpty // p is not playing
             }
@@ -325,7 +329,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val ids = ttMatch.player1Ids ++ ttMatch.player2Ids
     val noOpenMatchesForPlayers = !ttMatchSeq.exists(m =>
       (m.player1Ids.containsAnyOf(ids) || m.player2Ids.containsAnyOf(ids))
-        && (m.state == Callable || m.state == OnTable))
+        && (m.state == Callable || m.state == OnTable || m.state == Started))
     Logger.info("isPlayable " + noOpenMatchesForPlayers + " " + ttMatch)
     noOpenMatchesForPlayers && ttMatch.team2Id != 0 && ttMatch.team1Id != 0
   }
@@ -351,13 +355,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
     if(m.player1Ids.length < 2)
-      MatchDAO(m.id, m.state == Callable || m.state == OnTable, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.state == Completed, m.matchTypeId,
+      MatchDAO(m.id, m.state == Callable || m.state == OnTable || m.state == Started, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.state == Completed, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
         m.roundNumber.getOrElse(0), Some(m.getWinnerIds.headOption.getOrElse(0)))
     else {
       val t1 = Seq(getDouble(m.team1Id - 100000).get.player1Id, getDouble(m.team1Id - 100000).get.player2Id)
       val t2 = Seq(getDouble(m.team2Id - 100000).get.player1Id, getDouble(m.team2Id - 100000).get.player2Id)
-      val x = MatchDAO(m.id, m.state == Callable || m.state == OnTable, m.team1Id, m.team2Id, None, m.state == Finished, m.matchTypeId,
+      val x = MatchDAO(m.id, m.state == Callable || m.state == OnTable || m.state == Started, m.team1Id, m.team2Id, None, m.state == Finished, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
         m.roundNumber.getOrElse(0), Some(if(t1.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team1Id else if(t2.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team2Id else 0))
       Logger.debug("toMatchDAO m: " + m.toString)
@@ -374,7 +378,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         if (m.id == matchId) m.copy(state = Callable)
         else m
       }
-      pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == matchId))
+      val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+      val ids = m.player1 ++ m.player2
+      pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
       ttTablesSeq = ttTablesSeq map { t =>
         if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
         else t
@@ -450,18 +456,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
   }
 
-  def setResult(id: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
+  def setResult(matchId: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
     val x = result map (r => r.mkString("="))
     val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
     val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y.head>y(1)) Seq(x.head+1, x(1)) else Seq(x.head, x(1) + 1)}
     ttTablesSeq = ttTablesSeq map { t =>
-      if (t.matchId.contains(id)) t.copy(matchId = t.matchId.filterNot(_ == id))
+      if (t.matchId.contains(matchId)) t.copy(matchId = t.matchId.filterNot(_ == matchId))
       else t
     }
-    pub ! UpdateTable(allTableInfo.filter(_.id == id))
+    pub ! UpdateTable(allTableInfo.filter(_.id == matchId))
     ttMatchSeq = ttMatchSeq map { m =>
-      if (m.id == id) {
+      if (m.id == matchId) {
         m.copy(
           resultRaw = x.mkString(","),
           result = sets.head + " : " + sets(1),
@@ -473,8 +479,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         )
       } else m
     }
-    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
-    ttMatchSeq.find(_.id == id) match {
+    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+    val ids = m.player1 ++ m.player2
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
+    ttMatchSeq.find(_.id == matchId) match {
       case Some(ttMatch) => writeMatch(ttMatch) flatMap { b =>
         if(
                b                                          // write successful
