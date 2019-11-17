@@ -20,7 +20,7 @@ export class WebsocketService {
     }
 
     public connectTable(listeners: any): Observable<any> {
-        return this.connect('tables', listeners);
+        return this.connect('', listeners);
     }
 
     public connectMatchList(listeners: any): Observable<any> {

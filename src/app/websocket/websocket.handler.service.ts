@@ -23,8 +23,8 @@ export class WebsocketHandlerService {
     public connectToWebsocket() {
         console.log('start connecting to socket');
         this.connectToTableWebsocket();
-        this.connectToMatchWebsocket();
-        this.connectToMatchListWebsocket();
+        // this.connectToMatchWebsocket();
+        // this.connectToMatchListWebsocket();
     }
 
     private connectToTableWebsocket() {
@@ -64,11 +64,22 @@ export class WebsocketHandlerService {
     }
 
     private handleTableWebsocketMessage(data: any) {
-        console.log('handle table websocker message: ');
+        console.log('handle websocket message: ');
         console.log(data);
         if (data.UpdateTable && data.UpdateTable.length > 0) {
             const updatedTables: TableDto[] = data.UpdateTable;
             this.store.dispatch(new UpdateTablesSuccess(updatedTables));
+        }
+        if (data.UpdateMatchList) {
+            const newMatchlistItems: MatchList[] = data.UpdateMatchList;
+            this.store.dispatch(new LoadMatchListSuccess(newMatchlistItems));
+        }
+        if (data.UpdateMatches) {
+            const updatedMatches: Match[] = data.UpdateMatches;
+            this.store.dispatch(new UpdateMatchesSuccess(updatedMatches));
+            // this.store.dispatch(new Load());
+            // this.store.dispatch(new LoadResultsSuccess(
+            //     newMatchData.filter(match => match.state === MatchState[MatchState.Finished])));
         }
     }
 
