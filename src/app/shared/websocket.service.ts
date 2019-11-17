@@ -15,22 +15,14 @@ export class WebsocketService {
     constructor(@Inject(DOCUMENT) private document) {
     }
 
-    public connectMatchSocket(listeners: any): Observable<any> {
-        return this.connect('matches', listeners);
-    }
-
     public connectTable(listeners: any): Observable<any> {
-        return this.connect('', listeners);
+        return this.connect(listeners);
     }
 
-    public connectMatchList(listeners: any): Observable<any> {
-        return this.connect('matchList', listeners);
-    }
-
-    private connect(topicName: string, listeners: any): Observable<any> {
+    private connect(listeners: any): Observable<any> {
         const myLocation = this.document.location.hostname;
-        const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}${topicName}`;
-        console.log('connect to: ' + url);
+        const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}`;
+        console.log('connecting to: ' + url);
         const connectListener = new BehaviorSubject<any>({});
         const disconnectListener = new EventEmitter<any>();
         connectListener.subscribe(listeners.connected);

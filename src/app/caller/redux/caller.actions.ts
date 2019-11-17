@@ -16,21 +16,21 @@ export enum CallerActionTypes {
     SetSelectedMatchAggregate = '[CallMatch] Set Selected Match'
 }
 
-export class Load implements Action {
+export class LoadCallerMatches implements Action {
     readonly type = CallerActionTypes.Load;
 
     constructor() {
     }
 }
 
-export class LoadSuccess implements Action {
+export class LoadCallerMatchesSuccess implements Action {
     readonly type = CallerActionTypes.LoadSuccess;
 
     constructor(public payload: MatchAggregate[]) {
     }
 }
 
-export class LoadError implements Action {
+export class LoadCallerMatchesError implements Action {
     readonly type = CallerActionTypes.LoadError;
 
     constructor(public payload: any) {
@@ -87,9 +87,9 @@ export class SetSelectedMatchAggregate implements Action {
 }
 
 export type CallerActionUnion =
-    | Load
-    | LoadSuccess
-    | LoadError
+    | LoadCallerMatches
+    | LoadCallerMatchesSuccess
+    | LoadCallerMatchesError
     | LoadRefereesList
     | LoadRefereesListSuccess
     | LoadRefereesListError

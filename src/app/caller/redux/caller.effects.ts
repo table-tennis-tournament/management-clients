@@ -10,10 +10,10 @@ import {
     CallMatch,
     CallMatchError,
     CallMatchSuccess,
-    LoadError,
+    LoadCallerMatchesError,
     LoadRefereesListError,
     LoadRefereesListSuccess,
-    LoadSuccess
+    LoadCallerMatchesSuccess
 } from './caller.actions';
 
 @Injectable()
@@ -25,10 +25,10 @@ export class CallerEffects {
         switchMap(() => {
             return this.callerService
                 .loadMatchAggregateForCaller().pipe(
-                    map(matches => new LoadSuccess(matches)),
+                    map(matches => new LoadCallerMatchesSuccess(matches)),
                     catchError(err => {
                         this.toastService.error('Fehler beim Laden der Ausrufermatches');
-                        return of(new LoadError(err));
+                        return of(new LoadCallerMatchesError(err));
                     })
                 );
         })

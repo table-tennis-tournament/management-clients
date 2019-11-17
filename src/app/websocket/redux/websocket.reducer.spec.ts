@@ -1,5 +1,5 @@
 import {reduceWebsocketState, WebSocketState} from './websocket.reducer';
-import {ConnectMatchWebSocket, ConnectMatchWebSocketError, ConnectMatchWebSocketSuccess} from './websocket.actions';
+import {ConnectWebSocket, ConnectWebSocketError, ConnectWebSocketSuccess} from './websocket.actions';
 
 const initialState: WebSocketState = Object.freeze({
     connected: false
@@ -12,7 +12,7 @@ describe('the match reducer', () => {
             connected: false
         };
 
-        const newState = reduceWebsocketState(initialState, new ConnectMatchWebSocket(null));
+        const newState = reduceWebsocketState(initialState, new ConnectWebSocket(null));
         expect(newState).toEqual(expectedState);
     });
 
@@ -22,7 +22,7 @@ describe('the match reducer', () => {
             connected: true
         };
 
-        const newState = reduceWebsocketState(initialState, new ConnectMatchWebSocketSuccess(true));
+        const newState = reduceWebsocketState(initialState, new ConnectWebSocketSuccess(true));
         expect(newState).toEqual(expectedState);
     });
 
@@ -32,7 +32,7 @@ describe('the match reducer', () => {
             connected: false
         };
 
-        const newState = reduceWebsocketState(initialState, new ConnectMatchWebSocketError(null));
+        const newState = reduceWebsocketState(initialState, new ConnectWebSocketError(null));
         expect(newState).toEqual(expectedState);
     });
 

@@ -4,7 +4,7 @@ import {Store} from '@ngrx/store';
 import {getCallerMatchAggregateState, getRefereesLoading, getRefereesState, getTypeColorsState} from '../app-state.reducer';
 import {MatchAggregate} from '../shared/data/match.aggregate';
 import {Player} from '../shared/data/player.model';
-import {CallMatch, Load, SetSelectedMatchAggregate} from './redux/caller.actions';
+import {CallMatch, LoadCallerMatches, SetSelectedMatchAggregate} from './redux/caller.actions';
 
 @Component({
     selector: 'toma-caller-page',
@@ -22,7 +22,7 @@ export class CallerPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(new Load());
+        this.store.dispatch(new LoadCallerMatches());
         this.typeColor = this.store.select(getTypeColorsState);
         this.refereesLoading = this.store.select(getRefereesLoading);
         this.referees = this.store.select(getRefereesState);
