@@ -135,22 +135,25 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       else m
     }
     val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val ids = m.player1 ++ m.player2
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
+    val p = m.player1 ++ m.player2
+    val ids = p.map(_.id)
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
   }
 
   def takeBackTTTable(matchId: Long): Unit = {
+    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId)).head
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
-    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val ids = m.player1 ++ m.player2
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId)m.copy(state = Open)
       else m
     }
-    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == matchId))
+    pub ! UpdateTable(Seq(tableInfo.copy(ttMatch = Seq.empty[AllMatchInfo])))
+    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+    val p = m.player1 ++ m.player2
+    val ids = p.map(_.id)
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
   }
 
   def lockTTTable(nr: Long): Unit = {
@@ -218,14 +221,17 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     loop(Set(), ls)
   }
 
-  def setMatchState(id: Long, state: MatchState): Unit = {
+  def setMatchState(matchId: Long, state: MatchState): Unit = {
     ttMatchSeq = ttMatchSeq map {m =>
-      if (m.id == id)
+      if (m.id == matchId)
         m.copy(state = state)
       else
         m
     }
-    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
+    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+    val p = m.player1 ++ m.player2
+    val ids = p.map(_.id)
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
   }
 
   def startNextMatch = if(autoStart) {
@@ -379,8 +385,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         else m
       }
       val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-      val ids = m.player1 ++ m.player2
-      pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
+      val p = m.player1 ++ m.player2
+      val ids = p.map(_.id)
+      Logger.info("MATCHES UPDATE: " + allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
+      pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
       ttTablesSeq = ttTablesSeq map { t =>
         if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
         else t
@@ -414,7 +422,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       if(m.id == matchId) m.copy(state = matchState)
       else m
     }
-    pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == matchId))
+    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
+    val p = m.player1 ++ m.player2
+    val ids = p.map(_.id)
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
   }
 
   def setStartTime(matchId: Long, startTime: DateTime): Unit = {
@@ -480,8 +491,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       } else m
     }
     val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val ids = m.player1 ++ m.player2
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).contains(ids))))
+    val p = m.player1 ++ m.player2
+    val ids = p.map(_.id)
+    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
     ttMatchSeq.find(_.id == matchId) match {
       case Some(ttMatch) => writeMatch(ttMatch) flatMap { b =>
         if(
