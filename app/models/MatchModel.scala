@@ -264,3 +264,4 @@ case object Callable extends MatchState
 case object OnTable extends MatchState
 case object Finished extends MatchState
 case object Completed extends MatchState
+case object Started extends MatchState
