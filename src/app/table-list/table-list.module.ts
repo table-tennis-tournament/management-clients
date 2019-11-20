@@ -11,9 +11,10 @@ import {TableListComponent} from './table-list.component';
 import {ResultDialogComponent} from './tt-table/result-dialog/result-dialog.component';
 import {StartDialogComponent} from './tt-table/start-dialog/start-dialog.component';
 import {TtTableComponent} from './tt-table/tt-table.component';
-import {MatchlistComponent} from './tt-table/matchlist/matchlist.component';
 import {PlayerDialogComponent} from './tt-table/player-dialog/player-dialog.component';
-import { GameDialogComponent } from './tt-table/game-dialog/game-dialog.component';
+import {GameDialogComponent} from './tt-table/game-dialog/game-dialog.component';
+import {ClubNamePipe} from './club-name.pipe';
+import {MatchItemComponent} from './tt-table/match-item/match-item.component';
 
 @NgModule({
   declarations: [
@@ -22,9 +23,10 @@ import { GameDialogComponent } from './tt-table/game-dialog/game-dialog.componen
     PlayerNamePipe,
     ResultDialogComponent,
     StartDialogComponent,
-    MatchlistComponent,
     PlayerDialogComponent,
-    GameDialogComponent
+    GameDialogComponent,
+    ClubNamePipe,
+    MatchItemComponent
   ],
   imports: [
     SharedModule,

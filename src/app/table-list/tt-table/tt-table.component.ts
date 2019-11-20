@@ -5,9 +5,7 @@ import {Match} from '../match/match.model';
 import {Player} from '../match/player.model';
 import {GameDialogComponent} from './game-dialog/game-dialog.component';
 import {GameService} from './game.service';
-import {PlayerDialogComponent} from './player-dialog/player-dialog.component';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
-import {StartDialogComponent} from './start-dialog/start-dialog.component';
 import {Table} from './table.model';
 
 @Component({
@@ -32,6 +30,9 @@ export class TtTableComponent {
   @Output()
   callPlayersForMatch = new EventEmitter();
 
+  @Output()
+  takeBackMatch = new EventEmitter();
+
   maxGames = [0, 1, 2, 3, 4];
 
   constructor(public dialog: MatDialog, public gameService: GameService) {
@@ -43,10 +44,6 @@ export class TtTableComponent {
 
   tableHasStartedMatch(): boolean {
     return this.currentMatch() !== undefined;
-  }
-
-  tableHasNoStartedAndAtLeastOneMatch(): boolean {
-    return this.table.matches.length > 0 && !this.currentMatch();
   }
 
   allGames(): Game[] {
@@ -81,7 +78,7 @@ export class TtTableComponent {
     });
   }
 
-  openGameDialog(playerWon: Player, isPlayerA: boolean) {
+  openGameDialog(playerWon: Player[], isPlayerA: boolean) {
     const dialogRef = this.dialog.open(GameDialogComponent, {
       width: '400px',
       data: {
@@ -105,46 +102,12 @@ export class TtTableComponent {
     });
   }
 
-  startMatch() {
-    if (this.table.matches.length === 1) {
-      this.startMatchOnTable.emit({
-        tableId: this.table.table_id,
-        matchId: this.table.matches[0].match_id
-      });
-      return;
-    }
-    const dialogRef = this.dialog.open(StartDialogComponent, {
-      width: '400px',
-      data: this.table.matches.filter(match => match.state === 'ASSIGNED')
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!!result) {
-        this.startMatchOnTable.emit({
-          tableId: this.table.table_id,
-          matchId: result
-        });
-      }
+  startMatch(matchId) {
+    this.startMatchOnTable.emit({
+      tableId: this.table.table_id,
+      matchId
     });
   }
-
-  callPlayer() {
-    const players = this.table.matches.map(match => [match.player_a, match.player_b]).reduce((first, second) => first.concat(second));
-    const dialogRef = this.dialog.open(PlayerDialogComponent, {
-      width: '400px',
-      data: players
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!!result) {
-        this.updateMatchResult.emit({
-          playerIds: result,
-          matchId: this.currentMatch().match_id
-        });
-      }
-    });
-  }
-
 
   endMatch() {
     this.finishMatch.emit(this.currentMatch());
@@ -158,5 +121,9 @@ export class TtTableComponent {
       }
     }
     return 0;
+  }
+
+  takeBack() {
+    this.takeBackMatch.emit({matchId: this.currentMatch().match_id});
   }
 }

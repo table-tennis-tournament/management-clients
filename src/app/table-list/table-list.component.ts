@@ -45,4 +45,8 @@ export class TableListComponent implements OnInit {
   onCallPlayersForMatch($event: any) {
     this.store.dispatch(MatchActions.callPlayerForMatch($event));
   }
+
+  onTakeBackMatch($event: any) {
+    this.store.dispatch(MatchActions.takeBackMatch($event));
+  }
 }

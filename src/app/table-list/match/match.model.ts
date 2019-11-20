@@ -4,8 +4,8 @@ import {Result} from './result.model';
 export interface Match {
     match_id?: number;
     result?: Result;
-    player_a?: Player;
-    player_b?: Player;
+    players_a?: Player[];
+    players_b?: Player[];
     stage?: string;
     classification?: string;
     state?: string;

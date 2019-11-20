@@ -61,3 +61,18 @@ export const callPlayerForMatchError = createAction(
   props<{}>()
 );
 
+export const takeBackMatch = createAction(
+  '[Match] Take back',
+  props<{ matchId: number }>()
+);
+
+export const takeBackMatchSuccess = createAction(
+  '[Match] Take back Success',
+  props<{}>()
+);
+
+export const takeBackMatchError = createAction(
+  '[Match] Take back Error',
+  props<{}>()
+);
+
