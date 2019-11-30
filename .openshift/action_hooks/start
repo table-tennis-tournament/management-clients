@@ -1,3 +1,0 @@
-#!/bin/bash
-nohup $OPENSHIFT_REPO_DIR/target/universal/stage/bin/your_app_name_here -Ddw.server.connector.bindHost=$OPENSHIFT_DIY_IP -Ddw.server.connector.port=$OPENSHIFT_DIY_PORT server $OPENSHIFT_REPO_DIR/config/local.yml &
-echo $! > $OPENSHIFT_REPO_DIR/pid.pid
