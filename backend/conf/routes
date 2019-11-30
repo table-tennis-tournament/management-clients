@@ -53,7 +53,8 @@ GET     /api/match/deleteType/:id           controllers.MatchController.deleteTy
 POST    /api/match/call                     controllers.MatchController.callMatches
 
 # WebSocket for push messages
-GET     /api/ws                      controllers.WebSocketController.tablesSocket
+GET     /api/ws                             controllers.WebSocketController.tablesSocket
+->      /api/ws2                            controllers.SockJSController
 
 # PrinterController:
 GET     /api/printer/all                    controllers.PrinterController.allPrinter
