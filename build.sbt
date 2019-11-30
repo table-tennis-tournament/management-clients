@@ -1,6 +1,6 @@
 name := """TurnierManager"""
 
-version := "1.0"
+version := "1.6.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
 
@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   "org.apache.pdfbox" % "pdfbox" % "2.0.13",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
   "net.glxn" % "qrgen" % "1.4",
+  "com.github.fdimuccio" %% "play2-sockjs" % "0.6.0"
 
 
 )
@@ -45,6 +46,7 @@ enablePlugins(AshScriptPlugin)
 
 dockerBaseImage       := "openjdk:jre-alpine"
 packageName in Docker := "holzleube/turniermanager"
+dockerExposedPorts    := Seq(9000, 9443)
 
 // Docker fix
 javaOptions in Universal ++= Seq(
