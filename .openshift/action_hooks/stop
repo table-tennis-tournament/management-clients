@@ -1,6 +1,0 @@
-#!/bin/bash
-source $OPENSHIFT_CARTRIDGE_SDK_BASH
-echo Killing PID $(cat $OPENSHIFT_REPO_DIR/pid.pid)
-kill $(cat $OPENSHIFT_REPO_DIR/pid.pid)
-rm $OPENSHIFT_REPO_DIR/pid.pid
-exit 0
