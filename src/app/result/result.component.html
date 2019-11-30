@@ -1,0 +1,28 @@
+<div class="row " *ngFor="let i of rowCount" >
+  <div *ngFor="let currentTab of currentTabs | slice:(i*12):(i+1)*12" class="col no-padding">
+    <a class="waves-effect waves-light btn {{colors[currentTab.id]}}" (click)="onTabSelected(currentTab)">{{currentTab.name}}</a>
+  </div>
+  <div class="col">
+    <p>
+      <input type="checkbox" class="filled-in" [(ngModel)]="isFixed" id="remove-played-checkbox" (change)="onIsFixedChanged()" />
+      <label for="remove-played-checkbox">Stop</label>
+    </p>
+  </div>
+</div>
+
+<div *ngIf="selectedTab" class="row">
+  <div *ngIf="selectedTab.stages" class="discipline-stage-view">
+    <div class="row">
+      <div *ngFor="let currentStage of selectedTab.stages" class="col s2">
+        <app-stage-view [stage]="currentStage"></app-stage-view>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="selectedTab.groups&&!selectedTab.stages[0]" >
+    <div class="row" *ngFor="let i of selectedTab.rowCount" >
+      <div *ngFor="let currentGroup of selectedTab.groups | slice:(i*6):(i+1)*6" class="col s2">
+        <result-group-view [group]="currentGroup"></result-group-view>
+      </div>
+    </div>
+  </div>
+</div>
