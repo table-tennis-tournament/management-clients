@@ -50,7 +50,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
   }
 
   def freeMatches: Action[AnyContent] = Action { request =>
-    Logger.info("freeMatches")
     val req = request.body.asJson
     req match {
       case Some(r) =>
@@ -173,7 +172,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
   }
 
   def setResult(id: Long): Action[AnyContent] = Action.async { request =>
-    Logger.info(request.body.asJson.get.toString())
     val res = request.body.asJson
     if(res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
@@ -192,7 +190,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
   }
 
   def updateResult(id: Long): Action[AnyContent] = Action { request =>
-    Logger.info(request.body.asJson.get.toString())
     val res = request.body.asJson
     if(res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
@@ -236,9 +233,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
           case Some(matchIds) =>
             val table = tables.getTTTableFromName(tableName).get
             val matches = tables.allMatches()
-            Logger.info("matches: " + matches.toString())
             val m = matchIds.map(id => matches.filter(_.id == id).head)
-            Logger.info(checkPlayable.toString)
             val matchReady = !checkPlayable || m.forall(m => if (m.state == Open || m.state == InWaitingList) {
                 (m.player1Ids ++ m.player2Ids).forall { p =>
                   val ml = matches.filter { ma =>
@@ -251,28 +246,25 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
               })
             val res = if (matchReady) {
               val currentStartTime = new org.joda.time.DateTime()
-              val result = matchIds map { matchId =>
-                Logger.info("Set match to Table")
-                Logger.info(tables.getMatchList.toString())
-                Logger.info("matchId: " + matchId)
+              val result = matchIds.map { matchId =>
                 val ml = tables.getMatchList
                 tables.updateMatchState(Callable, matchId)
                 tables.setStartTime(matchId, currentStartTime)
                 ml.find(_.matchId.contains(matchId)) match {
                   case Some(mlItem) =>
-                    Logger.info("delMatchList")
                     tables.delMatchListItem(mlItem.uuid.get, matchId)
                     tables.startMatch(matchId, table.id, print)
                   case _ =>
                     tables.startMatch(matchId, table.id, print)
                 }
               }
+              pub ! UpdateTable(tables.allTableInfo.filter(_.id == table.id))
+              pub ! UpdateMatches(tables.allMatchesInfo.filter(_.state != Completed))
+              pub ! UpdateMatchList(tables.getAllMatchList)
               result.forall(x => x)
             } else {
-              Logger.error("Match not ready" + m.toString())
               false
             }
-            Logger.info("result: " + res.toString + " " + table.toString + " " + m.toString)
             if(res) {
               Ok(Json.toJson(Answer(successful = true, "started match")))
             } else
@@ -285,7 +277,6 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
   }
 
   def callMatches: Action[AnyContent] = Action { request =>
-    Logger.info("callMatches")
     val req = request.body.asJson
     req match {
       case Some(r) =>
