@@ -134,7 +134,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
     pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-    pub ! UpdateTable(allTableInfo.filter(t => (t.ttMatch.map(_.ttMatch.id)).contains(matchId)))
+    pub ! UpdateTable(allTableInfo.filter(_.id == tableInfo.id))
   }
 
   def takeBackTTTable(matchId: Long): Unit = {
