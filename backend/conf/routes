@@ -54,7 +54,7 @@ POST    /api/match/call                     controllers.MatchController.callMatc
 
 # WebSocket for push messages
 GET     /api/ws                             controllers.WebSocketController.tablesSocket
-->      /api/ws2                            controllers.SockJSController
+->      /api/wsa                            controllers.SockJSController
 
 # PrinterController:
 GET     /api/printer/all                    controllers.PrinterController.allPrinter
