@@ -5,9 +5,9 @@ import {Match} from '../shared/data/match.model';
 import {UpdateMatchesSuccess} from '../assign/redux/match.actions';
 import {MatchList} from '../supervisor/matchlist.model';
 import {LoadMatchListSuccess} from '../supervisor/redux/matchlist.actions';
-import {ConnectWebSocket} from './redux/websocket.actions';
 import {Store} from '@ngrx/store';
 import {LoadCallerMatches} from '../caller/redux/caller.actions';
+import {ConnectWebSocket} from './redux/websocket.actions';
 
 @Injectable({
     providedIn: 'root'
@@ -45,5 +45,4 @@ export class WebsocketHandlerService {
             //     newMatchData.filter(match => match.state === MatchState[MatchState.Finished])));
         }
     }
-
 }
