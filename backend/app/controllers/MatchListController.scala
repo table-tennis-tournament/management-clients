@@ -48,6 +48,7 @@ class MatchListController @Inject() (tables: Tables,
               pub ! UpdateMatches(tables.allMatchesInfo.filter(m => newMLEntry.matchId.contains(m.ttMatch.id)))
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
+              pub ! UpdateMatchList(tables.getAllMatchList)
               Ok(Json.toJson(Answer(successful = true, "match added", newMLEntry.uuid)))
             } else {
               BadRequest(Json.toJson(Answer(successful = false, "match is already in match list", newMLEntry.uuid)))
