@@ -146,11 +146,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       if (m.id == matchId)m.copy(state = Open)
       else m
     }
-    pub ! UpdateTable(Seq(tableInfo.copy(ttMatch = Seq.empty[AllMatchInfo])))
     val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
     pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
+    pub ! UpdateTable(allTableInfo.filter(_.id == tableInfo.id))
   }
 
   def lockTTTable(nr: Long): Unit = {
