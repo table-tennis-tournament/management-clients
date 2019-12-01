@@ -122,7 +122,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def getTTTable(id: Long): Option[TTTable] = ttTablesSeq.find(_.id == id)
 
   def freeTTTable(matchId: Long): Unit = {
-    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId)).head
+    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
@@ -134,11 +134,11 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
     pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-    pub ! UpdateTable(allTableInfo.filter(_.id == tableInfo.id))
+    pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
   }
 
   def takeBackTTTable(matchId: Long): Unit = {
-    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId)).head
+    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
@@ -150,7 +150,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
     pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-    pub ! UpdateTable(allTableInfo.filter(_.id == tableInfo.id))
+    pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
   }
 
   def lockTTTable(nr: Long): Unit = {
