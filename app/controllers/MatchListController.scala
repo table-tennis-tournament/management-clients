@@ -15,6 +15,7 @@ import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
   * Created by jonas on 24.11.16.
   */
 class MatchListController @Inject() (tables: Tables,
+                                     @Named("publisher_actor") pub: ActorRef,
                                      val controllerComponents: ControllerComponents) extends BaseController {
 
   import models.AnswerModel._
@@ -44,6 +45,7 @@ class MatchListController @Inject() (tables: Tables,
               val newMLAdded = newML ++ Seq(newMLEntry)
               newMLEntry.matchId.foreach(id => tables.updateMatchState(OnTable, id))
               matchList.matchId.foreach(m => tables.updateMatchState(InWaitingList, m))
+              pub ! UpdateMatches(tables.allMatchesInfo.filter(m => newMLEntry.matchId.contains(m.ttMatch.id)))
               tables.setMatchList(newMLAdded)
               tables.startNextMatch
               Ok(Json.toJson(Answer(successful = true, "match added", newMLEntry.uuid)))
