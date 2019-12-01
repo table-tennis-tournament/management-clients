@@ -358,7 +358,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
     Logger.debug("start match")
-    if(!ttTablesSeq.exists(_.matchId.contains(matchId))) {
+    //if(!ttTablesSeq.exists(_.matchId.contains(matchId))) {
       updateMatchState(Callable, matchId)
       ttMatchSeq = ttMatchSeq map { m =>
         if (m.id == matchId) m.copy(state = Callable)
@@ -373,9 +373,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       }
       if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
       true
-    } else {
-      false
-    }
+    //} else {
+    //  false
+    //}
   }
 
   def deleteMatch(matchId: Long): Unit = ttMatchSeq = ttMatchSeq.filter(_.id != matchId)
