@@ -425,7 +425,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
   }
 
   def setStartTime(matchId: Long, startTime: DateTime): Unit = {
