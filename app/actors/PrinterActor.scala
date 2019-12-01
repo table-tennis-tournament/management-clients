@@ -68,7 +68,7 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq
       sender() ! printers
     case GetPrinter =>
-      sender() ! printService.getName
+      sender() ! (if(printService != null) printService.getName else "")
     case SetPrinter(name: String) =>
       val psO = PrintServiceLookup.lookupPrintServices(null, null).find(_.getName == name)
       psO match {
