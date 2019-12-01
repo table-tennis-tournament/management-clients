@@ -1,7 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {DisciplineGroup} from './data/discipline.group';
-import {DisciplineStage} from './data/discipline.stage';
+import {select, Store} from '@ngrx/store';
+import {Observable} from 'rxjs';
 import {DisciplineTab} from './data/discipline.tab';
+import {Type} from './data/type';
+import {TypeColors} from './data/typeColors';
+import * as ResultActions from './redux/result.actions';
+import {AppState, getTypes} from './redux/result.reducer';
 
 @Component({
   selector: 'app-result',
@@ -23,19 +27,23 @@ export class ResultComponent implements OnInit {
   private currentIndex = 0;
   public isFixed = false;
 
-  constructor() {
+  types$: Observable<Type[]>;
+
+  constructor(private store: Store<AppState>) {
+    this.colors = TypeColors.TYPE_COLORS;
+    this.types$ = store.pipe(select(getTypes));
   }
 
   ngOnInit() {
-    this.currentTabs = [
-      new DisciplineTab(1, 'Herren A', 1),
-      new DisciplineTab(2, 'Herren B', 1)
-    ];
-    this.selectedTab = this.currentTabs[0];
+    this.store.dispatch(ResultActions.loadTypes({}));
   }
 
-  onTabSelected(selectedTab: DisciplineTab) {
-    this.currentIndex = this.currentTabs.indexOf(selectedTab);
+  onTabSelected(selectedTab: Type) {
+    this.currentIndex = 0;
+  }
+
+  onSubscribed() {
+    console.log('ino it');
   }
 
   onIsFixedChanged() {
