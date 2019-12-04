@@ -1,11 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
+import {DisciplineGroup} from './data/discipline.group';
+import {DisciplineStage} from './data/discipline.stage';
 import {DisciplineTab} from './data/discipline.tab';
+import {Match} from './data/match';
 import {Type} from './data/type';
 import {TypeColors} from './data/typeColors';
 import * as ResultActions from './redux/result.actions';
-import {AppState, getTypes} from './redux/result.reducer';
+import {AppState, getGroups, getMatches, getStages, getTypes} from './redux/result.reducer';
 
 @Component({
   selector: 'app-result',
@@ -28,18 +31,25 @@ export class ResultComponent implements OnInit {
   public isFixed = false;
 
   types$: Observable<Type[]>;
+  matches$: Observable<Match[]>;
+  stages$: Observable<DisciplineStage[]>;
+  groups$: Observable<DisciplineGroup[]>;
 
   constructor(private store: Store<AppState>) {
     this.colors = TypeColors.TYPE_COLORS;
     this.types$ = store.pipe(select(getTypes));
+    this.matches$ = store.pipe(select(getMatches));
+    this.stages$ = store.pipe(select(getStages));
+    this.groups$ = store.pipe(select(getGroups));
   }
 
   ngOnInit() {
     this.store.dispatch(ResultActions.loadTypes({}));
+    this.store.dispatch(ResultActions.loadMatches({typeId: 8}));
   }
 
   onTabSelected(selectedTab: Type) {
-    this.currentIndex = 0;
+    this.store.dispatch(ResultActions.loadMatches({typeId: selectedTab.id}));
   }
 
   onSubscribed() {

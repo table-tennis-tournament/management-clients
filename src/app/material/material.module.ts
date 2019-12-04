@@ -6,6 +6,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
@@ -17,39 +18,40 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
 const matModules = [
-    MatToolbarModule,
-    MatTabsModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    MatInputModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatChipsModule,
-    MatRadioModule,
-    MatCheckboxModule,
-    MatBadgeModule
+  MatToolbarModule,
+  MatTabsModule,
+  MatSidenavModule,
+  MatListModule,
+  MatButtonModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatDialogModule,
+  MatInputModule,
+  MatIconModule,
+  MatSnackBarModule,
+  MatChipsModule,
+  MatRadioModule,
+  MatCheckboxModule,
+  MatBadgeModule,
+  MatExpansionModule
 ];
 
 @NgModule({
-    declarations: [],
-    imports: [
-        CommonModule,
-        ...matModules
-    ],
-    providers: [
-        {
-            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
-                politeness: 'assertive',
-                verticalPosition: 'top',
-                duration: 3000
-            }
-        }
-    ],
-    exports: [...matModules]
+  declarations: [],
+  imports: [
+    CommonModule,
+    ...matModules
+  ],
+  providers: [
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
+        politeness: 'assertive',
+        verticalPosition: 'top',
+        duration: 3000
+      }
+    }
+  ],
+  exports: [...matModules]
 })
 export class MaterialModule {
 }

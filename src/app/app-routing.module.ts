@@ -7,10 +7,10 @@ import {ResultModule} from './result/result.module';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/tablemanager/1',
+    redirectTo: '/result',
     pathMatch: 'full'
   },
-  {path: 'tablemanager/:managerId', component: ResultComponent}
+  {path: 'result', component: ResultComponent}
 ];
 
 @NgModule({

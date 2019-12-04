@@ -1,16 +1,9 @@
-<p>group-view works!</p>
-
-<!--<div class="card {{group.bgColor}}">-->
-<!--  <div class="card-content black-text">-->
-<!--        <span class="card-title">-->
-<!--            <span>{{group.name}}</span>-->
-<!--            <span class="right" *ngIf="isComplete" ><i class="material-icons">done</i></span>-->
-<!--            <span class="right" *ngIf="!isComplete">{{openMatches}}/{{allMatchCount}}</span>-->
-<!--        </span>-->
-<!--    <ul class="collection">-->
-<!--      <li *ngFor="let currentMatch of group.matches" href="javascript:void(0)" class="collection-item" >-->
-<!--        <result-match-item [match]="currentMatch"></result-match-item>-->
-<!--      </li>-->
-<!--    </ul>-->
-<!--  </div>-->
-<!--</div>-->
+<mat-card>
+  <mat-card-title>
+    <span>{{group.name}}</span>
+    <span class="float-right" *ngIf="group.isComplete" ><i class="material-icons">done</i></span>
+  </mat-card-title>
+  <mat-card-content>
+        <app-match-item *ngFor="let currentMatch of group.matches" [match]="currentMatch" ></app-match-item>
+  </mat-card-content>
+</mat-card>

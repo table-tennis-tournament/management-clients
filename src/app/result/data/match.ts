@@ -16,4 +16,5 @@ export interface Match {
   matchType?: MatchType;
   type?: Type;
   group?: Group;
+  state?: string;
 }

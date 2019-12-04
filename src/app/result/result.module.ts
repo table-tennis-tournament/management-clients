@@ -10,6 +10,7 @@ import {ResultComponent} from './result.component';
 import {ResultPipe} from './result.pipe';
 import {StageViewComponent} from './stage-view/stage-view.component';
 import { TabItemComponent } from './tab-item/tab-item.component';
+import { TeamItemComponent } from './match-item/team-item/team-item.component';
 
 @NgModule({
   declarations: [
@@ -18,11 +19,13 @@ import { TabItemComponent } from './tab-item/tab-item.component';
     GroupViewComponent,
     ResultPipe,
     MatchItemComponent,
-    TabItemComponent
+    TabItemComponent,
+    TeamItemComponent
   ],
   imports: [
     SharedModule,
     StoreModule.forFeature('disciplines', fromResults.reducer),
+    StoreModule.forFeature('matches', fromResults.matchReducer),
     EffectsModule.forFeature([ResultEffects])
   ],
   exports: [ResultComponent]
