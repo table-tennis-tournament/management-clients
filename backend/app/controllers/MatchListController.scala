@@ -9,7 +9,7 @@ import models._
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
-import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
+import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches}
 
 /**
   * Created by jonas on 24.11.16.
@@ -62,7 +62,16 @@ class MatchListController @Inject() (tables: Tables,
   def deleteMatch(uuid: String): Action[AnyContent] = Action{
     Logger.info(tables.getMatchList.toString())
     Logger.info(uuid)
-    if(tables.delMatchList(UUID.fromString(uuid))){
+    val matchlistId = UUID.fromString(uuid)
+    val currentMatchListItem = tables.findMatchListById(matchlistId)
+    if(tables.delMatchList(matchlistId)){
+      currentMatchListItem match {
+        case Some(matchListItem) => {
+          pub ! UpdateMatches(tables.allMatchesInfo.filter(m => matchListItem.matchId.contains(m.ttMatch.id)))
+        }
+      }
+
+      pub ! UpdateMatchList(tables.getAllMatchList)
       Ok(Json.toJson(Answer(successful = true, "match deleted")))
     } else {
       BadRequest(Json.toJson(Answer(successful = false, "UUID not found")))
@@ -96,6 +105,7 @@ class MatchListController @Inject() (tables: Tables,
           else m.copy(position = m.position + 1)
         }
         tables.setMatchList((mlNew :+ mlItem.copy(position = pos)).sortBy(_.position))
+        pub ! UpdateMatchList(tables.getAllMatchList)
         Ok(Json.toJson(Answer(successful = true, "changed match list")))
       case _ => BadRequest(Json.toJson(Answer(successful = false, "UUID not found")))
     }

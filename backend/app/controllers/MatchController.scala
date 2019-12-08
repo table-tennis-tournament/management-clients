@@ -285,6 +285,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
             ids foreach { id =>
               tables.updateMatchState(OnTable, id)
             }
+            pub ! UpdateMatches(tables.allMatchesInfo.filter(_.state != Completed))
             Ok(Json.toJson(Answer(successful = true, "successful")).toString())
           case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
