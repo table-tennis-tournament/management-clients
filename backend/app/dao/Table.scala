@@ -172,26 +172,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a)
   }
 
-  class TTTablesTable(tag: Tag) extends Table[TTTableDAO](tag, "tables") {
 
-    def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
-
-    def name = column[Int]("Tabl_Name")
-
-    def left = column[Long]("Tabl_Left")
-
-    def top = column[Long]("Tabl_Top")
-
-    // def matchId = column[Long]("Tabl_Matc_ID")
-
-    def tourId = column[Long]("Tabl_Tour_ID")
-
-    def groupId = column[Option[Long]]("Tabl_Group")
-
-    def isLocked = Option(false)
-
-    def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply)
-  }
 
   // Matches
 
@@ -370,9 +351,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       }
       if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
       true
-    //} else {
-    //  false
-    //}
   }
 
   def deleteMatch(matchId: Long): Unit = ttMatchSeq = ttMatchSeq.filter(_.id != matchId)
@@ -513,32 +491,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     }
   }
 
-  class MatchesTable(tag: Tag) extends Table[MatchDAO](tag, "matches") {
 
-    def id = column[Long]("Matc_ID", O.PrimaryKey, O.AutoInc)
-    def isPlaying = column[Boolean]("Matc_IsPlaying")
-    def player1Id = column[Long]("Matc_Play1_ID")
-    def player2Id = column[Long]("Matc_Play2_ID")
-    def ttTableId = column[Option[Long]]("Matc_Tabl_ID")
-    def isPlayed = column[Boolean]("Matc_Played")
-    def matchTypeId = column[Long]("Matc_MaTy_ID")
-    def typeId = column[Long]("Matc_Type_ID")
-    def groupId = column[Option[Long]]("Matc_Grou_ID")
-    def startTime = column[DateTime]("Matc_StartTime")
-    def resultRaw = column[String]("Matc_ResultRaw")
-    def result = column[String]("Matc_Result")
-    def balls1 = column[Int]("Matc_Balls1")
-    def balls2 = column[Int]("Matc_Balls2")
-    def sets1 = column[Int]("Matc_Sets1")
-    def sets2 = column[Int]("Matc_Sets2")
-    def plannedTableId = column[Option[Long]]("Matc_PlannedTable_ID")
-    def nr = column[Int]("Matc_Nr")
-    def roundNumber = column[Int]("Matc_RoundNumber")
-    def winnerId = column[Option[Long]]("Matc_Winner_ID")
-
-    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
-      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber, winnerId) <> (MatchDAO.tupled, MatchDAO.unapply)
-  }
 
   // Players
 
@@ -574,14 +527,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   }
 
-  class ClubTable(tag: Tag) extends Table[Club](tag, "club") {
-
-    def id = column[Long]("Club_ID", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("Club_Name")
-
-    def * = (id, name) <> (Club.tupled, Club.unapply)
-  }
-
   def updateClubList: Future[Boolean] = {
     dbConfigProvider.get.db.run(clubs.result) map {cList =>
       ttClubsSeq = cList
@@ -592,32 +537,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getClub(id: Long): Option[Club] = ttClubsSeq.find(_.id == id)
 
-  class PlayerTable(tag: Tag) extends Table[PlayerDAO](tag, "player") {
-    def id = column[Long]("Play_ID", O.PrimaryKey, O.AutoInc)
-    def firstName = column[String]("Play_FirstName")
-    def lastName = column[String]("Play_LastName")
-    def ttr = column[Option[Int]]("Play_TTR")
-    def paid = column[Boolean]("Play_Paid")
-    def sex = column[String]("Play_Sex")
-    def email = column[Option[String]]("Play_Email")
-    def zipCode = column[Option[String]]("Play_PLZ")
-    def location = column[Option[String]]("Play_Location")
-    def street = column[Option[String]]("Play_Street")
-    def phone = column[Option[String]]("Play_TelNr")
-    def clubId = column[Option[Long]]("Play_CLub_ID")
-
-    def * = (id, firstName, lastName, ttr, sex, clubId) <> (PlayerDAO.tupled, PlayerDAO.unapply)
-
-    def club = foreignKey("Club_FK", clubId, clubs)(_.id.?)
-  }
-
-  class MatchTypeTable(tag: Tag) extends Table[MatchType](tag, "matchtype") {
-
-    def id = column[Long]("MaTy_ID", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("MaTy_Name")
-
-    def * = (id, name) <> (MatchType.tupled, MatchType.unapply)
-  }
 
   def updateMatchTypeList: Future[Boolean] = {
     dbConfigProvider.get.db.run(matchTypes.result) map {mtList =>
@@ -629,15 +548,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getMatchType(id: Long): Option[MatchType] = ttMatchTypeSeq.find(_.id == id)
 
-  class TypeTable(tag: Tag) extends Table[Type](tag, "type") {
 
-    def id = column[Long]("Type_ID", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("Type_Name")
-    def kind = column[Int]("Type_Kind")
-    def active = column[Boolean]("Type_Active")
-
-    def * = (id, name, kind, active) <> (Type.tupled, Type.unapply)
-  }
 
   def updateTypesList: Future[Boolean] = {
     dbConfigProvider.get.db.run(types.result) map {tList =>
@@ -653,13 +564,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttTypeSeq
   }
 
-  class GroupTable(tag: Tag) extends Table[Group](tag, "groups") {
 
-    def id = column[Long]("Grou_ID", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("Grou_Name")
-
-    def * = (id, name) <> (Group.tupled, Group.unapply)
-  }
 
   def updateGroupsSeq: Future[Boolean] = {
     dbConfigProvider.get.db.run(groups.result) map {gList =>
@@ -673,15 +578,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getGroup(id: Long): Option[Group] = ttGroupsSeq.find(_.id == id)
 
-  class DoubleTable(tag: Tag) extends Table[Double](tag, "doubles") {
 
-    def id = column[Long]("Doub_ID", O.PrimaryKey, O.AutoInc)
-    def player1Id = column[Long]("Doub_Play1_ID")
-    def player2Id = column[Long]("Doub_Play2_ID")
-    def kindId = column[Int]("Doub_Kind")
-
-    def * = (id, player1Id, player2Id, kindId) <> (Double.tupled, Double.unapply)
-  }
 
   def updateDoublesSeq: Future[Boolean] = {
     dbConfigProvider.get.db.run(doubles.result) map {dList =>
@@ -695,23 +592,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getDouble(id: Long): Option[Double] = ttDoublesSeq.find(_.id == id)
 
-//  class MatchListTable(tag: Tag) extends Table[MatchList](tag, "match_list") {
-//
-//    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-//    def matchId = column[Long]("match_id")
-//    def asGroup = column[Option[Long]]("as_group")
-//    def position = column[Int]("position")
-//
-//    def * = (id.?, matchId, asGroup, position) <> (MatchList.tupled, MatchList.unapply _)
-//  }
-//
-//  def updateMatchListSeq: Future[Boolean] = {
-//    dbConfigProvider.get.db.run(matchList.result) map {mlList =>
-//      ttMatchListSeq = mlList.sortBy(_.position)
-//      Logger.debug("read MatchList: " + ttMatchListSeq.size.toString)
-//      true
-//    }
-//  }
+  // matchlist
 
   def getMatchList: Seq[MatchList] = {
     ttMatchListSeq.sortBy(_.position)
@@ -764,6 +645,99 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def isInMatchList(ttMatch: TTMatch): Boolean = ttMatchListSeq.exists(_.matchId.contains(ttMatch.id))
 
+
+  //database table defintions
+
+  class MatchesTable(tag: Tag) extends Table[MatchDAO](tag, "matches") {
+
+    def id = column[Long]("Matc_ID", O.PrimaryKey, O.AutoInc)
+    def isPlaying = column[Boolean]("Matc_IsPlaying")
+    def player1Id = column[Long]("Matc_Play1_ID")
+    def player2Id = column[Long]("Matc_Play2_ID")
+    def ttTableId = column[Option[Long]]("Matc_Tabl_ID")
+    def isPlayed = column[Boolean]("Matc_Played")
+    def matchTypeId = column[Long]("Matc_MaTy_ID")
+    def typeId = column[Long]("Matc_Type_ID")
+    def groupId = column[Option[Long]]("Matc_Grou_ID")
+    def startTime = column[DateTime]("Matc_StartTime")
+    def resultRaw = column[String]("Matc_ResultRaw")
+    def result = column[String]("Matc_Result")
+    def balls1 = column[Int]("Matc_Balls1")
+    def balls2 = column[Int]("Matc_Balls2")
+    def sets1 = column[Int]("Matc_Sets1")
+    def sets2 = column[Int]("Matc_Sets2")
+    def plannedTableId = column[Option[Long]]("Matc_PlannedTable_ID")
+    def nr = column[Int]("Matc_Nr")
+    def roundNumber = column[Int]("Matc_RoundNumber")
+    def winnerId = column[Option[Long]]("Matc_Winner_ID")
+
+    def * = (id, isPlaying, player1Id, player2Id, ttTableId, isPlayed, matchTypeId, typeId, groupId, startTime, resultRaw, result,
+      balls1, balls2, sets1, sets2, nr, plannedTableId, roundNumber, winnerId) <> (MatchDAO.tupled, MatchDAO.unapply)
+  }
+
+  class MatchTypeTable(tag: Tag) extends Table[MatchType](tag, "matchtype") {
+
+    def id = column[Long]("MaTy_ID", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("MaTy_Name")
+
+    def * = (id, name) <> (MatchType.tupled, MatchType.unapply)
+  }
+
+  class GroupTable(tag: Tag) extends Table[Group](tag, "groups") {
+
+    def id = column[Long]("Grou_ID", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("Grou_Name")
+
+    def * = (id, name) <> (Group.tupled, Group.unapply)
+  }
+
+  class TypeTable(tag: Tag) extends Table[Type](tag, "type") {
+
+    def id = column[Long]("Type_ID", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("Type_Name")
+    def kind = column[Int]("Type_Kind")
+    def active = column[Boolean]("Type_Active")
+
+    def * = (id, name, kind, active) <> (Type.tupled, Type.unapply)
+  }
+
+  class DoubleTable(tag: Tag) extends Table[Double](tag, "doubles") {
+
+    def id = column[Long]("Doub_ID", O.PrimaryKey, O.AutoInc)
+    def player1Id = column[Long]("Doub_Play1_ID")
+    def player2Id = column[Long]("Doub_Play2_ID")
+    def kindId = column[Int]("Doub_Kind")
+
+    def * = (id, player1Id, player2Id, kindId) <> (Double.tupled, Double.unapply)
+  }
+
+  class PlayerTable(tag: Tag) extends Table[PlayerDAO](tag, "player") {
+    def id = column[Long]("Play_ID", O.PrimaryKey, O.AutoInc)
+    def firstName = column[String]("Play_FirstName")
+    def lastName = column[String]("Play_LastName")
+    def ttr = column[Option[Int]]("Play_TTR")
+    def paid = column[Boolean]("Play_Paid")
+    def sex = column[String]("Play_Sex")
+    def email = column[Option[String]]("Play_Email")
+    def zipCode = column[Option[String]]("Play_PLZ")
+    def location = column[Option[String]]("Play_Location")
+    def street = column[Option[String]]("Play_Street")
+    def phone = column[Option[String]]("Play_TelNr")
+    def clubId = column[Option[Long]]("Play_CLub_ID")
+
+    def * = (id, firstName, lastName, ttr, sex, clubId) <> (PlayerDAO.tupled, PlayerDAO.unapply)
+
+    def club = foreignKey("Club_FK", clubId, clubs)(_.id.?)
+  }
+
+  class ClubTable(tag: Tag) extends Table[Club](tag, "club") {
+
+    def id = column[Long]("Club_ID", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("Club_Name")
+
+    def * = (id, name) <> (Club.tupled, Club.unapply)
+  }
+
   class PlayerPerGroupTable(tag: Tag) extends Table[PlayerPerGroup](tag, "playerpergroup") {
     def id = column[Long]("PPGr_ID", O.PrimaryKey, O.AutoInc)
     def playerId = column[Long]("PPGr_Play_ID")
@@ -782,6 +756,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def setsDiff = column[Long]("PPGr_SetDiff")
 
     def * = (id, playerId, groupId, groupPos, matchesWon, matchesLost, setsWon, setsLost, pointsWon, pointsLost, games, sets, points, checked, setsDiff) <> (PlayerPerGroup.tupled, PlayerPerGroup.unapply)
+  }
+
+  class TTTablesTable(tag: Tag) extends Table[TTTableDAO](tag, "tables") {
+
+    def id = column[Long]("Tabl_ID", O.PrimaryKey, O.AutoInc)
+    def name = column[Int]("Tabl_Name")
+    def left = column[Long]("Tabl_Left")
+    def top = column[Long]("Tabl_Top")
+    // def matchId = column[Long]("Tabl_Matc_ID")
+    def tourId = column[Long]("Tabl_Tour_ID")
+    def groupId = column[Option[Long]]("Tabl_Group")
+    def isLocked = Option(false)
+
+    def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply)
   }
 
   def allPlayerPerGroup: Future[Seq[PlayerPerGroup]] = db.run(playerPerGroup.result)
