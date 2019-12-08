@@ -63,6 +63,7 @@ object MatchModel {
     case OnTable => Json.toJson("OnTable")
     case Finished => Json.toJson("Finished")
     case Completed => Json.toJson("Completed")
+    case Started => Json.toJson("Started")
   }
 
   implicit val allMatchInfoWrites = new Writes[AllMatchInfo] {
