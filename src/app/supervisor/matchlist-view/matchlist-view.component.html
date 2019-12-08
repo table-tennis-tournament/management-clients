@@ -1,4 +1,15 @@
-<div class="row waiting-list-drop-zone">
+<div class="row p-1">
+    <div class="col">
+        <h5>Warteliste</h5>
+    </div>
+    <div class="col">
+        <div class="pt-3">
+            <input type="checkbox" class="filled-in" [(ngModel)]="fixWaitingList" id="fix-waiting-list"/>
+            <label for="fix-waiting-list">Fixed</label>
+        </div>
+    </div>
+</div>
+<div class="row waiting-list-drop-zone" [class.waiting-list-fixed-position]="fixWaitingList">
     <ul class="collection waiting-list-sorting-area" cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
         <li *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
             class="collection-item" [ngClass]="typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]">

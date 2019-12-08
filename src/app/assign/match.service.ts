@@ -30,7 +30,7 @@ export class MatchService {
     }
 
     resultForMatch(matchResult: TTMatchResult): Observable<StatusDto> {
-        return this.http.post<StatusDto>(`api/match/${matchResult.match.id}/result`, matchResult.result);
+        return this.http.post<StatusDto>(`api/match/${matchResult.match.id}/setResult`, matchResult.result);
     }
 
     loadAllMatches(): Observable<Match[]> {
@@ -43,5 +43,9 @@ export class MatchService {
 
     reloadMatchesFromDb(): Observable<StatusDto> {
         return this.http.get<StatusDto>(`/api/match/loadnew`);
+    }
+
+    loadPlayedMatches(): Observable<Match[]> {
+        return this.http.get<Match[]>(`/api/match/played/all`);
     }
 }

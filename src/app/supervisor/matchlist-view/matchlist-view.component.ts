@@ -26,6 +26,8 @@ export class MatchlistViewComponent {
     @Output()
     moveMatchListItem = new EventEmitter<MatchListItem>();
 
+    fixWaitingList = true;
+
     constructor() {
     }
 

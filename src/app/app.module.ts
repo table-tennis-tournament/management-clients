@@ -74,6 +74,7 @@ import {ResultPipe} from './shared/result/result.pipe';
 import {ZXingScannerModule} from '@zxing/ngx-scanner';
 import {MatchlistGroupItemComponent} from './supervisor/matchlist-view/matchlist-group-item/matchlist-group-item.component';
 import {MatchlistSingleItemComponent} from './supervisor/matchlist-view/matchlist-single-item/matchlist-single-item.component';
+import {ResultEffects} from './result/redux/result.effects';
 
 @NgModule({
     declarations: [
@@ -148,7 +149,7 @@ import {MatchlistSingleItemComponent} from './supervisor/matchlist-view/matchlis
             logOnly: environment.production,
         }),
         EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects,
-            DisciplineEffects, SettingsEffects, WebSocketEffects, CallerEffects]),
+            DisciplineEffects, SettingsEffects, WebSocketEffects, CallerEffects, ResultEffects]),
         HttpClientModule
     ],
 

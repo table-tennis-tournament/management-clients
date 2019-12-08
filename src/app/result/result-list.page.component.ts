@@ -7,6 +7,7 @@ import {Discipline} from '../discipline/discipline.model';
 import {FreeTable, ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
+import {LoadResults} from './redux/result.actions';
 
 @Component({
     selector: 'toma-result-list-page',
@@ -27,6 +28,7 @@ export class ResultListPageComponent implements OnInit {
         this.matchesLoading = this.store.select(getResultMatchesLoading);
         this.disciplines = this.store.select(getDisciplineState);
         this.disciplinesLoading = this.store.select(getDisciplineLoading);
+        this.store.dispatch(new LoadResults({}));
     }
 
     onTakeBackMatch(match: Match) {
@@ -44,8 +46,7 @@ export class ResultListPageComponent implements OnInit {
         this.store.dispatch(new ResultForMatch(matchResult));
     }
 
-    onFreeMatch(matchId: number) {
-        this.store.dispatch(new FreeTable({matchIds: [matchId]}));
+    onRefreshResultList() {
+        this.store.dispatch(new LoadResults({}));
     }
-
 }

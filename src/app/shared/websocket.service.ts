@@ -24,7 +24,7 @@ export class WebsocketService {
         disconnectListener.subscribe(listeners.disconnected);
 
         return Observable.create(complete => {
-            this.websocket = new SockJS('/api/wsa');
+            this.websocket = new SockJS('/api/websocket');
             this.websocket.onopen = function (e) {
                 complete.next();
             };

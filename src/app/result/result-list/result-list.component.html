@@ -5,6 +5,7 @@
             <toma-discipline-select
                     (disciplineChanged)="onTypeChanged($event)"
                     [disciplines]="disciplines"
+                    (disciplineRefresh)="refreshResultList.emit()"
                     [showWaitingList]="false">
             </toma-discipline-select>
         </div>

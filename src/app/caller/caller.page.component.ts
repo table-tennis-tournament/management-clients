@@ -34,6 +34,9 @@ export class CallerPageComponent implements OnInit {
         if (aggregates != null && aggregates.length > 0) {
             this.selectedItem = aggregates[0];
         }
+        if(aggregates !== null && aggregates.length === 0){
+            this.selectedItem = null;
+        }
     }
 
     onMatchesSelected(selectedItem: MatchAggregate) {

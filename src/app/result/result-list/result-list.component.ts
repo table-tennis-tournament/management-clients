@@ -40,6 +40,9 @@ export class ResultListComponent implements AfterViewInit {
     @Output()
     resultCompleteForMatch: EventEmitter<any> = new EventEmitter<any>();
 
+    @Output()
+    refreshResultList: EventEmitter<any> = new EventEmitter<any>();
+
     @ViewChild('answer') private elementRef: ElementRef;
 
     @Input()

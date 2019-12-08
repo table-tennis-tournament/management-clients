@@ -1,13 +1,15 @@
 .waiting-list-drop-zone {
   min-height: 100px;
   width: 200px;
-  position: fixed;
   z-index: 999999;
+}
+
+.waiting-list-fixed-position {
+  position: fixed;
 }
 
 .waiting-list-sorting-area{
   min-height: 100px;
-  margin-top: 30px;
   width: 200px;
 }
 
