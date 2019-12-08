@@ -59,8 +59,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   implicit def seqToContainsAnyOf[T](seq: Seq[T]): ContainsAnyOf[T] = new ContainsAnyOf(seq)
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
-    val p1 = ttMatch.player1Ids map {id => getPlayerTypes(getPlayer(id))}
-    val p2 = ttMatch.player2Ids map {id => getPlayerTypes(getPlayer(id))}
+    val p1 = getPlayersForMatch(ttMatch.player1Ids)
+    val p2 = getPlayersForMatch(ttMatch.player2Ids)
     val mt = getMatchType(ttMatch.matchTypeId)
     val ty = getType(ttMatch.typeId)
     val g = getGroup(ttMatch.groupId)
@@ -68,11 +68,33 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val state = ttMatch.state
     val tn = getTTTableFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
-      Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, state, tn))
+      Some(AllMatchInfo(ttMatch, p1, p2, mt.get, ty.get, g, pl, state, tn))
     else {
       Logger.error("None: " + mt + ty)
       None
     }
+  }
+
+  def getTableManagerMatchInfo(ttMatch: TTMatch): Option[TableManagerMatch] = {
+    val p1 = getTableManagerPlayers(ttMatch.player1Ids)
+    val p2 = getTableManagerPlayers(ttMatch.player2Ids)
+    val mt = getMatchType(ttMatch.matchTypeId)
+    val ty = getType(ttMatch.typeId)
+    val state = ttMatch.state
+    if (mt.isDefined && ty.isDefined)
+      Some(TableManagerMatch(ttMatch.id, 1, p1, p2, mt.get.name, ty.get.name, state))
+    else {
+      Logger.error("None: " + mt + ty)
+      None
+    }
+  }
+
+  def getPlayersForMatch(playerIds : Seq[Long]): Seq[Player] = {
+    playerIds.map(id => getPlayerTypes(getPlayer(id))).filter(_.isDefined).map(_.get)
+  }
+
+  def getTableManagerPlayers(playerIds : Seq[Long]): Seq[TableManagerPlayer] = {
+    getPlayersForMatch(playerIds).map(pl => TableManagerPlayer(pl.id, pl.firstName, pl.lastName, pl.club.get.clubName, 1))
   }
 
   def allTableInfo: Seq[TableInfo] = allTTTables().map(t => getAllTableInfo(t)).sortBy(_.tableNumber)
@@ -83,6 +105,14 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       ttTable.tableNumber,
       ttTable.isLocked,
       ttTable.matchId.map(id => getAllMatchInfo(getMatch(id).get).get)
+    )
+  }
+
+ def getTableManagerTableInfo(ttTable: TTTable, managerId: Long): TableManagerTableInfo = {
+    TableManagerTableInfo(
+      ttTable.tableNumber,
+      managerId,
+      ttTable.matchId.map(id => getTableManagerMatchInfo(getMatch(id).get).get)
     )
   }
 

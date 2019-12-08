@@ -9,6 +9,7 @@ import play.api.libs.json.{Json, Writes}
 
 object TableModel {
   import models.MatchModel.allMatchInfoWrites
+  import models.MatchModel.tableManagerMatchWrites
   import models.PlayerModel._
   import play.api.libs.json.JodaWrites
 
@@ -85,6 +86,16 @@ object TableModel {
     "isLocked" -> tableInfo.isLocked,
     "matches" -> tableInfo.ttMatch
   )
+
+
+
+  implicit val tableManagerTableWrites: Writes[TableManagerTableInfo] = (tableInfo: TableManagerTableInfo) => Json.obj(
+    "table_id" -> tableInfo.tableNumber,
+    "table_manager_id" -> tableInfo.managerId,
+    "matches" -> tableInfo.matches
+  )
+
+
 }
 
 case class AllMatchInfoTable(
@@ -101,6 +112,12 @@ case class TableInfo(
     tableNumber: Int,
     isLocked: Option[Boolean],
     ttMatch: Seq[AllMatchInfo]
+  )
+
+case class TableManagerTableInfo(
+    tableNumber: Long,
+    managerId: Long,
+    matches: Seq[TableManagerMatch]
   )
 
 case class TTTable(

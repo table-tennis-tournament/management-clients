@@ -6,37 +6,38 @@ import dao.Tables
 import javax.inject._
 import models._
 import org.joda.time.DateTime
-import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import websocket.WebSocketActor._
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
+
 /**
-  * Created by jonas on 10.10.16.
-  */
-class MatchController @Inject() (implicit ec: ExecutionContext,
-                                 tables: Tables,
-                                 @Named("publisher_actor") pub: ActorRef,
-                                 val controllerComponents: ControllerComponents) extends BaseController {
+ * Created by jonas on 10.10.16.
+ */
+class MatchController @Inject()(implicit ec: ExecutionContext,
+                                tables: Tables,
+                                @Named("publisher_actor") pub: ActorRef,
+                                val controllerComponents: ControllerComponents) extends BaseController {
   implicit val timeout: Timeout = 5.seconds
+
   import models.AnswerModel._
   import models.MatchModel._
 
-  def testSocket = Action{
+  def testSocket = Action {
     pub ! UpdateMatches(tables.allMatchesInfo)
     Ok("send")
   }
 
   def startMatch(id: Long) = Action {
     tables.setMatchState(id, Started)
-    Ok("started Match")
+    Ok(Json.toJson(Answer(successful = true, "match started")))
   }
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
-    val p1 = ttMatch.player1Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
-    val p2 = ttMatch.player2Ids map {id => tables.getPlayerTypes(tables.getPlayer(id))}
+    val p1 = ttMatch.player1Ids map { id => tables.getPlayerTypes(tables.getPlayer(id)) }
+    val p2 = ttMatch.player2Ids map { id => tables.getPlayerTypes(tables.getPlayer(id)) }
     val mt = tables.getMatchType(ttMatch.matchTypeId)
     val ty = tables.getType(ttMatch.typeId)
     val g = tables.getGroup(ttMatch.groupId)
@@ -99,7 +100,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
 
   def getOpenMatches: Action[AnyContent] = Action {
     val matches = tables.allMatches()
-    val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
+    val openMatches = matches.filter(m => m.state == Open || m.state == InWaitingList)
     val x = openMatches.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
   }
@@ -107,25 +108,26 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
 
   def getMatchAggregateNameFromMatch(head: TTMatch): String = {
     def fullMatch = getAllMatchInfo(head)
-    if(fullMatch.isEmpty) return ""
+
+    if (fullMatch.isEmpty) return ""
     val completeMatch = fullMatch.get
     val resultString = completeMatch.matchType.name
-    if(completeMatch.group.isDefined){
+    if (completeMatch.group.isDefined) {
       return resultString + " " + completeMatch.group.get.name
     }
     resultString
   }
 
   def getPlayersFromMatches(value: Seq[TTMatch]): Seq[Player] = {
-    value.map(currentMatch => currentMatch.player1Ids++currentMatch.player2Ids).reduce((first, second)=> first ++ second).distinct
-      .map( id => tables.getPlayerTypes(tables.getPlayer(id)).get)
+    value.map(currentMatch => currentMatch.player1Ids ++ currentMatch.player2Ids).reduce((first, second) => first ++ second).distinct
+      .map(id => tables.getPlayerTypes(tables.getPlayer(id)).get)
   }
 
   def getTableNumbersFromMatches(value: Seq[TTMatch]): Seq[Int] = {
     value.map(currentMatch => tables.getTTTableFromMatchId(currentMatch.id)).reduce((first, second) => first ++ second).distinct
   }
 
-  implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore  _)
+  implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
 
   def getMatchAggregateForCaller: Action[AnyContent] = Action {
     val matches = tables.allMatches()
@@ -134,7 +136,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
       case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head),
         key,
         getTableNumbersFromMatches(value),
-        tables.getType(value.head.typeId).get ,
+        tables.getType(value.head.typeId).get,
         getPlayersFromMatches(value),
         value.map(getAllMatchInfo).filter(_.isDefined).map(_.get)
       )
@@ -159,7 +161,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
 
   def getOpenMatchesByTypeId(typeid: Long): Action[AnyContent] = Action {
     val matches = tables.allMatches()
-    val openMatches = matches.filter(m => m.state ==  Open || m.state == InWaitingList)
+    val openMatches = matches.filter(m => m.state == Open || m.state == InWaitingList)
     val openMatchesByType = openMatches.filter(_.typeId == typeid)
     val x = openMatchesByType.map(ttMatch => getAllMatchInfo(ttMatch)).filter(_.isDefined).map(_.get)
     Ok(Json.toJson(x.sortBy(_.ttMatch.id)))
@@ -167,22 +169,21 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
 
   def getMatch(id: Long): Action[AnyContent] = Action {
     val ttMatch = tables.getMatch(id)
-    val ami = if(ttMatch.isDefined) getAllMatchInfo(ttMatch.get) else None
+    val ami = if (ttMatch.isDefined) getAllMatchInfo(ttMatch.get) else None
     Ok(Json.toJson(ami))
   }
 
   def setResult(id: Long): Action[AnyContent] = Action.async { request =>
     val res = request.body.asJson
-    if(res.isDefined) {
+    if (res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
-      tables.setResult(id, resultO.get) map {res =>
-        {
-          if(res) {
-            tables.updateMatchState(Completed, id)
-            tables.startNextMatch
-            Ok(Json.toJson(Answer(successful = true, "set result")))
-          } else BadRequest(Json.toJson(Answer(successful = false, "error writing result to database")))
-        }
+      tables.setResult(id, resultO.get) map { res => {
+        if (res) {
+          tables.updateMatchState(Completed, id)
+          tables.startNextMatch
+          Ok(Json.toJson(Answer(successful = true, "set result")))
+        } else BadRequest(Json.toJson(Answer(successful = false, "error writing result to database")))
+      }
       }
     } else {
       Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
@@ -191,7 +192,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
 
   def updateResult(id: Long): Action[AnyContent] = Action { request =>
     val res = request.body.asJson
-    if(res.isDefined) {
+    if (res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.updateResult(id, resultO.get)
       Ok(Json.toJson(Answer(successful = true, "updated match")))
@@ -225,8 +226,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
   }
 
 
-
-  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false): Action[AnyContent] = Action{ request =>
+  def setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false): Action[AnyContent] = Action { request =>
     request.body.asJson match {
       case Some(matchIdsJson) =>
         matchIdsJson.validate[Seq[Long]].asOpt match {
@@ -235,15 +235,15 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
             val matches = tables.allMatches()
             val m = matchIds.map(id => matches.filter(_.id == id).head)
             val matchReady = !checkPlayable || m.forall(m => if (m.state == Open || m.state == InWaitingList) {
-                (m.player1Ids ++ m.player2Ids).forall { p =>
-                  val ml = matches.filter { ma =>
-                    (ma.state == Callable || ma.state == OnTable) && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
-                  }
-                  ml.isEmpty // p is not playing
+              (m.player1Ids ++ m.player2Ids).forall { p =>
+                val ml = matches.filter { ma =>
+                  (ma.state == Callable || ma.state == OnTable) && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
                 }
-              } else {
-                false
-              })
+                ml.isEmpty // p is not playing
+              }
+            } else {
+              false
+            })
             val res = if (matchReady) {
               val currentStartTime = new org.joda.time.DateTime()
               val result = matchIds.map { matchId =>
@@ -265,7 +265,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
             } else {
               false
             }
-            if(res) {
+            if (res) {
               Ok(Json.toJson(Answer(successful = true, "started match")))
             } else
               BadRequest(Json.toJson(Answer(successful = false, "not all matches started")))
@@ -302,7 +302,7 @@ class MatchController @Inject() (implicit ec: ExecutionContext,
               tables.updateGroupsSeq flatMap { g =>
                 tables.updatePlayerList map { i =>
                   val x = n && b && d && e && f && g && i
-                  if(x) {
+                  if (x) {
                     Ok(Json.toJson(Answer(successful = true, "load new matches")))
                   } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
                 }

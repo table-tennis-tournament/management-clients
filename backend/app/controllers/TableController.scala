@@ -11,10 +11,10 @@ import websocket.WebSocketActor.UpdateTable
 
 
 /**
-  * Created by jonas on 09.10.16.
-  */
-class TableController @Inject() (tables: Tables,
-                                 val controllerComponents: ControllerComponents) extends BaseController {
+ * Created by jonas on 09.10.16.
+ */
+class TableController @Inject()(tables: Tables,
+                                val controllerComponents: ControllerComponents) extends BaseController {
 
   import models.AnswerModel._
   import models.TableModel._
@@ -50,5 +50,18 @@ class TableController @Inject() (tables: Tables,
   def unlockTable(nr: Long): Action[AnyContent] = Action {
     tables.unlockTTTable(nr)
     Ok(Json.toJson(Answer(successful = true, "table unlocked")))
+  }
+
+  def getByTablemanager(tableManagerId: Long) = Action {
+    val lowerBoundary = (tableManagerId - 1) * 5
+    val upperBoundary = tableManagerId * 5
+    val tableManagerTables = tables.allTTTables()
+      .filter(table => table.tableNumber > lowerBoundary && table.tableNumber <= upperBoundary);
+    val tablesWithMatches = tableManagerTables.map(ttTable => tables.getTableManagerTableInfo(ttTable, tableManagerId))
+    Ok(Json.toJson(tablesWithMatches));
+  }
+
+  def mapToTableManagerStructure(table: TTTable): Unit = {
+
   }
 }

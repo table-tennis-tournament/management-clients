@@ -41,6 +41,14 @@ object PlayerModel {
     "sex" -> player.sex,
     "clubId" -> player.clubId
   )
+
+  implicit val tableManagerPlayerWrites: Writes[TableManagerPlayer] = (player: TableManagerPlayer) => Json.obj(
+    "player_id" -> player.id,
+    "first_name" -> player.firstName,
+    "last_name" -> player.lastName,
+    "club" -> player.club,
+    "call_count" -> player.callCount
+  )
 }
 
 case class Player(
@@ -53,6 +61,14 @@ case class Player(
     hasMatches: Boolean,
     typeIds: Seq[Long]
   )
+
+case class TableManagerPlayer(
+   id: Long,
+   firstName: String,
+   lastName: String,
+   club: String,
+   callCount: Int,
+ )
 
 case class PlayerTypes(
     player: Player,

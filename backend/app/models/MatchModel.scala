@@ -83,6 +83,18 @@ object MatchModel {
     )
   }
 
+  implicit val tableManagerMatchWrites = new Writes[TableManagerMatch] {
+    def writes(tableManagerMatch: TableManagerMatch) = Json.obj(
+      "match_id" -> tableManagerMatch.id,
+      "result" -> tableManagerMatch.result,
+      "players_a" -> tableManagerMatch.player1,
+      "players_b" -> tableManagerMatch.player2,
+      "stage" -> tableManagerMatch.stage,
+      "classification" -> tableManagerMatch.classification,
+      "state" -> tableManagerMatch.state
+    )
+  }
+
   implicit val matchListWrites: Writes[MatchList] = (matchList: MatchList) => Json.obj(
     "id" -> matchList.uuid,
     "matchIds" -> matchList.matchId,
@@ -124,6 +136,16 @@ case class AllMatchInfo(
     isPlayable: Boolean,
     state: MatchState,
     table: Seq[Int]
+  )
+
+case class TableManagerMatch(
+    id: Long,
+    result: Int,
+    player1: Seq[TableManagerPlayer],
+    player2: Seq[TableManagerPlayer],
+    stage: String,
+    classification: String,
+    state: MatchState
   )
 
 case class MatchAggregate(
