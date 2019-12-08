@@ -11,7 +11,7 @@ import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.jdbc.JdbcProfile
-import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
+import websocket.WebSocketActor.{UpdateMatches, UpdateTable}
 
 import scala.concurrent.Future
 
@@ -41,7 +41,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   private val clubs = TableQuery[ClubTable]
   private val doubles = TableQuery[DoubleTable]
   private val playerPerGroup = TableQuery[PlayerPerGroupTable]
-  // private val matchList = TableQuery[MatchListTable]
 
   var ttTablesSeq = Seq.empty[TTTable]
   var ttMatchSeq = Seq.empty[TTMatch]
@@ -190,8 +189,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def groupId = column[Option[Long]]("Tabl_Group")
 
     def isLocked = Option(false)
-
-    //def ttMatch = foreignKey("Matc_FK", matchId, matches)(_.id.?)
 
     def * = (id, name, isLocked) <> (TTTableDAO.tupled, TTTableDAO.unapply)
   }
@@ -734,7 +731,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def delMatchList(uuid: UUID): Boolean = {
-    val result = ttMatchListSeq.find(_.uuid.contains(uuid)) match {
+    val result = findMatchListById(uuid) match {
       case Some(mlItem) =>
         mlItem.matchId.foreach(id => updateMatchState(Open, id))
         ttMatchListSeq = ttMatchListSeq.filterNot(_.uuid.contains(uuid)) map { mlEntry =>
@@ -744,6 +741,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       case _ => false
     }
     result
+  }
+
+  def findMatchListById(uuid: UUID) = {
+    ttMatchListSeq.find(_.uuid.contains(uuid))
   }
 
   def delMatchListItem(uuid: UUID, id: Long): Unit = {
@@ -762,12 +763,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def isInMatchList(ttMatch: TTMatch): Boolean = ttMatchListSeq.exists(_.matchId.contains(ttMatch.id))
-//  def startMatch(ttMatch: TTMatch) = {
-//    ttMatchSeq = ttMatchSeq map {m =>
-//      if (m.id == ttMatch.id) m.copy(isPlaying = true)
-//      else m
-//    }
-//  }
 
   class PlayerPerGroupTable(tag: Tag) extends Table[PlayerPerGroup](tag, "playerpergroup") {
     def id = column[Long]("PPGr_ID", O.PrimaryKey, O.AutoInc)
