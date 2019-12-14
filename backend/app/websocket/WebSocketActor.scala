@@ -19,6 +19,7 @@ object WebSocketActor {
   case class UpdateTable(table: Seq[TableInfo]) extends Message
   case class UpdateMatches(matches: Seq[AllMatchInfo]) extends Message
   case class UpdateMatchList(matchList: Seq[MatchListInfo]) extends Message
+  case class UpdateTableManager(table: Seq[TableManagerTableInfo]) extends Message
 }
 
 
@@ -26,6 +27,7 @@ object WebSocketActor {
 class WebSocketActor(out: ActorRef, topic: String) extends Actor {
   import models.MatchModel.{allMatchInfoWrites, matchListInfoWrites}
   import models.TableModel.tableInfoWrites
+  import models.TableModel.tableManagerTableWrites
   import websocket.WebSocketActor._
 
   Logger.info("subscribe...")
@@ -47,6 +49,10 @@ class WebSocketActor(out: ActorRef, topic: String) extends Actor {
     "UpdateMatchList" -> updateMatchList.matchList
   )
 
+  implicit val updateTableManagerWrites: Writes[UpdateTableManager] = (updateTablemanager: UpdateTableManager) => Json.obj(
+    "UpdateTableManager" -> updateTablemanager.table
+  )
+
   def receive: PartialFunction[Any, Unit] = {
     case msg: String =>
       Logger.info("I received your message: " + msg)
@@ -59,6 +65,9 @@ class WebSocketActor(out: ActorRef, topic: String) extends Actor {
       out ! Json.toJson(m).toString()
     case m: UpdateMatchList =>
       Logger.info("send UpdateMatchList)")
+      out ! Json.toJson(m).toString()
+    case m: UpdateTableManager =>
+      Logger.info("send UpdateTableManager)")
       out ! Json.toJson(m).toString()
     case SubscribeAck(Subscribe(topic, None, `self`)) ⇒
       Logger.info("subscribing " + topic)

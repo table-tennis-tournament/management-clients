@@ -1,13 +1,11 @@
 package controllers
 
-import akka.actor.ActorRef
 import dao.Tables
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 import models._
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
-import websocket.WebSocketActor.UpdateTable
 
 
 /**
@@ -61,7 +59,4 @@ class TableController @Inject()(tables: Tables,
     Ok(Json.toJson(tablesWithMatches));
   }
 
-  def mapToTableManagerStructure(table: TTTable): Unit = {
-
-  }
 }

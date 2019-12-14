@@ -11,7 +11,7 @@ import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.jdbc.JdbcProfile
-import websocket.WebSocketActor.{UpdateMatches, UpdateTable}
+import websocket.WebSocketActor.{UpdateMatches, UpdateTable, UpdateTableManager}
 
 import scala.concurrent.Future
 
@@ -82,7 +82,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val ty = getType(ttMatch.typeId)
     val state = ttMatch.state
     if (mt.isDefined && ty.isDefined)
-      Some(TableManagerMatch(ttMatch.id, 1, p1, p2, mt.get.name, ty.get.name, state))
+    Some(TableManagerMatch(ttMatch.id, getTableManagerResult(ttMatch), p1, p2, mt.get.name, ty.get.name, state))
     else {
       Logger.error("None: " + mt + ty)
       None
@@ -95,6 +95,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getTableManagerPlayers(playerIds : Seq[Long]): Seq[TableManagerPlayer] = {
     getPlayersForMatch(playerIds).map(pl => TableManagerPlayer(pl.id, pl.firstName, pl.lastName, pl.club.get.clubName, 1))
+  }
+
+  def getTableManagerResult(ttMatch: TTMatch): TableManagerResult = {
+    val result = ttMatch.getResult
+    if(result.isEmpty) {
+      return TableManagerResult(Seq.empty[TableManagerGame], 0, 0)
+    }
+    val games = result.get.map(result => TableManagerGame(result.head, result.tail.head))
+    val sets = getSetsFromResult(result.get)
+    TableManagerResult(games, sets.head, sets(1))
   }
 
   def allTableInfo: Seq[TableInfo] = allTTTables().map(t => getAllTableInfo(t)).sortBy(_.tableNumber)
@@ -151,14 +161,31 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def getTTTable(id: Long): Option[TTTable] = ttTablesSeq.find(_.id == id)
 
   def freeTTTable(matchId: Long): Unit = {
-    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
+    val tableInfo = getTableInfoForMatch(matchId)
+    updateStateForMatchAndTable(matchId, Finished)
+    sendMatchAndTableMessage(matchId, tableInfo)
+  }
+
+  def takeBackTTTable(matchId: Long): Unit = {
+    val tableInfo = getTableInfoForMatch(matchId)
+    updateStateForMatchAndTable(matchId, Open)
+    sendMatchAndTableMessage(matchId, tableInfo)
+  }
+
+  def startMatchOnTTTable(matchId: Long): Unit = {
+    val tableInfo = getTableInfoForMatch(matchId)
+    updateStateForMatchAndTable(matchId, Started)
+    sendMatchAndTableMessage(matchId, tableInfo)
+  }
+
+  private def updateStateForMatchAndTable(matchId: Long, newState: MatchState) = {
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
-    ttMatchSeq = ttMatchSeq map { m =>
-      if (m.id == matchId) m.copy(state = Finished)
-      else m
-    }
+    updateMatchState(newState, matchId)
+  }
+
+  private def sendMatchAndTableMessage(matchId: Long, tableInfo: Seq[TableInfo]) = {
     val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
@@ -166,20 +193,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
   }
 
-  def takeBackTTTable(matchId: Long): Unit = {
-    val tableInfo = allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
-    ttTablesSeq = ttTablesSeq map { t =>
-      t.copy(matchId = t.matchId.filterNot(_ == matchId))
-    }
-    ttMatchSeq = ttMatchSeq map { m =>
-      if (m.id == matchId)m.copy(state = Open)
-      else m
-    }
-    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val p = m.player1 ++ m.player2
-    val ids = p.map(_.id)
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-    pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
+
+
+  private def getTableInfoForMatch(matchId: Long) = {
+    allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
   }
 
   def lockTTTable(nr: Long): Unit = {
@@ -226,18 +243,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     loop(Set(), ls)
   }
 
-  def setMatchState(matchId: Long, state: MatchState): Unit = {
-    ttMatchSeq = ttMatchSeq map {m =>
-      if (m.id == matchId)
-        m.copy(state = state)
-      else
-        m
-    }
-    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val p = m.player1 ++ m.player2
-    val ids = p.map(_.id)
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-  }
+
 
   def startNextMatch = if(autoStart) {
     val tl = getFreeTables().sortBy(_.tableNumber)
@@ -404,9 +410,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       if(m.id == matchId) m.copy(state = matchState)
       else m
     }
-    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val p = m.player1 ++ m.player2
-    val ids = p.map(_.id)
   }
 
   def setStartTime(matchId: Long, startTime: DateTime): Unit = {
@@ -428,9 +431,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def updateResult(id: Long, result: Seq[Seq[Int]]) = {
     val x = result map (r => r.mkString("="))
-    val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
-    val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y.head>y(1)) Seq(x.head+1, x(1)) else Seq(x.head, x(1) + 1)}
+    val sets = getSetsFromResult(result)
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == id) {
         m.copy(
@@ -439,19 +441,21 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           balls1 = balls.head,
           balls2 = balls(1),
           sets1 = sets.head,
-          sets2 = sets(1),
-          state = Completed
+          sets2 = sets(1)
         )
       } else m
     }
     pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
   }
 
+  private def getSetsFromResult(result: Seq[Seq[Int]]) = {
+    result.foldLeft(Seq(0, 0)) { (x, y) => if (y.head > y(1)) Seq(x.head + 1, x(1)) else Seq(x.head, x(1) + 1) }
+  }
+
   def setResult(matchId: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
     val x = result map (r => r.mkString("="))
-    val resultRaw = x.mkString(",")
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
-    val sets = result.foldLeft(Seq(0,0)){(x,y) => if(y.head>y(1)) Seq(x.head+1, x(1)) else Seq(x.head, x(1) + 1)}
+    val sets = getSetsFromResult(result)
     ttTablesSeq = ttTablesSeq map { t =>
       if (t.matchId.contains(matchId)) t.copy(matchId = t.matchId.filterNot(_ == matchId))
       else t
@@ -520,8 +524,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       if(r == 1) true else false
     }
   }
-
-
 
   // Players
 

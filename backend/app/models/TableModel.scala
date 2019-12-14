@@ -87,15 +87,11 @@ object TableModel {
     "matches" -> tableInfo.ttMatch
   )
 
-
-
   implicit val tableManagerTableWrites: Writes[TableManagerTableInfo] = (tableInfo: TableManagerTableInfo) => Json.obj(
     "table_id" -> tableInfo.tableNumber,
     "table_manager_id" -> tableInfo.managerId,
     "matches" -> tableInfo.matches
   )
-
-
 }
 
 case class AllMatchInfoTable(

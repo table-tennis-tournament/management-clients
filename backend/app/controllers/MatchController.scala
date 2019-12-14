@@ -31,7 +31,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   }
 
   def startMatch(id: Long) = Action {
-    tables.setMatchState(id, Started)
+    tables.startMatchOnTTTable(id)
     Ok(Json.toJson(Answer(successful = true, "match started")))
   }
 

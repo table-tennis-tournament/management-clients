@@ -70,6 +70,8 @@ case class TableManagerPlayer(
    callCount: Int,
  )
 
+
+
 case class PlayerTypes(
     player: Player,
     typeIds: Seq[Long]

@@ -124,6 +124,17 @@ object MatchModel {
       "matches" -> matchAggregate.matches
     )
   }
+
+  implicit val tableManagerResult: Writes[TableManagerResult] = (result: TableManagerResult) => Json.obj(
+    "games" -> result.games,
+    "games_won_player_a" -> result.gamesWonPlayerA,
+    "games_won_player_b" -> result.gamesWonPlayerB
+  )
+
+  implicit val tableManagerGame: Writes[TableManagerGame] = (game: TableManagerGame) => Json.obj(
+    "score_player_a" -> game.scorePlayerA,
+    "score_player_b" -> game.scorePlayerB
+  )
 }
 
 case class AllMatchInfo(
@@ -140,13 +151,24 @@ case class AllMatchInfo(
 
 case class TableManagerMatch(
     id: Long,
-    result: Int,
+    result: TableManagerResult,
     player1: Seq[TableManagerPlayer],
     player2: Seq[TableManagerPlayer],
     stage: String,
     classification: String,
     state: MatchState
   )
+
+case class TableManagerResult(
+   games: Seq[TableManagerGame],
+   gamesWonPlayerA: Int,
+   gamesWonPlayerB: Int
+ )
+
+case class TableManagerGame(
+   scorePlayerA: Int,
+   scorePlayerB: Int
+ )
 
 case class MatchAggregate(
    name: String,
