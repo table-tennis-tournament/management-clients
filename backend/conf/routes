@@ -10,6 +10,7 @@ GET     /api/player/all                     controllers.PlayerController.getAllP
 GET     /api/player/:id                     controllers.PlayerController.getPlayer(id: Long)
 
 # MatchController:
+GET     /api/match/allmatchtable            controllers.MatchController.allMatchTable
 GET     /api/testsocket                     controllers.MatchController.testSocket
 GET     /api/match/all                      controllers.MatchController.getAllMatches
 GET     /api/match/start/:id                controllers.MatchController.startMatch(id: Long)

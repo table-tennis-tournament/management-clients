@@ -7,7 +7,6 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Json._
 
-
 /**
   * Created by jonas on 29.12.16.
   */
@@ -310,3 +309,11 @@ case object OnTable extends MatchState
 case object Finished extends MatchState
 case object Completed extends MatchState
 case object Started extends MatchState
+
+case class MatchTable (
+  uuid: UUID,
+  matchId: Int,
+  tableId: Int,
+  state: Int,
+  timestamp: DateTime
+)

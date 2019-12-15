@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   guice,
+  //evolutions,
   "org.scala-sbt" % "librarymanagement_2.10" % "0.1.0-M11",
   "com.typesafe.akka" %% "akka-cluster" % "2.5.17",
   "com.typesafe.akka" %% "akka-cluster-tools" % "2.5.17",
@@ -29,10 +30,19 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
   "net.glxn" % "qrgen" % "1.4",
   "com.github.fdimuccio" %% "play2-sockjs" % "0.6.0"
-
-
 )
 
+val circeVersion = "0.11.1"
+
+//libraryDependencies ++= Seq(
+//  "io.circe" %% "circe-core",
+//  "io.circe" %% "circe-generic",
+//  "io.circe" %% "circe-parser"
+//).map(_ % circeVersion)
+//
+//addCompilerPlugin(
+//  "org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full
+//)
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.

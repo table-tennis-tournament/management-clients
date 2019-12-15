@@ -11,6 +11,7 @@ import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.jdbc.JdbcProfile
+import slick.sql.SqlProfile.ColumnOption.SqlType
 import websocket.WebSocketActor.{UpdateMatches, UpdateTable, UpdateTableManager}
 
 import scala.concurrent.Future
@@ -41,6 +42,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   private val clubs = TableQuery[ClubTable]
   private val doubles = TableQuery[DoubleTable]
   private val playerPerGroup = TableQuery[PlayerPerGroupTable]
+  private val matchTable = TableQuery[TTMatchTable]
 
   var ttTablesSeq = Seq.empty[TTTable]
   var ttMatchSeq = Seq.empty[TTMatch]
@@ -51,6 +53,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   var ttGroupsSeq = Seq.empty[Group]
   var ttDoublesSeq = Seq.empty[Double]
   var ttMatchListSeq = Seq.empty[MatchList]
+  var ttMatchTableSeq = Seq.empty[MatchTable]
 
   class ContainsAnyOf[T](seq: Seq[T]) {
     def containsAnyOf(xs: Seq[T]): Boolean = seq.exists(xs.contains(_))
@@ -853,4 +856,30 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       Future.sequence(res.map(p => db.run(playerPerGroup.insertOrUpdate(p)))).map(_.sum)
     }
   }
+
+  implicit val uuidToString = MappedColumnType.base[UUID, String](_.toString, UUID.fromString)
+
+  class TTMatchTable(tag: Tag) extends Table[MatchTable](tag, "matchtable") {
+    def uuid = column[UUID]("id", O.PrimaryKey, SqlType("CHAR"))(uuidToString)
+    def tableId = column[Int]("tableId")
+    def matchId = column[Int]("matchId")
+    def state = column[Int]("state")
+    def timestamp = column[DateTime]("timestamp")
+
+    def * = (uuid, tableId, matchId, state, timestamp) <> (MatchTable.tupled, MatchTable.unapply)
+  }
+
+  def allMatchTable = {
+    dbConfigProvider.get.db.run(matchTable.result)
+  }
+
+  def getMatchTable(uuid: UUID) = dbConfigProvider.get.db.run(matchTable.filter(_.uuid === uuid).result.headOption)
+
+  def getMatchTableForTable(tableId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).result)
+
+  def getMatchTableForMatch(matchId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).result)
+
+  def deleteMatchTableForMatch(matchId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
+
+  def deleteMatchTableForTable(tableId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).delete)
 }

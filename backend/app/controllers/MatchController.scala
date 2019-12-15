@@ -30,6 +30,10 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     Ok("send")
   }
 
+  def allMatchTable = Action.async {
+    tables.allMatchTable.map(x => Ok(x.toString()))
+  }
+
   def startMatch(id: Long) = Action {
     tables.startMatchOnTTTable(id)
     Ok(Json.toJson(Answer(successful = true, "match started")))
