@@ -69,7 +69,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val g = getGroup(ttMatch.groupId)
     val pl = isPlayable(ttMatch)
     val state = ttMatch.state
-    val tn = getTTTableFromMatchId(ttMatch.id)
+    val tn = getTTTableIdFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
       Some(AllMatchInfo(ttMatch, p1, p2, mt.get, ty.get, g, pl, state, tn))
     else {
@@ -165,23 +165,29 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def freeTTTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
-    updateStateForMatchAndTable(matchId, Finished)
+    updateStateForMatchAndRemoveFromTable(matchId, Finished)
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
   def takeBackTTTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
-    updateStateForMatchAndTable(matchId, Open)
+    updateStateForMatchAndRemoveFromTable(matchId, Open)
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
   def startMatchOnTTTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
-    updateStateForMatchAndTable(matchId, Started)
+    updateMatchState(Started, matchId)
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
-  private def updateStateForMatchAndTable(matchId: Long, newState: MatchState) = {
+  def setMatchStateToOnTable(matchId: Long): Unit = {
+    val tableInfo = getTableInfoForMatch(matchId)
+    updateMatchState(OnTable, matchId)
+    sendMatchAndTableMessage(matchId, tableInfo)
+  }
+
+  private def updateStateForMatchAndRemoveFromTable(matchId: Long, newState: MatchState) = {
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
@@ -218,8 +224,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     pub ! UpdateTable(allTableInfo.filter(_.tableNumber == nr))
   }
 
-  def getTTTableFromMatchId(id: Long): Seq[Int] = {
-    ttTablesSeq.filter(_.matchId.contains(id)).map(_.tableNumber).sortBy(a => a)
+  def getTTTableIdFromMatchId(matchId: Long): Seq[Int] = {
+    ttTablesSeq.filter(_.matchId.contains(matchId)).map(_.tableNumber).sortBy(a => a)
+  }
+
+  def getTTTableFromMatchId(matchId: Long): Seq[TTTable] = {
+    ttTablesSeq.filter(_.matchId.contains(matchId))
   }
 
 
@@ -377,8 +387,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     Logger.debug("start match")
     //if(!ttTablesSeq.exists(_.matchId.contains(matchId))) {
       updateMatchState(Callable, matchId)
+    val currentTime = new DateTime()
       ttMatchSeq = ttMatchSeq map { m =>
-        if (m.id == matchId) m.copy(state = Callable)
+        if (m.id == matchId) m.copy(state = Callable, startTime = currentTime)
         else m
       }
       val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head

@@ -34,9 +34,16 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     tables.allMatchTable.map(x => Ok(x.toString()))
   }
 
-  def startMatch(id: Long) = Action {
-    tables.startMatchOnTTTable(id)
+  def startMatch(matchId: Long) = Action {
+    tables.startMatchOnTTTable(matchId)
+    sendUpdateTableManagerMessages(matchId)
     Ok(Json.toJson(Answer(successful = true, "match started")))
+  }
+
+  def stopMatch(matchId: Long) = Action {
+    tables.setMatchStateToOnTable(matchId)
+    sendUpdateTableManagerMessages(matchId)
+    Ok(Json.toJson(Answer(successful = true, "match on table")))
   }
 
   def getAllMatchInfo(ttMatch: TTMatch): Option[AllMatchInfo] = {
@@ -47,7 +54,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     val g = tables.getGroup(ttMatch.groupId)
     val pl = tables.isPlayable(ttMatch)
     val state = ttMatch.state
-    val tn = tables.getTTTableFromMatchId(ttMatch.id)
+    val tn = tables.getTTTableIdFromMatchId(ttMatch.id)
     if (mt.isDefined && ty.isDefined)
       Some(AllMatchInfo(ttMatch, p1.filter(_.isDefined).map(_.get), p2.filter(_.isDefined).map(_.get), mt.get, ty.get, g, pl, state, tn))
     else
@@ -128,7 +135,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   }
 
   def getTableNumbersFromMatches(value: Seq[TTMatch]): Seq[Int] = {
-    value.map(currentMatch => tables.getTTTableFromMatchId(currentMatch.id)).reduce((first, second) => first ++ second).distinct
+    value.map(currentMatch => tables.getTTTableIdFromMatchId(currentMatch.id)).reduce((first, second) => first ++ second).distinct
   }
 
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
@@ -177,14 +184,18 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     Ok(Json.toJson(ami))
   }
 
-  def setResult(id: Long): Action[AnyContent] = Action.async { request =>
+  def setResult(matchId: Long): Action[AnyContent] = Action.async { request =>
     val res = request.body.asJson
     if (res.isDefined) {
+      val ttTables = tables.getTTTableFromMatchId(matchId)
+
       val resultO = res.get.validate[Seq[Seq[Int]]]
-      tables.setResult(id, resultO.get) map { res => {
+      tables.setResult(matchId, resultO.get) map { res => {
         if (res) {
-          tables.updateMatchState(Completed, id)
+          tables.updateMatchState(Completed, matchId)
           tables.startNextMatch
+          val newTables = ttTables.map(foundTable => tables.getTTTable(foundTable.id).get)
+          sendUpdateTableManagerMessagesForTables(newTables);
           Ok(Json.toJson(Answer(successful = true, "set result")))
         } else BadRequest(Json.toJson(Answer(successful = false, "error writing result to database")))
       }
@@ -194,17 +205,27 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     }
   }
 
-  def updateResult(id: Long): Action[AnyContent] = Action { request =>
+  def updateResult(matchId: Long): Action[AnyContent] = Action { request =>
     val res = request.body.asJson
     if (res.isDefined) {
       val resultO = res.get.validate[Seq[Seq[Int]]]
-      tables.updateResult(id, resultO.get)
+      tables.updateResult(matchId, resultO.get)
+      sendUpdateTableManagerMessages(matchId)
       Ok(Json.toJson(Answer(successful = true, "updated match")))
     } else {
       BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
   }
 
+
+  private def sendUpdateTableManagerMessages(matchId: Long) = {
+    val ttTables = tables.getTTTableFromMatchId(matchId)
+    sendUpdateTableManagerMessagesForTables(ttTables)
+  }
+
+  private def sendUpdateTableManagerMessagesForTables(ttTables: Seq[TTTable]) = {
+    pub ! UpdateTableManager(ttTables.map(table => tables.getTableManagerTableInfo(table, 1)))
+  }
 
   def getTypes: Action[AnyContent] = Action {
     Ok(Json.toJson(tables.allTypes.map(addDoubleName).sortBy(_.name)))
@@ -262,9 +283,12 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
                     tables.startMatch(matchId, table.id, print)
                 }
               }
+
               pub ! UpdateTable(tables.allTableInfo.filter(_.id == table.id))
               pub ! UpdateMatches(tables.allMatchesInfo.filter(_.state != Completed))
               pub ! UpdateMatchList(tables.getAllMatchList)
+              val newTable = tables.getTTTableFromName(tableName).get
+              pub ! UpdateTableManager( Seq(tables.getTableManagerTableInfo(newTable, 1)))
               result.forall(x => x)
             } else {
               false

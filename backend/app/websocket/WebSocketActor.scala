@@ -58,16 +58,16 @@ class WebSocketActor(out: ActorRef, topic: String) extends Actor {
       Logger.info("I received your message: " + msg)
       out ! ("I received your message: " + msg)
     case m: UpdateTable =>
-      Logger.info("send UpdateTable)")
+      Logger.info("send UpdateTable")
       out ! Json.toJson(m).toString()
     case m: UpdateMatches =>
-      Logger.info("send UpdateMatches)")
+      Logger.info("send UpdateMatches")
       out ! Json.toJson(m).toString()
     case m: UpdateMatchList =>
-      Logger.info("send UpdateMatchList)")
+      Logger.info("send UpdateMatchList")
       out ! Json.toJson(m).toString()
     case m: UpdateTableManager =>
-      Logger.info("send UpdateTableManager)")
+      Logger.info("send UpdateTableManager")
       out ! Json.toJson(m).toString()
     case SubscribeAck(Subscribe(topic, None, `self`)) ⇒
       Logger.info("subscribing " + topic)

@@ -14,6 +14,7 @@ GET     /api/match/allmatchtable            controllers.MatchController.allMatch
 GET     /api/testsocket                     controllers.MatchController.testSocket
 GET     /api/match/all                      controllers.MatchController.getAllMatches
 GET     /api/match/start/:id                controllers.MatchController.startMatch(id: Long)
+GET     /api/match/stop/:id                controllers.MatchController.stopMatch(id: Long)
 GET     /api/match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
 # GET     /api/match/filter                   controllers.MatchController.getFilteredMatchList()
 POST    /api/match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false)
