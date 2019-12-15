@@ -10,6 +10,7 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json.Json
 import slick.jdbc.JdbcProfile
 import slick.sql.SqlProfile.ColumnOption.SqlType
 import websocket.WebSocketActor.{UpdateMatches, UpdateTable, UpdateTableManager}
@@ -22,6 +23,8 @@ import scala.concurrent.Future
 class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
                        @Named("printer_actor") printerActor: ActorRef,
                        @Named("publisher_actor") pub: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
+
+
 
   import profile.api._
 
@@ -194,6 +197,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
+    deleteMatchTableForMatch(matchId)
     updateMatchState(newState, matchId)
   }
 
@@ -235,7 +239,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttTablesSeq.filter(_.matchId.contains(matchId))
   }
 
-
+  def getCallableMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+    ttMatchTableSeq.flatMap(mt => ttMatchSeq.find(_.id == mt.matchId)
+      .map(m => (mt, m)))
+      .filter(_._2.state == Callable)
+      .groupBy(_._1.tableId)
+  }
 
   // Matches
 
@@ -402,7 +411,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
         else t
       }
-      saveMatchTable(MatchTable(UUID.randomUUID(), matchId, tableId, 1, new DateTime()))
+      saveMatchTable(MatchTable(UUID.randomUUID(), matchId, tableId, new DateTime()))
       if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
       true
   }
@@ -474,10 +483,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val x = result map (r => r.mkString("="))
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
     val sets = getSetsFromResult(result)
-    ttTablesSeq = ttTablesSeq map { t =>
-      if (t.matchId.contains(matchId)) t.copy(matchId = t.matchId.filterNot(_ == matchId))
-      else t
-    }
+    updateStateForMatchAndRemoveFromTable(matchId, Completed)
     pub ! UpdateTable(allTableInfo.filter(_.id == matchId))
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId) {
@@ -878,10 +884,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def uuid = column[UUID]("id", O.PrimaryKey, SqlType("CHAR"))(uuidToString)
     def tableId = column[Long]("tableId")
     def matchId = column[Long]("matchId")
-    def state = column[Int]("state")
     def timestamp = column[DateTime]("timestamp")
 
-    def * = (uuid, tableId, matchId, state, timestamp) <> (MatchTable.tupled, MatchTable.unapply)
+    def * = (uuid, matchId, tableId, timestamp) <> (MatchTable.tupled, MatchTable.unapply)
   }
 
   def allMatchTable = {
@@ -894,17 +899,48 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getMatchTableForMatch(matchId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).result)
 
-  def deleteMatchTableForMatch(matchId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
+  def deleteMatchTableForMatch(matchId: Long) = {
+    dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
+    ttMatchTableSeq = ttMatchTableSeq.filter(_.matchId != matchId)
+  }
 
   def deleteMatchTableForTable(tableId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).delete)
 
-  def saveMatchTable(newMatchTable: MatchTable) = dbConfigProvider.get.db.run(matchTable.insertOrUpdate(newMatchTable))
+  def saveMatchTable(newMatchTable: MatchTable) = {
+    dbConfigProvider.get.db.run(matchTable.insertOrUpdate(newMatchTable))
+    ttMatchTableSeq.find(_.uuid == newMatchTable.uuid) match {
+      case Some(mt) => ttMatchTableSeq = ttMatchTableSeq.map(x => if(x.uuid == mt.uuid) newMatchTable else x)
+      case None => ttMatchTableSeq :+= newMatchTable
+    }
+  }
 
   def updateMatchTableSeq = {
     dbConfigProvider.get.db.run(matchTable.result) map {gList =>
       ttMatchTableSeq = gList
       Logger.debug("read MatchTable: " + ttMatchTableSeq.size.toString)
       true
+    }
+  }
+
+  def loadAllFromDB: Future[Boolean] = {
+    updateMatchTableSeq flatMap { mt =>
+      updateTTTables flatMap { t =>
+        loadNewMatches() flatMap { n =>
+          updateDoublesSeq flatMap { b =>
+            updateClubList flatMap { d =>
+              updateMatchTypeList flatMap { e =>
+                updateTypesList flatMap { f =>
+                  updateGroupsSeq flatMap { g =>
+                    updatePlayerList map { i =>
+                      mt && t && n && b && d && e && f && g && i
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

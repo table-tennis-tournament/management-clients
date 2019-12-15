@@ -314,6 +314,5 @@ case class MatchTable (
   uuid: UUID,
   matchId: Long,
   tableId: Long,
-  state: Int,
   timestamp: DateTime
 )

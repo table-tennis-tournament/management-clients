@@ -140,20 +140,25 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
 
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
 
+  def distinctBy[A, B](xs: List[A])(f: A => B): List[A] =
+    scala.reflect.internal.util.Collections.distinctBy(xs)(f)
+
   def getMatchAggregateForCaller: Action[AnyContent] = Action {
-    val matches = tables.allMatches()
-    val callableMatches = matches.filter(_.state == Callable).groupBy(_.startTime)
+    val callableMatches = tables.getCallableMatches()
     val matchAggregates = callableMatches map {
-      case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head),
-        key,
-        getTableNumbersFromMatches(value),
-        tables.getType(value.head.typeId).get,
-        getPlayersFromMatches(value),
-        value.map(getAllMatchInfo).filter(_.isDefined).map(_.get)
+      case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head._2),
+        value.head._2.startTime,
+        getTableNumbersFromMatches(value.map(_._2)),
+        tables.getType(value.head._2.typeId).get,
+        getPlayersFromMatches(value.map(_._2)),
+        value.map(x => getAllMatchInfo(x._2)).filter(_.isDefined).map(_.get)
       )
     }
-    Ok(Json.toJson(matchAggregates.toList.sortBy(_.startTime)))
+    val matchAggregateList = distinctBy(matchAggregates.toList)(_.tableNumbers)
+    Ok(Json.toJson(matchAggregateList.sortBy(_.startTime)))
   }
+
+
 
   def getPlayedMatches: Action[AnyContent] = Action {
     val matches = tables.allMatches()
@@ -192,7 +197,6 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
       val resultO = res.get.validate[Seq[Seq[Int]]]
       tables.setResult(matchId, resultO.get) map { res => {
         if (res) {
-          tables.updateMatchState(Completed, matchId)
           tables.startNextMatch
           val newTables = ttTables.map(foundTable => tables.getTTTable(foundTable.id).get)
           sendUpdateTableManagerMessagesForTables(newTables);
@@ -322,25 +326,10 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   }
 
   def loadNewMatches: Action[AnyContent] = Action.async {
-    tables.updateMatchTableSeq flatMap { mt =>
-      tables.loadNewMatches() flatMap { n =>
-        tables.updateDoublesSeq flatMap { b =>
-          tables.updateClubList flatMap { d =>
-            tables.updateMatchTypeList flatMap { e =>
-              tables.updateTypesList flatMap { f =>
-                tables.updateGroupsSeq flatMap { g =>
-                  tables.updatePlayerList map { i =>
-                    val x = n && b && d && e && f && g && i && mt
-                    if (x) {
-                      Ok(Json.toJson(Answer(successful = true, "load new matches")))
-                    } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    tables.loadAllFromDB map { wasSuccessful =>
+      if (wasSuccessful) {
+        Ok(Json.toJson(Answer(successful = true, "load new matches")))
+      } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
     }
   }
 
