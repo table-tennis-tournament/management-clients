@@ -301,14 +301,19 @@ case class DisciplinMatches(
     isComplete: Boolean = false
 )
 
+sealed trait BlockingMatchState extends MatchState
 sealed trait MatchState
 case object Open extends MatchState
 case object InWaitingList extends MatchState
-case object Callable extends MatchState
-case object OnTable extends MatchState
+case object Callable extends BlockingMatchState
+case object OnTable extends BlockingMatchState
+case object SecondCall extends BlockingMatchState
+case object ThirdCall extends BlockingMatchState
+case object Started extends BlockingMatchState
 case object Finished extends MatchState
 case object Completed extends MatchState
-case object Started extends MatchState
+
+
 
 case class MatchTable (
   uuid: UUID,

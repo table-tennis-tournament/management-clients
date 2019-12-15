@@ -6,8 +6,10 @@
 GET     /                                   controllers.Application.index
 
 # PlayerController
-GET     /api/player/all                     controllers.PlayerController.getAllPlayer
-GET     /api/player/:id                     controllers.PlayerController.getPlayer(id: Long)
+GET     /api/players/all                     controllers.PlayerController.getAllPlayer
+GET     /api/players/:id                     controllers.PlayerController.getPlayer(id: Long)
+GET     /api/players/type/:typeId            controllers.PlayerController.getPlayesByType(typeId: Long)
+GET     /api/players/:id/:active             controllers.PlayerController.setPlayerActiveState(id: Long, active: Boolean)
 
 # MatchController:
 GET     /api/match/allmatchtable            controllers.MatchController.allMatchTable

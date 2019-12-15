@@ -18,4 +18,13 @@ class PlayerController @Inject() (tables: Tables,val controllerComponents: Contr
   def getPlayer(id: Long): Action[AnyContent] = Action {
     Ok(Json.toJson(tables.getPlayer(id)))
   }
+
+  def getPlayesByType(typeId: Long): Action[AnyContent] = Action {
+    Ok(Json.toJson(tables.getPlayer(typeId)))
+  }
+
+  def setPlayerActiveState(id: Long, active: Boolean) = Action {
+    Ok(Json.toJson(tables.getPlayer(id)))
+  }
+
 }
