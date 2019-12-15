@@ -322,17 +322,19 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   }
 
   def loadNewMatches: Action[AnyContent] = Action.async {
-    tables.loadNewMatches() flatMap { n =>
-      tables.updateDoublesSeq flatMap { b =>
-        tables.updateClubList flatMap { d =>
-          tables.updateMatchTypeList flatMap { e =>
-            tables.updateTypesList flatMap { f =>
-              tables.updateGroupsSeq flatMap { g =>
-                tables.updatePlayerList map { i =>
-                  val x = n && b && d && e && f && g && i
-                  if (x) {
-                    Ok(Json.toJson(Answer(successful = true, "load new matches")))
-                  } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
+    tables.updateMatchTableSeq flatMap { mt =>
+      tables.loadNewMatches() flatMap { n =>
+        tables.updateDoublesSeq flatMap { b =>
+          tables.updateClubList flatMap { d =>
+            tables.updateMatchTypeList flatMap { e =>
+              tables.updateTypesList flatMap { f =>
+                tables.updateGroupsSeq flatMap { g =>
+                  tables.updatePlayerList map { i =>
+                    val x = n && b && d && e && f && g && i && mt
+                    if (x) {
+                      Ok(Json.toJson(Answer(successful = true, "load new matches")))
+                    } else BadRequest(Json.toJson(Answer(successful = false, "error loading new matches")))
+                  }
                 }
               }
             }

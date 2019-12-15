@@ -138,7 +138,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     }
   }
 
-  def toTTTable(ttTableDAO: TTTableDAO) = TTTable(ttTableDAO.id, ttTableDAO.tableNumber, ttTableDAO.isLocked)
+  def toTTTable(ttTableDAO: TTTableDAO) = TTTable(
+    ttTableDAO.id, ttTableDAO.tableNumber, ttTableDAO.isLocked,
+    ttMatchTableSeq.filter(_.tableId == ttTableDAO.id).map(_.matchId)
+  )
 
   def allTTTables(): Seq[TTTable] = {
     ttTablesSeq
@@ -399,6 +402,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
         else t
       }
+      saveMatchTable(MatchTable(UUID.randomUUID(), matchId, tableId, 1, new DateTime()))
       if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
       true
   }
@@ -872,8 +876,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   class TTMatchTable(tag: Tag) extends Table[MatchTable](tag, "matchtable") {
     def uuid = column[UUID]("id", O.PrimaryKey, SqlType("CHAR"))(uuidToString)
-    def tableId = column[Int]("tableId")
-    def matchId = column[Int]("matchId")
+    def tableId = column[Long]("tableId")
+    def matchId = column[Long]("matchId")
     def state = column[Int]("state")
     def timestamp = column[DateTime]("timestamp")
 
@@ -886,11 +890,21 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getMatchTable(uuid: UUID) = dbConfigProvider.get.db.run(matchTable.filter(_.uuid === uuid).result.headOption)
 
-  def getMatchTableForTable(tableId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).result)
+  def getMatchTableForTable(tableId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).result)
 
-  def getMatchTableForMatch(matchId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).result)
+  def getMatchTableForMatch(matchId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).result)
 
-  def deleteMatchTableForMatch(matchId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
+  def deleteMatchTableForMatch(matchId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
 
-  def deleteMatchTableForTable(tableId: Int) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).delete)
+  def deleteMatchTableForTable(tableId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).delete)
+
+  def saveMatchTable(newMatchTable: MatchTable) = dbConfigProvider.get.db.run(matchTable.insertOrUpdate(newMatchTable))
+
+  def updateMatchTableSeq = {
+    dbConfigProvider.get.db.run(matchTable.result) map {gList =>
+      ttMatchTableSeq = gList
+      Logger.debug("read MatchTable: " + ttMatchTableSeq.size.toString)
+      true
+    }
+  }
 }

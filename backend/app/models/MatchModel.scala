@@ -312,8 +312,8 @@ case object Started extends MatchState
 
 case class MatchTable (
   uuid: UUID,
-  matchId: Int,
-  tableId: Int,
+  matchId: Long,
+  tableId: Long,
   state: Int,
   timestamp: DateTime
 )
