@@ -14,6 +14,6 @@
 ## Dockerhub
 There is also a docker image available. To start the docker file you can use the following command (use your mysql credentials):
 
-`docker run --rm -p 9000:9000 -e MYSQL_SERVER=localhost -e MYSQL_PORT=? -e MYSQL_DB=? -e MYSQL_USER=? -e MYSQL_PW=? turniermanager:1.0`
+`docker run --rm -p 9000:9000 -e MYSQL_SERVER=localhost -e MYSQL_PORT=? -e MYSQL_DB=? -e MYSQL_USER=? -e MYSQL_PW=? holzleube/turniermanager:1.0`
 
 available docker-images: [Dockerhub](https://hub.docker.com/r/holzleube/turniermanager) 
