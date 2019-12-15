@@ -13,7 +13,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import slick.jdbc.JdbcProfile
 import slick.sql.SqlProfile.ColumnOption.SqlType
-import websocket.WebSocketActor.{UpdateMatches, UpdateTable, UpdateTableManager}
+import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable, UpdateTableManager}
 
 import scala.concurrent.Future
 
@@ -312,6 +312,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
                   startMatch(matchId, table.id, true)
               }
             }
+            pub ! UpdateTable(allTableInfo.filter(_.id == table.id))
+            pub ! UpdateMatches(allMatchesInfo.filter(x => matchIds.contains(x.ttMatch.id)))
+            pub ! UpdateMatchList(getAllMatchList)
             result.forall(x => x)
           } else {
             Logger.error("Match not ready")
@@ -367,17 +370,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def toMatch(m: MatchDAO): TTMatch = {
+    val isOnTable = ttMatchTableSeq.exists(_.matchId == m.id)
     if (m.team1Id < 100000 && m.team2Id < 100000) {
       TTMatch(m.id, m.team1Id, m.team2Id, Seq(m.team1Id), Seq(m.team2Id), m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId, 1,
-        if(m.matchTypeId == 9) Some(m.roundNumber) else None, if(m.isPlayed) Completed else Open)
+        if(m.matchTypeId == 9) Some(m.roundNumber) else None, if(m.isPlayed) Completed else if(isOnTable) OnTable else Open)
     } else {
       val d1 = getDouble(m.team1Id - 100000)
       val d2 = getDouble(m.team2Id - 100000)
       TTMatch(m.id, m.team1Id, m.team2Id, if (d1.isDefined) Seq(d1.get.player1Id, d1.get.player2Id) else Seq.empty,
         if (d2.isDefined) Seq(d2.get.player1Id, d2.get.player2Id) else Seq.empty, m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
-        2, if(m.matchTypeId == 9) Some(m.roundNumber) else None, if(m.isPlayed) Completed else Open)
+        2, if(m.matchTypeId == 9) Some(m.roundNumber) else None, if(m.isPlayed) Completed else if(isOnTable) OnTable else Open)
     }
   }
 
