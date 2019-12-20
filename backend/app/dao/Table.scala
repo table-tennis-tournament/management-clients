@@ -397,22 +397,28 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
         m.roundNumber.getOrElse(0), Some(m.getWinnerIds.headOption.getOrElse(0)))
     else {
-      val firstTeam = getDouble(m.team1Id - 100000)
-      val secondTeam = getDouble(m.team2Id - 100000)
-      if(firstTeam.isEmpty || secondTeam.isEmpty) {
-        Logger.error("first or second team ist empty:  "+ firstTeam.isEmpty + " second team: "+ secondTeam.isEmpty
-        + "firstTeamId: "+m.team1Id+ " second team id: "+m.team2Id)
-      }
-      val t1 = Seq(firstTeam.get.player1Id, firstTeam.get.player2Id)
-      val t2 = Seq(secondTeam.get.player1Id, secondTeam.get.player2Id)
-      val winnerId = Some(
-        if (t1.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team1Id
-        else if (t2.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team2Id
-        else 0)
       MatchDAO(m.id, isPlaying(m.state), m.team1Id, m.team2Id, None, isCompleted(m), m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
-        m.roundNumber.getOrElse(0), winnerId)
+        m.roundNumber.getOrElse(0), getWinnerIdForDouble(m))
     }
+  }
+
+  private def getWinnerIdForDouble(m: TTMatch) = {
+    val team1Ids = getPlayerIdsOrEmptyList(m.team1Id)
+    val team2Ids = getPlayerIdsOrEmptyList(m.team2Id)
+    Some(
+      if (team1Ids.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team1Id
+      else if (team2Ids.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team2Id
+      else 0)
+  }
+
+  private def getPlayerIdsOrEmptyList(teamId: Long): Seq[Long] = {
+    val secondTeam = getDouble(teamId - 100000)
+    if(secondTeam.isEmpty) {
+      Logger.info("Empty team for teamId: "+ teamId)
+      return Seq.empty;
+    }
+    Seq(secondTeam.get.player1Id, secondTeam.get.player2Id)
   }
 
   private def isCompleted(m: TTMatch) = {
