@@ -834,7 +834,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def allPlayerPerGroup: Future[Seq[PlayerPerGroup]] = db.run(playerPerGroup.result)
 
-  def isGroupCompleted(groupID: Long): Boolean = !ttMatchSeq.exists(m => m.state == Completed && m.groupId.get == groupID)
+  def isGroupCompleted(groupID: Long): Boolean = !ttMatchSeq.exists(m => m.state != Completed && m.groupId.get == groupID)
 
   def updatePlayerPerGroup(groupId: Long): Future[Future[Int]] = {
     allPlayerPerGroup map { ppg =>
