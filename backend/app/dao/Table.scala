@@ -194,22 +194,28 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   private def updateStateForMatchAndRemoveFromTable(matchId: Long, newState: MatchState) = {
+    removeMatchFromTable(matchId)
+    updateMatchState(newState, matchId)
+  }
+
+  private def removeMatchFromTable(matchId: Long) = {
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(_ == matchId))
     }
     deleteMatchTableForMatch(matchId)
-    updateMatchState(newState, matchId)
   }
 
   private def sendMatchAndTableMessage(matchId: Long, tableInfo: Seq[TableInfo]) = {
+    sendUpdateMatchesMessageForPlayersInMatch(matchId)
+    pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
+  }
+
+  private def sendUpdateMatchesMessageForPlayersInMatch(matchId: Long) = {
     val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
     val p = m.player1 ++ m.player2
     val ids = p.map(_.id)
     pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-    pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
   }
-
-
 
   private def getTableInfoForMatch(matchId: Long) = {
     allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
@@ -387,37 +393,51 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def toMatchDAO(m: TTMatch): MatchDAO = {
     if(m.player1Ids.length < 2)
-      MatchDAO(m.id, m.state == Callable || m.state == OnTable || m.state == Started, m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, m.state == Completed, m.matchTypeId,
+      MatchDAO(m.id, isPlaying(m.state), m.player1Ids.headOption.getOrElse(0), m.player2Ids.headOption.getOrElse(0), None, isCompleted(m), m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
         m.roundNumber.getOrElse(0), Some(m.getWinnerIds.headOption.getOrElse(0)))
     else {
-      val t1 = Seq(getDouble(m.team1Id - 100000).get.player1Id, getDouble(m.team1Id - 100000).get.player2Id)
-      val t2 = Seq(getDouble(m.team2Id - 100000).get.player1Id, getDouble(m.team2Id - 100000).get.player2Id)
-      MatchDAO(m.id, m.state == Callable || m.state == OnTable || m.state == Started, m.team1Id, m.team2Id, None, m.state == Finished, m.matchTypeId,
+      val firstTeam = getDouble(m.team1Id - 100000)
+      val secondTeam = getDouble(m.team2Id - 100000)
+      if(firstTeam.isEmpty || secondTeam.isEmpty) {
+        Logger.error("first or second team ist empty:  "+ firstTeam.isEmpty + " second team: "+ secondTeam.isEmpty
+        + "firstTeamId: "+m.team1Id+ " second team id: "+m.team2Id)
+      }
+      val t1 = Seq(firstTeam.get.player1Id, firstTeam.get.player2Id)
+      val t2 = Seq(secondTeam.get.player1Id, secondTeam.get.player2Id)
+      val winnerId = Some(
+        if (t1.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team1Id
+        else if (t2.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team2Id
+        else 0)
+      MatchDAO(m.id, isPlaying(m.state), m.team1Id, m.team2Id, None, isCompleted(m), m.matchTypeId,
         m.typeId, m.groupId, m.startTime, m.resultRaw, m.result, m.balls1, m.balls2, m.sets1, m.sets2, m.nr, m.plannedTableId,
-        m.roundNumber.getOrElse(0), Some(if(t1.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team1Id else if(t2.contains(m.getWinnerIds.headOption.getOrElse(0))) m.team2Id else 0))
+        m.roundNumber.getOrElse(0), winnerId)
     }
+  }
+
+  private def isCompleted(m: TTMatch) = {
+    m.state == Completed
+  }
+
+  private def isPlaying(matchState: MatchState) = {
+    List(Callable, OnTable, Started).contains(matchState)
   }
 
   def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
     Logger.debug("start match")
-    //if(!ttTablesSeq.exists(_.matchId.contains(matchId))) {
-      updateMatchState(Callable, matchId)
+    updateMatchState(Callable, matchId)
     val currentTime = new DateTime()
-      ttMatchSeq = ttMatchSeq map { m =>
-        if (m.id == matchId) m.copy(state = Callable, startTime = currentTime)
-        else m
-      }
-      val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-      val p = m.player1 ++ m.player2
-      val ids = p.map(_.id)
-      ttTablesSeq = ttTablesSeq map { t =>
-        if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
-        else t
-      }
-      saveMatchTable(MatchTable(UUID.randomUUID(), matchId, tableId, new DateTime()))
-      if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
-      true
+    ttMatchSeq = ttMatchSeq map { m =>
+      if (m.id == matchId) m.copy(state = Callable, startTime = currentTime)
+      else m
+    }
+    ttTablesSeq = ttTablesSeq map { t =>
+      if (t.id == tableId) t.copy(matchId = t.matchId :+ matchId)
+      else t
+    }
+    saveMatchTable(MatchTable(UUID.randomUUID(), matchId, tableId, new DateTime()))
+    if(printOnStart && print) printerActor ! Print(getAllMatchInfo(getMatch(matchId).get).get)
+    true
   }
 
   def deleteMatch(matchId: Long): Unit = ttMatchSeq = ttMatchSeq.filter(_.id != matchId)
@@ -461,34 +481,40 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def updateResult(id: Long, result: Seq[Seq[Int]]) = {
-    val x = result map (r => r.mkString("="))
-    val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
-    val sets = getSetsFromResult(result)
-    ttMatchSeq = ttMatchSeq map { m =>
-      if (m.id == id) {
-        m.copy(
-          resultRaw = x.mkString(","),
-          result = sets.head + " : " + sets(1),
-          balls1 = balls.head,
-          balls2 = balls(1),
-          sets1 = sets.head,
-          sets2 = sets(1)
-        )
-      } else m
-    }
+    setResultAndCompletedStateOnMatch(id, result, setCompleted = false)
     pub ! UpdateMatches(allMatchesInfo.filter(_.ttMatch.id == id))
   }
 
-  private def getSetsFromResult(result: Seq[Seq[Int]]) = {
-    result.foldLeft(Seq(0, 0)) { (x, y) => if (y.head > y(1)) Seq(x.head + 1, x(1)) else Seq(x.head, x(1) + 1) }
+  def setResult(matchId: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
+    val tablesToUpdateIds = ttTablesSeq.filter(table => table.matchId.contains(matchId)).map(_.id)
+    setResultAndCompletedStateOnMatch(matchId, result, setCompleted = true)
+    removeMatchFromTable(matchId);
+    pub ! UpdateTable(allTableInfo.filter(allTableInfo => tablesToUpdateIds.contains(allTableInfo.id)))
+    sendUpdateMatchesMessageForPlayersInMatch(matchId)
+    updateMatchAndWriteKOMatchOrUpdateGroup(matchId)
   }
 
-  def setResult(matchId: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
+  private def updateMatchAndWriteKOMatchOrUpdateGroup(matchId: Long): Future[Boolean] = {
+    ttMatchSeq.find(_.id == matchId) match {
+      case Some(ttMatch) => writeMatch(ttMatch) flatMap { b =>
+        if (b // write successful
+          && ttMatch.groupId.getOrElse(0) == 999 // KO match
+          && (2 to 8).contains(ttMatch.matchTypeId) // not the final match
+        ) {
+          writeNextKoMatch(ttMatch)
+        } else {
+          if (isGroupCompleted(ttMatch.groupId.get)) updatePlayerPerGroup(ttMatch.groupId.get)
+          Future.successful(b)
+        }
+      }
+      case _ => Future.successful(false)
+    }
+  }
+
+  def setResultAndCompletedStateOnMatch(matchId: Long, result: Seq[Seq[Int]], setCompleted:Boolean) = {
     val x = result map (r => r.mkString("="))
     val balls = result.foldRight(Seq(0,0)){(x,y) => Seq(x.head+y.head, x(1)+y(1))}
     val sets = getSetsFromResult(result)
-    updateStateForMatchAndRemoveFromTable(matchId, Completed)
-    pub ! UpdateTable(allTableInfo.filter(_.id == matchId))
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId) {
         m.copy(
@@ -498,42 +524,27 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           balls2 = balls(1),
           sets1 = sets.head,
           sets2 = sets(1),
-          state = Completed
+          state = if(setCompleted)Completed else m.state
         )
       } else m
     }
-    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val p = m.player1 ++ m.player2
-    val ids = p.map(_.id)
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
-    ttMatchSeq.find(_.id == matchId) match {
-      case Some(ttMatch) => writeMatch(ttMatch) flatMap { b =>
-        if(
-               b                                          // write successful
-            && ttMatch.groupId.getOrElse(0) == 999        // KO match
-            && (2 to 8).contains(ttMatch.matchTypeId)     // not the final match
-        ) {
-          writeNextKoMatch(ttMatch)
-        } else {
-          if(isGroupCompleted(ttMatch.groupId.get)) updatePlayerPerGroup(ttMatch.groupId.get)
-          Future.successful(b)
-        }
-      }
-      case _ => Future.successful(false)
-    }
+  }
+
+  private def getSetsFromResult(result: Seq[Seq[Int]]) = {
+    result.foldLeft(Seq(0, 0)) { (x, y) => if (y.head > y(1)) Seq(x.head + 1, x(1)) else Seq(x.head, x(1) + 1) }
   }
 
   def writeNextKoMatch(ttMatch: TTMatch): Future[Boolean] = {
     val nr = ttMatch.nr
     val newNr =  ((nr/1000)-1)*1000+((nr%1000)+1)/2
     val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
-    val teamId = if(ttMatch.getWinnerIds.size > 1){
-      if(ttMatch.getWinnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) ttMatch.team1Id else ttMatch.team2Id
-    }  else ttMatch.getWinnerIds.head
+    val winnerIds = ttMatch.getWinnerIds
+    val singleWinnerId = getTeamOrSingleWinner(winnerIds, ttMatch)
+    Logger.error("current winner id: "+singleWinnerId)
     val newMatch = if(nr%1000%2 == 1) {
-      uMatch.copy(player1Ids = ttMatch.getWinnerIds, team1Id = if(ttMatch.getWinnerIds.size > 1) teamId else ttMatch.getWinnerIds.head)
+      uMatch.copy(player1Ids = winnerIds, team1Id = singleWinnerId)
     } else {
-      uMatch.copy(player2Ids = ttMatch.getWinnerIds, team2Id = if(ttMatch.getWinnerIds.size > 1) teamId else ttMatch.getWinnerIds.head)
+      uMatch.copy(player2Ids = winnerIds, team2Id = singleWinnerId)
     }
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == newMatch.id){
@@ -545,6 +556,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     writeMatch(newMatch) map {res =>
       res
     }
+  }
+
+  def getTeamOrSingleWinner(winnerIds: Seq[Long], ttMatch: TTMatch):Long = {
+    if(winnerIds.isEmpty) {
+      Logger.error("Winner ids are empty for matchid: "+ ttMatch.id)
+      return 0;
+    }
+    if(winnerIds.size == 1) {
+      return winnerIds.head
+    }
+    if(winnerIds.contains(getDouble(ttMatch.team1Id - 100000).get.player1Id)) {
+        ttMatch.team1Id
+    }
+    else ttMatch.team2Id
   }
 
   def writeMatch(ttMatch: TTMatch): Future[Boolean] = {
@@ -841,8 +866,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       val filteredPlayerPerGroup = ppg.filter(_.groupId == groupId)
       val ppgRes = filteredPlayerPerGroup map {ppg =>
         val p = ttPlayerSeq.filter(_.id == ppg.playerId).head
-        val m1 = ttMatchSeq.filter(m => m.player1Ids.contains(p.id) && m.groupId.contains(groupId) && m.state == Completed)
-        val m2 = ttMatchSeq.filter(m => m.player2Ids.contains(p.id) && m.groupId.contains(groupId) && m.state == Completed)
+        val m1 = ttMatchSeq.filter(m => m.player1Ids.contains(p.id) && m.groupId.contains(groupId) && isCompleted(m))
+        val m2 = ttMatchSeq.filter(m => m.player2Ids.contains(p.id) && m.groupId.contains(groupId) && isCompleted(m))
         var ballsWon = 0
         var ballsLost = 0
         var setsWon = 0
@@ -874,7 +899,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           pointsWon = ballsWon,
           pointsLost = ballsLost,
           setsDiff = setsWon - setsLost,
-          checked = ttMatchSeq.filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id) && m.groupId.contains(groupId)).forall(_.state == Completed)
+          checked = ttMatchSeq.filter(m => (m.player1Ids ++ m.player2Ids).contains(p.id) && m.groupId.contains(groupId)).forall(isCompleted(_))
         )
       }
       val res = ppgRes.sortBy(ppg => (-ppg.matchesWon, -ppg.setsDiff, -ppg.pointsWon)).zipWithIndex.map(p => p._1.copy(groupPos = p._2 + 1))
