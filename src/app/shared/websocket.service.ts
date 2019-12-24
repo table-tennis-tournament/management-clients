@@ -19,8 +19,8 @@ export class WebsocketService {
 
     private connectSocks(listeners: any) {
         const connectListener = new EventEmitter<any>();
-        connectListener.subscribe(listeners.connected);
         const disconnectListener = new EventEmitter<any>();
+        connectListener.subscribe(listeners.connected);
         disconnectListener.subscribe(listeners.disconnected);
 
         return Observable.create(complete => {

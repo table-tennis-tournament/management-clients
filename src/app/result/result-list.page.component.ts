@@ -4,7 +4,7 @@ import {getDisciplineLoading, getDisciplineState, getResultMatchesLoading, getRe
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Discipline} from '../discipline/discipline.model';
-import {FreeTable, ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
+import {ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
 import {LoadResults} from './redux/result.actions';
