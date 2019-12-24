@@ -67,11 +67,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
       case Some(r) =>
         r.asOpt[Seq[Long]] match {
           case Some(ids) =>
-            ids foreach { id =>
-              tables.freeTTTable(id)
-              tables.updateMatchState(Finished, id)
-            }
-            tables.startNextMatch
+            setStateRemoveFromTableStartNextMatchAndSendMessages(ids, Finished)
             Ok(Json.toJson(Answer(successful = true, "successful")).toString())
           case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
@@ -85,16 +81,21 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
       case Some(r) =>
         r.asOpt[Seq[Long]] match {
           case Some(ids) =>
-            ids foreach { id =>
-              tables.takeBackTTTable(id)
-              tables.updateMatchState(Open, id)
-            }
-            tables.startNextMatch
+            setStateRemoveFromTableStartNextMatchAndSendMessages(ids, Open)
             Ok(Json.toJson(Answer(successful = true, "successful")))
           case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
         }
       case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
     }
+  }
+
+  private def setStateRemoveFromTableStartNextMatchAndSendMessages(ids: Seq[Long], matchState: MatchState) = {
+    val tableIdsToSendUpdate = tables.getTableInfoIdsForMatches(ids);
+    tables.updateStateForMatchesAndRemoveFromTable(ids, matchState)
+    pub ! UpdateMatches(tables.getAllMatchInfoForRelatedPlayers(ids))
+    pub ! UpdateTable(tables.getTableInfosForIds(tableIdsToSendUpdate))
+    tables.startNextMatch
+    pub ! UpdateMatchList(tables.getAllMatchList)
   }
 
   def getMatchesByType(typeId: Long): Action[AnyContent] = Action {

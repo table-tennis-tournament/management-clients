@@ -11,10 +11,9 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.Json
 import slick.jdbc.JdbcProfile
 import slick.sql.SqlProfile.ColumnOption.SqlType
-import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable, UpdateTableManager}
+import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
 
 import scala.concurrent.Future
 
@@ -172,18 +171,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getTTTable(id: Long): Option[TTTable] = ttTablesSeq.find(_.id == id)
 
-  def freeTTTable(matchId: Long): Unit = {
-    val tableInfo = getTableInfoForMatch(matchId)
-    updateStateForMatchAndRemoveFromTable(matchId, Finished)
-    sendMatchAndTableMessage(matchId, tableInfo)
-  }
-
-  def takeBackTTTable(matchId: Long): Unit = {
-    val tableInfo = getTableInfoForMatch(matchId)
-    updateStateForMatchAndRemoveFromTable(matchId, Open)
-    sendMatchAndTableMessage(matchId, tableInfo)
-  }
-
   def startMatchOnTTTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
     updateMatchState(Started, matchId)
@@ -196,9 +183,16 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
-  private def updateStateForMatchAndRemoveFromTable(matchId: Long, newState: MatchState) = {
+  def updateStateForMatchAndRemoveFromTable(matchId: Long, newState: MatchState) = {
     removeMatchFromTable(matchId)
     updateMatchState(newState, matchId)
+  }
+
+  def updateStateForMatchesAndRemoveFromTable(matchIds: Seq[Long], newState: MatchState) = {
+    ttTablesSeq = ttTablesSeq map { t =>
+      t.copy(matchId = t.matchId.filterNot(matchIds contains))
+    }
+    deleteMatchTableForMatches(matchIds)
   }
 
   private def removeMatchFromTable(matchId: Long) = {
@@ -211,17 +205,33 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   private def sendMatchAndTableMessage(matchId: Long, tableInfo: Seq[TableInfo]) = {
     sendUpdateMatchesMessageForPlayersInMatch(matchId)
     pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
+
+  }
+
+  def getAllMatchInfoForRelatedPlayers(matchIds: Seq[Long]): Seq[AllMatchInfo] = {
+    val relatedPlayerIds = allMatchesInfo
+      .filter(currentMatch => matchIds.contains(currentMatch.ttMatch.id))
+      .map(m => m.player1 ++ m.player2)
+      .reduce((p1, p2) => p1 ++ p2)
+      .map(_.id)
+      .distinct
+    allMatchesInfo.filter(m => relatedPlayerIds.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id)))
   }
 
   private def sendUpdateMatchesMessageForPlayersInMatch(matchId: Long) = {
-    val m = allMatchesInfo.filter(_.ttMatch.id == matchId).head
-    val p = m.player1 ++ m.player2
-    val ids = p.map(_.id)
-    pub ! UpdateMatches(allMatchesInfo.filter(m => ids.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id))))
+    getAllMatchInfoForRelatedPlayers(List(matchId))
   }
 
   private def getTableInfoForMatch(matchId: Long) = {
     allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
+  }
+
+  def getTableInfoIdsForMatches(matchIds: Seq[Long]):Seq[Long]= {
+    allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).containsAnyOf(matchIds)).map(_.id)
+  }
+
+  def getTableInfosForIds(tableIds: Seq[Long]): Seq[TableInfo] = {
+    allTableInfo.filter(table => tableIds.contains(table.id))
   }
 
   def lockTTTable(nr: Long): Unit = {
@@ -938,8 +948,14 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def getMatchTableForMatch(matchId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).result)
 
   def deleteMatchTableForMatch(matchId: Long) = {
-    dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
-    ttMatchTableSeq = ttMatchTableSeq.filter(_.matchId != matchId)
+    deleteMatchTableForMatches(List(matchId))
+  }
+
+  def deleteMatchTableForMatches(matchIds: Seq[Long]) = {
+    matchIds foreach {
+      matchId => dbConfigProvider.get.db.run(matchTable.filter(_.matchId === matchId).delete)
+    }
+    ttMatchTableSeq = ttMatchTableSeq.filter(m => !matchIds.contains(m.matchId))
   }
 
   def deleteMatchTableForTable(tableId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).delete)
