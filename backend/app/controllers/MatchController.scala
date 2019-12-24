@@ -278,7 +278,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
               val currentStartTime = new org.joda.time.DateTime()
               val result = matchIds.map { matchId =>
                 val ml = tables.getMatchList
-                tables.updateMatchState(Callable, matchId)
+                tables.updateMatchState(Callable, List(matchId))
                 tables.setStartTime(matchId, currentStartTime)
                 ml.find(_.matchId.contains(matchId)) match {
                   case Some(mlItem) =>

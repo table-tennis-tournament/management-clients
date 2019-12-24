@@ -173,33 +173,27 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def startMatchOnTTTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
-    updateMatchState(Started, matchId)
+    updateMatchState(Started,  List(matchId))
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
   def setMatchStateToOnTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
-    updateMatchState(OnTable, matchId)
+    updateMatchState(OnTable, List(matchId))
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
-  def updateStateForMatchAndRemoveFromTable(matchId: Long, newState: MatchState) = {
-    removeMatchFromTable(matchId)
-    updateMatchState(newState, matchId)
-  }
 
   def updateStateForMatchesAndRemoveFromTable(matchIds: Seq[Long], newState: MatchState) = {
+    removeMatchesFromTable(matchIds)
+    updateMatchState(newState, matchIds)
+  }
+
+  private def removeMatchesFromTable(matchIds: Seq[Long]) = {
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(matchIds contains))
     }
     deleteMatchTableForMatches(matchIds)
-  }
-
-  private def removeMatchFromTable(matchId: Long) = {
-    ttTablesSeq = ttTablesSeq map { t =>
-      t.copy(matchId = t.matchId.filterNot(_ == matchId))
-    }
-    deleteMatchTableForMatch(matchId)
   }
 
   private def sendMatchAndTableMessage(matchId: Long, tableInfo: Seq[TableInfo]) = {
@@ -444,7 +438,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
     Logger.debug("start match")
-    updateMatchState(Callable, matchId)
+    updateMatchState(Callable, List(matchId))
     val currentTime = new DateTime()
     ttMatchSeq = ttMatchSeq map { m =>
       if (m.id == matchId) m.copy(state = Callable, startTime = currentTime)
@@ -475,11 +469,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttMatchSeq.filter(_.groupId.getOrElse(0) == id)
   }
 
-  def updateMatchState(matchState: MatchState, matchId: Long): Unit = {
+  def updateMatchState(matchState: MatchState, matchIds: Seq[Long]): Unit = {
     ttMatchSeq = ttMatchSeq.map {m =>
-      if(m.id == matchId) m.copy(state = matchState)
+      if(matchIds.contains(m.id)) m.copy(state = matchState)
       else m
     }
+  }
+
+  def updateMatchState(matchState: MatchState, matchId: Long): Unit = {
+    updateMatchState(matchState, List(matchId))
   }
 
   def setStartTime(matchId: Long, startTime: DateTime): Unit = {
@@ -507,7 +505,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def setResult(matchId: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
     val tablesToUpdateIds = ttTablesSeq.filter(table => table.matchId.contains(matchId)).map(_.id)
     setResultAndCompletedStateOnMatch(matchId, result, setCompleted = true)
-    removeMatchFromTable(matchId);
+    removeMatchesFromTable(List(matchId))
     pub ! UpdateTable(allTableInfo.filter(allTableInfo => tablesToUpdateIds.contains(allTableInfo.id)))
     sendUpdateMatchesMessageForPlayersInMatch(matchId)
     updateMatchAndWriteKOMatchOrUpdateGroup(matchId)
@@ -718,7 +716,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def delMatchList(uuid: UUID): Boolean = {
     val result = findMatchListById(uuid) match {
       case Some(mlItem) =>
-        mlItem.matchId.foreach(id => updateMatchState(Open, id))
+        mlItem.matchId.foreach(id => updateMatchState(Open, List(id)))
         ttMatchListSeq = ttMatchListSeq.filterNot(_.uuid.contains(uuid)) map { mlEntry =>
           if (mlEntry.position > mlItem.position) mlEntry.copy(position = mlEntry.position - 1) else mlEntry
         }
