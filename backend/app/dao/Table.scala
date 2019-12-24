@@ -184,22 +184,21 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
 
-  def updateStateForMatchesAndRemoveFromTable(matchIds: Seq[Long], newState: MatchState) = {
+  def updateStateForMatchesAndRemoveFromTable(matchIds: Seq[Long], newState: MatchState): Unit = {
     removeMatchesFromTable(matchIds)
     updateMatchState(newState, matchIds)
   }
 
-  private def removeMatchesFromTable(matchIds: Seq[Long]) = {
+  private def removeMatchesFromTable(matchIds: Seq[Long]): Unit = {
     ttTablesSeq = ttTablesSeq map { t =>
       t.copy(matchId = t.matchId.filterNot(matchIds contains))
     }
     deleteMatchTableForMatches(matchIds)
   }
 
-  private def sendMatchAndTableMessage(matchId: Long, tableInfo: Seq[TableInfo]) = {
-    sendUpdateMatchesMessageForPlayersInMatch(matchId)
+  private def sendMatchAndTableMessage(matchId: Long, tableInfo: Seq[TableInfo]): Unit = {
+    pub ! UpdateMatches(getAllMatchInfoForRelatedPlayers(List(matchId)))
     pub ! UpdateTable(allTableInfo.filter(ti => tableInfo.map(_.id).contains(ti.id)))
-
   }
 
   def getAllMatchInfoForRelatedPlayers(matchIds: Seq[Long]): Seq[AllMatchInfo] = {
@@ -212,11 +211,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     allMatchesInfo.filter(m => relatedPlayerIds.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id)))
   }
 
-  private def sendUpdateMatchesMessageForPlayersInMatch(matchId: Long) = {
-    getAllMatchInfoForRelatedPlayers(List(matchId))
-  }
-
-  private def getTableInfoForMatch(matchId: Long) = {
+  def getTableInfoForMatch(matchId: Long) = {
     allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
   }
 
@@ -503,11 +498,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def setResult(matchId: Long, result: Seq[Seq[Int]]): Future[Boolean] = {
-    val tablesToUpdateIds = ttTablesSeq.filter(table => table.matchId.contains(matchId)).map(_.id)
     setResultAndCompletedStateOnMatch(matchId, result, setCompleted = true)
     removeMatchesFromTable(List(matchId))
-    pub ! UpdateTable(allTableInfo.filter(allTableInfo => tablesToUpdateIds.contains(allTableInfo.id)))
-    sendUpdateMatchesMessageForPlayersInMatch(matchId)
     updateMatchAndWriteKOMatchOrUpdateGroup(matchId)
   }
 
