@@ -44,7 +44,10 @@ export class MatchListEffects {
         mergeMap((action: AssignToMatchList) => {
             return this.matchListService
                 .assignToMatchList(action.payload).pipe(
-                    map(status => new AssignToMatchListSuccess(status)),
+                    map(status => {
+                        this.toastService.info('In Warteliste eingefügt');
+                        return new AssignToMatchListSuccess(status);
+                    }),
                     catchError(err => {
                         this.toastService.error('Fehler beim Hinzufügen des Matchlist-items');
                         return of(new AssignToMatchListError(err));
