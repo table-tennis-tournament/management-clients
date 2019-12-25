@@ -12,7 +12,7 @@
 <div class="row waiting-list-drop-zone" [class.waiting-list-fixed-position]="fixWaitingList">
     <ul class="collection waiting-list-sorting-area" cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
         <li *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
-            class="collection-item" [ngClass]="typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]">
+            class="collection-item p-1" [ngClass]="typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]">
             <div class="cut-text" *ngIf="!currentMatch.matchinfo[1]&&currentMatch.matchinfo[0]">
                 <toma-matchlist-single-item [matchListItem]="currentMatch"
                                             (matchListItemDelete)="matchListItemDelete.emit($event)">
