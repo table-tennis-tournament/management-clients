@@ -25,7 +25,6 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
                        @Named("publisher_actor") pub: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
 
 
-
   import profile.api._
 
   object PortableJodaSupport extends com.github.tototoshi.slick.GenericJodaSupport(dbConfigProvider.get.profile)
@@ -255,11 +254,24 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def getCallableMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+    getMatchTableByState(Callable)
+  }
+
+  def getSecondCallMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+    getMatchTableByState(SecondCall)
+  }
+
+  def getThirdCallMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+    getMatchTableByState(ThirdCall)
+  }
+
+  private def getMatchTableByState(matchState: MatchState) = {
     ttMatchTableSeq.flatMap(mt => ttMatchSeq.find(_.id == mt.matchId)
       .map(m => (mt, m)))
-      .filter(_._2.state == Callable)
+      .filter(_._2.state == matchState)
       .groupBy(_._1.tableId)
   }
+
 
   // Matches
 

@@ -10,6 +10,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import websocket.WebSocketActor._
 
+import scala.collection.immutable
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -145,9 +146,29 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     scala.reflect.internal.util.Collections.distinctBy(xs)(f)
 
   def getMatchAggregateForCaller: Action[AnyContent] = Action {
-    val callableMatches = tables.getCallableMatches()
+    Ok(Json.toJson(
+      mapToMatchAggregate(tables.getCallableMatches())
+        .sortBy(_.startTime))
+    )
+  }
+
+  def getMatchAggregateForSecondCall:  Action[AnyContent] = Action {
+    Ok(Json.toJson(
+      mapToMatchAggregate(tables.getSecondCallMatches())
+        .sortBy(_.startTime))
+    )
+  }
+
+  def getMatchAggregateForThirdCall:  Action[AnyContent] = Action {
+    Ok(Json.toJson(
+      mapToMatchAggregate(tables.getThirdCallMatches())
+        .sortBy(_.startTime))
+    )
+  }
+
+  private def mapToMatchAggregate(callableMatches: Map[Long, Seq[(MatchTable, TTMatch)]]): immutable.Seq[MatchAggregate] = {
     val matchAggregates = callableMatches map {
-      case (key, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head._2),
+      case (_, value) => MatchAggregate(getMatchAggregateNameFromMatch(value.head._2),
         value.head._2.startTime,
         getTableNumbersFromMatches(value.map(_._2)),
         tables.getType(value.head._2.typeId).get,
@@ -156,10 +177,8 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
       )
     }
     val matchAggregateList = distinctBy(matchAggregates.toList)(_.tableNumbers)
-    Ok(Json.toJson(matchAggregateList.sortBy(_.startTime)))
+    matchAggregateList
   }
-
-
 
   def getPlayedMatches: Action[AnyContent] = Action {
     val matches = tables.allMatches()

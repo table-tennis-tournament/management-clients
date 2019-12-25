@@ -28,7 +28,9 @@ GET     /api/match/played/all               controllers.MatchController.getPlaye
 GET     /api/match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
 GET     /api/match/loadnew                  controllers.MatchController.loadNewMatches
 GET     /api/match/:id                      controllers.MatchController.getMatch(id: Long)
-GET     /api/matchaggregate/caller          controllers.MatchController.getMatchAggregateForCaller
+GET     /api/matchaggregates/caller          controllers.MatchController.getMatchAggregateForCaller
+GET     /api/matchaggregates/secondCall      controllers.MatchController.getMatchAggregateForSecondCall
+GET     /api/matchaggregates/thirdCall       controllers.MatchController.getMatchAggregateForThirdCall
 # Result format: [[5,11],[13,11],[11,0],[11,4]]
 POST    /api/match/:id/setResult            controllers.MatchController.setResult(id: Long)
 POST    /api/match/:id/updateResult         controllers.MatchController.updateResult(id: Long)
