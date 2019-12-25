@@ -253,15 +253,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttTablesSeq.filter(_.matchId.contains(matchId))
   }
 
-  def getCallableMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+  def getCallableMatches: Map[Long, Seq[(MatchTable, TTMatch)]] = {
     getMatchTableByState(Callable)
   }
 
-  def getSecondCallMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+  def getSecondCallMatches: Map[Long, Seq[(MatchTable, TTMatch)]] = {
     getMatchTableByState(SecondCall)
   }
 
-  def getThirdCallMatches(): Map[Long, Seq[(MatchTable, TTMatch)]] = {
+  def getThirdCallMatches: Map[Long, Seq[(MatchTable, TTMatch)]] = {
     getMatchTableByState(ThirdCall)
   }
 
