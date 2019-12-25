@@ -20,7 +20,6 @@ GET     /api/match/all                      controllers.MatchController.getAllMa
 GET     /api/match/start/:id                controllers.MatchController.startMatch(id: Long)
 GET     /api/match/stop/:id                controllers.MatchController.stopMatch(id: Long)
 GET     /api/match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
-# GET     /api/match/filter                   controllers.MatchController.getFilteredMatchList()
 POST    /api/match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false)
 POST    /api/match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false, print: Boolean = false, secondTable: Boolean = true)
 GET     /api/match/open/all                 controllers.MatchController.getOpenMatches
@@ -58,6 +57,7 @@ POST    /api/match/takeBack                 controllers.MatchController.takeBack
 GET     /api/match/delete/:id               controllers.MatchController.deleteMatch(id: Long)
 GET     /api/match/deleteType/:id           controllers.MatchController.deleteType(id: Long)
 POST    /api/match/call                     controllers.MatchController.callMatches
+POST    /api/playercall/:matchId            controllers.MatchController.callPlayers(matchId: Long)
 
 # WebSocket for push messages
 ->      /api/websocket                            controllers.SockJSController

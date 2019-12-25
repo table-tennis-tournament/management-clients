@@ -329,6 +329,12 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     }
   }
 
+  def callPlayers(matchId: Long): Action[AnyContent] = Action { request =>
+    tables.updateCallStateForMatch(matchId)
+    sendUpdateTableManagerMessagesForTables(tables.getTTTableFromMatchId(matchId))
+    Ok(Json.toJson(Answer(successful = true, "Call Players success")))
+  }
+
   def loadNewMatches: Action[AnyContent] = Action.async {
     tables.loadAllFromDB map { wasSuccessful =>
       if (wasSuccessful) {

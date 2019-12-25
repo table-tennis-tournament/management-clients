@@ -183,6 +183,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
+  def updateCallStateForMatch(matchId: Long): Unit = {
+    val tableInfo = getTableInfoForMatch(matchId).flatMap(info => info.ttMatch).filter(_.ttMatch.id == matchId).head
+    if(tableInfo.state == OnTable) {
+      return updateMatchState(SecondCall, matchId)
+    }
+    updateMatchState(ThirdCall, List(matchId))
+  }
 
   def updateStateForMatchesAndRemoveFromTable(matchIds: Seq[Long], newState: MatchState): Unit = {
     removeMatchesFromTable(matchIds)
@@ -211,7 +218,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     allMatchesInfo.filter(m => relatedPlayerIds.exists(id => (m.player1 ++ m.player2).map(_.id).contains(id)))
   }
 
-  def getTableInfoForMatch(matchId: Long) = {
+  def getTableInfoForMatch(matchId: Long): Seq[TableInfo] = {
     allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
   }
 
