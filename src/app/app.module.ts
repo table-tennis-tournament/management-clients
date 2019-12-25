@@ -75,6 +75,7 @@ import {ZXingScannerModule} from '@zxing/ngx-scanner';
 import {MatchlistGroupItemComponent} from './supervisor/matchlist-view/matchlist-group-item/matchlist-group-item.component';
 import {MatchlistSingleItemComponent} from './supervisor/matchlist-view/matchlist-single-item/matchlist-single-item.component';
 import {ResultEffects} from './result/redux/result.effects';
+import { PlayerCallsComponent } from './caller/player-calls/player-calls.component';
 
 @NgModule({
     declarations: [
@@ -115,7 +116,8 @@ import {ResultEffects} from './result/redux/result.effects';
         RefereesListComponent,
         QrResultScannerComponent,
         MatchlistGroupItemComponent,
-        MatchlistSingleItemComponent
+        MatchlistSingleItemComponent,
+        PlayerCallsComponent
     ],
     imports: [
         BrowserModule,

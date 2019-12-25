@@ -6,13 +6,17 @@ export interface CallerState {
     referees: Player[];
     refereesLoading: boolean;
     callerMatches: MatchAggregate[];
+    secondCallMatches: MatchAggregate[];
+    thirdCallMatches: MatchAggregate[];
 }
 
 
 const initialState: CallerState = {
     referees: [],
     refereesLoading: false,
-    callerMatches: []
+    callerMatches: [],
+    secondCallMatches: [],
+    thirdCallMatches: []
 };
 
 export function reduceCallerState(state: CallerState = initialState, action: CallerActionUnion) {
@@ -49,6 +53,16 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
                 ...state,
                 refereesLoading: false
             };
+        case CallerActionTypes.LoadSecondCallMatchesSuccess:
+            return {
+                ...state,
+                secondCallMatches: action.payload
+            };
+        case CallerActionTypes.LoadThirdCallMatchesSuccess:
+            return {
+                ...state,
+                thirdCallMatches: action.payload
+            };
         case CallerActionTypes.SetSelectedMatchAggregate:
             return {
                 ...state,
@@ -63,3 +77,5 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
 export const getReferees = (state: CallerState) => state.referees;
 export const getRefereesLoading = (state: CallerState) => state.refereesLoading;
 export const getCallerMatchAggregates = (state: CallerState) => state.callerMatches;
+export const getSecondCallMatchAggregates = (state: CallerState) => state.secondCallMatches;
+export const getThirdCallMatchAggregates = (state: CallerState) => state.thirdCallMatches;

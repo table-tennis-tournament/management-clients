@@ -15,10 +15,13 @@
         </toma-caller-match-detail>
     </div>
     <div class="col s2 m3">
-        <toma-referees-list
-                [referees]="referees | async"
-                [refereesLoading]="refereesLoading | async">
-        </toma-referees-list>
+        <toma-player-calls
+                [typeColor]="typeColor | async"
+                [secondCalls]="secondCalls | async"
+                [thirdCalls]="thirdCalls | async"
+                (matchesSelected)="onMatchesSelected($event)"
+                >
+        </toma-player-calls>
     </div>
 </div>
 

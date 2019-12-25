@@ -1,10 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {getCallerMatchAggregateState, getRefereesLoading, getRefereesState, getTypeColorsState} from '../app-state.reducer';
+import {
+    getCallerMatchAggregateState,
+    getRefereesLoading,
+    getSecondCallMatchesState,
+    getThirdCallMatchesState,
+    getTypeColorsState
+} from '../app-state.reducer';
 import {MatchAggregate} from '../shared/data/match.aggregate';
-import {Player} from '../shared/data/player.model';
-import {CallMatch, LoadCallerMatches, SetSelectedMatchAggregate} from './redux/caller.actions';
+import {CallMatch, LoadCallerMatches, LoadSecondCallMatches, LoadThirdCallMatches, SetSelectedMatchAggregate} from './redux/caller.actions';
+import {getSecondCallMatchAggregates, getThirdCallMatchAggregates} from './redux/caller.reducer';
 
 @Component({
     selector: 'toma-caller-page',
@@ -14,32 +20,37 @@ export class CallerPageComponent implements OnInit {
 
     selectedItem: MatchAggregate;
     typeColor: Observable<string[]>;
-    referees: Observable<Player[]>;
     refereesLoading: Observable<boolean>;
     matchAggregates: Observable<MatchAggregate[]>;
+    secondCalls: Observable<MatchAggregate[]>;
+    thirdCalls: Observable<MatchAggregate[]>;
 
     constructor(private store: Store<any>) {
     }
 
     ngOnInit() {
         this.store.dispatch(new LoadCallerMatches());
+        this.store.dispatch(new LoadSecondCallMatches());
+        this.store.dispatch(new LoadThirdCallMatches());
         this.typeColor = this.store.select(getTypeColorsState);
         this.refereesLoading = this.store.select(getRefereesLoading);
-        this.referees = this.store.select(getRefereesState);
         this.matchAggregates = this.store.select(getCallerMatchAggregateState);
         this.matchAggregates.subscribe(this.onMatchesLoaded.bind(this));
+        this.secondCalls = this.store.select(getSecondCallMatchesState);
+        this.thirdCalls = this.store.select(getThirdCallMatchesState);
     }
 
     onMatchesLoaded(aggregates: MatchAggregate[]) {
         if (aggregates != null && aggregates.length > 0) {
             this.selectedItem = aggregates[0];
         }
-        if(aggregates !== null && aggregates.length === 0){
+        if (aggregates !== null && aggregates.length === 0) {
             this.selectedItem = null;
         }
     }
 
     onMatchesSelected(selectedItem: MatchAggregate) {
+        this.selectedItem = selectedItem;
         this.store.dispatch(new SetSelectedMatchAggregate(selectedItem));
     }
 
