@@ -33,7 +33,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="selectedTab" class="row" [ngClass]="typeColor[selectedTab.id]" >
+<div *ngIf="selectedTab" class="row no-scroll-overflow" [ngClass]="typeColor[selectedTab.id]" >
     <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">
         <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r=index">
             <toma-discipline-stage [stage]="currentStage"
