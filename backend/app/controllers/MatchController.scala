@@ -147,21 +147,21 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
 
   def getMatchAggregateForCaller: Action[AnyContent] = Action {
     Ok(Json.toJson(
-      mapToMatchAggregate(tables.getCallableMatches())
+      mapToMatchAggregate(tables.getCallableMatches)
         .sortBy(_.startTime))
     )
   }
 
   def getMatchAggregateForSecondCall:  Action[AnyContent] = Action {
     Ok(Json.toJson(
-      mapToMatchAggregate(tables.getSecondCallMatches())
+      mapToMatchAggregate(tables.getSecondCallMatches)
         .sortBy(_.startTime))
     )
   }
 
   def getMatchAggregateForThirdCall:  Action[AnyContent] = Action {
     Ok(Json.toJson(
-      mapToMatchAggregate(tables.getThirdCallMatches())
+      mapToMatchAggregate(tables.getThirdCallMatches)
         .sortBy(_.startTime))
     )
   }

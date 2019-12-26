@@ -265,7 +265,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     getMatchTableByState(ThirdCall)
   }
 
-  private def getMatchTableByState(matchState: MatchState) = {
+  private def getMatchTableByState(matchState: MatchState): Map[Long, Seq[(MatchTable, TTMatch)]] = {
     ttMatchTableSeq.flatMap(mt => ttMatchSeq.find(_.id == mt.matchId)
       .map(m => (mt, m)))
       .filter(_._2.state == matchState)
