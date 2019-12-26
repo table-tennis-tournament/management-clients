@@ -10,7 +10,7 @@
     <div class="col s8 m6">
         <toma-caller-match-detail
                 [typeColor]="typeColor | async"
-                [matchAggregate]="selectedItem"
+                [matchAggregate]="selectedItem | async"
                 (matchCalled)="onMatchCalled($event)">
         </toma-caller-match-detail>
     </div>
