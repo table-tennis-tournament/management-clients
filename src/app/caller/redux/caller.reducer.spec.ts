@@ -12,7 +12,10 @@ import {
 const initialState: CallerState = Object.freeze({
     referees: [],
     refereesLoading: false,
-    callerMatches: []
+    callerMatches: [],
+    selectedMatchAggregate: null,
+    secondCallMatches: [],
+    thirdCallMatches: []
 });
 
 describe('the callerState reducer', () => {

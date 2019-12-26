@@ -22,7 +22,8 @@ describe('the match effects', () => {
     let matchListService: MatchListService;
 
     const toastServiceMock: ToastrService = <ToastrService>{
-        error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null
+        error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+        info: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null
     };
 
     beforeEach(() => {
