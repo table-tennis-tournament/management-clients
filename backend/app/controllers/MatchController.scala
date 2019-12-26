@@ -25,6 +25,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
 
   import models.AnswerModel._
   import models.MatchModel._
+  import models.MatchState._
 
   def testSocket = Action {
     pub ! UpdateMatches(tables.allMatchesInfo)
@@ -289,7 +290,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
             val matchReady = !checkPlayable || m.forall(m => if (m.state == Open || m.state == InWaitingList) {
               (m.player1Ids ++ m.player2Ids).forall { p =>
                 val ml = matches.filter { ma =>
-                  (ma.state == Callable || ma.state == OnTable) && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+                  isBlocking(ma.state) && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
                 }
                 ml.isEmpty // p is not playing
               }

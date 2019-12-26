@@ -303,19 +303,25 @@ case class DisciplinMatches(
     isComplete: Boolean = false
 )
 
-sealed trait BlockingMatchState extends MatchState
 sealed trait MatchState
-case object Open extends MatchState
-case object InWaitingList extends MatchState
+sealed trait BlockingMatchState extends MatchState
+sealed trait NonblockingMatchState extends MatchState
+case object Open extends NonblockingMatchState
+case object InWaitingList extends NonblockingMatchState
 case object Callable extends BlockingMatchState
 case object OnTable extends BlockingMatchState
 case object SecondCall extends BlockingMatchState
 case object ThirdCall extends BlockingMatchState
 case object Started extends BlockingMatchState
-case object Finished extends MatchState
-case object Completed extends MatchState
+case object Finished extends NonblockingMatchState
+case object Completed extends NonblockingMatchState
 
-
+object MatchState {
+  def isBlocking(m: MatchState) = m match {
+    case _: BlockingMatchState => true
+    case _ => false
+  }
+}
 
 case class MatchTable (
   uuid: UUID,

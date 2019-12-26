@@ -26,6 +26,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
 
   import profile.api._
+  import models.MatchState._
 
   object PortableJodaSupport extends com.github.tototoshi.slick.GenericJodaSupport(dbConfigProvider.get.profile)
 
@@ -321,7 +322,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           val matchReady = m.forall(m => if (m.state == Open || m.state == InWaitingList) {
             (m.player1Ids ++ m.player2Ids).forall { p =>
               val ml = matches.filter { ma =>
-                (ma.state == Callable || ma.state == OnTable || ma.state == Started)  && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
+                isBlocking(ma.state)  && (ma.player1Ids.contains(p) || ma.player2Ids.contains(p))
               }
               ml.isEmpty // p is not playing
             }
@@ -392,7 +393,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val ids = ttMatch.player1Ids ++ ttMatch.player2Ids
     val noOpenMatchesForPlayers = !ttMatchSeq.exists(m =>
       (m.player1Ids.containsAnyOf(ids) || m.player2Ids.containsAnyOf(ids))
-        && (m.state == Callable || m.state == OnTable || m.state == Started))
+        && isBlocking(m.state))
     noOpenMatchesForPlayers && ttMatch.team2Id != 0 && ttMatch.team1Id != 0
   }
 
