@@ -2,14 +2,18 @@ package controllers
 
 import dao.Tables
 import javax.inject.Inject
+import models.Answer
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+
+import scala.concurrent.ExecutionContext
 
 /**
   * Created by jonas on 09.10.16.
   */
-class PlayerController @Inject() (tables: Tables,val controllerComponents: ControllerComponents) extends BaseController{
+class PlayerController @Inject() (implicit ec: ExecutionContext, tables: Tables,val controllerComponents: ControllerComponents) extends BaseController{
   import models.PlayerModel._
+  import models.AnswerModel._
 
   def getAllPlayer: Action[AnyContent] = Action {
     Ok(Json.toJson(tables.allPlayer))
@@ -27,4 +31,14 @@ class PlayerController @Inject() (tables: Tables,val controllerComponents: Contr
     Ok(Json.toJson(tables.getPlayer(id)))
   }
 
+
+  def getAllTypePerPlayer = Action {
+    Ok(Json.toJson(tables.allTypePerPlayer))
+  }
+
+  def setPayed(id: Long, paid: Boolean) = Action.async{
+    tables.setPaid(id, paid) map { result =>
+      Ok(Json.toJson(Answer(true, result.toString)))
+    }
+  }
 }

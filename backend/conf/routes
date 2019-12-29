@@ -7,6 +7,8 @@ GET     /                                   controllers.Application.index
 
 # PlayerController
 GET     /api/players/all                     controllers.PlayerController.getAllPlayer
+GET     /api/players/allTypePerPlayer        controllers.PlayerController.getAllTypePerPlayer
+GET     /api/players/setPayed/:id/:paid     controllers.PlayerController.setPayed(id: Long, paid: Boolean)
 GET     /api/players/:id                     controllers.PlayerController.getPlayer(id: Long)
 GET     /api/players/type/:typeId            controllers.PlayerController.getPlayesByType(typeId: Long)
 GET     /api/players/:id/:active             controllers.PlayerController.setPlayerActiveState(id: Long, active: Boolean)

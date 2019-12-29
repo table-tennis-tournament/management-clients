@@ -1,5 +1,6 @@
 package dao
 
+import java.sql.Timestamp
 import java.util.UUID
 
 import actors.PrinterActor.Print
@@ -45,6 +46,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   private val clubs = TableQuery[ClubTable]
   private val doubles = TableQuery[DoubleTable]
   private val playerPerGroup = TableQuery[PlayerPerGroupTable]
+  private val typePerPlayer = TableQuery[TypePerPlayerTable]
   private val matchTable = TableQuery[TTMatchTable]
 
   var ttTablesSeq = Seq.empty[TTTable]
@@ -57,6 +59,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   var ttDoublesSeq = Seq.empty[Double]
   var ttMatchListSeq = Seq.empty[MatchList]
   var ttMatchTableSeq = Seq.empty[MatchTable]
+  var ttTypePerPlayer = Seq.empty[TypePerPlayer]
 
   class ContainsAnyOf[T](seq: Seq[T]) {
     def containsAnyOf(xs: Seq[T]): Boolean = seq.exists(xs.contains(_))
@@ -596,7 +599,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     dbConfigProvider.get.db.run(player.result) map { ap =>
       val x = ap map { p => getPlayerFromPlayerDAO(p)}
       ttPlayerSeq = x
-      Logger.debug("read Players: " + ttPlayerSeq.size.toString)
+      Logger.info("read Players: " + ttPlayerSeq.size.toString)
       true
     }
   }
@@ -952,22 +955,67 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateMatchTableSeq = {
     dbConfigProvider.get.db.run(matchTable.result) map {gList =>
       ttMatchTableSeq = gList
-      Logger.debug("read MatchTable: " + ttMatchTableSeq.size.toString)
+      Logger.info("read MatchTable: " + ttMatchTableSeq.size.toString)
       true
     }
   }
 
+
+  class TypePerPlayerTable(tag: Tag) extends Table[TypePerPlayer](tag, "typeperplayer") {
+    def id = column[Long]("typl_id", O.PrimaryKey, O.AutoInc)
+    def playerId = column[Long]("typl_play_id")
+    def typeId = column[Long]("typl_type_id")
+    def seed = column[Long]("typl_seed")
+    def paid = column[Boolean]("typl_paid")
+    def timestamp = column[Timestamp]("typl_timestamp")
+    def cashId = column[Long]("typl_Cash_ID")
+    def externalId = column[String]("Typl_ExternalID")
+
+    def * = (id, playerId, typeId, seed, paid, timestamp, cashId, externalId) <> (TypePerPlayer.tupled, TypePerPlayer.unapply)
+  }
+
+  def loadTypePerPlayer = {
+    Logger.info("loadTypePerPlayer")
+    dbConfigProvider.get.db.run(typePerPlayer.result) map {tpp =>
+      Logger.info("tpp")
+      Logger.info("tpp" + tpp.size.toString())
+      ttTypePerPlayer = tpp
+      true
+    }
+  }
+
+  def setPaid(typePerPlayerId: Long, value: Boolean) = {
+    val q = for { c <- typePerPlayer if c.id === typePerPlayerId } yield c.paid
+    dbConfigProvider.get.db.run(q.update(value))
+  }
+
+  def allTypePerPlayer = {
+    val tppOut = ttTypePerPlayer map { tpp =>
+      TypePerPlayerOut(tpp.id, ttPlayerSeq.find(_.id == tpp.playerId).get, ttTypeSeq.find(_.id == tpp.typeId).get, tpp.paid)
+    }
+    tppOut.groupBy(_.ttType.id)
+  }
+
   def loadAllFromDB: Future[Boolean] = {
+    Logger.info("loadAllFromDB")
+    loadTypePerPlayer.map(x =>Logger.info("tpp: " + x.toString))
     updateMatchTableSeq flatMap { mt =>
       updateTTTables flatMap { t =>
         loadNewMatches() flatMap { n =>
           updateDoublesSeq flatMap { b =>
             updateClubList flatMap { d =>
               updateMatchTypeList flatMap { e =>
+                Logger.info("e: " + e.toString)
                 updateTypesList flatMap { f =>
+                  Logger.info("f: " + f.toString)
                   updateGroupsSeq flatMap { g =>
-                    updatePlayerList map { i =>
-                      mt && t && n && b && d && e && f && g && i
+                    Logger.info("gi: " + g.toString)
+                    updatePlayerList flatMap { i =>
+                      Logger.info("i: " + i.toString)
+                      loadTypePerPlayer map { tpp =>
+                        Logger.info("info tpp " + tpp.toString)
+                        mt && t && n && b && d && e && f && g && i && tpp
+                      }
                     }
                   }
                 }
@@ -978,4 +1026,5 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       }
     }
   }
+
 }

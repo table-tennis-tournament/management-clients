@@ -1,5 +1,7 @@
 package models
 
+import java.sql.Timestamp
+
 import play.api.libs.json._
 
 /**
@@ -48,6 +50,13 @@ object PlayerModel {
     "last_name" -> player.lastName,
     "club" -> player.club,
     "call_count" -> player.callCount
+  )
+
+  implicit val typePerPlayerOutWrites: Writes[TypePerPlayerOut] = (tpp: TypePerPlayerOut) => Json.obj(
+    "id" -> tpp.id,
+    "player" -> tpp.player,
+    "type" -> tpp.ttType,
+    "ttr" -> tpp.paid
   )
 }
 
@@ -107,4 +116,22 @@ case class PlayerPerGroup(
   points: String,
   checked: Boolean,   // all matches played
   setsDiff: Long
+)
+
+case class TypePerPlayer (
+   id: Long,
+   playerId: Long,
+   typeId: Long,
+   seed: Long,
+   paid: Boolean,
+   timestamp: Timestamp,
+   cashId: Long,
+   externalId: String
+)
+
+case class TypePerPlayerOut (
+                              id: Long,
+                              player:Player,
+                              ttType: Type,
+                              paid: Boolean
 )
