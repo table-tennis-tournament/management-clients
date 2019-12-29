@@ -62,6 +62,7 @@ import {MatchlistSingleItemComponent} from './supervisor/matchlist-view/matchlis
 import {ResultEffects} from './result/redux/result.effects';
 import {PlayerCallsComponent} from './caller/player-calls/player-calls.component';
 import {SharedModule} from './shared/shared.module';
+import {PlayerModule} from './player/player.module';
 
 @NgModule({
     declarations: [
@@ -109,6 +110,7 @@ import {SharedModule} from './shared/shared.module';
         SharedModule,
         AppRoutingModule,
         DragDropModule,
+        PlayerModule,
         ZXingScannerModule.forRoot(),
         ToastrModule.forRoot({
             timeOut: 5000,

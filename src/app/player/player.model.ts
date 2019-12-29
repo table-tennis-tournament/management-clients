@@ -9,4 +9,5 @@ export interface Player {
     club?: Club;
     hasMatches?: boolean;
     types?: number[];
+    isActive: boolean;
 }

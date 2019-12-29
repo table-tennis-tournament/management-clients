@@ -29,7 +29,7 @@ export class LoadPlayersError implements Action {
 }
 
 
-export type TableActionsUnion =
+export type PlayerActionsUnion =
     | LoadPlayers
     | LoadPlayersSuccess
     | LoadPlayersError;

@@ -1,3 +1,4 @@
-<p>
-  player.page works!
-</p>
+<toma-player-list
+        [players]="players | async"
+        [playersLoading]="playersLoading | async"
+></toma-player-list>

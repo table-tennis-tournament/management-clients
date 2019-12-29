@@ -1,8 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TableDto} from '../tabledto.model';
 import {MatchToTable} from './tt-table/tt-table-content/matchtotable.model';
-import {CdkDragDrop} from '@angular/cdk/typings/esm5/drag-drop';
-import {Match} from '../../shared/data/match.model';
 
 @Component({
     selector: 'toma-table-list',

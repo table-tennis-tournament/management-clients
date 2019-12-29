@@ -1,0 +1,37 @@
+<div class="row">
+
+</div>
+<div class="row">
+    <mz-spinner *ngIf="playersLoading"></mz-spinner>
+    <table class="highlight centered striped">
+        <thead>
+        <tr>
+            <th>Nr</th>
+            <th>Vorname</th>
+            <th>Nachname</th>
+            <th>Verein</th>
+            <th>Bezahlt</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let currentPlayer of players; let i = index;">
+            <td>{{i}}</td>
+            <td>
+                {{currentPlayer.firstName}}
+            </td>
+            <td>
+                {{currentPlayer.lastName}}
+            </td>
+            <td>
+                {{currentPlayer.club.clubName}}
+            </td>
+            <td>
+                <input name="inputPlayer{{currentPlayer.id}}"
+                       type="checkbox"
+                       id="inputPlayer{{currentPlayer.id}}"
+                       [(ngModel)]="currentPlayer.isActive"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

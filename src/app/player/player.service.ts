@@ -1,15 +1,16 @@
 import {Injectable} from '@angular/core';
-import {TableDto} from '../table/tabledto.model';
+import {Player} from './player.model';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PlayerService {
 
-    constructor() {
+  constructor(private http: HttpClient) {
     }
 
     getAllPlayers() {
-        return this.http.get<TableDto[]>('api/player/all');
+      return this.http.get<Player[]>('/api/players/all');
     }
 }
