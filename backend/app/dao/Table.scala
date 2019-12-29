@@ -1,6 +1,5 @@
 package dao
 
-import java.sql.Timestamp
 import java.util.UUID
 
 import actors.PrinterActor.Print
@@ -993,9 +992,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def typeId = column[Long]("typl_type_id")
     def seed = column[Long]("typl_seed")
     def paid = column[Boolean]("typl_paid")
-    def timestamp = column[Timestamp]("typl_timestamp")
+    def timestamp = column[String]("typl_timestamp")
     def cashId = column[Long]("typl_Cash_ID")
-    def externalId = column[String]("Typl_ExternalID")
+    def externalId = column[Option[String]]("Typl_ExternalID")
 
     def * = (id, playerId, typeId, seed, paid, timestamp, cashId, externalId) <> (TypePerPlayer.tupled, TypePerPlayer.unapply)
   }
@@ -1031,15 +1030,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           updateDoublesSeq flatMap { b =>
             updateClubList flatMap { d =>
               updateMatchTypeList flatMap { e =>
-                Logger.info("e: " + e.toString)
                 updateTypesList flatMap { f =>
-                  Logger.info("f: " + f.toString)
                   updateGroupsSeq flatMap { g =>
-                    Logger.info("gi: " + g.toString)
                     updatePlayerList flatMap { i =>
-                      Logger.info("i: " + i.toString)
                       loadTypePerPlayer map { tpp =>
-                        Logger.info("info tpp " + tpp.toString)
                         mt && t && n && b && d && e && f && g && i && tpp
                       }
                     }

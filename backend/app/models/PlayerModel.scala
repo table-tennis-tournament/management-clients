@@ -124,9 +124,9 @@ case class TypePerPlayer (
    typeId: Long,
    seed: Long,
    paid: Boolean,
-   timestamp: Timestamp,
+   timestamp: String,
    cashId: Long,
-   externalId: String
+   externalId: Option[String]
 )
 
 case class TypePerPlayerOut (

@@ -41,4 +41,10 @@ class PlayerController @Inject() (implicit ec: ExecutionContext, tables: Tables,
       Ok(Json.toJson(Answer(true, result.toString)))
     }
   }
+
+  def load = Action.async{
+    tables.loadTypePerPlayer map {result =>
+      Ok(result.toString)
+    }
+  }
 }
