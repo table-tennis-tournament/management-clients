@@ -1,23 +1,9 @@
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {
-    MzButtonModule,
-    MzCheckboxModule,
-    MzCollapsibleModule,
-    MzCollectionModule,
-    MzInputModule,
-    MzModalModule,
-    MzSelectModule,
-    MzSidenavModule,
-    MzSpinnerModule,
-    MzTabModule
-} from 'ngx-materialize';
 import {ToastrModule} from 'ngx-toastr';
 import {environment} from '../environments/environment';
 
@@ -34,7 +20,6 @@ import {TtTableContentComponent} from './table/table-list/tt-table/tt-table-cont
 import {TtTableMatchItemComponent} from './table/table-list/tt-table/tt-table-match-item/tt-table-match-item.component';
 import {TtPlayerNameReducerPipe} from './table/pipes/tt-player-name-reducer.pipe';
 import {ResultModalComponent} from './table/table-list/result-modal/result-modal.component';
-import {FormsModule} from '@angular/forms';
 import {TtMatchDisciplinePipe} from './table/pipes/tt-match-discipline.pipe';
 import {SelectMatchModalComponent} from './table/table-list/select-match-modal/select-match-modal.component';
 import {ShowMatchModalComponent} from './table/table-list/show-match-modal/show-match-modal.component';
@@ -75,7 +60,8 @@ import {ZXingScannerModule} from '@zxing/ngx-scanner';
 import {MatchlistGroupItemComponent} from './supervisor/matchlist-view/matchlist-group-item/matchlist-group-item.component';
 import {MatchlistSingleItemComponent} from './supervisor/matchlist-view/matchlist-single-item/matchlist-single-item.component';
 import {ResultEffects} from './result/redux/result.effects';
-import { PlayerCallsComponent } from './caller/player-calls/player-calls.component';
+import {PlayerCallsComponent} from './caller/player-calls/player-calls.component';
+import {SharedModule} from './shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -120,21 +106,9 @@ import { PlayerCallsComponent } from './caller/player-calls/player-calls.compone
         PlayerCallsComponent
     ],
     imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
+        SharedModule,
         AppRoutingModule,
-        MzButtonModule,
-        MzSpinnerModule,
-        MzInputModule,
-        MzModalModule,
-        MzCheckboxModule,
-        MzSidenavModule,
-        MzSelectModule,
-        MzCollectionModule,
-        MzCollapsibleModule,
-        MzTabModule,
         DragDropModule,
-        FormsModule,
         ZXingScannerModule.forRoot(),
         ToastrModule.forRoot({
             timeOut: 5000,
