@@ -131,7 +131,7 @@ case class TypePerPlayer (
 
 case class TypePerPlayerOut (
                               id: Long,
-                              player:Player,
-                              ttType: Type,
+                              player: Option[Player],
+                              ttType: Option[Type],
                               paid: Boolean
 )
