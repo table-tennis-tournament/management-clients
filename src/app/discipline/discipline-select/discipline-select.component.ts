@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Discipline} from '../../discipline/discipline.model';
+import {Discipline} from '../discipline.model';
 
 @Component({
     selector: 'toma-discipline-select',
@@ -34,6 +34,9 @@ export class DisciplineSelectComponent {
         return this._showWaitingList;
     }
 
+    @Input()
+    showAll = false;
+
     @Output()
     disciplineChanged = new EventEmitter<number>();
 
@@ -44,7 +47,10 @@ export class DisciplineSelectComponent {
     }
 
     private refreshSelectBox() {
-        const disciplines = this.disciplines.filter(discipline => discipline.active);
+        let disciplines = this._disciplines;
+        if (!this.showAll) {
+            disciplines = this.disciplines.filter(discipline => discipline.active);
+        }
         const result = [];
         if (this.showWaitingList) {
             result.push({
