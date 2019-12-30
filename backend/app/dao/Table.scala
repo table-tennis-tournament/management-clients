@@ -1019,8 +1019,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       TypePerPlayerOut(tpp.id, ttPlayerSeq.find(_.id == tpp.playerId), ttTypeSeq.find(_.id == tpp.typeId), tpp.paid)
     }
     tppOut
-      .filter(tp => tp.ttType.getOrElse(Type(0, "", 2, active = false)).kind == 1)
-      .sortBy(_.player.getOrElse(Player(0, "", "", Option.empty, "", Option.empty, hasMatches = false, List())).lastName)
+      .filter(_.ttType match {case Some(t) => t.kind != 2 && !t.active; case None => false})
+      .sortBy(_.player match {case Some(p) => p.lastName; case None => ""})
   }
 
   def loadAllFromDB: Future[Boolean] = {
