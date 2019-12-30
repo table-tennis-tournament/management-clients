@@ -24,7 +24,7 @@ export class PlayerListComponent {
     }
 
     private _disciplines: Discipline[];
-    private filteredDisciplines: Discipline[];
+    filteredDisciplines: Discipline[];
 
     get disciplines(): Discipline[] {
         return this._players;

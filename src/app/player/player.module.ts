@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {PlayerPageComponent} from './player.page.component';
-import {PlayerItemComponent} from './player-list/player-item/player-item.component';
 import {SharedModule} from '../shared/shared.module';
 import {PlayerListComponent} from './player-list/player-list.component';
 import {StoreModule} from '@ngrx/store';
@@ -12,7 +11,6 @@ import {DisciplineModule} from '../discipline/discipline.module';
 @NgModule({
     declarations: [
         PlayerPageComponent,
-        PlayerItemComponent,
         PlayerListComponent
     ],
     imports: [
