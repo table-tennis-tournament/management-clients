@@ -1,5 +1,7 @@
-import {Component, Input} from '@angular/core';
-import {Player} from '../player.model';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Player} from '../data/player.model';
+import {PlayerType} from '../data/player.type.model';
+import {Discipline} from '../../discipline/discipline.model';
 
 @Component({
     selector: 'toma-player-list',
@@ -8,22 +10,39 @@ import {Player} from '../player.model';
 })
 export class PlayerListComponent {
 
-    _players: Player[];
-
-    get players(): Player[] {
+    private _players: PlayerType[];
+    get players(): PlayerType[] {
         return this._players;
     }
 
+    values: boolean[];
+
     @Input('players')
-    set players(players: Player[]) {
+    set players(players: PlayerType[]) {
         this._players = players;
         this.filteredPlayers = players;
     }
 
-    filteredPlayers: Player[];
+    private _disciplines: Discipline[];
+    private filteredDisciplines: Discipline[];
+
+    get disciplines(): Discipline[] {
+        return this._players;
+    }
+
+    @Input('disciplines')
+    set disciplines(disciplines: Discipline[]) {
+        this._disciplines = disciplines;
+        this.filteredDisciplines = disciplines.filter(dis => dis.kind === 1);
+    }
 
     @Input()
     playersLoading: boolean;
+
+    @Output()
+    playerChanged: EventEmitter<PlayerType> = new EventEmitter<PlayerType>();
+
+    filteredPlayers: PlayerType[];
 
     firstNameInput: string;
     clubInput: string;
@@ -32,13 +51,13 @@ export class PlayerListComponent {
     constructor() {
     }
 
-    filterPlayers(value: string, callback: (player: Player) => string) {
+    filterPlayers(value: string, callback: (player: PlayerType) => string) {
         this.filteredPlayers = this.players
             .filter(player => this.containsValue(callback(player), value));
     }
 
     filterByFirstName(value: string) {
-        this.filterPlayers(value, p => p.firstName);
+        this.filterPlayers(value, p => p.player.firstName);
     }
 
     private containsValue(value: string, input: string) {
@@ -46,10 +65,28 @@ export class PlayerListComponent {
     }
 
     filterByLastName(value: string) {
-        this.filterPlayers(value, p => p.lastName);
+        this.filterPlayers(value, p => p.player.lastName);
     }
 
     filterByClub(value: string) {
-        this.filterPlayers(value, p => p.club.clubName);
+        this.filterPlayers(value, p => p.player.club.clubName);
+    }
+
+    onDisciplineChanged($event: number) {
+        if ($event < 1) {
+            this.filteredPlayers = this.players;
+            return;
+        }
+        this.filteredPlayers = this.players.filter(pl => pl.type.id === $event);
+    }
+
+    getPaidPlayersCount() {
+        return this.filteredPlayers.filter(pl => pl.paid).length;
+    }
+
+    onChange(currentPlayerType: PlayerType) {
+        const newPlayer: PlayerType = Object.assign({}, currentPlayerType);
+        newPlayer.paid = !currentPlayerType.paid;
+        this.playerChanged.emit(newPlayer);
     }
 }

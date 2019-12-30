@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Player} from '../../player.model';
+import {Player} from '../../data/player.model';
 
 @Component({
     selector: 'toma-player-item',

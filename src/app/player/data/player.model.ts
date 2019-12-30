@@ -1,4 +1,4 @@
-import {Club} from '../shared/data/club.model';
+import {Club} from '../../shared/data/club.model';
 
 export interface Player {
     id?: number;
@@ -9,5 +9,4 @@ export interface Player {
     club?: Club;
     hasMatches?: boolean;
     types?: number[];
-    isActive: boolean;
 }

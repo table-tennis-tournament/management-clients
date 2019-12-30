@@ -26,7 +26,6 @@ import {ShowMatchModalComponent} from './table/table-list/show-match-modal/show-
 import {SelectTableModalComponent} from './table/table-list/select-table-modal/select-table-modal.component';
 import {AssignMatchPageComponent} from './assign/assign-match.page.component';
 import {DisciplineMatchListComponent} from './assign/discipline-match-list/discipline-match-list.component';
-import {DisciplineSelectComponent} from './discipline/discipline-select/discipline-select.component';
 import {DisciplineTypePipe} from './assign/pipes/discipline-type.pipe';
 import {MatchEffects} from './assign/redux/match.effects';
 import {SupervisorPageComponent} from './supervisor/supervisor.page.component';
@@ -63,6 +62,7 @@ import {ResultEffects} from './result/redux/result.effects';
 import {PlayerCallsComponent} from './caller/player-calls/player-calls.component';
 import {SharedModule} from './shared/shared.module';
 import {PlayerModule} from './player/player.module';
+import {DisciplineModule} from './discipline/discipline.module';
 
 @NgModule({
     declarations: [
@@ -81,7 +81,6 @@ import {PlayerModule} from './player/player.module';
         SelectTableModalComponent,
         AssignMatchPageComponent,
         DisciplineMatchListComponent,
-        DisciplineSelectComponent,
         DisciplineTypePipe,
         SupervisorPageComponent,
         DisciplineViewComponent,
@@ -111,6 +110,7 @@ import {PlayerModule} from './player/player.module';
         AppRoutingModule,
         DragDropModule,
         PlayerModule,
+        DisciplineModule,
         ZXingScannerModule.forRoot(),
         ToastrModule.forRoot({
             timeOut: 5000,

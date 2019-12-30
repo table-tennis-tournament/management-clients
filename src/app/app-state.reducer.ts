@@ -17,7 +17,6 @@ export interface State {
     table: fromTables.TableState;
     matches: fromMatches.MatchesState;
     matchList: fromMatchList.MatchListState;
-    disciplines: fromDisciplines.DisciplineState;
     settings: fromSettings.SettingsState;
     websocket: fromWebSocket.WebSocketState;
     caller: fromCaller.CallerState;
@@ -29,7 +28,6 @@ export const reducers: ActionReducerMap<State> = {
     router: fromRouter.routerReducer,
     matches: fromMatches.reduceMatchState,
     matchList: fromMatchList.reduceMatchListState,
-    disciplines: fromDisciplines.reduceDisciplineState,
     settings: fromSettings.reduceSettingsState,
     websocket: fromWebSocket.reduceWebsocketState,
     caller: fromCaller.reduceCallerState,
@@ -51,9 +49,6 @@ export const getMatchListLoading = createSelector((state: State) => state.matchL
 
 export const getResultMatchesState = createSelector((state: State) => state.result, fromResult.getResultMatches);
 export const getResultMatchesLoading = createSelector((state: State) => state.result, fromResult.getResultMatchesLoading);
-
-export const getDisciplineState = createSelector((state: State) => state.disciplines, fromDisciplines.getDisciplines);
-export const getDisciplineLoading = createSelector((state: State) => state.disciplines, fromDisciplines.getDisciplinesLoading);
 
 export const getSettingsState = createSelector((state: State) => state.settings, fromSettings.getSettings);
 export const getSettingsLoading = createSelector((state: State) => state.settings, fromSettings.getSettingsLoading);

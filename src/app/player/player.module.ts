@@ -7,6 +7,7 @@ import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {PlayerEffects} from './redux/player.effects';
 import * as fromPlayers from './redux/index';
+import {DisciplineModule} from '../discipline/discipline.module';
 
 @NgModule({
     declarations: [
@@ -16,6 +17,7 @@ import * as fromPlayers from './redux/index';
     ],
     imports: [
         SharedModule,
+        DisciplineModule,
         StoreModule.forFeature('players', fromPlayers.reducers),
         EffectsModule.forFeature([PlayerEffects])
     ],

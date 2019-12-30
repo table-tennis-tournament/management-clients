@@ -1,6 +1,6 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getDisciplineLoading, getDisciplineState, getResultMatchesLoading, getResultMatchesState} from '../app-state.reducer';
+import {getResultMatchesLoading, getResultMatchesState} from '../app-state.reducer';
 import {Observable} from 'rxjs';
 import {Match} from '../shared/data/match.model';
 import {Discipline} from '../discipline/discipline.model';
@@ -8,6 +8,7 @@ import {ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {MzModalService} from 'ngx-materialize';
 import {LoadResults} from './redux/result.actions';
+import {getDisciplineLoading, getDisciplineState} from '../discipline/redux';
 
 @Component({
     selector: 'toma-result-list-page',

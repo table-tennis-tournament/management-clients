@@ -1,6 +1,6 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getDisciplineState, getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
+import {getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
 import {Match} from '../shared/data/match.model';
 import {Observable} from 'rxjs';
 import {MatchList} from './matchlist.model';
@@ -11,6 +11,7 @@ import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem
 import {MzModalService} from 'ngx-materialize';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {ResultForMatch} from '../table/redux/table.actions';
+import {getDisciplineState} from '../discipline/redux';
 
 @Component({
     selector: 'toma-supervisor.page',

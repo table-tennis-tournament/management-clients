@@ -1,8 +1,8 @@
 import {PlayerActionsUnion, PlayerActionTypes} from './player.actions';
-import {Player} from '../player.model';
+import {PlayerType} from '../data/player.type.model';
 
 export interface PlayerState {
-    players: Player[];
+    players: PlayerType[];
     playersLoading: boolean;
 }
 
@@ -23,6 +23,16 @@ export function reducePlayerState(state: PlayerState = initialState, action: Pla
                 ...state,
                 playersLoading: false,
                 players: action.payload
+            };
+        case PlayerActionTypes.SetPaidSuccess:
+            return {
+                ...state,
+                players: state.players.map(player => {
+                    if (player.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return player;
+                })
             };
         default:
             return state;

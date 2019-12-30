@@ -1,10 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Player} from './player.model';
+import {Player} from './data/player.model';
 import {Store} from '@ngrx/store';
-import {LoadPlayers} from './redux/player.actions';
+import {LoadPlayers, SetPlayerPaid} from './redux/player.actions';
 import {getPlayersLoading} from './redux/player.reducer';
 import {getAllPlayersState} from './redux';
+import {PlayerType} from './data/player.type.model';
+import {getDisciplineState} from '../discipline/redux';
+import {Discipline} from '../discipline/discipline.model';
 
 @Component({
     selector: 'toma-player-page',
@@ -13,22 +16,21 @@ import {getAllPlayersState} from './redux';
 })
 export class PlayerPageComponent implements OnInit {
 
-    players: Observable<Player[]>;
+    players: Observable<PlayerType[]>;
     playersLoading: Observable<boolean>;
+    disciplines: Observable<Discipline[]>;
 
     constructor(private store: Store<any>) {
     }
 
     ngOnInit() {
         this.store.dispatch(new LoadPlayers(null));
+        this.disciplines = this.store.select(getDisciplineState);
         this.players = this.store.select(getAllPlayersState);
         this.playersLoading = this.store.select(getPlayersLoading);
-        this.players.subscribe(this.onPlayersLoaded.bind(this));
     }
 
-    onPlayersLoaded(event) {
-        console.log('test');
-        console.log(event);
+    onPlayerChanged(playerType: PlayerType) {
+        this.store.dispatch(new SetPlayerPaid(playerType));
     }
-
 }
