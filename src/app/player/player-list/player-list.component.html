@@ -64,7 +64,7 @@
                 <input name="inputPlayer{{currentPlayerType.id}}"
                        type="checkbox"
                        id="inputPlayer{{currentPlayerType.id}}"
-                       (change)="onChange(currentPlayerType, currentPlayerType.paid)"
+                       (change)="onChange(currentPlayerType)"
                        [(ngModel)]="currentPlayerType.paid"/>
                 <label for="inputPlayer{{currentPlayerType.id}}"></label>
             </td>
