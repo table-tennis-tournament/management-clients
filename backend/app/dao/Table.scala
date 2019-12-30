@@ -1018,7 +1018,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val tppOut = ttTypePerPlayer map { tpp =>
       TypePerPlayerOut(tpp.id, ttPlayerSeq.find(_.id == tpp.playerId), ttTypeSeq.find(_.id == tpp.typeId), tpp.paid)
     }
-    tppOut.filter(_.ttType match {case Some(t) => t.kind != 2 case None => false}).groupBy(_.ttType match {case Some(t) => t.id; case _ => Long.MaxValue})
+    tppOut.filter(_.ttType match {case Some(t) => t.kind != 2 && !t.active; case None => false}).groupBy(_.ttType match {case Some(t) => t.id; case _ => Long.MaxValue})
   }
 
   def loadAllFromDB: Future[Boolean] = {
