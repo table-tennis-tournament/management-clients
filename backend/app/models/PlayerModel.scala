@@ -56,7 +56,7 @@ object PlayerModel {
     "id" -> tpp.id,
     "player" -> tpp.player,
     "type" -> tpp.ttType,
-    "ttr" -> tpp.paid
+    "paid" -> tpp.paid
   )
 }
 
