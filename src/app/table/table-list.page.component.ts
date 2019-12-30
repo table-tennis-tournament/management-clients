@@ -93,7 +93,7 @@ export class TableListPageComponent implements OnInit {
     onFreeTablesLoaded(selectedMatchIds, tables: TableDto[]) {
         if (this.freeTablesAvailable(tables)) {
             const dialog: ComponentRef<SelectTableModalComponent> =
-                <ComponentRef<SelectTableModalComponent>> this.modalService.open(SelectTableModalComponent);
+                <ComponentRef<SelectTableModalComponent>>this.modalService.open(SelectTableModalComponent);
             dialog.instance.tables = tables;
             dialog.instance.OnTableSelected.subscribe(tableNumber =>
                 this.store.dispatch(new AssignToSecondTable({tableNr: tableNumber, matchIds: selectedMatchIds})));
@@ -105,7 +105,7 @@ export class TableListPageComponent implements OnInit {
     onResultForTable(table: TableDto) {
         if (this.isSingleMatch(table)) {
             const dialog: ComponentRef<ResultModalComponent> =
-                <ComponentRef<ResultModalComponent>> this.modalService.open(ResultModalComponent);
+                <ComponentRef<ResultModalComponent>>this.modalService.open(ResultModalComponent);
             dialog.instance.currentMatch = table.matches[0];
             dialog.instance.OnResultForMatch.subscribe(match => this.store.dispatch(new ResultForMatch(match)));
             return;
@@ -131,7 +131,7 @@ export class TableListPageComponent implements OnInit {
 
     private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
         const dialog: ComponentRef<SelectMatchModalComponent> =
-            <ComponentRef<SelectMatchModalComponent>> this.modalService.open(SelectMatchModalComponent);
+            <ComponentRef<SelectMatchModalComponent>>this.modalService.open(SelectMatchModalComponent);
         dialog.instance.matches = table.matches;
         dialog.instance.OnMatchesSelected.subscribe(onMatchSelectedAction);
     }

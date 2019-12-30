@@ -10,28 +10,76 @@ export enum CallerActionTypes {
     LoadReferees = '[Referees] Load',
     LoadRefereesSuccess = '[Referees] Load Success',
     LoadRefereesError = '[Referees] Load Error',
+    LoadSecondCallMatches = '[SecondCall] Load',
+    LoadSecondCallMatchesSuccess = '[SecondCall] Load Success',
+    LoadSecondCallMatchesError = '[SecondCall] Load Error',
+    LoadThirdCallMatches = '[ThirdCall] Load',
+    LoadThirdCallMatchesSuccess = '[ThirdCall] Load Success',
+    LoadThirdCallMatchesError = '[ThirdCall] Load Error',
     CallMatch = '[CallMatch]',
     CallMatchSuccess = '[CallMatch] Success',
     CallMatchError = '[CallMatch] Error',
     SetSelectedMatchAggregate = '[CallMatch] Set Selected Match'
 }
 
-export class Load implements Action {
+export class LoadCallerMatches implements Action {
     readonly type = CallerActionTypes.Load;
 
     constructor() {
     }
 }
 
-export class LoadSuccess implements Action {
+export class LoadCallerMatchesSuccess implements Action {
     readonly type = CallerActionTypes.LoadSuccess;
 
     constructor(public payload: MatchAggregate[]) {
     }
 }
 
-export class LoadError implements Action {
+export class LoadCallerMatchesError implements Action {
     readonly type = CallerActionTypes.LoadError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class LoadSecondCallMatches implements Action {
+    readonly type = CallerActionTypes.LoadSecondCallMatches;
+
+    constructor() {
+    }
+}
+
+export class LoadSecondCallMatchesSuccess implements Action {
+    readonly type = CallerActionTypes.LoadSecondCallMatchesSuccess;
+
+    constructor(public payload: MatchAggregate[]) {
+    }
+}
+
+export class LoadSecondCallMatchesError implements Action {
+    readonly type = CallerActionTypes.LoadSecondCallMatchesError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class LoadThirdCallMatches implements Action {
+    readonly type = CallerActionTypes.LoadThirdCallMatches;
+
+    constructor() {
+    }
+}
+
+export class LoadThirdCallMatchesSuccess implements Action {
+    readonly type = CallerActionTypes.LoadThirdCallMatchesSuccess;
+
+    constructor(public payload: MatchAggregate[]) {
+    }
+}
+
+export class LoadThirdCallMatchesError implements Action {
+    readonly type = CallerActionTypes.LoadThirdCallMatchesError;
 
     constructor(public payload: any) {
     }
@@ -87,13 +135,19 @@ export class SetSelectedMatchAggregate implements Action {
 }
 
 export type CallerActionUnion =
-    | Load
-    | LoadSuccess
-    | LoadError
+    | LoadCallerMatches
+    | LoadCallerMatchesSuccess
+    | LoadCallerMatchesError
     | LoadRefereesList
     | LoadRefereesListSuccess
     | LoadRefereesListError
     | CallMatch
     | CallMatchSuccess
     | CallMatchError
+    | LoadSecondCallMatches
+    | LoadSecondCallMatchesSuccess
+    | LoadSecondCallMatchesError
+    | LoadThirdCallMatches
+    | LoadThirdCallMatchesSuccess
+    | LoadThirdCallMatchesError
     | SetSelectedMatchAggregate;

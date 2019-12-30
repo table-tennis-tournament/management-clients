@@ -92,7 +92,7 @@ export class TableEffects {
             return this.matchService
                 .freeMatches(action.payload.matchIds).pipe(
                     map(() => {
-                        this.toastService.success(`SpielNr. ${action.payload.matchIds} zurück genommen`);
+                        this.toastService.success(`SpielNr. ${action.payload.matchIds} frei gemacht`);
                         return new FreeTableSuccess(action.payload);
                     }),
                     catchError(err => {

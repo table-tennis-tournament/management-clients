@@ -14,9 +14,7 @@ import * as deepEqual from 'deep-equal';
 })
 export class DisciplineViewComponent {
 
-    currentTabId: number;
     tabs: DisciplineTab[];
-
     selectedTab: DisciplineTab;
 
     showAllMatches = false;
@@ -25,6 +23,7 @@ export class DisciplineViewComponent {
     stopRefresh = false;
 
     private _matches: Match [];
+    private _selectedDiscipline: number;
 
     @Input()
     set matches(value: Match[]) {
@@ -32,7 +31,7 @@ export class DisciplineViewComponent {
         if (this.stopRefresh) {
             return;
         }
-        this.setTabForId(this.currentTabId);
+        this.setTabForId(this.selectedDiscipline);
     }
 
     get matches() {
@@ -50,12 +49,32 @@ export class DisciplineViewComponent {
 
     @Input('disciplines')
     set disciplines(value: Discipline[]) {
-        this._disciplines = value;
-        this.tabs = this.disciplineTabService.getTabsForDisciplines(this.disciplines.filter(discipline => discipline.active));
-        if (this.tabs && this.tabs.length > 0) {
-            const firstTabDisciplineId = this.tabs[0].id;
-            this.setTabForId(firstTabDisciplineId);
+        this._disciplines = value.filter(discipline => discipline.active);
+        this.tabs = this.disciplineTabService.getTabsForDisciplines(this._disciplines);
+        if (this.selectedDiscipline < 1) {
+            this.selectDiscipline.emit(this.tabs[0].id);
         }
+        // if (this.tabs && this.tabs.length > 0) {
+        //     let selectedTabId = this.tabs[0].id;
+        //     if (this.selectedDiscipline > 0) {
+        //         selectedTabId = this.selectedDiscipline;
+        //     }
+        //     this.setTabForId(selectedTabId);
+        // }
+    }
+
+    get selectedDiscipline() {
+        return this._selectedDiscipline;
+    }
+
+    @Input('selectedDiscipline')
+    set selectedDiscipline(value: number) {
+        this._selectedDiscipline = value;
+        if (value < 1 && this.disciplines && this.disciplines.length > 0) {
+            this.selectDiscipline.emit(this.disciplines[0].id);
+            return;
+        }
+        this.setTabForId(value);
     }
 
     @Input()
@@ -74,10 +93,9 @@ export class DisciplineViewComponent {
         if (id < 1) {
             return;
         }
-        this.currentTabId = id;
         this.mergeMatches(id);
         this.removePlayedItems();
-        this.selectDiscipline.emit(this.selectedTab.id);
+        // this.selectDiscipline.emit(this.selectedTab.id);
     }
 
     private mergeMatches(id: number) {
@@ -121,16 +139,14 @@ export class DisciplineViewComponent {
 
     removePlayedItems() {
         if (this.showAllMatches === false) {
-            const stagesCopy = this.selectedTab.stages.filter(x => x.isComplete === false);
-            this.selectedTab.stages = stagesCopy;
-            const groupsCopy = this.selectedTab.groups.filter(y => y.isComplete === false);
-            this.selectedTab.groups = groupsCopy;
+            this.selectedTab.stages = this.selectedTab.stages.filter(x => x.isComplete === false);
+            this.selectedTab.groups = this.selectedTab.groups.filter(y => y.isComplete === false);
         }
     }
 
     onRemovePlayedChanged() {
         if (this.showAllMatches !== false) {
-            this.setTabForId(this.currentTabId);
+            this.setTabForId(this.selectedDiscipline);
             return;
         }
         this.removePlayedItems();

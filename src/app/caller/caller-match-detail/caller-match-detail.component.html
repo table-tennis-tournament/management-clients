@@ -1,7 +1,7 @@
 <div *ngIf="matchAggregate">
-    <div class="card center-align" [ngClass]="typeColor[matchAggregate.discipline.id]">
+    <div class="card center-align" >
         <div class="card-content simple-padding">
-            <span class="card-title ">
+            <span class="card-title " [ngClass]="typeColor[matchAggregate.discipline.id]">
             <h3>{{matchAggregate.discipline.name}}</h3>
             </span>
             <br/>
@@ -35,7 +35,7 @@
 
             </div>
         </div>
-        <div class="card-action white">
+        <div class="card-action white" *ngIf="stateIsCallable()">
             <button mz-button (click)="onMatchCalled()">
                 OK
             </button>

@@ -1,43 +1,46 @@
 import {testAggregate, testPlayers} from './test.data';
 import {CallerState, reduceCallerState} from './caller.reducer';
 import {
-    Load,
+    LoadCallerMatches,
     LoadRefereesList,
     LoadRefereesListError,
     LoadRefereesListSuccess,
-    LoadSuccess,
+    LoadCallerMatchesSuccess,
     SetSelectedMatchAggregate
 } from './caller.actions';
 
 const initialState: CallerState = Object.freeze({
     referees: [],
     refereesLoading: false,
-    callerMatches: []
+    callerMatches: [],
+    selectedMatchAggregate: null,
+    secondCallMatches: [],
+    thirdCallMatches: []
 });
 
 describe('the callerState reducer', () => {
-    it('should handle the Load action correctly', () => {
+    it('should handle the LoadCallerMatches action correctly', () => {
         const expectedState = {
             ...initialState,
             refereesLoading: true
         };
 
-        const newState = reduceCallerState(initialState, new Load());
+        const newState = reduceCallerState(initialState, new LoadCallerMatches());
         expect(newState).toEqual(expectedState);
     });
 
-    it('should handle the LoadSuccess action correctly', () => {
+    it('should handle the LoadCallerMatchesSuccess action correctly', () => {
         const expectedState = {
             ...initialState,
             callerMatches: testAggregate,
             refereesLoading: false
         };
 
-        const newState = reduceCallerState(initialState, new LoadSuccess(testAggregate));
+        const newState = reduceCallerState(initialState, new LoadCallerMatchesSuccess(testAggregate));
         expect(newState).toEqual(expectedState);
     });
 
-    it('should handle the LoadError action correctly', () => {
+    it('should handle the LoadCallerMatchesError action correctly', () => {
         const expectedState = {
             ...initialState,
             refereesLoading: false

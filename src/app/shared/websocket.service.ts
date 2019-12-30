@@ -1,61 +1,43 @@
 import {EventEmitter, Inject, Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {WebSocketSubject} from 'rxjs/webSocket';
-import {environment} from '../../environments/environment';
+import {Observable} from 'rxjs';
 import {DOCUMENT} from '@angular/common';
+import * as SockJS from 'sockjs-client';
 
 @Injectable({
     providedIn: 'root'
 })
 export class WebsocketService {
 
-    connected$ = new BehaviorSubject<any>({});
-    disconnected$: EventEmitter<any> = new EventEmitter<any>();
-
-    private socket$: WebSocketSubject<any>;
+    private websocket: any;
 
     constructor(@Inject(DOCUMENT) private document) {
     }
 
-    public connectSocket(): Observable<any> {
-        const myLocation = this.document.location.hostname;
-        const url = `${environment.socket.protocol}://${myLocation}${environment.socket.port}${environment.socket.baseUrl}`;
-        console.log('connect to: ' + url);
-        return Observable.create(complete => {
-            this.socket$ = new WebSocketSubject({
-                url: url,
-                openObserver: {
-                    next: value => {
-                        complete.next(value);
-                    }
-                }
-            });
-
-            this.socket$.subscribe(
-                (event) => {
-                    this.connected$.next(event);
-                },
-                (err) => {
-                    console.log('websocket error event');
-                    console.log(err);
-                    this.socket$.unsubscribe();
-                    this.connected$.complete();
-                    this.connected$ = new BehaviorSubject<any>({});
-                    this.disconnected$.next(err);
-                    this.disconnected$.complete();
-                    this.disconnected$ = new EventEmitter();
-                },
-                () => {
-                    console.warn('websocket completed');
-                    console.log('try to reconnect ...');
-                }
-            );
-            }
-        );
+    public connectTable(listeners: any): Observable<any> {
+        return this.connectSocks(listeners);
     }
 
-    registerListeners(listeners: any) {
-        this.connected$.subscribe(listeners.connected);
-        this.disconnected$.subscribe(listeners.disconnected);
+    private connectSocks(listeners: any) {
+        const connectListener = new EventEmitter<any>();
+        const disconnectListener = new EventEmitter<any>();
+        connectListener.subscribe(listeners.connected);
+        disconnectListener.subscribe(listeners.disconnected);
+
+        return Observable.create(complete => {
+            this.websocket = new SockJS('/api/websocket');
+            this.websocket.onopen = function (e) {
+                complete.next();
+            };
+            this.websocket.onmessage = function (e) {
+                const jsonMessage = JSON.parse(e.data);
+                connectListener.emit(jsonMessage);
+            };
+            this.websocket.onclose = function (e) {
+                console.log('websocket error event');
+                console.log(e);
+                connectListener.complete();
+                disconnectListener.emit(e);
+            };
+        });
     }
 }

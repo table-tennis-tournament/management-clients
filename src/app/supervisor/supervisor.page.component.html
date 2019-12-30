@@ -6,12 +6,12 @@
                     [disciplines]="disciplines | async"
                     [typeColor]="typeColor | async"
                     [matchesLoading]="matchesLoading | async"
+                    [selectedDiscipline]="selectedDiscipline | async"
                     (resultForMatch)="onResultForMatch($event)"
                     (selectDiscipline)="onSelectedDisciplineChanged($event)"
             ></toma-discipline-view>
         </div>
         <div class="col s2">
-            <h4>Warteschlange: </h4>
             <toma-matchlist-view
                     [matchListMatches]="matchList |async"
                     [typeColor]="typeColor | async"

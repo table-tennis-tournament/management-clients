@@ -1,0 +1,74 @@
+<div class="row">
+
+    <div class="col">
+        <h5>{{filteredPlayers.length}}/{{getPaidPlayersCount()}} (Gesamt/Gemeldet)</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col s3">
+        <toma-discipline-select
+                [disciplines]="filteredDisciplines"
+                (disciplineChanged)="onDisciplineChanged($event)"
+                [showAll]="true"
+        ></toma-discipline-select>
+    </div>
+    <div class="col s3">
+        <label for="vornameFilter">Vorname</label>
+        <input id="vornameFilter" class="form-control" type="text" #firstName
+               (keyup)="filterByFirstName(firstName.value)"
+               [(ngModel)]="firstNameInput">
+    </div>
+    <div class="col s3">
+        <label for="nachnameFilter">Nachname</label>
+        <input id="nachnameFilter" class="form-control" type="text" #lastName
+               (keyup)="filterByLastName(lastName.value)"
+               [(ngModel)]="lastNameInput">
+    </div>
+    <div class="col s3">
+        <label for="vereinFilter">Verein</label>
+        <input id="vereinFilter" class="form-control" type="text" #club
+               (keyup)="filterByClub(club.value)"
+               [(ngModel)]="clubInput">
+    </div>
+
+</div>
+<div class="row">
+    <mz-spinner *ngIf="playersLoading"></mz-spinner>
+    <table class="highlight centered striped">
+        <thead>
+        <tr>
+            <th>Nr</th>
+            <th>Vorname</th>
+            <th>Nachname</th>
+            <th>Verein</th>
+            <th>Konkurrenz</th>
+            <th>Bezahlt</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let currentPlayerType of filteredPlayers; let i = index;">
+            <td>{{i+1}}</td>
+            <td>
+                {{currentPlayerType?.player?.firstName}}
+            </td>
+            <td>
+                {{currentPlayerType?.player?.lastName}}
+            </td>
+            <td>
+                {{currentPlayerType?.player?.club.clubName}}
+            </td>
+            <td>
+                {{currentPlayerType.type?.name}}
+            </td>
+            <td>
+                <input name="inputPlayer{{currentPlayerType.id}}"
+                       type="checkbox"
+                       id="inputPlayer{{currentPlayerType.id}}"
+                       (change)="onChange(currentPlayerType, currentPlayerType.paid)"
+                       [(ngModel)]="currentPlayerType.paid"/>
+                <label for="inputPlayer{{currentPlayerType.id}}"></label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

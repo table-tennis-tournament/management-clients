@@ -17,11 +17,19 @@ export class CallerService {
         return Observable.create([]);
     }
 
-    callMatch(matchIds: number[]): Observable<StatusDto> {
-        return this.http.post<StatusDto>('/api/match/call', matchIds);
+    loadMatchAggregateForCaller(): Observable<MatchAggregate[]> {
+        return this.http.get<MatchAggregate[]>('/api/matchaggregates/caller');
     }
 
-    loadMatchAggregateForCaller(): Observable<MatchAggregate[]> {
-        return this.http.get<MatchAggregate[]>('/api/matchaggregate/caller');
+    loadSecondCallMatches(): Observable<MatchAggregate[]> {
+        return this.http.get<MatchAggregate[]>('/api/matchaggregates/secondCall');
+    }
+
+    loadThirdCallMatches(): Observable<MatchAggregate[]> {
+        return this.http.get<MatchAggregate[]>('/api/matchaggregates/thirdCall');
+    }
+
+    callMatch(matchIds: number[]): Observable<StatusDto> {
+        return this.http.post<StatusDto>('/api/match/call', matchIds);
     }
 }

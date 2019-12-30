@@ -1,0 +1,6 @@
+<toma-player-list
+        [players]="players | async"
+        [playersLoading]="playersLoading | async"
+        [disciplines]="disciplines | async"
+        (playerChanged)="onPlayerChanged($event)"
+></toma-player-list>

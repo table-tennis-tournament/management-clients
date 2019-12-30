@@ -10,10 +10,14 @@ import {
     CallMatch,
     CallMatchError,
     CallMatchSuccess,
-    LoadError,
+    LoadCallerMatchesError,
     LoadRefereesListError,
     LoadRefereesListSuccess,
-    LoadSuccess
+    LoadCallerMatchesSuccess,
+    LoadSecondCallMatchesSuccess,
+    LoadSecondCallMatchesError,
+    LoadThirdCallMatchesSuccess,
+    LoadThirdCallMatchesError
 } from './caller.actions';
 
 @Injectable()
@@ -25,10 +29,10 @@ export class CallerEffects {
         switchMap(() => {
             return this.callerService
                 .loadMatchAggregateForCaller().pipe(
-                    map(matches => new LoadSuccess(matches)),
+                    map(matches => new LoadCallerMatchesSuccess(matches)),
                     catchError(err => {
                         this.toastService.error('Fehler beim Laden der Ausrufermatches');
-                        return of(new LoadError(err));
+                        return of(new LoadCallerMatchesError(err));
                     })
                 );
         })
@@ -44,6 +48,36 @@ export class CallerEffects {
                     catchError(err => {
                         this.toastService.error('Fehler beim Laden der Schiedsrichter');
                         return of(new LoadRefereesListError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    loadSecondCallList$: Observable<Action> = this.actions$.pipe(
+        ofType(CallerActionTypes.LoadSecondCallMatches),
+        switchMap(() => {
+            return this.callerService
+                .loadSecondCallMatches().pipe(
+                    map(matches => new LoadSecondCallMatchesSuccess(matches)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Laden der 2. Aufruf Spiele');
+                        return of(new LoadSecondCallMatchesError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    loadThirdCallList$: Observable<Action> = this.actions$.pipe(
+        ofType(CallerActionTypes.LoadThirdCallMatches),
+        switchMap(() => {
+            return this.callerService
+                .loadThirdCallMatches().pipe(
+                    map(matches => new LoadThirdCallMatchesSuccess(matches)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Laden der 3. Aufruf Spiele');
+                        return of(new LoadThirdCallMatchesError(err));
                     })
                 );
         })

@@ -28,7 +28,7 @@ export class SelectMatchModalComponent extends MzBaseModal {
     }
 
     onOk() {
-        // ugly solution because of [(ngModel)]=match.isPlayable ist not working
+        // ugly solution because [(ngModel)]=match.isPlayable is not working
         const result = [];
         this.currentValues.forEach((x, index) => {
             if (x) {

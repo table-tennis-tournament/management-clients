@@ -12,22 +12,20 @@ export class WebSocketEffects {
 
     @Effect()
     connectWebSocket$: Observable<Action> = this.actions$.pipe(
-        ofType(WebSocketActionTypes.Connect),
+        ofType(WebSocketActionTypes.ConnectWebsocket),
         mergeMap((action: ConnectWebSocket) => {
             return this.websocketService
-                .connectSocket().pipe(
+                .connectTable(action.payload).pipe(
                     map(() => {
-                        this.websocketService.registerListeners(action.payload);
-                        return new ConnectWebSocketSuccess(true);
-                    },
-                    catchError(err => {
-                        this.toastService.error('Fehler beim Verbinden via WebSocket');
-                        return of(new ConnectWebSocketError(err));
-                    })
-                ));
+                            return new ConnectWebSocketSuccess(true);
+                        },
+                        catchError(err => {
+                            this.toastService.error('Fehler beim Verbinden mit Websocket');
+                            return of(new ConnectWebSocketError(err));
+                        })
+                    ));
         })
     );
-
 
     constructor(private actions$: Actions,
                 private toastService: ToastrService, private websocketService: WebsocketService) {

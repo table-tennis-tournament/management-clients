@@ -4,17 +4,6 @@
 
 export const environment = {
     production: false,
-    socket: {
-        // baseUrl: 'ws://localhost:9000/register',
-        baseUrl: '/api/register',
-        protocol: 'ws',
-        port: ':9000',
-        config: {
-            path: '/api/register'
-        },
-        upgrade: false,
-        transports: ['websocket']
-    }
 };
 
 /*

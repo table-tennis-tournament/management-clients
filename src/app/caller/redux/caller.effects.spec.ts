@@ -10,10 +10,10 @@ import {
     CallerActionTypes,
     CallMatch,
     CallMatchSuccess,
-    Load,
+    LoadCallerMatches,
     LoadRefereesList,
     LoadRefereesListSuccess,
-    LoadSuccess
+    LoadCallerMatchesSuccess
 } from './caller.actions';
 
 describe('the match effects', () => {
@@ -44,10 +44,10 @@ describe('the match effects', () => {
     describe('load', () => {
 
         it('should return a LoadSuccess', (done) => {
-            const expectedResult = new LoadSuccess([]);
+            const expectedResult = new LoadCallerMatchesSuccess([]);
             spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(of([]));
 
-            actions.next(new Load());
+            actions.next(new LoadCallerMatches());
 
             callerEffects.load$.subscribe((result) => {
                 expect(result).toEqual(expectedResult);
@@ -58,7 +58,7 @@ describe('the match effects', () => {
         it('should return a LoadError', (done) => {
             spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(throwError({msg: 'Error'}));
 
-            actions.next(new Load());
+            actions.next(new LoadCallerMatches());
 
             callerEffects.load$.subscribe((result) => {
                 expect(result.type).toEqual(CallerActionTypes.LoadError);

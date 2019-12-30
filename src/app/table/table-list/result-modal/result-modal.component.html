@@ -7,15 +7,16 @@
       {{currentMatch.team1 | ttPlayerNameReducer}}
     </div>
     <br/>
-    <div class="center-align"><h4>  - </h4><br/></div>
+    <div class="center-align"><h4> - </h4><br/></div>
     <div [class.winner-text]="checkerResult.secondPlayerWinning" class="center-align">
       {{currentMatch.team2 | ttPlayerNameReducer}}
     </div>
     <div class="input-field col s4 m2 top-margin">
-      <input autofocus id="result" [(ngModel)]="currentInput" class="form-control" type="text" #answer
+      <input autofocus [attr.id]="currentMatch.id" [(ngModel)]="currentInput" class="form-control" type="text"
+             #answer
              (keyup)="onKeyUp(answer.value)"
              (keyup.enter)="checkResultAndClose()">
-      <label for="result">Ergebnis (bsp. -7 8 8 9)</label>
+      <label [attr.for]="currentMatch.id">Ergebnis (bsp. -7 8 8 9)</label>
     </div>
   </mz-modal-content>
   <mz-modal-footer>

@@ -3,10 +3,10 @@ import {TestBed} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
 import {ToastrService} from 'ngx-toastr';
 import {IndividualConfig} from 'ngx-toastr/toastr/toastr-config';
-import {of, ReplaySubject, throwError} from 'rxjs';
+import {of, ReplaySubject} from 'rxjs';
 import {WebSocketEffects} from './websocket.effects';
 import {WebsocketService} from '../../shared/websocket.service';
-import {ConnectWebSocket, ConnectWebSocketSuccess, WebSocketActionTypes} from './websocket.actions';
+import {ConnectWebSocket, ConnectWebSocketSuccess} from './websocket.actions';
 
 describe('the websocket effects', () => {
     let actions: ReplaySubject<any>;
@@ -39,8 +39,7 @@ describe('the websocket effects', () => {
 
         it('should return a ConnectWebSocketSuccess', (done) => {
             const expectedResult = new ConnectWebSocketSuccess(true);
-            spyOn(webSocketService, 'connectSocket').and.returnValue(of({}));
-            spyOn(webSocketService, 'registerListeners');
+            spyOn(webSocketService, 'connectTable').and.returnValue(of({}));
 
             actions.next(new ConnectWebSocket(null));
 
@@ -49,18 +48,6 @@ describe('the websocket effects', () => {
                 done();
             });
         });
-
-        // it('should return a ConnectWebSocketError', (done) => {
-        //     spyOn(webSocketService, 'connectSocket').and.returnValue(throwError({msg: 'Error'}));
-        //
-        //     actions.next(new ConnectWebSocket(null));
-        //
-        //     webSocketEffects.connectWebSocket$.subscribe((result) => {
-        //         expect(result.type).toEqual(WebSocketActionTypes.ConnectError);
-        //         done();
-        //     });
-        // });
-
 
     });
 

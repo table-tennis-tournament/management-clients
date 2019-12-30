@@ -26,6 +26,18 @@ export function reduceTableState(state: TableState = initialState, action: Table
                 tablesLoading: false,
                 tables: action.payload
             };
+        case TableActionTypes.UpdateSuccess:
+            return {
+                ...state,
+                tables: state.tables.map(table => {
+                    const tables = action.payload.filter(item => item.number === table.number)
+                    if (tables.length > 0) {
+                        return tables[0];
+                    }
+                    return table;
+                })
+
+            };
         case TableActionTypes.LoadError:
             return {
                 ...state,
@@ -60,20 +72,6 @@ export function reduceTableState(state: TableState = initialState, action: Table
                     return table;
                 })
 
-            };
-        case TableActionTypes.TakeBackSuccess:
-            const takeBackEvent = action.payload;
-            return {
-                ...state,
-                tables: state.tables.map(table => {
-                    if (table.number === action.payload.tableNr) {
-                        return {
-                            ...table,
-                            matches: [...table.matches.filter(match => !takeBackEvent.matchIds.indexOf(match.id))]
-                        };
-                    }
-                    return table;
-                })
             };
         case TableActionTypes.ResultForMatchSuccess:
             const resultForMatch: TTMatchResult = action.payload;

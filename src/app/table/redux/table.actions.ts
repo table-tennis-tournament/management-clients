@@ -5,6 +5,9 @@ export enum TableActionTypes {
     Load = '[Table] Load',
     LoadSuccess = '[Table] Load Success',
     LoadError = '[Table] Load Error',
+    Update = '[Table] Update',
+    UpdateSuccess = '[Table] Update Success',
+    UpdateError = '[Table] Update Error',
     Lock = '[Table] Lock',
     LockSuccess = '[Table] Lock Success',
     LockError = '[Table] Lock Error',
@@ -47,6 +50,27 @@ export class LoadTablesSuccess implements Action {
 
 export class LoadTablesError implements Action {
     readonly type = TableActionTypes.LoadError;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class UpdateTables implements Action {
+    readonly type = TableActionTypes.Update;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class UpdateTablesSuccess implements Action {
+    readonly type = TableActionTypes.UpdateSuccess;
+
+    constructor(public payload: TableDto[]) {
+    }
+}
+
+export class UpdateTablesError implements Action {
+    readonly type = TableActionTypes.UpdateError;
 
     constructor(public payload: any) {
     }
@@ -224,6 +248,9 @@ export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
     | LoadTablesError
+    | UpdateTables
+    | UpdateTablesSuccess
+    | UpdateTablesError
     | LockTable
     | LockTableSuccess
     | LockTableError
