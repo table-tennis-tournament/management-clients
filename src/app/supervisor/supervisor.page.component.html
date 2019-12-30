@@ -6,6 +6,7 @@
                     [disciplines]="disciplines | async"
                     [typeColor]="typeColor | async"
                     [matchesLoading]="matchesLoading | async"
+                    [selectedDiscipline]="selectedDiscipline | async"
                     (resultForMatch)="onResultForMatch($event)"
                     (selectDiscipline)="onSelectedDisciplineChanged($event)"
             ></toma-discipline-view>

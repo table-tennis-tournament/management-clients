@@ -4,7 +4,7 @@
     <div *ngFor="let currentTab of tabs" class="col no-padding">
         <a class="waves-effect waves-light btn"
            [ngClass]="typeColor[currentTab.id]"
-           (click)="setTabForId(currentTab.id)">{{currentTab.name}}</a>
+           (click)="this.selectDiscipline.emit(currentTab.id)">{{currentTab.name}}</a>
     </div>
     <div class="col">
         <div class="simple-padding">
@@ -28,7 +28,7 @@
     <div class="col">
         <div class="simple-padding">
             <input type="checkbox" class="filled-in" [(ngModel)]="stopRefresh"
-                   (change)="this.setTabForId(this.currentTabId)" id="stop-refresh-checkbox"/>
+                   (change)="this.setTabForId(this.selectedDiscipline)" id="stop-refresh-checkbox"/>
             <label for="stop-refresh-checkbox">Stop</label>
         </div>
     </div>
@@ -44,7 +44,7 @@
         </div>
     </div>
     <div *ngIf="selectedTab.groups" class="disciplineTable disciplineTable--4cols">
-        <div class="row" *ngFor="let currentGroup of selectedTab.groups" class="disciplineTable-cell">
+        <div *ngFor="let currentGroup of selectedTab.groups" class="row disciplineTable-cell">
             <toma-discipline-group [group]="currentGroup"
                                    [typeColor]="typeColor"
                                    [showMatches]="matchesAreOpen"

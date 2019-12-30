@@ -46,6 +46,7 @@ export const getMatchesLoading = createSelector((state: State) => state.matches,
 
 export const getMatchListState = createSelector((state: State) => state.matchList, fromMatchList.getMatchList);
 export const getMatchListLoading = createSelector((state: State) => state.matchList, fromMatchList.getMatchListLoading);
+export const getSelectedDiscipline = createSelector((state: State) => state.matchList, fromMatchList.getSelectedDiscipline);
 
 export const getResultMatchesState = createSelector((state: State) => state.result, fromResult.getResultMatches);
 export const getResultMatchesLoading = createSelector((state: State) => state.result, fromResult.getResultMatchesLoading);

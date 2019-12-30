@@ -39,14 +39,8 @@ export class TableListPageComponent implements OnInit {
 
     ngOnInit() {
         this.tables = this.store.select(getTableState);
-        this.tables.subscribe(this.ontablePage.bind(this));
         this.tablesLoading = this.store.select(getTablesLoading);
         this.typeColor = this.store.select(getTypeColorsState);
-    }
-
-    ontablePage(test) {
-        console.log('on event');
-        console.log(test);
     }
 
     onLockTable(tableNr: number) {

@@ -15,7 +15,8 @@ export enum MatchListActionTypes {
     DeleteItemError = '[Matchlist] Delete item Error',
     MoveItem = '[Matchlist] Move item',
     MoveItemSuccess = '[Matchlist] Move item Success',
-    MoveItemError = '[Matchlist] Move item Error'
+    MoveItemError = '[Matchlist] Move item Error',
+    SelectDiscipline = '[Discipline] Select'
 }
 
 export class LoadMatchList implements Action {
@@ -102,6 +103,12 @@ export class MoveMatchListItemError implements Action {
     constructor(public payload: any) {
     }
 }
+export class SelectDiscipline implements Action {
+    readonly type = MatchListActionTypes.SelectDiscipline;
+
+    constructor(public payload: any) {
+    }
+}
 
 export type MatchListActionUnion =
     | LoadMatchList
@@ -115,4 +122,5 @@ export type MatchListActionUnion =
     | DeleteMatchListItemError
     | MoveMatchListItem
     | MoveMatchListItemSuccess
-    | MoveMatchListItemError;
+    | MoveMatchListItemError
+    | SelectDiscipline;

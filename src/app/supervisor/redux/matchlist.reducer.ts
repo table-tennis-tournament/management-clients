@@ -4,12 +4,14 @@ import {MatchList} from '../matchlist.model';
 export interface MatchListState {
     matchList: MatchList[];
     matchListLoading: boolean;
+    selectedDiscipline: number;
 }
 
 
 const initialState: MatchListState = {
     matchList: [],
-    matchListLoading: false
+    matchListLoading: false,
+    selectedDiscipline: 0
 };
 
 export function reduceMatchListState(state: MatchListState = initialState, action: MatchListActionUnion) {
@@ -30,6 +32,11 @@ export function reduceMatchListState(state: MatchListState = initialState, actio
                 ...state,
                 matchListLoading: false
             };
+        case MatchListActionTypes.SelectDiscipline:
+            return {
+                ...state,
+                selectedDiscipline: action.payload
+            };
         default:
             return state;
     }
@@ -38,3 +45,4 @@ export function reduceMatchListState(state: MatchListState = initialState, actio
 
 export const getMatchList = (state: MatchListState) => state.matchList;
 export const getMatchListLoading = (state: MatchListState) => state.matchListLoading;
+export const getSelectedDiscipline = (state: MatchListState) => state.selectedDiscipline;

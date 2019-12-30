@@ -1,13 +1,13 @@
 import {Component, ComponentRef, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState} from '../app-state.reducer';
+import {getMatchesLoading, getMatchesState, getMatchListState, getSelectedDiscipline, getTypeColorsState} from '../app-state.reducer';
 import {Match} from '../shared/data/match.model';
 import {Observable} from 'rxjs';
 import {MatchList} from './matchlist.model';
 import {Discipline} from '../discipline/discipline.model';
 import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {LoadMatches, ReloadMatches} from '../assign/redux/match.actions';
-import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem} from './redux/matchlist.actions';
+import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem, SelectDiscipline} from './redux/matchlist.actions';
 import {MzModalService} from 'ngx-materialize';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {ResultForMatch} from '../table/redux/table.actions';
@@ -25,6 +25,7 @@ export class SupervisorPageComponent implements OnInit {
     matchList: Observable<MatchList[]>;
     disciplines: Observable<Discipline[]>;
     typeColor: Observable<string[]>;
+    selectedDiscipline: Observable<number>;
     private colors: string[];
     currentColor: string;
 
@@ -37,7 +38,9 @@ export class SupervisorPageComponent implements OnInit {
         this.matchList = this.store.select(getMatchListState);
         this.disciplines = this.store.select(getDisciplineState);
         this.typeColor = this.store.select(getTypeColorsState);
+        this.selectedDiscipline = this.store.select(getSelectedDiscipline);
         this.typeColor.subscribe(color => this.colors = color);
+        this.selectedDiscipline.subscribe(this.changeColor.bind(this));
     }
 
     onSupervisorRefresh() {
@@ -71,8 +74,12 @@ export class SupervisorPageComponent implements OnInit {
     }
 
     onSelectedDisciplineChanged(selectedDisciplineId: number) {
+        this.store.dispatch(new SelectDiscipline(selectedDisciplineId));
+    }
+
+    changeColor(selectedDiscipline: number) {
         if (this.colors != null) {
-            this.currentColor = this.colors[selectedDisciplineId];
+            this.currentColor = this.colors[selectedDiscipline];
         }
     }
 
