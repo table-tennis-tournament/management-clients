@@ -1015,11 +1015,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def allTypePerPlayer = {
+    val activeTypes = allMatchesInfo.map(_.ttType.id).distinct
     val tppOut = ttTypePerPlayer map { tpp =>
       TypePerPlayerOut(tpp.id, ttPlayerSeq.find(_.id == tpp.playerId), ttTypeSeq.find(_.id == tpp.typeId), tpp.paid)
     }
     tppOut
-      .filter(_.ttType match {case Some(t) => t.kind != 2 && !t.active; case None => false})
+      .filter(_.ttType match {case Some(t) => t.kind != 2 && !activeTypes.contains(t.id); case None => false})
       .sortBy(_.player match {case Some(p) => p.lastName; case None => ""})
   }
 
