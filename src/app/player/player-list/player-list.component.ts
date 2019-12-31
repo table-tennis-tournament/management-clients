@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Player} from '../data/player.model';
 import {PlayerType} from '../data/player.type.model';
 import {Discipline} from '../../discipline/discipline.model';
 
@@ -11,20 +10,50 @@ import {Discipline} from '../../discipline/discipline.model';
 export class PlayerListComponent {
 
     private _players: PlayerType[];
+    private currentDisciplineFilter: number;
+    private _disciplines: Discipline[];
+    filteredDisciplines: Discipline[];
+    paidValues: any = {};
+    filteredPlayers: PlayerType[];
+
+    firstNameInput: string;
+    clubInput: string;
+    lastNameInput: string;
+
     get players(): PlayerType[] {
         return this._players;
     }
 
-    values: boolean[];
-
     @Input('players')
     set players(players: PlayerType[]) {
         this._players = players;
+        this.paidValues = {};
+        players.map(player => {
+            this.paidValues[player.id] = player.paid;
+            return player;
+        });
         this.filteredPlayers = players;
+        this.applyFilters();
     }
 
-    private _disciplines: Discipline[];
-    filteredDisciplines: Discipline[];
+    private applyFilters() {
+        if (this.currentDisciplineFilter > 0) {
+            this.filteredPlayers = this.filteredPlayers.filter(pl => pl.type.id === this.currentDisciplineFilter);
+            return;
+        }
+        if (this.firstNameInput) {
+            this.filterByFirstName(this.firstNameInput);
+            return;
+        }
+        if (this.lastNameInput) {
+            this.filterByLastName(this.lastNameInput);
+            return;
+        }
+        if (this.clubInput) {
+            this.filterByClub(this.clubInput);
+            return;
+        }
+    }
 
     get disciplines(): Discipline[] {
         return this._players;
@@ -41,12 +70,6 @@ export class PlayerListComponent {
 
     @Output()
     playerChanged: EventEmitter<PlayerType> = new EventEmitter<PlayerType>();
-
-    filteredPlayers: PlayerType[];
-
-    firstNameInput: string;
-    clubInput: string;
-    lastNameInput: string;
 
     constructor() {
     }
@@ -72,12 +95,13 @@ export class PlayerListComponent {
         this.filterPlayers(value, p => p.player.club.clubName);
     }
 
-    onDisciplineChanged($event: number) {
-        if ($event < 1) {
+    onDisciplineChanged(disciplineId: number) {
+        this.currentDisciplineFilter = disciplineId;
+        if (disciplineId < 1) {
             this.filteredPlayers = this.players;
             return;
         }
-        this.filteredPlayers = this.players.filter(pl => pl.type.id === $event);
+        this.filteredPlayers = this.players.filter(pl => pl.type.id === disciplineId);
     }
 
     getPaidPlayersCount() {
@@ -86,7 +110,7 @@ export class PlayerListComponent {
 
     onChange(currentPlayerType: PlayerType) {
         const newPlayer: PlayerType = Object.assign({}, currentPlayerType);
-        newPlayer.paid = !currentPlayerType.paid;
+        newPlayer.paid = this.paidValues[currentPlayerType.id];
         this.playerChanged.emit(newPlayer);
     }
 }
