@@ -42,7 +42,8 @@
                     <toma-single-item
                             [typeColor]="typeColor"
                             *ngIf="currentMatch.matchinfo.length === 1" [currentMatch]="currentMatch.matchinfo[0]"
-                        cdkDrag [cdkDragData]="currentMatch.matchinfo">
+                            [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
+                            cdkDrag [cdkDragData]="currentMatch.matchinfo">
                         <i *cdkDragPreview class="material-icons">perm_identity</i>
                     </toma-single-item>
                     <toma-matchlist-group cdkDrag [cdkDragData]="currentMatch.matchinfo"
@@ -60,7 +61,8 @@
                                     [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
                      <toma-single-item
                              [typeColor]="typeColor"
-                              [currentMatch]="currentMatchItem"
+                             [cdkDragDisabled]="!currentMatchItem.isPlayable"
+                             [currentMatch]="currentMatchItem"
                              cdkDrag [cdkDragData]="[currentMatchItem]">
                          <i *cdkDragPreview class="material-icons">perm_identity</i>
                     </toma-single-item>
