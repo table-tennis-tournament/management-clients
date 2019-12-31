@@ -6,7 +6,7 @@ import {MatchList} from '../../../supervisor/matchlist.model';
   templateUrl: './matchlist-stage.component.html',
   styleUrls: ['./matchlist-stage.component.scss']
 })
-export class MatchlistStageComponent implements OnInit {
+export class MatchlistStageComponent {
 
   constructor() { }
 

@@ -6,7 +6,7 @@ import {Match} from '../../../shared/data/match.model';
   templateUrl: './single-item.component.html',
   styleUrls: ['./single-item.component.scss']
 })
-export class SingleItemComponent implements OnInit {
+export class SingleItemComponent {
 
   constructor() { }
 
