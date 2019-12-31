@@ -12,7 +12,7 @@ import {MatchState} from '../../shared/data/matchstate.model';
 export class DisciplineMatchListComponent {
 
     private _matches: Match[];
-    private currentDisciplineId: number;
+    currentDisciplineId: number;
     private _matchList: MatchList[];
 
     @Input()
@@ -90,4 +90,11 @@ export class DisciplineMatchListComponent {
         return this.matches.filter(x => this.isMatchInGroup(groupId, x));
     }
 
+    anyMatchIsNotPlayable(currentMatch: MatchList) {
+        return currentMatch.matchinfo.filter(match => !match.isPlayable).length > 0;
+    }
+
+    firstMatch(currentMatch: MatchList) {
+        return currentMatch.matchinfo[0];
+    }
 }

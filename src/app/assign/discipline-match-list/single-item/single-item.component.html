@@ -1,0 +1,17 @@
+<div class="cut-text"
+     [ngClass]="typeColor[currentMatch.type.id]"
+     [class.disabled-item]="!currentMatch.isPlayable">
+  <div class="d-flex justify-content-between">
+    <div class="text-truncate">
+      <toma-team-item [team]="currentMatch.team1"></toma-team-item>
+      <br/>
+      <toma-team-item [team]="currentMatch.team2"></toma-team-item>
+    </div>
+    <div>
+      <div class="discipline-match-list-square indigo white-text text-center">
+        <span *ngIf="!currentMatch.group">{{currentMatch.matchType | disciplineType}}</span>
+        <span *ngIf="currentMatch.group">{{currentMatch.group.name}}</span>
+      </div>
+    </div>
+  </div>
+</div>

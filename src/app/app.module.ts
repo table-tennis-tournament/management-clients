@@ -63,6 +63,9 @@ import {PlayerCallsComponent} from './caller/player-calls/player-calls.component
 import {SharedModule} from './shared/shared.module';
 import {PlayerModule} from './player/player.module';
 import {DisciplineModule} from './discipline/discipline.module';
+import { MatchlistGroupComponent } from './assign/discipline-match-list/matchlist-group/matchlist-group.component';
+import { SingleItemComponent } from './assign/discipline-match-list/single-item/single-item.component';
+import { MatchlistStageComponent } from './assign/discipline-match-list/matchlist-stage/matchlist-stage.component';
 
 @NgModule({
     declarations: [
@@ -103,7 +106,10 @@ import {DisciplineModule} from './discipline/discipline.module';
         QrResultScannerComponent,
         MatchlistGroupItemComponent,
         MatchlistSingleItemComponent,
-        PlayerCallsComponent
+        PlayerCallsComponent,
+        MatchlistGroupComponent,
+        SingleItemComponent,
+        MatchlistStageComponent
     ],
     imports: [
         SharedModule,

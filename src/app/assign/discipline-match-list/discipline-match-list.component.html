@@ -9,7 +9,7 @@
 </div>
 <div class="row maxHeight">
     <mz-spinner *ngIf="matchesLoading"></mz-spinner>
-    <mz-collection>
+    <mz-collection *ngIf="currentDisciplineId !== -1">
         <mz-collection-item cdkDropList
                             [ngClass]="typeColor[currentMatch.type.id]"
                             *ngFor="let currentMatch of currentMatchesToShow; let i = index;"
@@ -34,5 +34,39 @@
                 </div>
             </div>
         </mz-collection-item>
+    </mz-collection>
+    <mz-collection *ngIf="currentDisciplineId === -1">
+        <span *ngFor="let currentMatch of matchList; let i = index;">
+            <span *ngIf="currentMatch.matchinfo[0].group !== null">
+                <mz-collection-item cdkDropList [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
+                    <toma-single-item
+                            [typeColor]="typeColor"
+                            *ngIf="currentMatch.matchinfo.length === 1" [currentMatch]="currentMatch.matchinfo[0]"
+                        cdkDrag [cdkDragData]="currentMatch.matchinfo">
+                        <i *cdkDragPreview class="material-icons">perm_identity</i>
+                    </toma-single-item>
+                    <toma-matchlist-group cdkDrag [cdkDragData]="currentMatch.matchinfo"
+                                      [typeColor]="typeColor"
+                                      [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
+                                      [matchListItem]="currentMatch"
+                                      *ngIf="currentMatch.matchinfo.length > 1">
+                    <i *cdkDragPreview class="material-icons">group</i>
+                </toma-matchlist-group>
+             </mz-collection-item>
+            </span>
+            <span *ngIf="currentMatch.matchinfo[0].group === null">
+                <mz-collection-item *ngFor="let currentMatchItem of currentMatch.matchinfo"
+                                    cdkDropList
+                                    [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
+                     <toma-single-item
+                             [typeColor]="typeColor"
+                              [currentMatch]="currentMatchItem"
+                             cdkDrag [cdkDragData]="[currentMatchItem]">
+                         <i *cdkDragPreview class="material-icons">perm_identity</i>
+                    </toma-single-item>
+                </mz-collection-item>
+            </span>
+        </span>
+
     </mz-collection>
 </div>
