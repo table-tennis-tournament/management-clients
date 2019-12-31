@@ -4,7 +4,8 @@ import {testData} from './test.data';
 
 const initialState: MatchListState = Object.freeze({
     matchList: [],
-    matchListLoading: false
+    matchListLoading: false,
+    selectedDiscipline: 0
 });
 
 const matchData = testData;
