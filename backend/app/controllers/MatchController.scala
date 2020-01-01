@@ -103,6 +103,9 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
         r.asOpt[Seq[Long]] match {
           case Some(ids) =>
             val result = Future.sequence(ids.map(id => tables.removeMatchFromTable(id, tableId)))
+            sendUpdateTableManagerMessagesForTables(tables.ttTablesSeq.filter(_.id == tableId))
+            pub ! UpdateTable(tables.allTableInfo.filter(_.id == tableId))
+            pub ! UpdateMatches(tables.allMatchesInfo.filter(m => ids.contains(m)))
             result.map(x => Ok(Json.toJson(Answer(successful = true, "successful"))))
           case _ => Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))
         }

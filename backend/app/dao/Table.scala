@@ -178,7 +178,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def removeMatchFromOtherTables(matchId: Long, tableId: Long) = {
-    val result = ttTablesSeq.map(_.id).filter(_ != matchId).map(id => removeMatchFromTable(matchId, id))
+    val result = ttTablesSeq.map(_.id).filter(_ != tableId).map(id => removeMatchFromTable(matchId, id))
     Future.sequence(result).map(_.sum)
   }
 
