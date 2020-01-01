@@ -184,11 +184,15 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def removeMatchFromTable(matchId: Long, tableId: Long) = {
     ttTablesSeq = ttTablesSeq map { t =>
-      if(t.id == tableId) t.copy(matchId = t.matchId.filter(_ != tableId))
+      if(t.id == tableId && isMatchOnSecondTable(matchId, tableId)) t.copy(matchId = t.matchId.filter(_ != tableId))
       else t
     }
     ttMatchTableSeq = ttMatchTableSeq.filter(mt => mt.tableId == tableId && mt.matchId == matchId)
     deleteMatchTable(matchId, tableId)
+  }
+
+  def isMatchOnSecondTable(matchId: Long, tableId: Long) = {
+    ttMatchTableSeq.filter(mt => mt.matchId == matchId && mt.tableId == tableId).nonEmpty
   }
 
   def setMatchStateToOnTable(matchId: Long): Unit = {
