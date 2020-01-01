@@ -130,7 +130,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       ttTable.id,
       ttTable.tableNumber,
       managerId,
-      ttTable.matchId.map(id => getTableManagerMatchInfo(getMatch(id).get).get)
+      ttTable.matchId.map(id => getTableManagerMatchInfo(getMatch(id).get).get).sortBy(_.id)
     )
   }
 
