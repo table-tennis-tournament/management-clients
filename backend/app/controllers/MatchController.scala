@@ -40,9 +40,9 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     tables.startMatchOnTTTable(matchId, tableId)
     val t = tables.ttTablesSeq.filter(_.matchId.contains(matchId))
     tables.removeMatchFromOtherTables(matchId, tableId) map { res =>
-      sendUpdateTableManagerMessages(matchId)
       sendUpdateTableManagerMessagesForTables(t)
       pub ! UpdateTable(t.map(t =>tables.getAllTableInfo(t)))
+      pub ! UpdateMatches(tables.allMatchesInfo.filter(_.ttMatch.id == matchId))
       Ok(Json.toJson(Answer(successful = true, "match started")))
     }
   }
