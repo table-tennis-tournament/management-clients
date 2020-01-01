@@ -170,8 +170,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getTTTable(id: Long): Option[TTTable] = ttTablesSeq.find(_.id == id)
 
-  def startMatchOnTTTable(matchId: Long): Unit = {
-    val tableInfo = getTableInfoForMatch(matchId)
+  def startMatchOnTTTable(matchId: Long, tableId: Long): Unit = {
+    val tableInfo = getTableInfoForMatchAndTable(matchId, tableId)
     updateMatchState(Started,  List(matchId))
     sendMatchAndTableMessage(matchId, tableInfo)
   }
@@ -219,6 +219,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getTableInfoForMatch(matchId: Long): Seq[TableInfo] = {
     allTableInfo.filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
+  }
+
+  def getTableInfoForMatchAndTable(matchId: Long, tableId: Long): Seq[TableInfo] = {
+    allTableInfo.filter(_.id == tableId).filter(_.ttMatch.map(_.ttMatch.id).contains(matchId))
   }
 
   def getTableInfoIdsForMatches(matchIds: Seq[Long]):Seq[Long]= {

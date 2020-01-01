@@ -36,8 +36,8 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     tables.allMatchTable.map(x => Ok(x.toString()))
   }
 
-  def startMatch(matchId: Long): Action[AnyContent] = Action {
-    tables.startMatchOnTTTable(matchId)
+  def startMatch(matchId: Long, tableId: Long): Action[AnyContent] = Action {
+    tables.startMatchOnTTTable(matchId, tableId)
     sendUpdateTableManagerMessages(matchId)
     Ok(Json.toJson(Answer(successful = true, "match started")))
   }
