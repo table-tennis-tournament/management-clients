@@ -55,7 +55,7 @@ class TableController @Inject()(tables: Tables,
     val upperBoundary = tableManagerId * 5
     val tableManagerTables = tables.allTTTables()
       .filter(table => table.tableNumber > lowerBoundary && table.tableNumber <= upperBoundary);
-    val tablesWithMatches = tableManagerTables.map(ttTable => tables.getTableManagerTableInfo(ttTable, tableManagerId))
+    val tablesWithMatches = tableManagerTables.map(ttTable => tables.getTableManagerTableInfo(ttTable, tableManagerId)).sortBy(_.tableNumber)
     Ok(Json.toJson(tablesWithMatches));
   }
 

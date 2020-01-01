@@ -88,7 +88,8 @@ object TableModel {
   )
 
   implicit val tableManagerTableWrites: Writes[TableManagerTableInfo] = (tableInfo: TableManagerTableInfo) => Json.obj(
-    "table_id" -> tableInfo.tableNumber,
+    "table_id" -> tableInfo.tableId,
+    "table_number" -> tableInfo.tableNumber,
     "table_manager_id" -> tableInfo.managerId,
     "matches" -> tableInfo.matches
   )
@@ -111,6 +112,7 @@ case class TableInfo(
   )
 
 case class TableManagerTableInfo(
+    tableId: Long,
     tableNumber: Long,
     managerId: Long,
     matches: Seq[TableManagerMatch]

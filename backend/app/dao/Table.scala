@@ -127,6 +127,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
  def getTableManagerTableInfo(ttTable: TTTable, managerId: Long): TableManagerTableInfo = {
     TableManagerTableInfo(
+      ttTable.id,
       ttTable.tableNumber,
       managerId,
       ttTable.matchId.map(id => getTableManagerMatchInfo(getMatch(id).get).get)
