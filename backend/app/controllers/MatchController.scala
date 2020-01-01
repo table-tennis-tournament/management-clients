@@ -96,6 +96,20 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     }
   }
 
+  def removeMatchesFromTable(tableId: Long): Action[AnyContent] = Action { request =>
+    val req = request.body.asJson
+    req match {
+      case Some(r) =>
+        r.asOpt[Seq[Long]] match {
+          case Some(ids) =>
+            //TODO
+            Ok(Json.toJson(Answer(successful = true, "successful")))
+          case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
+        }
+      case _ => BadRequest(Json.toJson(Answer(successful = false, "wrong request format")))
+    }
+  }
+
   private def setStateRemoveFromTableStartNextMatchAndSendMessages(ids: Seq[Long], matchState: MatchState): Unit = {
     val tableIdsToSendUpdate = tables.getTableInfoIdsForMatches(ids)
     tables.updateStateForMatchesAndRemoveFromTable(ids, matchState)

@@ -57,6 +57,7 @@ GET     /api/matchlist/move/:uuid/:position controllers.MatchListController.move
 GET     /api/matchlist/autostart            controllers.MatchListController.autoStart
 POST    /api/match/free                     controllers.MatchController.freeMatches
 POST    /api/match/takeBack                 controllers.MatchController.takeBackMatches
+POST    /api/match/remove/:tableId          controllers.MatchController.removeMatchesFromTable(tableId: Long)
 GET     /api/match/delete/:id               controllers.MatchController.deleteMatch(id: Long)
 GET     /api/match/deleteType/:id           controllers.MatchController.deleteType(id: Long)
 POST    /api/match/call                     controllers.MatchController.callMatches
