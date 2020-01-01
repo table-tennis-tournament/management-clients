@@ -6,6 +6,7 @@ import dao.Tables
 import javax.inject._
 import models._
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import websocket.WebSocketActor._
@@ -39,8 +40,10 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   def startMatch(matchId: Long, tableId: Long): Action[AnyContent] = Action.async {
     tables.startMatchOnTTTable(matchId, tableId)
     val t = tables.ttTablesSeq.filter(_.matchId.contains(matchId))
+    val tableIds = t.map(_.id)
     tables.removeMatchFromOtherTables(matchId, tableId) map { res =>
-      sendUpdateTableManagerMessagesForTables(t)
+      Logger.info("res: " + res)
+      sendUpdateTableManagerMessagesForTables(tables.ttTablesSeq.filter(table => tableIds.contains(table.id)))
       pub ! UpdateTable(t.map(t =>tables.getAllTableInfo(t)))
       pub ! UpdateMatches(tables.allMatchesInfo.filter(_.ttMatch.id == matchId))
       Ok(Json.toJson(Answer(successful = true, "match started")))

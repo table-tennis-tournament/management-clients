@@ -178,21 +178,23 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def removeMatchFromOtherTables(matchId: Long, tableId: Long) = {
-    val result = ttTablesSeq.map(_.id).filter(_ != tableId).map(id => removeMatchFromTable(matchId, id))
+    val result = ttTablesSeq.filter(t => t.id != tableId && t.matchId.contains(matchId)).map(t => removeMatchFromTable(matchId, t.id))
     Future.sequence(result).map(_.sum)
   }
 
   def removeMatchFromTable(matchId: Long, tableId: Long) = {
     ttTablesSeq = ttTablesSeq map { t =>
-      if(t.id == tableId && isMatchOnSecondTable(matchId, tableId)) t.copy(matchId = t.matchId.filter(_ != tableId))
+      if(t.id == tableId && isMatchOnSecondTable(matchId, tableId)) t.copy(matchId = t.matchId.filter(_ != matchId))
       else t
     }
-    ttMatchTableSeq = ttMatchTableSeq.filter(mt => mt.tableId == tableId && mt.matchId == matchId)
+    ttMatchTableSeq = ttMatchTableSeq.filterNot(mt => mt.tableId == tableId && mt.matchId == matchId)
     deleteMatchTable(matchId, tableId)
   }
 
   def isMatchOnSecondTable(matchId: Long, tableId: Long) = {
-    ttMatchTableSeq.filter(mt => mt.matchId == matchId && mt.tableId == tableId).nonEmpty
+    val res = ttMatchTableSeq.filter(mt => mt.matchId == matchId && mt.tableId != tableId).nonEmpty
+    Logger.info("onSecondTable: " + res.toString)
+    res
   }
 
   def setMatchStateToOnTable(matchId: Long): Unit = {
