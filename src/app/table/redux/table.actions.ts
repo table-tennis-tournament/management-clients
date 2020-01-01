@@ -32,6 +32,9 @@ export enum TableActionTypes {
     AssignMatchToTable = '[Table] Assign match to table',
     AssignMatchToTableError = '[Table] Assign match to table Error',
     AssignMatchToTableSuccess = '[Table] Assign match to table Success',
+    Remove = '[Table] Remove',
+    RemoveSuccess = '[Table] Remove Success',
+    RemoveError = '[Table] Remove Error'
 }
 
 export class LoadTables implements Action {
@@ -244,6 +247,27 @@ export class AssignMatchToTableError implements Action {
     }
 }
 
+export class RemoveMatchFromTable implements Action {
+    readonly type = TableActionTypes.Remove;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class RemoveMatchFromTableSuccess implements Action {
+    readonly type = TableActionTypes.RemoveSuccess;
+
+    constructor(public payload: any) {
+    }
+}
+
+export class RemoveMatchFromTableError implements Action {
+    readonly type = TableActionTypes.RemoveError;
+
+    constructor(public payload: any) {
+    }
+}
+
 export type TableActionsUnion =
     | LoadTables
     | LoadTablesSuccess
@@ -274,4 +298,7 @@ export type TableActionsUnion =
     | ResultForMatchError
     | AssignMatchToTable
     | AssignMatchToTableSuccess
-    | AssignMatchToTableError;
+    | AssignMatchToTableError
+    | RemoveMatchFromTable
+    | RemoveMatchFromTableSuccess
+    | RemoveMatchFromTableError;

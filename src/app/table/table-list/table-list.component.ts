@@ -42,4 +42,7 @@ export class TableListComponent {
     @Output()
     assignMatchToTable = new EventEmitter<MatchToTable>();
 
+    @Output()
+    removeFromTable = new EventEmitter<TableDto>();
+
 }

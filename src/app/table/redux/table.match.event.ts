@@ -1,4 +1,4 @@
 export class TableMatchEvent {
-    constructor(public matchIds: number[], public tableNr: number) {
+    constructor(public matchIds: number[], public tableId: number) {
     }
 }

@@ -9,6 +9,7 @@ import {
     LoadTables,
     LockTable,
     PrintTable,
+    RemoveMatchFromTable,
     ResultForMatch,
     TakeBackTable,
     UnLockTable
@@ -69,6 +70,16 @@ export class TableListPageComponent implements OnInit {
         }
         this.selectMatchAndCallFunction(table, match => this.store.dispatch(
             new TakeBackTable(new TableMatchEvent(match.map(nextMatch => nextMatch.id), table.number))));
+    }
+
+    onRemoveFromTable(table: TableDto) {
+        if (this.isSingleMatch(table)) {
+            const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
+            this.store.dispatch(new TakeBackTable(takeBackTableEvent));
+            return;
+        }
+        this.selectMatchAndCallFunction(table, match => this.store.dispatch(
+            new RemoveMatchFromTable(new TableMatchEvent(match.map(nextMatch => nextMatch.id), table.number))));
     }
 
     onTableRefresh() {

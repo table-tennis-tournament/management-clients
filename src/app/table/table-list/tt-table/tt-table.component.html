@@ -16,6 +16,7 @@
                 <a href="javascript:void(0)" (click)="takeBackTable.emit(table)">Zurück</a>
                 <a href="javascript:void(0)" (click)="printTable.emit(table)">Drucken</a>
                 <a href="javascript:void(0)" (click)="assignSecondTable.emit(table)">2.Tisch</a>
+                <a href="javascript:void(0)" (click)="removeFromTable.emit(table)">Entfernen</a>
             </span>
             <a *ngIf="!table.isLocked" href="javascript:void(0)" (click)="lockTable.emit(table.number)">Sperren</a>
             <a *ngIf="table.isLocked" href="javascript:void(0)"

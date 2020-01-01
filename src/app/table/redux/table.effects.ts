@@ -22,6 +22,9 @@ import {
     PrintTable,
     PrintTableError,
     PrintTableSuccess,
+    RemoveMatchFromTable,
+    RemoveMatchFromTableError,
+    RemoveMatchFromTableSuccess,
     ResultForMatch,
     ResultForMatchError,
     ResultForMatchSuccess,
@@ -183,6 +186,21 @@ export class TableEffects {
                         }
                         this.toastService.error(errorMessage, '');
                         return of(new AssignMatchToTableError(err));
+                    })
+                );
+        })
+    );
+
+    @Effect()
+    removeMatchFromTable$: Observable<Action> = this.actions$.pipe(
+        ofType(TableActionTypes.Remove),
+        mergeMap((action: RemoveMatchFromTable) => {
+            return this.matchService
+                .removeMatchFromTable(action.payload).pipe(
+                    map(() => new RemoveMatchFromTableSuccess(action.payload)),
+                    catchError(err => {
+                        this.toastService.error('Fehler beim Entfernen der Spiele', '');
+                        return of(new RemoveMatchFromTableError(err));
                     })
                 );
         })

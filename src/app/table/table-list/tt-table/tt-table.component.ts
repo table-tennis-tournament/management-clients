@@ -51,4 +51,7 @@ export class TtTableComponent {
     @Output()
     assignMatchToTable = new EventEmitter<MatchToTable>();
 
+    @Output()
+    removeFromTable = new EventEmitter<TableDto>();
+
 }

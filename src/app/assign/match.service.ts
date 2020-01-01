@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {TTMatchResult} from '../table/table-list/result-modal/ttmatch-result.model';
 import {Match} from '../shared/data/match.model';
 import {MatchToTable} from '../table/table-list/tt-table/tt-table-content/matchtotable.model';
+import {TableMatchEvent} from '../table/redux/table.match.event';
 
 @Injectable({
     providedIn: 'root'
@@ -47,5 +48,9 @@ export class MatchService {
 
     loadPlayedMatches(): Observable<Match[]> {
         return this.http.get<Match[]>(`/api/match/played/all`);
+    }
+
+    removeMatchFromTable(payload: TableMatchEvent): Observable<StatusDto> {
+        return this.http.post<StatusDto>(`/api/match/remove/${payload.tableId}`, payload.matchIds);
     }
 }
