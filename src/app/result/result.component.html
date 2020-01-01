@@ -1,7 +1,7 @@
 <div class="mh-100 vh-100 p-2">
   <div class="row mb-3" >
     <div *ngFor="let currentType of types$ | async" class="ml-3">
-      <button mat-raised-button color="accent" (click)="onTabSelected(currentType)">{{currentType.name}}</button>
+      <button mat-raised-button color="{{getColor(currentType)}}" (click)="onTabSelected(currentType)">{{currentType.name}}</button>
     </div>
     <div class="col">
       <mat-checkbox [(ngModel)]="isFixed"  (change)="onIsFixedChanged()">Stop</mat-checkbox>
@@ -19,7 +19,7 @@
   </div>
   <div *ngIf="groups$" >
     <div class="row">
-      <div *ngFor="let currentGroup of groups$ | async" class="col-3">
+      <div *ngFor="let currentGroup of groups$ | async" class="col-3  mt-2">
         <app-group-view [group]="currentGroup"></app-group-view>
       </div>
     </div>

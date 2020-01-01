@@ -34,10 +34,12 @@ export class ResultComponent implements OnInit {
   matches$: Observable<Match[]>;
   stages$: Observable<DisciplineStage[]>;
   groups$: Observable<DisciplineGroup[]>;
+  currentTabId: number;
 
   constructor(private store: Store<AppState>) {
     this.colors = TypeColors.TYPE_COLORS;
     this.types$ = store.pipe(select(getTypes));
+    this.types$.subscribe(this.onTypesLoaded.bind(this));
     this.matches$ = store.pipe(select(getMatches));
     this.stages$ = store.pipe(select(getStages));
     this.groups$ = store.pipe(select(getGroups));
@@ -48,7 +50,14 @@ export class ResultComponent implements OnInit {
     this.store.dispatch(ResultActions.loadMatches({typeId: 8}));
   }
 
+  onTypesLoaded(types: Type[]) {
+    if (types.length > 0) {
+      this.onTabSelected(types[0]);
+    }
+  }
+
   onTabSelected(selectedTab: Type) {
+    this.currentTabId = selectedTab.id;
     this.store.dispatch(ResultActions.loadMatches({typeId: selectedTab.id}));
   }
 
@@ -62,5 +71,12 @@ export class ResultComponent implements OnInit {
 
   private startTimer() {
 
+  }
+
+  getColor(currentType: Type) {
+    if(currentType.id === this.currentTabId) {
+      return 'warn';
+    }
+    return 'accent';
   }
 }
