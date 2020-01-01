@@ -177,6 +177,20 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     sendMatchAndTableMessage(matchId, tableInfo)
   }
 
+  def removeMatchFromOtherTables(matchId: Long, tableId: Long) = {
+    val result = ttTablesSeq.map(_.id).filter(_ != matchId).map(id => removeMatchFromTable(matchId, id))
+    Future.sequence(result).map(_.sum)
+  }
+
+  def removeMatchFromTable(matchId: Long, tableId: Long) = {
+    ttTablesSeq = ttTablesSeq map { t =>
+      if(t.id == tableId) t.copy(matchId = t.matchId.filter(_ != tableId))
+      else t
+    }
+    ttMatchTableSeq = ttMatchTableSeq.filter(mt => mt.tableId == tableId && mt.matchId == matchId)
+    deleteMatchTable(matchId, tableId)
+  }
+
   def setMatchStateToOnTable(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId)
     updateMatchState(OnTable, List(matchId))
@@ -973,6 +987,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def deleteMatchTableForTable(tableId: Long) = dbConfigProvider.get.db.run(matchTable.filter(_.tableId === tableId).delete)
+
+  def deleteMatchTable(matchId: Long, tableId: Long) = dbConfigProvider.get.db.run(matchTable.filter(mt => mt.tableId === tableId && mt.matchId === matchId).delete)
 
   def saveMatchTable(newMatchTable: MatchTable) = {
     dbConfigProvider.get.db.run(matchTable.insertOrUpdate(newMatchTable))

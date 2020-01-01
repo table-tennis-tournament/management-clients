@@ -36,10 +36,15 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     tables.allMatchTable.map(x => Ok(x.toString()))
   }
 
-  def startMatch(matchId: Long, tableId: Long): Action[AnyContent] = Action {
+  def startMatch(matchId: Long, tableId: Long): Action[AnyContent] = Action.async {
     tables.startMatchOnTTTable(matchId, tableId)
-    sendUpdateTableManagerMessages(matchId)
-    Ok(Json.toJson(Answer(successful = true, "match started")))
+    val t = tables.ttTablesSeq.filter(_.matchId.contains(matchId))
+    tables.removeMatchFromOtherTables(matchId, tableId) map { res =>
+      sendUpdateTableManagerMessages(matchId)
+      sendUpdateTableManagerMessagesForTables(t)
+      pub ! UpdateTable(t.map(t =>tables.getAllTableInfo(t)))
+      Ok(Json.toJson(Answer(successful = true, "match started")))
+    }
   }
 
   def stopMatch(matchId: Long): Action[AnyContent] = Action {
