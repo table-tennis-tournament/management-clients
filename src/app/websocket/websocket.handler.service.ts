@@ -6,7 +6,7 @@ import {UpdateMatchesSuccess} from '../assign/redux/match.actions';
 import {MatchList} from '../supervisor/matchlist.model';
 import {LoadMatchListSuccess} from '../supervisor/redux/matchlist.actions';
 import {Store} from '@ngrx/store';
-import {LoadCallerMatches} from '../caller/redux/caller.actions';
+import {LoadCallerMatches, LoadSecondCallMatches, LoadThirdCallMatches} from '../caller/redux/caller.actions';
 import {ConnectWebSocket} from './redux/websocket.actions';
 import {UpdateResults} from '../result/redux/result.actions';
 import {MatchState} from '../shared/data/matchstate.model';
@@ -44,10 +44,19 @@ export class WebsocketHandlerService {
             this.store.dispatch(new UpdateMatchesSuccess(updatedMatches));
             this.store.dispatch(new LoadCallerMatches());
             this.store.dispatch(new UpdateResults(updatedMatches.filter(match => this.matchesAreFinishedOrCompleted(match))));
+            const secondOrThirdCallMatches = updatedMatches.filter(match => this.matchHasSecondOrThirdCall(match));
+            if (secondOrThirdCallMatches.length > 0) {
+                this.store.dispatch(new LoadSecondCallMatches());
+                this.store.dispatch(new LoadThirdCallMatches());
+            }
         }
     }
 
     private matchesAreFinishedOrCompleted(match) {
         return [MatchState[MatchState.Finished], MatchState[MatchState.Completed]].indexOf(match.state) > -1;
+    }
+
+    private matchHasSecondOrThirdCall(match: Match) {
+        return [MatchState[MatchState.SecondCall], MatchState[MatchState.ThirdCall]].indexOf(match.state) > -1;
     }
 }

@@ -8,6 +8,7 @@ import {getAllPlayersState} from './redux';
 import {PlayerType} from './data/player.type.model';
 import {getDisciplineState} from '../discipline/redux';
 import {Discipline} from '../discipline/discipline.model';
+import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 
 @Component({
     selector: 'toma-player-page',
@@ -25,6 +26,7 @@ export class PlayerPageComponent implements OnInit {
 
     ngOnInit() {
         this.store.dispatch(new LoadPlayers(null));
+        this.store.dispatch(new LoadDiscipline(null));
         this.disciplines = this.store.select(getDisciplineState);
         this.players = this.store.select(getAllPlayersState);
         this.playersLoading = this.store.select(getPlayersLoading);

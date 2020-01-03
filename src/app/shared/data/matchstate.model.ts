@@ -4,5 +4,7 @@ export enum MatchState {
     Callable= <any>'Callable',
     OnTable= <any>'OnTable',
     Finished= <any>'Finished',
-    Completed= <any>'Completed'
+    Completed= <any>'Completed',
+    SecondCall= <any>'SecondCall',
+    ThirdCall= <any>'ThirdCall'
 }
