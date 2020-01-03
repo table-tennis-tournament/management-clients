@@ -32,14 +32,13 @@ export class PlayerListComponent {
             this.paidValues[player.id] = player.paid;
             return player;
         });
-        this.filteredPlayers = players;
         this.applyFilters();
     }
 
     private applyFilters() {
+        this.filteredPlayers = this.players;
         if (this.currentDisciplineFilter > 0) {
             this.filteredPlayers = this.filteredPlayers.filter(pl => pl.type.id === this.currentDisciplineFilter);
-            return;
         }
         if (this.firstNameInput) {
             this.filterByFirstName(this.firstNameInput);
@@ -75,16 +74,12 @@ export class PlayerListComponent {
     }
 
     filterPlayers(value: string, callback: (player: PlayerType) => string) {
-        this.filteredPlayers = this.players
+        this.filteredPlayers = this.filteredPlayers
             .filter(player => this.containsValue(callback(player), value));
     }
 
     filterByFirstName(value: string) {
         this.filterPlayers(value, p => p.player.firstName);
-    }
-
-    private containsValue(value: string, input: string) {
-        return value.toLowerCase().indexOf(input.toLowerCase()) > -1;
     }
 
     filterByLastName(value: string) {
@@ -93,6 +88,10 @@ export class PlayerListComponent {
 
     filterByClub(value: string) {
         this.filterPlayers(value, p => p.player.club.clubName);
+    }
+
+    private containsValue(value: string, input: string) {
+        return value.toLowerCase().indexOf(input.toLowerCase()) > -1;
     }
 
     onDisciplineChanged(disciplineId: number) {

@@ -15,19 +15,19 @@
     <div class="col s3">
         <label for="vornameFilter">Vorname</label>
         <input id="vornameFilter" class="form-control" type="text" #firstName
-               (keyup)="filterByFirstName(firstName.value)"
+               (keyup)="applyFilters()"
                [(ngModel)]="firstNameInput">
     </div>
     <div class="col s3">
         <label for="nachnameFilter">Nachname</label>
         <input id="nachnameFilter" class="form-control" type="text" #lastName
-               (keyup)="filterByLastName(lastName.value)"
+               (keyup)="applyFilters()"
                [(ngModel)]="lastNameInput">
     </div>
     <div class="col s3">
         <label for="vereinFilter">Verein</label>
         <input id="vereinFilter" class="form-control" type="text" #club
-               (keyup)="filterByClub(club.value)"
+               (keyup)="applyFilters()"
                [(ngModel)]="clubInput">
     </div>
 
