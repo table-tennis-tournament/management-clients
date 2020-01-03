@@ -377,6 +377,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   def callPlayers(matchId: Long): Action[AnyContent] = Action { request =>
     tables.updateCallStateForMatch(matchId)
     sendUpdateTableManagerMessagesForTables(tables.getTTTableFromMatchId(matchId))
+    pub ! UpdateMatches(tables.allMatchesInfo.filter(m => m.ttMatch.id == matchId))
     Ok(Json.toJson(Answer(successful = true, "Call Players success")))
   }
 
