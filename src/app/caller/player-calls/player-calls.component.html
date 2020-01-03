@@ -6,6 +6,7 @@
                           (click)="matchesSelected.emit(currentMatch)"
                           *ngFor="let currentMatch of secondCalls" >
         <div class="cut-text" *ngIf="currentMatch">
+          {{getStartTime(currentMatch)}} min.
           {{currentMatch.name}}
           <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
         </div>
