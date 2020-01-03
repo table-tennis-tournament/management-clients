@@ -35,7 +35,7 @@ export class PlayerListComponent {
         this.applyFilters();
     }
 
-    private applyFilters() {
+    applyFilters() {
         this.filteredPlayers = this.players;
         if (this.currentDisciplineFilter > 0) {
             this.filteredPlayers = this.filteredPlayers.filter(pl => pl.type.id === this.currentDisciplineFilter);
