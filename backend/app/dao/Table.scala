@@ -1037,6 +1037,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def setPaid(typePerPlayerId: Long, value: Boolean) = {
+    ttTypePerPlayer = ttTypePerPlayer.map {m =>
+      if(m.id == typePerPlayerId) m.copy(paid = value)
+      else m
+    }
     val q = for { c <- typePerPlayer if c.id === typePerPlayerId } yield c.paid
     dbConfigProvider.get.db.run(q.update(value))
   }
