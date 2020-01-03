@@ -35,25 +35,6 @@ export class PlayerListComponent {
         this.applyFilters();
     }
 
-    applyFilters() {
-        this.filteredPlayers = this.players;
-        if (this.currentDisciplineFilter > 0) {
-            this.filteredPlayers = this.filteredPlayers.filter(pl => pl.type.id === this.currentDisciplineFilter);
-        }
-        if (this.firstNameInput) {
-            this.filterByFirstName(this.firstNameInput);
-            return;
-        }
-        if (this.lastNameInput) {
-            this.filterByLastName(this.lastNameInput);
-            return;
-        }
-        if (this.clubInput) {
-            this.filterByClub(this.clubInput);
-            return;
-        }
-    }
-
     get disciplines(): Discipline[] {
         return this._players;
     }
@@ -76,6 +57,25 @@ export class PlayerListComponent {
     filterPlayers(value: string, callback: (player: PlayerType) => string) {
         this.filteredPlayers = this.filteredPlayers
             .filter(player => this.containsValue(callback(player), value));
+    }
+
+    applyFilters() {
+        this.filteredPlayers = this.players;
+        if (this.currentDisciplineFilter > 0) {
+            this.filteredPlayers = this.filteredPlayers.filter(pl => pl.type.id === this.currentDisciplineFilter);
+        }
+        if (this.firstNameInput) {
+            this.filterByFirstName(this.firstNameInput);
+            return;
+        }
+        if (this.lastNameInput) {
+            this.filterByLastName(this.lastNameInput);
+            return;
+        }
+        if (this.clubInput) {
+            this.filterByClub(this.clubInput);
+            return;
+        }
     }
 
     filterByFirstName(value: string) {
