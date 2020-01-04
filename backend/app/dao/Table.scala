@@ -137,7 +137,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateTTTables(): Future[Boolean] = {
     val ttTableF = dbConfigProvider.get.db.run(ttTables.filterNot(_.name === 0).sortBy(_.name.asc).result)
     ttTableF map { ttTables =>
-      ttTablesSeq = ttTables.map(t => toTTTable(t))
+      ttTablesSeq = ttTables map { newTable =>
+        ttTablesSeq.find(tab => tab.id == newTable.id) match {
+          case Some(oldTable) => oldTable.copy(tableNumber = newTable.tableNumber,
+            matchId = ttMatchTableSeq.filter(_.tableId == newTable.id).map(_.matchId))
+          case None => toTTTable(newTable)
+        }
+      }
       Logger.debug("read Tables: " + ttTablesSeq.size.toString)
       true
     }
