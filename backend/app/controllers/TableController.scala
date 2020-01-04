@@ -51,10 +51,15 @@ class TableController @Inject()(tables: Tables,
   }
 
   def getByTablemanager(tableManagerId: Long) = Action {
-    val lowerBoundary = (tableManagerId - 1) * 5
-    val upperBoundary = tableManagerId * 5
+    val ids = tableManagerId match {
+      case 1 => Seq(1,2,3,4,5)
+      case 2 => Seq(6, 7, 8, 11, 12)
+      case 3 => Seq(9, 10, 13, 14, 15)
+      case 4 => Seq(16, 17, 18, 19, 20)
+      case 5 => Seq(21, 22, 23, 24)
+    }
     val tableManagerTables = tables.allTTTables()
-      .filter(table => table.tableNumber > lowerBoundary && table.tableNumber <= upperBoundary);
+      .filter(table => ids.contains(table.tableNumber))
     val tablesWithMatches = tableManagerTables.map(ttTable => tables.getTableManagerTableInfo(ttTable, tableManagerId)).sortBy(_.tableNumber)
     Ok(Json.toJson(tablesWithMatches));
   }
