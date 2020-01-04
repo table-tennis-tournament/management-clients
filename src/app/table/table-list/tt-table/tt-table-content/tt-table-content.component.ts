@@ -20,17 +20,6 @@ export class TtTableContentComponent {
     @Output()
     assignMatchToTable = new EventEmitter<MatchToTable>();
 
-
-    onMatchDrop(event) {
-        if (this.isDropDataValid(event)) {
-            this.assignMatchToTable.emit({
-                matchIds: event.dragData.matches.map(match => match.id),
-                tableId: this.table.id,
-                tableNr: this.table.number
-            });
-        }
-    }
-
     private isDropDataValid(event) {
         return (!this.table.matches || !this.table.matches[0]) && event.item.data;
     }
