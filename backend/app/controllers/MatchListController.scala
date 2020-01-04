@@ -36,7 +36,11 @@ class MatchListController @Inject() (tables: Tables,
           case Some(matchList) =>
             val filteredMatchList = matchList.copy(matchId = matchList.matchId.filter(id => tables.getMatch(id).get.state == Open))
             Logger.info("addMatch")
-            val newMLEntry = filteredMatchList.copy(uuid = Some(filteredMatchList.uuid.getOrElse(UUID.randomUUID())), matchId = filteredMatchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
+            val newMLEntry = filteredMatchList.copy(uuid = Some(filteredMatchList.uuid.getOrElse(UUID.randomUUID())),
+              matchId = filteredMatchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
+            if(newMLEntry.matchId.isEmpty) {
+              BadRequest(Json.toJson(Answer(successful = false, "no valid matchids match list", newMLEntry.uuid)))
+            }
             val ml = tables.getMatchList
             if (!ml.exists(_.matchId == filteredMatchList.matchId)) {
               val newML = ml map { mlEntry =>
