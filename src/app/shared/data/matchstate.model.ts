@@ -6,5 +6,6 @@ export enum MatchState {
     Finished= <any>'Finished',
     Completed= <any>'Completed',
     SecondCall= <any>'SecondCall',
-    ThirdCall= <any>'ThirdCall'
+    ThirdCall= <any>'ThirdCall',
+    Started = <any>'Started'
 }

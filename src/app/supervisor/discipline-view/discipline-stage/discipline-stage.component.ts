@@ -37,7 +37,10 @@ export class DisciplineStageComponent {
     isInWaitingListOrOnTableOrCallable(currentMatch: Match) {
         return currentMatch.state === MatchState[MatchState.InWaitingList]
             || currentMatch.state === MatchState[MatchState.Callable]
-            || currentMatch.state === MatchState[MatchState.OnTable];
+            || currentMatch.state === MatchState[MatchState.OnTable]
+            || currentMatch.state === MatchState[MatchState.Started]
+            || currentMatch.state === MatchState[MatchState.SecondCall]
+            || currentMatch.state === MatchState[MatchState.ThirdCall];
     }
 
     isMatchOpen(currentMatch: Match) {
