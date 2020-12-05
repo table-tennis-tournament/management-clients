@@ -1,0 +1,8 @@
+# Default ignored files
+/workspace.xml
+$CACHE_FILE$
+$PRODUCT_WORKSPACE_FILE$
+modules.xml
+libraries/**
+/shelf/**
+sonarlint/

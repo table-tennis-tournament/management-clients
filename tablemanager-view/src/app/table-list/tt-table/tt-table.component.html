@@ -1,0 +1,73 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            <div class="row">
+                <div class="col-4">
+                    <span matBadge="{{table.table_id}}" matBadgeOverlap="false">Tisch</span>
+                </div>
+                <div class="col-4 p-0" *ngIf="tableHasStartedMatch()">
+                    <mat-chip-list>
+                        <mat-chip class="m-0" selected color="primary">{{currentMatch().classification}}</mat-chip>
+                    </mat-chip-list>
+                </div>
+                <div class="col-4 p-0" *ngIf="tableHasStartedMatch()">
+                    <mat-chip-list>
+                        <mat-chip class="m-0" selected color="primary">{{currentMatch().stage}}</mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="!tableHasStartedMatch()">
+        <div class="row">
+            <div class="col">
+                <p>Kein Spiel zugewiesen</p>
+            </div>
+        </div>
+        <app-match-item *ngFor="let match of table.matches" [match]="match"
+                        (callPlayersForMatch)="callPlayersForMatch.emit($event)"
+                        (startMatch)="startMatch($event)">
+        </app-match-item>
+    </mat-card-content>
+    <mat-card-content *ngIf="tableHasStartedMatch()">
+        <div class="row">
+            <div class="col-5">
+            </div>
+            <div class="col-1 mat-small" *ngFor="let game of maxGames">
+                <p>{{game + 1}}</p>
+            </div>
+            <div class="col-1 mat-small">
+                <p>Tot</p>
+            </div>
+        </div>
+        <div class="row">
+            <a  mat-button class="col-5" (click)="openGameDialog(currentMatch().players_a, true)" >
+              <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body-strong mb-0 text-truncate">{{currentMatch().players_a | playerName}}</div>
+              <div class="text-truncate">{{currentMatch().players_a | clubName}}</div>
+            </a>
+            <div class="col-1" *ngFor="let game of allGames()">
+                <p [ngClass]="{'won': this.gameService.playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
+            </div>
+            <div class="col-1">
+                <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}" class="mat-body">{{currentMatch().result.games_won_player_a}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <a mat-button class="col-5 text-truncate" (click)="openGameDialog(currentMatch().players_b, false)">
+                <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0 text-truncate">{{currentMatch().players_b | playerName}}</div>
+                <div class="text-truncate">{{currentMatch().players_b | clubName}}</div>
+            </a>
+            <div class="col-1" *ngFor="let game of allGames()">
+                <p [ngClass]="{'won': this.gameService.playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
+            </div>
+            <div class="col-1">
+                <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body">{{currentMatch().result.games_won_player_b}}</p>
+            </div>
+        </div>
+    </mat-card-content>
+    <mat-card-actions *ngIf="tableHasStartedMatch()">
+      <button  mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
+      <button  mat-raised-button color="primary" (click)="takeBack()">Zurück</button>
+      <button  mat-raised-button color="accent" (click)="endMatch()" class="float-right">Beenden</button>
+    </mat-card-actions>
+</mat-card>

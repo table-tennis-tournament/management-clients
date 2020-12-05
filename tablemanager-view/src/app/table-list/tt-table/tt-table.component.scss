@@ -1,0 +1,22 @@
+mat-card {
+    margin: 20px;
+}
+
+mat-card-header {
+  display: inline;
+}
+
+.won {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.match-won {
+  color: #2E7D32;
+  font-weight: bold;
+}
+
+a.mat-button {
+  line-height: 12px;
+  text-align: left;
+}

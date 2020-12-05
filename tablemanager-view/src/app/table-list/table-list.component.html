@@ -1,0 +1,8 @@
+<app-tt-table *ngFor="let currentTable of tables$ | async"
+              [table]=currentTable
+              (updateMatchResult)="onUpdateMatchResult($event)"
+              (finishMatch)="onFinishMatch($event)"
+              (startMatchOnTable)="onMatchOnTableStarted($event)"
+              (callPlayersForMatch)="onCallPlayersForMatch($event)"
+              (takeBackMatch)="onTakeBackMatch($event)"
+></app-tt-table>
