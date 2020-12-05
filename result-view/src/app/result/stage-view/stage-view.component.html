@@ -1,0 +1,33 @@
+<mat-accordion>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <i class="material-icons">view_list</i>
+        {{stage.name}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+      <div *ngFor="let currentMatch of stage.matches" class="mt-3">
+        <app-match-item [match]="currentMatch"></app-match-item>
+      </div>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<!--<ul materialize="collapsible" class="collapsible" data-collapsible="expandable">-->
+<!--  <li >-->
+<!--    <div class="collapsible-header {{stage.bgColor}} active">-->
+<!--      <div>-->
+<!--        <i class="material-icons">view_list</i>-->
+<!--        {{stage.name}}-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="collapsible-body no-padding black-text">-->
+<!--      <div class="collection">-->
+<!--        <a *ngFor="let currentMatch of stage.matches" href="javascript:void(0)" class="collection-item black-text {{stage.textColor}} minimal-padding">-->
+<!--          <div>-->
+<!--            <result-match-item [match]="currentMatch"></result-match-item>-->
+<!--          </div>-->
+<!--        </a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </li>-->
+<!--</ul>-->

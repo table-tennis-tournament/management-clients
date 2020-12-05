@@ -1,0 +1,10 @@
+<div class="mt-3">
+   <div class="single-bordered pl-1">
+       <app-team-item [team]="match.team1"></app-team-item>
+       <span class="float-right pr-1">{{match.result |resultPipe:true}}</span>
+   </div>
+    <div class="single-bordered pl-1">
+        <app-team-item [team]="match.team2"></app-team-item>
+        <span class="float-right pr-1">{{match.result |resultPipe:false}}</span>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<mat-card>
+  <mat-card-title>
+    <span>{{group.name}}</span>
+    <span class="float-right" *ngIf="group.isComplete" ><i class="material-icons">done</i></span>
+  </mat-card-title>
+  <mat-card-content>
+        <app-match-item *ngFor="let currentMatch of group.matches" [match]="currentMatch" ></app-match-item>
+  </mat-card-content>
+</mat-card>
