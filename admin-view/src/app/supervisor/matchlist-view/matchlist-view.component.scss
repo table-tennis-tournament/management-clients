@@ -1,0 +1,52 @@
+.waiting-list-drop-zone {
+  min-height: 100px;
+  width: 200px;
+  z-index: 999999;
+}
+
+.waiting-list-fixed-position {
+  position: fixed;
+}
+
+.waiting-list-sorting-area{
+  min-height: 100px;
+  width: 200px;
+}
+
+.collection.custom-margin{
+  margin: -30px;
+}
+
+.reverse-margin {
+  margin: -1rem;
+}
+
+.header-main-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 220px;
+}
+
+.header-center-content {
+  flex: 1;
+  order: 1;
+}
+
+.header-right-content {
+  width: 33px;
+  order: 2;
+}
+
+.discipline-match-list-square {
+  width: 25px;
+  height: 25px;
+  float: right;
+  text-align: center
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto 30px;
+  grid-template-rows: auto;
+}

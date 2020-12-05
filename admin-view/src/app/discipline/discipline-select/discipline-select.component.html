@@ -1,0 +1,20 @@
+<div class="col m9 s8">
+  <mz-select-container>
+    <select mz-select
+            id="select-discipline"
+            [label]="'Wähle Konkurrenz'"
+            [placeholder]="'Konkurrenz'"
+            (change)="disciplineChanged.emit(+selectedDiscipline)"
+            [(ngModel)]="selectedDiscipline">
+      <option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
+        {{currentDiscipline.name}}
+      </option>
+    </select>
+  </mz-select-container>
+</div>
+
+<div class="col m3 s4">
+  <a class="btn-floating btn-medium blue" (click)="disciplineRefresh.emit(+selectedDiscipline)">
+    <i class="medium material-icons">refresh</i>
+  </a>
+</div>

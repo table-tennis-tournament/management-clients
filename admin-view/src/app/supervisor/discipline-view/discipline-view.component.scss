@@ -1,0 +1,57 @@
+.disciplineTable {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 3em 0;
+  padding: 0;
+}
+
+.disciplineTable-cell {
+  box-sizing: border-box;
+  flex-grow: 1;
+  width: 100%; // Default to full width
+  padding: 0.8em 1.2em;
+  overflow: hidden; // Or flex might break
+  list-style: none;
+
+  > h1, > h2, > h3, > h4, > h5, > h6 {
+    margin: 0;
+  }
+}
+
+/* Table column sizing
+================================== */
+.disciplineTable--2cols > .disciplineTable-cell {
+  width: 50%;
+}
+
+.disciplineTable--3cols > .disciplineTable-cell {
+  width: 33.33%;
+}
+
+.disciplineTable--4cols > .disciplineTable-cell {
+  width: 25%;
+}
+
+.disciplineTable--5cols > .disciplineTable-cell {
+  width: 20%;
+}
+
+.disciplineTable--6cols > .disciplineTable-cell {
+  width: 16.6%;
+}
+
+.row.no-bottom-margin {
+  margin-bottom: 0px;
+}
+
+label {
+  color: unset;
+}
+
+.simple-padding {
+  padding: 5px;
+}
+
+.no-scroll-overflow {
+  overflow-anchor: none
+}

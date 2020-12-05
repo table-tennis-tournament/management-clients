@@ -1,0 +1,25 @@
+<mz-modal #selectTableModal [fixedFooter]="true" [options]="modalOptions">
+    <mz-modal-header class="center-align padding-5">
+        <h4>Freier Tisch auswählen</h4>
+    </mz-modal-header>
+    <mz-modal-content>
+
+        <div class="col s4">
+            <mz-select-container class="col s12 m6">
+                <select mz-select
+                        id="select-table"
+                        [label]="'Wähle Tisch'"
+                        [placeholder]="'Tisch Nr.'"
+                        [(ngModel)]="selectedTable">
+                    <option *ngFor="let currentTable of tables" [value]="currentTable.number">Tisch Nr.
+                        {{currentTable.number}}
+                    </option>
+                </select>
+            </mz-select-container>
+        </div>
+    </mz-modal-content>
+    <mz-modal-footer>
+        <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
+        <button mz-button [flat]="true" mz-modal-close (click)="onOk()">OK</button>
+    </mz-modal-footer>
+</mz-modal>

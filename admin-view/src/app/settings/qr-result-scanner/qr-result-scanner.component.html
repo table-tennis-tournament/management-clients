@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col s12 m4">
+        <mz-select-container>
+            <select mz-select
+                    id="select-camerar"
+                    [label]="'Wähle Kamera'"
+                    [placeholder]="'Kamera'"
+                    [(ngModel)]="selectedDevice"
+                    (select)="onDeviceSelectChange($event)">
+                <option *ngFor="let device of availableDevices" [value]="device.deviceId">
+                    {{device.label}}
+                </option>
+            </select>
+        </mz-select-container>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col s12 m12 l12">
+        <zxing-scanner #scanner class="test-class" start="true"
+                       [device]="selectedMediaDevice"
+                       (scanSuccess)="handleQrCodeResult($event)"
+        ></zxing-scanner>
+    </div>
+</div>
+
