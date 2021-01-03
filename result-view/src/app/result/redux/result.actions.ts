@@ -5,8 +5,7 @@ import {Match} from '../data/match';
 import {Type} from '../data/type';
 
 export const loadTypes = createAction(
-    '[Types] Load',
-    props<{}>()
+    '[Types] Load'
 );
 
 export const loadTypesSuccess = createAction(
@@ -15,8 +14,7 @@ export const loadTypesSuccess = createAction(
 );
 
 export const loadTypesError = createAction(
-  '[Types] Load Error',
-  props<{}>()
+  '[Types] Load Error'
 );
 
 export const loadMatches = createAction(
@@ -30,6 +28,5 @@ export const loadMatchesSuccess = createAction(
 );
 
 export const loadMatchesError = createAction(
-  '[Matches] Load Error',
-  props<{}>()
+  '[Matches] Load Error'
 );

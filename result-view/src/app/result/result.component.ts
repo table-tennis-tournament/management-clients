@@ -46,7 +46,7 @@ export class ResultComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch(ResultActions.loadTypes({}));
+    this.store.dispatch(ResultActions.loadTypes());
     this.store.dispatch(ResultActions.loadMatches({typeId: 8}));
   }
 
@@ -74,7 +74,7 @@ export class ResultComponent implements OnInit {
   }
 
   getColor(currentType: Type) {
-    if(currentType.id === this.currentTabId) {
+    if (currentType.id === this.currentTabId) {
       return 'warn';
     }
     return 'accent';

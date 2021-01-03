@@ -16,7 +16,7 @@ export class ResultEffects {
     switchMap(() => this.typesService.getOpenTypes()
       .pipe(
         map(types => ResultActions.loadTypesSuccess({types})),
-        catchError(() => of(ResultActions.loadTypesError({})))
+        catchError(() => of(ResultActions.loadTypesError()))
       )
     )
   ));
@@ -42,7 +42,7 @@ export class ResultEffects {
             });
           }
         ),
-        catchError(() => of(ResultActions.loadMatchesError({})))
+        catchError(() => of(ResultActions.loadMatchesError()))
       )
     )
   ));
