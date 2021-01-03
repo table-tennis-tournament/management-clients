@@ -13,7 +13,7 @@ export const loadTablesSuccess = createAction(
 
 export const updatedMatchToTable = createAction(
     '[Tables] UpdatedMatchToTable',
-    props<{ table: Table }>()
+    props<{ tables: Table[] }>()
 );
 
 export const loadTablesError = createAction(

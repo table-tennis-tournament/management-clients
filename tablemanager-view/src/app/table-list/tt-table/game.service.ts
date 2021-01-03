@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Game} from '../match/game.model';
+import {Result} from '../match/result.model';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +54,10 @@ export class GameService {
 
   playerWonMatch(gamesWonPlayer: number) {
     return gamesWonPlayer === 3;
+  }
+
+  playerHasWon(result: Result) {
+    return this.playerWonMatch(result.games_won_player_a) || this.playerWonMatch(result.games_won_player_b);
   }
 
   gameHasNoResult(game: Game) {

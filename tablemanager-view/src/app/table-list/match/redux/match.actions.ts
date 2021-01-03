@@ -18,7 +18,7 @@ export const updateMatchResultError = createAction(
 
 export const finishMatch = createAction(
   '[Match] Finish Match',
-  props<{ matchId: number }>()
+  props<{ matchId: number, result: Result }>()
 );
 
 export const finishMatchSuccess = createAction(

@@ -12,7 +12,9 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {NavigationModule} from './navigation/navigation.module';
 import {metaReducers, reducers} from './reducers';
+import {WebsocketService} from './services/websocket.service';
 import {TableListModule} from './table-list/table-list.module';
+import {WebsocketHandlerService} from './table-list/websocket-handler.service';
 
 @NgModule({
     declarations: [
@@ -28,15 +30,15 @@ import {TableListModule} from './table-list/table-list.module';
         StoreModule.forRoot(reducers, {
             metaReducers,
             runtimeChecks: {
-                strictStateImmutability: true,
-                strictActionImmutability: true
+                strictStateImmutability: false,
+                strictActionImmutability: false
             }
         }),
         EffectsModule.forRoot([]),
         StoreRouterConnectingModule.forRoot(),
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
     ],
-    providers: [],
+    providers: [WebsocketService, WebsocketHandlerService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

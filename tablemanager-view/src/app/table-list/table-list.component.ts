@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {select, Store} from '@ngrx/store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {WebsocketService} from '../services/websocket.service';
 import {Match} from './match/match.model';
 import * as MatchActions from './match/redux/match.actions';
@@ -17,17 +17,16 @@ import {Table} from './tt-table/table.model';
 export class TableListComponent implements OnInit {
 
   tables$: Observable<Table[]>;
+  subscription: Subscription;
 
   constructor(private store: Store<AppState>, private events: WebsocketService, private route: ActivatedRoute) {
     this.tables$ = store.pipe(select(getTables));
   }
 
   ngOnInit() {
-    this.route.params
-      .subscribe(
-        params => this.store.dispatch(
-          TableActions.loadTables({tableManagerId: params.managerId})));
-    this.events.startListening();
+    this.subscription = this.route
+        .data
+        .subscribe(v => this.store.dispatch(TableActions.loadTables({tableManagerId: v.tableManagerId})));
   }
 
   onUpdateMatchResult(matchResult: any) {
@@ -35,7 +34,7 @@ export class TableListComponent implements OnInit {
   }
 
   onFinishMatch(match: Match) {
-    this.store.dispatch(MatchActions.finishMatch({matchId: match.match_id}));
+    this.store.dispatch(MatchActions.finishMatch({matchId: match.match_id, result: match.result}));
   }
 
   onMatchOnTableStarted($event: any) {

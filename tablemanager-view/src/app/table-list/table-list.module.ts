@@ -15,6 +15,7 @@ import {PlayerDialogComponent} from './tt-table/player-dialog/player-dialog.comp
 import {GameDialogComponent} from './tt-table/game-dialog/game-dialog.component';
 import {ClubNamePipe} from './club-name.pipe';
 import {MatchItemComponent} from './tt-table/match-item/match-item.component';
+import { SinglePlayerPipe } from './single-player.pipe';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {MatchItemComponent} from './tt-table/match-item/match-item.component';
     PlayerDialogComponent,
     GameDialogComponent,
     ClubNamePipe,
-    MatchItemComponent
+    MatchItemComponent,
+    SinglePlayerPipe
   ],
   imports: [
     SharedModule,

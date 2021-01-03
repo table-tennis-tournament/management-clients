@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import {updatedMatchToTable} from '../table-list/redux/table-list.actions';
@@ -12,82 +12,27 @@ import {Table} from '../table-list/tt-table/table.model';
 })
 export class WebsocketService {
 
-    constructor(private store: Store<AppState>) {
-
-    }
-
     websocket: any;
-    stompClient: any;
-    backendUrl: string;
 
-    connectedState = false;
-    connected = new BehaviorSubject<boolean>(false);
-    logMessages = new BehaviorSubject<string>('');
-    lastMessages: string[] = [];
+    connectSocks(listeners: any): Observable<any> {
+        const connectListener = new EventEmitter<any>();
+        connectListener.subscribe(listeners.connected);
+        const disconnectListener = new EventEmitter<any>();
+        disconnectListener.subscribe(listeners.disconnected);
 
-    sendMessage(message) {
-        if (!this.websocket) {
-            this.connect();
-            this.stompClient.send('/topic/table', {}, JSON.stringify(message));
-        } else if (this.connectedState) {
-            this.stompClient.send('/topic/table', {}, JSON.stringify(message));
-        }
-    }
-
-    disconnectWS() {
-        this.close();
-    }
-
-    private close() {
-        if (!!this.stompClient) {
-            this.stompClient.disconnect();
-        }
-        this.connectedState = false;
-        this.connected.next(this.connectedState);
-    }
-
-    protected getWebsocketBackendUrl(): string {
-        return '/api/ttt-management-websocket';
-    }
-
-    public startListening() {
-        this.logMessages.subscribe(msg => {
-            this.lastMessages.push(msg);
-            this.lastMessages = this.lastMessages.slice(Math.max(this.lastMessages.length - 50, 0));
+        return new Observable(complete => {
+            this.websocket = new SockJS('/api/websocket');
+            this.websocket.onopen = () => complete.next();
+            this.websocket.onmessage = (e) => {
+                const jsonMessage = JSON.parse(e.data);
+                connectListener.emit(jsonMessage);
+            };
+            this.websocket.onclose = (e) => {
+                console.log('websocket error event');
+                console.log(e);
+                connectListener.complete();
+                disconnectListener.emit(e);
+            };
         });
-        this.logMessages.next('init');
-        this.backendUrl = this.getWebsocketBackendUrl();
-        this.logMessages.next('init with ' + this.backendUrl);
-
-        this.connect();
-    }
-
-    private connect() {
-        this.disconnectWS();
-
-        this.websocket = new SockJS(this.backendUrl);
-        this.stompClient = Stomp.over(this.websocket);
-        this.stompClient.debug = () => {
-        };
-        this.stompClient.connect({}, frame => {
-            this.connectedState = true;
-            this.stompClient.subscribe('/topic/table', evt => {
-                try {
-                    console.log('Received WS event: {} ' + evt);
-                    const jsonMessage = JSON.parse(evt.body);
-                    this.store.dispatch(updatedMatchToTable({table: jsonMessage as Table}));
-                } catch (e) {
-                    this.logMessages.next(e + ': ' + evt.data);
-                }
-            });
-            // this.stompClient.reconnect_delay = 2000;
-        }, this.errorCallBack);
-    }
-
-    errorCallBack(error) {
-        console.error('errorCallBack -> ' + error);
-        setTimeout(() => {
-            this.connect();
-        }, 5000);
     }
 }

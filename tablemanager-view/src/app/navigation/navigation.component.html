@@ -10,7 +10,7 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav>
         <mat-nav-list>
-            <a *ngFor="let manager of managers" routerLinkActive="active" mat-list-item [routerLink]="'/tablemanager/' + manager"
+            <a *ngFor="let manager of managers" routerLinkActive="active" mat-list-item [routerLink]="'/tablemanager' + manager"
                (click)="sidenav.toggle()">
                 Manager {{manager}}
             </a>

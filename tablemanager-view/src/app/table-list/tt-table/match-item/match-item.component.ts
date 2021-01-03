@@ -37,4 +37,12 @@ export class MatchItemComponent {
       }
     });
   }
+
+  isSecondCall() {
+    return this.match.state === 'SecondCall';
+  }
+
+  isThirdCall() {
+    return this.match.state === 'ThirdCall';
+  }
 }

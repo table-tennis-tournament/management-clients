@@ -1,14 +1,20 @@
 <div class="row">
   <div class="col-6 col-md-5 col-sm-5">
-    <span matBadge="{{match.players_a[0].call_count}}" [matBadgeHidden]="match.players_a[0].call_count<2" matBadgeColor="warn" matBadgeOverlap="false">{{match.players_a | playerName}}</span>
+    <span>{{match.players_a | playerName}}</span>
   </div>
   <div class="col-6 col-md-5 col-sm-5">
     <span matBadge="{{match.players_b[0].call_count}}" [matBadgeHidden]="match.players_b[0].call_count<2" matBadgeColor="warn" matBadgeOverlap="false">{{match.players_b | playerName}} </span>
   </div>
   <div class="col-md-2 col-sm-2">
     <button mat-mini-fab color="accent" (click)="callPlayers()">
-      <mat-icon aria-hidden="false">notification_important</mat-icon>
+      <mat-icon aria-hidden="false">alarm</mat-icon>
     </button>
+    <span *ngIf="isSecondCall()" class="call-color">
+      2. Aufruf!
+    </span>
+    <span *ngIf="isThirdCall()" class="call-color">
+      3. Aufruf!
+    </span>
     <button mat-mini-fab color="warn" (click)="startMatch.emit(match.match_id)" class="float-right">
       <mat-icon aria-hidden="false">play_arrow</mat-icon>
     </button>

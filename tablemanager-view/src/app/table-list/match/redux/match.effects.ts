@@ -28,7 +28,7 @@ export class MatchEffects {
 
   finishMatch = createEffect(() => this.actions$.pipe(
     ofType(MatchActions.finishMatch),
-    switchMap(({matchId}) => this.matchService.finishMatch(matchId)
+    switchMap(({matchId, result}) => this.matchService.finishMatch(matchId, result)
       .pipe(
         map(() => MatchActions.finishMatchSuccess({})),
         catchError(() => of(MatchActions.finishMatchError({})))

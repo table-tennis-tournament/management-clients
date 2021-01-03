@@ -39,7 +39,7 @@ export class TtTableComponent {
   }
 
   currentMatch(): Match {
-    return this.table.matches.find(match => match.state === 'STARTED');
+    return this.table.matches.find(match => match.state === 'Started');
   }
 
   tableHasStartedMatch(): boolean {

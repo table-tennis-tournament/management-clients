@@ -7,10 +7,14 @@ import {TableListModule} from './table-list/table-list.module';
 const routes: Routes = [
     {
         path: '',
-        redirectTo: '/tablemanager/1',
+        redirectTo: '/tablemanager1',
         pathMatch: 'full'
     },
-    {path: 'tablemanager/:managerId', component: TableListComponent}
+    {path: 'tablemanager1', component: TableListComponent, data: {tableManagerId: 1}},
+    {path: 'tablemanager2', component: TableListComponent, data: {tableManagerId: 2}},
+    {path: 'tablemanager3', component: TableListComponent, data: {tableManagerId: 3}},
+    {path: 'tablemanager4', component: TableListComponent, data: {tableManagerId: 4}},
+    {path: 'tablemanager5', component: TableListComponent, data: {tableManagerId: 5}}
 ];
 
 @NgModule({

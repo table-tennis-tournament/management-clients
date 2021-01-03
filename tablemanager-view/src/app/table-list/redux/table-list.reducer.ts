@@ -1,4 +1,4 @@
-import {Action, createFeatureSelector, createReducer, createSelector, on, State} from '@ngrx/store';
+import {Action, createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
 import {Table} from '../tt-table/table.model';
 import * as TableActions from './table-list.actions';
 
@@ -20,14 +20,14 @@ const tableReducer = createReducer(
         ...state,
         tables
     })),
-    on(TableActions.updatedMatchToTable, (state, {table}) => ({
+    on(TableActions.updatedMatchToTable, (state, {tables}) => ({
         ...state,
         tables: state.tables.map(existingTable => {
-            if (existingTable.table_id === table.table_id) {
-                return table;
-            } else {
-                return existingTable;
+            const availableTable = tables.filter(tab => tab.table_id === existingTable.table_id);
+            if (availableTable.length > 0) {
+                return availableTable[0];
             }
+            return existingTable;
         })
     }))
 );
