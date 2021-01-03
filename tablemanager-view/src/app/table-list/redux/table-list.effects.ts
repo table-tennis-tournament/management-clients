@@ -14,7 +14,7 @@ export class TableListEffects {
         switchMap(({tableManagerId}) => this.tableService.getTables(tableManagerId)
             .pipe(
                 map(tables => TableActions.loadTablesSuccess({tables})),
-                catchError(() => of(TableActions.loadTablesError({})))
+                catchError(() => of(TableActions.loadTablesError()))
             )
         )
     ));

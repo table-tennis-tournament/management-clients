@@ -17,6 +17,5 @@ export const updatedMatchToTable = createAction(
 );
 
 export const loadTablesError = createAction(
-    '[Tables] Load Tables Error',
-    props<{}>()
+    '[Tables] Load Tables Error'
 );

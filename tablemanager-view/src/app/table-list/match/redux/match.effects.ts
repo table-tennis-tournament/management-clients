@@ -13,8 +13,8 @@ export class MatchEffects {
     ofType(MatchActions.updateMatchResult),
     switchMap(({matchId, result}) => this.matchService.updateMatchResult(matchId, result)
       .pipe(
-        map(() => MatchActions.updateMatchResultSuccess({})),
-        catchError(() => of(MatchActions.updateMatchResultError({})))
+        map(() => MatchActions.updateMatchResultSuccess()),
+        catchError(() => of(MatchActions.updateMatchResultError()))
       )
     )
   ));
@@ -30,8 +30,8 @@ export class MatchEffects {
     ofType(MatchActions.finishMatch),
     switchMap(({matchId, result}) => this.matchService.finishMatch(matchId, result)
       .pipe(
-        map(() => MatchActions.finishMatchSuccess({})),
-        catchError(() => of(MatchActions.finishMatchError({})))
+        map(() => MatchActions.finishMatchSuccess()),
+        catchError(() => of(MatchActions.finishMatchError()))
       )
     )
   ));
@@ -47,8 +47,8 @@ export class MatchEffects {
     ofType(MatchActions.startMatchOnTable),
     switchMap(({tableId, matchId}) => this.matchService.startMatch(tableId, matchId)
       .pipe(
-        map(() => MatchActions.startMatchOnTableSuccess({})),
-        catchError(() => of(MatchActions.startMatchOnTableError({})))
+        map(() => MatchActions.startMatchOnTableSuccess()),
+        catchError(() => of(MatchActions.startMatchOnTableError()))
       )
     )
   ));
@@ -65,8 +65,8 @@ export class MatchEffects {
     ofType(MatchActions.callPlayerForMatch),
     switchMap(({playerIds, matchId}) => this.matchService.callPlayersForMatch(playerIds, matchId)
       .pipe(
-        map(() => MatchActions.callPlayerForMatchSuccess({})),
-        catchError(() => of(MatchActions.callPlayerForMatchError({})))
+        map(() => MatchActions.callPlayerForMatchSuccess()),
+        catchError(() => of(MatchActions.callPlayerForMatchError()))
       )
     )
   ));
@@ -83,8 +83,8 @@ export class MatchEffects {
     ofType(MatchActions.takeBackMatch),
     switchMap(({matchId}) => this.matchService.takeBackMatch(matchId)
       .pipe(
-        map(() => MatchActions.takeBackMatchSuccess({})),
-        catchError(() => of(MatchActions.takeBackMatchError({})))
+        map(() => MatchActions.takeBackMatchSuccess()),
+        catchError(() => of(MatchActions.takeBackMatchError()))
       )
     )
   ));

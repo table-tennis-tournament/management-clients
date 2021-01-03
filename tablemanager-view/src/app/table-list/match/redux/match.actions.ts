@@ -7,13 +7,11 @@ export const updateMatchResult = createAction(
 );
 
 export const updateMatchResultSuccess = createAction(
-  '[Match] Update Match Result Success',
-  props<{}>()
+  '[Match] Update Match Result Success'
 );
 
 export const updateMatchResultError = createAction(
-  '[Match] Update Match Result Error',
-  props<{}>()
+  '[Match] Update Match Result Error'
 );
 
 export const finishMatch = createAction(
@@ -22,13 +20,11 @@ export const finishMatch = createAction(
 );
 
 export const finishMatchSuccess = createAction(
-  '[Match] Finish Match Success',
-  props<{}>()
+  '[Match] Finish Match Success'
 );
 
 export const finishMatchError = createAction(
-  '[Match] Finish Match Error',
-  props<{}>()
+  '[Match] Finish Match Error'
 );
 
 export const startMatchOnTable = createAction(
@@ -37,13 +33,11 @@ export const startMatchOnTable = createAction(
 );
 
 export const startMatchOnTableSuccess = createAction(
-  '[Match] Start Match Success',
-  props<{}>()
+  '[Match] Start Match Success'
 );
 
 export const startMatchOnTableError = createAction(
-  '[Match] Start Match Error',
-  props<{}>()
+  '[Match] Start Match Error'
 );
 
 export const callPlayerForMatch = createAction(
@@ -52,13 +46,11 @@ export const callPlayerForMatch = createAction(
 );
 
 export const callPlayerForMatchSuccess = createAction(
-  '[Match] Call Player for Match Success',
-  props<{}>()
+  '[Match] Call Player for Match Success'
 );
 
 export const callPlayerForMatchError = createAction(
-  '[Match] Call Player for Match Error',
-  props<{}>()
+  '[Match] Call Player for Match Error'
 );
 
 export const takeBackMatch = createAction(
@@ -67,12 +59,10 @@ export const takeBackMatch = createAction(
 );
 
 export const takeBackMatchSuccess = createAction(
-  '[Match] Take back Success',
-  props<{}>()
+  '[Match] Take back Success'
 );
 
 export const takeBackMatchError = createAction(
-  '[Match] Take back Error',
-  props<{}>()
+  '[Match] Take back Error'
 );
 
