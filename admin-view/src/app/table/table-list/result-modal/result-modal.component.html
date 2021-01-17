@@ -20,8 +20,8 @@
     </div>
   </mz-modal-content>
   <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
-    <button mz-button [flat]="true" mz-modal-close
+    <button mat-flat-button mz-modal-close>Abbrechen</button>
+    <button mat-flat-button mz-modal-close
             [class.disabled]="!checkerResult.firstPlayerWinning && !checkerResult.secondPlayerWinning"
             (click)="checkResultAndClose()">
       OK

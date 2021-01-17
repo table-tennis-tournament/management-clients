@@ -66,6 +66,7 @@ import {DisciplineModule} from './discipline/discipline.module';
 import { MatchlistGroupComponent } from './assign/discipline-match-list/matchlist-group/matchlist-group.component';
 import { SingleItemComponent } from './assign/discipline-match-list/single-item/single-item.component';
 import { MatchlistStageComponent } from './assign/discipline-match-list/matchlist-stage/matchlist-stage.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -134,7 +135,8 @@ import { MatchlistStageComponent } from './assign/discipline-match-list/matchlis
         }),
         EffectsModule.forRoot([TableEffects, MatchEffects, MatchListEffects,
             DisciplineEffects, SettingsEffects, WebSocketEffects, CallerEffects, ResultEffects]),
-        HttpClientModule
+        HttpClientModule,
+        NoopAnimationsModule
     ],
 
     providers: [TableService, WebsocketService, WebsocketHandlerService],

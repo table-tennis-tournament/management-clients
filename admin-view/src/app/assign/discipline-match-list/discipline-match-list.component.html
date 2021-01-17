@@ -8,7 +8,7 @@
     </div>
 </div>
 <div class="row maxHeight">
-    <mz-spinner *ngIf="matchesLoading"></mz-spinner>
+    <mat-spinner *ngIf="matchesLoading"></mat-spinner>
     <mz-collection *ngIf="currentDisciplineId !== -1">
         <mz-collection-item cdkDropList
                             [ngClass]="typeColor[currentMatch.type.id]"
