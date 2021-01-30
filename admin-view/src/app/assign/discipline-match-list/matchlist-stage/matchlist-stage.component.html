@@ -1,7 +1,6 @@
 <div class="cut-text" [ngClass]="typeColor[matchListItem.matchinfo[0].type.id]">
-  <mz-collapsible>
-    <mz-collapsible-item>
-      <mz-collapsible-item-header>
+  <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
         <div class="black-text header-main-container">
           <span class="header-center-content" *ngIf="matchListItem.matchinfo[0].group">
             <i class="material-icons m-0">group</i>
@@ -12,8 +11,7 @@
             <span class="align-top">{{matchListItem.matchinfo[0].matchType |disciplineType}}</span>
           </span>
         </div>
-      </mz-collapsible-item-header>
-      <mz-collapsible-item-body>
+      </mat-expansion-panel-header>
         <div class="collection custom-margin">
           <a *ngFor="let matchGroup of matchListItem.matchinfo" href="javascript:void(0)"
              [class.disabled-item]="!matchGroup.isPlayable"
@@ -23,7 +21,5 @@
             <toma-team-item [team]="matchGroup.team2"></toma-team-item>
           </a>
         </div>
-      </mz-collapsible-item-body>
-    </mz-collapsible-item>
-  </mz-collapsible>
+  </mat-expansion-panel>
 </div>

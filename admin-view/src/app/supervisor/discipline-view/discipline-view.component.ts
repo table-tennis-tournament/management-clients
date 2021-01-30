@@ -54,13 +54,6 @@ export class DisciplineViewComponent {
         if (this.selectedDiscipline < 1) {
             this.selectDiscipline.emit(this.tabs[0].id);
         }
-        // if (this.tabs && this.tabs.length > 0) {
-        //     let selectedTabId = this.tabs[0].id;
-        //     if (this.selectedDiscipline > 0) {
-        //         selectedTabId = this.selectedDiscipline;
-        //     }
-        //     this.setTabForId(selectedTabId);
-        // }
     }
 
     get selectedDiscipline() {
@@ -95,7 +88,6 @@ export class DisciplineViewComponent {
         }
         this.mergeMatches(id);
         this.removePlayedItems();
-        // this.selectDiscipline.emit(this.selectedTab.id);
     }
 
     private mergeMatches(id: number) {
@@ -106,7 +98,6 @@ export class DisciplineViewComponent {
         }
         this.mergeStage(this.selectedTab.stages, createdTab.stages);
         this.mergeGroups(this.selectedTab.groups, createdTab.groups);
-        // this.selectedTab = createdTab;
     }
 
     private mergeStage(existingStages: DisciplineStage[], newStages: DisciplineStage[]) {

@@ -1,30 +1,26 @@
-<mz-collapsible>
-  <mz-collapsible-item>
-    <mz-collapsible-item-header>
-      <div class="black-text header-main-container">
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+        <div class="black-text header-main-container">
         <span class="header-center-content" *ngIf="matchListItem.matchinfo[0].group">
           <i class="material-icons m-0">group</i>
           <span class="align-top">Gruppe {{matchListItem.matchinfo[0].group.name}}</span>
         </span>
-        <span class="header-center-content" *ngIf="!matchListItem.matchinfo[0].group">
+            <span class="header-center-content" *ngIf="!matchListItem.matchinfo[0].group">
           <i class="material-icons m-0">view_list</i>
           <span class="align-top">{{matchListItem.matchinfo[0].matchType |disciplineType}}</span>
         </span>
-        <span class="header-right-content">
+            <span class="header-right-content">
             <a href="javascript:void(0)" (click)="matchListItemDelete.emit(matchListItem)">
             <i class="material-icons">close</i></a>
         </span>
-      </div>
-    </mz-collapsible-item-header>
-    <mz-collapsible-item-body>
-      <div class="collection custom-margin">
+        </div>
+    </mat-expansion-panel-header>
+    <div class="collection custom-margin">
         <a *ngFor="let matchGroup of matchListItem.matchinfo" href="javascript:void(0)"
            class="collection-item">
-          <toma-team-item [team]="matchGroup.team1"></toma-team-item>
-          -
-          <toma-team-item [team]="matchGroup.team2"></toma-team-item>
+            <toma-team-item [team]="matchGroup.team1"></toma-team-item>
+            -
+            <toma-team-item [team]="matchGroup.team2"></toma-team-item>
         </a>
-      </div>
-    </mz-collapsible-item-body>
-  </mz-collapsible-item>
-</mz-collapsible>
+    </div>
+</mat-expansion-panel>

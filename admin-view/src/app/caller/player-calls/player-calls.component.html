@@ -1,8 +1,8 @@
 <div>
   <div *ngIf="secondCalls">
-    <mz-collection>
-      <mz-collection-header><h4>2. Aufruf:</h4></mz-collection-header>
-      <mz-collection-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
+    <h4>2. Aufruf:</h4>
+    <mat-list>
+      <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
                           (click)="matchesSelected.emit(currentMatch)"
                           *ngFor="let currentMatch of secondCalls" >
         <div class="cut-text" *ngIf="currentMatch">
@@ -10,13 +10,13 @@
           {{currentMatch.name}}
           <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
         </div>
-      </mz-collection-item>
-    </mz-collection>
+      </mat-list-item>
+    </mat-list>
   </div>
   <div *ngIf="thirdCalls">
-    <mz-collection>
-      <mz-collection-header><h4>3. Aufruf:</h4></mz-collection-header>
-      <mz-collection-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
+    <h4>3. Aufruf:</h4>
+    <mat-list>
+      <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
                           (click)="matchesSelected.emit(currentMatch)"
                           *ngFor="let currentMatch of thirdCalls" >
 
@@ -25,7 +25,7 @@
           {{currentMatch.name}}
           <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
         </div>
-      </mz-collection-item>
-    </mz-collection>
+      </mat-list-item>
+    </mat-list>
   </div>
 </div>

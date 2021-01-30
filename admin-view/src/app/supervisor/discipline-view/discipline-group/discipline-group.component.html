@@ -9,30 +9,31 @@
             <span class="circle right" *ngIf="isGroupInWaitingList()">W</span>
         </span>
     </div>
-
-    <mz-collapsible [mode]="'expandable'" #collapsibleGroup>
-        <mz-collapsible-item [active]="showPlayers">
-            <mz-collapsible-item-header>
-                <div class="black-text">
-                    <i class="material-icons">perm_identity</i>Spieler
-                </div>
-            </mz-collapsible-item-header>
-            <mz-collapsible-item-body>
-                <div class="collection custom-margin black-text">
+        <mat-expansion-panel [expanded]="showPlayers">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>
+                        perm_identity
+                    </mat-icon>
+                    Spieler
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+                <div class="collection black-text">
                     <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
                         <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
                     </a>
                 </div>
-            </mz-collapsible-item-body>
-        </mz-collapsible-item>
-        <mz-collapsible-item [active]="showMatches">
-            <mz-collapsible-item-header>
-                <div class="black-text">
-                    <i class="material-icons">view_list</i>Spiele
-                </div>
-            </mz-collapsible-item-header>
-            <mz-collapsible-item-body>
-                <div class="collection custom-margin" cdkDropList>
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="showMatches">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>
+                        view_list
+                    </mat-icon>
+                    Spiele
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+                <div class="collection" cdkDropList>
                     <a *ngFor="let currentMatch of group.matches"
                        (dblclick)="resultForMatch.emit(currentMatch)"
                        cdkDrag [cdkDragDisabled]="currentMatch.state !== openMatchState"
@@ -52,7 +53,5 @@
                         </div>
                     </a>
                 </div>
-            </mz-collapsible-item-body>
-        </mz-collapsible-item>
-    </mz-collapsible>
+        </mat-expansion-panel>
 </div>
