@@ -1,25 +1,13 @@
-<mz-modal #selectTableModal [fixedFooter]="true" [options]="modalOptions">
-    <mz-modal-header class="center-align padding-5">
-        <h4>Freier Tisch auswählen</h4>
-    </mz-modal-header>
-    <mz-modal-content>
-
-        <div class="col s4">
-            <mz-select-container class="col s12 m6">
-                <select mz-select
-                        id="select-table"
-                        [label]="'Wähle Tisch'"
-                        [placeholder]="'Tisch Nr.'"
-                        [(ngModel)]="selectedTable">
-                    <option *ngFor="let currentTable of tables" [value]="currentTable.number">Tisch Nr.
-                        {{currentTable.number}}
-                    </option>
-                </select>
-            </mz-select-container>
-        </div>
-    </mz-modal-content>
-    <mz-modal-footer>
-        <button mat-flat-button mz-modal-close>Abbrechen</button>
-        <button mat-flat-button mz-modal-close (click)="onOk()">OK</button>
-    </mz-modal-footer>
-</mz-modal>
+<h1 mat-dialog-title>Freier Tisch auswählen</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+        <mat-label>Wähle Tisch</mat-label>
+        <mat-select [(value)]="selectedTable">
+            <mat-option *ngFor="let currentTable of data" [value]="currentTable.number">Tisch Nr. {{currentTable.number}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-button [mat-dialog-close]="selectedTable" cdkFocusInitial>Ok</button>
+</div>

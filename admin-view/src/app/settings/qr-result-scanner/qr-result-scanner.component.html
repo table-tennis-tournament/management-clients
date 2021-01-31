@@ -1,17 +1,15 @@
 <div class="row">
     <div class="col s12 m4">
-        <mz-select-container>
-            <select mz-select
-                    id="select-camerar"
-                    [label]="'Wähle Kamera'"
-                    [placeholder]="'Kamera'"
-                    [(ngModel)]="selectedDevice"
-                    (select)="onDeviceSelectChange($event)">
-                <option *ngFor="let device of availableDevices" [value]="device.deviceId">
+        <mat-form-field appearance="fill">
+            <mat-label>Wähle Kamera</mat-label>
+            <mat-select id="select-camera"
+                        [(value)]="selectedDevice"
+                        (selectionChange)="onDeviceSelectChange($event)">
+                <mat-option *ngFor="let device of availableDevices" [value]="device.deviceId">
                     {{device.label}}
-                </option>
-            </select>
-        </mz-select-container>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
 
 </div>

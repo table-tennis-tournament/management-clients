@@ -23,6 +23,7 @@ import {TableService} from './table.service';
 import {SelectTableModalComponent} from './table-list/select-table-modal/select-table-modal.component';
 import {ToastrService} from 'ngx-toastr';
 import {MatchToTable} from './table-list/tt-table/tt-table-content/matchtotable.model';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     selector: 'toma-table-list-page',
@@ -35,7 +36,8 @@ export class TableListPageComponent implements OnInit {
     typeColor: Observable<string[]>;
 
     constructor(private store: Store<any>, private modalService: MzModalService,
-                private tableService: TableService, private toastService: ToastrService) {
+                private tableService: TableService, private toastService: ToastrService,
+                public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -53,7 +55,7 @@ export class TableListPageComponent implements OnInit {
     }
 
     onFreeTable(table: TableDto) {
-        if (this.isSingleMatch(table)) {
+        if (this.isSingleMatchOnTable(table)) {
             const freeTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
             this.store.dispatch(new FreeTable(freeTableEvent));
             return;
@@ -63,7 +65,7 @@ export class TableListPageComponent implements OnInit {
     }
 
     onTakeBackTable(table: TableDto) {
-        if (this.isSingleMatch(table)) {
+        if (this.isSingleMatchOnTable(table)) {
             const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
             return;
@@ -73,7 +75,7 @@ export class TableListPageComponent implements OnInit {
     }
 
     onRemoveFromTable(table: TableDto) {
-        if (this.isSingleMatch(table)) {
+        if (this.isSingleMatchOnTable(table)) {
             const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
             this.store.dispatch(new TakeBackTable(takeBackTableEvent));
             return;
@@ -87,13 +89,13 @@ export class TableListPageComponent implements OnInit {
     }
 
     onPrintTable(table: TableDto) {
-        if (this.isSingleMatch(table)) {
+        if (this.isSingleMatchOnTable(table)) {
             this.store.dispatch(new PrintTable({matchId: table.matches[0].id}));
         }
     }
 
     onAssignSecondTable(table: TableDto) {
-        if (this.isSingleMatch(table)) {
+        if (this.isSingleMatchOnTable(table)) {
             this.toastService.error('Ein Spiel kann nich auf zwei Tische gelegt werden.');
             return;
         }
@@ -103,22 +105,31 @@ export class TableListPageComponent implements OnInit {
 
     onFreeTablesLoaded(selectedMatchIds, tables: TableDto[]) {
         if (this.freeTablesAvailable(tables)) {
-            const dialog: ComponentRef<SelectTableModalComponent> =
-                <ComponentRef<SelectTableModalComponent>>this.modalService.open(SelectTableModalComponent);
-            dialog.instance.tables = tables;
-            dialog.instance.OnTableSelected.subscribe(tableNumber =>
-                this.store.dispatch(new AssignToSecondTable({tableNr: tableNumber, matchIds: selectedMatchIds})));
+            const dialogRef = this.dialog.open(SelectTableModalComponent, {
+                width: '250px',
+                data: tables
+            });
+
+            dialogRef.afterClosed().subscribe(tableNumber => {
+                console.log('The dialog was closed');
+                console.log(tableNumber);
+                this.store.dispatch(new AssignToSecondTable({tableNr: tableNumber, matchIds: selectedMatchIds}));
+            });
             return;
         }
         this.toastService.error('Es sind keine freien Tische verfügbar.');
     }
 
     onResultForTable(table: TableDto) {
-        if (this.isSingleMatch(table)) {
-            const dialog: ComponentRef<ResultModalComponent> =
-                <ComponentRef<ResultModalComponent>>this.modalService.open(ResultModalComponent);
-            dialog.instance.currentMatch = table.matches[0];
-            dialog.instance.OnResultForMatch.subscribe(match => this.store.dispatch(new ResultForMatch(match)));
+        if (this.isSingleMatchOnTable(table)) {
+            const dialogRef = this.dialog.open(ResultModalComponent, {
+                width: '500px',
+                data: table.matches[0]
+            });
+
+            dialogRef.afterClosed().subscribe(matchResult => {
+                this.store.dispatch(new ResultForMatch(matchResult));
+            });
             return;
         }
         this.toastService.error('Ergebnis für zwei Tische kann nicht eingegeben werden.');
@@ -128,12 +139,8 @@ export class TableListPageComponent implements OnInit {
         return tables && tables.length > 0;
     }
 
-    private isSingleMatch(table: TableDto) {
-        return table.matches.length === 1;
-    }
-
     private isSingleMatchOnTable(table: TableDto) {
-        return table.matches.length !== 1;
+        return table.matches.length === 1;
     }
 
     onAssignMatchToTable(event: MatchToTable) {
@@ -141,10 +148,11 @@ export class TableListPageComponent implements OnInit {
     }
 
     private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
-        const dialog: ComponentRef<SelectMatchModalComponent> =
-            <ComponentRef<SelectMatchModalComponent>>this.modalService.open(SelectMatchModalComponent);
-        dialog.instance.matches = table.matches;
-        dialog.instance.OnMatchesSelected.subscribe(onMatchSelectedAction);
+        const dialogRef = this.dialog.open(SelectMatchModalComponent, {
+            width: '400px',
+            data: table.matches
+        });
+        dialogRef.afterClosed().subscribe(onMatchSelectedAction);
     }
 
 
