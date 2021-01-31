@@ -36,9 +36,7 @@
             </div>
         </div>
         <div class="card-action white" *ngIf="stateIsCallable()">
-            <button mz-button (click)="onMatchCalled()">
-                OK
-            </button>
+            <button mat-raised-button (click)="onMatchCalled()" color="primary">OK</button>
         </div>
     </div>
 </div>

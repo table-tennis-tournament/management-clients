@@ -17,7 +17,6 @@ import {
 import {TableDto} from './tabledto.model';
 import {TableMatchEvent} from './redux/table.match.event';
 import {ResultModalComponent} from './table-list/result-modal/result-modal.component';
-import {MzModalService} from 'ngx-materialize';
 import {SelectMatchModalComponent} from './table-list/select-match-modal/select-match-modal.component';
 import {TableService} from './table.service';
 import {SelectTableModalComponent} from './table-list/select-table-modal/select-table-modal.component';
@@ -35,7 +34,7 @@ export class TableListPageComponent implements OnInit {
     tablesLoading: Observable<boolean>;
     typeColor: Observable<string[]>;
 
-    constructor(private store: Store<any>, private modalService: MzModalService,
+    constructor(private store: Store<any>,
                 private tableService: TableService, private toastService: ToastrService,
                 public dialog: MatDialog) {
     }

@@ -1,16 +1,12 @@
 <div class="col m9 s8">
-  <mz-select-container>
-    <select mz-select
-            id="select-discipline"
-            [label]="'Wähle Konkurrenz'"
-            [placeholder]="'Konkurrenz'"
-            (change)="disciplineChanged.emit(+selectedDiscipline)"
-            [(ngModel)]="selectedDiscipline">
-      <option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
+  <mat-form-field appearance="fill">
+    <mat-label></mat-label>
+    <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
+      <mat-option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
         {{currentDiscipline.name}}
-      </option>
-    </select>
-  </mz-select-container>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <div class="col m3 s4">

@@ -16,19 +16,14 @@
 </div>
 
 <div class="row">
-    <div class="col s4">
-        <mz-select-container>
-            <select mz-select
-                    id="select-printer"
-                    [label]="'Wähle Drucker'"
-                    [placeholder]="'Drucker'"
-                    [(ngModel)]="selectedPrinter">
-                <option *ngFor="let printer of printers" [value]="printer">
-                    {{printer}}
-                </option>
-            </select>
-        </mz-select-container>
-    </div>
+    <mat-form-field appearance="fill" class="col s4">
+        <mat-label>Wähle Drucker</mat-label>
+        <mat-select [(value)]="selectedPrinter">
+            <mat-option *ngFor="let printer of printers" [value]="printer">
+                {{printer}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
     <div class="col s6">
         <a class="waves-effect waves-light btn" (click)="savePrinter.emit(selectedPrinter)"><i
                 class="material-icons left">save</i>Speichern</a>

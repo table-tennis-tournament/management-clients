@@ -8,8 +8,8 @@
   <div [class.winner-text]="checkerResult.secondPlayerWinning" class="center-align">
     {{currentMatch.team2 | ttPlayerNameReducer}}
   </div>
-  <form class="example-form">
-    <mat-form-field class="col s4 m2 ">
+  <form>
+    <mat-form-field>
       <mat-label>Ergebnis (bsp. -7 8 8 9)</mat-label>
       <input matInput placeholder=""
              [(ngModel)]="currentInput" #answer
@@ -17,15 +17,6 @@
              (keyup.enter)="getResult()">
     </mat-form-field>
   </form>
-
-<!--  <div class="input-field col s4 m2 top-margin">-->
-<!--    <input autofocus [attr.id]="currentMatch.id" [(ngModel)]="currentInput" class="form-control" type="text"-->
-
-<!--           #answer-->
-<!--           (keyup)="onKeyUp(answer.value)"-->
-<!--           (keyup.enter)="getResult()">-->
-<!--    <label [attr.for]="currentMatch.id">Ergebnis (bsp. -7 8 8 9)</label>-->
-<!--  </div>-->
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Abbrechen</button>
