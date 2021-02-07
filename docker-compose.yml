@@ -1,0 +1,21 @@
+version: "3.3"  # optional since v1.27.0
+services:
+  db:
+    image: holzleube/mysql-docker-image:3.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=ttv01
+  backend:
+    image: holzleube/turniermanager:2.0
+    ports:
+      - "9000:9000"
+    environment:
+      - MYSQL_SERVER=192.168.178.89
+      - MYSQL_DB=tournamentManager
+      - MYSQL_USER=root
+      - MYSQL_PW=ttv01
+      - MYSQL_PORT=3306
+    depends_on:
+      - "db"
+
