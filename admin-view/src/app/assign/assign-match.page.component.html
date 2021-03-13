@@ -1,5 +1,5 @@
 <div class="row" cdkDropListGroup>
-    <div class="col s2">
+    <div class="col-md-2">
         <toma-discipline-match-list
                 [matches]="matches | async"
                 [matchesLoading]="matchesLoading | async"
@@ -9,7 +9,7 @@
                 (disciplineRefresh)="onDisciplineRefresh($event)">
         </toma-discipline-match-list>
     </div>
-    <div class="col s10">
+    <div class="col-md-10">
         <toma-table-list-page></toma-table-list-page>
     </div>
 </div>

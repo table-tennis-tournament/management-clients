@@ -1,4 +1,4 @@
-<div class="col m9 s8">
+<div class="pl-5">
   <mat-form-field appearance="fill">
     <mat-label></mat-label>
     <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
@@ -7,10 +7,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-</div>
-
-<div class="col m3 s4">
-  <a class="btn-floating btn-medium blue" (click)="disciplineRefresh.emit(+selectedDiscipline)">
-    <i class="medium material-icons">refresh</i>
-  </a>
+  <button mat-mini-fab (click)="disciplineRefresh.emit(+selectedDiscipline)">
+    <mat-icon>refresh</mat-icon>
+  </button>
 </div>
