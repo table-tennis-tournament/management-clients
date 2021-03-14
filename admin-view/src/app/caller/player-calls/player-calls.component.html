@@ -1,31 +1,29 @@
-<div>
-  <div *ngIf="secondCalls">
-    <h4>2. Aufruf:</h4>
+<div *ngIf="secondCalls" class="pt-2">
+    <h2>2. Aufruf:</h2>
     <mat-list>
-      <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
-                          (click)="matchesSelected.emit(currentMatch)"
-                          *ngFor="let currentMatch of secondCalls" >
-        <div class="cut-text" *ngIf="currentMatch">
-          {{getStartTime(currentMatch)}} min.
-          {{currentMatch.name}}
-          <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
-        </div>
-      </mat-list-item>
+        <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
+                       (click)="matchesSelected.emit(currentMatch)"
+                       *ngFor="let currentMatch of secondCalls">
+            <div class="cut-text" *ngIf="currentMatch">
+                {{getStartTime(currentMatch)}} min.
+                {{currentMatch.name}}
+                <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
+            </div>
+        </mat-list-item>
     </mat-list>
-  </div>
-  <div *ngIf="thirdCalls">
-    <h4>3. Aufruf:</h4>
+</div>
+<div *ngIf="thirdCalls" class="pt-2">
+    <h2>3. Aufruf:</h2>
     <mat-list>
-      <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
-                          (click)="matchesSelected.emit(currentMatch)"
-                          *ngFor="let currentMatch of thirdCalls" >
+        <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
+                       (click)="matchesSelected.emit(currentMatch)"
+                       *ngFor="let currentMatch of thirdCalls">
 
-        <div class="cut-text" *ngIf="currentMatch">
-          {{getStartTime(currentMatch)}} min.
-          {{currentMatch.name}}
-          <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
-        </div>
-      </mat-list-item>
+            <div class="cut-text" *ngIf="currentMatch">
+                {{getStartTime(currentMatch)}} min.
+                {{currentMatch.name}}
+                <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
+            </div>
+        </mat-list-item>
     </mat-list>
-  </div>
 </div>

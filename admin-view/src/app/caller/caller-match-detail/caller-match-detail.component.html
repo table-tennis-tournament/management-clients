@@ -1,19 +1,20 @@
-<div *ngIf="matchAggregate">
-    <div class="card center-align" >
-        <div class="card-content simple-padding">
-            <span class="card-title " [ngClass]="typeColor[matchAggregate.discipline.id]">
-            <h3>{{matchAggregate.discipline.name}}</h3>
-            </span>
-            <br/>
-            <h4>{{matchAggregate.name}}</h4>
-            <br/><br/>
-            <h4>Tisch
-                <span class="circle" *ngFor="let tableNumber of matchAggregate.tableNumbers">{{tableNumber}}</span>
-            </h4>
-            <br/><br/>
-            <div class="row" *ngIf="matchAggregate?.matches?.length === 1">
-                <h5>
-                    <div>
+<mat-card *ngIf="matchAggregate" [ngClass]="typeColor[matchAggregate.discipline.id]">
+    <mat-card-title>
+
+    </mat-card-title>
+    <mat-card-content class="text-center">
+        <h1>{{matchAggregate.discipline.name}}</h1>
+        <br/>
+        <h2>{{matchAggregate.name}}</h2>
+        <br/><br/>
+        <h2>Tisch
+            <span class="circle" *ngFor="let tableNumber of matchAggregate.tableNumbers">{{tableNumber}}</span>
+        </h2>
+        <br/><br/>
+        <div class="row" *ngIf="matchAggregate?.matches?.length === 1">
+            <div class="col-12">
+                <h3>
+                    <div class="text-center">
                         Schiedsrichter: ?
                     </div>
                     <br/><br/>
@@ -23,25 +24,29 @@
                     <br/>
                     <br/>
                     <div *ngFor="let currentPlayer of matchAggregate.matches[0].team2">{{[currentPlayer]| ttPlayerNameReducer}}</div>
-                </h5>
+                </h3>
             </div>
-            <div class="row" *ngIf="matchAggregate?.matches?.length > 1">
-                <div><h3>Spieler: </h3></div>
-                <h5>
-                    <div *ngFor="let currentPlayer of matchAggregate.players">
-                        {{[currentPlayer] | ttPlayerNameReducer}}
-                    </div>
-                </h5>
+        </div>
+        <div class="row" *ngIf="matchAggregate?.matches?.length > 1">
+            <div><h3>Spieler: </h3></div>
+            <h5>
+                <div *ngFor="let currentPlayer of matchAggregate.players">
+                    {{[currentPlayer] | ttPlayerNameReducer}}
+                </div>
+            </h5>
 
-            </div>
         </div>
-        <div class="card-action white" *ngIf="stateIsCallable()">
-            <button mat-raised-button (click)="onMatchCalled()" color="primary">OK</button>
-        </div>
-    </div>
-</div>
-<div class="center-align" *ngIf="!matchAggregate">
-    <h2>Keine Spiele zum Ausrufen</h2>
-    <i class="large material-icons">beach_access</i>
-</div>
+    </mat-card-content>
+    <mat-card-actions class="d-flex justify-content-center">
+        <button mat-raised-button (click)="onMatchCalled()" color="primary">OK</button>
+    </mat-card-actions>
+</mat-card>
+<mat-card *ngIf="!matchAggregate" class="text-center">
+    <mat-card-header>
+        <mat-card-title class="text-center"><h2>Keine Spiele zum Ausrufen</h2></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-icon aria-hidden="false" aria-label="Example home icon">beach_access</mat-icon>
+    </mat-card-content>
+</mat-card>
 

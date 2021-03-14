@@ -21,7 +21,7 @@ export class TtPlayerNameReducerPipe implements PipeTransform {
     }
 
     getSinglePlayerString(player: Player) {
-        return player.firstName + ' ' + player.lastName + '(' + player.club.clubName + ')';
+        return player.firstName + ' ' + player.lastName + ' (' + player.club.clubName + ')';
     }
 
     getSinglePlayerStringShort(player: Player) {
