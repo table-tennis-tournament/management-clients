@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Player} from '../../shared/data/player.model';
+import {Player} from '../data/player.model';
 
 @Pipe({
     name: 'ttPlayerNameReducer'

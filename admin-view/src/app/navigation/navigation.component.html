@@ -5,14 +5,14 @@
         </button>
         <h1>Turniermanager</h1>
         <span class="example-spacer"></span>
-        <a href="#" class="padding-left" [routerLink]="['/callerView']" routerLinkActive="active">Ausrufer</a>
-        <a href="#" class="padding-left" [routerLink]="['/tableView']" routerLinkActive="active">Tische</a>
-        <a href="#" class="padding-left" [routerLink]="['/assignView']" routerLinkActive="active">Zuweiser</a>
-        <a href="#" class="padding-left" [routerLink]="['/supervisorView']" routerLinkActive="active">Supervisor</a>
-        <a href="#" class="padding-left" [routerLink]="['/resultView']" routerLinkActive="active">Ergebnisse</a>
-        <a href="#" class="padding-left" [routerLink]="['/playerView']" routerLinkActive="active">Spieler</a>
-        <a href="#" class="padding-left" [routerLink]="['/settingsView']" routerLinkActive="active">Einstellungen</a>
-        <a href="#" class="padding-left" [routerLink]="['/qrView']" routerLinkActive="active">Scanner</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/callerView']" routerLinkActive="active">Ausrufer</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/tableView']" routerLinkActive="active">Tische</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/assignView']" routerLinkActive="active">Zuweiser</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/supervisorView']" routerLinkActive="active">Supervisor</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/resultView']" routerLinkActive="active">Ergebnisse</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/playerView']" routerLinkActive="active">Spieler</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/settingsView']" routerLinkActive="active">Einstellungen</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/qrView']" routerLinkActive="active">Scanner</a>
     </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container>
@@ -21,7 +21,4 @@
             <a href="#" [routerLink]="['/qrView']">Scanner</a>
         </mat-nav-list>
     </mat-sidenav>
-    <mat-sidenav-content>
-        <router-outlet></router-outlet>
-    </mat-sidenav-content>
 </mat-sidenav-container>

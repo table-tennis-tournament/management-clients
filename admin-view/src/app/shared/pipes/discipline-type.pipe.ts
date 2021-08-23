@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {StageType} from '../../shared/data/stagetype.model';
+import {StageType} from '../data/stagetype.model';
 
 @Pipe({
     name: 'disciplineType'
