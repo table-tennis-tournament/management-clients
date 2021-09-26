@@ -15,6 +15,8 @@ export class ResultListComponent implements AfterViewInit {
     private _matches: Match[];
     selectedDisciplineId = 0;
 
+    displayedColumns: string[] = ['back', 'id', 'player1', 'player2', 'type', 'discipline', 'fastCapture', 'endCapture'];
+
     checkerResultList: ResultCheckModel[] = [];
 
     @Input('matches')

@@ -19,6 +19,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatTableModule} from '@angular/material';
 
 const matModules = [
     MatToolbarModule,
@@ -39,7 +40,8 @@ const matModules = [
     MatCheckboxModule,
     MatBadgeModule,
     MatExpansionModule,
-    DragDropModule
+    DragDropModule,
+    MatTableModule
 ];
 
 @NgModule({

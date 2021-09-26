@@ -15,12 +15,11 @@
         </span>
         </div>
     </mat-expansion-panel-header>
-    <div class="collection custom-margin">
-        <a *ngFor="let matchGroup of matchListItem.matchinfo" href="javascript:void(0)"
-           class="collection-item">
+    <mat-list>
+        <mat-list-item *ngFor="let matchGroup of matchListItem.matchinfo">
             <toma-team-item [team]="matchGroup.team1"></toma-team-item>
             -
             <toma-team-item [team]="matchGroup.team2"></toma-team-item>
-        </a>
-    </div>
+        </mat-list-item>
+    </mat-list>
 </mat-expansion-panel>

@@ -19,11 +19,11 @@
                     Spieler
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="collection black-text">
-                <a *ngFor="let currentPlayer of group.players" href="javascript:void(0)" class="collection-item">
+            <mat-list>
+                <mat-list-item *ngFor="let currentPlayer of group.players">
                     <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
-                </a>
-            </div>
+                </mat-list-item>
+            </mat-list>
         </mat-expansion-panel>
         <mat-expansion-panel [expanded]="showMatches">
             <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]">
@@ -34,13 +34,13 @@
                     Spiele
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="collection" cdkDropList>
-                <a *ngFor="let currentMatch of group.matches"
-                   (dblclick)="resultForMatch.emit(currentMatch)"
-                   cdkDrag [cdkDragDisabled]="currentMatch.state !== openMatchState"
-                   [cdkDragData]="[currentMatch]"
-                   class="collection-item"
-                   [class.disabled-item]="currentMatch.state === inWaitingListState">
+            <mat-list cdkDropList>
+                <mat-list-item *ngFor="let currentMatch of group.matches"
+                               (dblclick)="resultForMatch.emit(currentMatch)"
+                               cdkDrag [cdkDragDisabled]="currentMatch.state !== openMatchState"
+                               [cdkDragData]="[currentMatch]"
+                               class="collection-item"
+                               [class.disabled-item]="currentMatch.state === inWaitingListState">
                     <div>
                         <toma-team-item [team]="currentMatch.team1"
                                         [showDisciplines]="false"></toma-team-item>
@@ -52,8 +52,8 @@
                         <span *ngIf="currentMatch.result" class="right">{{currentMatch.result|resultPipe}}</span>
                         <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>
                     </div>
-                </a>
-            </div>
+                </mat-list-item>
+            </mat-list>
         </mat-expansion-panel>
     </mat-card-content>
 </mat-card>

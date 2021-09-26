@@ -28,13 +28,14 @@
             </div>
         </div>
         <div class="row" *ngIf="matchAggregate?.matches?.length > 1">
-            <div><h3>Spieler: </h3></div>
-            <h5>
-                <div *ngFor="let currentPlayer of matchAggregate.players">
-                    {{[currentPlayer] | ttPlayerNameReducer}}
-                </div>
-            </h5>
-
+            <div class="col-12">
+                <div class="text-center"><h2>Spieler: </h2></div>
+                <h3>
+                    <div *ngFor="let currentPlayer of matchAggregate.players">
+                        {{[currentPlayer] | ttPlayerNameReducer}}
+                    </div>
+                </h3>
+            </div>
         </div>
     </mat-card-content>
     <mat-card-actions class="d-flex justify-content-center">
@@ -46,7 +47,7 @@
         <mat-card-title class="text-center"><h2>Keine Spiele zum Ausrufen</h2></mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-icon aria-hidden="false" aria-label="Example home icon">beach_access</mat-icon>
+        <mat-icon aria-hidden="false">beach_access</mat-icon>
     </mat-card-content>
 </mat-card>
 
