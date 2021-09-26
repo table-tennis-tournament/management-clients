@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Match} from '../../shared/data/match.model';
+import {Match} from '../data/match.model';
 
 @Pipe({
   name: 'ttMatchDiscipline'
