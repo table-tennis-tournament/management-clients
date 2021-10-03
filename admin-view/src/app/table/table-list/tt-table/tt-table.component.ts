@@ -54,4 +54,11 @@ export class TtTableComponent {
     @Output()
     removeFromTable = new EventEmitter<TableDto>();
 
+    @Output()
+    refreshTables = new EventEmitter<any>();
+
+    public isGameAvailable() {
+        return this.table !== null && this.table.matches !== null && this.table.matches.length > 0;
+    }
+
 }

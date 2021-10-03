@@ -21,7 +21,7 @@ export class DisciplineMatchListComponent {
         if (this.currentDisciplineId == null) {
             return;
         }
-        this.onDisciplineSelected(this.currentDisciplineId == null ? 0 : this.currentDisciplineId);
+        this.onDisciplineSelected(this.currentDisciplineId);
     }
 
     get matches() {
@@ -38,7 +38,7 @@ export class DisciplineMatchListComponent {
         if (this.currentDisciplineId == null) {
             return;
         }
-        this.onDisciplineSelected(this.currentDisciplineId == null ? 0 : this.currentDisciplineId);
+        this.onDisciplineSelected(this.currentDisciplineId);
     }
 
     get matchList() {

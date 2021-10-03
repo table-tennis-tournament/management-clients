@@ -9,7 +9,7 @@ export class ResultPipe implements PipeTransform {
     FIRST_PLAYER_SETS = 1;
     SECOND_PLAYER_SETS = 2;
 
-    transform(value: TTResult[], setsForPlayer: number): any {
+    transform(value: TTResult[], setsForPlayer?: number): any {
         if (value == null || value.length < 1) {
             return '';
         }

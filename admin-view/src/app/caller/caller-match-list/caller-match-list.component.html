@@ -1,17 +1,19 @@
-<div>
-  <mz-spinner *ngIf="matchesLoading"></mz-spinner>
+<div class="pt-2">
+  <mat-spinner *ngIf="matchesLoading"></mat-spinner>
   <div *ngIf="!matchesLoading&&matchAggregates?.length>0">
-    <mz-collection>
-      <mz-collection-header><h4>Spiele zum Ausrufen:</h4></mz-collection-header>
-      <mz-collection-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
+    <h2>Spiele zum Ausrufen:</h2>
+    <mat-list>
+      <mat-list-item [ngClass]="typeColor[currentMatch?.discipline?.id]"
                           (click)="matchesSelected.emit(currentMatch)"
                           *ngFor="let currentMatch of matchAggregates" >
-        <div class="cut-text" *ngIf="currentMatch">
-          {{currentMatch.name}}
-          <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
-        </div>
-      </mz-collection-item>
-    </mz-collection>
+          <div class="col-10">
+            {{currentMatch.name}}
+          </div>
+          <div class="col-2">
+          <span class="circle" *ngFor="let tableNumber of currentMatch.tableNumbers">{{tableNumber}}</span>
+          </div>
+      </mat-list-item>
+    </mat-list>
   </div>
 </div>
 

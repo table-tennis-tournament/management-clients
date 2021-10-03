@@ -20,6 +20,9 @@ export class PlayerListComponent {
     clubInput: string;
     lastNameInput: string;
 
+    displayedColumns: string[] = ['id', 'firstName', 'lastName', 'club', 'discipline', 'paid'];
+
+
     get players(): PlayerType[] {
         return this._players;
     }
@@ -36,7 +39,7 @@ export class PlayerListComponent {
     }
 
     get disciplines(): Discipline[] {
-        return this._players;
+        return this._disciplines;
     }
 
     @Input('disciplines')

@@ -1,30 +1,24 @@
-<mz-modal #resultModal [fixedFooter]="true" [options]="modalOptions">
-  <mz-modal-header class="center-align padding-5">
-    <h4>{{currentMatch | ttMatchDiscipline}}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    <div [class.winner-text]="checkerResult.firstPlayerWinning" class="center-align">
-      {{currentMatch.team1 | ttPlayerNameReducer}}
-    </div>
-    <br/>
-    <div class="center-align"><h4> - </h4><br/></div>
-    <div [class.winner-text]="checkerResult.secondPlayerWinning" class="center-align">
-      {{currentMatch.team2 | ttPlayerNameReducer}}
-    </div>
-    <div class="input-field col s4 m2 top-margin">
-      <input autofocus [attr.id]="currentMatch.id" [(ngModel)]="currentInput" class="form-control" type="text"
-             #answer
+<h1 mat-dialog-title>{{currentMatch | ttMatchDiscipline}}</h1>
+<div mat-dialog-content>
+  <div [class.winner-text]="checkerResult.firstPlayerWinning" class="text-center">
+    {{currentMatch.team1 | ttPlayerNameReducer}}
+  </div>
+  <br/>
+  <div class="text-center"><h4> - </h4><br/></div>
+  <div [class.winner-text]="checkerResult.secondPlayerWinning" class="text-center">
+    {{currentMatch.team2 | ttPlayerNameReducer}}
+  </div>
+  <form class="d-flex justify-content-center">
+    <mat-form-field>
+      <mat-label>Ergebnis (bsp. -7 8 8 9)</mat-label>
+      <input matInput placeholder=""
+             [(ngModel)]="currentInput" #answer
              (keyup)="onKeyUp(answer.value)"
-             (keyup.enter)="checkResultAndClose()">
-      <label [attr.for]="currentMatch.id">Ergebnis (bsp. -7 8 8 9)</label>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
-    <button mz-button [flat]="true" mz-modal-close
-            [class.disabled]="!checkerResult.firstPlayerWinning && !checkerResult.secondPlayerWinning"
-            (click)="checkResultAndClose()">
-      OK
-    </button>
-  </mz-modal-footer>
-</mz-modal>
+             (keyup.enter)="getResult()">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button [mat-dialog-close]="getResult()" [disabled]="resultNotValid()">Ok</button>
+</div>

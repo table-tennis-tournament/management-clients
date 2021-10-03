@@ -1,17 +1,16 @@
-import {Component, ElementRef, EventEmitter, ViewChild} from '@angular/core';
-import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
+import {Component, ElementRef, EventEmitter, Inject, ViewChild} from '@angular/core';
 import {TTMatchResult} from './ttmatch-result.model';
-import {customModalOptions} from '../../../shared/modal.options';
 import {ResultCheckerService} from './result-checker.service';
 import {ResultCheckModel} from './result-check.model';
 import {Match} from '../../../shared/data/match.model';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
     selector: 'toma-result-modal',
     templateUrl: './result-modal.component.html',
     styleUrls: ['./result-modal.component.scss']
 })
-export class ResultModalComponent extends MzBaseModal {
+export class ResultModalComponent {
 
     checkerResult: ResultCheckModel = {
         firstPlayerWinning: false,
@@ -21,17 +20,14 @@ export class ResultModalComponent extends MzBaseModal {
 
     currentInput: string;
 
-    private _currentMatch: Match;
     public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
-
-    public modalOptions: Materialize.ModalOptions = customModalOptions;
-
-    @ViewChild('resultModal') modal: MzModalComponent;
 
     @ViewChild('answer') private elementRef: ElementRef;
 
-    constructor(private resultCheckerService: ResultCheckerService) {
-        super();
+    constructor(private resultCheckerService: ResultCheckerService,
+                public dialogRef: MatDialogRef<ResultModalComponent>,
+                @Inject(MAT_DIALOG_DATA) public currentMatch: Match) {
+        this.setInputIfAvailable();
     }
 
     focusElement() {
@@ -40,28 +36,26 @@ export class ResultModalComponent extends MzBaseModal {
         }
     }
 
-    get currentMatch(): Match {
-        return this._currentMatch;
-    }
-
-    set currentMatch(value: Match) {
-        this._currentMatch = value;
-        this.setInputIfAvailable();
-        setTimeout(this.focusElement.bind(this), 200);
-    }
 
     onKeyUp(value) {
         this.checkerResult = this.resultCheckerService.checkResult(value);
     }
 
-    checkResultAndClose() {
+    onCancel(): void {
+        this.dialogRef.close();
+    }
+
+    getResult() {
         if (this.checkerResult.firstPlayerWinning || this.checkerResult.secondPlayerWinning) {
-            this.OnResultForMatch.emit({
+            return {
                 result: this.checkerResult.currentResult,
-                match: this._currentMatch
-            });
-            this.modal.closeModal();
+                match: this.currentMatch
+            };
         }
+    }
+
+    resultNotValid() {
+        return !this.checkerResult.firstPlayerWinning && !this.checkerResult.secondPlayerWinning;
     }
 
     private setInputIfAvailable() {

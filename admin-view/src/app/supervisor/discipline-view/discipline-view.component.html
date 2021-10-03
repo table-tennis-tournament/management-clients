@@ -1,36 +1,16 @@
-<div class="row no-bottom-margin">
-    <mz-spinner *ngIf="matchesLoading"></mz-spinner>
+<div class="row m-2">
+    <mat-spinner *ngIf="matchesLoading"></mat-spinner>
 
-    <div *ngFor="let currentTab of tabs" class="col no-padding">
-        <a class="waves-effect waves-light btn"
-           [ngClass]="typeColor[currentTab.id]"
-           (click)="this.selectDiscipline.emit(currentTab.id)">{{currentTab.name}}</a>
+    <div *ngFor="let currentTab of tabs" class="mr-2">
+        <button mat-raised-button
+                [ngClass]="typeColor[currentTab.id]"
+                (click)="this.selectDiscipline.emit(currentTab.id)">{{currentTab.name}}</button>
     </div>
-    <div class="col">
-        <div class="simple-padding">
-            <input type="checkbox" class="filled-in" [(ngModel)]="showAllMatches" id="remove-played-checkbox"
-                   (change)="onRemovePlayedChanged()"/>
-            <label for="remove-played-checkbox">Alle</label>
-        </div>
-    </div>
-    <div class="col">
-        <div class="simple-padding">
-            <input type="checkbox" class="filled-in" [(ngModel)]="playersAreOpen" id="open-player-checkbox"/>
-            <label for="open-player-checkbox">Spieler</label>
-        </div>
-    </div>
-    <div class="col">
-        <div class="simple-padding">
-            <input type="checkbox" class="filled-in" [(ngModel)]="matchesAreOpen" id="open-matches-checkbox"/>
-            <label for="open-matches-checkbox">Spiele</label>
-        </div>
-    </div>
-    <div class="col">
-        <div class="simple-padding">
-            <input type="checkbox" class="filled-in" [(ngModel)]="stopRefresh"
-                   (change)="this.setTabForId(this.selectedDiscipline)" id="stop-refresh-checkbox"/>
-            <label for="stop-refresh-checkbox">Stop</label>
-        </div>
+    <div class="m-2">
+        <mat-checkbox class="mr-2" [(ngModel)]="showAllMatches">Alle</mat-checkbox>
+        <mat-checkbox class="mr-2" [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
+        <mat-checkbox class="mr-2" [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
+        <mat-checkbox class="mr-2" (change)="this.setTabForId(this.selectedDiscipline)"  [(ngModel)]="stopRefresh">Stop</mat-checkbox>
     </div>
 </div>
 <div *ngIf="selectedTab" class="row no-scroll-overflow" [ngClass]="typeColor[selectedTab.id]" >

@@ -1,4 +1,4 @@
-<mz-spinner *ngIf="matchesLoading"></mz-spinner>
+<mat-spinner *ngIf="matchesLoading"></mat-spinner>
 <div>
     <div class="row">
         <div class="input-field col s10 m6">
@@ -12,50 +12,53 @@
     </div>
 
     <div class="row">
-        <table class="highlight centered striped">
-            <thead>
-            <tr>
-                <th></th>
-                <th>Nr</th>
-                <th>Spieler 1</th>
-                <th>Spieler 2</th>
-                <th>Typ</th>
-                <th>Konkurrenz</th>
-                <th>Schnellerfassung</th>
-                <th>Eingabe</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr *ngFor="let currentMatch of selectedMatches; let i = index;">
-                <td><a class="btn-floating btn-medium blue" (click)="takeBackMatch.emit(currentMatch)">
-                    <i class="medium material-icons">chevron_left</i>
-                </a></td>
-                <td>{{currentMatch.id}}</td>
-                <td [class.winner-text]="checkerResultList[i]&&checkerResultList[i].firstPlayerWinning">
-                    <toma-team-item [team]="currentMatch.team1"></toma-team-item>
-                </td>
-                <td [class.winner-text]="checkerResultList[i]&&checkerResultList[i].secondPlayerWinning">
-                    <toma-team-item [team]="currentMatch.team2"></toma-team-item>
-                </td>
-                <td>{{currentMatch | stage}}</td>
-                <td>{{currentMatch | discipline}}</td>
-                <td>
-                    <div>
-                        <input id="result" class="form-control" type="text" #answer
-                               (keyup)="onKeyUp(answer.value, i)"
-                               [(ngModel)]="currentMatch.result"
-                               (keyup.enter)="checkResultAndClose(checkerResultList[i], currentMatch)">
-                    </div>
-                </td>
-                <td>
-                    <a class="btn-floating btn-medium blue" (click)="resultForMatch.emit(currentMatch)">
-                        <i class="medium material-icons">chevron_right</i>
-                    </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="col-12">
+            <table mat-table [dataSource]="selectedMatches" class="mat-elevation-z8">
+                <ng-container matColumnDef="back">
+                    <th mat-header-cell *matHeaderCellDef> Zurück </th>
+                    <td mat-cell *matCellDef="let element"><button mat-mini-fab><mat-icon>chevron_left</mat-icon></button> </td>
+                </ng-container>
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef> Nr </th>
+                    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                </ng-container>
+                <ng-container matColumnDef="player1">
+                    <th mat-header-cell *matHeaderCellDef > Spieler 1 </th>
+                    <td mat-cell *matCellDef="let element; let i = index;"[class.winner-text]="checkerResultList[i]&&checkerResultList[i].firstPlayerWinning"><toma-team-item [team]="element.team1"></toma-team-item></td>
+                </ng-container>
+                <ng-container matColumnDef="player2">
+                    <th mat-header-cell *matHeaderCellDef> Spieler 2 </th>
+                    <td mat-cell *matCellDef="let element; let i = index;" [class.winner-text]="checkerResultList[i]&&checkerResultList[i].secondPlayerWinning"> <toma-team-item [team]="element.team2"></toma-team-item></td>
+                </ng-container>
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Typ </th>
+                    <td mat-cell *matCellDef="let element"> {{element | stage}} </td>
+                </ng-container>
+                <ng-container matColumnDef="discipline">
+                    <th mat-header-cell *matHeaderCellDef> Konkurrenz </th>
+                    <td mat-cell *matCellDef="let element"> {{element | discipline}} </td>
+                </ng-container>
+                <ng-container matColumnDef="fastCapture">
+                    <th mat-header-cell *matHeaderCellDef> Schnellerfassung </th>
+                    <td mat-cell *matCellDef="let element; let i = index;">
+                        <mat-form-field class="example-full-width" appearance="fill">
+                            <mat-label>Ergebnis</mat-label>
+                            <input matInput #answer
+                                   (keyup)="onKeyUp(answer.value, i)"
+                                   [(ngModel)]="element.result"
+                                   (keyup.enter)="checkResultAndClose(checkerResultList[i], element)">
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="endCapture">
+                    <th mat-header-cell *matHeaderCellDef> Eingabe </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-mini-fab (click)="resultForMatch.emit(element)"><mat-icon>chevron_right</mat-icon></button>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
     </div>
 
 </div>

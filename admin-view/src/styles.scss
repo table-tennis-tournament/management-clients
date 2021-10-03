@@ -1,7 +1,8 @@
 
 @import '~bootstrap/scss/bootstrap-reboot';
+@import '~bootstrap/scss/bootstrap-grid';
 @import '~bootstrap/scss/_utilities';
-
+@import 'colors';
 span.circle {
   background: #fff;
   border-radius: 0.8em;
@@ -23,3 +24,28 @@ span.circle {
   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.5);
   opacity: .50;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.fab-container {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+
+  > div {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom: 5px;
+
+    button {
+      margin-bottom: 17px;
+    }
+  }
+}
+

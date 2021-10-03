@@ -6,9 +6,9 @@ import {Match} from '../shared/data/match.model';
 import {Discipline} from '../discipline/discipline.model';
 import {ResultForMatch, TakeBackTable} from '../table/redux/table.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
-import {MzModalService} from 'ngx-materialize';
 import {LoadResults} from './redux/result.actions';
 import {getDisciplineLoading, getDisciplineState} from '../discipline/redux';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     selector: 'toma-result-list-page',
@@ -21,7 +21,7 @@ export class ResultListPageComponent implements OnInit {
     disciplines: Observable<Discipline[]>;
     disciplinesLoading: Observable<boolean>;
 
-    constructor(private store: Store<any>, private modalService: MzModalService) {
+    constructor(private store: Store<any>, public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -37,10 +37,14 @@ export class ResultListPageComponent implements OnInit {
     }
 
     onResultForMatch(match: Match) {
-        const dialog: ComponentRef<ResultModalComponent> =
-            <ComponentRef<ResultModalComponent>>this.modalService.open(ResultModalComponent);
-        dialog.instance.currentMatch = match;
-        dialog.instance.OnResultForMatch.subscribe(matchResult => this.store.dispatch(new ResultForMatch(matchResult)));
+        const dialogRef = this.dialog.open(ResultModalComponent, {
+            width: '500px',
+            data: match
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.store.dispatch(new ResultForMatch(result));
+        });
     }
 
     onResultCompleteForMatch(matchResult: any) {

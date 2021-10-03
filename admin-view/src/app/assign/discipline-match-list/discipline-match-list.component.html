@@ -1,44 +1,39 @@
-<div class="row without-margin">
-    <div class="input-field col s12">
-        <toma-discipline-select (disciplineChanged)="onDisciplineSelected($event)"
-                                (disciplineRefresh)="disciplineRefresh.emit($event)"
-                                [showWaitingList]="true"
-                                [disciplines]="disciplines">
-        </toma-discipline-select>
-    </div>
-</div>
-<div class="row maxHeight">
-    <mz-spinner *ngIf="matchesLoading"></mz-spinner>
-    <mz-collection *ngIf="currentDisciplineId !== -1">
-        <mz-collection-item cdkDropList
-                            [ngClass]="typeColor[currentMatch.type.id]"
-                            *ngFor="let currentMatch of currentMatchesToShow; let i = index;"
-                            [class.disabled-item]="!currentMatch.isPlayable">
-            <div class="cut-text discipline-match-list-root " *ngIf="currentMatch">
-                <div class="discipline-match-list-item" [cdkDragDisabled]="!currentMatch.isPlayable" cdkDrag [cdkDragData]="[currentMatch]" >
-                    <i *cdkDragPreview class="material-icons">perm_identity</i>
-                    <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
-                    <span *ngIf="currentMatch.team1[1]">/{{currentMatch.team1[1].lastName}}</span>
-                    <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
-                    <span *ngIf="currentMatch.team2[1]">/{{currentMatch.team2[1].lastName}}</span>
-                </div>
-                <div *ngIf="currentMatch.group"
-                     cdkDrag [cdkDragData]="getMatch(currentMatch.group.id)"
-                     [cdkDragDisabled]="!currentMatch.isPlayable"
-                     class="discipline-match-list-square indigo white-text">
-                    <i *cdkDragPreview class="material-icons">group</i>
-                    {{currentMatch.group.name}}
-                </div>
-                <div *ngIf="!currentMatch.group" class="discipline-match-list-square indigo white-text">
-                    {{currentMatch.matchType |disciplineType}}
-                </div>
+<div class="row">
+    <toma-discipline-select (disciplineChanged)="onDisciplineSelected($event)"
+                            (disciplineRefresh)="disciplineRefresh.emit($event)"
+                            [showWaitingList]="true"
+                            [disciplines]="disciplines">
+    </toma-discipline-select>
+    <mat-spinner *ngIf="matchesLoading"></mat-spinner>
+    <mat-list *ngIf="currentDisciplineId !== -1">
+        <mat-list-item cdkDropList
+                       [ngClass]="typeColor[currentMatch.type.id]"
+                       *ngFor="let currentMatch of currentMatchesToShow; let i = index;"
+                       [class.disabled-item]="!currentMatch.isPlayable">
+            <div class="discipline-match-list-item col-10" [cdkDragDisabled]="!currentMatch.isPlayable" cdkDrag
+                 [cdkDragData]="[currentMatch]">
+                <i *cdkDragPreview class="material-icons">perm_identity</i>
+                <span *ngIf="currentMatch.team1[0]">{{currentMatch.team1[0].lastName}}</span>
+                <span *ngIf="currentMatch.team1[1]">/{{currentMatch.team1[1].lastName}}</span>
+                <span *ngIf="currentMatch.team2[0]">- {{currentMatch.team2[0].lastName}}</span>
+                <span *ngIf="currentMatch.team2[1]">/{{currentMatch.team2[1].lastName}}</span>
             </div>
-        </mz-collection-item>
-    </mz-collection>
-    <mz-collection *ngIf="currentDisciplineId === -1">
+            <div *ngIf="currentMatch.group"
+                 cdkDrag [cdkDragData]="getMatch(currentMatch.group.id)"
+                 [cdkDragDisabled]="!currentMatch.isPlayable"
+                 class="discipline-match-list-square indigo white-text col-2">
+                <i *cdkDragPreview class="material-icons">group</i>
+                {{currentMatch.group.name}}
+            </div>
+            <div *ngIf="!currentMatch.group" class="discipline-match-list-square indigo white-text col-2">
+                {{currentMatch.matchType |disciplineType}}
+            </div>
+        </mat-list-item>
+    </mat-list>
+    <mat-list *ngIf="currentDisciplineId === -1">
         <span *ngFor="let currentMatch of matchList; let i = index;">
             <span *ngIf="currentMatch.matchinfo[0].group !== null">
-                <mz-collection-item cdkDropList [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
+                <mat-list-item cdkDropList [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
                     <toma-single-item
                             [typeColor]="typeColor"
                             *ngIf="currentMatch.matchinfo.length === 1" [currentMatch]="currentMatch.matchinfo[0]"
@@ -47,18 +42,18 @@
                         <i *cdkDragPreview class="material-icons">perm_identity</i>
                     </toma-single-item>
                     <toma-matchlist-group cdkDrag [cdkDragData]="currentMatch.matchinfo"
-                                      [typeColor]="typeColor"
-                                      [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
-                                      [matchListItem]="currentMatch"
-                                      *ngIf="currentMatch.matchinfo.length > 1">
+                                          [typeColor]="typeColor"
+                                          [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
+                                          [matchListItem]="currentMatch"
+                                          *ngIf="currentMatch.matchinfo.length > 1">
                     <i *cdkDragPreview class="material-icons">group</i>
                 </toma-matchlist-group>
-             </mz-collection-item>
+             </mat-list-item>
             </span>
             <span *ngIf="currentMatch.matchinfo[0].group === null">
-                <mz-collection-item *ngFor="let currentMatchItem of currentMatch.matchinfo"
-                                    cdkDropList
-                                    [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
+                <mat-list-item *ngFor="let currentMatchItem of currentMatch.matchinfo"
+                               cdkDropList
+                               [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
                      <toma-single-item
                              [typeColor]="typeColor"
                              [cdkDragDisabled]="!currentMatchItem.isPlayable"
@@ -66,8 +61,9 @@
                              cdkDrag [cdkDragData]="[currentMatchItem]">
                          <i *cdkDragPreview class="material-icons">perm_identity</i>
                     </toma-single-item>
-                </mz-collection-item>
+                </mat-list-item>
             </span>
         </span>
-    </mz-collection>
+    </mat-list>
+
 </div>

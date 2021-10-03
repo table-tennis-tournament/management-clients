@@ -1,44 +1,38 @@
-import {Component, EventEmitter, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Inject, ViewChild} from '@angular/core';
 import {TableDto} from '../../tabledto.model';
 import {Player} from '../../../shared/data/player.model';
-import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
-import {customModalOptions} from '../../../shared/modal.options';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
     selector: 'toma-show-match-modal',
     templateUrl: './show-match-modal.component.html',
     styleUrls: ['./show-match-modal.component.scss']
 })
-export class ShowMatchModalComponent extends MzBaseModal {
-    private _currentTable: TableDto;
-
-    @ViewChild('showMatchModal') modal: MzModalComponent;
-
+export class ShowMatchModalComponent {
     public OnTableCalled: EventEmitter<void> = new EventEmitter<void>();
-
-    public modalOptions: Materialize.ModalOptions = customModalOptions;
 
     public players: Player[];
 
-    get currentTable(): TableDto {
-        return this._currentTable;
-    }
-
-    set currentTable(value: TableDto) {
-        this._currentTable = value;
+    constructor(
+        public dialogRef: MatDialogRef<ShowMatchModalComponent>,
+        @Inject(MAT_DIALOG_DATA) public currentTable: TableDto) {
         this.players = null;
         if (this.isGroupOfMatches()) {
             this.setPlayers();
         }
     }
 
+    onCancel(): void {
+        this.dialogRef.close();
+    }
+
     private isGroupOfMatches() {
-        return this._currentTable.matches && this._currentTable.matches.length > 1;
+        return this.currentTable.matches && this.currentTable.matches.length > 1;
     }
 
     setPlayers() {
         const playerArray = [];
-        this._currentTable.matches.forEach(match => {
+        this.currentTable.matches.forEach(match => {
             const firstPlayer = match.team1;
             if (firstPlayer && !playerArray[firstPlayer[0].id]) {
                 playerArray[firstPlayer[0].id] = match.team1[0];
@@ -54,10 +48,6 @@ export class ShowMatchModalComponent extends MzBaseModal {
                 this.players.push(player);
             }
         });
-    }
-
-    onOk() {
-        this.modal.closeModal();
     }
 
 }

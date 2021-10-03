@@ -1,6 +1,7 @@
 .waiting-list-drop-zone {
   min-height: 100px;
-  width: 200px;
+  min-width: 200px;
+  padding: 10px;
   z-index: 999999;
 }
 

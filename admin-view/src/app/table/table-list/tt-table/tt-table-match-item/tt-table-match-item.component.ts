@@ -5,16 +5,9 @@ import {Match} from '../../../../shared/data/match.model';
     selector: 'toma-tt-table-match-item',
     templateUrl: './tt-table-match-item.component.html'
 })
-export class TtTableMatchItemComponent implements OnInit {
+export class TtTableMatchItemComponent {
 
     @Input()
     matches: Match[];
-
-    constructor() {
-    }
-
-    ngOnInit() {
-    }
-
 
 }

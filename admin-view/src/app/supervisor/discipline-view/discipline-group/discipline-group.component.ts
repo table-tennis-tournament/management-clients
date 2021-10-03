@@ -1,6 +1,5 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {DisciplineGroup} from '../models/discipline.group.model';
-import {MzCollapsibleComponent} from 'ngx-materialize';
 import {Match} from '../../../shared/data/match.model';
 import {MatchState} from '../../../shared/data/matchstate.model';
 
@@ -15,7 +14,6 @@ export class DisciplineGroupComponent {
     inWaitingListState: string = MatchState[MatchState.InWaitingList];
     tableNumbers: any[];
 
-    @ViewChild('collapsibleGroup') collapsibleGroup: MzCollapsibleComponent;
 
     @Input()
     typeColor: string[];
@@ -32,7 +30,7 @@ export class DisciplineGroupComponent {
     @Input('showMatches')
     set showMatches(value: boolean) {
         this._showMatches = value;
-        this.openCloseByIndex(value, 1);
+        // this.openCloseByIndex(value, 1);
     }
 
     get showMatches(): boolean {
@@ -50,7 +48,7 @@ export class DisciplineGroupComponent {
     @Input('showPlayers')
     set showPlayers(value: boolean) {
         this._showPlayers = value;
-        this.openCloseByIndex(value, 0);
+        // this.openCloseByIndex(value, 0);
     }
 
     get showPlayers(): boolean {
@@ -80,13 +78,13 @@ export class DisciplineGroupComponent {
         this.tableNumbers = numberArray;
     }
 
-    openCloseByIndex(value: boolean, index: number) {
-        if (value === true) {
-            this.collapsibleGroup.open(index);
-            return;
-        }
-        this.collapsibleGroup.close(index);
-    }
+    // openCloseByIndex(value: boolean, index: number) {
+    //     if (value === true) {
+    //         this.collapsibleGroup.open(index);
+    //         return;
+    //     }
+    //     this.collapsibleGroup.close(index);
+    // }
 
     isGroupPlayable() {
         const playableMatches = this.group.matches.filter(match => match.isPlayable === false);

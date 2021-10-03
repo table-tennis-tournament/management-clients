@@ -1,16 +1,18 @@
-<div class="row" cdkDropListGroup>
-    <div class="col s2">
-        <toma-discipline-match-list
-                [matches]="matches | async"
-                [matchesLoading]="matchesLoading | async"
-                [matchList]="matchList | async"
-                [disciplines]="disciplines | async"
-                [typeColor]="typeColor | async"
-                (disciplineRefresh)="onDisciplineRefresh($event)">
-        </toma-discipline-match-list>
-    </div>
-    <div class="col s10">
-        <toma-table-list-page></toma-table-list-page>
+<div class="container-fluid">
+    <div class="row ml-1" cdkDropListGroup>
+        <div class="col-2 no-padding">
+            <toma-discipline-match-list
+                    [matches]="matches | async"
+                    [matchesLoading]="matchesLoading | async"
+                    [matchList]="matchList | async"
+                    [disciplines]="disciplines | async"
+                    [typeColor]="typeColor | async"
+                    (disciplineRefresh)="onDisciplineRefresh($event)">
+            </toma-discipline-match-list>
+        </div>
+        <div class="col-10">
+            <toma-table-list-page></toma-table-list-page>
+        </div>
     </div>
 </div>
 

@@ -1,34 +1,28 @@
-<mz-collapsible
-        [mode]="'expandable'"
-        [popout]="true">
-    <mz-collapsible-item [active]="true">
-        <mz-collapsible-item-header cdkDropList>
-            <div cdkDrag [cdkDragData]="stage.matches"
-                 class=" header-main-container black-text">
-              <span class="header-center-content">
-              <i class="material-icons">view_list</i>
-                  {{stage.name}}
-              </span>
-                <span class="header-right-content">
-                    <a href="javascript:void(0)" class="secondary-content" (click)="deleteStage.emit(stage)"><i
-                            class="material-icons">close</i></a>
-                  <i *ngIf="stage.isComplete" class="material-icons">done</i>
-              </span>
+<mat-expansion-panel [expanded]="true" hideToggle>
+    <mat-expansion-panel-header cdkDropList>
+        <mat-panel-title cdkDrag [cdkDragData]="stage.matches">
+            <mat-icon>
+                view_list
+            </mat-icon>
+            {{stage.name}}
+        </mat-panel-title>
+        <mat-panel-description>
+            <a href="javascript:void(0)" class="secondary-content" (click)="deleteStage.emit(stage)">
+                <mat-icon>close</mat-icon>
+            </a>
+            <mat-icon *ngIf="stage.isComplete">done</mat-icon>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="collection minus-margin" cdkDropList>
+        <a *ngFor="let currentMatch of stage.matches"
+           class="collection-item no-lines {{lineStageClass[index%3]}}"
+           (dblclick)="resultForMatch.emit(currentMatch)"
+           [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)"
+           cdkDrag [cdkDragDisabled]="!isMatchOpen(currentMatch)"
+           [cdkDragData]="[currentMatch]">
+            <div class="match-item-padding">
+                <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>
             </div>
-        </mz-collapsible-item-header>
-        <mz-collapsible-item-body>
-            <div class="collection minus-margin" cdkDropList>
-                <a *ngFor="let currentMatch of stage.matches"
-                   class="collection-item no-lines {{lineStageClass[index%3]}}"
-                   (dblclick)="resultForMatch.emit(currentMatch)"
-                   [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)"
-                   cdkDrag [cdkDragDisabled]="!isMatchOpen(currentMatch)"
-                   [cdkDragData]="[currentMatch]">
-                    <div class="match-item-padding">
-                        <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>
-                    </div>
-                </a>
-            </div>
-        </mz-collapsible-item-body>
-    </mz-collapsible-item>
-</mz-collapsible>
+        </a>
+    </div>
+</mat-expansion-panel>

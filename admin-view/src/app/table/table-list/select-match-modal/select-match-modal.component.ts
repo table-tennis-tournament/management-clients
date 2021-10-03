@@ -1,33 +1,23 @@
-import {Component, EventEmitter, ViewChild} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {Match} from '../../../shared/data/match.model';
-import {MzBaseModal, MzModalComponent} from 'ngx-materialize';
-import {customModalOptions} from '../../../shared/modal.options';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
     selector: 'toma-select-match-modal',
     templateUrl: './select-match-modal.component.html',
     styleUrls: ['./select-match-modal.component.scss']
 })
-export class SelectMatchModalComponent extends MzBaseModal {
-
-    _matches: Match[];
-    modalOptions: Materialize.ModalOptions = customModalOptions;
+export class SelectMatchModalComponent {
 
     currentValues: boolean[] = [];
 
-    @ViewChild('selectMatchModal') modal: MzModalComponent;
-
-    public OnMatchesSelected: EventEmitter<Match[]> = new EventEmitter<Match[]>();
-
-    set matches(matches: Match[]) {
-        this._matches = matches;
+    constructor(
+        public dialogRef: MatDialogRef<SelectMatchModalComponent>,
+        @Inject(MAT_DIALOG_DATA) public matches: Match[]) {
     }
 
-    get matches(): Match[] {
-        return this._matches;
-    }
 
-    onOk() {
+    getSelectedMatches() {
         // ugly solution because [(ngModel)]=match.isPlayable is not working
         const result = [];
         this.currentValues.forEach((x, index) => {
@@ -35,12 +25,11 @@ export class SelectMatchModalComponent extends MzBaseModal {
                 result.push(this.matches[index]);
             }
         });
-        this.fireEventAndClose(result);
+        return result;
     }
 
-    fireEventAndClose(result) {
-        this.OnMatchesSelected.emit(result);
-        this.modal.closeModal();
+    onCancel(): void {
+        this.dialogRef.close();
     }
 
 }

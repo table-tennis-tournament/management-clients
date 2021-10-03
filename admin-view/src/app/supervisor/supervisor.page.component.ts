@@ -1,17 +1,29 @@
-import {Component, ComponentRef, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {getMatchesLoading, getMatchesState, getMatchListState, getSelectedDiscipline, getTypeColorsState} from '../app-state.reducer';
+import {
+    getMatchesLoading,
+    getMatchesState,
+    getMatchListState,
+    getSelectedDiscipline,
+    getTypeColorsState
+} from '../app-state.reducer';
 import {Match} from '../shared/data/match.model';
 import {Observable} from 'rxjs';
 import {MatchList} from './matchlist.model';
 import {Discipline} from '../discipline/discipline.model';
 import {LoadDiscipline} from '../discipline/redux/discipline.actions';
 import {LoadMatches, ReloadMatches} from '../assign/redux/match.actions';
-import {AssignToMatchList, DeleteMatchListItem, LoadMatchList, MoveMatchListItem, SelectDiscipline} from './redux/matchlist.actions';
-import {MzModalService} from 'ngx-materialize';
+import {
+    AssignToMatchList,
+    DeleteMatchListItem,
+    LoadMatchList,
+    MoveMatchListItem,
+    SelectDiscipline
+} from './redux/matchlist.actions';
 import {ResultModalComponent} from '../table/table-list/result-modal/result-modal.component';
 import {ResultForMatch} from '../table/redux/table.actions';
 import {getDisciplineState} from '../discipline/redux';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     selector: 'toma-supervisor.page',
@@ -29,7 +41,7 @@ export class SupervisorPageComponent implements OnInit {
     private colors: string[];
     currentColor: string;
 
-    constructor(private store: Store<any>, private modalService: MzModalService) {
+    constructor(private store: Store<any>, public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -66,10 +78,15 @@ export class SupervisorPageComponent implements OnInit {
     }
 
     onResultForMatch(match: Match) {
-        const dialog: ComponentRef<ResultModalComponent> =
-            <ComponentRef<ResultModalComponent>>this.modalService.open(ResultModalComponent);
-        dialog.instance.currentMatch = match;
-        dialog.instance.OnResultForMatch.subscribe(matchResult => this.store.dispatch(new ResultForMatch(matchResult)));
+        const dialogRef = this.dialog.open(ResultModalComponent, {
+            width: '250px',
+            data: match
+        });
+
+        dialogRef.afterClosed().subscribe(matchResult => {
+            console.log('The dialog was closed');
+            this.store.dispatch(new ResultForMatch(matchResult));
+        });
         return;
     }
 

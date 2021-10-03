@@ -1,64 +1,24 @@
-<nav>
-    <div class="nav-wrapper">
-        <a href="#!" class="brand-logo left">Turniermanager</a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/callerView']">Ausrufer</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/tableView']">Tische</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/assignView']">Zuweiser</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/supervisorView']">Supervisor</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/resultView']">Ergebnisse</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/playerView']">Spieler</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/settingsView']">Einstellungen</a>
-            </li>
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/qrView']">Scanner</a>
-            </li>
-        </ul>
-        <ul id="mobile-navigation" class="hide-on-large-only right">
-            <li routerLinkActive="active">
-                <a href="#" [routerLink]="['/qrView']">Scanner</a>
-            </li>
-        </ul>
-
-    </div>
-</nav>
-
-<!--<mz-navbar>-->
-<!--<a href="#" class="brand-logo left">Turniermanager</a>-->
-<!--<mz-navbar-item-container [align]="'right hide-on-med-and-down'">-->
-<!--<mz-navbar-item [active]="active">-->
-<!--<a [routerLink]="['/callerView']">Ausrufer</a>-->
-<!--</mz-navbar-item>-->
-<!--<mz-navbar-item [active]="active">-->
-<!--<a [routerLink]="['/tableView']">Tische</a>-->
-<!--</mz-navbar-item>-->
-<!--<mz-navbar-item [active]="active">-->
-<!--<a [routerLink]="['/assignView']">Zuweiser</a>-->
-<!--</mz-navbar-item>-->
-<!--<mz-navbar-item [active]="active">-->
-<!--<a [routerLink]="['/supervisorView']">Supervisor</a>-->
-<!--</mz-navbar-item>-->
-<!--<mz-navbar-item [active]="routerLinkActive">-->
-<!--<a [routerLink]="['/resultView']">Ergebnisse</a>-->
-<!--</mz-navbar-item>-->
-<!--<mz-navbar-item [active]="routerLinkActive">-->
-<!--<a [routerLink]="['/settingsView']">Einstellungen</a>-->
-<!--</mz-navbar-item>-->
-<!--<mz-navbar-item [active]="routerLinkActive">-->
-<!--<a [routerLink]="['/qrView']">Scanner</a>-->
-<!--</mz-navbar-item>-->
-<!--</mz-navbar-item-container>-->
-<!--</mz-navbar>-->
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <button mat-icon-button>
+            <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
+        </button>
+        <h1>Turniermanager</h1>
+        <span class="example-spacer"></span>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/callerView']" routerLinkActive="active">Ausrufer</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/tableView']" routerLinkActive="active">Tische</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/assignView']" routerLinkActive="active">Zuweiser</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/supervisorView']" routerLinkActive="active">Supervisor</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/resultView']" routerLinkActive="active">Ergebnisse</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/playerView']" routerLinkActive="active">Spieler</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/settingsView']" routerLinkActive="active">Einstellungen</a>
+        <a href="#" class="padding-left" [routerLink]="['/admin-view/qrView']" routerLinkActive="active">Scanner</a>
+    </mat-toolbar-row>
+</mat-toolbar>
+<mat-sidenav-container>
+    <mat-sidenav #sidenav>
+        <mat-nav-list>
+            <a href="#" [routerLink]="['/qrView']">Scanner</a>
+        </mat-nav-list>
+    </mat-sidenav>
+</mat-sidenav-container>

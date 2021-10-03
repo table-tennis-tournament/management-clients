@@ -1,20 +1,13 @@
-<div class="col m9 s8">
-  <mz-select-container>
-    <select mz-select
-            id="select-discipline"
-            [label]="'Wähle Konkurrenz'"
-            [placeholder]="'Konkurrenz'"
-            (change)="disciplineChanged.emit(+selectedDiscipline)"
-            [(ngModel)]="selectedDiscipline">
-      <option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
+<div class="pl-2 full-width flex-container">
+  <mat-form-field appearance="fill" class="flex_item_left">
+    <mat-label>Konkurrenz</mat-label>
+    <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
+      <mat-option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
         {{currentDiscipline.name}}
-      </option>
-    </select>
-  </mz-select-container>
-</div>
-
-<div class="col m3 s4">
-  <a class="btn-floating btn-medium blue" (click)="disciplineRefresh.emit(+selectedDiscipline)">
-    <i class="medium material-icons">refresh</i>
-  </a>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-mini-fab color="primary" (click)="disciplineRefresh.emit(+selectedDiscipline)" class="flex_item_right">
+    <mat-icon>refresh</mat-icon>
+  </button>
 </div>

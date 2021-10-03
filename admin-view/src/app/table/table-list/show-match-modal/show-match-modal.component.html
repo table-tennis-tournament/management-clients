@@ -1,30 +1,26 @@
-<mz-modal #showMatchModal [fixedFooter]="true" [options]="modalOptions">
-    <mz-modal-header class="center-align padding-5">
-        <h4>Neues Spiel ausrufen</h4>
-    </mz-modal-header>
-    <mz-modal-content>
-        <div class="col s4">
-            <h5>Tisch Nr: {{currentTable.number}}</h5>
+<h1 mat-dialog-title>Neues Spiel ausrufen</h1>
+<div mat-dialog-content>
+    <div class="col s4">
+        <h5>Tisch Nr: {{currentTable.number}}</h5>
+        <br/>
+        <h5>{{currentTable.matches[0].type.name}} {{currentTable.matches[0].matchType.name}}</h5>
+        <br/><br/>
+        <div class="row" *ngIf="!players">
+            {{currentTable?.matches[0]?.team1 | ttPlayerNameReducer}}
             <br/>
-            <h5>{{currentTable.matches[0].type.name}} {{currentTable.matches[0].matchType.name}}</h5>
-            <br/><br/>
-            <div class="row" *ngIf="!players">
-                {{currentTable?.matches[0]?.team1 | ttPlayerNameReducer}}
-                <br/>
-                -
-                <br/>
-                {{currentTable?.matches[0]?.team2 | ttPlayerNameReducer}}
-            </div>
-            <div class="row" *ngIf="players">
-                <div><h5>Spieler: </h5></div>
-                <div *ngFor="let currentPlayer of players">
-                    {{currentPlayer | ttPlayerNameReducer}}
-                </div>
+            -
+            <br/>
+            {{currentTable?.matches[0]?.team2 | ttPlayerNameReducer}}
+        </div>
+        <div class="row" *ngIf="players">
+            <div><h5>Spieler: </h5></div>
+            <div *ngFor="let currentPlayer of players">
+                {{[currentPlayer] | ttPlayerNameReducer}}
             </div>
         </div>
-    </mz-modal-content>
-    <mz-modal-footer>
-        <button mz-button [flat]="true" mz-modal-close>Abbrechen</button>
-        <button mz-button [flat]="true" mz-modal-close (click)="onOk()">OK</button>
-    </mz-modal-footer>
-</mz-modal>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-button [mat-dialog-close]="currentTable" cdkFocusInitial>Ok</button>
+</div>

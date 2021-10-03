@@ -1,6 +1,6 @@
 <div class="row p-1">
     <div class="col">
-        <h5>Warteliste</h5>
+        <h1>Warteliste</h1>
     </div>
     <div class="col">
         <div class="pt-3">
@@ -9,20 +9,21 @@
         </div>
     </div>
 </div>
-<div class="row waiting-list-drop-zone" [class.waiting-list-fixed-position]="fixWaitingList">
-    <ul class="collection waiting-list-sorting-area" cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
-        <li *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
-            class="collection-item p-1" [ngClass]="typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]">
+<div class="row waiting-list-drop-zone border" [class.waiting-list-fixed-position]="fixWaitingList"
+     cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
+    <mat-list cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
+        <mat-list-item *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
+                       class="border-bottom" [ngClass]="typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]">
             <div class="cut-text" *ngIf="!currentMatch.matchinfo[1]&&currentMatch.matchinfo[0]">
                 <toma-matchlist-single-item [matchListItem]="currentMatch"
                                             (matchListItemDelete)="matchListItemDelete.emit($event)">
                 </toma-matchlist-single-item>
             </div>
-            <div class="cut-text" [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
+            <div class="cut-text mb-3 mt-3" [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
                  *ngIf="currentMatch.matchinfo[1]">
                 <toma-matchlist-group-item [matchListItem]="currentMatch"
-                (matchListItemDelete)="matchListItemDelete.emit($event)"></toma-matchlist-group-item>
+                                           (matchListItemDelete)="matchListItemDelete.emit($event)"></toma-matchlist-group-item>
             </div>
-        </li>
-    </ul>
+        </mat-list-item>
+    </mat-list>
 </div>

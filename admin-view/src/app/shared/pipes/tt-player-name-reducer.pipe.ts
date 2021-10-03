@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Player} from '../../shared/data/player.model';
+import {Player} from '../data/player.model';
 
 @Pipe({
     name: 'ttPlayerNameReducer'
@@ -21,7 +21,7 @@ export class TtPlayerNameReducerPipe implements PipeTransform {
     }
 
     getSinglePlayerString(player: Player) {
-        return player.firstName + ' ' + player.lastName + '(' + player.club.clubName + ')';
+        return player.firstName + ' ' + player.lastName + ' (' + player.club.clubName + ')';
     }
 
     getSinglePlayerStringShort(player: Player) {
