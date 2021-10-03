@@ -1,6 +1,6 @@
 <div class="container-fluid">
-    <div class="row" cdkDropListGroup>
-        <div class="col-md-2">
+    <div class="row ml-1" cdkDropListGroup>
+        <div class="col-2 no-padding">
             <toma-discipline-match-list
                     [matches]="matches | async"
                     [matchesLoading]="matchesLoading | async"
@@ -10,7 +10,7 @@
                     (disciplineRefresh)="onDisciplineRefresh($event)">
             </toma-discipline-match-list>
         </div>
-        <div class="col-md-10">
+        <div class="col-10">
             <toma-table-list-page></toma-table-list-page>
         </div>
     </div>

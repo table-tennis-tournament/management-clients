@@ -1,13 +1,17 @@
 version: "3.3"  # optional since v1.27.0
 services:
-  db:
+  mysql:
     image: holzleube/mysql-docker-image:4.0
     ports:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=ttv01
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+#      timeout: 20s
+#      retries: 10
   backend:
-    image: holzleube/turniermanager:3.0
+    image: holzleube/turniermanager:3.2
     ports:
       - "9000:9000"
     environment:
@@ -16,6 +20,8 @@ services:
       - MYSQL_USER=root
       - MYSQL_PW=ttv01
       - MYSQL_PORT=3306
+      - WAIT_HOSTS=mysql:3306
+      - WAIT_TIMEOUT=200
     depends_on:
-      - "db"
+      - "mysql"
 
