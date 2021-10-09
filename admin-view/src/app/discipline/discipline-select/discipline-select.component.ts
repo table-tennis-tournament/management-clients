@@ -48,7 +48,7 @@ export class DisciplineSelectComponent {
 
     private refreshSelectBox() {
         let disciplines = this._disciplines;
-        if (!this.showAll) {
+        if (!this.showAll && disciplines) {
             disciplines = this.disciplines.filter(discipline => discipline.active);
         }
         const result = [];

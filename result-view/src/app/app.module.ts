@@ -35,7 +35,6 @@ import {ResultModule} from './result/result.module';
     EffectsModule.forRoot([]),
     StoreRouterConnectingModule.forRoot({ serializer: DefaultRouterStateSerializer }),
     StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
-    StoreModule.forRoot({}, {})
   ],
   providers: [],
   bootstrap: [AppComponent]

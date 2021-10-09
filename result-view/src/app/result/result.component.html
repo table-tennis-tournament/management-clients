@@ -4,7 +4,7 @@
       <button mat-raised-button color="{{getColor(currentType)}}" (click)="onTabSelected(currentType)">{{currentType.name}}</button>
     </div>
     <div class="col">
-      <mat-checkbox [(ngModel)]="isFixed"  (change)="onIsFixedChanged()">Stop</mat-checkbox>
+      <mat-checkbox [(ngModel)]="isFixed"  (change)="onIsFixedChanged()" name="stopCheckbox">Stop</mat-checkbox>
     </div>
   </div>
 

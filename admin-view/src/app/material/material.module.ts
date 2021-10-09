@@ -19,7 +19,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import {MatTableModule} from '@angular/material';
+import {MatTableModule} from '@angular/material/table';
 
 const matModules = [
     MatToolbarModule,

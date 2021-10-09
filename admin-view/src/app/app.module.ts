@@ -36,7 +36,6 @@ const components = [AppComponent];
     imports: [
         AppRoutingModule,
         DragDropModule,
-
         SharedModule.forRoot(),
         ToastrModule.forRoot({
             timeOut: 5000,
@@ -44,7 +43,13 @@ const components = [AppComponent];
             closeButton: false,
             positionClass: 'toast-bottom-center'
         }),
-        StoreModule.forRoot(reducers, {metaReducers}),
+        StoreModule.forRoot(reducers, {
+            metaReducers,
+            runtimeChecks: {
+                strictStateImmutability: false,
+                strictActionImmutability: false
+            }
+        }),
         StoreDevtoolsModule.instrument({
             name: 'Devtools',
             logOnly: environment.production,
