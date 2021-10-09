@@ -22,7 +22,7 @@ export class ResultModalComponent {
 
     public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
 
-    @ViewChild('answer') private elementRef: ElementRef;
+    @ViewChild('answer', {read: ElementRef, static: false}) private elementRef: ElementRef;
 
     constructor(private resultCheckerService: ResultCheckerService,
                 public dialogRef: MatDialogRef<ResultModalComponent>,

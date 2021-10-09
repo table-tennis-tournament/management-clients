@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Match} from '../../shared/data/match.model';
 import {Discipline} from '../../discipline/discipline.model';
 import {MatchState} from '../../shared/data/matchstate.model';
@@ -10,7 +10,7 @@ import {ResultCheckModel} from '../../table/table-list/result-modal/result-check
     templateUrl: './result-list.component.html',
     styleUrls: ['./result-list.component.scss']
 })
-export class ResultListComponent implements AfterViewInit {
+export class ResultListComponent {
 
     private _matches: Match[];
     selectedDisciplineId = 0;
@@ -23,7 +23,6 @@ export class ResultListComponent implements AfterViewInit {
     set matches(value: Match[]) {
         this._matches = value;
         this.onTypeChanged(this.selectedDisciplineId);
-        setTimeout(this.ngAfterViewInit.bind(this), 200);
     }
 
     get matches() {
@@ -44,8 +43,6 @@ export class ResultListComponent implements AfterViewInit {
 
     @Output()
     refreshResultList: EventEmitter<any> = new EventEmitter<any>();
-
-    @ViewChild('answer') private elementRef: ElementRef;
 
     @Input()
     matchesLoading: boolean;
@@ -91,12 +88,6 @@ export class ResultListComponent implements AfterViewInit {
                 match: match
             });
             this.checkerResultList = [];
-        }
-    }
-
-    ngAfterViewInit(): void {
-        if (this.elementRef != null) {
-            this.elementRef.nativeElement.focus();
         }
     }
 

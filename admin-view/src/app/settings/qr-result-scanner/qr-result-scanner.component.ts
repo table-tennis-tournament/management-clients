@@ -13,7 +13,7 @@ export class QrResultScannerComponent implements OnInit {
     @Output()
     freeMatch: EventEmitter<number> = new EventEmitter();
 
-    @ViewChild('scanner')
+    @ViewChild(ZXingScannerComponent, {read: ZXingScannerComponent, static: false})
     scanner: ZXingScannerComponent;
 
     private hasCameras: boolean;
