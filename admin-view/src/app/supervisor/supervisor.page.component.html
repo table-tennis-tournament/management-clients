@@ -1,32 +1,32 @@
-<div class="{{currentColor}}">
-    <div class="row" cdkDropListGroup>
-        <div class="col-10 p-3">
-            <toma-discipline-view
-                    [matches]="matches | async"
-                    [disciplines]="disciplines | async"
-                    [typeColor]="typeColor | async"
-                    [matchesLoading]="matchesLoading | async"
-                    [selectedDiscipline]="selectedDiscipline | async"
-                    (resultForMatch)="onResultForMatch($event)"
-                    (selectDiscipline)="onSelectedDisciplineChanged($event)"
-            ></toma-discipline-view>
-        </div>
-        <div class="col-2">
-            <toma-matchlist-view
-                    [matchListMatches]="matchList |async"
-                    [typeColor]="typeColor | async"
-                    (matchListItemDelete)="onMatchListItemDelete($event)"
-                    (assignMatchListItem)="onAssignMatchListItem($event)"
-                    (moveMatchListItem)="onMatchListItemMove($event)"
-            ></toma-matchlist-view>
-        </div>
+<div class="{{ currentColor }}">
+  <div class="row" cdkDropListGroup>
+    <div class="col-10 p-3">
+      <toma-discipline-view
+        [matches]="matches | async"
+        [disciplines]="disciplines | async"
+        [typeColor]="typeColor | async"
+        [matchesLoading]="matchesLoading | async"
+        [selectedDiscipline]="selectedDiscipline | async"
+        (resultForMatch)="onResultForMatch($event)"
+        (selectDiscipline)="onSelectedDisciplineChanged($event)"
+      ></toma-discipline-view>
     </div>
+    <div class="col-2">
+      <toma-matchlist-view
+        [matchListMatches]="matchList | async"
+        [typeColor]="typeColor | async"
+        (matchListItemDelete)="onMatchListItemDelete($event)"
+        (assignMatchListItem)="onAssignMatchListItem($event)"
+        (moveMatchListItem)="onMatchListItemMove($event)"
+      ></toma-matchlist-view>
+    </div>
+  </div>
 </div>
 <div class="fab-container">
-    <button mat-fab color="primary" (click)="onSupervisorRefresh()">
-        <mat-icon>refresh</mat-icon>
-    </button>
-    <button mat-fab color="primary" (click)="onSyncMatches()">
-        <mat-icon>autorenew</mat-icon>
-    </button>
+  <button mat-fab color="primary" (click)="onSupervisorRefresh()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+  <button mat-fab color="primary" (click)="onSyncMatches()">
+    <mat-icon>autorenew</mat-icon>
+  </button>
 </div>

@@ -3,12 +3,11 @@
   <div *ngIf="referees">
     <h4>Schiedsrichter:</h4>
     <mat-list>
-      <mat-list-item *ngFor="let currentReferee of referees" >
+      <mat-list-item *ngFor="let currentReferee of referees">
         <div class="cut-text" *ngIf="currentReferee">
-          {{currentReferee.firstName}}
+          {{ currentReferee.firstName }}
         </div>
       </mat-list-item>
     </mat-list>
   </div>
 </div>
-

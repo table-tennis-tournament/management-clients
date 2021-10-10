@@ -1,9 +1,9 @@
 <toma-result-list
-        [matches]="matches | async"
-        [matchesLoading]="matchesLoading | async"
-        [disciplines]="disciplines | async"
-        (takeBackMatch)="onTakeBackMatch($event)"
-        (resultForMatch)="onResultForMatch($event)"
-        (resultCompleteForMatch)="onResultCompleteForMatch($event)"
-        (refreshResultList)="onRefreshResultList()"
+  [matches]="matches | async"
+  [matchesLoading]="matchesLoading | async"
+  [disciplines]="disciplines | async"
+  (takeBackMatch)="onTakeBackMatch($event)"
+  (resultForMatch)="onResultForMatch($event)"
+  (resultCompleteForMatch)="onResultCompleteForMatch($event)"
+  (refreshResultList)="onRefreshResultList()"
 ></toma-result-list>

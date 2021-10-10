@@ -1,35 +1,28 @@
-import {Action} from '@ngrx/store';
-import {Discipline} from '../discipline.model';
+import { Action } from '@ngrx/store';
+import { Discipline } from '../discipline.model';
 
 export enum DisciplineActionTypes {
-    Load = '[Discipline] Load',
-    LoadSuccess = '[Discipline] Load Success',
-    LoadError = '[Discipline] Load Error'
+  Load = '[Discipline] Load',
+  LoadSuccess = '[Discipline] Load Success',
+  LoadError = '[Discipline] Load Error',
 }
 
 export class LoadDiscipline implements Action {
-    readonly type = DisciplineActionTypes.Load;
+  readonly type = DisciplineActionTypes.Load;
 
-    constructor(public payload: any) {
-    }
+  constructor(public payload: any) {}
 }
 
 export class LoadDisciplineSuccess implements Action {
-    readonly type = DisciplineActionTypes.LoadSuccess;
+  readonly type = DisciplineActionTypes.LoadSuccess;
 
-    constructor(public payload: Discipline[]) {
-    }
+  constructor(public payload: Discipline[]) {}
 }
 
 export class LoadDisciplineError implements Action {
-    readonly type = DisciplineActionTypes.LoadError;
+  readonly type = DisciplineActionTypes.LoadError;
 
-    constructor(public payload: any) {
-    }
+  constructor(public payload: any) {}
 }
 
-
-export type DisciplineActionsUnion =
-    | LoadDiscipline
-    | LoadDisciplineSuccess
-    | LoadDisciplineError;
+export type DisciplineActionsUnion = LoadDiscipline | LoadDisciplineSuccess | LoadDisciplineError;

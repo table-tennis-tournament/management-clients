@@ -1,4 +1,4 @@
 export interface StageType {
-    id?: number;
-    name?: string;
+  id?: number;
+  name?: string;
 }

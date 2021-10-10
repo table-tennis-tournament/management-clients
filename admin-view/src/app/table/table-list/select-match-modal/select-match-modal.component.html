@@ -1,25 +1,27 @@
 <h1 mat-dialog-title>Wähle Spiel</h1>
 <div mat-dialog-content>
-    <form class="col s12">
-        <div class="row">
-            <div class="col s10">
-                <p *ngFor="let match of matches; let i= index;">
-                    <input name="inputMatch{{match.id}}"
-                           type="checkbox"
-                           id="inputMatch{{match.id}}"
-                           [(ngModel)]="currentValues[i]"/>
-                    <label for="inputMatch{{match.id}}">
-                        {{match.team1 | ttPlayerNameReducer}}
-                        -
-                        {{match.team2 | ttPlayerNameReducer}}
-                    </label>
-                </p>
-            </div>
-        </div>
-    </form>
+  <form class="col s12">
+    <div class="row">
+      <div class="col s10">
+        <p *ngFor="let match of matches; let i = index">
+          <input
+            name="inputMatch{{ match.id }}"
+            type="checkbox"
+            id="inputMatch{{ match.id }}"
+            [(ngModel)]="currentValues[i]"
+          />
+          <label for="inputMatch{{ match.id }}">
+            {{ match.team1 | ttPlayerNameReducer }}
+            -
+            {{ match.team2 | ttPlayerNameReducer }}
+          </label>
+        </p>
+      </div>
+    </div>
+  </form>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-button [mat-dialog-close]="matches">Alle</button>
-    <button mat-button [mat-dialog-close]="getSelectedMatches()" cdkFocusInitial>Ok</button>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button [mat-dialog-close]="matches">Alle</button>
+  <button mat-button [mat-dialog-close]="getSelectedMatches()" cdkFocusInitial>Ok</button>
 </div>

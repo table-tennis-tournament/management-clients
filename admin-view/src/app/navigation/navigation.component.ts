@@ -1,11 +1,8 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-    selector: 'toma-navigation',
-    templateUrl: './navigation.component.html',
-    styleUrls: ['./navigation.component.scss']
+  selector: 'toma-navigation',
+  templateUrl: './navigation.component.html',
+  styleUrls: ['./navigation.component.scss'],
 })
-export class NavigationComponent {
-
-}
-
+export class NavigationComponent {}

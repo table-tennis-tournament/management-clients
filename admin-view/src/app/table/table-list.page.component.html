@@ -1,19 +1,19 @@
 <toma-table-list
-        [tables]="tables | async"
-        [tablesLoading]="tablesLoading | async"
-        [typeColor]="typeColor | async"
-        (lockTable)="onLockTable($event)"
-        (unLockTable)="onUnLockTable($event)"
-        (freeTable)="onFreeTable($event)"
-        (takeBackTable)="onTakeBackTable($event)"
-        (printTable)="onPrintTable($event)"
-        (assignSecondTable)="onAssignSecondTable($event)"
-        (resultForTable)="onResultForTable($event)"
-        (assignMatchToTable)="onAssignMatchToTable($event)"
-        (removeFromTable)="onRemoveFromTable($event)"
+  [tables]="tables | async"
+  [tablesLoading]="tablesLoading | async"
+  [typeColor]="typeColor | async"
+  (lockTable)="onLockTable($event)"
+  (unLockTable)="onUnLockTable($event)"
+  (freeTable)="onFreeTable($event)"
+  (takeBackTable)="onTakeBackTable($event)"
+  (printTable)="onPrintTable($event)"
+  (assignSecondTable)="onAssignSecondTable($event)"
+  (resultForTable)="onResultForTable($event)"
+  (assignMatchToTable)="onAssignMatchToTable($event)"
+  (removeFromTable)="onRemoveFromTable($event)"
 ></toma-table-list>
 <div class="fab-container">
-    <button mat-fab color="primary" (click)="onTableRefresh()">
-        <mat-icon>refresh</mat-icon>
-    </button>
+  <button mat-fab color="primary" (click)="onTableRefresh()">
+    <mat-icon>refresh</mat-icon>
+  </button>
 </div>

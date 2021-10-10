@@ -1,24 +1,21 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {MatchList} from '../../../supervisor/matchlist.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { MatchList } from '../../../supervisor/matchlist.model';
 
 @Component({
-    selector: 'toma-matchlist-group',
-    templateUrl: './matchlist-group.component.html',
-    styleUrls: ['./matchlist-group.component.scss']
+  selector: 'toma-matchlist-group',
+  templateUrl: './matchlist-group.component.html',
+  styleUrls: ['./matchlist-group.component.scss'],
 })
 export class MatchlistGroupComponent {
+  constructor() {}
 
-    constructor() {
-    }
+  @Input()
+  matchListItem: MatchList;
 
-    @Input()
-    matchListItem: MatchList;
+  @Input()
+  typeColor: string[];
 
-
-    @Input()
-    typeColor: string[];
-
-    isBlocked() {
-        return this.matchListItem.matchinfo.filter(x => !x.isPlayable).length > 0;
-    }
+  isBlocked() {
+    return this.matchListItem.matchinfo.filter((x) => !x.isPlayable).length > 0;
+  }
 }

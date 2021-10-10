@@ -3,7 +3,7 @@
     <mat-label>Konkurrenz</mat-label>
     <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
       <mat-option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
-        {{currentDiscipline.name}}
+        {{ currentDiscipline.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>

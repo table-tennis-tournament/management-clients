@@ -1,4 +1,4 @@
 export interface Club {
-    id?: number;
-    clubName?: string;
+  id?: number;
+  clubName?: string;
 }

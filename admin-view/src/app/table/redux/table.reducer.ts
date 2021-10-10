@@ -1,93 +1,88 @@
-import {TableDto} from '../tabledto.model';
-import {TableActionsUnion, TableActionTypes} from './table.actions';
-import {TTMatchResult} from '../table-list/result-modal/ttmatch-result.model';
+import { TableDto } from '../tabledto.model';
+import { TableActionsUnion, TableActionTypes } from './table.actions';
+import { TTMatchResult } from '../table-list/result-modal/ttmatch-result.model';
 
 export interface TableState {
-    tables: TableDto[];
-    tablesLoading: boolean;
+  tables: TableDto[];
+  tablesLoading: boolean;
 }
 
-
 const initialState: TableState = {
-    tables: [],
-    tablesLoading: false
+  tables: [],
+  tablesLoading: false,
 };
 
 export function reduceTableState(state: TableState = initialState, action: TableActionsUnion) {
-    switch (action.type) {
-        case TableActionTypes.Load:
+  switch (action.type) {
+    case TableActionTypes.Load:
+      return {
+        ...state,
+        tablesLoading: true,
+      };
+    case TableActionTypes.LoadSuccess:
+      return {
+        ...state,
+        tablesLoading: false,
+        tables: action.payload,
+      };
+    case TableActionTypes.UpdateSuccess:
+      return {
+        ...state,
+        tables: state.tables.map((table) => {
+          const tables = action.payload.filter((item) => item.number === table.number);
+          if (tables.length > 0) {
+            return tables[0];
+          }
+          return table;
+        }),
+      };
+    case TableActionTypes.LoadError:
+      return {
+        ...state,
+        tablesLoading: false,
+      };
+    case TableActionTypes.LockSuccess:
+      return {
+        ...state,
+        tables: state.tables.map((table) => {
+          if (table.number === action.payload) {
             return {
-                ...state,
-                tablesLoading: true
+              ...table,
+              matches: [...table.matches],
+              isLocked: true,
             };
-        case TableActionTypes.LoadSuccess:
+          }
+          return table;
+        }),
+      };
+    case TableActionTypes.UnLockSuccess:
+      return {
+        ...state,
+        tables: state.tables.map((table) => {
+          if (table.number === action.payload) {
             return {
-                ...state,
-                tablesLoading: false,
-                tables: action.payload
+              ...table,
+              matches: [...table.matches],
+              isLocked: false,
             };
-        case TableActionTypes.UpdateSuccess:
-            return {
-                ...state,
-                tables: state.tables.map(table => {
-                    const tables = action.payload.filter(item => item.number === table.number)
-                    if (tables.length > 0) {
-                        return tables[0];
-                    }
-                    return table;
-                })
-
-            };
-        case TableActionTypes.LoadError:
-            return {
-                ...state,
-                tablesLoading: false
-            };
-        case TableActionTypes.LockSuccess:
-            return {
-                ...state,
-                tables: state.tables.map(table => {
-                    if (table.number === action.payload) {
-                        return {
-                            ...table,
-                            matches: [...table.matches],
-                            isLocked: true
-                        };
-                    }
-                    return table;
-                })
-
-            };
-        case TableActionTypes.UnLockSuccess:
-            return {
-                ...state,
-                tables: state.tables.map(table => {
-                    if (table.number === action.payload) {
-                        return {
-                            ...table,
-                            matches: [...table.matches],
-                            isLocked: false
-                        };
-                    }
-                    return table;
-                })
-
-            };
-        case TableActionTypes.ResultForMatchSuccess:
-            const resultForMatch: TTMatchResult = action.payload;
-            return {
-                ...state,
-                tables: state.tables.map(table => {
-                    return {
-                        ...table,
-                        matches: [...table.matches.filter(match => resultForMatch.match.id !== match.id)]
-                    };
-                })
-            };
-        default:
-            return state;
-    }
-
+          }
+          return table;
+        }),
+      };
+    case TableActionTypes.ResultForMatchSuccess:
+      const resultForMatch: TTMatchResult = action.payload;
+      return {
+        ...state,
+        tables: state.tables.map((table) => {
+          return {
+            ...table,
+            matches: [...table.matches.filter((match) => resultForMatch.match.id !== match.id)],
+          };
+        }),
+      };
+    default:
+      return state;
+  }
 }
 
 export const getTables = (state: TableState) => state.tables;
