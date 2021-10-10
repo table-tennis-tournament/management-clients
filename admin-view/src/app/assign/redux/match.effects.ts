@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Action} from '@ngrx/store';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ToastrService} from 'ngx-toastr';
-import {Observable, of} from 'rxjs';
+import {of} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {MatchService} from '../match.service';
 import {LoadMatchesError, LoadMatchesSuccess, MatchActionTypes, ReloadMatchesError, ReloadMatchesSuccess} from './match.actions';
@@ -10,8 +9,7 @@ import {LoadMatchesError, LoadMatchesSuccess, MatchActionTypes, ReloadMatchesErr
 @Injectable()
 export class MatchEffects {
 
-    @Effect()
-    loadMatches$: Observable<Action> = this.actions$.pipe(
+    loadMatches =  createEffect( () => this.actions$.pipe(
         ofType(MatchActionTypes.Load),
         switchMap(() => {
             return this.matchService
@@ -23,10 +21,9 @@ export class MatchEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    reloadMatches$: Observable<Action> = this.actions$.pipe(
+    reloadMatches =  createEffect( () => this.actions$.pipe(
         ofType(MatchActionTypes.Reload),
         switchMap(() => {
             return this.matchService
@@ -41,7 +38,7 @@ export class MatchEffects {
                     })
                 );
         })
-    );
+    ));
 
 
     constructor(private actions$: Actions,

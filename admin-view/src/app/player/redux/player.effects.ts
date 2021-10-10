@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {Observable, of} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
@@ -17,8 +17,7 @@ import {ToastrService} from 'ngx-toastr';
 @Injectable()
 export class PlayerEffects {
 
-    @Effect()
-    loadTables$: Observable<Action> = this.actions$.pipe(
+    loadTables =  createEffect( () => this.actions$.pipe(
         ofType(PlayerActionTypes.Load),
         switchMap(() => {
             return this.playerService
@@ -30,10 +29,9 @@ export class PlayerEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    playerPaid$: Observable<Action> = this.actions$.pipe(
+    playerPaid =  createEffect( () => this.actions$.pipe(
         ofType(PlayerActionTypes.SetPaid),
         switchMap((action: SetPlayerPaid) => {
             return this.playerService
@@ -45,7 +43,7 @@ export class PlayerEffects {
                     })
                 );
         })
-    );
+    ));
 
 
     constructor(private actions$: Actions, private playerService: PlayerService, private toastService: ToastrService) {

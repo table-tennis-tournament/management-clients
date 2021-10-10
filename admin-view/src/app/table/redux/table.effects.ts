@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
@@ -43,23 +43,23 @@ import {PrintService} from '../../shared/print.service';
 @Injectable()
 export class TableEffects {
 
-    @Effect()
-    loadTables$: Observable<Action> = this.actions$.pipe(
-        ofType(TableActionTypes.Load),
-        switchMap(() => {
-            return this.tableService
-                .getAllTables().pipe(
-                    map(tables => new LoadTablesSuccess(tables)),
-                    catchError(err => {
-                        this.toastService.error('Fehler beim Laden der Tische', '');
-                        return of(new LoadTablesError(err));
-                    })
-                );
-        })
+
+    loadTables= createEffect( () =>
+        this.actions$.pipe(
+            ofType(TableActionTypes.Load),
+            switchMap(() => {
+                return this.tableService
+                    .getAllTables().pipe(
+                        map(tables => new LoadTablesSuccess(tables)),
+                        catchError(err => {
+                            this.toastService.error('Fehler beim Laden der Tische', '');
+                            return of(new LoadTablesError(err));
+                        })
+                    );
+            }))
     );
 
-    @Effect()
-    lockTables$: Observable<Action> = this.actions$.pipe(
+    lockTables = createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.Lock),
         mergeMap((action: LockTable) => {
             return this.tableService
@@ -71,10 +71,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    unLockTables$: Observable<Action> = this.actions$.pipe(
+    unLockTables = createEffect(() => this.actions$.pipe(
         ofType(TableActionTypes.UnLock),
         mergeMap((action: UnLockTable) => {
             return this.tableService
@@ -86,10 +85,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    freeTables$: Observable<Action> = this.actions$.pipe(
+    freeTables = createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.Free),
         mergeMap((action: FreeTable) => {
             return this.matchService
@@ -104,10 +102,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    takeBackTables$: Observable<Action> = this.actions$.pipe(
+    takeBackTables = createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.TakeBack),
         mergeMap((action: TakeBackTable) => {
             return this.matchService
@@ -119,10 +116,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    printTables$: Observable<Action> = this.actions$.pipe(
+    printTables =  createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.PrintTable),
         mergeMap((action: PrintTable) => {
             return this.printService.printMatch(action.payload.matchId)
@@ -134,10 +130,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    assignToSecondTable$: Observable<Action> = this.actions$.pipe(
+    assignToSecondTable =  createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.AssignToSecondTable),
         mergeMap((action: AssignToSecondTable) => {
             return this.matchService.assignToSecondTable(action.payload.tableNr, action.payload.matchIds)
@@ -149,10 +144,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    resultForMatch$: Observable<Action> = this.actions$.pipe(
+    resultForMatch =  createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.ResultForMatch),
         mergeMap((action: ResultForMatch) => {
             return this.matchService.resultForMatch(action.payload)
@@ -164,10 +158,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    assignMatchToTable$: Observable<Action> = this.actions$.pipe(
+    assignMatchToTable =  createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.AssignMatchToTable),
         mergeMap((action: AssignMatchToTable) => {
             return this.matchService.assignMatchToTable(action.payload)
@@ -189,10 +182,9 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    removeMatchFromTable$: Observable<Action> = this.actions$.pipe(
+    removeMatchFromTable =  createEffect( () => this.actions$.pipe(
         ofType(TableActionTypes.Remove),
         mergeMap((action: RemoveMatchFromTable) => {
             return this.matchService
@@ -204,11 +196,10 @@ export class TableEffects {
                     })
                 );
         })
-    );
+    ));
 
     constructor(private actions$: Actions, private tableService: TableService,
                 private toastService: ToastrService, private matchService: MatchService, private printService: PrintService) {
-
     }
 
 }

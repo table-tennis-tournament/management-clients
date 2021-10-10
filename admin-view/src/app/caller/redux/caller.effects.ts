@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
@@ -23,8 +23,7 @@ import {
 @Injectable()
 export class CallerEffects {
 
-    @Effect()
-    load$: Observable<Action> = this.actions$.pipe(
+    load =  createEffect( () => this.actions$.pipe(
         ofType(CallerActionTypes.Load),
         switchMap(() => {
             return this.callerService
@@ -36,10 +35,9 @@ export class CallerEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    loadRefereeList$: Observable<Action> = this.actions$.pipe(
+    loadRefereeList =  createEffect( () => this.actions$.pipe(
         ofType(CallerActionTypes.LoadReferees),
         switchMap(() => {
             return this.callerService
@@ -51,10 +49,9 @@ export class CallerEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    loadSecondCallList$: Observable<Action> = this.actions$.pipe(
+    loadSecondCallList =  createEffect( () => this.actions$.pipe(
         ofType(CallerActionTypes.LoadSecondCallMatches),
         switchMap(() => {
             return this.callerService
@@ -66,10 +63,9 @@ export class CallerEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    loadThirdCallList$: Observable<Action> = this.actions$.pipe(
+    loadThirdCallList =  createEffect( () => this.actions$.pipe(
         ofType(CallerActionTypes.LoadThirdCallMatches),
         switchMap(() => {
             return this.callerService
@@ -81,10 +77,9 @@ export class CallerEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    callMatch$: Observable<Action> = this.actions$.pipe(
+    callMatch =  createEffect( () => this.actions$.pipe(
         ofType(CallerActionTypes.CallMatch),
         switchMap((action: CallMatch) => {
             return this.callerService
@@ -96,7 +91,7 @@ export class CallerEffects {
                     })
                 );
         })
-    );
+    ));
 
 
     constructor(private actions$: Actions,

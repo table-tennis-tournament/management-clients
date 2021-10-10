@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
@@ -23,8 +23,7 @@ import {MatchListService} from '../matchlist.service';
 @Injectable()
 export class MatchListEffects {
 
-    @Effect()
-    loadMatchList$: Observable<Action> = this.actions$.pipe(
+    loadMatchList =  createEffect( () => this.actions$.pipe(
         ofType(MatchListActionTypes.Load),
         switchMap(() => {
             return this.matchListService
@@ -36,10 +35,9 @@ export class MatchListEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    assignToMatchList$: Observable<Action> = this.actions$.pipe(
+    assignToMatchList =  createEffect( () => this.actions$.pipe(
         ofType(MatchListActionTypes.Assign),
         mergeMap((action: AssignToMatchList) => {
             return this.matchListService
@@ -54,10 +52,9 @@ export class MatchListEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    deleteMatchListItem$: Observable<Action> = this.actions$.pipe(
+    deleteMatchListItem =  createEffect( () => this.actions$.pipe(
         ofType(MatchListActionTypes.DeleteItem),
         switchMap((action: DeleteMatchListItem) => {
             return this.matchListService
@@ -69,10 +66,9 @@ export class MatchListEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    moveMatchListItem$: Observable<Action> = this.actions$.pipe(
+    moveMatchListItem =  createEffect( () => this.actions$.pipe(
         ofType(MatchListActionTypes.MoveItem),
         switchMap((action: MoveMatchListItem) => {
             return this.matchListService
@@ -84,7 +80,7 @@ export class MatchListEffects {
                     })
                 );
         })
-    );
+    ));
 
 
     constructor(private actions$: Actions,

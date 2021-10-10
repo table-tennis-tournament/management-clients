@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
@@ -25,8 +25,7 @@ import {SettingsService} from '../settings.service';
 @Injectable()
 export class SettingsEffects {
 
-    @Effect()
-    loadSettings$: Observable<Action> = this.actions$.pipe(
+    loadSettings =  createEffect( () => this.actions$.pipe(
         ofType(SettingsActionTypes.Load),
         mergeMap(() => {
             return this.settingsService
@@ -38,10 +37,9 @@ export class SettingsEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    loadPrinters$: Observable<Action> = this.actions$.pipe(
+    loadPrinters =  createEffect( () => this.actions$.pipe(
         ofType(SettingsActionTypes.LoadPrinters),
         mergeMap(() => {
             return this.settingsService
@@ -53,10 +51,9 @@ export class SettingsEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    saveAssignAutomatically$: Observable<Action> = this.actions$.pipe(
+    saveAssignAutomatically =  createEffect( () => this.actions$.pipe(
         ofType(SettingsActionTypes.SaveAssignAutomatically),
         mergeMap((action: SaveAssignAutomatically) => {
             return this.settingsService
@@ -68,10 +65,9 @@ export class SettingsEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    savePrintOnAssign$: Observable<Action> = this.actions$.pipe(
+    savePrintOnAssign =  createEffect( () => this.actions$.pipe(
         ofType(SettingsActionTypes.SavePrintOnAssign),
         mergeMap((action: SavePrintOnAssign) => {
             return this.settingsService
@@ -83,10 +79,9 @@ export class SettingsEffects {
                     })
                 );
         })
-    );
+    ));
 
-    @Effect()
-    setPrinter$: Observable<Action> = this.actions$.pipe(
+    setPrinter =  createEffect( () => this.actions$.pipe(
         ofType(SettingsActionTypes.SetPrinter),
         mergeMap((action: SetPrinter) => {
             return this.settingsService
@@ -98,7 +93,7 @@ export class SettingsEffects {
                     })
                 );
         })
-    );
+    ));
 
 
     constructor(private actions$: Actions,

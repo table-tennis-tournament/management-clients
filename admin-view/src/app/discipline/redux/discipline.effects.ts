@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
@@ -10,8 +10,7 @@ import {DisciplineActionTypes, LoadDisciplineError, LoadDisciplineSuccess} from 
 @Injectable()
 export class DisciplineEffects {
 
-    @Effect()
-    loadDisciplines$: Observable<Action> = this.actions$.pipe(
+    loadDisciplines =  createEffect( () => this.actions$.pipe(
         ofType(DisciplineActionTypes.Load),
         switchMap(() => {
             return this.disciplineService
@@ -23,7 +22,7 @@ export class DisciplineEffects {
                     })
                 );
         })
-    );
+    ));
 
 
     constructor(private actions$: Actions,

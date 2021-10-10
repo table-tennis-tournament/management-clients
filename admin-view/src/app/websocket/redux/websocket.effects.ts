@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from 'rxjs';
@@ -10,8 +10,7 @@ import {WebsocketService} from '../../shared/websocket.service';
 @Injectable()
 export class WebSocketEffects {
 
-    @Effect()
-    connectWebSocket$: Observable<Action> = this.actions$.pipe(
+    connectWebSocket =  createEffect( () => this.actions$.pipe(
         ofType(WebSocketActionTypes.ConnectWebsocket),
         mergeMap((action: ConnectWebSocket) => {
             return this.websocketService
@@ -25,7 +24,7 @@ export class WebSocketEffects {
                         })
                     ));
         })
-    );
+    ));
 
     constructor(private actions$: Actions,
                 private toastService: ToastrService, private websocketService: WebsocketService) {

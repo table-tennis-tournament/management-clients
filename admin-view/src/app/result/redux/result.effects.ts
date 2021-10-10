@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import {LoadMatchListError, LoadMatchListSuccess} from '../../supervisor/redux/matchlist.actions';
@@ -11,8 +11,7 @@ import {MatchService} from '../../assign/match.service';
 @Injectable()
 export class ResultEffects {
 
-    @Effect()
-    loadResults$: Observable<Action> = this.actions$.pipe(
+    loadResults =  createEffect( () => this.actions$.pipe(
         ofType(ResultActionTypes.Load),
         switchMap(() => {
             return this.matchService
@@ -24,7 +23,7 @@ export class ResultEffects {
                     })
                 );
         })
-    );
+    ));
 
     constructor(private actions$: Actions,
                 private toastService: ToastrService, private matchService: MatchService) {
