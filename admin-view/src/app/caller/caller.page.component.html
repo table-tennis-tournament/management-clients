@@ -1,28 +1,30 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-2 col-md-3">
-            <toma-caller-match-list
-                    [typeColor]="typeColor | async"
-                    [matchAggregates]="matchAggregates | async"
-                    (matchesSelected)="onMatchesSelected($event)"
-                    [matchesLoading]="refereesLoading | async">
-            </toma-caller-match-list>
-        </div>
-        <div class="col-sm-8 col-md-6">
-            <toma-caller-match-detail
-                    [typeColor]="typeColor | async"
-                    [matchAggregate]="selectedItem | async"
-                    (matchCalled)="onMatchCalled($event)">
-            </toma-caller-match-detail>
-        </div>
-        <div class="col-sm-2 col-md-3">
-            <toma-player-calls
-                    [typeColor]="typeColor | async"
-                    [secondCalls]="secondCalls | async"
-                    [thirdCalls]="thirdCalls | async"
-                    (matchesSelected)="onMatchesSelected($event)"
-            >
-            </toma-player-calls>
-        </div>
+  <div class="row">
+    <div class="col-sm-2 col-md-3">
+      <toma-caller-match-list
+        [typeColor]="typeColor | async"
+        [matchAggregates]="matchAggregates | async"
+        (matchesSelected)="onMatchesSelected($event)"
+        [matchesLoading]="refereesLoading | async"
+      >
+      </toma-caller-match-list>
     </div>
+    <div class="col-sm-8 col-md-6">
+      <toma-caller-match-detail
+        [typeColor]="typeColor | async"
+        [matchAggregate]="selectedItem | async"
+        (matchCalled)="onMatchCalled($event)"
+      >
+      </toma-caller-match-detail>
+    </div>
+    <div class="col-sm-2 col-md-3">
+      <toma-player-calls
+        [typeColor]="typeColor | async"
+        [secondCalls]="secondCalls | async"
+        [thirdCalls]="thirdCalls | async"
+        (matchesSelected)="onMatchesSelected($event)"
+      >
+      </toma-player-calls>
+    </div>
+  </div>
 </div>

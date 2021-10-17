@@ -1,4 +1,3 @@
-
 @import '~bootstrap/scss/bootstrap-reboot';
 @import '~bootstrap/scss/bootstrap-grid';
 @import '~bootstrap/scss/_utilities';
@@ -19,14 +18,20 @@ span.circle {
 }
 
 .disabled-item {
-  khtml-opacity: .50;
+  khtml-opacity: 0.5;
   filter: alpha(opacity=50);
   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.5);
-  opacity: .50;
+  opacity: 0.5;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
 
 .fab-container {
   position: fixed;
@@ -48,4 +53,3 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     }
   }
 }
-

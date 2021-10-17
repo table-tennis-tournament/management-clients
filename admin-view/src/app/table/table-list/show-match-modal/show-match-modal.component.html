@@ -1,26 +1,29 @@
 <h1 mat-dialog-title>Neues Spiel ausrufen</h1>
 <div mat-dialog-content>
-    <div class="col s4">
-        <h5>Tisch Nr: {{currentTable.number}}</h5>
-        <br/>
-        <h5>{{currentTable.matches[0].type.name}} {{currentTable.matches[0].matchType.name}}</h5>
-        <br/><br/>
-        <div class="row" *ngIf="!players">
-            {{currentTable?.matches[0]?.team1 | ttPlayerNameReducer}}
-            <br/>
-            -
-            <br/>
-            {{currentTable?.matches[0]?.team2 | ttPlayerNameReducer}}
-        </div>
-        <div class="row" *ngIf="players">
-            <div><h5>Spieler: </h5></div>
-            <div *ngFor="let currentPlayer of players">
-                {{[currentPlayer] | ttPlayerNameReducer}}
-            </div>
-        </div>
+  <div class="col s4">
+    <h5>Tisch Nr: {{ currentTable.number }}</h5>
+    <br />
+    <h5>
+      {{ currentTable.matches[0].type.name }}
+      {{ currentTable.matches[0].matchType.name }}
+    </h5>
+    <br /><br />
+    <div class="row" *ngIf="!players">
+      {{ currentTable?.matches[0]?.team1 | ttPlayerNameReducer }}
+      <br />
+      -
+      <br />
+      {{ currentTable?.matches[0]?.team2 | ttPlayerNameReducer }}
     </div>
+    <div class="row" *ngIf="players">
+      <div><h5>Spieler:</h5></div>
+      <div *ngFor="let currentPlayer of players">
+        {{ [currentPlayer] | ttPlayerNameReducer }}
+      </div>
+    </div>
+  </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-button [mat-dialog-close]="currentTable" cdkFocusInitial>Ok</button>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button [mat-dialog-close]="currentTable" cdkFocusInitial>Ok</button>
 </div>

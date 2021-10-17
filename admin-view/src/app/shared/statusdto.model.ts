@@ -1,4 +1,4 @@
 export interface StatusDto {
-    message?: string;
-    successful?: boolean;
+  message?: string;
+  successful?: boolean;
 }

@@ -1,7 +1,6 @@
 /* Variables
 ================================== */
 
-
 /* Tables
 ================================== */
 .tttable {
@@ -13,18 +12,34 @@
 .tttable-cell {
   box-sizing: border-box;
   flex-grow: 1;
-  width: 100%;  // Default to full width
-  padding: 0.2em 1.0em;
+  width: 100%; // Default to full width
+  padding: 0.2em 1em;
   overflow: hidden; // Or flex might break
   list-style: none;
-  > h1, > h2, > h3, > h4, > h5, > h6 { margin: 0; }
+  > h1,
+  > h2,
+  > h3,
+  > h4,
+  > h5,
+  > h6 {
+    margin: 0;
+  }
 }
 
 /* Table column sizing
 ================================== */
-.tttable--2cols > .tttable-cell  { width: 50%; }
-.tttable--3cols > .tttable-cell  { width: 33.33%; }
-.tttable--4cols > .tttable-cell  { width: 25%; }
-.tttable--5cols > .tttable-cell  { width: 20%; }
-.tttable--6cols > .tttable-cell  { width: 16.6%; }
-
+.tttable--2cols > .tttable-cell {
+  width: 50%;
+}
+.tttable--3cols > .tttable-cell {
+  width: 33.33%;
+}
+.tttable--4cols > .tttable-cell {
+  width: 25%;
+}
+.tttable--5cols > .tttable-cell {
+  width: 20%;
+}
+.tttable--6cols > .tttable-cell {
+  width: 16.6%;
+}

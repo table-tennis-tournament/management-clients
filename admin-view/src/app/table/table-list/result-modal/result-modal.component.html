@@ -1,20 +1,27 @@
-<h1 mat-dialog-title>{{currentMatch | ttMatchDiscipline}}</h1>
+<h1 mat-dialog-title>{{ currentMatch | ttMatchDiscipline }}</h1>
 <div mat-dialog-content>
   <div [class.winner-text]="checkerResult.firstPlayerWinning" class="text-center">
-    {{currentMatch.team1 | ttPlayerNameReducer}}
+    {{ currentMatch.team1 | ttPlayerNameReducer }}
   </div>
-  <br/>
-  <div class="text-center"><h4> - </h4><br/></div>
+  <br />
+  <div class="text-center">
+    <h4>-</h4>
+    <br />
+  </div>
   <div [class.winner-text]="checkerResult.secondPlayerWinning" class="text-center">
-    {{currentMatch.team2 | ttPlayerNameReducer}}
+    {{ currentMatch.team2 | ttPlayerNameReducer }}
   </div>
   <form class="d-flex justify-content-center">
     <mat-form-field>
       <mat-label>Ergebnis (bsp. -7 8 8 9)</mat-label>
-      <input matInput placeholder=""
-             [(ngModel)]="currentInput" #answer
-             (keyup)="onKeyUp(answer.value)"
-             (keyup.enter)="getResult()">
+      <input
+        matInput
+        placeholder=""
+        [(ngModel)]="currentInput"
+        #answer
+        (keyup)="onKeyUp(answer.value)"
+        (keyup.enter)="getResult()"
+      />
     </mat-form-field>
   </form>
 </div>

@@ -1,29 +1,44 @@
 <div class="row p-1">
-    <div class="col">
-        <h1>Warteliste</h1>
+  <div class="col">
+    <h1>Warteliste</h1>
+  </div>
+  <div class="col">
+    <div class="pt-3">
+      <input type="checkbox" class="filled-in" [(ngModel)]="fixWaitingList" id="fix-waiting-list" />
+      <label for="fix-waiting-list">Fixed</label>
     </div>
-    <div class="col">
-        <div class="pt-3">
-            <input type="checkbox" class="filled-in" [(ngModel)]="fixWaitingList" id="fix-waiting-list"/>
-            <label for="fix-waiting-list">Fixed</label>
-        </div>
-    </div>
+  </div>
 </div>
-<div class="row waiting-list-drop-zone border" [class.waiting-list-fixed-position]="fixWaitingList"
-     cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
-    <mat-list cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
-        <mat-list-item *ngFor="let currentMatch of matchListMatches; let i = index;" cdkDrag
-                       class="border-bottom" [ngClass]="typeColor[currentMatch.matchinfo[0]?currentMatch.matchinfo[0].type.id:0]">
-            <div class="cut-text" *ngIf="!currentMatch.matchinfo[1]&&currentMatch.matchinfo[0]">
-                <toma-matchlist-single-item [matchListItem]="currentMatch"
-                                            (matchListItemDelete)="matchListItemDelete.emit($event)">
-                </toma-matchlist-single-item>
-            </div>
-            <div class="cut-text mb-3 mt-3" [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
-                 *ngIf="currentMatch.matchinfo[1]">
-                <toma-matchlist-group-item [matchListItem]="currentMatch"
-                                           (matchListItemDelete)="matchListItemDelete.emit($event)"></toma-matchlist-group-item>
-            </div>
-        </mat-list-item>
-    </mat-list>
+<div
+  class="row waiting-list-drop-zone border"
+  [class.waiting-list-fixed-position]="fixWaitingList"
+  cdkDropList
+  (cdkDropListDropped)="onDropSuccess($event)"
+>
+  <mat-list cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
+    <mat-list-item
+      *ngFor="let currentMatch of matchListMatches; let i = index"
+      cdkDrag
+      class="border-bottom"
+      [ngClass]="typeColor[currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0]"
+    >
+      <div class="cut-text" *ngIf="!currentMatch.matchinfo[1] && currentMatch.matchinfo[0]">
+        <toma-matchlist-single-item
+          [matchListItem]="currentMatch"
+          (matchListItemDelete)="matchListItemDelete.emit($event)"
+        >
+        </toma-matchlist-single-item>
+      </div>
+      <div
+        class="cut-text mb-3 mt-3"
+        [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
+        *ngIf="currentMatch.matchinfo[1]"
+      >
+        <toma-matchlist-group-item
+          [matchListItem]="currentMatch"
+          (matchListItemDelete)="matchListItemDelete.emit($event)"
+        ></toma-matchlist-group-item>
+      </div>
+    </mat-list-item>
+  </mat-list>
 </div>

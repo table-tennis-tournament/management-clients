@@ -1,19 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Match} from '../../../shared/data/match.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { Match } from '../../../shared/data/match.model';
 
 @Component({
   selector: 'toma-single-item',
   templateUrl: './single-item.component.html',
-  styleUrls: ['./single-item.component.scss']
+  styleUrls: ['./single-item.component.scss'],
 })
 export class SingleItemComponent {
-
-  constructor() { }
+  constructor() {}
 
   @Input()
   typeColor: string[];
 
   @Input()
   currentMatch: Match;
-
 }

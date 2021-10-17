@@ -1,36 +1,43 @@
 <div class="row m-2">
-    <mat-spinner *ngIf="matchesLoading"></mat-spinner>
+  <mat-spinner *ngIf="matchesLoading"></mat-spinner>
 
-    <div *ngFor="let currentTab of tabs" class="mr-2">
-        <button mat-raised-button
-                [ngClass]="typeColor[currentTab.id]"
-                (click)="this.selectDiscipline.emit(currentTab.id)">{{currentTab.name}}</button>
-    </div>
-    <div class="m-2">
-        <mat-checkbox class="mr-2" [(ngModel)]="showAllMatches">Alle</mat-checkbox>
-        <mat-checkbox class="mr-2" [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
-        <mat-checkbox class="mr-2" [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
-        <mat-checkbox class="mr-2" (change)="this.setTabForId(this.selectedDiscipline)"  [(ngModel)]="stopRefresh">Stop</mat-checkbox>
-    </div>
+  <div *ngFor="let currentTab of tabs" class="mr-2">
+    <button mat-raised-button [ngClass]="typeColor[currentTab.id]" (click)="this.selectDiscipline.emit(currentTab.id)">
+      {{ currentTab.name }}
+    </button>
+  </div>
+  <div class="m-2">
+    <mat-checkbox class="mr-2" [(ngModel)]="showAllMatches">Alle</mat-checkbox>
+    <mat-checkbox class="mr-2" [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
+    <mat-checkbox class="mr-2" [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
+    <mat-checkbox class="mr-2" (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh"
+      >Stop</mat-checkbox
+    >
+  </div>
 </div>
-<div *ngIf="selectedTab" class="row no-scroll-overflow" [ngClass]="typeColor[selectedTab.id]" >
-    <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">
-        <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r=index">
-            <toma-discipline-stage [stage]="currentStage"
-                                   [typeColor]="typeColor"
-                                   (resultForMatch)="resultForMatch.emit($event)" [index]="r"
-                                   (deleteStage)="onDeleteStage($event)">
-            </toma-discipline-stage>
-        </div>
+<div *ngIf="selectedTab" class="row no-scroll-overflow" [ngClass]="typeColor[selectedTab.id]">
+  <div *ngIf="selectedTab.stages" class="disciplineTable disciplineTable--3cols">
+    <div class="disciplineTable-cell" *ngFor="let currentStage of selectedTab.stages; let r = index">
+      <toma-discipline-stage
+        [stage]="currentStage"
+        [typeColor]="typeColor"
+        (resultForMatch)="resultForMatch.emit($event)"
+        [index]="r"
+        (deleteStage)="onDeleteStage($event)"
+      >
+      </toma-discipline-stage>
     </div>
-    <div *ngIf="selectedTab.groups" class="disciplineTable disciplineTable--4cols">
-        <div *ngFor="let currentGroup of selectedTab.groups" class="row disciplineTable-cell">
-            <toma-discipline-group [group]="currentGroup"
-                                   [typeColor]="typeColor"
-                                   [showMatches]="matchesAreOpen"
-                                   [showPlayers]="playersAreOpen"
-                                   (resultForMatch)="resultForMatch.emit($event)">
-            </toma-discipline-group>
-        </div>
+  </div>
+  <div *ngIf="selectedTab.groups" class="disciplineTable disciplineTable--4cols">
+    <div *ngFor="let currentGroup of selectedTab.groups" class="row disciplineTable-cell">
+      <toma-discipline-group
+        [group]="currentGroup"
+        [typeColor]="typeColor"
+        [showMatches]="matchesAreOpen"
+        [showPlayers]="playersAreOpen"
+        (resultForMatch)="resultForMatch.emit($event)"
+      >
+      </toma-discipline-group>
     </div>
+  </div>
 </div>

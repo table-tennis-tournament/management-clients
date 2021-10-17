@@ -1,7 +1,7 @@
-import {TTResult} from './ttresult.model';
+import { TTResult } from './ttresult.model';
 
 export interface ResultCheckModel {
-    firstPlayerWinning?: boolean;
-    secondPlayerWinning?: boolean;
-    currentResult?: TTResult[];
+  firstPlayerWinning?: boolean;
+  secondPlayerWinning?: boolean;
+  currentResult?: TTResult[];
 }

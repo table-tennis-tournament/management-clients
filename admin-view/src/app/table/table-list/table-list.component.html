@@ -1,20 +1,20 @@
 <mat-spinner *ngIf="tablesLoading"></mat-spinner>
 
 <div *ngIf="!tablesLoading" class="tttable tttable--5cols">
-    <div *ngFor="let currentTable of tables" class="tttable-cell">
-        <toma-tt-table
-                [table]="currentTable"
-                [typeColor]="typeColor"
-                (lockTable)="lockTable.emit($event)"
-                (unLockTable)="unLockTable.emit($event)"
-                (freeTable)="freeTable.emit($event)"
-                (takeBackTable)="takeBackTable.emit($event)"
-                (resultForTable)="resultForTable.emit($event)"
-                (printTable)="printTable.emit($event)"
-                (assignSecondTable)="assignSecondTable.emit($event)"
-                (removeFromTable)="removeFromTable.emit($event)"
-                (assignMatchToTable)="assignMatchToTable.emit($event)">
-        </toma-tt-table>
-    </div>
+  <div *ngFor="let currentTable of tables" class="tttable-cell">
+    <toma-tt-table
+      [table]="currentTable"
+      [typeColor]="typeColor"
+      (lockTable)="lockTable.emit($event)"
+      (unLockTable)="unLockTable.emit($event)"
+      (freeTable)="freeTable.emit($event)"
+      (takeBackTable)="takeBackTable.emit($event)"
+      (resultForTable)="resultForTable.emit($event)"
+      (printTable)="printTable.emit($event)"
+      (assignSecondTable)="assignSecondTable.emit($event)"
+      (removeFromTable)="removeFromTable.emit($event)"
+      (assignMatchToTable)="assignMatchToTable.emit($event)"
+    >
+    </toma-tt-table>
+  </div>
 </div>
-

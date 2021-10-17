@@ -1,59 +1,55 @@
 <mat-card>
-    <mat-card-title >
-          <span class="card-title group-view-header" cdkDropList>
-            <span cdkDrag [cdkDragDisabled]="!groupIsDraggable()" [cdkDragData]="group.matches">{{group.name}} </span>
-              <mat-icon *ngIf="group.isComplete">done</mat-icon>
-              <mat-icon *ngIf="groupIsNotPlayable()">remove_circle_outline</mat-icon>
-            <span class="right" *ngIf="groupIsNotComplete()">{{openMatches}}/{{allMatchCount}}</span>
-            <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{tableNumber}}</span>
-            <span class="circle right" *ngIf="isGroupInWaitingList()">W</span>
-        </span>
-    </mat-card-title>
-    <mat-card-content >
-        <mat-expansion-panel [expanded]="showPlayers">
-            <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]">
-                <mat-panel-title>
-                    <mat-icon>
-                        perm_identity
-                    </mat-icon>
-                    Spieler
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <mat-list>
-                <mat-list-item *ngFor="let currentPlayer of group.players">
-                    <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
-                </mat-list-item>
-            </mat-list>
-        </mat-expansion-panel>
-        <mat-expansion-panel [expanded]="showMatches">
-            <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]">
-                <mat-panel-title>
-                    <mat-icon>
-                        view_list
-                    </mat-icon>
-                    Spiele
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <mat-list cdkDropList>
-                <mat-list-item *ngFor="let currentMatch of group.matches"
-                               (dblclick)="resultForMatch.emit(currentMatch)"
-                               cdkDrag [cdkDragDisabled]="currentMatch.state !== openMatchState"
-                               [cdkDragData]="[currentMatch]"
-                               class="collection-item"
-                               [class.disabled-item]="currentMatch.state === inWaitingListState">
-                    <div>
-                        <toma-team-item [team]="currentMatch.team1"
-                                        [showDisciplines]="false"></toma-team-item>
-                        -
-                        <toma-team-item [team]="currentMatch.team2"
-                                        [showDisciplines]="false"></toma-team-item>
-                        <span *ngIf="currentMatch.table[0]"
-                              class="circle right">{{currentMatch.table[0]}}</span>
-                        <span *ngIf="currentMatch.result" class="right">{{currentMatch.result|resultPipe}}</span>
-                        <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>
-                    </div>
-                </mat-list-item>
-            </mat-list>
-        </mat-expansion-panel>
-    </mat-card-content>
+  <mat-card-title>
+    <span class="card-title group-view-header" cdkDropList>
+      <span cdkDrag [cdkDragDisabled]="!groupIsDraggable()" [cdkDragData]="group.matches">{{ group.name }} </span>
+      <mat-icon *ngIf="group.isComplete">done</mat-icon>
+      <mat-icon *ngIf="groupIsNotPlayable()">remove_circle_outline</mat-icon>
+      <span class="right" *ngIf="groupIsNotComplete()">{{ openMatches }}/{{ allMatchCount }}</span>
+      <span class="circle right" *ngFor="let tableNumber of tableNumbers">{{ tableNumber }}</span>
+      <span class="circle right" *ngIf="isGroupInWaitingList()">W</span>
+    </span>
+  </mat-card-title>
+  <mat-card-content>
+    <mat-expansion-panel [expanded]="showPlayers">
+      <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]">
+        <mat-panel-title>
+          <mat-icon> perm_identity </mat-icon>
+          Spieler
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item *ngFor="let currentPlayer of group.players">
+          <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="showMatches">
+      <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]">
+        <mat-panel-title>
+          <mat-icon> view_list </mat-icon>
+          Spiele
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-list cdkDropList>
+        <mat-list-item
+          *ngFor="let currentMatch of group.matches"
+          (dblclick)="resultForMatch.emit(currentMatch)"
+          cdkDrag
+          [cdkDragDisabled]="currentMatch.state !== openMatchState"
+          [cdkDragData]="[currentMatch]"
+          class="collection-item"
+          [class.disabled-item]="currentMatch.state === inWaitingListState"
+        >
+          <div>
+            <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
+            -
+            <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
+            <span *ngIf="currentMatch.table[0]" class="circle right">{{ currentMatch.table[0] }}</span>
+            <span *ngIf="currentMatch.result" class="right">{{ currentMatch.result | resultPipe }}</span>
+            <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-card-content>
 </mat-card>

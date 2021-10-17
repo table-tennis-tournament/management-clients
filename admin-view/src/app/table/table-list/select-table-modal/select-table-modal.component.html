@@ -1,13 +1,15 @@
 <h1 mat-dialog-title>Freier Tisch auswählen</h1>
 <div mat-dialog-content>
-    <mat-form-field appearance="fill">
-        <mat-label>Wähle Tisch</mat-label>
-        <mat-select [(value)]="selectedTable">
-            <mat-option *ngFor="let currentTable of data" [value]="currentTable.number">Tisch Nr. {{currentTable.number}}</mat-option>
-        </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Wähle Tisch</mat-label>
+    <mat-select [(value)]="selectedTable">
+      <mat-option *ngFor="let currentTable of data" [value]="currentTable.number"
+        >Tisch Nr. {{ currentTable.number }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-button [mat-dialog-close]="selectedTable" cdkFocusInitial>Ok</button>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button [mat-dialog-close]="selectedTable" cdkFocusInitial>Ok</button>
 </div>

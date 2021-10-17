@@ -1,26 +1,23 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {MatchAggregate} from '../../shared/data/match.aggregate';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatchAggregate } from '../../shared/data/match.aggregate';
 
 @Component({
-    selector: 'toma-caller-match-list',
-    templateUrl: './caller-match-list.component.html',
-    styleUrls: ['./caller-match-list.component.scss']
+  selector: 'toma-caller-match-list',
+  templateUrl: './caller-match-list.component.html',
+  styleUrls: ['./caller-match-list.component.scss'],
 })
 export class CallerMatchListComponent {
+  @Input()
+  matchAggregates: MatchAggregate[];
 
-    @Input()
-    matchAggregates: MatchAggregate[];
+  constructor() {}
 
-    constructor() {
-    }
+  @Input()
+  typeColor: string[];
 
-    @Input()
-    typeColor: string[];
+  @Input()
+  matchesLoading: boolean;
 
-    @Input()
-    matchesLoading: boolean;
-
-    @Output()
-    matchesSelected: EventEmitter<MatchAggregate> = new EventEmitter<MatchAggregate>();
-
+  @Output()
+  matchesSelected: EventEmitter<MatchAggregate> = new EventEmitter<MatchAggregate>();
 }

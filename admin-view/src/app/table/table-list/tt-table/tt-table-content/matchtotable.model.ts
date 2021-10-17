@@ -1,5 +1,5 @@
 export interface MatchToTable {
-    matchIds?: number[];
-    tableId?: number;
-    tableNr?: number;
+  matchIds?: number[];
+  tableId?: number;
+  tableNr?: number;
 }
