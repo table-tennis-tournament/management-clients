@@ -1,26 +1,26 @@
 .single-bordered {
   border: 1px solid grey;
-  padding: 2px 0px;
+  padding: 2px 0;
 }
 
 .collection .collection-item.first-stage {
   height: 80px;
-  padding: 15px 0px;
+  padding: 5px 0;
 }
 
 .collection .collection-item.second-stage {
-  height: 160px;
-  padding: 55px 0px;
+  height: 80px;
+  padding: 50px 0;
 }
 
 .collection .collection-item.third-stage {
-  height: 320px;
-  padding: 135px 0px;
+  height: 80px;
+  padding: 140px 0;
 }
 
 .collection .collection-item.fourth-stage {
-  height: 640px;
-  padding: 295px 0px;
+  height: 80px;
+  padding: 320px 0;
 }
 
 .header-main-container {
@@ -45,5 +45,5 @@
 }
 
 .collection-item.no-lines {
-  border-bottom: 0px;
+  border-bottom: 0;
 }
