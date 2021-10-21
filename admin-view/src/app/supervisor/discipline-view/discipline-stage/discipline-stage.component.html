@@ -1,15 +1,17 @@
 <mat-expansion-panel [expanded]="true" hideToggle>
-  <mat-expansion-panel-header cdkDropList>
+  <mat-expansion-panel-header cdkDropList collapsedHeight="50px" expandedHeight="50px">
     <mat-panel-title cdkDrag [cdkDragData]="stage.matches">
-      <mat-icon> view_list </mat-icon>
-      {{ stage.name }}
+      <span>
+        <mat-icon> view_list </mat-icon>
+        {{ stage.name }}
+      </span>
+      <span class="float-right">
+        <button mat-icon-button aria-label="remove stage button" (click)="deleteStage.emit(stage)">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-icon *ngIf="stage.isComplete">done</mat-icon>
+      </span>
     </mat-panel-title>
-    <mat-panel-description>
-      <a href="javascript:void(0)" class="secondary-content" (click)="deleteStage.emit(stage)">
-        <mat-icon>close</mat-icon>
-      </a>
-      <mat-icon *ngIf="stage.isComplete">done</mat-icon>
-    </mat-panel-description>
   </mat-expansion-panel-header>
   <div class="collection minus-margin" cdkDropList>
     <div
