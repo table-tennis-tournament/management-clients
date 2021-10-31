@@ -53,3 +53,19 @@ body {
     }
   }
 }
+
+.mat-expansion-panel-content > .mat-expansion-panel-body {
+  padding: 5px !important;
+}
+
+.two-column-container {
+  width: 100%;
+  .full-width {
+    margin-right: 15px;
+  }
+  .fixed-width {
+    float: right;
+    width: 15px;
+  }
+}
+
