@@ -27,3 +27,14 @@
   order: 2;
   padding-top: 10px;
 }
+
+.two-column-container {
+  width: 100%;
+  .full-width {
+    margin-right: 15px;
+  }
+  .fixed-width {
+    float: right;
+    width: 15px;
+  }
+}
