@@ -9,4 +9,4 @@ RUN npm run build
 
 FROM bitnami/nginx:1.21.3
 COPY --from=builder /ng-app/dist /app/
-#COPY my_server_block.conf /opt/bitnami/nginx/conf/server_blocks/my_server_block.conf
+COPY my_server_block.conf /opt/bitnami/nginx/conf/server_blocks/my_server_block.conf
