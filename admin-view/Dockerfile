@@ -5,7 +5,7 @@ RUN npm i && mkdir /ng-app && mv ./node_modules ./ng-app
 WORKDIR /ng-app
 COPY . .
 
-RUN npm run build -- --output-path=./dist/out --configuration prod 
+RUN npm run build -- --output-path=./dist/out --configuration production 
 
 FROM bitnami/nginx:1.21.3
 COPY --from=builder /ng-app/dist/out/ /usr/share/nginx/html
