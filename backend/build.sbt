@@ -1,11 +1,10 @@
 name := """TurnierManager"""
 
-version := "3.1"
+version := "4.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
 
 scalaVersion := "2.12.7"
-
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
@@ -31,18 +30,6 @@ libraryDependencies ++= Seq(
   "net.glxn" % "qrgen" % "1.4",
   "com.github.fdimuccio" %% "play2-sockjs" % "0.6.0"
 )
-
-val circeVersion = "0.11.1"
-
-//libraryDependencies ++= Seq(
-//  "io.circe" %% "circe-core",
-//  "io.circe" %% "circe-generic",
-//  "io.circe" %% "circe-parser"
-//).map(_ % circeVersion)
-//
-//addCompilerPlugin(
-//  "org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full
-//)
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
