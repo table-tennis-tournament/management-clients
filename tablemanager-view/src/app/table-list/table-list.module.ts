@@ -18,31 +18,25 @@ import {MatchItemComponent} from './tt-table/match-item/match-item.component';
 import { SinglePlayerPipe } from './single-player.pipe';
 
 @NgModule({
-  declarations: [
-    TtTableComponent,
-    TableListComponent,
-    PlayerNamePipe,
-    ResultDialogComponent,
-    StartDialogComponent,
-    PlayerDialogComponent,
-    GameDialogComponent,
-    ClubNamePipe,
-    MatchItemComponent,
-    SinglePlayerPipe
-  ],
-  imports: [
-    SharedModule,
-    StoreModule.forFeature('tables', fromTables.reducer),
-    EffectsModule.forFeature([MatchEffects, TableListEffects]),
-    ReactiveFormsModule
-  ],
-  exports: [TableListComponent],
-  entryComponents: [
-    ResultDialogComponent,
-    StartDialogComponent,
-    PlayerDialogComponent,
-    GameDialogComponent
-  ]
+    declarations: [
+        TtTableComponent,
+        TableListComponent,
+        PlayerNamePipe,
+        ResultDialogComponent,
+        StartDialogComponent,
+        PlayerDialogComponent,
+        GameDialogComponent,
+        ClubNamePipe,
+        MatchItemComponent,
+        SinglePlayerPipe
+    ],
+    imports: [
+        SharedModule,
+        StoreModule.forFeature('tables', fromTables.reducer),
+        EffectsModule.forFeature([MatchEffects, TableListEffects]),
+        ReactiveFormsModule
+    ],
+    exports: [TableListComponent]
 })
 export class TableListModule {
 }
