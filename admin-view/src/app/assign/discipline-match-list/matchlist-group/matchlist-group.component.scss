@@ -1,0 +1,11 @@
+.header-main-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 160px;
+}
+
+.header-center-content {
+  flex: 1;
+  order: 1;
+}

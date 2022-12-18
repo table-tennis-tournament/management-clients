@@ -4,8 +4,9 @@
     (disciplineRefresh)="disciplineRefresh.emit($event)"
     [showWaitingList]="true"
     [disciplines]="disciplines"
-  >
-  </toma-discipline-select>
+  ></toma-discipline-select>
+</div>
+<div class="row">
   <mat-spinner *ngIf="matchesLoading"></mat-spinner>
   <mat-list *ngIf="currentDisciplineId !== -1">
     <mat-list-item
