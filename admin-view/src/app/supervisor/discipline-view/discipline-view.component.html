@@ -17,7 +17,7 @@
 </div>
 <div *ngIf="selectedTab" [ngClass]="typeColor[selectedTab.id]">
   <div *ngIf="selectedTab.stages" class="row">
-    <div class="col-3" *ngFor="let currentStage of selectedTab.stages; let r = index">
+    <div class="col-3 pt-2" *ngFor="let currentStage of selectedTab.stages; let r = index">
       <toma-discipline-stage
         [stage]="currentStage"
         [typeColor]="typeColor"

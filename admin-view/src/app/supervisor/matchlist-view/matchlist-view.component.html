@@ -9,13 +9,8 @@
     </div>
   </div>
 </div>
-<div
-  class="row waiting-list-drop-zone border"
-  [class.waiting-list-fixed-position]="fixWaitingList"
-  cdkDropList
-  (cdkDropListDropped)="onDropSuccess($event)"
->
-  <mat-list cdkDropList (cdkDropListDropped)="onDropSuccess($event)">
+<div class="row">
+  <mat-list cdkDropList (cdkDropListDropped)="onDropSuccess($event)" [class.waiting-list-fixed-position]="fixWaitingList" class="waiting-list-drop-zone border pt-0">
     <mat-list-item
       *ngFor="let currentMatch of matchListMatches; let i = index"
       cdkDrag
