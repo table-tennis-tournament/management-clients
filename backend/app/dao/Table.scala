@@ -827,7 +827,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def * = (id, name) <> (MatchType.tupled, MatchType.unapply)
   }
 
-  class GroupTable(tag: Tag) extends Table[Group](tag, "groups") {
+  class GroupTable(tag: Tag) extends Table[Group](tag, "playgroups") {
 
     def id = column[Long]("Grou_ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("Grou_Name")
@@ -867,7 +867,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def location = column[Option[String]]("Play_Location")
     def street = column[Option[String]]("Play_Street")
     def phone = column[Option[String]]("Play_TelNr")
-    def clubId = column[Option[Long]]("Play_CLub_ID")
+    def clubId = column[Option[Long]]("Play_Club_ID")
 
     def * = (id, firstName, lastName, ttr, sex, clubId) <> (PlayerDAO.tupled, PlayerDAO.unapply)
 
