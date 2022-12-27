@@ -1,8 +1,7 @@
 .waiting-list-drop-zone {
   min-height: 100px;
   min-width: 200px;
-  padding: 10px;
-  z-index: 999999;
+  z-index: 999998;
 }
 
 .waiting-list-fixed-position {
@@ -50,4 +49,12 @@
   display: grid;
   grid-template-columns: auto 30px;
   grid-template-rows: auto;
+}
+
+.mat-list-item {
+  height: 60px;
+}
+
+.mat-expansion-panel {
+  z-index: 999999;
 }

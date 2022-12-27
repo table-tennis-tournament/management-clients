@@ -12,7 +12,7 @@ export interface SettingsState {
 const initialState: SettingsState = {
   typeColor: [
     'brown darken-4',
-    'amber darken-1  white-text',
+    'amber darken-3  white-text',
     'orange',
     'light-green darken-1 white-text',
     'green',
@@ -22,8 +22,18 @@ const initialState: SettingsState = {
     'grey darken-3',
     'blue darken-1 white-text',
     'indigo',
-    'amber darken-1 white-text',
-    'orange',
+    'brown darken-2 white-text',
+    'brown',
+    'blue-grey darken-2 white-text',
+    'blue-grey',
+    'lime darken-1 white-text',
+    'lime',
+    'teal darken-4 white-text',
+    'teal',
+    'deep-orange darken-3 white-text',
+    'deep-orange',
+    'deep-purple darken-4 white-text',
+    'deep-purple',
     'light-green darken-1 white-text',
     'green',
     'red lighten-3 white-text',
@@ -31,44 +41,35 @@ const initialState: SettingsState = {
     'grey white-text',
     'grey darken-3',
     'blue darken-1 white-text',
-    'indigo',
-    'amber darken-4 white-text',
-    'orange',
-    'light-green darken-1 white-text',
-    'green',
-    'red lighten-3 white-text',
-    'pink',
-    'grey white-text',
-    'grey darken-3',
-    'blue darken-1 white-text',
-    'indigo',
+    'indigo'
   ],
-  settings: [],
-  printers: [],
-  settingsLoading: false,
+  'settings': [],
+  'printers': [],
+  'settingsLoading': false
 };
+
 export function reduceSettingsState(state: SettingsState = initialState, action: SettingsActionUnion) {
   switch (action.type) {
     case SettingsActionTypes.Load:
       return {
         ...state,
-        settingsLoading: true,
+        settingsLoading: true
       };
     case SettingsActionTypes.LoadSuccess:
       return {
         ...state,
         settingsLoading: false,
-        settings: action.payload,
+        settings: action.payload
       };
     case SettingsActionTypes.LoadError:
       return {
         ...state,
-        settingsLoading: false,
+        settingsLoading: false
       };
     case SettingsActionTypes.LoadPrintersSuccess:
       return {
         ...state,
-        printers: action.payload,
+        printers: action.payload
       };
     case SettingsActionTypes.SaveAssignAutomaticallySuccess:
       return {
@@ -77,11 +78,11 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
           if (setting.key === AUTOSTART_SETTING) {
             return {
               key: AUTOSTART_SETTING,
-              value: action.payload,
+              value: action.payload
             };
           }
           return setting;
-        }),
+        })
       };
     case SettingsActionTypes.SavePrintOnAssignSuccess:
       return {
@@ -90,11 +91,11 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
           if (setting.key === ALWAYS_PRINT_SETTING) {
             return {
               key: ALWAYS_PRINT_SETTING,
-              value: action.payload,
+              value: action.payload
             };
           }
           return setting;
-        }),
+        })
       };
     case SettingsActionTypes.SetPrinterSuccess:
       return {
@@ -103,11 +104,11 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
           if (setting.key === PRINTER_NAME_SETTING) {
             return {
               key: PRINTER_NAME_SETTING,
-              value: action.payload,
+              value: action.payload
             };
           }
           return setting;
-        }),
+        })
       };
     default:
       return state;

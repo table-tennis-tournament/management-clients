@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormControl} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
 import {Player} from '../../match/player.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
@@ -14,15 +14,15 @@ export class PlayerDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<PlayerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public players: Player[],
-    private formBuilder: FormBuilder) {
+    private formBuilder: UntypedFormBuilder) {
   }
 
   ngOnInit() {
     this.playersFormGroup = this.formBuilder.group({
       players: this.formBuilder.array([])
     });
-    const formArray = this.playersFormGroup.get('players') as FormArray;
-    this.players.forEach(() => formArray.push(new FormControl(false)));
+    const formArray = this.playersFormGroup.get('players') as UntypedFormArray;
+    this.players.forEach(() => formArray.push(new UntypedFormControl(false)));
   }
 
   onOk() {
