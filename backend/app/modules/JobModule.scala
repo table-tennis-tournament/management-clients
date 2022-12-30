@@ -11,7 +11,7 @@ import play.api.libs.concurrent.AkkaGuiceSupport
   */
 
 class JobModule extends AbstractModule with AkkaGuiceSupport {
-  def configure(): Unit = {
+  override def configure(): Unit = {
     bind(classOf[Scheduler]).asEagerSingleton()
     bind(classOf[Tables]).asEagerSingleton()
     bind(classOf[Startup]).asEagerSingleton()

@@ -1,11 +1,12 @@
 package controllers
 
 import java.util.UUID
-
 import akka.actor.ActorRef
 import dao.Tables
+
 import javax.inject.{Inject, Named}
 import models._
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -21,6 +22,8 @@ class MatchListController @Inject() (tables: Tables,
   import models.AnswerModel._
   import models.MatchModel._
 
+  val log = LoggerFactory.getLogger("matchListControllerLogger")
+
   var isActiv = false
 
   def autoStart: Action[AnyContent] = Action {
@@ -35,7 +38,7 @@ class MatchListController @Inject() (tables: Tables,
         json.validate[MatchList].asOpt match {
           case Some(matchList) =>
             val filteredMatchList = matchList.copy(matchId = matchList.matchId.filter(id => tables.getMatch(id).get.state == Open))
-            Logger.info("addMatch")
+            log.info("addMatch")
             val newMLEntry = filteredMatchList.copy(uuid = Some(filteredMatchList.uuid.getOrElse(UUID.randomUUID())),
               matchId = filteredMatchList.matchId.filter(id => !tables.isInMatchList(tables.getMatch(id).get)))
             if(newMLEntry.matchId.isEmpty) {
@@ -64,8 +67,8 @@ class MatchListController @Inject() (tables: Tables,
   }
 
   def deleteMatch(uuid: String): Action[AnyContent] = Action{
-    Logger.info(tables.getMatchList.toString())
-    Logger.info(uuid)
+    log.info(tables.getMatchList.toString())
+    log.info(uuid)
     val matchlistId = UUID.fromString(uuid)
     val currentMatchListItem = tables.findMatchListById(matchlistId)
     if(tables.delMatchList(matchlistId)){

@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl._
 import com.google.inject.Inject
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.InjectedController
@@ -17,10 +18,12 @@ class SockJSController @Inject() (implicit system: ActorSystem, materializer: Ma
 
   override protected def settings = SockJSSettings(websocket = false)
 
+  val log = LoggerFactory.getLogger("sockJSControllerLogger")
+
   // to handle a SockJS request override sockjs method
   def sockjs = SockJS.accept[String, String] { request =>
 
-    Logger.info("websocket request tables")
+    log.info("websocket request tables")
     ActorFlow.actorRef(out => WebSocketActor.props(out, "UpdateTable"))
   }
 

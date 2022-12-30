@@ -8,9 +8,11 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import dao.Tables
 import it.innove.play.pdf.PdfGenerator
+
 import javax.inject._
 import models.{AllMatchInfo, Answer, TTMatch}
 import net.glxn.qrgen.QRCode
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.http.{DefaultFileMimeTypes, DefaultFileMimeTypesProvider, FileMimeTypesConfiguration}
 import play.api.libs.json._
@@ -28,8 +30,10 @@ class PrinterController @Inject() (pdfGenerator: PdfGenerator,
   implicit val timeout: Timeout = 5.seconds
   import models.AnswerModel._
 
+  val log = LoggerFactory.getLogger("printerControllerLogger")
+
   def print(id: Long): Action[AnyContent] = Action {
-    Logger.debug("print")
+    log.debug("print")
     tables.getMatch(id) match {
       case Some(ttMatch) => tables.getAllMatchInfo(ttMatch) match {
         case Some(allMatchInfo) =>
@@ -42,7 +46,7 @@ class PrinterController @Inject() (pdfGenerator: PdfGenerator,
   }
 
   def printAll: Action[AnyContent] = Action { request =>
-    Logger.debug("print all")
+    log.debug("print all")
     val req = request.body.asJson
     req match {
       case Some(r) =>

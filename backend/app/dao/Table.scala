@@ -1,27 +1,28 @@
 package dao
 
 import java.util.UUID
-
 import actors.PrinterActor.Print
 import akka.actor.ActorRef
+
 import javax.inject.{Inject, Named}
 import models._
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.jdbc.JdbcProfile
 import slick.sql.SqlProfile.ColumnOption.SqlType
 import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
 /**
   * Created by jonas on 29.09.16.
   */
 class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
                        @Named("printer_actor") printerActor: ActorRef,
-                       @Named("publisher_actor") pub: ActorRef) extends HasDatabaseConfigProvider[JdbcProfile] {
+                       @Named("publisher_actor") pub: ActorRef)(implicit ec: ExecutionContext) extends HasDatabaseConfigProvider[JdbcProfile] {
 
 
   import profile.api._
@@ -59,6 +60,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   var ttMatchTableSeq = Seq.empty[MatchTable]
   var ttTypePerPlayer = Seq.empty[TypePerPlayer]
 
+  val log = LoggerFactory.getLogger("tableLoger")
+
   class ContainsAnyOf[T](seq: Seq[T]) {
     def containsAnyOf(xs: Seq[T]): Boolean = seq.exists(xs.contains(_))
   }
@@ -77,7 +80,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     if (mt.isDefined && ty.isDefined)
       Some(AllMatchInfo(ttMatch, p1, p2, mt.get, ty.get, g, pl, state, tn))
     else {
-      Logger.error("None: " + mt + ty)
+      log.error("None: " + mt + ty)
       None
     }
   }
@@ -91,7 +94,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     if (mt.isDefined && ty.isDefined)
     Some(TableManagerMatch(ttMatch.id, getTableManagerResult(ttMatch), p1, p2, mt.get.name, ty.get.name, state))
     else {
-      Logger.error("None: " + mt + ty)
+      log.error("None: " + mt + ty)
       None
     }
   }
@@ -144,7 +147,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           case None => toTTTable(newTable)
         }
       }
-      Logger.debug("read Tables: " + ttTablesSeq.size.toString)
+      log.debug("read Tables: " + ttTablesSeq.size.toString)
       true
     }
   }
@@ -199,7 +202,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def isMatchOnSecondTable(matchId: Long, tableId: Long) = {
     val res = ttMatchTableSeq.filter(mt => mt.matchId == matchId && mt.tableId != tableId).nonEmpty
-    Logger.info("onSecondTable: " + res.toString)
+    log.info("onSecondTable: " + res.toString)
     res
   }
 
@@ -332,7 +335,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val tl = getFreeTables().sortBy(_.tableNumber)
     val tl2 = tl.filter(_.tableNumber % 2 == 1) ++ tl.filter(_.tableNumber % 2 == 0)
     tl2 map { table =>
-      Logger.debug("start next Match")
+      log.debug("start next Match")
       val ml = filterFirst(getMatchList.toList)
       val inverseFilteredML = ml.filterNot(mlItem => isPossibleMatch(mlItem))
       val filteredML = ml.filter { mlItem =>
@@ -375,7 +378,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
             pub ! UpdateMatchList(getAllMatchList)
             result.forall(x => x)
           } else {
-            Logger.error("Match not ready")
+            log.error("Match not ready")
             false
           }
         case _ =>
@@ -389,7 +392,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         toMatch(r)
       }
       ttMatchSeq = x
-      Logger.debug("read Matches: " + ttMatchSeq.size.toString)
+      log.debug("read Matches: " + ttMatchSeq.size.toString)
       true
     }
   }
@@ -403,7 +406,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
         val matchSeqIds = ttMatchSeq.map(_.id)
         val newMatches = x.filter(m => !matchSeqIds.contains(m.id))
         ttMatchSeq = ttMatchSeq ++ newMatches
-        Logger.info("add Matches " + newMatches.size.toString)
+        log.info("add Matches " + newMatches.size.toString)
         true
       }
     }
@@ -467,7 +470,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   private def getPlayerIdsOrEmptyList(teamId: Long): Seq[Long] = {
     val secondTeam = getDouble(teamId - 100000)
     if(secondTeam.isEmpty) {
-      Logger.info("Empty team for teamId: "+ teamId)
+      log.info("Empty team for teamId: "+ teamId)
       return Seq.empty;
     }
     Seq(secondTeam.get.player1Id, secondTeam.get.player2Id)
@@ -482,7 +485,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def startMatch(matchId: Long, tableId: Long, print: Boolean = true): Boolean= {
-    Logger.debug("start match")
+    log.debug("start match")
     updateMatchState(Callable, List(matchId))
     val currentTime = new DateTime()
     ttMatchSeq = ttMatchSeq map { m =>
@@ -599,7 +602,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     val uMatch = ttMatchSeq.filter(m => m.nr == newNr && m.typeId == ttMatch.typeId).head
     val winnerIds = ttMatch.getWinnerIds
     val singleWinnerId = getTeamOrSingleWinner(winnerIds, ttMatch)
-    Logger.error("current winner id: "+singleWinnerId)
+    log.error("current winner id: "+singleWinnerId)
     val newMatch = if(nr%1000%2 == 1) {
       uMatch.copy(player1Ids = winnerIds, team1Id = singleWinnerId)
     } else {
@@ -619,7 +622,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getTeamOrSingleWinner(winnerIds: Seq[Long], ttMatch: TTMatch):Long = {
     if(winnerIds.isEmpty) {
-      Logger.error("Winner ids are empty for matchid: "+ ttMatch.id)
+      log.error("Winner ids are empty for matchid: "+ ttMatch.id)
       return 0;
     }
     if(winnerIds.size == 1) {
@@ -649,7 +652,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     dbConfigProvider.get.db.run(player.result) map { ap =>
       val x = ap map { p => getPlayerFromPlayerDAO(p)}
       ttPlayerSeq = x
-      Logger.info("read Players: " + ttPlayerSeq.size.toString)
+      log.info("read Players: " + ttPlayerSeq.size.toString)
       true
     }
   }
@@ -674,7 +677,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateClubList: Future[Boolean] = {
     dbConfigProvider.get.db.run(clubs.result) map {cList =>
       ttClubsSeq = cList
-      Logger.debug("read Clubs: " + ttClubsSeq.size.toString)
+      log.debug("read Clubs: " + ttClubsSeq.size.toString)
       true
     }
   }
@@ -685,7 +688,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateMatchTypeList: Future[Boolean] = {
     dbConfigProvider.get.db.run(matchTypes.result) map {mtList =>
       ttMatchTypeSeq = mtList
-      Logger.debug("read MatchTypes: " + ttMatchTypeSeq.size.toString)
+      log.debug("read MatchTypes: " + ttMatchTypeSeq.size.toString)
       true
     }
   }
@@ -697,7 +700,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateTypesList: Future[Boolean] = {
     dbConfigProvider.get.db.run(types.result) map {tList =>
       ttTypeSeq = tList
-      Logger.debug("read Types: " + ttTypeSeq.size.toString)
+      log.debug("read Types: " + ttTypeSeq.size.toString)
       true
     }
   }
@@ -713,7 +716,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateGroupsSeq: Future[Boolean] = {
     dbConfigProvider.get.db.run(groups.result) map {gList =>
       ttGroupsSeq = gList
-      Logger.debug("read Groups: " + ttGroupsSeq.size.toString)
+      log.debug("read Groups: " + ttGroupsSeq.size.toString)
       true
     }
   }
@@ -727,7 +730,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateDoublesSeq: Future[Boolean] = {
     dbConfigProvider.get.db.run(doubles.result) map {dList =>
       ttDoublesSeq = dList
-      Logger.debug("read Doubles: " + ttDoublesSeq.size.toString)
+      log.debug("read Doubles: " + ttDoublesSeq.size.toString)
       true
     }
   }
@@ -1013,7 +1016,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateMatchTableSeq = {
     dbConfigProvider.get.db.run(matchTable.result) map {gList =>
       ttMatchTableSeq = gList
-      Logger.info("read MatchTable: " + ttMatchTableSeq.size.toString)
+      log.info("read MatchTable: " + ttMatchTableSeq.size.toString)
       true
     }
   }
@@ -1033,10 +1036,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def loadTypePerPlayer = {
-    Logger.info("loadTypePerPlayer")
+    log.info("loadTypePerPlayer")
     dbConfigProvider.get.db.run(typePerPlayer.result) map {tpp =>
-      Logger.info("tpp")
-      Logger.info("tpp" + tpp.size.toString())
+      log.info("tpp")
+      log.info("tpp" + tpp.size.toString())
       ttTypePerPlayer = tpp
       true
     }
@@ -1062,8 +1065,8 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def loadAllFromDB: Future[Boolean] = {
-    Logger.info("loadAllFromDB")
-    loadTypePerPlayer.map(x =>Logger.info("tpp: " + x.toString))
+    log.info("loadAllFromDB")
+    loadTypePerPlayer.map(x =>log.info("tpp: " + x.toString))
     updateMatchTableSeq flatMap { mt =>
       updateTTTables flatMap { t =>
         loadNewMatches() flatMap { n =>

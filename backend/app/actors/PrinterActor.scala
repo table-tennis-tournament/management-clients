@@ -1,10 +1,10 @@
 package actors
 
 import java.awt.print.PrinterJob
-
 import akka.actor._
 import controllers.AssetsFinder
 import it.innove.play.pdf.PdfGenerator
+
 import javax.inject.Inject
 import javax.print.attribute.standard.{MediaSizeName, OrientationRequested, PageRanges}
 import javax.print.attribute.{HashDocAttributeSet, HashPrintRequestAttributeSet}
@@ -12,6 +12,7 @@ import javax.print.{PrintService, PrintServiceLookup}
 import models.AllMatchInfo
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.printing.PDFPageable
+import org.slf4j.LoggerFactory
 import play.api.{Environment, Logger}
 
 
@@ -34,7 +35,9 @@ object PrinterActor {
 class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: AssetsFinder) extends Actor {
   import actors.PrinterActor._
 
-  Logger.debug("starting PrinterActor")
+  val log = LoggerFactory.getLogger("printerLogger")
+
+  log.debug("starting PrinterActor")
   var printService: PrintService = PrintServiceLookup.lookupDefaultPrintService()
   var aSet = new HashPrintRequestAttributeSet
   aSet.add(MediaSizeName.ISO_A6)
@@ -46,12 +49,12 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
 
   def receive: PartialFunction[Any, Unit] = {
     case Print(allMatchInfo) =>
-      Logger.debug("start printing")
+      log.debug("start printing")
       import java.io.ByteArrayInputStream
 
 
       val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
-      Logger.debug("pdf created")
+      log.debug("pdf created")
       val doc: PDDocument = PDDocument.load(new ByteArrayInputStream(byteStream))
       val printerJob = PrinterJob.getPrinterJob
       printerJob.setPrintService(printService)

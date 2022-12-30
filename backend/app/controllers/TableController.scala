@@ -1,8 +1,10 @@
 package controllers
 
 import dao.Tables
+
 import javax.inject.Inject
 import models._
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -17,11 +19,13 @@ class TableController @Inject()(tables: Tables,
   import models.AnswerModel._
   import models.TableModel._
 
+  val log = LoggerFactory.getLogger("tableControllerLogger")
+
   def getAllTables: Action[AnyContent] = Action {
     val t = tables.allTTTables()
     val x = t.map(ttTable => tables.getAllTableInfo(ttTable))
     val z = x.sortBy(_.tableNumber)
-    Logger.info("m: " + z.toString())
+    log.info("m: " + z.toString())
     Ok(Json.toJson(z))
   }
 
@@ -29,7 +33,7 @@ class TableController @Inject()(tables: Tables,
     val t = tables.allTTTables().filter(t => t.matchId.isEmpty && !t.isLocked.getOrElse(false))
     val x = t.map(ttTable => tables.getAllTableInfo(ttTable))
     val z = x.sortBy(_.tableNumber)
-    Logger.info("m: " + z.toString())
+    log.info("m: " + z.toString())
     Ok(Json.toJson(z))
   }
 

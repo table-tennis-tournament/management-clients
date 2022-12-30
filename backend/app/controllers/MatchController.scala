@@ -3,9 +3,11 @@ package controllers
 import akka.actor.ActorRef
 import akka.util.Timeout
 import dao.Tables
+
 import javax.inject._
 import models._
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -28,6 +30,8 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
   import models.MatchModel._
   import models.MatchState._
 
+  val log = LoggerFactory.getLogger("matchControllerLogger")
+
   def testSocket = Action {
     pub ! UpdateMatches(tables.allMatchesInfo)
     Ok("send")
@@ -42,7 +46,7 @@ class MatchController @Inject()(implicit ec: ExecutionContext,
     val t = tables.ttTablesSeq.filter(_.matchId.contains(matchId))
     val tableIds = t.map(_.id)
     tables.removeMatchFromOtherTables(matchId, tableId) map { res =>
-      Logger.info("res: " + res)
+      log.info("res: " + res)
       sendUpdateTableManagerMessagesForTables(tables.ttTablesSeq.filter(table => tableIds.contains(table.id)))
       pub ! UpdateTable(t.map(t =>tables.getAllTableInfo(t)))
       pub ! UpdateMatches(tables.allMatchesInfo.filter(_.ttMatch.id == matchId))

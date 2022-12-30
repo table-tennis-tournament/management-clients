@@ -7,6 +7,7 @@ import akka.actor._
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.{Subscribe, SubscribeAck}
 import models._
+import org.slf4j.LoggerFactory
 import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 
@@ -30,12 +31,14 @@ class WebSocketActor(out: ActorRef, topic: String) extends Actor {
   import models.TableModel.tableManagerTableWrites
   import websocket.WebSocketActor._
 
-  Logger.info("subscribe...")
+  val log = LoggerFactory.getLogger("webSocketActorLogger")
+
+  log.info("subscribe...")
   val mediator: ActorRef = DistributedPubSub(context.system).mediator
 
-  Logger.info("subscribe topic: " + topic)
+  log.info("subscribe topic: " + topic)
   mediator ! Subscribe(topic, self)
-  Logger.info("subscribed")
+  log.info("subscribed")
 
   implicit val updateTableWrites: Writes[UpdateTable] = (updateTable: UpdateTable) => Json.obj(
     "UpdateTable" -> updateTable.table
@@ -55,22 +58,22 @@ class WebSocketActor(out: ActorRef, topic: String) extends Actor {
 
   def receive: PartialFunction[Any, Unit] = {
     case msg: String =>
-      Logger.info("I received your message: " + msg)
+      log.info("I received your message: " + msg)
       out ! ("I received your message: " + msg)
     case m: UpdateTable =>
-      Logger.info("send UpdateTable")
+      log.info("send UpdateTable")
       out ! Json.toJson(m).toString()
     case m: UpdateMatches =>
-      Logger.info("send UpdateMatches")
+      log.info("send UpdateMatches")
       out ! Json.toJson(m).toString()
     case m: UpdateMatchList =>
-      Logger.info("send UpdateMatchList")
+      log.info("send UpdateMatchList")
       out ! Json.toJson(m).toString()
     case m: UpdateTableManager =>
-      Logger.info("send UpdateTableManager")
+      log.info("send UpdateTableManager")
       out ! Json.toJson(m).toString()
     case SubscribeAck(Subscribe(topic, None, `self`)) ⇒
-      Logger.info("subscribing " + topic)
-    case e => Logger.info("error: " + e.toString)
+      log.info("subscribing " + topic)
+    case e => log.info("error: " + e.toString)
   }
 }
