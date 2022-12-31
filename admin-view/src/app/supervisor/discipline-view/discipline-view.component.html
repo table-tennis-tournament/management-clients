@@ -1,6 +1,6 @@
 <div class="row m-2">
   <mat-spinner *ngIf="matchesLoading"></mat-spinner>
-
+  <div *ngIf="selectedTab" mat-raised-button class="mr-2">{{ selectedTab.name }}</div>
   <div *ngFor="let currentTab of tabs" class="mr-2">
     <button mat-raised-button [ngClass]="typeColor[currentTab.id]" (click)="this.selectDiscipline.emit(currentTab.id)">
       {{ currentTab.name }}
@@ -11,8 +11,8 @@
     <mat-checkbox class="mr-2" [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
     <mat-checkbox class="mr-2" [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
     <mat-checkbox class="mr-2" (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh"
-      >Stop</mat-checkbox
-    >
+      >Stop
+    </mat-checkbox>
   </div>
 </div>
 <div *ngIf="selectedTab" [ngClass]="typeColor[selectedTab.id]">
@@ -23,7 +23,8 @@
         [typeColor]="typeColor"
         (resultForMatch)="resultForMatch.emit($event)"
         [index]="r"
-        (deleteStage)="onDeleteStage($event)">
+        (deleteStage)="onDeleteStage($event)"
+      >
       </toma-discipline-stage>
     </div>
   </div>
@@ -34,7 +35,8 @@
         [typeColor]="typeColor"
         [showMatches]="matchesAreOpen"
         [showPlayers]="playersAreOpen"
-        (resultForMatch)="resultForMatch.emit($event)">
+        (resultForMatch)="resultForMatch.emit($event)"
+      >
       </toma-discipline-group>
     </div>
   </div>

@@ -28,6 +28,7 @@ export class DisciplineTabService {
     let currentItem: Match = null;
     for (let index = 0; index < matches.length; index++) {
       currentItem = matches[index];
+      currentItemTab.name = currentItem.type.name;
 
       if (!currentItem.group) {
         const localIndex = allStages[currentItem.matchType.name];
