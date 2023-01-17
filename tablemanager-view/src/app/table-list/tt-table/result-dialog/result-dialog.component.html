@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-8">
             <div class="mat-body-strong mb-0">{{match.players_b | playerName}}</div>
-            <div *ngIf="match.players_b.length === 1">({{match.players_a | clubName}})</div>
+            <div *ngIf="match.players_b.length === 1">({{match.players_b | clubName}})</div>
         </div>
         <div class="col-4">
             <div class="mat-display-1 mb-0">{{match.result.games_won_player_b}}</div>
