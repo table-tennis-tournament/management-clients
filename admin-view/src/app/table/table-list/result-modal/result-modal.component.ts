@@ -1,5 +1,4 @@
-import { Component, ElementRef, EventEmitter, Inject, ViewChild } from '@angular/core';
-import { TTMatchResult } from './ttmatch-result.model';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { ResultCheckerService } from './result-checker.service';
 import { ResultCheckModel } from './result-check.model';
 import { Match } from '../../../shared/data/match.model';
@@ -19,8 +18,6 @@ export class ResultModalComponent {
 
   currentInput: string;
 
-  public OnResultForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
-
   @ViewChild('answer', { read: ElementRef, static: false })
   private elementRef: ElementRef;
 
@@ -32,12 +29,6 @@ export class ResultModalComponent {
     this.setInputIfAvailable();
   }
 
-  focusElement() {
-    if (this.elementRef != null) {
-      this.elementRef.nativeElement.focus();
-    }
-  }
-
   onKeyUp(value) {
     this.checkerResult = this.resultCheckerService.checkResult(value);
   }
@@ -46,7 +37,7 @@ export class ResultModalComponent {
     this.dialogRef.close();
   }
 
-  getResult() {
+  getResult(): any {
     if (this.checkerResult.firstPlayerWinning || this.checkerResult.secondPlayerWinning) {
       return {
         result: this.checkerResult.currentResult,
@@ -55,7 +46,7 @@ export class ResultModalComponent {
     }
   }
 
-  resultNotValid() {
+  resultNotValid(): boolean {
     return !this.checkerResult.firstPlayerWinning && !this.checkerResult.secondPlayerWinning;
   }
 
@@ -74,5 +65,12 @@ export class ResultModalComponent {
       this.onKeyUp(resultString);
     }
     this.currentInput = resultString;
+  }
+
+  onEnter() {
+    if (this.resultNotValid()) {
+      return;
+    }
+    this.dialogRef.close(this.getResult());
   }
 }

@@ -8,20 +8,14 @@
     </div>
   </div>
 
-  <div class="row ml-1">
-    <div *ngIf="stages$" class="discipline-stage-view">
-      <div class="row">
-        <div *ngFor="let currentStage of stages$ | async" class="col-3">
-          <app-stage-view [stage]="currentStage"></app-stage-view>
-        </div>
+  <div class="row ml-1" *ngIf="stages$">
+      <div *ngFor="let currentStage of stages$ | async" class="col-3">
+        <app-stage-view [stage]="currentStage"></app-stage-view>
       </div>
-    </div>
   </div>
-  <div *ngIf="groups$" >
-    <div class="row">
-      <div *ngFor="let currentGroup of groups$ | async" class="col-3  mt-2">
-        <app-group-view [group]="currentGroup"></app-group-view>
-      </div>
+  <div class="row" *ngIf="groups$">
+    <div *ngFor="let currentGroup of groups$ | async" class="col-3  mt-2">
+      <app-group-view [group]="currentGroup"></app-group-view>
     </div>
-  </div>
+</div>
 </div>

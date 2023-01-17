@@ -7,5 +7,5 @@ import {Component} from '@angular/core';
 })
 export class NavigationComponent {
 
-    managers = [1, 2, 3, 4, 5];
+    managers = [1, 2, 3, 4];
 }

@@ -20,7 +20,7 @@
         [(ngModel)]="currentInput"
         #answer
         (keyup)="onKeyUp(answer.value)"
-        (keyup.enter)="getResult()"
+        (keyup.enter)="onEnter()"
       />
     </mat-form-field>
   </form>
