@@ -23,7 +23,7 @@ services:
     depends_on:
       - "mysql"
   admin:
-    image: holzleube/tt-admin-view:71cea536e3f8b1fd7501906d53a8c6e9dba0459e
+    image: holzleube/tt-admin-view:5.0
     ports:
       - "8080:8080"
     depends_on:
