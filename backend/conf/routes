@@ -1,0 +1,80 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                   controllers.Application.index
+
+# PlayerController
+GET     /api/players/load                    controllers.PlayerController.load
+GET     /api/players/all                     controllers.PlayerController.getAllPlayer
+GET     /api/players/allTypePerPlayer        controllers.PlayerController.getAllTypePerPlayer
+GET     /api/players/setPayed/:id/:paid     controllers.PlayerController.setPayed(id: Long, paid: Boolean)
+GET     /api/players/:id                     controllers.PlayerController.getPlayer(id: Long)
+GET     /api/players/type/:typeId            controllers.PlayerController.getPlayesByType(typeId: Long)
+GET     /api/players/:id/:active             controllers.PlayerController.setPlayerActiveState(id: Long, active: Boolean)
+
+# MatchController:
+GET     /api/match/allmatchtable            controllers.MatchController.allMatchTable
+GET     /api/testsocket                     controllers.MatchController.testSocket
+GET     /api/match/all                      controllers.MatchController.getAllMatches
+GET     /api/match/start/:id/:tableId                controllers.MatchController.startMatch(id: Long, tableId: Long)
+GET     /api/match/stop/:id                controllers.MatchController.stopMatch(id: Long)
+GET     /api/match/typeid/:typeid           controllers.MatchController.getMatchesByType(typeid: Long)
+POST    /api/match/matchtotable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = true, print: Boolean = true, secondTable: Boolean = false)
+POST    /api/match/matchtosecondtable/:tableName     controllers.MatchController.setMatchToTable(tableName: Int, checkPlayable: Boolean = false, print: Boolean = false, secondTable: Boolean = true)
+GET     /api/match/open/all                 controllers.MatchController.getOpenMatches
+GET     /api/match/open/typeid/:typeid      controllers.MatchController.getOpenMatchesByTypeId(typeid: Long)
+GET     /api/match/played/all               controllers.MatchController.getPlayedMatches
+GET     /api/match/played/typeid/:typeid    controllers.MatchController.getPlayedMatchesByTypeId(typeid: Long)
+GET     /api/match/loadnew                  controllers.MatchController.loadNewMatches
+GET     /api/match/:id                      controllers.MatchController.getMatch(id: Long)
+GET     /api/matchaggregates/caller          controllers.MatchController.getMatchAggregateForCaller
+GET     /api/matchaggregates/secondCall      controllers.MatchController.getMatchAggregateForSecondCall
+GET     /api/matchaggregates/thirdCall       controllers.MatchController.getMatchAggregateForThirdCall
+# Result format: [[5,11],[13,11],[11,0],[11,4]]
+POST    /api/match/:id/setResult            controllers.MatchController.setResult(id: Long)
+POST    /api/match/:id/updateResult         controllers.MatchController.updateResult(id: Long)
+
+GET     /api/types/all                      controllers.MatchController.getTypes
+GET     /api/types/open/all                 controllers.MatchController.getActiveTypes
+
+# TableController:
+GET     /api/table/all                      controllers.TableController.getAllTables
+GET     /api/table/free                     controllers.TableController.getFreeTables
+GET     /api/table/:id                      controllers.TableController.getTable(id: Long)
+GET     /api/table/:nr/lock                 controllers.TableController.lockTable(nr: Long)
+GET     /api/table/:nr/unlock               controllers.TableController.unlockTable(nr: Long)
+GET     /api/tables                         controllers.TableController.getByTablemanager(table_manager: Long ?=1)
+
+# MatchListController:
+GET     /api/matchlist/all                  controllers.MatchListController.getAllMatchList
+GET     /api/matchlist/next                 controllers.MatchListController.getNext
+POST    /api/matchlist/addMatch             controllers.MatchListController.addMatch
+DELETE  /api/matchlist/deleteMatch/:uuid    controllers.MatchListController.deleteMatch(uuid: String)
+GET     /api/matchlist/active/:isActive     controllers.MatchListController.setActive(isActive: Boolean)
+GET     /api/matchlist/move/:uuid/:position controllers.MatchListController.move(uuid: String, position: Int)
+GET     /api/matchlist/autostart            controllers.MatchListController.autoStart
+POST    /api/match/free                     controllers.MatchController.freeMatches
+POST    /api/match/takeBack                 controllers.MatchController.takeBackMatches
+POST    /api/match/remove/:tableId          controllers.MatchController.removeMatchesFromTable(tableId: Long)
+GET     /api/match/delete/:id               controllers.MatchController.deleteMatch(id: Long)
+GET     /api/match/deleteType/:id           controllers.MatchController.deleteType(id: Long)
+POST    /api/match/call                     controllers.MatchController.callMatches
+POST    /api/playercall/:matchId            controllers.MatchController.callPlayers(matchId: Long)
+
+# WebSocket for push messages
+->      /api/websocket                            controllers.SockJSController
+
+# PrinterController:
+GET     /api/printer/all                    controllers.PrinterController.allPrinter
+GET     /api/printer/printpdf/:id           controllers.PrinterController.printPDF(id: Long)
+GET     /api/printer/print/:id              controllers.PrinterController.print(id: Long)
+POST    /api/printer/printAll               controllers.PrinterController.printAll
+GET     /api/printer/set/:name              controllers.PrinterController.setPrinter(name: String)
+GET     /api/printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
+GET     /api/printer/getQrCode/:content     controllers.PrinterController.getQrCode(content: String)
+
+GET     /api/settings/all                   controllers.SettingsController.allSettings
+# POST    /settings                       controllers.SettingsController.setSettings
+

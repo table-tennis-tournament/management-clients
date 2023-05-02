@@ -1,0 +1,21 @@
+image: hseeberger/scala-sbt:8u222_1.3.3_2.13.1
+
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=/cache/maven.repository
+
+stages:
+  - build
+  - test
+  - staging
+  - deploy
+
+build:
+  stage: build
+  script:
+    - sbt dist
+    - set -x
+      unzip -d svc target/universal/turniermanager*.zip
+      mv svc/*/* svc/
+      rm svc/bin/*.bat
+      :q
+  # -Dsbt.ivy.home=/cache/.ivy2 -Dsbt.global.base=/cache/.sbt/1.0 -Dsbt.boot.directory=/cache/.sbt/boot -Dsbt.repository.config=/cache/.sbt/repositories
