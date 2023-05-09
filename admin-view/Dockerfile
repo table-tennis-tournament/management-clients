@@ -7,7 +7,7 @@ COPY . .
 
 RUN npm run build -- --output-path=./dist/out --configuration production 
 
-FROM bitnami/nginx:1.21.3
+FROM bitnami/nginx:1.24.0
 COPY --from=builder /ng-app/dist/out/ /usr/share/nginx/html
 COPY --from=builder /ng-app/dist/out /app/
 
