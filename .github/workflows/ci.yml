@@ -34,39 +34,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: holzleube/tt-admin-view
+          images: holzleube/ttt-clients
           tags: |
               type=sha,enable=true,priority=100,prefix=,suffix=,format=long
       - name: Build and push Docker images
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./admin-view
+          context: ./
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          file: ./admin-view/Dockerfile
-#      - name: Build and push
-#        working-directory: ./admin-view
-#        uses: docker/build-push-action@v2
-#        with:
-#          context: .
-#          push: true
-#          tags: holzleube/tt-admin-view:latest
-#    steps:
-#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      # Runs a single command using the runners shell
-#      - name: Clean install dependencies
-#        working-directory: ./admin-view
-#        run: |
-#          npm ci
-#          chmod -R a+rwx node_modules
-#
-#      - name: Build prod
-#        uses: docker://trion/ng-cli-karma:9.1.0
-#        working-directory: ./admin-view
-#        with:
-#          args: ng test --watch=false --progress=false
-
+          file: ./Dockerfile-clients

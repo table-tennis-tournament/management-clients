@@ -1,0 +1,19 @@
+FROM node:lts-alpine3.14 AS builder
+
+COPY admin-view/ ./admin-view/
+COPY result-view/ ./result-view/
+COPY tablemanager-view/ ./tablemanager-view/
+
+RUN npm install -g @angular/cli
+
+RUN cd ./admin-view && npm install && npm run build -- --output-path=./dist/out --configuration production --base-href=/admin-view/
+RUN cd ./result-view && npm install && npm run build -- --output-path=./dist/out --configuration production --base-href=/result-view/
+RUN cd ./tablemanager-view && npm install && npm run build -- --output-path=./dist/out --configuration production --base-href=/tablemanager-view/
+
+
+FROM bitnami/nginx:1.24.0
+COPY --from=builder /admin-view/dist/out/ /usr/share/nginx/html/admin-view
+COPY --from=builder /result-view/dist/out/ /usr/share/nginx/html/result-view
+COPY --from=builder /tablemanager-view/dist/out/ /usr/share/nginx/html/tablemanager-view
+
+COPY my_server_block.conf /opt/bitnami/nginx/conf/server_blocks/my_server_block.conf
