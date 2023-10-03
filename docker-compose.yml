@@ -23,7 +23,7 @@ services:
     depends_on:
       - "mysql"
   admin:
-    image: holzleube/ttt-clients:2.0
+    image: holzleube/ttt-clients:aca1433de2176a90f06b4af8c909f6f16a533650
     ports:
       - "80:8080"
     depends_on:
