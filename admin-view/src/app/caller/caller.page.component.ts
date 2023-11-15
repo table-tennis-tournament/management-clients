@@ -6,6 +6,7 @@ import {
   getRefereesLoading,
   getSecondCallMatchesState,
   getSelectedMatchAggregateState,
+  getSelectedSecondCallMatchAggregateState,
   getThirdCallMatchesState,
   getTypeColorsState,
 } from '../app-state.reducer';
@@ -16,6 +17,7 @@ import {
   LoadSecondCallMatches,
   LoadThirdCallMatches,
   SetSelectedMatchAggregate,
+  SetSelectedSecondCallMatchAggregate,
 } from './redux/caller.actions';
 
 @Component({
@@ -24,6 +26,7 @@ import {
 })
 export class CallerPageComponent implements OnInit {
   selectedItem: Observable<MatchAggregate>;
+  selectedSecondCallItem: Observable<MatchAggregate>;
   typeColor: Observable<string[]>;
   refereesLoading: Observable<boolean>;
   matchAggregates: Observable<MatchAggregate[]>;
@@ -40,6 +43,7 @@ export class CallerPageComponent implements OnInit {
     this.refereesLoading = this.store.select(getRefereesLoading);
     this.matchAggregates = this.store.select(getCallerMatchAggregateState);
     this.selectedItem = this.store.select(getSelectedMatchAggregateState);
+    this.selectedSecondCallItem = this.store.select(getSelectedSecondCallMatchAggregateState);
     this.matchAggregates.subscribe(this.onMatchesLoaded.bind(this));
     this.secondCalls = this.store.select(getSecondCallMatchesState);
     this.thirdCalls = this.store.select(getThirdCallMatchesState);
@@ -58,7 +62,15 @@ export class CallerPageComponent implements OnInit {
     this.store.dispatch(new SetSelectedMatchAggregate(selectedItem));
   }
 
+  onSecondCallMatchesSelected(selectedItem: MatchAggregate) {
+    this.store.dispatch(new SetSelectedSecondCallMatchAggregate(selectedItem));
+  }
+
   onMatchCalled(matchIds: number[]) {
     this.store.dispatch(new CallMatch(matchIds));
+  }
+
+  onSecondCallCalled(matchIds: number[]) {
+    this.store.dispatch(new SetSelectedSecondCallMatchAggregate(null));
   }
 }

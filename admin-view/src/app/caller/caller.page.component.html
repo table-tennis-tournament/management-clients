@@ -9,7 +9,7 @@
       >
       </toma-caller-match-list>
     </div>
-    <div class="col-sm-8 col-md-6">
+    <div class="col-sm-4 col-md-3">
       <toma-caller-match-detail
         [typeColor]="typeColor | async"
         [matchAggregate]="selectedItem | async"
@@ -17,12 +17,20 @@
       >
       </toma-caller-match-detail>
     </div>
+    <div class="col-sm-4 col-md-3">
+      <toma-second-call-match-detail
+        [typeColor]="typeColor | async"
+        [matchAggregate]="selectedSecondCallItem | async"
+        (matchCalled)="onSecondCallCalled($event)"
+      >
+      </toma-second-call-match-detail>
+    </div>
     <div class="col-sm-2 col-md-3">
       <toma-player-calls
         [typeColor]="typeColor | async"
         [secondCalls]="secondCalls | async"
         [thirdCalls]="thirdCalls | async"
-        (matchesSelected)="onMatchesSelected($event)"
+        (matchesSelected)="onSecondCallMatchesSelected($event)"
       >
       </toma-player-calls>
     </div>

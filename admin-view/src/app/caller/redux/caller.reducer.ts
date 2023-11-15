@@ -7,6 +7,7 @@ export interface CallerState {
   refereesLoading: boolean;
   callerMatches: MatchAggregate[];
   selectedMatchAggregate: MatchAggregate;
+  selectedSecondCallMatchAggregate: MatchAggregate;
   secondCallMatches: MatchAggregate[];
   thirdCallMatches: MatchAggregate[];
 }
@@ -16,6 +17,7 @@ const initialState: CallerState = {
   refereesLoading: false,
   callerMatches: [],
   selectedMatchAggregate: null,
+  selectedSecondCallMatchAggregate: null,
   secondCallMatches: [],
   thirdCallMatches: [],
 };
@@ -69,6 +71,11 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
         ...state,
         selectedMatchAggregate: action.payload,
       };
+    case CallerActionTypes.SetSelectedSecondCallMatchAggregate:
+      return {
+        ...state,
+        selectedSecondCallMatchAggregate: action.payload,
+      };
     default:
       return state;
   }
@@ -77,6 +84,7 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
 export const getReferees = (state: CallerState) => state.referees;
 export const getRefereesLoading = (state: CallerState) => state.refereesLoading;
 export const getSelectedMatchAggregate = (state: CallerState) => state.selectedMatchAggregate;
+export const getSelectedSecondCallMatchAggregate = (state: CallerState) => state.selectedSecondCallMatchAggregate;
 export const getCallerMatchAggregates = (state: CallerState) => state.callerMatches;
 export const getSecondCallMatchAggregates = (state: CallerState) => state.secondCallMatches;
 export const getThirdCallMatchAggregates = (state: CallerState) => state.thirdCallMatches;

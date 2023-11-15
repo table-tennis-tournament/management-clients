@@ -215,9 +215,10 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   def updateCallStateForMatch(matchId: Long): Unit = {
     val tableInfo = getTableInfoForMatch(matchId).flatMap(info => info.ttMatch).filter(_.ttMatch.id == matchId).head
     if(tableInfo.state == OnTable) {
-      return updateMatchState(SecondCall, matchId)
+      updateMatchState(SecondCall, matchId)
+    } else if(tableInfo.state == SecondCall) {
+      updateMatchState(ThirdCall, List(matchId))
     }
-    updateMatchState(ThirdCall, List(matchId))
   }
 
   def updateStateForMatchesAndRemoveFromTable(matchIds: Seq[Long], newState: MatchState): Unit = {
