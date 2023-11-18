@@ -1,17 +1,17 @@
-version: "3.3"  # optional since v1.27.0
+version: "3.3"
 services:
-  mysql:
-    image: holzleube/mysql-docker-image:5.2
+  mariadb:
+    image: holzleube/mysql-docker-image:6.1
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=ttv01
+      - MARIADB_ROOT_PASSWORD=ttv01
 #    healthcheck:
 #      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
 #      timeout: 20s
 #      retries: 10
   backend:
-    image: holzleube/turniermanager:5.0
+    image: holzleube/turniermanager:5.1
     ports:
       - "9000:9000"
     environment:
@@ -21,9 +21,9 @@ services:
       - WAIT_HOSTS=mysql:3306
       - WAIT_TIMEOUT=200
     depends_on:
-      - "mysql"
+      - "mariadb"
   admin:
-    image: holzleube/ttt-clients:aca1433de2176a90f06b4af8c909f6f16a533650
+    image: holzleube/ttt-clients:5.1
     ports:
       - "80:8080"
     depends_on:
