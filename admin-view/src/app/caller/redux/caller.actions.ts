@@ -19,7 +19,11 @@ export enum CallerActionTypes {
   CallMatch = '[CallMatch]',
   CallMatchSuccess = '[CallMatch] Success',
   CallMatchError = '[CallMatch] Error',
+  SecondCallMatch = '[SecondCallMatch]',
+  SecondCallMatchSuccess = '[SecondCallMatch] Success',
+  SecondCallMatchError = '[SecondCallMatch] Error',
   SetSelectedMatchAggregate = '[CallMatch] Set Selected Match',
+  SetSelectedSecondCallMatchAggregate = '[SecondCallMatch] Set Selected SecondCallMatch',
 }
 
 export class LoadCallerMatches implements Action {
@@ -112,8 +116,31 @@ export class CallMatchError implements Action {
   constructor(public payload: any) {}
 }
 
+export class SecondCallMatch implements Action {
+  readonly type = CallerActionTypes.SecondCallMatch;
+
+  constructor(public payload: number[]) {}
+}
+
+export class SecondCallMatchSuccess implements Action {
+  readonly type = CallerActionTypes.SecondCallMatchSuccess;
+
+  constructor(public payload: StatusDto) {}
+}
+
+export class SecondCallMatchError implements Action {
+  readonly type = CallerActionTypes.SecondCallMatchError;
+
+  constructor(public payload: any) {}
+}
+
 export class SetSelectedMatchAggregate implements Action {
   readonly type = CallerActionTypes.SetSelectedMatchAggregate;
+
+  constructor(public payload: any) {}
+}
+export class SetSelectedSecondCallMatchAggregate implements Action {
+  readonly type = CallerActionTypes.SetSelectedSecondCallMatchAggregate;
 
   constructor(public payload: any) {}
 }
@@ -134,4 +161,5 @@ export type CallerActionUnion =
   | LoadThirdCallMatches
   | LoadThirdCallMatchesSuccess
   | LoadThirdCallMatchesError
-  | SetSelectedMatchAggregate;
+  | SetSelectedMatchAggregate
+  | SetSelectedSecondCallMatchAggregate;

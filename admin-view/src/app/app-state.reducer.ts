@@ -75,6 +75,10 @@ export const getSelectedMatchAggregateState = createSelector(
   (state: State) => state.caller,
   fromCaller.getSelectedMatchAggregate
 );
+export const getSelectedSecondCallMatchAggregateState = createSelector(
+  (state: State) => state.caller,
+  fromCaller.getSelectedSecondCallMatchAggregate
+);
 export const getSecondCallMatchesState = createSelector(
   (state: State) => state.caller,
   fromCaller.getSecondCallMatchAggregates
