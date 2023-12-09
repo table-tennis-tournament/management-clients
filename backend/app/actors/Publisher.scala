@@ -8,7 +8,7 @@ import play.api.Logger
 import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable, UpdateTableManager}
 
 object Publisher{
-  def props: Props = Props[Publisher]
+  def props: Props = Props[Publisher]()
 }
 
 class Publisher extends Actor {

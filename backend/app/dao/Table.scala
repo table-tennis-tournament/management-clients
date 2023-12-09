@@ -166,7 +166,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   }
 
   def getFreeTable(tableIds: Seq[Long]): Option[TTTable] = {
-    val freeTables = getFreeTables
+    val freeTables = getFreeTables()
     if (tableIds.isEmpty) {
       freeTables.headOption
     } else freeTables.find(t => tableIds.contains(t.id))
@@ -582,7 +582,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
       if (m.id == matchId) {
         m.copy(
           resultRaw = x.mkString(","),
-          result = sets.head + " : " + sets(1),
+          result = s"${sets.head} : ${sets(1)}",
           balls1 = balls.head,
           balls2 = balls(1),
           sets1 = sets.head,
@@ -956,9 +956,9 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
           matchesLost = matchesLost,
           setsWon = setsWon,
           setsLost = setsLost,
-          sets = setsWon + " : " + setsLost,
-          games = matchesWon + " : " + matchesLost,
-          points = ballsWon + " : " + ballsLost,
+          sets = s"$setsWon : $setsLost",
+          games = s"$matchesWon : $matchesLost",
+          points = s"$ballsWon : $ballsLost",
           pointsWon = ballsWon,
           pointsLost = ballsLost,
           setsDiff = setsWon - setsLost,
@@ -1040,7 +1040,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     log.info("loadTypePerPlayer")
     dbConfigProvider.get.db.run(typePerPlayer.result) map {tpp =>
       log.info("tpp")
-      log.info("tpp" + tpp.size.toString())
+      log.info("tpp" + tpp.size.toString)
       ttTypePerPlayer = tpp
       true
     }
@@ -1069,7 +1069,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     log.info("loadAllFromDB")
     loadTypePerPlayer.map(x =>log.info("tpp: " + x.toString))
     updateMatchTableSeq flatMap { mt =>
-      updateTTTables flatMap { t =>
+      updateTTTables() flatMap { t =>
         loadNewMatches() flatMap { n =>
           updateDoublesSeq flatMap { b =>
             updateClubList flatMap { d =>

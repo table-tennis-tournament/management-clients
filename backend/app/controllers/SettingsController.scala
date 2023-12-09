@@ -43,6 +43,7 @@ class SettingsController @Inject() (implicit ec: ExecutionContext,
 
                   case _ => BadRequest(Json.toJson(Answer(successful = false, "Printer not Found")))
                 }
+              case _ => BadRequest(Json.toJson(Answer(successful = false, "Printer not Found")))
             }
             Future.successful(Ok(Json.toJson(Answer(successful = true, "set settings"))))
           case _ => Future.successful(BadRequest(Json.toJson(Answer(successful = false, "wrong request format"))))

@@ -76,6 +76,7 @@ class MatchListController @Inject() (tables: Tables,
         case Some(matchListItem) => {
           pub ! UpdateMatches(tables.allMatchesInfo.filter(m => matchListItem.matchId.contains(m.ttMatch.id)))
         }
+        case _ => BadRequest(Json.toJson(Answer(successful = false, "no match available")))
       }
 
       pub ! UpdateMatchList(tables.getAllMatchList)
