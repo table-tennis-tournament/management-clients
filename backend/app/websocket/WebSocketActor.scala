@@ -72,7 +72,7 @@ class WebSocketActor(out: ActorRef, topic: String) extends Actor {
     case m: UpdateTableManager =>
       log.info("send UpdateTableManager")
       out ! Json.toJson(m).toString()
-    case SubscribeAck(Subscribe(topic, None, `self`)) ⇒
+    case SubscribeAck(Subscribe(topic, None, `self`)) =>
       log.info("subscribing " + topic)
     case e => log.info("error: " + e.toString)
   }

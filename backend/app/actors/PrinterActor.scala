@@ -18,7 +18,7 @@ import play.api.{Environment, Logger}
 
 
 object PrinterActor {
-  def props: Props = Props[PrinterActor]
+  def props: Props = Props[PrinterActor]()
 
   case class Print(allMatchInfo: AllMatchInfo)
   case class GetPrinterList()
@@ -77,8 +77,8 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
       psO match {
         case Some(ps) =>
           printService = ps
-          sender ! PrinterFound
-        case _ => sender ! PrinterNotFound
+          sender() ! PrinterFound
+        case _ => sender() ! PrinterNotFound
       }
 
   }
