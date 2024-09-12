@@ -13,4 +13,4 @@ project/**
 .cache-main
 node_modules/
 *.iml
-.angular/
+**/.angular/
