@@ -1,6 +1,6 @@
 name := """TurnierManager"""
 
-version := "5.2"
+version := "5.3"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
 
@@ -48,5 +48,6 @@ dockerExposedPorts    := Seq(9000, 9443)
 
 // Docker fix
 javaOptions in Universal ++= Seq(
-  "-Dpidfile.path=/dev/null"
+  "-Dpidfile.path=/dev/null",
+  "-Dplay.evolutions.db.default.autoApply=true"
 )
