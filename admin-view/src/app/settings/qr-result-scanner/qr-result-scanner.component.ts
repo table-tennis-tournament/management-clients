@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+//import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { FreeTable } from '../../table/redux/table.actions';
 
 @Component({
@@ -12,11 +12,11 @@ export class QrResultScannerComponent implements OnInit {
   @Output()
   freeMatch: EventEmitter<number> = new EventEmitter();
 
-  @ViewChild(ZXingScannerComponent, {
-    read: ZXingScannerComponent,
-    static: false,
-  })
-  scanner: ZXingScannerComponent;
+  // @ViewChild(ZXingScannerComponent, {
+  //   read: ZXingScannerComponent,
+  //   static: false,
+  // })
+  // scanner: ZXingScannerComponent;
 
   private hasCameras: boolean;
   availableDevices: MediaDeviceInfo[];
@@ -26,7 +26,7 @@ export class QrResultScannerComponent implements OnInit {
 
   set selectedDevice(value: string) {
     this._selectedDevice = value;
-    this.selectedMediaDevice = this.scanner.getDeviceById(value);
+    //this.selectedMediaDevice = this.scanner.getDeviceById(value);
   }
 
   get selectedDevice(): string {
@@ -36,12 +36,12 @@ export class QrResultScannerComponent implements OnInit {
   constructor(private store: Store<any>) {}
 
   ngOnInit() {
-    this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
-      this.hasCameras = true;
-
-      console.log('Devices: ', devices);
-      this.availableDevices = devices;
-    });
+    // this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
+    //   this.hasCameras = true;
+    //
+    //   console.log('Devices: ', devices);
+    //   this.availableDevices = devices;
+    // });
   }
 
   handleQrCodeResult(result) {
