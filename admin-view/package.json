@@ -28,7 +28,7 @@
     "@types/sockjs-client": "1.1.1",
     "bootstrap": "4.6.2",
     "core-js": "2.5.4",
-    "deep-equal": "1.0.1",
+    "deep-equal": "2.2.3",
     "moment": "^2.24.0",
     "ngx-toastr": "^16.2.0",
     "rxjs": "6.6.7",

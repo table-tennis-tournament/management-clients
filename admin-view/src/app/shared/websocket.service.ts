@@ -1,6 +1,5 @@
-import { EventEmitter, Inject, Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DOCUMENT } from '@angular/common';
 import * as SockJS from 'sockjs-client';
 
 @Injectable({
@@ -9,7 +8,7 @@ import * as SockJS from 'sockjs-client';
 export class WebsocketService {
   private websocket: any;
 
-  constructor(@Inject(DOCUMENT) private document) {}
+  constructor() {}
 
   public connectTable(listeners: any): Observable<any> {
     return this.connectSocks(listeners);
@@ -21,9 +20,9 @@ export class WebsocketService {
     connectListener.subscribe(listeners.connected);
     disconnectListener.subscribe(listeners.disconnected);
 
-    return Observable.create((complete) => {
+    return new Observable((complete) => {
       this.websocket = new SockJS('/api/websocket');
-      this.websocket.onopen = function (e) {
+      this.websocket.onopen = function () {
         complete.next();
       };
       this.websocket.onmessage = function (e) {
