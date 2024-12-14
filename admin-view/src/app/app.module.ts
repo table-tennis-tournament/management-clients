@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -26,45 +26,39 @@ import { AdminRootModule } from './admin-root/admin-root.module';
 
 const components = [AppComponent];
 
-@NgModule({
-  declarations: components,
-  imports: [
-    AppRoutingModule,
-    DragDropModule,
-    SharedModule.forRoot(),
-    ToastrModule.forRoot({
-      timeOut: 5000,
-      extendedTimeOut: 2000,
-      closeButton: false,
-      positionClass: 'toast-bottom-center',
-    }),
-    StoreModule.forRoot(reducers, {
-      metaReducers,
-      runtimeChecks: {
-        strictStateImmutability: false,
-        strictActionImmutability: false,
-      },
-    }),
-    StoreDevtoolsModule.instrument({
-      name: 'Devtools',
-      logOnly: environment.production,
-    connectInZone: true}),
-    EffectsModule.forRoot([
-      TableEffects,
-      MatchEffects,
-      MatchListEffects,
-      DisciplineEffects,
-      SettingsEffects,
-      WebSocketEffects,
-      CallerEffects,
-      ResultEffects,
-    ]),
-    HttpClientModule,
-    NoopAnimationsModule,
-    AdminRootModule,
-  ],
-  providers: [TableService, WebsocketService, WebsocketHandlerService],
-  bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-})
+@NgModule({ declarations: components,
+    bootstrap: [AppComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA], imports: [AppRoutingModule,
+        DragDropModule,
+        SharedModule.forRoot(),
+        ToastrModule.forRoot({
+            timeOut: 5000,
+            extendedTimeOut: 2000,
+            closeButton: false,
+            positionClass: 'toast-bottom-center',
+        }),
+        StoreModule.forRoot(reducers, {
+            metaReducers,
+            runtimeChecks: {
+                strictStateImmutability: false,
+                strictActionImmutability: false,
+            },
+        }),
+        StoreDevtoolsModule.instrument({
+            name: 'Devtools',
+            logOnly: environment.production,
+            connectInZone: true
+        }),
+        EffectsModule.forRoot([
+            TableEffects,
+            MatchEffects,
+            MatchListEffects,
+            DisciplineEffects,
+            SettingsEffects,
+            WebSocketEffects,
+            CallerEffects,
+            ResultEffects,
+        ]),
+        NoopAnimationsModule,
+        AdminRootModule], providers: [TableService, WebsocketService, WebsocketHandlerService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}
