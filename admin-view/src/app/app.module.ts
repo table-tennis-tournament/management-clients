@@ -48,7 +48,7 @@ const components = [AppComponent];
     StoreDevtoolsModule.instrument({
       name: 'Devtools',
       logOnly: environment.production,
-    }),
+    connectInZone: true}),
     EffectsModule.forRoot([
       TableEffects,
       MatchEffects,
