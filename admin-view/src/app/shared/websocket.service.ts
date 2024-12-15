@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';
 
 @Injectable({
   providedIn: 'root',

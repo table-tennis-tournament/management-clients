@@ -28,7 +28,8 @@ const components = [AppComponent];
 
 @NgModule({ declarations: components,
     bootstrap: [AppComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA], imports: [AppRoutingModule,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [AppRoutingModule,
         DragDropModule,
         SharedModule.forRoot(),
         ToastrModule.forRoot({
