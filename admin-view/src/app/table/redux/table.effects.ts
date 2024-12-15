@@ -41,6 +41,15 @@ import { PrintService } from '../../shared/print.service';
 
 @Injectable()
 export class TableEffects {
+
+  constructor(
+    private actions$: Actions,
+    private tableService: TableService,
+    private toastService: ToastrService,
+    private matchService: MatchService,
+    private printService: PrintService
+  ) {}
+
   loadTables = createEffect(() =>
     this.actions$.pipe(
       ofType(TableActionTypes.Load),
@@ -204,11 +213,5 @@ export class TableEffects {
     )
   );
 
-  constructor(
-    private actions$: Actions,
-    private tableService: TableService,
-    private toastService: ToastrService,
-    private matchService: MatchService,
-    private printService: PrintService
-  ) {}
+
 }
