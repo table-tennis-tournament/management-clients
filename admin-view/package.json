@@ -27,7 +27,7 @@
     "@ngrx/store": "18.1.1",
     "@ngrx/store-devtools": "18.1.1",
     "@types/sockjs-client": "1.5.4",
-    "bootstrap": "4.6.2",
+    "bootstrap": "5.3.3",
     "core-js": "2.5.4",
     "deep-equal": "2.2.3",
     "moment": "^2.30.1",
