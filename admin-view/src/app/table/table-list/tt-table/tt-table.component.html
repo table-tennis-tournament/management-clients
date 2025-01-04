@@ -20,14 +20,16 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-card-actions>
-      <button mat-button *ngIf="!table.isLocked" (click)="lockTable.emit(table.number)">Sperren</button>
-      <button mat-button *ngIf="table.isLocked" (click)="unLockTable.emit(table.number)">Entsperren</button>
-      <span *ngIf="isGameAvailable()">
-        <button mat-button (click)="takeBackTable.emit(table)">Zurück</button>
-        <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
-        <button mat-button (click)="printTable.emit(table)">Drucken</button>
-        <button mat-button (click)="assignSecondTable.emit(table)">2.Tisch</button>
-      </span>
+      <div>
+        <button mat-button *ngIf="!table.isLocked" (click)="lockTable.emit(table.number)">Sperren</button>
+        <button mat-button *ngIf="table.isLocked" (click)="unLockTable.emit(table.number)">Entsperren</button>
+        <span *ngIf="isGameAvailable()">
+          <button mat-button (click)="takeBackTable.emit(table)">Zurück</button>
+          <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
+          <button mat-button (click)="printTable.emit(table)">Drucken</button>
+          <button mat-button (click)="assignSecondTable.emit(table)">2.Tisch</button>
+        </span>
+      </div>
     </mat-card-actions>
   </mat-expansion-panel>
 </mat-card>
