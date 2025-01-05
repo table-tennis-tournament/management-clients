@@ -5,18 +5,62 @@
     </button>
     <h1>Turniermanager</h1>
     <span class="example-spacer"></span>
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/callerView']" routerLinkActive="active">Ausrufer</a>
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/tableView']" routerLinkActive="active">Tische</a>
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/assignView']" routerLinkActive="active">Zuweiser</a>
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/supervisorView']" routerLinkActive="active"
-      >Supervisor</a
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/callerView']"
+      routerLinkActive="active"
+      >Ausrufer</span
     >
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/resultView']" routerLinkActive="active">Ergebnisse</a>
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/playerView']" routerLinkActive="active">Spieler</a>
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/settingsView']" routerLinkActive="active"
-      >Einstellungen</a
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/tableView']"
+      routerLinkActive="active"
+      >Tische</span
     >
-    <a href="#" class="padding-left" [routerLink]="['/admin-view/qrView']" routerLinkActive="active">Scanner</a>
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/assignView']"
+      routerLinkActive="active"
+      >Zuweiser</span
+    >
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/supervisorView']"
+      routerLinkActive="active"
+      >Supervisor</span
+    >
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/resultView']"
+      routerLinkActive="active"
+      >Ergebnisse</span
+    >
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/playerView']"
+      routerLinkActive="active"
+      >Spieler</span
+    >
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/settingsView']"
+      routerLinkActive="active"
+      >Einstellungen</span
+    >
+    <span
+      [style.cursor]="'pointer'"
+      class="padding-left"
+      [routerLink]="['/admin-view/qrView']"
+      routerLinkActive="active"
+      >Scanner</span
+    >
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container>
