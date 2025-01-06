@@ -1,13 +1,13 @@
 <div class="pt-4">
   <mat-card>
     <mat-card-title>
-      <div class="card-title group-view-header black-text" cdkDropList>
+      <div class="p-1 card-title group-view-header black-text" cdkDropList>
         <span cdkDrag [cdkDragDisabled]="!groupIsDraggable()" [cdkDragData]="group.matches">{{ group.name }}</span>
         <mat-icon *ngIf="group.isComplete">done</mat-icon>
         <mat-icon *ngIf="groupIsNotPlayable()">remove_circle_outline</mat-icon>
-        <span class="float-right" *ngIf="groupIsNotComplete()">{{ openMatches }}/{{ allMatchCount }}</span>
-        <span class="circle float-right" *ngFor="let tableNumber of tableNumbers">{{ tableNumber }}</span>
-        <span class="circle float-right" *ngIf="isGroupInWaitingList()">W</span>
+        <span class="float-end" *ngIf="groupIsNotComplete()">{{ openMatches }}/{{ allMatchCount }}</span>
+        <span class="circle float-end" *ngFor="let tableNumber of tableNumbers">{{ tableNumber }}</span>
+        <span class="circle float-end" *ngIf="isGroupInWaitingList()">W</span>
       </div>
     </mat-card-title>
     <mat-card-content>

@@ -1,18 +1,17 @@
-<span *ngIf="team[1] && team[0]" class="align-middle">
+<div *ngIf="team[1] && team[0]" class="full-width">
   <span *ngIf="showDisciplines">
     <span *ngFor="let currentType of team[0].types" [ngClass]="typeColor[currentType]" class="square"></span>
   </span>
-  {{ team[0].lastName }}/
+  <span>{{ team[0].lastName }}/{{ team[1].lastName }}</span>
   <span *ngIf="showDisciplines">
     <span *ngFor="let currentType of team[1].types" [ngClass]="typeColor[currentType]" class="square"></span>
   </span>
-  {{ team[1].lastName }}
-</span>
-  <span *ngIf="!team[1] && team[0]" class="align-middle">
+</div>
+<span *ngIf="!team[1] && team[0]" class="align-middle">
   <span *ngIf="showDisciplines">
     <span *ngFor="let currentType of team[0].types" [ngClass]="typeColor[currentType]" class="square"></span>
   </span>
-    {{ team[0].firstName }} {{ team[0].lastName }}
-    <span *ngIf="showClubs"> ({{ team[0].club.clubName }}) </span>
+  {{ team[0].firstName }} {{ team[0].lastName }}
+  <span *ngIf="showClubs"> ({{ team[0].club.clubName }}) </span>
 </span>
-  <span *ngIf="!team[1] && !team[0]"> [Frei] </span>
+<span *ngIf="!team[1] && !team[0]"> [Frei] </span>

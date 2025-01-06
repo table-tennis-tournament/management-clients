@@ -1,7 +1,7 @@
 <div class="header-main-container">
   <span class="header-center-content">
     <div class="single-bordered two-column-container">
-      <toma-team-item [team]="match.team1" [showDisciplines]="true"></toma-team-item>
+      <div class="full-width"><toma-team-item [team]="match.team1" [showDisciplines]="true"></toma-team-item></div>
       <div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 1 }}</div>
     </div>
     <div class="single-bordered two-column-container">

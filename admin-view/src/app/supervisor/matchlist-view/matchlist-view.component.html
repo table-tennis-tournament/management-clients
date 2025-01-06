@@ -23,6 +23,7 @@
           <toma-matchlist-single-item
             [matchListItem]="currentMatch"
             (matchListItemDelete)="matchListItemDelete.emit($event)"
+            [ngClass]="typeColor[currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0]"
           >
           </toma-matchlist-single-item>
         </div>
