@@ -1,19 +1,17 @@
-<div class="row m-2">
+<div class="d-flex flex-wrap gap-05rem">
   <mat-spinner *ngIf="matchesLoading"></mat-spinner>
-  <div *ngIf="selectedTab" mat-raised-button class="mr-2">{{ selectedTab.name }}</div>
-  <div *ngFor="let currentTab of tabs" class="mr-2">
+  <div *ngIf="selectedTab">{{ selectedTab.name }}</div>
+  <div *ngFor="let currentTab of tabs">
     <button mat-raised-button [ngClass]="typeColor[currentTab.id]" (click)="this.selectDiscipline.emit(currentTab.id)">
       {{ currentTab.name }}
     </button>
   </div>
-  <div class="m-2">
-    <mat-checkbox class="mr-2" [(ngModel)]="showAllMatches">Alle</mat-checkbox>
-    <mat-checkbox class="mr-2" [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
-    <mat-checkbox class="mr-2" [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
-    <mat-checkbox class="mr-2" (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh"
-      >Stop
-    </mat-checkbox>
-  </div>
+  <mat-checkbox [(ngModel)]="showAllMatches">Alle</mat-checkbox>
+  <mat-checkbox [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
+  <mat-checkbox [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
+  <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh"
+    >Stop
+  </mat-checkbox>
 </div>
 <div *ngIf="selectedTab" [ngClass]="typeColor[selectedTab.id]">
   <div *ngIf="selectedTab.stages" class="row">
