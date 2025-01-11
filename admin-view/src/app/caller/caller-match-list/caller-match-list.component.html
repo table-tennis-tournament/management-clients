@@ -8,11 +8,13 @@
         (click)="matchesSelected.emit(currentMatch)"
         *ngFor="let currentMatch of matchAggregates"
       >
-        <div class="d-flex">
+        <div class="d-flex justify-content-between w-100">
           <div>
             {{ currentMatch.name }}
           </div>
-          <span class="circle ml-auto" *ngFor="let tableNumber of currentMatch.tableNumbers">{{ tableNumber }}</span>
+          <div class="ml-auto">
+            <span class="circle" *ngFor="let tableNumber of currentMatch.tableNumbers">{{ tableNumber }}</span>
+          </div>
         </div>
       </mat-list-item>
     </mat-list>
