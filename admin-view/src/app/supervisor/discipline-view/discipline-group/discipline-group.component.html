@@ -40,13 +40,17 @@
             [cdkDragData]="[currentMatch]"
             class="collection-item"
             [class.disabled-item]="currentMatch.state === inWaitingListState">
-            <div>
-              <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
-              -
-              <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
-              <span *ngIf="currentMatch.table[0]" class="circle right">{{ currentMatch.table[0] }}</span>
-              <span *ngIf="currentMatch.result" class="right">{{ currentMatch.result | resultPipe }}</span>
-              <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>
+            <div class="d-flex justify-content-between w-100">
+              <div class="text-truncate">
+                <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
+                  -
+                <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
+              </div>
+              <div class="ml-auto">
+                <span *ngIf="currentMatch.table[0]" class="circle right">{{ currentMatch.table[0] }}</span>
+                <span *ngIf="currentMatch.result" class="right">{{ currentMatch.result | resultPipe }}</span>
+                <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>
+              </div>
             </div>
           </mat-list-item>
         </mat-list>

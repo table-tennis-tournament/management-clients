@@ -1,7 +1,7 @@
-<div class="d-flex justify-content-between">
+<div class="d-flex justify-content-between pt-1">
   <div class="text-truncate">
     <toma-team-item [team]="matchListItem.matchinfo[0].team1"></toma-team-item>
-    <br />
+    <span *ngIf=!matchListItem.matchinfo[0].team1[1]>-</span>
     <toma-team-item [team]="matchListItem.matchinfo[0].team2"></toma-team-item>
   </div>
   <div>
@@ -9,7 +9,7 @@
       {{ matchListItem.matchinfo[0].matchType | disciplineType }}
     </div>
     <a href="javascript:void(0)" class="secondary-content" (click)="matchListItemDelete.emit(matchListItem)">
-      <i class="material-icons white-text">close</i>
+      <i class="material-icons">close</i>
     </a>
   </div>
 </div>
