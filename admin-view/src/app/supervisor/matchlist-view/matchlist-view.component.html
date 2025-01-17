@@ -13,10 +13,10 @@
       [class.waiting-list-fixed-position]="fixWaitingList"
       class="waiting-list-drop-zone pt-0 pl-0 custom-border"
     >
-      <mat-list-item
+      <div
         *ngFor="let currentMatch of matchListMatches; let i = index"
         cdkDrag
-        class="border-bottom"
+        class="border-bottom border-dark px-3"
         [ngClass]="typeColor[currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0]"
       >
         <div class="cut-text pt-1" *ngIf="!currentMatch.matchinfo[1] && currentMatch.matchinfo[0]">
@@ -28,7 +28,7 @@
           </toma-matchlist-single-item>
         </div>
         <div
-          class="cut-text mb-3 mt-3"
+          class="cut-text"
           [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
           *ngIf="currentMatch.matchinfo[1]"
         >
@@ -37,7 +37,7 @@
             (matchListItemDelete)="matchListItemDelete.emit($event)"
           ></toma-matchlist-group-item>
         </div>
-      </mat-list-item>
+      </div>
     </mat-list>
   </div>
 </div>
