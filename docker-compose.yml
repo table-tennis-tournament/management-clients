@@ -1,4 +1,6 @@
-version: "3.3"
+networks:
+  app-tier:
+    driver: bridge
 services:
   mariadb:
     image: holzleube/mysql-docker-image:6.1
@@ -6,26 +8,32 @@ services:
       - "3306:3306"
     environment:
       - MARIADB_ROOT_PASSWORD=ttv01
-#    healthcheck:
-#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-#      timeout: 20s
-#      retries: 10
+    networks:
+      - app-tier
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
   backend:
-    image: holzleube/turniermanager:5.1
+    image: holzleube/turniermanager:5.3
     ports:
       - "9000:9000"
     environment:
-      - MYSQL_JDBC=jdbc:mysql://mysql:3306/tournamentManager
+      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/tournamentManager
       - MYSQL_USER=root
       - MYSQL_PW=ttv01
-      - WAIT_HOSTS=mysql:3306
-      - WAIT_TIMEOUT=200
+    networks: 
+      - app-tier
     depends_on:
       - "mariadb"
   admin:
-    image: holzleube/ttt-clients:5.1.0
+    image: holzleube/ttt-clients:5.3.0-sunday
     ports:
       - "80:8080"
+    networks:
+      - app-tier
     depends_on:
       - "backend"
 
