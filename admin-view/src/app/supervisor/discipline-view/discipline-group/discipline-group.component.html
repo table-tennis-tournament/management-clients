@@ -46,7 +46,7 @@
                   -
                 <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
               </div>
-              <div class="ml-auto">
+              <div class="ms-auto">
                 <span *ngIf="currentMatch.table[0]" class="circle right">{{ currentMatch.table[0] }}</span>
                 <span *ngIf="currentMatch.result" class="right">{{ currentMatch.result | resultPipe }}</span>
                 <span class="circle right" *ngIf="currentMatch.state === inWaitingListState">W</span>

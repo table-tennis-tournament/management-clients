@@ -1,5 +1,5 @@
-<span *ngIf="matches?.length === 1" class="text-truncate">
-  <div class="d-flex">
+<span *ngIf="matches?.length === 1" class="text-truncate ">
+  <div class="d-flex justify-content-center">
     <b *ngIf="!matches[0].group">{{ matches[0].matchType.name }} </b>
     <b *ngIf="matches[0].group"> Gruppe {{ matches[0].group.name }}</b>
   </div>

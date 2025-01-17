@@ -1,10 +1,10 @@
-<span *ngIf="table?.matches?.length > 0">
-  <mat-card-header>
+<div *ngIf="table?.matches?.length > 0">
+  <mat-card-header class="p-0 ">
     <mat-card-title class="d-flex align-items-center">
       <span *ngIf="table.number" class="circle">{{ table.number }}</span>
-      <span class="flex-grow-1 text-truncate-custom text-center">
+      <div class="flex-grow-1 text-truncate text-center">
         {{ table.matches[0].type.name }}
-      </span>
+      </div>
     </mat-card-title>
   </mat-card-header>
 
@@ -12,7 +12,7 @@
     <b *ngIf="table.isLocked">Tisch wird gesperrt.<br /></b>
     <toma-tt-table-match-item [matches]="table.matches"></toma-tt-table-match-item>
   </p>
-</span>
+</div>
 
 <span class="card-title activator" *ngIf="table?.matches?.length < 1" cdkDropList (cdkDropListDropped)="drop($event)">
   <h5>

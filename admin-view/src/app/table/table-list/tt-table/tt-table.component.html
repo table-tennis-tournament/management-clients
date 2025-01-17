@@ -1,5 +1,5 @@
 <mat-card [ngClass]="typeColor[table?.matches[0]?.type.id]">
-  <mat-card-content>
+  <mat-card-content class="p-2">
     <toma-tt-table-content
       [table]="table"
       (freeTable)="freeTable.emit(table)"
