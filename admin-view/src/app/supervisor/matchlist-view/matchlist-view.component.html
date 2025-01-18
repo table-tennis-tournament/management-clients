@@ -6,12 +6,12 @@
     <input type="checkbox" class="filled-in" [(ngModel)]="fixWaitingList" id="fix-waiting-list" />
     <label for="fix-waiting-list">Fixed</label>
   </div>
-  <div class="flex-grow-1 d-flex flex-column">
+  <div class="">
     <mat-list
       cdkDropList
       (cdkDropListDropped)="onDropSuccess($event)"
       [class.waiting-list-fixed-position]="fixWaitingList"
-      class="waiting-list-drop-zone pt-0 ps-0 custom-border"
+      class="waiting-list-drop-zone p-0 border border-dark"
     >
       <div
         *ngFor="let currentMatch of matchListMatches; let i = index"

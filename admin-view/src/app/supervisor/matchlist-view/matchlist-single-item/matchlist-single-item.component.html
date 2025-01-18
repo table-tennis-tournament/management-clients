@@ -1,8 +1,11 @@
 <div class="d-flex justify-content-between pt-1">
   <div class="text-truncate">
-    <toma-team-item [team]="matchListItem.matchinfo[0].team1"></toma-team-item>
-    <span *ngIf=!matchListItem.matchinfo[0].team1[1]>-</span>
-    <toma-team-item [team]="matchListItem.matchinfo[0].team2"></toma-team-item>
+    <div class="d-flex align-items-center">
+      <toma-team-item [team]="matchListItem.matchinfo[0].team1"></toma-team-item>
+    </div>
+    <div class="d-flex align-items-center">
+      <toma-team-item [team]="matchListItem.matchinfo[0].team2"></toma-team-item>
+    </div>
   </div>
   <div>
     <div class="discipline-match-list-square indigo white-text text-center">
