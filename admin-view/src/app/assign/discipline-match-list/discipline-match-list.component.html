@@ -48,9 +48,11 @@
     </div>
   </mat-list>
   <mat-list *ngIf="currentDisciplineId === -1">
-    <span *ngFor="let currentMatch of matchList; let i = index">
-      <span *ngIf="currentMatch.matchinfo[0].group !== null">
-        <div class="mat-list-item border-bottom border-secondary" cdkDropList [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
+    <div class="mat-list-item border-bottom border-secondary" 
+      *ngFor="let currentMatch of matchList; let i = index">
+      <div *ngIf="currentMatch.matchinfo[0].group !== null">
+        <div 
+          cdkDropList [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
           <toma-single-item
             [typeColor]="typeColor"
             *ngIf="currentMatch.matchinfo.length === 1"
@@ -72,8 +74,8 @@
             <i *cdkDragPreview class="material-icons">group</i>
           </toma-matchlist-group>
         </div>
-      </span>
-      <span *ngIf="currentMatch.matchinfo[0].group === null">
+      </div>
+      <div *ngIf="currentMatch.matchinfo[0].group === null">
         <div class="mat-list-item border-bottom border-secondary"
           *ngFor="let currentMatchItem of currentMatch.matchinfo"
           cdkDropList
@@ -89,7 +91,7 @@
             <i *cdkDragPreview class="material-icons">perm_identity</i>
           </toma-single-item>
         </div>
-      </span>
-    </span>
+      </div>
+    </div>
   </mat-list>
 </div>
