@@ -8,9 +8,10 @@ import { DisciplineGroup } from './models/discipline.group.model';
 import deepEqual from 'deep-equal';
 
 @Component({
-  selector: 'toma-discipline-view',
-  templateUrl: './discipline-view.component.html',
-  styleUrls: ['./discipline-view.component.scss'],
+    selector: 'toma-discipline-view',
+    templateUrl: './discipline-view.component.html',
+    styleUrls: ['./discipline-view.component.scss'],
+    standalone: false
 })
 export class DisciplineViewComponent {
   tabs: DisciplineTab[];

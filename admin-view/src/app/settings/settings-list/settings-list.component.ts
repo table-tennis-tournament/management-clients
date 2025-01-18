@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Settings } from '../settings.model';
 
 @Component({
-  selector: 'toma-settings-list',
-  templateUrl: './settings-list.component.html',
-  styleUrls: ['./settings-list.component.scss'],
+    selector: 'toma-settings-list',
+    templateUrl: './settings-list.component.html',
+    styleUrls: ['./settings-list.component.scss'],
+    standalone: false
 })
 export class SettingsListComponent {
   _settings: Settings[];

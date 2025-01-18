@@ -5,9 +5,10 @@ import { Match } from '../../shared/data/match.model';
 import { MatchState } from '../../shared/data/matchstate.model';
 
 @Component({
-  selector: 'toma-matchlist-view',
-  templateUrl: './matchlist-view.component.html',
-  styleUrls: ['./matchlist-view.component.scss'],
+    selector: 'toma-matchlist-view',
+    templateUrl: './matchlist-view.component.html',
+    styleUrls: ['./matchlist-view.component.scss'],
+    standalone: false
 })
 export class MatchlistViewComponent {
   @Input()

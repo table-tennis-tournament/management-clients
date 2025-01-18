@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Match } from '../data/match.model';
 
 @Pipe({
-  name: 'ttMatchDiscipline',
+    name: 'ttMatchDiscipline',
+    standalone: false
 })
 export class TtMatchDisciplinePipe implements PipeTransform {
   transform(match: Match, args?: any): any {

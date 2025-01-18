@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Discipline } from '../discipline.model';
 
 @Component({
-  selector: 'toma-discipline-select',
-  templateUrl: './discipline-select.component.html',
-  styleUrls: ['./discipline-select.component.scss'],
+    selector: 'toma-discipline-select',
+    templateUrl: './discipline-select.component.html',
+    styleUrls: ['./discipline-select.component.scss'],
+    standalone: false
 })
 export class DisciplineSelectComponent {
   selectedDiscipline: number;

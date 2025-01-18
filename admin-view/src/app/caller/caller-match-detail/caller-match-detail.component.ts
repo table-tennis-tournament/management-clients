@@ -3,9 +3,10 @@ import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { MatchState } from '../../shared/data/matchstate.model';
 
 @Component({
-  selector: 'toma-caller-match-detail',
-  templateUrl: './caller-match-detail.component.html',
-  styleUrls: ['./caller-match-detail.component.scss'],
+    selector: 'toma-caller-match-detail',
+    templateUrl: './caller-match-detail.component.html',
+    styleUrls: ['./caller-match-detail.component.scss'],
+    standalone: false
 })
 export class CallerMatchDetailComponent {
   @Input()

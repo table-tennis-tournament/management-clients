@@ -11,8 +11,9 @@ import { getDisciplineLoading, getDisciplineState } from '../discipline/redux';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'toma-result-list-page',
-  templateUrl: './result-list.page.component.html',
+    selector: 'toma-result-list-page',
+    templateUrl: './result-list.page.component.html',
+    standalone: false
 })
 export class ResultListPageComponent implements OnInit {
   matches: Observable<Match[]>;

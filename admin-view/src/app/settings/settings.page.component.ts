@@ -12,8 +12,9 @@ import { Observable } from 'rxjs';
 import { Settings } from './settings.model';
 
 @Component({
-  selector: 'toma-settings',
-  templateUrl: './settings.page.component.html',
+    selector: 'toma-settings',
+    templateUrl: './settings.page.component.html',
+    standalone: false
 })
 export class SettingsPageComponent implements OnInit {
   settings: Observable<Settings[]>;
