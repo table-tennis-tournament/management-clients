@@ -26,6 +26,7 @@
     "@ngrx/router-store": "18.1.1",
     "@ngrx/store": "18.1.1",
     "@ngrx/store-devtools": "18.1.1",
+    "@types/deep-equal": "^1.0.4",
     "@types/sockjs-client": "1.5.4",
     "bootstrap": "5.3.3",
     "core-js": "2.5.4",

@@ -5,7 +5,7 @@ import { DisciplineTab } from './models/discipline.tab.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { DisciplineStage } from './models/discipline.stage.model';
 import { DisciplineGroup } from './models/discipline.group.model';
-import { deepEqual } from 'deep-equal';
+import deepEqual from 'deep-equal';
 
 @Component({
   selector: 'toma-discipline-view',
