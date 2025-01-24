@@ -3,26 +3,32 @@
   padding: 2px 0;
 }
 
+.collection {
+  display: flex;
+  flex-direction: column;
+  
+  .collection-item {
+    margin: 20px 0;
+    height: 80px;
+  }
+}
 
 .collection .collection-item.first-stage {
-  height: 80px;
-  padding: 5px 0;
+  margin: 0px 0;  // minimal spacing between matches
 }
 
 .collection .collection-item.second-stage {
-  height: 80px;
-  padding: 50px 0;
+  margin: 40px 0;  // matches spaced further apart
 }
 
 .collection .collection-item.third-stage {
-  height: 80px;
-  padding: 140px 0;
+  margin: 120px 0;  // even more spacing
 }
 
 .collection .collection-item.fourth-stage {
-  height: 80px;
-  padding: 320px 0;
+  margin: 280px 0;  // maximum spacing for final stages
 }
+
 
 .header-main-container {
   display: flex;

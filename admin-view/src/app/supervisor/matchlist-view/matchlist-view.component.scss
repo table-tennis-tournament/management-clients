@@ -1,6 +1,6 @@
 .waiting-list-drop-zone {
   min-height: 100px;
-  min-width: 200px;
+  min-width: 100px;
   z-index: 999998;
 }
 
@@ -10,7 +10,7 @@
 
 .waiting-list-sorting-area {
   min-height: 100px;
-  width: 200px;
+  min-width: 100px;
 }
 
 .collection.custom-margin {
@@ -45,12 +45,6 @@
   text-align: center;
 }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: auto 30px;
-  grid-template-rows: auto;
-}
-
 .mat-list-item {
   height: 60px;
 }
@@ -58,3 +52,4 @@
 .mat-expansion-panel {
   z-index: 999999;
 }
+

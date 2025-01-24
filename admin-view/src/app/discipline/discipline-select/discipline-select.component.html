@@ -1,5 +1,5 @@
-<div class="pl-2 full-width flex-container">
-  <mat-form-field appearance="fill" class="flex_item_left">
+<div class="ps-2 d-flex gap-2">
+  <mat-form-field appearance="fill" class="flex-grow-1">
     <mat-label>Konkurrenz</mat-label>
     <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
       <mat-option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
@@ -7,7 +7,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <button mat-mini-fab color="primary" (click)="disciplineRefresh.emit(+selectedDiscipline)" class="flex_item_right">
+  <button mat-mini-fab color="primary" (click)="disciplineRefresh.emit(+selectedDiscipline)" class="mt-2">
     <mat-icon>refresh</mat-icon>
   </button>
 </div>

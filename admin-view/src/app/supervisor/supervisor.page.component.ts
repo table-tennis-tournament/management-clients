@@ -26,9 +26,10 @@ import { getDisciplineState } from '../discipline/redux';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'toma-supervisor.page',
-  templateUrl: './supervisor.page.component.html',
-  styleUrls: ['./supervisor.page.component.scss'],
+    selector: 'toma-supervisor.page',
+    templateUrl: './supervisor.page.component.html',
+    styleUrls: ['./supervisor.page.component.scss'],
+    standalone: false
 })
 export class SupervisorPageComponent implements OnInit {
   matches: Observable<Match[]>;

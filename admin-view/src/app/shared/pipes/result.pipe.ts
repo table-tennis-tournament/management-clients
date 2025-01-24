@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TTResult } from '../../table/table-list/result-modal/ttresult.model';
 
 @Pipe({
-  name: 'resultPipe',
+    name: 'resultPipe',
+    standalone: false
 })
 export class ResultPipe implements PipeTransform {
   FIRST_PLAYER_SETS = 1;

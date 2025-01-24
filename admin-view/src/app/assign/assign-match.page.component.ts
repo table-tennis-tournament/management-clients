@@ -10,8 +10,9 @@ import { LoadMatches } from './redux/match.actions';
 import { getDisciplineState } from '../discipline/redux';
 
 @Component({
-  selector: 'toma-assign-match.page',
-  templateUrl: './assign-match.page.component.html',
+    selector: 'toma-assign-match.page',
+    templateUrl: './assign-match.page.component.html',
+    standalone: false
 })
 export class AssignMatchPageComponent implements OnInit {
   matches: Observable<Match[]>;

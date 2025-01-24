@@ -1,12 +1,12 @@
 .discipline-match-list-item {
-  width: calc(100% - 30px);
+  width: calc(100% - 50px);
   float: left;
   line-height: 1rem;
 }
 
 .discipline-match-list-square {
-  width: 25px;
-  height: 25px;
+  width: 40px;
+  height: 40px;
   float: right;
   text-align: center;
 }
@@ -15,9 +15,6 @@
   height: 30px;
 }
 
-.without-margin {
-  margin-bottom: 0px;
-}
 
 .mat-list-item {
   height: 60px;

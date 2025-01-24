@@ -1,15 +1,16 @@
-<div class="cut-text" [ngClass]="typeColor[currentMatch.type.id]" [class.disabled-item]="!currentMatch.isPlayable">
+<div class="cut-text p-2" [ngClass]="typeColor[currentMatch.type.id]" [class.disabled-item]="!currentMatch.isPlayable">
   <div class="d-flex justify-content-between">
-    <div class="text-truncate">
-      <toma-team-item [team]="currentMatch.team1"></toma-team-item>
-      <br />
-      <toma-team-item [team]="currentMatch.team2"></toma-team-item>
-    </div>
-    <div>
-      <div class="discipline-match-list-square indigo white-text text-center">
-        <span *ngIf="!currentMatch.group">{{ currentMatch.matchType | disciplineType }}</span>
-        <span *ngIf="currentMatch.group">{{ currentMatch.group.name }}</span>
+    <div class="discipline-match-list-item d-flex flex-column h-100 ps-3 text-truncate">
+      <div class="flex-grow-1 d-flex align-items-center">
+        <toma-team-item [team]="currentMatch.team1"></toma-team-item>
       </div>
+      <div class="flex-grow-1 d-flex align-items-center">
+        <toma-team-item [team]="currentMatch.team2"></toma-team-item>
+      </div>
+    </div>
+    <div class="discipline-match-list-square indigo white-text text-center">
+      <span *ngIf="!currentMatch.group">{{ currentMatch.matchType | disciplineType }}</span>
+      <span *ngIf="currentMatch.group">{{ currentMatch.group.name }}</span>
     </div>
   </div>
 </div>

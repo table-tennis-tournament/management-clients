@@ -1,4 +1,4 @@
-<div class="cut-text" [ngClass]="typeColor[matchListItem.matchinfo[0].type.id]">
+<div class="p-3" [ngClass]="typeColor[matchListItem.matchinfo[0].type.id]">
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -19,17 +19,14 @@
         </span>
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <div class="collection custom-margin">
-      <a
-        *ngFor="let matchGroup of matchListItem.matchinfo"
-        href="javascript:void(0)"
-        [class.disabled-item]="!matchGroup.isPlayable"
-        class="collection-item"
-      >
+    <mat-list>
+      <div class="cut-text border-bottom border-dark" 
+      *ngFor="let matchGroup of matchListItem.matchinfo"
+        [class.disabled-item]="!matchGroup.isPlayable">
         <toma-team-item [team]="matchGroup.team1"></toma-team-item>
         -
         <toma-team-item [team]="matchGroup.team2"></toma-team-item>
-      </a>
-    </div>
+      </div>
+    </mat-list>
   </mat-expansion-panel>
 </div>

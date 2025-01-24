@@ -1,6 +1,6 @@
-@import '~bootstrap/scss/bootstrap-reboot';
-@import '~bootstrap/scss/bootstrap-grid';
-@import '~bootstrap/scss/_utilities';
+@import 'bootstrap/scss/bootstrap-reboot';
+@import 'bootstrap/scss/bootstrap-grid';
+@import 'bootstrap/scss/bootstrap-utilities';
 @import 'colors';
 span.circle {
   background: #fff;
@@ -27,6 +27,7 @@ span.circle {
 html,
 body {
   height: 100%;
+  overflow-x: hidden;
 }
 body {
   margin: 0;
@@ -56,6 +57,12 @@ body {
 
 .mat-expansion-panel-content > .mat-expansion-panel-body {
   padding: 5px !important;
+}
+
+.text-truncate-custom {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 

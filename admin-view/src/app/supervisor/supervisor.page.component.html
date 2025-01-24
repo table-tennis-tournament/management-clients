@@ -1,6 +1,6 @@
 <div class="{{ currentColor }} w-100">
-  <div class="row mr-1 ml-1" cdkDropListGroup>
-    <div class="col-10 p-3">
+  <div class="row" cdkDropListGroup>
+    <div class="col-10 p-4">
       <toma-discipline-view
         [matches]="matches | async"
         [disciplines]="disciplines | async"
@@ -11,7 +11,7 @@
         (selectDiscipline)="onSelectedDisciplineChanged($event)"
       ></toma-discipline-view>
     </div>
-    <div class="col-2">
+    <div class="col-2 p-1">
       <toma-matchlist-view
         [matchListMatches]="matchList | async"
         [typeColor]="typeColor | async"

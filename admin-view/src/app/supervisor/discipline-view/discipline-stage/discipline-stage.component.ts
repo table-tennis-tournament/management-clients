@@ -4,9 +4,10 @@ import { Match } from '../../../shared/data/match.model';
 import { MatchState } from '../../../shared/data/matchstate.model';
 
 @Component({
-  selector: 'toma-discipline-stage',
-  templateUrl: './discipline-stage.component.html',
-  styleUrls: ['./discipline-stage.component.scss'],
+    selector: 'toma-discipline-stage',
+    templateUrl: './discipline-stage.component.html',
+    styleUrls: ['./discipline-stage.component.scss'],
+    standalone: false
 })
 export class DisciplineStageComponent {
   lineStageClass: string[] = ['first-stage', 'second-stage', 'third-stage', 'fourth-stage'];

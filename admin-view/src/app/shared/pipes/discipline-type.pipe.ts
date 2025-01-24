@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { StageType } from '../data/stagetype.model';
 
 @Pipe({
-  name: 'disciplineType',
+    name: 'disciplineType',
+    standalone: false
 })
 export class DisciplineTypePipe implements PipeTransform {
   transform(value: StageType, args?: any): any {

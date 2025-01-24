@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import {
   AssignMatchToTable,
@@ -42,6 +41,15 @@ import { PrintService } from '../../shared/print.service';
 
 @Injectable()
 export class TableEffects {
+
+  constructor(
+    private actions$: Actions,
+    private tableService: TableService,
+    private toastService: ToastrService,
+    private matchService: MatchService,
+    private printService: PrintService
+  ) {}
+
   loadTables = createEffect(() =>
     this.actions$.pipe(
       ofType(TableActionTypes.Load),
@@ -205,11 +213,5 @@ export class TableEffects {
     )
   );
 
-  constructor(
-    private actions$: Actions,
-    private tableService: TableService,
-    private toastService: ToastrService,
-    private matchService: MatchService,
-    private printService: PrintService
-  ) {}
+
 }

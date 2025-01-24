@@ -1,9 +1,9 @@
 logs
 target
-/.idea
-/.idea_modules
-/.classpath
-/.settings
+.idea
+.idea_modules
+.classpath
+.settings
 /RUNNING_PID
 /bin
 /.cache-tests
@@ -13,3 +13,5 @@ project/**
 .cache-main
 node_modules/
 *.iml
+.angular
+dist

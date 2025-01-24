@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
-import { Observable, of } from 'rxjs';
-import { Action } from '@ngrx/store';
-import { LoadMatchListError, LoadMatchListSuccess } from '../../supervisor/redux/matchlist.actions';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { LoadResultsError, LoadResultsSuccess, ResultActionTypes } from './result.actions';
 import { ToastrService } from 'ngx-toastr';
