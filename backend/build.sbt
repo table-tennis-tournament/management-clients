@@ -4,7 +4,7 @@ version := "5.3"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
 
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.14"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "5.1.0",
