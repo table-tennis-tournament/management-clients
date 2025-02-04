@@ -43,11 +43,11 @@ enablePlugins(DockerPlugin)
 enablePlugins(AshScriptPlugin)
 
 dockerBaseImage       := "openjdk:jre-alpine"
-packageName in Docker := "holzleube/turniermanager"
+Docker / packageName := "holzleube/turniermanager"
 dockerExposedPorts    := Seq(9000, 9443)
 
 // Docker fix
-javaOptions in Universal ++= Seq(
+Universal / javaOptions ++= Seq(
   "-Dpidfile.path=/dev/null",
   "-Dplay.evolutions.db.default.autoApply=true"
 )
