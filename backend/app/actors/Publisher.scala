@@ -1,8 +1,8 @@
 package actors
 
-import akka.actor._
-import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.Publish
+import org.apache.pekko.actor._
+import org.apache.pekko.cluster.pubsub.DistributedPubSub
+import org.apache.pekko.cluster.pubsub.DistributedPubSubMediator.Publish
 import org.slf4j.LoggerFactory
 import play.api.Logger
 import websocket.WebSocketActor.{UpdateMatchList, UpdateMatches, UpdateTable, UpdateTableManager}

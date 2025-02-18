@@ -2,10 +2,10 @@ package controllers
 
 import actors.PrinterActor
 import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter}
-import akka.actor.{ActorRef, ActorSystem}
-import akka.pattern.ask
-import akka.stream.Materializer
-import akka.util.Timeout
+import org.apache.pekko.actor.{ActorRef, ActorSystem}
+import org.apache.pekko.pattern.ask
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.util.Timeout
 import dao.Tables
 import it.innove.play.pdf.PdfGenerator
 

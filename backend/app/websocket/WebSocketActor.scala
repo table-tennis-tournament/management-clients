@@ -3,9 +3,9 @@ package websocket
 /**
   * Created by jonas on 20.11.16.
   */
-import akka.actor._
-import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.{Subscribe, SubscribeAck}
+import org.apache.pekko.actor._
+import org.apache.pekko.cluster.pubsub.DistributedPubSub
+import org.apache.pekko.cluster.pubsub.DistributedPubSubMediator.{Subscribe, SubscribeAck}
 import models._
 import org.slf4j.LoggerFactory
 import play.api.Logger

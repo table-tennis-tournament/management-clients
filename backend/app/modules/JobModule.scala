@@ -4,13 +4,13 @@ import actors.{PrinterActor, Publisher}
 import scheduler.Scheduler
 import dao.Tables
 import com.google.inject.AbstractModule
-import play.api.libs.concurrent.AkkaGuiceSupport
+import play.api.libs.concurrent.PekkoGuiceSupport
 
 /**
   * Created by jonas on 06.11.16.
   */
 
-class JobModule extends AbstractModule with AkkaGuiceSupport {
+class JobModule extends AbstractModule with PekkoGuiceSupport {
   override def configure(): Unit = {
     bind(classOf[Scheduler]).asEagerSingleton()
     bind(classOf[Tables]).asEagerSingleton()

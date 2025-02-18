@@ -1,7 +1,7 @@
 package actors
 
 import java.awt.print.PrinterJob
-import akka.actor._
+import org.apache.pekko.actor._
 import controllers.AssetsFinder
 import it.innove.play.pdf.PdfGenerator
 

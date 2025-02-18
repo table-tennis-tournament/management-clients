@@ -2,13 +2,16 @@ name := """TurnierManager"""
 
 version := "5.4"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayAkkaHttpServer)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayPekkoHttpServer)
 
 scalaVersion := "2.13.14"
 
+// Add this line to resolve the scala-xml conflict
+libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-slick" % "5.1.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "5.1.0",
+  "org.playframework" %% "play-slick" % "6.1.1",
+  "org.playframework" %% "play-slick-evolutions" % "6.1.1",
   "mysql" % "mysql-connector-java" % "8.0.33",
   cacheApi,
   ws,
@@ -18,9 +21,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-serialization-jackson" % "2.8.5",
   "com.typesafe.akka" %% "akka-cluster-tools" % "2.8.5",
   "com.typesafe.akka" %% "akka-cluster-typed" %"2.8.5",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "2.8.0",
-  "joda-time" % "joda-time"    % "2.12.5",
-  "org.joda"  % "joda-convert" % "2.2.3",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.9.1",
+  "joda-time" % "joda-time"    % "2.13.1",
+  "org.joda"  % "joda-convert" % "2.2.4",
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
   "it.innove" % "play2-pdf" % "1.11.0",
   "org.apache.pdfbox" % "pdfbox" % "2.0.27",
@@ -28,6 +31,7 @@ libraryDependencies ++= Seq(
   "net.glxn" % "qrgen" % "1.4",
   "com.github.fdimuccio" %% "play2-sockjs" % "0.8.2"
 )
+
 
 routesGenerator := InjectedRoutesGenerator
 
