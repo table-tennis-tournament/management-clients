@@ -5,6 +5,7 @@ import scheduler.Scheduler
 import dao.Tables
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.PekkoGuiceSupport
+import javax.inject.Singleton
 
 /**
   * Created by jonas on 06.11.16.
@@ -12,6 +13,7 @@ import play.api.libs.concurrent.PekkoGuiceSupport
 
 class JobModule extends AbstractModule with PekkoGuiceSupport {
   override def configure(): Unit = {
+    // Remove ActorSystem binding as it's provided by Play
     bind(classOf[Scheduler]).asEagerSingleton()
     bind(classOf[Tables]).asEagerSingleton()
     bind(classOf[Startup]).asEagerSingleton()
