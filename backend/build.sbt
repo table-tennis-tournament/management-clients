@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time"    % "2.13.1",
   "org.joda"  % "joda-convert" % "2.2.4",
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
-  "it.innove" % "play2-pdf" % "1.11.0",
+  // "it.innove" % "play2-pdf" % "1.11.0",
   "org.apache.pdfbox" % "pdfbox" % "2.0.33",
   "com.typesafe.play" %% "play-json-joda" % "2.9.3",
   "net.glxn" % "qrgen" % "1.4",

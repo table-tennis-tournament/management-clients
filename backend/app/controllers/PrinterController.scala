@@ -7,7 +7,6 @@ import org.apache.pekko.pattern.ask
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.util.Timeout
 import dao.Tables
-import it.innove.play.pdf.PdfGenerator
 
 import javax.inject._
 import models.{AllMatchInfo, Answer, TTMatch}
@@ -21,8 +20,7 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-class PrinterController @Inject() (pdfGenerator: PdfGenerator,
-                                   @Named("printer_actor") printerActor: ActorRef,
+class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRef,
                                    tables: Tables,
                                    val controllerComponents: ControllerComponents)
                                   (implicit ec: ExecutionContext, system: ActorSystem, materializer: Materializer
@@ -75,7 +73,8 @@ class PrinterController @Inject() (pdfGenerator: PdfGenerator,
       case Some(ttMatch: TTMatch) =>
         tables.getAllMatchInfo(ttMatch) match {
           case Some(allMatchInfo: AllMatchInfo) =>
-            Ok(pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")).as("application/pdf")
+            // Ok(pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")).as("application/pdf")
+            Ok(Json.toJson(Answer(successful = true, "successful")))
           case _ => BadRequest(Json.toJson(Answer(successful = false, "allMatchInfo not found")))
         }
       case _ => BadRequest(Json.toJson(Answer(successful = false, "ttMatch not found")))
