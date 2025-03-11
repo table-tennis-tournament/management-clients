@@ -18,3 +18,14 @@ variable "client_secret" {
   sensitive   = true
   description = "Azure Client Secret"
 }
+
+variable "mysql_administrator_login" {
+  type        = string
+  description = "MySQL Server administrator login"
+}
+
+variable "mysql_administrator_password" {
+  type        = string
+  sensitive   = true
+  description = "MySQL Server administrator password"
+}
