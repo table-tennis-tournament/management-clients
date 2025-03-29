@@ -24,6 +24,7 @@ import play.api.http.HttpEntity
 import scala.concurrent.duration._
 import com.lowagie.text.PageSize
 import com.lowagie.text.pdf.PdfWriter
+import services.PDFService
 
 
 object PrinterActor {
@@ -46,7 +47,8 @@ object PrinterActor {
 
 class PrinterActor @Inject() (
     env: Environment, 
-    af: AssetsFinder
+    af: AssetsFinder,
+    pdfService: PDFService
 )(implicit ec: ExecutionContext) extends Actor {
   import actors.PrinterActor._
 
@@ -83,30 +85,10 @@ class PrinterActor @Inject() (
 //      Logger.debug("started")
 
     case PrintToPDF(allMatchInfo) =>
-      log.debug("Creating PDF using Flying Saucer")
-      try {
-        val html = views.html.schiri(allMatchInfo).toString()
-        
-        val os = new ByteArrayOutputStream()
-        val renderer = new ITextRenderer()
-        
-        // Set page size to A6 landscape
-        renderer.getSharedContext().setBaseURL("http://localhost:9000/")
-        renderer.getSharedContext().setPrint(true)
-        renderer.getSharedContext().setInteractive(false)
-        
-        renderer.setDocumentFromString(html)
-        renderer.layout()
-        renderer.createPDF(os, true)
-        
-        val pdf = os.toByteArray
-        os.close()
-        
-        sender() ! PDFCreated(pdf)
-      } catch {
-        case e: Exception =>
-          log.error("Error creating PDF", e)
-          sender() ! PDFError(e.getMessage)
+      log.debug("Creating PDF using PDFService")
+      pdfService.generatePDF(allMatchInfo) match {
+        case Right(pdf) => sender() ! PDFCreated(pdf)
+        case Left(error) => sender() ! PDFError(error)
       }
 
     case GetPrinterList =>
