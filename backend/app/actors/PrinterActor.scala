@@ -13,7 +13,17 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.printing.PDFPageable
 import org.slf4j.LoggerFactory
 import play.api.{Environment, Logger}
-
+import play.twirl.api.Html
+import org.xhtmlrenderer.pdf.ITextRenderer
+import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
+import play.api.mvc.RequestHeader
+import play.api.libs.ws.WSClient
+import scala.concurrent.ExecutionContext
+import javax.inject.Singleton
+import play.api.http.HttpEntity
+import scala.concurrent.duration._
+import com.lowagie.text.PageSize
+import com.lowagie.text.pdf.PdfWriter
 
 
 object PrinterActor {
@@ -23,6 +33,9 @@ object PrinterActor {
   case class GetPrinterList()
   case class SetPrinter(name: String)
   case class GetPrinter()
+  case class PrintToPDF(allMatchInfo: AllMatchInfo)
+  case class PDFCreated(pdf: Array[Byte])
+  case class PDFError(message: String)
 
   sealed trait PrinterAnswer
   case object PrinterNotFound extends PrinterAnswer
@@ -31,7 +44,10 @@ object PrinterActor {
 
 
 
-class PrinterActor @Inject() (env: Environment, af: AssetsFinder) extends Actor {
+class PrinterActor @Inject() (
+    env: Environment, 
+    af: AssetsFinder
+)(implicit ec: ExecutionContext) extends Actor {
   import actors.PrinterActor._
 
   val log = LoggerFactory.getLogger("printerLogger")
@@ -65,6 +81,33 @@ class PrinterActor @Inject() (env: Environment, af: AssetsFinder) extends Actor 
 //      Logger.debug("start print job")
 //      printJob.print(documentToBePrinted, aset)
 //      Logger.debug("started")
+
+    case PrintToPDF(allMatchInfo) =>
+      log.debug("Creating PDF using Flying Saucer")
+      try {
+        val html = views.html.schiri(allMatchInfo).toString()
+        
+        val os = new ByteArrayOutputStream()
+        val renderer = new ITextRenderer()
+        
+        // Set page size to A6 landscape
+        renderer.getSharedContext().setBaseURL("http://localhost:9000/")
+        renderer.getSharedContext().setPrint(true)
+        renderer.getSharedContext().setInteractive(false)
+        
+        renderer.setDocumentFromString(html)
+        renderer.layout()
+        renderer.createPDF(os, true)
+        
+        val pdf = os.toByteArray
+        os.close()
+        
+        sender() ! PDFCreated(pdf)
+      } catch {
+        case e: Exception =>
+          log.error("Error creating PDF", e)
+          sender() ! PDFError(e.getMessage)
+      }
 
     case GetPrinterList =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq

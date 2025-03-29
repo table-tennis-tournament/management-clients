@@ -1,7 +1,7 @@
 package controllers
 
 import actors.PrinterActor
-import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter}
+import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter, PDFCreated, PDFError, PrintToPDF}
 import org.apache.pekko.actor.{ActorRef, ActorSystem}
 import org.apache.pekko.pattern.ask
 import org.apache.pekko.stream.Materializer
@@ -68,16 +68,19 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
     }
   }
 
-  def printPDF(id: Long): Action[AnyContent] = Action {
+  def printPDF(id: Long): Action[AnyContent] = Action.async {
     tables.getMatch(id) match {
       case Some(ttMatch: TTMatch) =>
         tables.getAllMatchInfo(ttMatch) match {
           case Some(allMatchInfo: AllMatchInfo) =>
-            // Ok(pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")).as("application/pdf")
-            Ok(Json.toJson(Answer(successful = true, "successful")))
-          case _ => BadRequest(Json.toJson(Answer(successful = false, "allMatchInfo not found")))
+            (printerActor ? PrintToPDF(allMatchInfo)).map {
+              case PDFCreated(pdf) => Ok(pdf).as("application/pdf")
+              case PDFError(message) => InternalServerError(Json.toJson(Answer(successful = false, message)))
+              case _ => InternalServerError(Json.toJson(Answer(successful = false, "Unknown error")))
+            }
+          case _ => scala.concurrent.Future.successful(BadRequest(Json.toJson(Answer(successful = false, "allMatchInfo not found"))))
         }
-      case _ => BadRequest(Json.toJson(Answer(successful = false, "ttMatch not found")))
+      case _ => scala.concurrent.Future.successful(BadRequest(Json.toJson(Answer(successful = false, "ttMatch not found"))))
     }
   }
 

@@ -32,6 +32,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json-joda" % "2.9.3",
   "net.glxn" % "qrgen" % "1.4",
   "com.github.fdimuccio" %% "play2-sockjs" % "0.10.0",
+  "org.xhtmlrenderer" % "flying-saucer-pdf" % "9.3.1",
+  "org.xhtmlrenderer" % "flying-saucer-core" % "9.3.1",
 )
 
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % "always"
