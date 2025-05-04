@@ -74,6 +74,8 @@ POST    /api/printer/printAll               controllers.PrinterController.printA
 GET     /api/printer/set/:name              controllers.PrinterController.setPrinter(name: String)
 GET     /api/printer/setprintonstart/:printOnStart        controllers.PrinterController.setPrintOnStart(printOnStart: Boolean)
 GET     /api/printer/getQrCode/:content     controllers.PrinterController.getQrCode(content: String)
+GET     /api/printer/discover               controllers.PrinterController.discoverNetworkPrinters()
+GET     /api/printer/status/:id             controllers.PrinterController.printStatus(id: String)
 
 GET     /api/settings/all                   controllers.SettingsController.allSettings
 # POST    /settings                       controllers.SettingsController.setSettings

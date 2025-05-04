@@ -1,7 +1,7 @@
 package controllers
 
 import actors.PrinterActor
-import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter, PDFCreated, PDFError, PrintToPDF}
+import actors.PrinterActor.{GetPrinterList, Print, PrinterFound, SetPrinter, PDFCreated, PDFError, PrintToPDF, PrintResult}
 import org.apache.pekko.actor.{ActorRef, ActorSystem}
 import org.apache.pekko.pattern.ask
 import org.apache.pekko.stream.Materializer
@@ -16,12 +16,14 @@ import play.api.Logger
 import play.api.http.{DefaultFileMimeTypes, DefaultFileMimeTypesProvider, FileMimeTypesConfiguration}
 import play.api.libs.json._
 import play.api.mvc._
+import services.PrinterService
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRef,
                                    tables: Tables,
+                                   printerService: PrinterService,
                                    val controllerComponents: ControllerComponents)
                                   (implicit ec: ExecutionContext, system: ActorSystem, materializer: Materializer
                                         ) extends BaseController {
@@ -104,5 +106,16 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
     implicit val fileMimeTypes: DefaultFileMimeTypes = new DefaultFileMimeTypesProvider(FileMimeTypesConfiguration(Map("png" -> "image/png"))).get
     val file = QRCode.from(content).file("test.png")
     Ok.sendFile(new java.io.File(file.getPath))
+  }
+
+  def discoverNetworkPrinters(): Action[AnyContent] = Action {
+    val printers = printerService.discoverNetworkPrinters()
+    Ok(Json.toJson(printers))
+  }
+
+  def printStatus(id: String): Action[AnyContent] = Action {
+    // A placeholder for print job status checking
+    // In a real implementation, you would track job IDs
+    Ok(Json.toJson(Answer(successful = true, s"Print job $id status: completed")))
   }
 }
