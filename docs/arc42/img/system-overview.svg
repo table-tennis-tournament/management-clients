@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
+  <defs>
+    <style>
+      .admin { fill: #1976d2; stroke: #0d47a1; stroke-width: 2; }
+      .result { fill: #388e3c; stroke: #1b5e20; stroke-width: 2; }
+      .table { fill: #7b1fa2; stroke: #4a148c; stroke-width: 2; }
+      .backend { fill: #e65100; stroke: #bf360c; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 12px; fill: white; text-anchor: middle; }
+      .title { font-size: 14px; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="500" y="30" class="text title" style="fill: #333; font-size: 18px;">Table Tennis Tournament Management System - System Overview</text>
+  
+  <!-- Admin View -->
+  <rect x="100" y="100" width="200" height="120" rx="10" class="admin"/>
+  <text x="200" y="140" class="text title">Admin View</text>
+  <text x="200" y="160" class="text">[Angular 19 SPA]</text>
+  <text x="200" y="180" class="text">• Match assignment</text>
+  <text x="200" y="200" class="text">• Tournament management</text>
+  
+  <!-- Result View -->
+  <rect x="400" y="100" width="200" height="120" rx="10" class="result"/>
+  <text x="500" y="140" class="text title">Result View</text>
+  <text x="500" y="160" class="text">[Angular 14 SPA]</text>
+  <text x="500" y="180" class="text">• Live results display</text>
+  <text x="500" y="200" class="text">• Tournament standings</text>
+  
+  <!-- Table Manager View -->
+  <rect x="700" y="100" width="200" height="120" rx="10" class="table"/>
+  <text x="800" y="140" class="text title">Table Manager View</text>
+  <text x="800" y="160" class="text">[Angular 14 SPA]</text>
+  <text x="800" y="180" class="text">• Table management</text>
+  <text x="800" y="200" class="text">• Result entry</text>
+  
+  <!-- Backend -->
+  <rect x="350" y="350" width="300" height="150" rx="10" class="backend"/>
+  <text x="500" y="400" class="text title">Tournament Management Backend</text>
+  <text x="500" y="420" class="text">[Scala Play Framework]</text>
+  <text x="500" y="440" class="text">• Business logic</text>
+  <text x="500" y="460" class="text">• WebSocket communication</text>
+  <text x="500" y="480" class="text">• PDF generation</text>
+  
+  <!-- Arrows -->
+  <line x1="200" y1="220" x2="450" y2="350" class="arrow"/>
+  <text x="300" y="270" class="text" style="fill: #333; font-size: 11px;">HTTP/REST</text>
+  <text x="300" y="285" class="text" style="fill: #333; font-size: 11px;">WebSocket</text>
+  
+  <line x1="500" y1="220" x2="500" y2="350" class="arrow"/>
+  <text x="520" y="285" class="text" style="fill: #333; font-size: 11px;">HTTP/REST</text>
+  <text x="520" y="300" class="text" style="fill: #333; font-size: 11px;">WebSocket</text>
+  
+  <line x1="800" y1="220" x2="550" y2="350" class="arrow"/>
+  <text x="700" y="270" class="text" style="fill: #333; font-size: 11px;">HTTP/REST</text>
+  <text x="700" y="285" class="text" style="fill: #333; font-size: 11px;">WebSocket</text>
+  
+  <!-- Real-time Communication Indicator -->
+  <rect x="50" y="550" width="900" height="30" rx="5" style="fill: #fff3e0; stroke: #ff9800; stroke-width: 1;"/>
+  <text x="500" y="570" class="text" style="fill: #ff9800; font-size: 12px;">Real-time WebSocket communication enables instant updates across all connected clients</text>
+  
+  <!-- Technology Stack -->
+  <rect x="50" y="300" width="250" height="180" rx="5" style="fill: #f5f5f5; stroke: #ccc; stroke-width: 1;"/>
+  <text x="175" y="325" class="text title" style="fill: #333;">Technology Stack</text>
+  <text x="70" y="350" class="text" style="fill: #333; text-anchor: start;">Frontend:</text>
+  <text x="70" y="370" class="text" style="fill: #333; text-anchor: start;">• Angular 14/19</text>
+  <text x="70" y="385" class="text" style="fill: #333; text-anchor: start;">• ngrx for state management</text>
+  <text x="70" y="400" class="text" style="fill: #333; text-anchor: start;">• Angular Material UI</text>
+  <text x="70" y="420" class="text" style="fill: #333; text-anchor: start;">Backend:</text>
+  <text x="70" y="440" class="text" style="fill: #333; text-anchor: start;">• Scala 2.13</text>
+  <text x="70" y="455" class="text" style="fill: #333; text-anchor: start;">• Play Framework</text>
+  <text x="70" y="470" class="text" style="fill: #333; text-anchor: start;">• Pekko Actors</text>
+</svg>

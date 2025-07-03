@@ -1,0 +1,295 @@
+= C4 Model Diagrams - Table Tennis Tournament Management System
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectnums:
+:imagesdir: img
+
+== C4 Model Overview
+
+The C4 model provides a hierarchical way to describe the architecture of the Table Tennis Tournament Management System. It consists of four levels:
+
+1. **Context** - System context and external dependencies
+2. **Container** - High-level technology choices and responsibilities
+3. **Component** - Major structural building blocks
+4. **Code** - Implementation details (classes, interfaces)
+
+== Level 1: System Context
+
+image::c4-context.svg[C4 Context Diagram]
+
+The system context shows how the Table Tennis Tournament Management System fits into the overall environment:
+
+=== Actors
+
+* **Tournament Administrator**: Manages the overall tournament flow, assigns matches to tables, calls matches, and enters results
+* **Table Manager**: Handles specific table operations, enters match results, and manages table-level activities
+* **Spectator**: Views live tournament results and standings
+* **System Administrator**: Manages system deployment, configuration, and monitoring
+
+=== External Systems
+
+* **Tournament Registration System** (future): External system for player registration and tournament setup
+* **Live Stream System** (future): Integration with streaming platforms for tournament broadcast
+* **Payment System** (future): Integration for tournament fees and payments
+
+== Level 2: Container
+
+image::c4-container.svg[C4 Container Diagram]
+
+The container diagram shows the high-level technology choices and how containers communicate:
+
+=== Web Applications
+
+* **Admin View** (Angular 19): Single-page application for tournament administration
+  - Port: 4201
+  - Responsibilities: Match assignment, tournament flow management, result entry
+  - Technology: Angular, ngrx, Angular Material
+
+* **Result View** (Angular 14): Single-page application for displaying results
+  - Port: 4202
+  - Responsibilities: Live result display, tournament standings
+  - Technology: Angular, ngrx, Angular Material
+
+* **Table Manager View** (Angular 14): Single-page application for table management
+  - Port: 4200
+  - Responsibilities: Table-specific match management, result entry
+  - Technology: Angular, ngrx, Angular Material
+
+=== Backend Services
+
+* **Tournament Management API** (Scala Play): Backend service providing REST API and WebSocket communication
+  - Port: 9000
+  - Responsibilities: Business logic, data persistence, real-time communication
+  - Technology: Scala 2.13, Play Framework, Pekko Actors
+
+=== Data Storage
+
+* **Tournament Database** (MariaDB): Relational database for tournament data
+  - Port: 3306
+  - Responsibilities: Data persistence, ACID transactions
+  - Technology: MariaDB/MySQL
+
+=== Communication Patterns
+
+* **HTTP/REST**: API communication between frontend and backend
+* **WebSocket**: Real-time bidirectional communication
+* **Database Connections**: JDBC connections with connection pooling
+
+== Level 3: Component - Backend
+
+image::c4-backend-components.svg[C4 Backend Components]
+
+The backend component diagram shows the internal structure of the Tournament Management API:
+
+=== Controllers
+
+* **ApplicationController**: Main application controller and health checks
+* **MatchController**: Match management operations (CRUD, assignment, status updates)
+* **PlayerController**: Player and team management
+* **TableController**: Table management and assignment
+* **SettingsController**: System configuration and settings
+* **PrinterController**: PDF generation and printing services
+* **SockJSController**: WebSocket connection handling
+
+=== Services
+
+* **MatchService**: Business logic for match management
+* **PlayerService**: Player and team business logic
+* **TableService**: Table assignment and management logic
+* **PDFService**: PDF document generation
+* **PrinterService**: Print job management
+* **SettingsService**: Configuration management
+
+=== Data Access
+
+* **MatchDAO**: Match data access and persistence
+* **PlayerDAO**: Player data access and persistence
+* **TableDAO**: Table data access and persistence
+* **Database Connection Pool**: Manages database connections
+
+=== Actors (Pekko)
+
+* **WebSocketActor**: Handles individual WebSocket connections
+* **Publisher**: Publishes events to connected clients
+* **PrinterActor**: Manages print job queue
+* **SchedulerActor**: Handles background tasks and scheduling
+
+=== Models
+
+* **Match Models**: Domain objects for match representation
+* **Player Models**: Domain objects for player and team data
+* **Table Models**: Domain objects for table management
+* **DTO Models**: Data transfer objects for API communication
+
+== Level 3: Component - Frontend
+
+image::c4-frontend-components.svg[C4 Frontend Components]
+
+The frontend component diagram shows the common structure across all three Angular applications:
+
+=== Presentation Layer
+
+* **Page Components**: Main page-level components
+* **UI Components**: Reusable UI elements
+* **Modals/Dialogs**: Overlay components for user interactions
+* **Navigation Components**: Menu and routing components
+
+=== State Management (ngrx)
+
+* **Actions**: Define application events and user interactions
+* **Reducers**: Pure functions that update application state
+* **Effects**: Handle side effects (API calls, WebSocket events)
+* **Selectors**: Query and derive data from the store
+* **Store**: Centralized application state container
+
+=== Services
+
+* **HTTP Services**: API communication with backend
+* **WebSocket Service**: Real-time communication handling
+* **Utility Services**: Common functionality and helpers
+* **Guards**: Route protection and access control
+
+=== Models
+
+* **TypeScript Interfaces**: Type definitions for data structures
+* **Enums**: Constant definitions
+* **Validators**: Form validation logic
+
+== Level 4: Code - WebSocket Communication
+
+image::c4-websocket-code.svg[C4 WebSocket Code Diagram]
+
+The code-level diagram shows the detailed implementation of WebSocket communication:
+
+=== Backend WebSocket Implementation
+
+* **WebSocketActor**: Actor that handles individual WebSocket connections
+  - Manages connection lifecycle
+  - Subscribes to relevant events
+  - Broadcasts messages to connected clients
+
+* **Publisher**: Event publisher actor
+  - Receives domain events
+  - Distributes events to subscribed WebSocket actors
+  - Handles event filtering and routing
+
+* **SockJSController**: HTTP controller for WebSocket upgrades
+  - Handles WebSocket handshake
+  - Creates WebSocket actors
+  - Manages connection authentication
+
+=== Frontend WebSocket Implementation
+
+* **WebSocketService**: Service for WebSocket communication
+  - Establishes and manages WebSocket connections
+  - Handles connection failures and reconnection
+  - Dispatches received messages to ngrx store
+
+* **WebSocket Effects**: ngrx effects for WebSocket events
+  - Listens for WebSocket messages
+  - Dispatches appropriate actions
+  - Handles connection state changes
+
+* **WebSocket Actions**: ngrx actions for WebSocket events
+  - Connection established/lost
+  - Message received/sent
+  - Error handling
+
+== Level 4: Code - Match Management
+
+image::c4-match-code.svg[C4 Match Code Diagram]
+
+The code-level diagram shows the detailed implementation of match management:
+
+=== Backend Match Implementation
+
+* **MatchController**: REST controller for match operations
+  - GET /matches - List matches
+  - POST /matches - Create match
+  - PUT /matches/:id - Update match
+  - DELETE /matches/:id - Delete match
+
+* **MatchService**: Business logic for match management
+  - Match assignment logic
+  - Status validation
+  - Result calculation
+  - Event publishing
+
+* **MatchDAO**: Data access for match operations
+  - Database queries using Slick
+  - Transaction management
+  - Relationship handling
+
+=== Frontend Match Implementation
+
+* **MatchComponent**: UI component for match display
+  - Match information rendering
+  - User interaction handling
+  - State binding
+
+* **MatchService**: Frontend service for match operations
+  - HTTP API calls
+  - Data transformation
+  - Error handling
+
+* **Match Store**: ngrx store for match state
+  - Actions: LoadMatches, CreateMatch, UpdateMatch, DeleteMatch
+  - Reducers: Handle state updates
+  - Effects: API calls and side effects
+  - Selectors: Query match data
+
+== Deployment Containers
+
+image::c4-deployment.svg[C4 Deployment Diagram]
+
+The deployment diagram shows how the system is deployed in production:
+
+=== Production Environment
+
+* **Load Balancer**: Distributes traffic across multiple instances
+* **Web Server**: Nginx serving static frontend assets
+* **Application Server**: Play Framework application instances
+* **Database Server**: MariaDB with replication
+* **File Storage**: Persistent storage for generated PDFs
+
+=== Development Environment
+
+* **Development Machine**: Local development setup
+* **Docker Compose**: Local container orchestration
+* **Hot Reload**: Development servers with live reload
+
+== Technology Stack Summary
+
+[cols="1,2,2"]
+|===
+|Layer |Technology |Purpose
+
+|Frontend
+|Angular 14/19, ngrx, Angular Material
+|User interfaces and state management
+
+|Backend
+|Scala 2.13, Play Framework, Pekko Actors
+|Business logic and API services
+
+|Database
+|MariaDB/MySQL, Slick ORM
+|Data persistence and queries
+
+|Communication
+|HTTP/REST, WebSocket, SockJS
+|Client-server communication
+
+|Build Tools
+|Angular CLI, npm, sbt
+|Build and development tools
+
+|Deployment
+|Docker, Docker Compose, Nginx
+|Containerization and deployment
+
+|Testing
+|Jasmine, Karma, ScalaTest
+|Automated testing frameworks
+|===
