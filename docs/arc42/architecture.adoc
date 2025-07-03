@@ -1,0 +1,513 @@
+= Table Tennis Tournament Management System Architecture
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectnums:
+:imagesdir: img
+
+== Introduction and Goals
+
+=== Requirements Overview
+
+The Table Tennis Tournament Management System is a comprehensive solution for managing table tennis tournaments with real-time capabilities. The system supports multiple user roles and provides specialized interfaces for different tournament management tasks.
+
+==== Functional Requirements
+
+* Tournament flow management (match assignment, calling, result entry)
+* Real-time result display for spectators
+* Table-specific management interfaces
+* Player and team management
+* Match scheduling and assignment
+* PDF generation for tournament documents
+* WebSocket-based real-time communication
+
+==== Quality Goals
+
+[cols="1,2,2"]
+|===
+|Priority |Quality Goal |Description
+
+|1
+|Real-time Performance
+|System must provide immediate updates across all connected clients
+
+|2
+|Scalability
+|Support multiple concurrent tournaments and users
+
+|3
+|Reliability
+|System must maintain data consistency during tournament operations
+
+|4
+|Usability
+|Intuitive interfaces for different user roles (admin, table manager, viewer)
+
+|5
+|Maintainability
+|Modular architecture allowing independent development and deployment
+|===
+
+=== Stakeholders
+
+[cols="1,2,2"]
+|===
+|Role |Contact |Expectations
+
+|Tournament Administrator
+|Tournament officials
+|Complete tournament management, match assignment, result entry
+
+|Table Manager
+|Table officials
+|Table-specific match management, result entry
+
+|Spectators
+|Tournament viewers
+|Real-time access to current results and standings
+
+|System Administrator
+|IT staff
+|System deployment, monitoring, maintenance
+
+|Developers
+|Development team
+|Clear architecture, maintainable code, good documentation
+|===
+
+== Architecture Constraints
+
+=== Technical Constraints
+
+[cols="1,2,2"]
+|===
+|Constraint |Description |Impact
+
+|JVM Platform
+|Backend must run on JVM (Scala/Play Framework)
+|Technology stack limited to JVM-compatible solutions
+
+|Web-based Frontend
+|Browser-based user interfaces required
+|Angular SPA architecture chosen
+
+|Real-time Communication
+|WebSocket support required
+|SockJS implementation for browser compatibility
+
+|Database
+|Relational database for data persistence
+|MariaDB/MySQL chosen for reliability
+
+|Docker Deployment
+|Containerized deployment required
+|Multi-container architecture with Docker Compose
+|===
+
+=== Organizational Constraints
+
+* Development team familiar with Scala and Angular
+* Existing infrastructure supports Docker deployments
+* Tournament regulations require specific data formats
+
+== System Scope and Context
+
+=== Business Context
+
+image::business-context.svg[Business Context Diagram]
+
+The system operates within the context of table tennis tournament management, interfacing with:
+
+* Tournament administrators managing the overall tournament flow
+* Table managers handling specific table operations
+* Spectators viewing live results
+* External systems for tournament registration (future)
+
+=== Technical Context
+
+image::technical-context.svg[Technical Context Diagram]
+
+The system consists of:
+
+* Three Angular frontend applications
+* Scala Play Framework backend
+* MariaDB database
+* WebSocket communication layer
+* Docker containerization
+
+== Solution Strategy
+
+=== Technology Decisions
+
+[cols="1,2,2"]
+|===
+|Area |Decision |Rationale
+
+|Backend Framework
+|Scala Play Framework
+|Mature, scalable web framework with excellent WebSocket support
+
+|Frontend Framework
+|Angular with ngrx
+|Component-based architecture, mature ecosystem, excellent state management
+
+|Database
+|MariaDB/MySQL
+|Relational model fits tournament data, proven reliability
+
+|Real-time Communication
+|WebSockets with SockJS
+|Bi-directional communication, fallback support for older browsers
+
+|Containerization
+|Docker with Docker Compose
+|Simplified deployment, environment consistency
+
+|State Management
+|Redux/ngrx pattern
+|Predictable state management, time-travel debugging
+|===
+
+=== Architecture Patterns
+
+* **Microservices**: Separate frontend applications for different user roles
+* **Event-driven**: WebSocket-based real-time communication
+* **Layered Architecture**: Clear separation of presentation, business logic, and data layers
+* **Repository Pattern**: Data access abstraction in backend
+
+== Building Block View
+
+=== Level 1: System Overview
+
+image::system-overview.svg[System Overview]
+
+The system consists of four main building blocks:
+
+[cols="1,3"]
+|===
+|Building Block |Responsibility
+
+|Admin View
+|Tournament administration interface - match assignment, calling, result entry
+
+|Result View
+|Public display of tournament results and standings
+
+|Table Manager View
+|Table-specific management interface for match results
+
+|Backend
+|Business logic, data persistence, WebSocket communication, PDF generation
+|===
+
+=== Level 2: Backend Components
+
+image::backend-components.svg[Backend Components]
+
+[cols="1,3"]
+|===
+|Component |Responsibility
+
+|Controllers
+|HTTP request handling, REST API endpoints
+
+|Services
+|Business logic implementation, PDF generation
+
+|Models
+|Data structures and domain objects
+
+|DAO Layer
+|Database access and persistence
+
+|WebSocket Actors
+|Real-time communication handling
+
+|Scheduler
+|Background job processing
+|===
+
+=== Level 3: Frontend Components
+
+Each Angular application follows a similar structure:
+
+image::frontend-components.svg[Frontend Components]
+
+[cols="1,3"]
+|===
+|Component |Responsibility
+
+|Components
+|UI components and pages
+
+|Services
+|HTTP communication, business logic
+
+|Redux Store
+|State management (actions, reducers, effects)
+
+|Models
+|TypeScript interfaces and data structures
+
+|Guards/Interceptors
+|Authentication, HTTP interceptors
+|===
+
+== Runtime View
+
+=== Match Assignment Flow
+
+image::match-assignment-flow.svg[Match Assignment Flow]
+
+1. Administrator selects match and table
+2. System updates match status
+3. WebSocket notification sent to all clients
+4. Table manager receives notification
+5. Match appears in table manager interface
+
+=== Result Entry Flow
+
+image::result-entry-flow.svg[Result Entry Flow]
+
+1. Table manager enters match result
+2. System validates and stores result
+3. WebSocket notification broadcasts update
+4. All connected clients receive real-time update
+5. Result view displays updated standings
+
+=== Real-time Communication
+
+image::websocket-communication.svg[WebSocket Communication]
+
+The system uses WebSocket actors for real-time communication:
+
+1. Client connects via WebSocket
+2. WebSocket actor created for connection
+3. Actor subscribes to relevant events
+4. System events trigger actor notifications
+5. Actor broadcasts to connected clients
+
+== Deployment View
+
+=== Production Deployment
+
+image::deployment-view.svg[Deployment View]
+
+The system is deployed using Docker containers:
+
+[cols="1,2,2"]
+|===
+|Container |Technology |Purpose
+
+|Frontend Container
+|Nginx + Angular builds
+|Serves all three frontend applications
+
+|Backend Container
+|Scala Play application
+|Business logic and API services
+
+|Database Container
+|MariaDB
+|Data persistence
+
+|Reverse Proxy
+|Nginx
+|Load balancing and SSL termination
+|===
+
+=== Development Environment
+
+image::development-setup.svg[Development Setup]
+
+Development setup uses:
+
+* Individual npm/ng serve for each frontend app
+* sbt run for backend development
+* Docker Compose for database
+* Proxy configuration for API calls
+
+== Cross-cutting Concepts
+
+=== Security
+
+* Input validation on all endpoints
+* SQL injection prevention through ORM
+* WebSocket connection authentication
+* Environment-based configuration
+
+=== Error Handling
+
+* Centralized error handling in backend
+* User-friendly error messages in frontend
+* Logging for debugging and monitoring
+* Graceful degradation for WebSocket failures
+
+=== Logging and Monitoring
+
+* Structured logging with Logback
+* Performance monitoring for database queries
+* WebSocket connection monitoring
+* Error tracking and alerting
+
+=== Data Consistency
+
+* Database transactions for critical operations
+* Optimistic locking for concurrent updates
+* Event sourcing for audit trails
+* Real-time synchronization across clients
+
+== Design Decisions
+
+=== Multiple Frontend Applications
+
+**Decision**: Three separate Angular applications instead of single application
+
+**Rationale**: 
+* Different user roles have distinct requirements
+* Allows independent development and deployment
+* Reduces application complexity
+* Better performance through focused functionality
+
+**Consequences**:
+* Some code duplication between applications
+* Additional deployment complexity
+* Shared component libraries needed
+
+=== WebSocket Communication
+
+**Decision**: WebSocket-based real-time communication
+
+**Rationale**:
+* Tournament management requires immediate updates
+* Better user experience with live data
+* Reduced server load compared to polling
+
+**Consequences**:
+* Additional complexity in connection management
+* Fallback mechanisms needed for connection failures
+* State synchronization challenges
+
+=== Scala Play Framework
+
+**Decision**: Scala Play Framework for backend
+
+**Rationale**:
+* Excellent WebSocket support
+* Mature ecosystem
+* Good performance characteristics
+* Team expertise
+
+**Consequences**:
+* JVM deployment requirements
+* Learning curve for new team members
+* Dependency on Scala ecosystem
+
+== Quality Requirements
+
+=== Performance Requirements
+
+[cols="1,2,2"]
+|===
+|Metric |Requirement |Measurement
+
+|Response Time
+|< 500ms for API calls
+|Average response time monitoring
+
+|WebSocket Latency
+|< 100ms for real-time updates
+|Message delivery time tracking
+
+|Concurrent Users
+|Support 100+ concurrent users
+|Load testing scenarios
+
+|Database Performance
+|< 100ms for simple queries
+|Query execution time monitoring
+|===
+
+=== Reliability Requirements
+
+* 99.9% uptime during tournament hours
+* Automatic recovery from connection failures
+* Data consistency across all clients
+* Graceful handling of high load scenarios
+
+=== Usability Requirements
+
+* Intuitive interface for non-technical users
+* Mobile-responsive design
+* Accessibility compliance
+* Multi-language support (future)
+
+== Risks and Technical Debts
+
+=== Technical Risks
+
+[cols="1,2,2,1"]
+|===
+|Risk |Impact |Mitigation |Priority
+
+|WebSocket Connection Failures
+|Users lose real-time updates
+|Automatic reconnection, fallback mechanisms
+|High
+
+|Database Performance
+|Slow response times
+|Query optimization, indexing strategy
+|Medium
+
+|Browser Compatibility
+|Limited user access
+|Progressive enhancement, polyfills
+|Medium
+
+|Scalability Limits
+|System overload during large tournaments
+|Load testing, performance monitoring
+|High
+|===
+
+=== Technical Debt
+
+* Code duplication between frontend applications
+* Legacy Angular versions in some applications
+* Limited test coverage in some areas
+* Missing documentation for some components
+
+== Glossary
+
+[cols="1,2"]
+|===
+|Term |Definition
+
+|Match
+|A single game between two players or teams
+
+|Tournament
+|A series of matches organized in a specific format
+
+|Table Manager
+|Person responsible for managing matches at a specific table
+
+|WebSocket
+|Protocol for real-time bidirectional communication
+
+|ngrx
+|Redux pattern implementation for Angular
+
+|SockJS
+|WebSocket-like object with fallback options
+
+|Play Framework
+|Scala web framework for building web applications
+
+|Slick
+|Scala database access library
+
+|Pekko
+|Actor-based toolkit for building concurrent applications
+|===

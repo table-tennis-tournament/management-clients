@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <style>
+      .container { fill: #2196f3; stroke: #0d47a1; stroke-width: 2; }
+      .database { fill: #4caf50; stroke: #2e7d32; stroke-width: 2; }
+      .proxy { fill: #ff9800; stroke: #e65100; stroke-width: 2; }
+      .storage { fill: #9c27b0; stroke: #6a1b9a; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 11px; fill: white; text-anchor: middle; }
+      .title { font-size: 13px; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .node { fill: #37474f; stroke: #263238; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" class="text title" style="fill: #333; font-size: 18px;">Deployment View - Production Environment</text>
+  
+  <!-- Load Balancer -->
+  <rect x="450" y="80" width="300" height="80" rx="10" class="proxy"/>
+  <text x="600" y="110" class="text title">Load Balancer / Reverse Proxy</text>
+  <text x="600" y="130" class="text">[Nginx]</text>
+  <text x="600" y="150" class="text">SSL termination, load balancing</text>
+  
+  <!-- Production Node 1 -->
+  <rect x="100" y="200" width="450" height="500" rx="10" class="node"/>
+  <text x="325" y="230" class="text title" style="fill: white;">Production Node 1</text>
+  
+  <!-- Frontend Container -->
+  <rect x="130" y="250" width="180" height="100" rx="5" class="container"/>
+  <text x="220" y="280" class="text title">Frontend Container</text>
+  <text x="220" y="300" class="text">[Nginx + Angular]</text>
+  <text x="220" y="320" class="text">Serves all three SPAs</text>
+  <text x="220" y="340" class="text">Port: 80/443</text>
+  
+  <!-- Backend Container -->
+  <rect x="130" y="370" width="180" height="100" rx="5" class="container"/>
+  <text x="220" y="400" class="text title">Backend Container</text>
+  <text x="220" y="420" class="text">[Scala Play App]</text>
+  <text x="220" y="440" class="text">API + WebSocket</text>
+  <text x="220" y="460" class="text">Port: 9000</text>
+  
+  <!-- File Storage -->
+  <rect x="340" y="250" width="180" height="100" rx="5" class="storage"/>
+  <text x="430" y="280" class="text title">File Storage</text>
+  <text x="430" y="300" class="text">[Persistent Volume]</text>
+  <text x="430" y="320" class="text">PDF documents</text>
+  <text x="430" y="340" class="text">Log files</text>
+  
+  <!-- Database Container -->
+  <rect x="340" y="370" width="180" height="100" rx="5" class="database"/>
+  <text x="430" y="400" class="text title">Database Container</text>
+  <text x="430" y="420" class="text">[MariaDB]</text>
+  <text x="430" y="440" class="text">Tournament data</text>
+  <text x="430" y="460" class="text">Port: 3306</text>
+  
+  <!-- Monitoring -->
+  <rect x="130" y="500" width="180" height="80" rx="5" style="fill: #607d8b; stroke: #455a64; stroke-width: 2;"/>
+  <text x="220" y="530" class="text title">Monitoring</text>
+  <text x="220" y="550" class="text">[Prometheus/Grafana]</text>
+  <text x="220" y="570" class="text">Metrics & Alerts</text>
+  
+  <!-- Backup -->
+  <rect x="340" y="500" width="180" height="80" rx="5" style="fill: #795548; stroke: #5d4037; stroke-width: 2;"/>
+  <text x="430" y="530" class="text title">Backup Service</text>
+  <text x="430" y="550" class="text">[Automated]</text>
+  <text x="430" y="570" class="text">DB + File backups</text>
+  
+  <!-- Production Node 2 (Replica) -->
+  <rect x="650" y="200" width="450" height="500" rx="10" class="node"/>
+  <text x="875" y="230" class="text title" style="fill: white;">Production Node 2 (Replica)</text>
+  
+  <!-- Frontend Container 2 -->
+  <rect x="680" y="250" width="180" height="100" rx="5" class="container"/>
+  <text x="770" y="280" class="text title">Frontend Container</text>
+  <text x="770" y="300" class="text">[Nginx + Angular]</text>
+  <text x="770" y="320" class="text">Serves all three SPAs</text>
+  <text x="770" y="340" class="text">Port: 80/443</text>
+  
+  <!-- Backend Container 2 -->
+  <rect x="680" y="370" width="180" height="100" rx="5" class="container"/>
+  <text x="770" y="400" class="text title">Backend Container</text>
+  <text x="770" y="420" class="text">[Scala Play App]</text>
+  <text x="770" y="440" class="text">API + WebSocket</text>
+  <text x="770" y="460" class="text">Port: 9000</text>
+  
+  <!-- File Storage 2 -->
+  <rect x="890" y="250" width="180" height="100" rx="5" class="storage"/>
+  <text x="980" y="280" class="text title">File Storage</text>
+  <text x="980" y="300" class="text">[Persistent Volume]</text>
+  <text x="980" y="320" class="text">PDF documents</text>
+  <text x="980" y="340" class="text">Log files</text>
+  
+  <!-- Database Replica -->
+  <rect x="890" y="370" width="180" height="100" rx="5" class="database"/>
+  <text x="980" y="400" class="text title">Database Replica</text>
+  <text x="980" y="420" class="text">[MariaDB]</text>
+  <text x="980" y="440" class="text">Read replica</text>
+  <text x="980" y="460" class="text">Port: 3306</text>
+  
+  <!-- Monitoring 2 -->
+  <rect x="680" y="500" width="180" height="80" rx="5" style="fill: #607d8b; stroke: #455a64; stroke-width: 2;"/>
+  <text x="770" y="530" class="text title">Monitoring</text>
+  <text x="770" y="550" class="text">[Prometheus/Grafana]</text>
+  <text x="770" y="570" class="text">Metrics & Alerts</text>
+  
+  <!-- Log Aggregation -->
+  <rect x="890" y="500" width="180" height="80" rx="5" style="fill: #795548; stroke: #5d4037; stroke-width: 2;"/>
+  <text x="980" y="530" class="text title">Log Aggregation</text>
+  <text x="980" y="550" class="text">[ELK Stack]</text>
+  <text x="980" y="570" class="text">Centralized logging</text>
+  
+  <!-- Arrows -->
+  <!-- Load Balancer to Nodes -->
+  <line x1="550" y1="160" x2="325" y2="200" class="arrow"/>
+  <line x1="650" y1="160" x2="875" y2="200" class="arrow"/>
+  
+  <!-- Internal connections Node 1 -->
+  <line x1="220" y1="350" x2="220" y2="370" class="arrow"/>
+  <line x1="220" y1="470" x2="430" y2="470" class="arrow"/>
+  <line x1="430" y1="350" x2="430" y2="370" class="arrow"/>
+  
+  <!-- Internal connections Node 2 -->
+  <line x1="770" y1="350" x2="770" y2="370" class="arrow"/>
+  <line x1="770" y1="470" x2="980" y2="470" class="arrow"/>
+  <line x1="980" y1="350" x2="980" y2="370" class="arrow"/>
+  
+  <!-- Database replication -->
+  <line x1="520" y1="420" x2="650" y2="420" class="arrow"/>
+  <text x="585" y="415" class="text" style="fill: #333; font-size: 10px;">Replication</text>
+  
+  <!-- External connections -->
+  <text x="600" y="750" class="text" style="fill: #333; font-size: 12px;">External connections: HTTPS (443), HTTP (80), Database replication (3306)</text>
+  
+  <!-- Development Environment Box -->
+  <rect x="50" y="730" width="500" height="50" rx="5" style="fill: #e8f5e8; stroke: #4caf50; stroke-width: 2;"/>
+  <text x="300" y="750" class="text title" style="fill: #2e7d32;">Development: Docker Compose with local database</text>
+  <text x="300" y="770" class="text" style="fill: #2e7d32;">ng serve (frontends) + sbt run (backend) + MariaDB container</text>
+</svg>
