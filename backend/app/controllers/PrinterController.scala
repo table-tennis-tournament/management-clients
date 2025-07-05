@@ -108,9 +108,10 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
     Ok.sendFile(new java.io.File(file.getPath))
   }
 
-  def discoverNetworkPrinters(): Action[AnyContent] = Action {
-    val printers = printerService.discoverNetworkPrinters()
-    Ok(Json.toJson(printers))
+  def discoverNetworkPrinters(): Action[AnyContent] = Action.async {
+    printerService.discoverNetworkPrinters().map { printers =>
+      Ok(Json.toJson(Answer(true, "ok", Some(printers))))
+    }
   }
 
   def printStatus(id: String): Action[AnyContent] = Action {
