@@ -97,7 +97,7 @@ class PrinterService @Inject()(
       }
     } else {
       // Fallback to local printer discovery
-      Future.successful(getPrinterList.filter(name => name.contains("Brother") || name.contains("network")))
+      Future.failed(new Exception("No printer host configured"))
     }
   }
 
@@ -131,26 +131,32 @@ class PrinterService @Inject()(
         log.debug(s"IPP Response Body: ${response.body}")
         log.debug(s"IPP Response Body Bytes: ${response.bodyAsBytes.toArray.mkString(",")}")
         
+        val responseBody = response.body
+        val readableBody = parseIPPResponse(responseBody)
+        val fullResponse = s"Status: ${response.status}, StatusText: ${response.statusText}, Body: ${readableBody}, OriginalBody: ${responseBody}"
+        
         if (response.status == 200) {
           // Check if the job was actually successful or aborted
-          val responseBody = response.body
-          if (responseBody.contains("aborted-by-system") || responseBody.contains("job-state-reasons")) {
+          if (responseBody.contains("aborted-by-system")) {
             log.error(s"IPP job was aborted by printer: ${responseBody}")
-            Left(s"IPP job aborted by printer. Reason: ${responseBody}")
+            Left(fullResponse)
+          } else if (responseBody.contains("job-state-reasons")) {
+            log.error(s"IPP job has issues: ${responseBody}")
+            Left(fullResponse)
           } else {
             log.info("IPP print job submitted successfully")
-            Right(s"IPP print job submitted successfully. Response: ${responseBody}")
+            Right(fullResponse)
           }
         } else {
           log.error(s"IPP printing failed with status ${response.status}: ${response.statusText}")
           log.error(s"IPP error response body: ${response.body}")
-          Left(s"IPP printing failed: ${response.status} - ${response.statusText} - Body: ${response.body}")
+          Left(fullResponse)
         }
       }
       .recover {
         case ex => 
           log.error(s"IPP printing error: ${ex.getMessage}", ex)
-          Left(s"IPP printing error: ${ex.getMessage}")
+          Left(ex.getMessage)
       }
   }
 
@@ -181,18 +187,29 @@ class PrinterService @Inject()(
   private def createIPPRequest(pdfData: Array[Byte]): Array[Byte] = {
     // IPP request structure
     val ippVersion = Array[Byte](1, 1) // IPP version 1.1
-    val operationId = Array[Byte](0, 2) // Print-Job operation  
+    val operationId = Array[Byte](0, 2) // Print-Job operation (0x0002)
     val requestId = Array[Byte](0, 0, 0, 1) // Request ID
     
     // Operation attributes tag
     val operationAttributesTag = Array[Byte](1)
     
-    // Required attributes for Print-Job
+    // Required attributes for Print-Job (minimal set)
     val charsetAttr = createIPPAttribute(0x47.toByte, "attributes-charset", "utf-8")
     val languageAttr = createIPPAttribute(0x48.toByte, "attributes-natural-language", "en")
     val printerUriAttr = createIPPAttribute(0x45.toByte, "printer-uri", s"ipp://$printerHost:$printerPort/ipp/print")
-    val documentFormatAttr = createIPPAttribute(0x49.toByte, "document-format", "application/pdf")
-    val jobNameAttr = createIPPAttribute(0x42.toByte, "job-name", "Table Tennis Match")
+    val requestingUserAttr = createIPPAttribute(0x42.toByte, "requesting-user-name", "anonymous")
+    val jobNameAttr = createIPPAttribute(0x42.toByte, "job-name", "TTMatch")
+    val documentFormatAttr = createIPPAttribute(0x49.toByte, "document-format", "application/octet-stream")
+    
+    // Job attributes tag
+    val jobAttributesTag = Array[Byte](2)
+    
+    // Simplified job attributes - more compatible
+    val copiesAttr = createIPPIntegerAttribute(0x21.toByte, "copies", 1)
+    val sidesAttr = createIPPAttribute(0x44.toByte, "sides", "one-sided")
+    val mediaAttr = createIPPAttribute(0x44.toByte, "media", "iso_a6_105x148mm")
+    val printQualityAttr = createIPPIntegerAttribute(0x23.toByte, "print-quality", 4) // normal quality
+    val orientationAttr = createIPPIntegerAttribute(0x23.toByte, "orientation-requested", 4) // landscape
     
     // End of attributes tag
     val endOfAttributes = Array[Byte](3)
@@ -200,7 +217,9 @@ class PrinterService @Inject()(
     // Combine all parts
     val ippRequest = ippVersion ++ operationId ++ requestId ++ 
                     operationAttributesTag ++ charsetAttr ++ languageAttr ++ 
-                    printerUriAttr ++ documentFormatAttr ++ jobNameAttr ++
+                    printerUriAttr ++ requestingUserAttr ++ jobNameAttr ++ documentFormatAttr ++
+                    jobAttributesTag ++ copiesAttr ++ sidesAttr ++ mediaAttr ++ 
+                    printQualityAttr ++ orientationAttr ++
                     endOfAttributes ++ pdfData
     
     log.debug(s"IPP request created - total size: ${ippRequest.length} bytes")
@@ -219,6 +238,70 @@ class PrinterService @Inject()(
     Array((valueBytes.length >> 8).toByte, valueBytes.length.toByte) ++ valueBytes
   }
 
+  // Helper method to create IPP integer attribute
+  private def createIPPIntegerAttribute(valueTag: Byte, name: String, value: Int): Array[Byte] = {
+    val nameBytes = name.getBytes("UTF-8")
+    val valueBytes = Array[Byte](
+      (value >> 24).toByte,
+      (value >> 16).toByte,
+      (value >> 8).toByte,
+      value.toByte
+    )
+    
+    Array(valueTag) ++ 
+    Array((nameBytes.length >> 8).toByte, nameBytes.length.toByte) ++ nameBytes ++
+    Array[Byte](0, 4) ++ valueBytes // Integer values are always 4 bytes
+  }
+
+  // Parse IPP response to extract readable information
+  private def parseIPPResponse(responseBody: String): String = {
+    try {
+      // Extract readable strings from the IPP response
+      val attributes = scala.collection.mutable.Map[String, String]()
+      
+      // Look for common IPP attributes in the response
+      val patterns = Map(
+        "job-uri" -> "job-uri",
+        "job-id" -> "job-id", 
+        "job-state" -> "job-state",
+        "job-state-reasons" -> "job-state-reasons",
+        "attributes-charset" -> "attributes-charset",
+        "attributes-natural-language" -> "attributes-natural-language"
+      )
+      
+      patterns.foreach { case (key, displayName) =>
+        val index = responseBody.indexOf(key)
+        if (index != -1) {
+          // Try to extract the value after the attribute name
+          val afterKey = responseBody.substring(index + key.length)
+          val valueStart = afterKey.indexWhere(c => c.isLetterOrDigit || c == '/' || c == ':' || c == '-')
+          if (valueStart != -1) {
+            val valueEnd = afterKey.substring(valueStart).indexWhere(c => c < 32 && c != ' ')
+            val value = if (valueEnd != -1) {
+              afterKey.substring(valueStart, valueStart + valueEnd)
+            } else {
+              afterKey.substring(valueStart).take(50) // Limit length
+            }
+            if (value.nonEmpty) {
+              attributes(displayName) = value
+            }
+          }
+        }
+      }
+      
+      // Format the attributes as readable text
+      if (attributes.nonEmpty) {
+        attributes.map { case (key, value) => s"$key: $value" }.mkString(", ")
+      } else {
+        "IPP response (binary data)"
+      }
+    } catch {
+      case ex: Exception =>
+        log.warn(s"Failed to parse IPP response: ${ex.getMessage}")
+        "IPP response (parsing failed)"
+    }
+  }
+
   // Enhanced print method with network printing support
   def printPDFNetwork(allMatchInfo: AllMatchInfo): Future[Either[String, String]] = {
     log.info(s"Starting print job for match ${allMatchInfo.ttMatch.id}")
@@ -234,21 +317,13 @@ class PrinterService @Inject()(
           savePDFToFile(pdfData, s"match_${allMatchInfo.ttMatch.id}.pdf")
         }
 
-        if (useNetworkPrinting && printerHost.nonEmpty) {
-          log.info(s"Using network printing to $printerHost")
-          // Try Raw TCP first (more reliable for PDF), fallback to IPP
-          printViaRawTCP(pdfData).flatMap {
-            case Right(message) => 
-              log.info(s"Raw TCP printing succeeded: $message")
-              Future.successful(Right(message))
-            case Left(rawError) =>
-              log.warn(s"Raw TCP printing failed: $rawError, trying IPP")
-              printViaIPP(pdfData)
-          }
+        if (printerHost.nonEmpty) {
+          log.info(s"Using IPP printing to $printerHost")
+          // Use IPP printing only, no fallback
+          printViaIPP(pdfData)
         } else {
-          log.info("Using local printing")
-          // Fallback to local printing
-          Future.successful(printPDFLocal(allMatchInfo))
+          log.error("Printer host is empty - cannot print")
+          Future.failed(new IllegalStateException("Printer host is not configured"))
         }
         
       case Left(error) => 

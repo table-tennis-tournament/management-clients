@@ -32,16 +32,22 @@ class PrinterController @Inject() (@Named("printer_actor") printerActor: ActorRe
 
   val log = LoggerFactory.getLogger("printerControllerLogger")
 
-  def print(id: Long): Action[AnyContent] = Action {
+  def print(id: Long): Action[AnyContent] = Action.async {
     log.debug("print")
     tables.getMatch(id) match {
       case Some(ttMatch) => tables.getAllMatchInfo(ttMatch) match {
         case Some(allMatchInfo) =>
-          printerActor ! Print(allMatchInfo)
-          Ok(Json.toJson(Answer(successful = true, "printing")))
-        case _ => BadRequest(Json.toJson(Answer(successful = false, "AllMatchInfo not found")))
+          (printerActor ? Print(allMatchInfo)).map {
+            case PrintResult(true, message) => 
+              Ok(Json.toJson(Answer(successful = true, message)))
+            case PrintResult(false, error) => 
+              BadRequest(Json.toJson(Answer(successful = false, "Print failed", Some(error))))
+            case _ => 
+              InternalServerError(Json.toJson(Answer(successful = false, "Unknown print response")))
+          }
+        case _ => Future.successful(BadRequest(Json.toJson(Answer(successful = false, "AllMatchInfo not found"))))
       }
-      case _ => BadRequest(Json.toJson(Answer(successful = false, "Match not found")))
+      case _ => Future.successful(BadRequest(Json.toJson(Answer(successful = false, "Match not found"))))
     }
   }
 
