@@ -11,9 +11,10 @@ import * as ResultActions from './redux/result.actions';
 import {AppState, getGroups, getMatches, getStages, getTypes} from './redux/result.reducer';
 
 @Component({
-  selector: 'app-result',
-  templateUrl: './result.component.html',
-  styleUrls: ['./result.component.scss']
+    selector: 'app-result',
+    templateUrl: './result.component.html',
+    styleUrls: ['./result.component.scss'],
+    standalone: false
 })
 export class ResultComponent implements OnInit {
 

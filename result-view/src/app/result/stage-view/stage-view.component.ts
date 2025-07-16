@@ -2,8 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {DisciplineStage} from '../data/discipline.stage';
 
 @Component({
-  selector: 'app-stage-view',
-  templateUrl: './stage-view.component.html'
+    selector: 'app-stage-view',
+    templateUrl: './stage-view.component.html',
+    standalone: false
 })
 export class StageViewComponent implements OnInit {
 

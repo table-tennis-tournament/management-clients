@@ -2,9 +2,10 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Match} from '../data/match';
 
 @Component({
-  selector: 'app-match-item',
-  templateUrl: './match-item.component.html',
-  styleUrls: ['./match-item.component.scss']
+    selector: 'app-match-item',
+    templateUrl: './match-item.component.html',
+    styleUrls: ['./match-item.component.scss'],
+    standalone: false
 })
 export class MatchItemComponent implements OnInit {
 
