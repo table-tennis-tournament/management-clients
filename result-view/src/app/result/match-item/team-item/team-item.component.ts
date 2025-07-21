@@ -2,8 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Player} from '../../data/player';
 
 @Component({
-  selector: 'app-team-item',
-  templateUrl: './team-item.component.html'
+    selector: 'app-team-item',
+    templateUrl: './team-item.component.html',
+    standalone: false
 })
 export class TeamItemComponent implements OnInit {
 
