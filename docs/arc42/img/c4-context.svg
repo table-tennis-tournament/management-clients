@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .person { fill: #08427b; stroke: #052d56; stroke-width: 2; }
+      .system { fill: #1168bd; stroke: #0b4884; stroke-width: 2; }
+      .external { fill: #999999; stroke: #666666; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 12px; fill: white; text-anchor: middle; }
+      .title { font-size: 14px; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="400" y="30" class="text title" style="fill: #333; font-size: 18px;">Table Tennis Tournament Management System - System Context</text>
+  
+  <!-- Central System -->
+  <rect x="300" y="250" width="200" height="100" rx="10" class="system"/>
+  <text x="400" y="290" class="text title">Tournament</text>
+  <text x="400" y="310" class="text title">Management System</text>
+  <text x="400" y="330" class="text">[Software System]</text>
+  
+  <!-- Tournament Administrator -->
+  <rect x="50" y="150" width="120" height="80" rx="10" class="person"/>
+  <text x="110" y="180" class="text title">Tournament</text>
+  <text x="110" y="200" class="text title">Administrator</text>
+  <text x="110" y="220" class="text">[Person]</text>
+  
+  <!-- Table Manager -->
+  <rect x="50" y="350" width="120" height="80" rx="10" class="person"/>
+  <text x="110" y="380" class="text title">Table Manager</text>
+  <text x="110" y="400" class="text">[Person]</text>
+  
+  <!-- Spectator -->
+  <rect x="630" y="150" width="120" height="80" rx="10" class="person"/>
+  <text x="690" y="180" class="text title">Spectator</text>
+  <text x="690" y="200" class="text">[Person]</text>
+  
+  <!-- System Administrator -->
+  <rect x="630" y="350" width="120" height="80" rx="10" class="person"/>
+  <text x="690" y="380" class="text title">System</text>
+  <text x="690" y="400" class="text title">Administrator</text>
+  <text x="690" y="420" class="text">[Person]</text>
+  
+  <!-- External Systems -->
+  <rect x="300" y="50" width="200" height="60" rx="10" class="external"/>
+  <text x="400" y="80" class="text title">Registration System</text>
+  <text x="400" y="100" class="text">[External System]</text>
+  
+  <rect x="300" y="490" width="200" height="60" rx="10" class="external"/>
+  <text x="400" y="520" class="text title">Live Stream System</text>
+  <text x="400" y="540" class="text">[External System]</text>
+  
+  <!-- Arrows -->
+  <line x1="170" y1="190" x2="300" y2="270" class="arrow"/>
+  <text x="230" y="220" class="text" style="fill: #333; font-size: 10px;">Manages tournaments</text>
+  
+  <line x1="170" y1="390" x2="300" y2="330" class="arrow"/>
+  <text x="230" y="370" class="text" style="fill: #333; font-size: 10px;">Enters results</text>
+  
+  <line x1="630" y1="190" x2="500" y2="270" class="arrow"/>
+  <text x="570" y="220" class="text" style="fill: #333; font-size: 10px;">Views results</text>
+  
+  <line x1="630" y1="390" x2="500" y2="330" class="arrow"/>
+  <text x="570" y="370" class="text" style="fill: #333; font-size: 10px;">Administers system</text>
+  
+  <line x1="400" y1="110" x2="400" y2="250" class="arrow"/>
+  <text x="430" y="180" class="text" style="fill: #333; font-size: 10px;">Future integration</text>
+  
+  <line x1="400" y1="350" x2="400" y2="490" class="arrow"/>
+  <text x="430" y="420" class="text" style="fill: #333; font-size: 10px;">Future integration</text>
+</svg>
