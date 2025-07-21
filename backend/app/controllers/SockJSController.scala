@@ -1,20 +1,17 @@
 package controllers
 
-import akka.actor.ActorSystem
-import akka.stream.Materializer
-import akka.stream.scaladsl._
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl._
+import org.apache.pekko.stream.OverflowStrategy
 import com.google.inject.Inject
 import org.slf4j.LoggerFactory
-import play.api.Logger
-import play.api.libs.streams.ActorFlow
 import play.api.mvc.InjectedController
 import play.sockjs.api.{InjectedSockJSRouter, SockJS, SockJSSettings}
 import websocket.WebSocketActor
 
-/**
-  * Created by jonas on 20.11.16.
-  */
-class SockJSController @Inject() (implicit system: ActorSystem, materializer: Materializer) extends InjectedController with InjectedSockJSRouter  {
+class SockJSController @Inject() (implicit system: ActorSystem, materializer: Materializer) 
+    extends InjectedController with InjectedSockJSRouter {
 
   override protected def settings = SockJSSettings(websocket = false)
 
@@ -22,10 +19,20 @@ class SockJSController @Inject() (implicit system: ActorSystem, materializer: Ma
 
   // to handle a SockJS request override sockjs method
   def sockjs = SockJS.accept[String, String] { request =>
-
     log.info("websocket request tables")
-    ActorFlow.actorRef(out => WebSocketActor.props(out, "UpdateTable"))
+    
+    val (actorRef, publisher) = Source.actorRef[String](
+      completionMatcher = PartialFunction.empty,
+      failureMatcher = PartialFunction.empty,
+      bufferSize = 16,
+      overflowStrategy = OverflowStrategy.fail
+    ).preMaterialize()
+
+    system.actorOf(WebSocketActor.props(actorRef, "UpdateTable"))
+
+    Flow.fromSinkAndSource(
+      Sink.ignore,
+      publisher
+    )
   }
-
-
 }

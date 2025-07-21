@@ -1,39 +1,92 @@
 @(allMatchInfo: AllMatchInfo)
 
+<!DOCTYPE html>
 <html>
-    <style>
-            table.bordered, table.bordered th, table.bordered td{border: 1px solid black;}
-            table {
-                border-collapse: collapse;
-            }
-            .full-width{
-                width: 100%;
-            }
-            .first-column{
-                width:40%;
-            }
-            .set-column{
-                width:10%;
-            }
-            .thirty-percent{
-                   width:30%;
-            }
-            .cut-image{
-                height:100px;
-                width: 100px;
-            }
-            .seventy-percent{
-                width: 70%;
-            }
-            td{
-                height: 30px;
-            }
-            @@page {
-                size: 14.8cm 10.5cm;
-            }
-    </style>
     <head>
         <meta charset="utf-8"/>
+        <style type="text/css">
+            /* Page size for A6 landscape */
+            @@page {
+                size: 148mm 105mm;  /* A6 size */
+                margin: 5mm;
+                padding: 0;
+            }
+            body {
+                width: 138mm; /* A6 width minus margins */
+                height: 95mm; /* A6 height minus margins */
+                margin: 0;
+                padding: 0;
+                position: relative;
+                overflow: hidden; /* Prevent content overflow */
+            }
+            /* Normal styles */
+            table.bordered, table.bordered th, table.bordered td {
+                border: 1px solid black;
+            }
+            table {
+                border-collapse: collapse;
+                margin-bottom: 10px;
+            }
+            .full-width { width: 100%; }
+            .first-column { width: 40%; }
+            .set-column { width: 10%; }
+            .thirty-percent { width: 30%; }
+            .seventy-percent { width: 70%; }
+            .cut-image {
+                height: 20mm;
+                width: 20mm;
+            }
+            td { 
+                padding: 1mm;
+                height: 6mm;
+                font-size: 8pt;
+            }
+            h2 { 
+                font-size: 10pt;
+                margin: 1mm 0;
+            }
+            h3 { 
+                font-size: 9pt;
+                margin: 1mm 0;
+            }
+
+            /* Flying Saucer print styles - note the @@ for escaping */
+            @@media print {
+                body {
+                    margin: 0;
+                    padding: 0;
+                }
+                table.bordered, table.bordered th, table.bordered td {
+                    border: 1px solid black;
+                }
+                table {
+                    border-collapse: collapse;
+                    margin-bottom: 10px;
+                }
+                .full-width { width: 100%; }
+                .first-column { width: 40%; }
+                .set-column { width: 10%; }
+                .thirty-percent { width: 30%; }
+                .seventy-percent { width: 70%; }
+                .cut-image {
+                    height: 20mm;
+                    width: 20mm;
+                }
+                td { 
+                    padding: 1mm;
+                    height: 6mm;
+                    font-size: 8pt;
+                }
+                h2 { 
+                    font-size: 10pt;
+                    margin: 1mm 0;
+                }
+                h3 { 
+                    font-size: 9pt;
+                    margin: 1mm 0;
+                }
+            }
+        </style>
     </head>
 
     <body>
@@ -43,7 +96,7 @@
                 <h3>@allMatchInfo.matchType.name @allMatchInfo.ttMatch.roundNumber.map(_.toString).getOrElse("") </h3>
             </td>
             <td>
-                <img class="cut-image" src=@routes.PrinterController.getQrCode(allMatchInfo.ttMatch.id.toString)>
+                <img class="cut-image" src="@routes.PrinterController.getQrCode(allMatchInfo.ttMatch.id.toString)"/>
             </td>
             <td>
                 <h2>Nr. @allMatchInfo.ttMatch.id</h2>

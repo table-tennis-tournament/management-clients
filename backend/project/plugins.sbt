@@ -1,4 +1,4 @@
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.18")
+addSbtPlugin("org.playframework" % "sbt-plugin" % "3.0.6")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.5")
+addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.11.1")

@@ -1,9 +1,8 @@
 package actors
 
 import java.awt.print.PrinterJob
-import akka.actor._
+import org.apache.pekko.actor._
 import controllers.AssetsFinder
-import it.innove.play.pdf.PdfGenerator
 
 import javax.inject.Inject
 import javax.print.attribute.standard.{MediaSizeName, OrientationRequested, PageRanges}
@@ -14,7 +13,18 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.printing.PDFPageable
 import org.slf4j.LoggerFactory
 import play.api.{Environment, Logger}
-
+import play.twirl.api.Html
+import org.xhtmlrenderer.pdf.ITextRenderer
+import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
+import play.api.mvc.RequestHeader
+import play.api.libs.ws.WSClient
+import scala.concurrent.ExecutionContext
+import javax.inject.Singleton
+import play.api.http.HttpEntity
+import scala.concurrent.duration._
+import com.lowagie.text.PageSize
+import com.lowagie.text.pdf.PdfWriter
+import services.PDFService
 
 
 object PrinterActor {
@@ -24,6 +34,9 @@ object PrinterActor {
   case class GetPrinterList()
   case class SetPrinter(name: String)
   case class GetPrinter()
+  case class PrintToPDF(allMatchInfo: AllMatchInfo)
+  case class PDFCreated(pdf: Array[Byte])
+  case class PDFError(message: String)
 
   sealed trait PrinterAnswer
   case object PrinterNotFound extends PrinterAnswer
@@ -32,7 +45,11 @@ object PrinterActor {
 
 
 
-class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: AssetsFinder) extends Actor {
+class PrinterActor @Inject() (
+    env: Environment, 
+    af: AssetsFinder,
+    pdfService: PDFService
+)(implicit ec: ExecutionContext) extends Actor {
   import actors.PrinterActor._
 
   val log = LoggerFactory.getLogger("printerLogger")
@@ -53,19 +70,26 @@ class PrinterActor @Inject() (pdfGenerator: PdfGenerator, env: Environment, af: 
       import java.io.ByteArrayInputStream
 
 
-      val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
+      // val byteStream = pdfGenerator.toBytes(views.html.schiri(allMatchInfo), "http://localhost:9000/")
       log.debug("pdf created")
-      val doc: PDDocument = PDDocument.load(new ByteArrayInputStream(byteStream))
-      val printerJob = PrinterJob.getPrinterJob
-      printerJob.setPrintService(printService)
-      printerJob.setPageable(new PDFPageable(doc))
-      printerJob.print(aSet)
-      doc.close()
+      // val doc: PDDocument = PDDocument.load(new ByteArrayInputStream(byteStream))
+      // val printerJob = PrinterJob.getPrinterJob
+      // printerJob.setPrintService(printService)
+      // printerJob.setPageable(new PDFPageable(doc))
+      // printerJob.print(aSet)
+      // doc.close()
 //      val documentToBePrinted = new SimpleDoc(new ByteArrayInputStream(byteStream), docType, docSet)
 //      Logger.debug(printService.getSupportedDocFlavors.toSeq.map(_.getMediaSubtype).toString)
 //      Logger.debug("start print job")
 //      printJob.print(documentToBePrinted, aset)
 //      Logger.debug("started")
+
+    case PrintToPDF(allMatchInfo) =>
+      log.debug("Creating PDF using PDFService")
+      pdfService.generatePDF(allMatchInfo) match {
+        case Right(pdf) => sender() ! PDFCreated(pdf)
+        case Left(error) => sender() ! PDFError(error)
+      }
 
     case GetPrinterList =>
       val printers = PrintServiceLookup.lookupPrintServices(null, null).map(p => p.getName).toSeq

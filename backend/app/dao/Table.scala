@@ -2,7 +2,7 @@ package dao
 
 import java.util.UUID
 import actors.PrinterActor.Print
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 
 import javax.inject.{Inject, Named}
 import models._

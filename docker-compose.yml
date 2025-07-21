@@ -17,7 +17,7 @@ services:
       retries: 6
       start_period: 30s
   backend:
-    image: holzleube/turniermanager:5.3
+    image: holzleube/turniermanager:5.4
     ports:
       - "9000:9000"
     environment:

@@ -1,7 +1,7 @@
 package controllers
 
 import java.util.UUID
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import dao.Tables
 
 import javax.inject.{Inject, Named}
