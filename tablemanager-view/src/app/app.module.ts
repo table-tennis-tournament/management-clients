@@ -36,7 +36,7 @@ import {WebsocketHandlerService} from './table-list/websocket-handler.service';
         }),
         EffectsModule.forRoot([]),
         StoreRouterConnectingModule.forRoot(),
-        StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
+        StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production, connectInZone: true})
     ],
     providers: [WebsocketService, WebsocketHandlerService],
     bootstrap: [AppComponent]
