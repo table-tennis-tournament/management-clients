@@ -9,9 +9,10 @@ import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {Table} from './table.model';
 
 @Component({
-  selector: 'app-tt-table',
-  templateUrl: './tt-table.component.html',
-  styleUrls: ['./tt-table.component.scss']
+    selector: 'app-tt-table',
+    templateUrl: './tt-table.component.html',
+    styleUrls: ['./tt-table.component.scss'],
+    standalone: false
 })
 export class TtTableComponent {
 

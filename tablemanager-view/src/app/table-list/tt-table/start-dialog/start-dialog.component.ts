@@ -5,7 +5,8 @@ import {Match} from '../../match/match.model';
 @Component({
     selector: 'app-start-dialog',
     templateUrl: './start-dialog.component.html',
-    styleUrls: ['./start-dialog.component.scss']
+    styleUrls: ['./start-dialog.component.scss'],
+    standalone: false
 })
 export class StartDialogComponent {
     selectedMatch: Match;

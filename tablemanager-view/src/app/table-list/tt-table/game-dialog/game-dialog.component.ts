@@ -3,9 +3,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GameData} from './gamedata.model';
 
 @Component({
-  selector: 'app-game-dialog',
-  templateUrl: './game-dialog.component.html',
-  styleUrls: ['./game-dialog.component.scss']
+    selector: 'app-game-dialog',
+    templateUrl: './game-dialog.component.html',
+    styleUrls: ['./game-dialog.component.scss'],
+    standalone: false
 })
 export class GameDialogComponent implements OnInit {
   public resultString: string;

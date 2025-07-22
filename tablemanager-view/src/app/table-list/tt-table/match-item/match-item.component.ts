@@ -4,9 +4,10 @@ import {Match} from '../../match/match.model';
 import {PlayerDialogComponent} from '../player-dialog/player-dialog.component';
 
 @Component({
-  selector: 'app-match-item',
-  templateUrl: './match-item.component.html',
-  styleUrls: ['./match-item.component.scss']
+    selector: 'app-match-item',
+    templateUrl: './match-item.component.html',
+    styleUrls: ['./match-item.component.scss'],
+    standalone: false
 })
 export class MatchItemComponent {
 

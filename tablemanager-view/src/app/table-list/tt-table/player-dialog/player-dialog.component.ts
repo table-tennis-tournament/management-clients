@@ -4,9 +4,10 @@ import {Player} from '../../match/player.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-player-dialog',
-  templateUrl: './player-dialog.component.html',
-  styleUrls: ['./player-dialog.component.scss']
+    selector: 'app-player-dialog',
+    templateUrl: './player-dialog.component.html',
+    styleUrls: ['./player-dialog.component.scss'],
+    standalone: false
 })
 export class PlayerDialogComponent implements OnInit {
   public playersFormGroup: any;
