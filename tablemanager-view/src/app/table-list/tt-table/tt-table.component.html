@@ -41,13 +41,13 @@
             </div>
         </div>
         <div class="row">
-            <a  mat-button class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_a, true)" >
+            <div  class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_a, true)" >
               <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}"
                    class="mat-body-strong mb-0 text-truncate-custom">{{currentMatch().players_a[0] | singlePlayer}}</div>
                 <div *ngIf="currentMatch().players_a.length > 1" [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}"
                    class="mat-body-strong mb-0 text-truncate-custom">{{currentMatch().players_a[1] | singlePlayer}}</div>
                 <div *ngIf="currentMatch().players_a.length === 1" class="text-truncate-custom">{{currentMatch().players_a | clubName}}</div>
-            </a>
+            </div>
             <div class="col-1" *ngFor="let game of allGames()">
                 <p [ngClass]="{'won': this.gameService.playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
             </div>
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="row">
-            <a mat-button class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_b, false)">
+            <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_b, false)">
                 <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0 text-truncate-custom">
                     {{currentMatch().players_b[0] | singlePlayer}}
                 </div>
@@ -66,7 +66,7 @@
                     {{currentMatch().players_b[1] | singlePlayer}}
                 </div>
                 <div *ngIf="currentMatch().players_b.length === 1" class="text-truncate-custom">{{currentMatch().players_b | clubName}}</div>
-            </a>
+            </div>
             <div class="col-1" *ngFor="let game of allGames()">
                 <p [ngClass]="{'won': this.gameService.playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
             </div>

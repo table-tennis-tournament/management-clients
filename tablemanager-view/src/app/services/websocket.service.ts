@@ -1,11 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import * as SockJS from 'sockjs-client';
-import * as Stomp from 'stompjs';
-import {updatedMatchToTable} from '../table-list/redux/table-list.actions';
-import {AppState} from '../table-list/redux/table-list.reducer';
-import {Table} from '../table-list/tt-table/table.model';
 
 @Injectable({
     providedIn: 'root'
