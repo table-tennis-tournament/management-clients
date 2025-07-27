@@ -43,6 +43,14 @@ export class TtTableComponent {
     return this.table.matches.find(match => match.state === 'Started');
   }
 
+  isSecondCall() {
+    return this.table.matches.find(match => match.state === 'SecondCall');
+  }
+
+  isThirdCall() {
+    return this.table.matches.find(match => match.state === 'ThirdCall');
+  }
+
   tableHasStartedMatch(): boolean {
     return this.currentMatch() !== undefined;
   }
