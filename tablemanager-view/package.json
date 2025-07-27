@@ -27,7 +27,7 @@
     "@ngrx/router-store": "19.2.1",
     "@ngrx/store": "19.2.1",
     "@ngrx/store-devtools": "19.2.1",
-    "bootstrap": "4.6.0",
+    "bootstrap": "^5.3.7",
     "net": "1.0.2",
     "rxjs": "6.6.3",
     "sockjs-client": "1.6.1",
