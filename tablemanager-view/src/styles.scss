@@ -2,5 +2,12 @@
 
 @import 'bootstrap/scss/bootstrap-reboot';
 @import 'bootstrap/scss/bootstrap-grid';
-@import 'bootstrap/scss/_utilities';
+@import 'bootstrap/scss/bootstrap-utilities';
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+
+.text-truncate-custom {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

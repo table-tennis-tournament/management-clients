@@ -6,7 +6,8 @@ import {GameService} from '../game.service';
 @Component({
     selector: 'app-result-dialog',
     templateUrl: './result-dialog.component.html',
-    styleUrls: ['./result-dialog.component.scss']
+    styleUrls: ['./result-dialog.component.scss'],
+    standalone: false
 })
 export class ResultDialogComponent implements OnInit {
     resultString: string;

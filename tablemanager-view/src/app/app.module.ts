@@ -1,4 +1,4 @@
-import {HttpClientModule} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -16,14 +16,11 @@ import {WebsocketService} from './services/websocket.service';
 import {TableListModule} from './table-list/table-list.module';
 import {WebsocketHandlerService} from './table-list/websocket-handler.service';
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent
     ],
-    imports: [
-        BrowserModule,
+    bootstrap: [AppComponent], imports: [BrowserModule,
         BrowserAnimationsModule,
-        HttpClientModule,
         AppRoutingModule,
         NavigationModule,
         TableListModule,
@@ -36,10 +33,6 @@ import {WebsocketHandlerService} from './table-list/websocket-handler.service';
         }),
         EffectsModule.forRoot([]),
         StoreRouterConnectingModule.forRoot(),
-        StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
-    ],
-    providers: [WebsocketService, WebsocketHandlerService],
-    bootstrap: [AppComponent]
-})
+        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production, connectInZone: true })], providers: [WebsocketService, WebsocketHandlerService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
 }

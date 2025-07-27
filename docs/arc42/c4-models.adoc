@@ -46,15 +46,17 @@ The container diagram shows the high-level technology choices and how containers
   - Responsibilities: Match assignment, tournament flow management, result entry
   - Technology: Angular, ngrx, Angular Material
 
-* **Result View** (Angular 14): Single-page application for displaying results
+* **Result View** (Angular 19): Single-page application for displaying results
   - Port: 4202
   - Responsibilities: Live result display, tournament standings
-  - Technology: Angular, ngrx, Angular Material
+  - Technology: Angular 19, ngrx 19, Angular Material 19
+  - Status: Updated to Angular 19
 
-* **Table Manager View** (Angular 14): Single-page application for table management
+* **Table Manager View** (Angular 19): Single-page application for table management
   - Port: 4200
   - Responsibilities: Table-specific match management, result entry
-  - Technology: Angular, ngrx, Angular Material
+  - Technology: Angular 19, ngrx 19, Angular Material 19
+  - Status: Updated to Angular 19
 
 === Backend Services
 
@@ -259,18 +261,61 @@ The deployment diagram shows how the system is deployed in production:
 * **Docker Compose**: Local container orchestration
 * **Hot Reload**: Development servers with live reload
 
+== Recent Changes and Migration Completion
+
+=== Angular Version Matrix (as of 2025)
+
+[cols="1,2,2,2"]
+|===
+|Application |Current Version |Technology Stack |Migration Status
+
+|Admin View
+|Angular 19
+|Angular 19, ngrx 19, Angular Material 19
+|✅ Updated
+
+|Table Manager View
+|Angular 19
+|Angular 19, ngrx 19, Angular Material 19
+|✅ Updated to Angular 19
+
+|Result View
+|Angular 19
+|Angular 19, ngrx 19, Angular Material 19
+|✅ Updated to Angular 19
+|===
+
+=== Migration Benefits Achieved
+
+* **Consistency**: All three applications now on Angular 19.2.14
+* **Performance**: Improved bundle sizes and runtime performance across all apps
+* **Security**: Latest security patches and dependency updates  
+* **Developer Experience**: Enhanced build tools and TypeScript 5.8 support
+* **Maintainability**: Unified modern codebase across all applications
+* **Future-proof**: Foundation for upcoming Angular features
+* **Reduced Technical Debt**: Eliminated version fragmentation
+
+=== Next Migration Steps
+
+1. ✅ All applications now on Angular 19
+2. Consider standalone component migration across all applications
+3. Evaluate shared component library to reduce code duplication
+4. Update build and deployment pipelines for consistency
+5. Consolidate common patterns and components
+
 == Technology Stack Summary
 
 [cols="1,2,2"]
 |===
 |Layer |Technology |Purpose
 
-|Frontend
-|Angular 14/19, ngrx, Angular Material
-|User interfaces and state management
+
+|Frontend (All Applications)
+|Angular 19.2.14, ngrx 19.2.1, Angular Material 19.2.19, TypeScript 5.8.3
+|Unified modern frontend stack - Admin, Result, and TableManager views
 
 |Backend
-|Scala 2.13, Play Framework, Pekko Actors
+|Scala 2.13.14, Play Framework 2.9.x, Pekko Actors
 |Business logic and API services
 
 |Database
@@ -278,11 +323,11 @@ The deployment diagram shows how the system is deployed in production:
 |Data persistence and queries
 
 |Communication
-|HTTP/REST, WebSocket, SockJS
+|HTTP/REST, WebSocket with SockJS fallback
 |Client-server communication
 
 |Build Tools
-|Angular CLI, npm, sbt
+|Angular CLI 19.2.15, npm, sbt, Zone.js 0.15.1
 |Build and development tools
 
 |Deployment
@@ -290,6 +335,6 @@ The deployment diagram shows how the system is deployed in production:
 |Containerization and deployment
 
 |Testing
-|Jasmine, Karma, ScalaTest
+|Jasmine, Karma, ScalaTest, Protractor
 |Automated testing frameworks
 |===

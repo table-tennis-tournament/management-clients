@@ -174,6 +174,7 @@ The system consists of:
 * **Event-driven**: WebSocket-based real-time communication
 * **Layered Architecture**: Clear separation of presentation, business logic, and data layers
 * **Repository Pattern**: Data access abstraction in backend
+* **Modern Frontend**: Latest Angular 19 with incremental updates and modern tooling
 
 == Building Block View
 
@@ -188,13 +189,13 @@ The system consists of four main building blocks:
 |Building Block |Responsibility
 
 |Admin View
-|Tournament administration interface - match assignment, calling, result entry
+|Tournament administration interface - match assignment, calling, result entry (Angular 19)
 
 |Result View
-|Public display of tournament results and standings
+|Public display of tournament results and standings (Angular 19)
 
 |Table Manager View
-|Table-specific management interface for match results
+|Table-specific management interface for match results (Angular 19)
 
 |Backend
 |Business logic, data persistence, WebSocket communication, PDF generation
@@ -357,6 +358,34 @@ Development setup uses:
 * Event sourcing for audit trails
 * Real-time synchronization across clients
 
+== Recent Architecture Changes
+
+=== Angular 19 Migration Completion (2025)
+
+**Motivation**: Modernize frontend applications to leverage latest Angular features and security updates
+
+**Changes Implemented**:
+* All three applications updated to Angular 19.2.14
+* Table Manager View: Incremental update from Angular 14 to Angular 19
+* Result View: Updated to Angular 19.2.14
+* Admin View: Already on Angular 19
+* Updated dependencies: Angular Material 19, ngrx 19, TypeScript 5.8
+* Fixed legacy Material component imports
+* Added `standalone: false` declarations for existing components
+* Updated build tools and CLI to latest versions
+
+**Impact**:
+* Improved performance and bundle size optimization
+* Enhanced developer experience with latest tooling
+* Better security with updated dependencies
+* Foundation for future modernization of remaining applications
+
+**Next Steps**:
+* ✅ All applications now on Angular 19
+* Consider migration to standalone components across all applications
+* Evaluate shared component library for code reuse
+* Optimize build pipelines for consistency
+
 == Design Decisions
 
 === Multiple Frontend Applications
@@ -474,9 +503,10 @@ Development setup uses:
 === Technical Debt
 
 * Code duplication between frontend applications
-* Legacy Angular versions in some applications
+* Code duplication between frontend applications (all now on Angular 19)
 * Limited test coverage in some areas
 * Missing documentation for some components
+* Opportunity to consolidate shared components across applications
 
 == Glossary
 

@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import {Player} from './match/player.model';
 
 @Pipe({
-  name: 'clubName'
+    name: 'clubName',
+    standalone: false
 })
 export class ClubNamePipe implements PipeTransform {
 
