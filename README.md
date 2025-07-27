@@ -17,3 +17,8 @@ The [tablemanager-view](./tablemanager-view/README.md) is designed to manage spe
 ## backend
 
 The [backend](./backend/README.md) provides all functionality for the clients. It is a scala backend with play framework and a mariaDB.
+
+## Architecture Documentation
+
+- **[arc42 Architecture](./docs/arc42/architecture.adoc)** - Complete architecture documentation
+- **[C4 Models](./docs/arc42/c4-models.adoc)** - System visualization and component diagrams
