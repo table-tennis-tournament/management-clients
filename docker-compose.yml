@@ -17,7 +17,7 @@ services:
       retries: 6
       start_period: 30s
   backend:
-    image: holzleube/turniermanager:5.4
+    image: holzleube/turniermanager:6.1
     ports:
       - "9000:9000"
     environment:
@@ -29,7 +29,7 @@ services:
     depends_on:
       - "mariadb"
   admin:
-    image: holzleube/ttt-clients:5.3.0-sunday
+    image: holzleube/ttt-clients:v6.0.1
     ports:
       - "80:8080"
     networks:
