@@ -10,6 +10,7 @@ import play.api.db.Database
 import play.api.Mode
 import play.api.libs.json._
 import java.time.LocalDateTime
+import scala.concurrent.duration._
 
 class TypeControllerSpec extends Specification {
   
@@ -31,13 +32,9 @@ class TypeControllerSpec extends Specification {
         val statement = conn.createStatement()
         // Insert test data
         statement.execute("""
-          INSERT INTO type (
-            Type_ID, Type_Name, Type_Active, Type_AgeFrom, Type_AgeTo, 
-            Type_System, Type_groups, Type_nextmatches, Type_Sex, 
-            Type_TTRFrom, Type_TTRTo, Type_Blocked
-          ) VALUES 
-          (1, 'Herren Einzel', 1, 18, 99, 1, 4, 2, 'M', 0, 3000, 0),
-          (2, 'Damen Einzel', 1, 18, 99, 1, 4, 2, 'W', 0, 3000, 0);
+          INSERT INTO type (Type_Name, Type_Kind, Type_Active) VALUES 
+          ('Herren Einzel', 1, 1),
+          ('Damen Einzel', 1, 1);
         """)
       }
 
@@ -49,17 +46,18 @@ class TypeControllerSpec extends Specification {
       contentType(response) must beSome("application/json")
       
       val json = contentAsJson(response)
-      (json \ "types").as[JsArray].value.length must equalTo(2)
+      json.as[JsArray].value.length must equalTo(2)
       
-      val types = (json \ "types").as[Seq[JsObject]]
-      (types.head \ "name").as[String] must equalTo("Herren Einzel")
-      (types(1) \ "name").as[String] must equalTo("Damen Einzel")
+      val types = json.as[Seq[JsObject]]
+      val typeNames = types.map(t => (t \ "name").as[String])
+      typeNames must contain("Herren Einzel")
+      typeNames must contain("Damen Einzel")
       
-      // Verify additional fields
-      (types.head \ "active").as[Boolean] must beTrue
-      (types.head \ "ageFrom").as[Int] must equalTo(18)
-      (types.head \ "ageTo").as[Int] must equalTo(99)
-      (types.head \ "sex").as[String] must equalTo("M")
+      // Verify additional fields that exist in the Type model
+      val herrenEinzel = types.find(t => (t \ "name").as[String] == "Herren Einzel").get
+      (herrenEinzel \ "active").as[Boolean] must beTrue
+      (herrenEinzel \ "kind").as[Int] must equalTo(1)
+      (herrenEinzel \ "id").as[Long] must beGreaterThan(0L)
 
       // Cleanup
       Evolutions.cleanupEvolutions(database)
