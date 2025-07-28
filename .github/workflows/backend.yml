@@ -1,0 +1,68 @@
+name: Backend Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache SBT dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.sbt
+          ~/.ivy2/cache
+          backend/target
+          backend/project/target
+        key: ${{ runner.os }}-sbt-${{ hashFiles('backend/build.sbt', 'backend/project/build.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-sbt-
+          
+    - name: Run tests
+      working-directory: backend
+      run: sbt test
+      
+    - name: Build Docker image locally
+      working-directory: backend
+      run: sbt docker:publishLocal
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Tag and push Docker image
+      working-directory: backend
+      run: |
+        # Get the image name from sbt (assumes standard naming)
+        IMAGE_NAME=$(sbt -q "print dockerRepository" | tail -1)
+        IMAGE_TAG=$(sbt -q "print version" | tail -1)
+        SHORT_SHA=${GITHUB_SHA::7}
+        
+        # Tag for DockerHub
+        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${{ secrets.DOCKERHUB_USERNAME }}/turniermanager:${IMAGE_TAG}-${SHORT_SHA}
+        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${{ secrets.DOCKERHUB_USERNAME }}/turniermanager:latest
+        
+        # Push to DockerHub
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/turniermanager:${IMAGE_TAG}-${SHORT_SHA}
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/turniermanager:latest
