@@ -9,22 +9,21 @@ import play.api.db.evolutions.Evolutions
 import play.api.db.Database
 import play.api.Mode
 import play.api.libs.json._
-// --- These are the new imports you were missing ---
 import play.api.Configuration
 import com.typesafe.config.ConfigFactory
-// --------------------------------------------------
 
 class TypeControllerSpec extends Specification {
 
   // Helper to load the specific test configuration file
   def appWithTestConfig: Application = {
-    // 1. Manually load the configuration file
-    val config = Configuration(ConfigFactory.load("application.test.conf"))
-
-    // 2. Pass the loaded configuration to the builder
+    // Build app with test configuration only
     GuiceApplicationBuilder()
       .in(Mode.Test)
-      .configure(config)
+      .loadConfig(env => {
+        // Load only the test configuration, not the main application.conf
+        val testConfig = ConfigFactory.parseResources("application.test.conf")
+        Configuration(testConfig.resolve())
+      })
       .build()
   }
 
