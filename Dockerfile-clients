@@ -16,4 +16,4 @@ COPY --from=builder /admin-view/dist/out/browser/ /usr/share/nginx/html/admin-vi
 COPY --from=builder /result-view/dist/out/browser/ /usr/share/nginx/html/result-view
 COPY --from=builder /tablemanager-view/dist/out/ /usr/share/nginx/html/tablemanager-view
 
-COPY my_server_block.conf.conf /etc/nginx/nginx.conf
+COPY my_server_block.conf /etc/nginx/nginx.conf
