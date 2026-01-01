@@ -9,61 +9,65 @@ import play.api.db.evolutions.Evolutions
 import play.api.db.Database
 import play.api.Mode
 import play.api.libs.json._
-import java.time.LocalDateTime
+import play.api.Configuration
+import com.typesafe.config.ConfigFactory
 
 class TypeControllerSpec extends Specification {
-  
+
+  // Helper to load the specific test configuration file
+  def appWithTestConfig: Application = {
+    // Build app with test configuration only
+    GuiceApplicationBuilder()
+      .in(Mode.Test)
+      .loadConfig(env => {
+        // Load only the test configuration, not the main application.conf
+        val testConfig = ConfigFactory.parseResources("application.test.conf")
+        Configuration(testConfig.resolve())
+      })
+      .build()
+  }
+
   "TypeController" should {
-    "return all types" in {
-      // Given: A running application with test data
-      val app: Application = GuiceApplicationBuilder()
-        .in(Mode.Test)
-        .configure(Map(
-          "config.resource" -> "application.test.conf"
-        ))
-        .build()
+    "return all types" in new WithApplication(appWithTestConfig) {
 
       val database = app.injector.instanceOf[Database]
-      
+
       // Initialize database with test data
       Evolutions.applyEvolutions(database)
-      database.withConnection { conn =>
-        val statement = conn.createStatement()
-        // Insert test data
-        statement.execute("""
-          INSERT INTO type (
-            Type_ID, Type_Name, Type_Active, Type_AgeFrom, Type_AgeTo, 
-            Type_System, Type_groups, Type_nextmatches, Type_Sex, 
-            Type_TTRFrom, Type_TTRTo, Type_Blocked
-          ) VALUES 
-          (1, 'Herren Einzel', 1, 18, 99, 1, 4, 2, 'M', 0, 3000, 0),
-          (2, 'Damen Einzel', 1, 18, 99, 1, 4, 2, 'W', 0, 3000, 0);
-        """)
+
+      try {
+        database.withConnection { conn =>
+          val statement = conn.createStatement()
+          statement.execute("""
+            INSERT INTO type (Type_Name, Type_Kind, Type_Active) VALUES
+            ('Herren Einzel', 1, 1),
+            ('Damen Einzel', 1, 1);
+          """)
+        }
+
+        // When
+        val response = route(app, FakeRequest(GET, "/api/types/all")).get
+
+        // Then
+        status(response) must equalTo(OK)
+        contentType(response) must beSome("application/json")
+
+        val json = contentAsJson(response)
+        json.as[JsArray].value.length must equalTo(2)
+
+        val types = json.as[Seq[JsObject]]
+        val typeNames = types.map(t => (t \ "name").as[String])
+        typeNames must contain("Herren Einzel")
+        typeNames must contain("Damen Einzel")
+
+        val herrenEinzel = types.find(t => (t \ "name").as[String] == "Herren Einzel").get
+        (herrenEinzel \ "active").as[Boolean] must beTrue
+        (herrenEinzel \ "kind").as[Int] must equalTo(1)
+        (herrenEinzel \ "id").as[Long] must beGreaterThan(0L)
+
+      } finally {
+        Evolutions.cleanupEvolutions(database)
       }
-
-      // When: We make a request to the endpoint
-      val response = route(app, FakeRequest(GET, "/api/types/all")).get
-
-      // Then: We should get a successful response with the test data
-      status(response) must equalTo(OK)
-      contentType(response) must beSome("application/json")
-      
-      val json = contentAsJson(response)
-      (json \ "types").as[JsArray].value.length must equalTo(2)
-      
-      val types = (json \ "types").as[Seq[JsObject]]
-      (types.head \ "name").as[String] must equalTo("Herren Einzel")
-      (types(1) \ "name").as[String] must equalTo("Damen Einzel")
-      
-      // Verify additional fields
-      (types.head \ "active").as[Boolean] must beTrue
-      (types.head \ "ageFrom").as[Int] must equalTo(18)
-      (types.head \ "ageTo").as[Int] must equalTo(99)
-      (types.head \ "sex").as[String] must equalTo("M")
-
-      // Cleanup
-      Evolutions.cleanupEvolutions(database)
-      app.stop()
     }
   }
-} 
+}
