@@ -29,7 +29,7 @@ services:
     depends_on:
       - "mariadb"
   admin:
-    image: holzleube/ttt-clients:v6.3.0
+    image: holzleube/ttt-clients:v6.4.0-sunday
     ports:
       - "80:8080"
     networks:

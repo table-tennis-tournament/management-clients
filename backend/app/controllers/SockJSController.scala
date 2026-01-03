@@ -13,7 +13,7 @@ import websocket.WebSocketActor
 class SockJSController @Inject() (implicit system: ActorSystem, materializer: Materializer) 
     extends InjectedController with InjectedSockJSRouter {
 
-  override protected def settings = SockJSSettings(websocket = false)
+  override protected def settings = SockJSSettings(websocket = true)
 
   val log = LoggerFactory.getLogger("sockJSControllerLogger")
 
