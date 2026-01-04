@@ -18,6 +18,12 @@ import {
   SetPrinterError,
   SetPrinterSuccess,
   SettingsActionTypes,
+  LoadTypeColors,
+  LoadTypeColorsSuccess,
+  LoadTypeColorsError,
+  SaveTypeColor,
+  SaveTypeColorSuccess,
+  SaveTypeColorError,
 } from './settings.actions';
 import { SettingsService } from '../settings.service';
 
@@ -92,6 +98,39 @@ export class SettingsEffects {
           catchError((err) => {
             this.toastService.error('Fehler beim setzen des Druckers');
             return of(new SetPrinterError(err));
+          })
+        );
+      })
+    )
+  );
+
+  loadTypeColors = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SettingsActionTypes.LoadTypeColors),
+      mergeMap(() => {
+        return this.settingsService.loadTypeColors().pipe(
+          map((typeColors) => new LoadTypeColorsSuccess(typeColors)),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Laden der Type-Farben');
+            return of(new LoadTypeColorsError(err));
+          })
+        );
+      })
+    )
+  );
+
+  saveTypeColor = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SettingsActionTypes.SaveTypeColor),
+      mergeMap((action: SaveTypeColor) => {
+        return this.settingsService.saveTypeColor(action.payload.typeId, action.payload.colorData).pipe(
+          map(() => {
+            this.toastService.success('Type-Farbe gespeichert');
+            return new SaveTypeColorSuccess(action.payload);
+          }),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Speichern der Type-Farbe');
+            return of(new SaveTypeColorError(err));
           })
         );
       })

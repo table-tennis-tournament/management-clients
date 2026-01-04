@@ -3,9 +3,12 @@
     <toma-settings-list
       [printers]="printers | async"
       [settings]="settings | async"
+      [typeColors]="typeColors$ | async"
+      [types]="types$ | async"
       (automaticallyAssign)="assignAutomatically($event)"
       (printForAssign)="printOnAssign($event)"
       (savePrinter)="savePrinter($event)"
+      (saveTypeColor)="onSaveTypeColor($event)"
     ></toma-settings-list>
   </div>
 </div>

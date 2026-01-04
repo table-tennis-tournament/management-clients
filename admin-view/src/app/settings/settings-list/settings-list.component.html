@@ -40,3 +40,52 @@
     >
   </div>
 </div>
+
+<div class="row">
+  <h5>Type-Farben Konfiguration</h5>
+</div>
+
+<div class="row">
+  <mat-form-field appearance="fill" class="col s4">
+    <mat-label>Wähle Type</mat-label>
+    <mat-select [(value)]="selectedTypeId" (selectionChange)="onTypeSelected()">
+      <mat-option *ngFor="let type of types" [value]="type.id">
+        {{ type.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="row" *ngIf="selectedTypeId">
+  <mat-form-field appearance="fill" class="col s4">
+    <mat-label>Hintergrundfarbe (Hex)</mat-label>
+    <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
+    <mat-hint>Format: #RRGGBB</mat-hint>
+  </mat-form-field>
+
+  <div class="col s2" *ngIf="selectedBgColor">
+    <div [style.background-color]="selectedBgColor"
+         [style.color]="selectedTextColor"
+         style="width: 50px; height: 50px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;">
+      A
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="selectedTypeId">
+  <mat-form-field appearance="fill" class="col s4">
+    <mat-label>Textfarbe</mat-label>
+    <mat-select [(value)]="selectedTextColor">
+      <mat-option value="white">Weiß</mat-option>
+      <mat-option value="black">Schwarz</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="row" *ngIf="selectedTypeId">
+  <div class="col s6">
+    <a class="waves-effect waves-light btn" (click)="saveTypeColorClick()">
+      <i class="material-icons left">save</i>Speichern
+    </a>
+  </div>
+</div>

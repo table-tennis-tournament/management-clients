@@ -1,8 +1,3 @@
-export interface Settings {
-  key: string;
-  value: any;
-}
-
 export interface TypeColor {
   bgColor: string;
   textColor: string;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Settings } from './settings.model';
+import { Settings, TypeColor, TypeColorMap } from './settings.model';
 import { HttpClient } from '@angular/common/http';
 import { StatusDto } from '../shared/statusdto.model';
 
@@ -28,5 +28,13 @@ export class SettingsService {
 
   setPrinter(printerName: string): Observable<StatusDto> {
     return this.http.get<StatusDto>(`api/printer/set/${printerName}`);
+  }
+
+  loadTypeColors(): Observable<TypeColorMap> {
+    return this.http.get<TypeColorMap>('api/settings/typecolors');
+  }
+
+  saveTypeColor(typeId: number, colorData: TypeColor): Observable<StatusDto> {
+    return this.http.post<StatusDto>(`api/settings/typecolors/${typeId}`, colorData);
   }
 }

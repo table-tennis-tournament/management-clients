@@ -47,6 +47,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   private val playerPerGroup = TableQuery[PlayerPerGroupTable]
   private val typePerPlayer = TableQuery[TypePerPlayerTable]
   private val matchTable = TableQuery[TTMatchTable]
+  private val typeColors = TableQuery[TypeColorTable]
 
   var ttTablesSeq = Seq.empty[TTTable]
   var ttMatchSeq = Seq.empty[TTMatch]
@@ -59,6 +60,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
   var ttMatchListSeq = Seq.empty[MatchList]
   var ttMatchTableSeq = Seq.empty[MatchTable]
   var ttTypePerPlayer = Seq.empty[TypePerPlayer]
+  var ttTypeColorsSeq = Seq.empty[TypeColor]
 
   val log = LoggerFactory.getLogger("tableLoger")
 
@@ -712,7 +714,50 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     ttTypeSeq
   }
 
+  // TypeColor methods
+  def getAllTypeColors: Map[Long, TypeColorData] = {
+    ttTypeColorsSeq.map(tc => tc.typeId -> TypeColorData(tc.bgColor, tc.textColor)).toMap
+  }
 
+  def getTypeColor(typeId: Long): Option[TypeColor] = {
+    ttTypeColorsSeq.find(_.typeId == typeId)
+  }
+
+  def saveTypeColor(typeId: Long, bgColor: String, textColor: String): Future[TypeColor] = {
+    val existingO = getTypeColor(typeId)
+
+    existingO match {
+      case Some(existing) =>
+        val updated = existing.copy(bgColor = bgColor, textColor = textColor)
+        val updateAction = typeColors.filter(_.typeId === typeId)
+          .map(tc => (tc.bgColor, tc.textColor))
+          .update((bgColor, textColor))
+
+        db.run(updateAction).map { _ =>
+          ttTypeColorsSeq = ttTypeColorsSeq.map {
+            case tc if tc.typeId == typeId => updated
+            case tc => tc
+          }
+          updated
+        }
+      case None =>
+        val insertAction = typeColors returning typeColors.map(_.id) into ((typeColor, id) => typeColor.copy(id = id))
+        val newTypeColor = TypeColor(0, typeId, bgColor, textColor)
+
+        db.run(insertAction += newTypeColor).map { result =>
+          ttTypeColorsSeq = ttTypeColorsSeq :+ result
+          result
+        }
+    }
+  }
+
+  def updateTypeColors(): Future[Boolean] = {
+    db.run(typeColors.result).map { colors =>
+      ttTypeColorsSeq = colors
+      log.debug("read TypeColors: " + ttTypeColorsSeq.size.toString)
+      true
+    }
+  }
 
   def updateGroupsSeq: Future[Boolean] = {
     dbConfigProvider.get.db.run(groups.result) map {gList =>
@@ -847,6 +892,18 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def active = column[Boolean]("Type_Active")
 
     def * = (id, name, kind, active) <> (Type.tupled, Type.unapply)
+  }
+
+  class TypeColorTable(tag: Tag) extends Table[TypeColor](tag, "typecolors") {
+    def id = column[Long]("tyco_id", O.PrimaryKey, O.AutoInc)
+    def typeId = column[Long]("tyco_type_id")
+    def bgColor = column[String]("tyco_bg_color")
+    def textColor = column[String]("tyco_text_color")
+
+    def * = (id, typeId, bgColor, textColor) <> (TypeColor.tupled, TypeColor.unapply)
+
+    def typeFK = foreignKey("fk_typecolors_type", typeId, types)(_.id, onDelete=ForeignKeyAction.Cascade)
+    def uniqueType = index("unique_type", typeId, unique = true)
   }
 
   class DoubleTable(tag: Tag) extends Table[Double](tag, "doubles") {
@@ -1075,10 +1132,12 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
             updateClubList flatMap { d =>
               updateMatchTypeList flatMap { e =>
                 updateTypesList flatMap { f =>
-                  updateGroupsSeq flatMap { g =>
-                    updatePlayerList flatMap { i =>
-                      loadTypePerPlayer map { tpp =>
-                        mt && t && n && b && d && e && f && g && i && tpp
+                  updateTypeColors() flatMap { tc =>
+                    updateGroupsSeq flatMap { g =>
+                      updatePlayerList flatMap { i =>
+                        loadTypePerPlayer map { tpp =>
+                          mt && t && n && b && d && e && f && tc && g && i && tpp
+                        }
                       }
                     }
                   }
