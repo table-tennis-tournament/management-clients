@@ -8,8 +8,9 @@ import {
   SetPrinter,
   LoadTypeColors,
   SaveTypeColor,
+  SetBulkTypeColors,
 } from './redux/settings.actions';
-import { getPrintersState, getSettingsState } from '../app-state.reducer';
+import { getPrintersState, getSettingsState, getTypeColorsMapState, getTypeColorsState } from '../app-state.reducer';
 import { Observable } from 'rxjs';
 import { Settings, TypeColor, TypeColorMap } from './settings.model';
 import { getTypeColors } from './redux/settings.reducer';
@@ -28,10 +29,7 @@ export class SettingsPageComponent implements OnInit {
   typeColors$: Observable<TypeColorMap>;
   types$: Observable<Discipline[]>;
 
-  constructor(private store: Store<any>) {
-    this.typeColors$ = this.store.pipe(select(getTypeColors));
-    this.types$ = this.store.select(getDisciplineState);
-  }
+  constructor(private store: Store<any>) {}
 
   ngOnInit() {
     this.store.dispatch(new LoadSettings());
@@ -40,6 +38,8 @@ export class SettingsPageComponent implements OnInit {
     this.store.dispatch(new LoadDiscipline(null));
     this.settings = this.store.select(getSettingsState);
     this.printers = this.store.select(getPrintersState);
+    this.typeColors$ = this.store.select(getTypeColorsMapState);
+    this.types$ = this.store.select(getDisciplineState);
   }
 
   assignAutomatically(assignAutomatically: boolean) {
@@ -56,5 +56,9 @@ export class SettingsPageComponent implements OnInit {
 
   onSaveTypeColor(payload: { typeId: number; colorData: TypeColor }) {
     this.store.dispatch(new SaveTypeColor(payload));
+  }
+
+  onSetBulkTypeColors(typeColors: TypeColorMap) {
+    this.store.dispatch(new SetBulkTypeColors(typeColors));
   }
 }

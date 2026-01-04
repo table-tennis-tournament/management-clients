@@ -125,6 +125,11 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
           [action.payload.typeId]: action.payload.colorData
         }
       };
+    case SettingsActionTypes.SetBulkTypeColorsSuccess:
+      return {
+        ...state,
+        typeColors: action.payload
+      };
     default:
       return state;
   }

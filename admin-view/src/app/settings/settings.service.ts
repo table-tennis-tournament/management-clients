@@ -37,4 +37,8 @@ export class SettingsService {
   saveTypeColor(typeId: number, colorData: TypeColor): Observable<StatusDto> {
     return this.http.post<StatusDto>(`api/settings/typecolors/${typeId}`, colorData);
   }
+
+  setBulkTypeColors(typeColors: TypeColorMap): Observable<StatusDto> {
+    return this.http.put<StatusDto>('api/settings/typecolors', typeColors);
+  }
 }
