@@ -751,6 +751,13 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     }
   }
 
+  def bulkSaveTypeColors(typeColorMap: Map[Long, TypeColorData]): Future[Seq[TypeColor]] = {
+    val futures = typeColorMap.map { case (typeId, colorData) =>
+      saveTypeColor(typeId, colorData.bgColor, colorData.textColor)
+    }.toSeq
+    Future.sequence(futures)
+  }
+
   def updateTypeColors(): Future[Boolean] = {
     db.run(typeColors.result).map { colors =>
       ttTypeColorsSeq = colors

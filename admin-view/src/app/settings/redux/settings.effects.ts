@@ -24,6 +24,9 @@ import {
   SaveTypeColor,
   SaveTypeColorSuccess,
   SaveTypeColorError,
+  SetBulkTypeColors,
+  SetBulkTypeColorsSuccess,
+  SetBulkTypeColorsError,
 } from './settings.actions';
 import { SettingsService } from '../settings.service';
 
@@ -131,6 +134,24 @@ export class SettingsEffects {
           catchError((err) => {
             this.toastService.error('Fehler beim Speichern der Type-Farbe');
             return of(new SaveTypeColorError(err));
+          })
+        );
+      })
+    )
+  );
+
+  setBulkTypeColors = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SettingsActionTypes.SetBulkTypeColors),
+      mergeMap((action: SetBulkTypeColors) => {
+        return this.settingsService.setBulkTypeColors(action.payload).pipe(
+          map(() => {
+            this.toastService.success('Type-Farben erfolgreich gesetzt');
+            return new SetBulkTypeColorsSuccess(action.payload);
+          }),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Setzen der Type-Farben');
+            return of(new SetBulkTypeColorsError(err));
           })
         );
       })

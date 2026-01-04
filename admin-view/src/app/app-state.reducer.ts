@@ -58,6 +58,7 @@ export const getResultMatchesLoading = createSelector(
 export const getSettingsState = createSelector((state: State) => state.settings, fromSettings.getSettings);
 export const getSettingsLoading = createSelector((state: State) => state.settings, fromSettings.getSettingsLoading);
 export const getTypeColorsState = createSelector((state: State) => state.settings, fromSettings.getTypeColor);
+export const getTypeColorsMapState = createSelector((state: State) => state.settings, fromSettings.getTypeColors);
 export const getPrintersState = createSelector((state: State) => state.settings, fromSettings.getPrinters);
 
 export const getWebSocketState = createSelector(

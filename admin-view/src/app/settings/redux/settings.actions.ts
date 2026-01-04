@@ -23,6 +23,9 @@ export enum SettingsActionTypes {
   SaveTypeColor = '[Settings] Save Type Color',
   SaveTypeColorSuccess = '[Settings] Save Type Color Success',
   SaveTypeColorError = '[Settings] Save Type Color Error',
+  SetBulkTypeColors = '[Settings] Set Bulk Type Colors',
+  SetBulkTypeColorsSuccess = '[Settings] Set Bulk Type Colors Success',
+  SetBulkTypeColorsError = '[Settings] Set Bulk Type Colors Error',
 }
 
 export class LoadSettings implements Action {
@@ -151,6 +154,24 @@ export class SaveTypeColorError implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetBulkTypeColors implements Action {
+  readonly type = SettingsActionTypes.SetBulkTypeColors;
+
+  constructor(public payload: TypeColorMap) {}
+}
+
+export class SetBulkTypeColorsSuccess implements Action {
+  readonly type = SettingsActionTypes.SetBulkTypeColorsSuccess;
+
+  constructor(public payload: TypeColorMap) {}
+}
+
+export class SetBulkTypeColorsError implements Action {
+  readonly type = SettingsActionTypes.SetBulkTypeColorsError;
+
+  constructor(public payload: any) {}
+}
+
 export type SettingsActionUnion =
   | LoadSettings
   | LoadSettingsSuccess
@@ -172,4 +193,7 @@ export type SettingsActionUnion =
   | LoadTypeColorsError
   | SaveTypeColor
   | SaveTypeColorSuccess
-  | SaveTypeColorError;
+  | SaveTypeColorError
+  | SetBulkTypeColors
+  | SetBulkTypeColorsSuccess
+  | SetBulkTypeColorsError;

@@ -20,11 +20,28 @@ class SettingsController @Inject() (implicit ec: ExecutionContext,
   import models.AnswerModel._
   import models.SettingModel._
   import models.MatchModel.{typeColorDataWrites, typeColorDataReads}
+  import play.api.libs.json._
 
   // Implicit Writes for Map[Long, TypeColorData]
   implicit val typeColorMapWrites: Writes[Map[Long, TypeColorData]] = new Writes[Map[Long, TypeColorData]] {
     def writes(map: Map[Long, TypeColorData]) = {
       JsObject(map.map { case (k, v) => k.toString -> typeColorDataWrites.writes(v) })
+    }
+  }
+
+  // Implicit Reads for Map[Long, TypeColorData]
+  implicit val typeColorMapReads: Reads[Map[Long, TypeColorData]] = new Reads[Map[Long, TypeColorData]] {
+    def reads(json: JsValue): JsResult[Map[Long, TypeColorData]] = {
+      json.validate[JsObject].map { obj =>
+        obj.fields.flatMap { case (key, value) =>
+          try {
+            val typeId = key.toLong
+            value.validate[TypeColorData].asOpt.map(typeId -> _)
+          } catch {
+            case _: NumberFormatException => None
+          }
+        }.toMap
+      }
     }
   }
 
@@ -77,6 +94,38 @@ class SettingsController @Inject() (implicit ec: ExecutionContext,
             } else {
               tables.saveTypeColor(typeId, colorData.bgColor, colorData.textColor).map { _ =>
                 Ok(Json.toJson(Answer(successful = true, "Type color saved")))
+              }.recover {
+                case e: Exception =>
+                  BadRequest(Json.toJson(Answer(successful = false, s"Error: ${e.getMessage}")))
+              }
+            }
+          case None =>
+            Future.successful(BadRequest(Json.toJson(Answer(successful = false, "Invalid format"))))
+        }
+      case None =>
+        Future.successful(BadRequest(Json.toJson(Answer(successful = false, "No JSON body"))))
+    }
+  }
+
+  def setBulkTypeColors: Action[AnyContent] = Action.async { request =>
+    val jsonO = request.body.asJson
+    jsonO match {
+      case Some(json) =>
+        json.validate[Map[Long, TypeColorData]].asOpt match {
+          case Some(typeColorMap) =>
+            // Validate all colors
+            val invalidColors = typeColorMap.filter { case (_, colorData) =>
+              !colorData.bgColor.matches("^#[0-9A-Fa-f]{6}$") ||
+              (colorData.textColor != "white" && colorData.textColor != "black")
+            }
+
+            if (invalidColors.nonEmpty) {
+              Future.successful(BadRequest(Json.toJson(
+                Answer(successful = false, s"Invalid color format for type IDs: ${invalidColors.keys.mkString(", ")}")
+              )))
+            } else {
+              tables.bulkSaveTypeColors(typeColorMap).map { _ =>
+                Ok(Json.toJson(Answer(successful = true, "Type colors saved successfully")))
               }.recover {
                 case e: Exception =>
                   BadRequest(Json.toJson(Answer(successful = false, s"Error: ${e.getMessage}")))

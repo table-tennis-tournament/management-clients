@@ -79,4 +79,5 @@ GET     /api/settings/all                   controllers.SettingsController.allSe
 # POST    /settings                       controllers.SettingsController.setSettings
 GET     /api/settings/typecolors            controllers.SettingsController.getAllTypeColors
 POST    /api/settings/typecolors/:typeId    controllers.SettingsController.saveTypeColor(typeId: Long)
+PUT     /api/settings/typecolors            controllers.SettingsController.setBulkTypeColors
 
