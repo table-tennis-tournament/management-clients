@@ -1,9 +1,10 @@
-import { Settings } from '../settings.model';
+import { Settings, TypeColorMap } from '../settings.model';
 import { SettingsActionTypes, SettingsActionUnion } from './settings.actions';
 import { ALWAYS_PRINT_SETTING, AUTOSTART_SETTING, PRINTER_NAME_SETTING } from '../settings.coonstants';
 
 export interface SettingsState {
   typeColor: string[];
+  typeColors: TypeColorMap;
   settings: Settings[];
   printers: string[];
   settingsLoading: boolean;
@@ -43,6 +44,7 @@ const initialState: SettingsState = {
     'blue darken-1 white-text',
     'indigo'
   ],
+  typeColors: {},
   'settings': [],
   'printers': [],
   'settingsLoading': false
@@ -110,6 +112,19 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
           return setting;
         })
       };
+    case SettingsActionTypes.LoadTypeColorsSuccess:
+      return {
+        ...state,
+        typeColors: action.payload
+      };
+    case SettingsActionTypes.SaveTypeColorSuccess:
+      return {
+        ...state,
+        typeColors: {
+          ...state.typeColors,
+          [action.payload.typeId]: action.payload.colorData
+        }
+      };
     default:
       return state;
   }
@@ -118,4 +133,5 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
 export const getSettings = (state: SettingsState) => state.settings;
 export const getSettingsLoading = (state: SettingsState) => state.settingsLoading;
 export const getTypeColor = (state: SettingsState) => state.typeColor;
+export const getTypeColors = (state: SettingsState) => state.typeColors;
 export const getPrinters = (state: SettingsState) => state.printers;

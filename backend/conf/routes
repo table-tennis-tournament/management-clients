@@ -77,4 +77,6 @@ GET     /api/printer/getQrCode/:content     controllers.PrinterController.getQrC
 
 GET     /api/settings/all                   controllers.SettingsController.allSettings
 # POST    /settings                       controllers.SettingsController.setSettings
+GET     /api/settings/typecolors            controllers.SettingsController.getAllTypeColors
+POST    /api/settings/typecolors/:typeId    controllers.SettingsController.saveTypeColor(typeId: Long)
 

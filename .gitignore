@@ -16,3 +16,4 @@ node_modules/
 .angular
 dist
 .claude
+/backend/
