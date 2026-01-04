@@ -21,9 +21,9 @@ import {
 } from './redux/caller.actions';
 
 @Component({
-    selector: 'toma-caller-page',
-    templateUrl: './caller.page.component.html',
-    standalone: false
+  selector: 'toma-caller-page',
+  templateUrl: './caller.page.component.html',
+  standalone: false,
 })
 export class CallerPageComponent implements OnInit {
   selectedItem: Observable<MatchAggregate>;

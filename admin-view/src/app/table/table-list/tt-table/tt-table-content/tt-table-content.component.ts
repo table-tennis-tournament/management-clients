@@ -5,10 +5,10 @@ import { Match } from '../../../../shared/data/match.model';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
-    selector: 'toma-tt-table-content',
-    templateUrl: './tt-table-content.component.html',
-    styleUrls: ['./tt-table-content.component.scss'],
-    standalone: false
+  selector: 'toma-tt-table-content',
+  templateUrl: './tt-table-content.component.html',
+  styleUrls: ['./tt-table-content.component.scss'],
+  standalone: false,
 })
 export class TtTableContentComponent {
   @Input()

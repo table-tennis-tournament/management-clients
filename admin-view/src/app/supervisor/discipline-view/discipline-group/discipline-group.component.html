@@ -14,7 +14,7 @@
       <mat-expansion-panel [expanded]="showPlayers">
         <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]" collapsedHeight="40px" expandedHeight="40px">
           <mat-panel-title>
-            <mat-icon> perm_identity </mat-icon>
+            <mat-icon>perm_identity</mat-icon>
             Spieler
           </mat-panel-title>
         </mat-expansion-panel-header>
@@ -27,7 +27,7 @@
       <mat-expansion-panel [expanded]="showMatches">
         <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]" collapsedHeight="40px" expandedHeight="40px">
           <mat-panel-title>
-            <mat-icon> view_list </mat-icon>
+            <mat-icon>view_list</mat-icon>
             Spiele
           </mat-panel-title>
         </mat-expansion-panel-header>
@@ -39,11 +39,12 @@
             [cdkDragDisabled]="currentMatch.state !== openMatchState"
             [cdkDragData]="[currentMatch]"
             class="collection-item"
-            [class.disabled-item]="currentMatch.state === inWaitingListState">
+            [class.disabled-item]="currentMatch.state === inWaitingListState"
+          >
             <div class="d-flex justify-content-between w-100">
               <div class="text-truncate">
                 <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
-                  -
+                -
                 <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
               </div>
               <div class="ms-auto">

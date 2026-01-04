@@ -2,10 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 
 @Component({
-    selector: 'toma-player-calls',
-    templateUrl: './player-calls.component.html',
-    styleUrls: ['./player-calls.component.scss'],
-    standalone: false
+  selector: 'toma-player-calls',
+  templateUrl: './player-calls.component.html',
+  styleUrls: ['./player-calls.component.scss'],
+  standalone: false,
 })
 export class PlayerCallsComponent {
   @Input()

@@ -3,10 +3,10 @@ import { TableDto } from '../../tabledto.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-    selector: 'toma-select-table-modal',
-    templateUrl: './select-table-modal.component.html',
-    styleUrls: ['./select-table-modal.component.scss'],
-    standalone: false
+  selector: 'toma-select-table-modal',
+  templateUrl: './select-table-modal.component.html',
+  styleUrls: ['./select-table-modal.component.scss'],
+  standalone: false,
 })
 export class SelectTableModalComponent {
   public selectedTable: number;

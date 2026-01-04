@@ -2,10 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 
 @Component({
-    selector: 'toma-caller-match-list',
-    templateUrl: './caller-match-list.component.html',
-    styleUrls: ['./caller-match-list.component.scss'],
-    standalone: false
+  selector: 'toma-caller-match-list',
+  templateUrl: './caller-match-list.component.html',
+  styleUrls: ['./caller-match-list.component.scss'],
+  standalone: false,
 })
 export class CallerMatchListComponent {
   @Input()

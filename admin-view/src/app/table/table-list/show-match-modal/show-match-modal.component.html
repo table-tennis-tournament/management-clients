@@ -7,7 +7,8 @@
       {{ currentTable.matches[0].type.name }}
       {{ currentTable.matches[0].matchType.name }}
     </h5>
-    <br /><br />
+    <br />
+    <br />
     <div class="row" *ngIf="!players">
       {{ currentTable?.matches[0]?.team1 | ttPlayerNameReducer }}
       <br />

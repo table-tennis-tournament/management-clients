@@ -3,10 +3,10 @@ import { Match } from '../../../../shared/data/match.model';
 import { MatchState } from '../../../../shared/data/matchstate.model';
 
 @Component({
-    selector: 'toma-discipline-stage-item',
-    templateUrl: './discipline-stage-item.component.html',
-    styleUrls: ['./discipline-stage-item.component.scss'],
-    standalone: false
+  selector: 'toma-discipline-stage-item',
+  templateUrl: './discipline-stage-item.component.html',
+  styleUrls: ['./discipline-stage-item.component.scss'],
+  standalone: false,
 })
 export class DisciplineStageItemComponent {
   @Input()

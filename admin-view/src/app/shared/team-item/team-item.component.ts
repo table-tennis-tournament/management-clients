@@ -4,10 +4,10 @@ import { Store } from '@ngrx/store';
 import { getTypeColorsState } from '../../app-state.reducer';
 
 @Component({
-    selector: 'toma-team-item',
-    templateUrl: './team-item.component.html',
-    styleUrls: ['./team-item.component.scss'],
-    standalone: false
+  selector: 'toma-team-item',
+  templateUrl: './team-item.component.html',
+  styleUrls: ['./team-item.component.scss'],
+  standalone: false,
 })
 export class TeamItemComponent implements OnInit {
   @Input() team: Player[];

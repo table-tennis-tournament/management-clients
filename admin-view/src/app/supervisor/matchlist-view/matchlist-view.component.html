@@ -24,14 +24,9 @@
             [matchListItem]="currentMatch"
             (matchListItemDelete)="matchListItemDelete.emit($event)"
             [ngClass]="typeColor[currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0]"
-          >
-          </toma-matchlist-single-item>
+          ></toma-matchlist-single-item>
         </div>
-        <div
-          class="cut-text"
-          [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]"
-          *ngIf="currentMatch.matchinfo[1]"
-        >
+        <div class="cut-text" [ngClass]="typeColor[currentMatch.matchinfo[0].type.id]" *ngIf="currentMatch.matchinfo[1]">
           <toma-matchlist-group-item
             [matchListItem]="currentMatch"
             (matchListItemDelete)="matchListItemDelete.emit($event)"
@@ -41,4 +36,3 @@
     </mat-list>
   </div>
 </div>
-

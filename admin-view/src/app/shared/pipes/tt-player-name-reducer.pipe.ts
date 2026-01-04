@@ -2,8 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Player } from '../data/player.model';
 
 @Pipe({
-    name: 'ttPlayerNameReducer',
-    standalone: false
+  name: 'ttPlayerNameReducer',
+  standalone: false,
 })
 export class TtPlayerNameReducerPipe implements PipeTransform {
   transform(players: Player[], args?: any): any {

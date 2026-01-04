@@ -26,40 +26,45 @@ import { AdminRootModule } from './admin-root/admin-root.module';
 
 const components = [AppComponent];
 
-@NgModule({ declarations: components,
-    bootstrap: [AppComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [AppRoutingModule,
-        DragDropModule,
-        SharedModule.forRoot(),
-        ToastrModule.forRoot({
-            timeOut: 5000,
-            extendedTimeOut: 2000,
-            closeButton: false,
-            positionClass: 'toast-bottom-center',
-        }),
-        StoreModule.forRoot(reducers, {
-            metaReducers,
-            runtimeChecks: {
-                strictStateImmutability: false,
-                strictActionImmutability: false,
-            },
-        }),
-        StoreDevtoolsModule.instrument({
-            name: 'Devtools',
-            logOnly: environment.production,
-            connectInZone: true
-        }),
-        EffectsModule.forRoot([
-            TableEffects,
-            MatchEffects,
-            MatchListEffects,
-            DisciplineEffects,
-            SettingsEffects,
-            WebSocketEffects,
-            CallerEffects,
-            ResultEffects,
-        ]),
-        NoopAnimationsModule,
-        AdminRootModule], providers: [TableService, WebsocketService, WebsocketHandlerService, provideHttpClient(withInterceptorsFromDi())] })
+@NgModule({
+  declarations: components,
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    AppRoutingModule,
+    DragDropModule,
+    SharedModule.forRoot(),
+    ToastrModule.forRoot({
+      timeOut: 5000,
+      extendedTimeOut: 2000,
+      closeButton: false,
+      positionClass: 'toast-bottom-center',
+    }),
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: false,
+        strictActionImmutability: false,
+      },
+    }),
+    StoreDevtoolsModule.instrument({
+      name: 'Devtools',
+      logOnly: environment.production,
+      connectInZone: true,
+    }),
+    EffectsModule.forRoot([
+      TableEffects,
+      MatchEffects,
+      MatchListEffects,
+      DisciplineEffects,
+      SettingsEffects,
+      WebSocketEffects,
+      CallerEffects,
+      ResultEffects,
+    ]),
+    NoopAnimationsModule,
+    AdminRootModule,
+  ],
+  providers: [TableService, WebsocketService, WebsocketHandlerService, provideHttpClient(withInterceptorsFromDi())],
+})
 export class AppModule {}

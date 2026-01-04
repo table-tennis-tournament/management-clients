@@ -7,8 +7,7 @@
         [disciplines]="disciplines"
         (disciplineRefresh)="refreshResultList.emit()"
         [showWaitingList]="false"
-      >
-      </toma-discipline-select>
+      ></toma-discipline-select>
     </div>
   </div>
 
@@ -74,8 +73,8 @@
             <button mat-mini-fab (click)="resultForMatch.emit(element)">
               <mat-icon>chevron_right</mat-icon>
             </button>
-          </td></ng-container
-        >
+          </td>
+        </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>

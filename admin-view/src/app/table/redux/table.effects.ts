@@ -41,7 +41,6 @@ import { PrintService } from '../../shared/print.service';
 
 @Injectable()
 export class TableEffects {
-
   constructor(
     private actions$: Actions,
     private tableService: TableService,
@@ -212,6 +211,4 @@ export class TableEffects {
       })
     )
   );
-
-
 }

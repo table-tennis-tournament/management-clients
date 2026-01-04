@@ -4,8 +4,7 @@
       [table]="table"
       (freeTable)="freeTable.emit(table)"
       (assignMatchToTable)="assignMatchToTable.emit($event)"
-    >
-    </toma-tt-table-content>
+    ></toma-tt-table-content>
   </mat-card-content>
   <mat-card-actions *ngIf="!isGameAvailable()" class="d-flex flex-row-reverse">
     <button mat-button *ngIf="!table.isLocked" (click)="lockTable.emit(table.number)">Sperren</button>
@@ -13,7 +12,7 @@
   </mat-card-actions>
   <mat-expansion-panel hideToggle *ngIf="isGameAvailable()">
     <mat-expansion-panel-header>
-      <mat-panel-title> ... </mat-panel-title>
+      <mat-panel-title>...</mat-panel-title>
       <mat-panel-description>
         <button mat-button *ngIf="isGameAvailable()" (click)="freeTable.emit(table)">Frei</button>
         <button mat-button *ngIf="table?.matches?.length === 1" (click)="resultForTable.emit(table)">Eingeben</button>

@@ -3,10 +3,10 @@ import { PlayerType } from '../data/player.type.model';
 import { Discipline } from '../../discipline/discipline.model';
 
 @Component({
-    selector: 'toma-player-list',
-    templateUrl: './player-list.component.html',
-    styleUrls: ['./player-list.component.scss'],
-    standalone: false
+  selector: 'toma-player-list',
+  templateUrl: './player-list.component.html',
+  styleUrls: ['./player-list.component.scss'],
+  standalone: false,
 })
 export class PlayerListComponent {
   private _players: PlayerType[];

@@ -11,10 +11,10 @@ import { Discipline } from '../discipline/discipline.model';
 import { LoadDiscipline } from '../discipline/redux/discipline.actions';
 
 @Component({
-    selector: 'toma-player-page',
-    templateUrl: './player.page.component.html',
-    styleUrls: ['./player.page.component.scss'],
-    standalone: false
+  selector: 'toma-player-page',
+  templateUrl: './player.page.component.html',
+  styleUrls: ['./player.page.component.scss'],
+  standalone: false,
 })
 export class PlayerPageComponent implements OnInit {
   players: Observable<PlayerType[]>;

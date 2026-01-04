@@ -4,10 +4,10 @@ import { Store } from '@ngrx/store';
 import { FreeTable } from '../../table/redux/table.actions';
 
 @Component({
-    selector: 'toma-qr-result-scanner',
-    templateUrl: './qr-result-scanner.component.html',
-    styleUrls: ['./qr-result-scanner.component.scss'],
-    standalone: false
+  selector: 'toma-qr-result-scanner',
+  templateUrl: './qr-result-scanner.component.html',
+  styleUrls: ['./qr-result-scanner.component.scss'],
+  standalone: false,
 })
 export class QrResultScannerComponent implements OnInit {
   @Output()

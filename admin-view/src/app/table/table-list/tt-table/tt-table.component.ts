@@ -3,10 +3,10 @@ import { TableDto } from '../../tabledto.model';
 import { MatchToTable } from './tt-table-content/matchtotable.model';
 
 @Component({
-    selector: 'toma-tt-table',
-    templateUrl: './tt-table.component.html',
-    styleUrls: ['./tt-table.component.scss'],
-    standalone: false
+  selector: 'toma-tt-table',
+  templateUrl: './tt-table.component.html',
+  styleUrls: ['./tt-table.component.scss'],
+  standalone: false,
 })
 export class TtTableComponent {
   @Input()

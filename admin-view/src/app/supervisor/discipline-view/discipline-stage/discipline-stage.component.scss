@@ -6,7 +6,7 @@
 .collection {
   display: flex;
   flex-direction: column;
-  
+
   .collection-item {
     margin: 20px 0;
     height: 80px;
@@ -14,21 +14,20 @@
 }
 
 .collection .collection-item.first-stage {
-  margin: 0px 0;  // minimal spacing between matches
+  margin: 0px 0; // minimal spacing between matches
 }
 
 .collection .collection-item.second-stage {
-  margin: 40px 0;  // matches spaced further apart
+  margin: 40px 0; // matches spaced further apart
 }
 
 .collection .collection-item.third-stage {
-  margin: 120px 0;  // even more spacing
+  margin: 120px 0; // even more spacing
 }
 
 .collection .collection-item.fourth-stage {
-  margin: 280px 0;  // maximum spacing for final stages
+  margin: 280px 0; // maximum spacing for final stages
 }
-
 
 .header-main-container {
   display: flex;

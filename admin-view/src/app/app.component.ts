@@ -7,9 +7,9 @@ import { LoadDiscipline } from './discipline/redux/discipline.actions';
 import { WebsocketHandlerService } from './websocket/websocket.handler.service';
 
 @Component({
-    selector: 'toma-root',
-    templateUrl: './app.component.html',
-    standalone: false
+  selector: 'toma-root',
+  templateUrl: './app.component.html',
+  standalone: false,
 })
 export class AppComponent implements OnInit {
   constructor(private store: Store<any>, private websocketService: WebsocketHandlerService) {}

@@ -1,20 +1,23 @@
 <mat-card *ngIf="matchAggregate" [ngClass]="typeColor[matchAggregate.discipline.id]">
-  <mat-card-title> </mat-card-title>
+  <mat-card-title></mat-card-title>
   <mat-card-content class="text-center">
     <h1>{{ matchAggregate.discipline.name }}</h1>
     <br />
     <h2>{{ matchAggregate.name }}</h2>
-    <br /><br />
+    <br />
+    <br />
     <h2>
       Tisch
       <span class="circle" *ngFor="let tableNumber of matchAggregate.tableNumbers">{{ tableNumber }}</span>
     </h2>
-    <br /><br />
+    <br />
+    <br />
     <div class="row" *ngIf="matchAggregate?.matches?.length === 1">
       <div class="col-12">
         <h3>
           <div class="text-center">Schiedsrichter: ?</div>
-          <br /><br />
+          <br />
+          <br />
           <div *ngFor="let currentPlayer of matchAggregate.matches[0].team1">
             {{ [currentPlayer] | ttPlayerNameReducer }}
           </div>

@@ -2,8 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 
 @Pipe({
-    name: 'stage',
-    standalone: false
+  name: 'stage',
+  standalone: false,
 })
 export class StagePipe implements PipeTransform {
   transform(value: Match, args?: any): any {
