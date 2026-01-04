@@ -5,10 +5,10 @@ import { Discipline } from '../../discipline/discipline.model';
 import { MatchState } from '../../shared/data/matchstate.model';
 
 @Component({
-    selector: 'toma-discipline-match-list',
-    templateUrl: './discipline-match-list.component.html',
-    styleUrls: ['./discipline-match-list.component.scss'],
-    standalone: false
+  selector: 'toma-discipline-match-list',
+  templateUrl: './discipline-match-list.component.html',
+  styleUrls: ['./discipline-match-list.component.scss'],
+  standalone: false,
 })
 export class DisciplineMatchListComponent {
   private _matches: Match[];

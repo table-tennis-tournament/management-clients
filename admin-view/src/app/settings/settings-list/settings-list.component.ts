@@ -2,10 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Settings, TypeColor, TypeColorMap } from '../settings.model';
 
 @Component({
-    selector: 'toma-settings-list',
-    templateUrl: './settings-list.component.html',
-    styleUrls: ['./settings-list.component.scss'],
-    standalone: false
+  selector: 'toma-settings-list',
+  templateUrl: './settings-list.component.html',
+  styleUrls: ['./settings-list.component.scss'],
+  standalone: false,
 })
 export class SettingsListComponent {
   _settings: Settings[];
@@ -92,8 +92,8 @@ export class SettingsListComponent {
       typeId: this.selectedTypeId,
       colorData: {
         bgColor: this.selectedBgColor,
-        textColor: this.selectedTextColor
-      }
+        textColor: this.selectedTextColor,
+      },
     });
   }
 
@@ -118,7 +118,7 @@ export class SettingsListComponent {
       17: { bgColor: '#7f7f00', textColor: 'white' },
       18: { bgColor: '#c7c700', textColor: 'black' },
       19: { bgColor: '#007f00', textColor: 'white' },
-      20: { bgColor: '#00fd00', textColor: 'black' }
+      20: { bgColor: '#00fd00', textColor: 'black' },
     };
     this.setBulkTypeColors.emit(saturdayColors);
   }
@@ -134,7 +134,7 @@ export class SettingsListComponent {
       7: { bgColor: '#323232', textColor: 'white' },
       8: { bgColor: '#bebebe', textColor: 'black' },
       9: { bgColor: '#1c3364', textColor: 'white' },
-      10: { bgColor: '#7bcafc', textColor: 'black' }
+      10: { bgColor: '#7bcafc', textColor: 'black' },
     };
     this.setBulkTypeColors.emit(sundayColors);
   }

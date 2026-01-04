@@ -4,10 +4,10 @@ import { Player } from '../../../shared/data/player.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-    selector: 'toma-show-match-modal',
-    templateUrl: './show-match-modal.component.html',
-    styleUrls: ['./show-match-modal.component.scss'],
-    standalone: false
+  selector: 'toma-show-match-modal',
+  templateUrl: './show-match-modal.component.html',
+  styleUrls: ['./show-match-modal.component.scss'],
+  standalone: false,
 })
 export class ShowMatchModalComponent {
   public OnTableCalled: EventEmitter<void> = new EventEmitter<void>();

@@ -6,8 +6,7 @@
         [matchAggregates]="matchAggregates | async"
         (matchesSelected)="onMatchesSelected($event)"
         [matchesLoading]="refereesLoading | async"
-      >
-      </toma-caller-match-list>
+      ></toma-caller-match-list>
     </div>
     <div class="col-sm-4 col-md-3">
       <toma-caller-match-detail
@@ -15,16 +14,14 @@
         [typeColor]="typeColor | async"
         [matchAggregate]="selectedItem | async"
         (matchCalled)="onMatchCalled($event)"
-      >
-      </toma-caller-match-detail>
+      ></toma-caller-match-detail>
     </div>
     <div class="col-sm-4 col-md-3">
       <toma-second-call-match-detail
         [typeColor]="typeColor | async"
         [matchAggregate]="selectedSecondCallItem | async"
         (matchCalled)="onSecondCallCalled($event)"
-      >
-      </toma-second-call-match-detail>
+      ></toma-second-call-match-detail>
     </div>
     <div class="col-sm-2 col-md-3">
       <toma-player-calls
@@ -32,8 +29,7 @@
         [secondCalls]="secondCalls | async"
         [thirdCalls]="thirdCalls | async"
         (matchesSelected)="onSecondCallMatchesSelected($event)"
-      >
-      </toma-player-calls>
+      ></toma-player-calls>
     </div>
   </div>
 </div>

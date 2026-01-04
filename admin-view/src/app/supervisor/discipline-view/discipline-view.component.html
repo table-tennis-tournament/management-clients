@@ -9,9 +9,7 @@
   <mat-checkbox [(ngModel)]="showAllMatches">Alle</mat-checkbox>
   <mat-checkbox [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
   <mat-checkbox [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
-  <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh"
-    >Stop
-  </mat-checkbox>
+  <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh">Stop</mat-checkbox>
 </div>
 <div *ngIf="selectedTab" [ngClass]="typeColor[selectedTab.id]">
   <div *ngIf="selectedTab.stages" class="row">
@@ -22,8 +20,7 @@
         (resultForMatch)="resultForMatch.emit($event)"
         [index]="r"
         (deleteStage)="onDeleteStage($event)"
-      >
-      </toma-discipline-stage>
+      ></toma-discipline-stage>
     </div>
   </div>
   <div *ngIf="selectedTab.groups" class="row">
@@ -34,8 +31,7 @@
         [showMatches]="matchesAreOpen"
         [showPlayers]="playersAreOpen"
         (resultForMatch)="resultForMatch.emit($event)"
-      >
-      </toma-discipline-group>
+      ></toma-discipline-group>
     </div>
   </div>
 </div>

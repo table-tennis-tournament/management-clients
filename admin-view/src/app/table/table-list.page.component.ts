@@ -25,9 +25,9 @@ import { MatchToTable } from './table-list/tt-table/tt-table-content/matchtotabl
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-    selector: 'toma-table-list-page',
-    templateUrl: './table-list.page.component.html',
-    standalone: false
+  selector: 'toma-table-list-page',
+  templateUrl: './table-list.page.component.html',
+  standalone: false,
 })
 export class TableListPageComponent implements OnInit {
   tables: Observable<TableDto[]>;

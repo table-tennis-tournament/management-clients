@@ -4,10 +4,10 @@ import { Match } from '../../../shared/data/match.model';
 import { MatchState } from '../../../shared/data/matchstate.model';
 
 @Component({
-    selector: 'toma-discipline-group',
-    templateUrl: './discipline-group.component.html',
-    styleUrls: ['./discipline-group.component.scss'],
-    standalone: false
+  selector: 'toma-discipline-group',
+  templateUrl: './discipline-group.component.html',
+  styleUrls: ['./discipline-group.component.scss'],
+  standalone: false,
 })
 export class DisciplineGroupComponent {
   openMatchState: string = MatchState[MatchState.Open];
