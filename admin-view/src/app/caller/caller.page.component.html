@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-sm-2 col-md-3">
       <toma-caller-match-list
-        [typeColor]="typeColor | async"
+        [typeColors]="typeColors | async"
         [matchAggregates]="matchAggregates | async"
         (matchesSelected)="onMatchesSelected($event)"
         [matchesLoading]="refereesLoading | async"
@@ -11,21 +11,21 @@
     <div class="col-sm-4 col-md-3">
       <toma-caller-match-detail
         class="h-100"
-        [typeColor]="typeColor | async"
+        [typeColors]="typeColors | async"
         [matchAggregate]="selectedItem | async"
         (matchCalled)="onMatchCalled($event)"
       ></toma-caller-match-detail>
     </div>
     <div class="col-sm-4 col-md-3">
       <toma-second-call-match-detail
-        [typeColor]="typeColor | async"
+        [typeColors]="typeColors | async"
         [matchAggregate]="selectedSecondCallItem | async"
         (matchCalled)="onSecondCallCalled($event)"
       ></toma-second-call-match-detail>
     </div>
     <div class="col-sm-2 col-md-3">
       <toma-player-calls
-        [typeColor]="typeColor | async"
+        [typeColors]="typeColors | async"
         [secondCalls]="secondCalls | async"
         [thirdCalls]="thirdCalls | async"
         (matchesSelected)="onSecondCallMatchesSelected($event)"

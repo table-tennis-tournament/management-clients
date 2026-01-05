@@ -4,7 +4,8 @@
     <h2>Spiele zum Ausrufen:</h2>
     <mat-list>
       <mat-list-item
-        [ngClass]="typeColor[currentMatch?.discipline?.id]"
+        [tomaTypeColor]="currentMatch?.discipline?.id"
+        [typeColors]="typeColors"
         (click)="matchesSelected.emit(currentMatch)"
         *ngFor="let currentMatch of matchAggregates"
       >

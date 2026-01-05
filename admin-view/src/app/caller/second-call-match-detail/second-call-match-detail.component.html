@@ -1,4 +1,4 @@
-<mat-card *ngIf="matchAggregate" [ngClass]="typeColor[matchAggregate.discipline.id]">
+<mat-card *ngIf="matchAggregate" [tomaTypeColor]="matchAggregate.discipline.id" [typeColors]="typeColors">
   <mat-card-title></mat-card-title>
   <mat-card-content class="text-center">
     <h1>{{ matchAggregate.discipline.name }}</h1>

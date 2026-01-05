@@ -10,10 +10,18 @@ import { TtMatchDisciplinePipe } from './pipes/tt-match-discipline.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { TeamItemComponent } from './team-item/team-item.component';
 import { DisciplineTypePipe } from './pipes/discipline-type.pipe';
+import { TypeColorDirective } from './directives/type-color.directive';
 
 const modules = [CommonModule, RouterModule, BrowserModule, MaterialModule, BrowserAnimationsModule, FormsModule];
 
-const providers = [TtPlayerNameReducerPipe, ResultPipe, TtMatchDisciplinePipe, TeamItemComponent, DisciplineTypePipe];
+const providers = [
+  TtPlayerNameReducerPipe,
+  ResultPipe,
+  TtMatchDisciplinePipe,
+  TeamItemComponent,
+  DisciplineTypePipe,
+  TypeColorDirective,
+];
 
 @NgModule({
   declarations: [...providers],

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableDto } from '../../tabledto.model';
 import { MatchToTable } from './tt-table-content/matchtotable.model';
+import { TypeColorMap } from '../../../settings/settings.model';
 
 @Component({
   selector: 'toma-tt-table',
@@ -13,7 +14,7 @@ export class TtTableComponent {
   table: TableDto;
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   resultForMatch = new EventEmitter<any>();

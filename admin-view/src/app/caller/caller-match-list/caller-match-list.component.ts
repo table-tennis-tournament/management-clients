@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
+import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
   selector: 'toma-caller-match-list',
@@ -14,7 +15,7 @@ export class CallerMatchListComponent {
   constructor() {}
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Input()
   matchesLoading: boolean;

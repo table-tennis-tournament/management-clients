@@ -1,4 +1,4 @@
-<div class="p-3" [ngClass]="typeColor[matchListItem.matchinfo[0].type.id]">
+<div class="p-3" [tomaTypeColor]="matchListItem.matchinfo[0].type.id" [typeColors]="typeColors">
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
       <mat-panel-title>

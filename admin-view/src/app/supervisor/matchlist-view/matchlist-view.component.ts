@@ -3,6 +3,7 @@ import { MatchList } from '../matchlist.model';
 import { MatchListItem } from '../matchlistitem.model';
 import { Match } from '../../shared/data/match.model';
 import { MatchState } from '../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
   selector: 'toma-matchlist-view',
@@ -15,7 +16,7 @@ export class MatchlistViewComponent {
   matchListMatches: MatchList[] = [];
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   matchListItemDelete = new EventEmitter<MatchList>();

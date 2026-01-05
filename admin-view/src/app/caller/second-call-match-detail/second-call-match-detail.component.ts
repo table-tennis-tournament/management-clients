@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { MatchState } from '../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
   selector: 'toma-second-call-match-detail',
@@ -10,7 +11,7 @@ import { MatchState } from '../../shared/data/matchstate.model';
 })
 export class SecondCallMatchDetailComponent {
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Input()
   matchAggregate: MatchAggregate;
