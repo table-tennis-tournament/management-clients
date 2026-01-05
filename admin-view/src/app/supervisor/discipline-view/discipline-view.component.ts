@@ -5,6 +5,7 @@ import { DisciplineTab } from './models/discipline.tab.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { DisciplineStage } from './models/discipline.stage.model';
 import { DisciplineGroup } from './models/discipline.group.model';
+import { TypeColorMap } from '../../settings/settings.model';
 import deepEqual from 'deep-equal';
 
 @Component({
@@ -39,7 +40,7 @@ export class DisciplineViewComponent {
   }
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   _disciplines: Discipline[];
 

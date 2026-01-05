@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match } from '../shared/data/match.model';
 import { Store } from '@ngrx/store';
-import { getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsState } from '../app-state.reducer';
+import { getMatchesLoading, getMatchesState, getMatchListState, getTypeColorsMapState } from '../app-state.reducer';
 import { MatchList } from '../supervisor/matchlist.model';
 import { Discipline } from '../discipline/discipline.model';
 import { LoadMatchList } from '../supervisor/redux/matchlist.actions';
 import { LoadMatches } from './redux/match.actions';
 import { getDisciplineState } from '../discipline/redux';
+import { TypeColorMap } from '../settings/settings.model';
 
 @Component({
   selector: 'toma-assign-match.page',
@@ -19,7 +20,7 @@ export class AssignMatchPageComponent implements OnInit {
   matchesLoading: Observable<boolean>;
   matchList: Observable<MatchList[]>;
   disciplines: Observable<Discipline[]>;
-  typeColor: Observable<string[]>;
+  typeColors: Observable<TypeColorMap>;
 
   constructor(private store: Store<any>) {}
 
@@ -28,7 +29,7 @@ export class AssignMatchPageComponent implements OnInit {
     this.matchesLoading = this.store.select(getMatchesLoading);
     this.matchList = this.store.select(getMatchListState);
     this.disciplines = this.store.select(getDisciplineState);
-    this.typeColor = this.store.select(getTypeColorsState);
+    this.typeColors = this.store.select(getTypeColorsMapState);
   }
 
   onDisciplineRefresh(disciplineId: number) {

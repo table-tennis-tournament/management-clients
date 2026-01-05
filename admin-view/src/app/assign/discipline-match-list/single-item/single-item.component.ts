@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Match } from '../../../shared/data/match.model';
+import { TypeColorMap } from '../../../settings/settings.model';
 
 @Component({
   selector: 'toma-single-item',
@@ -11,7 +12,7 @@ export class SingleItemComponent {
   constructor() {}
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Input()
   currentMatch: Match;

@@ -5,8 +5,9 @@ import {
   getMatchesState,
   getMatchListState,
   getSelectedDiscipline,
-  getTypeColorsState,
+  getTypeColorsMapState,
 } from '../app-state.reducer';
+import { TypeColorMap } from '../settings/settings.model';
 import { Match } from '../shared/data/match.model';
 import { Observable } from 'rxjs';
 import { MatchList } from './matchlist.model';
@@ -36,9 +37,9 @@ export class SupervisorPageComponent implements OnInit {
   matchesLoading: Observable<boolean>;
   matchList: Observable<MatchList[]>;
   disciplines: Observable<Discipline[]>;
-  typeColor: Observable<string[]>;
+  typeColors: Observable<TypeColorMap>;
   selectedDiscipline: Observable<number>;
-  private colors: string[];
+  private colors: TypeColorMap = {};
   currentColor: string;
 
   constructor(private store: Store<any>, public dialog: MatDialog) {}
@@ -48,9 +49,9 @@ export class SupervisorPageComponent implements OnInit {
     this.matchesLoading = this.store.select(getMatchesLoading);
     this.matchList = this.store.select(getMatchListState);
     this.disciplines = this.store.select(getDisciplineState);
-    this.typeColor = this.store.select(getTypeColorsState);
+    this.typeColors = this.store.select(getTypeColorsMapState);
     this.selectedDiscipline = this.store.select(getSelectedDiscipline);
-    this.typeColor.subscribe((color) => (this.colors = color));
+    this.typeColors.subscribe((color) => (this.colors = color));
     this.selectedDiscipline.subscribe(this.changeColor.bind(this));
   }
 
@@ -94,8 +95,10 @@ export class SupervisorPageComponent implements OnInit {
   }
 
   changeColor(selectedDiscipline: number) {
-    if (this.colors != null) {
-      this.currentColor = this.colors[selectedDiscipline];
+    if (this.colors != null && this.colors[selectedDiscipline]) {
+      const bgColor = this.colors[selectedDiscipline].bgColor;
+      const textColor = this.colors[selectedDiscipline].textColor;
+      this.currentColor = `background-color: ${bgColor}; color: ${textColor};`;
     }
   }
 }

@@ -12,7 +12,7 @@
     </mat-card-title>
     <mat-card-content>
       <mat-expansion-panel [expanded]="showPlayers">
-        <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]" collapsedHeight="40px" expandedHeight="40px">
+        <mat-expansion-panel-header [tomaTypeColor]="group?.matches[0]?.type.id" [typeColors]="typeColors" collapsedHeight="40px" expandedHeight="40px">
           <mat-panel-title>
             <mat-icon>perm_identity</mat-icon>
             Spieler
@@ -25,7 +25,7 @@
         </mat-list>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="showMatches">
-        <mat-expansion-panel-header [ngClass]="typeColor[group?.matches[0]?.type.id]" collapsedHeight="40px" expandedHeight="40px">
+        <mat-expansion-panel-header [tomaTypeColor]="group?.matches[0]?.type.id" [typeColors]="typeColors" collapsedHeight="40px" expandedHeight="40px">
           <mat-panel-title>
             <mat-icon>view_list</mat-icon>
             Spiele

@@ -14,7 +14,8 @@
     <div
       class="mat-list-item border-bottom border-secondary"
       cdkDropList
-      [ngClass]="typeColor[currentMatch.type.id]"
+      [tomaTypeColor]="currentMatch.type.id"
+      [typeColors]="typeColors"
       *ngFor="let currentMatch of currentMatchesToShow; let i = index"
       [class.disabled-item]="!currentMatch.isPlayable"
     >
@@ -50,9 +51,9 @@
   <mat-list *ngIf="currentDisciplineId === -1">
     <div class="mat-list-item border-bottom border-secondary" *ngFor="let currentMatch of matchList; let i = index">
       <div *ngIf="currentMatch.matchinfo[0].group !== null">
-        <div cdkDropList [ngClass]="typeColor[firstMatch(currentMatch).type.id]">
+        <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type.id" [typeColors]="typeColors">
           <toma-single-item
-            [typeColor]="typeColor"
+            [typeColors]="typeColors"
             *ngIf="currentMatch.matchinfo.length === 1"
             [currentMatch]="currentMatch.matchinfo[0]"
             [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
@@ -64,7 +65,7 @@
           <toma-matchlist-group
             cdkDrag
             [cdkDragData]="currentMatch.matchinfo"
-            [typeColor]="typeColor"
+            [typeColors]="typeColors"
             [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
             [matchListItem]="currentMatch"
             *ngIf="currentMatch.matchinfo.length > 1"
@@ -78,10 +79,11 @@
           class="mat-list-item border-bottom border-secondary"
           *ngFor="let currentMatchItem of currentMatch.matchinfo"
           cdkDropList
-          [ngClass]="typeColor[firstMatch(currentMatch).type.id]"
+          [tomaTypeColor]="firstMatch(currentMatch).type.id"
+          [typeColors]="typeColors"
         >
           <toma-single-item
-            [typeColor]="typeColor"
+            [typeColors]="typeColors"
             [cdkDragDisabled]="!currentMatchItem.isPlayable"
             [currentMatch]="currentMatchItem"
             cdkDrag

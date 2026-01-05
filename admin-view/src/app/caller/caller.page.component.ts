@@ -8,7 +8,7 @@ import {
   getSelectedMatchAggregateState,
   getSelectedSecondCallMatchAggregateState,
   getThirdCallMatchesState,
-  getTypeColorsState,
+  getTypeColorsMapState,
 } from '../app-state.reducer';
 import { MatchAggregate } from '../shared/data/match.aggregate';
 import {
@@ -19,6 +19,7 @@ import {
   SetSelectedMatchAggregate,
   SetSelectedSecondCallMatchAggregate,
 } from './redux/caller.actions';
+import { TypeColorMap } from '../settings/settings.model';
 
 @Component({
   selector: 'toma-caller-page',
@@ -28,7 +29,7 @@ import {
 export class CallerPageComponent implements OnInit {
   selectedItem: Observable<MatchAggregate>;
   selectedSecondCallItem: Observable<MatchAggregate>;
-  typeColor: Observable<string[]>;
+  typeColors: Observable<TypeColorMap>;
   refereesLoading: Observable<boolean>;
   matchAggregates: Observable<MatchAggregate[]>;
   secondCalls: Observable<MatchAggregate[]>;
@@ -40,7 +41,7 @@ export class CallerPageComponent implements OnInit {
     this.store.dispatch(new LoadCallerMatches());
     this.store.dispatch(new LoadSecondCallMatches());
     this.store.dispatch(new LoadThirdCallMatches());
-    this.typeColor = this.store.select(getTypeColorsState);
+    this.typeColors = this.store.select(getTypeColorsMapState);
     this.refereesLoading = this.store.select(getRefereesLoading);
     this.matchAggregates = this.store.select(getCallerMatchAggregateState);
     this.selectedItem = this.store.select(getSelectedMatchAggregateState);

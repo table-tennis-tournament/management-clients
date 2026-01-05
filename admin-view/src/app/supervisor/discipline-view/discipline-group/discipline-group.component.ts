@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DisciplineGroup } from '../models/discipline.group.model';
 import { Match } from '../../../shared/data/match.model';
 import { MatchState } from '../../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../../settings/settings.model';
 
 @Component({
   selector: 'toma-discipline-group',
@@ -15,7 +16,7 @@ export class DisciplineGroupComponent {
   tableNumbers: any[];
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();

@@ -4,7 +4,7 @@
   <div *ngFor="let currentTable of tables" class="tttable-cell">
     <toma-tt-table
       [table]="currentTable"
-      [typeColor]="typeColor"
+      [typeColors]="typeColors"
       (lockTable)="lockTable.emit($event)"
       (unLockTable)="unLockTable.emit($event)"
       (freeTable)="freeTable.emit($event)"

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableDto } from '../tabledto.model';
 import { MatchToTable } from './tt-table/tt-table-content/matchtotable.model';
+import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
   selector: 'toma-table-list',
@@ -16,7 +17,7 @@ export class TableListComponent {
   tablesLoading: boolean;
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   lockTable = new EventEmitter<number>();
