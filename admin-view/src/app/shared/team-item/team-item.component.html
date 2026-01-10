@@ -6,6 +6,7 @@
   <span *ngIf="showDisciplines">
     <span *ngFor="let currentType of team[1].types" [ngClass]="typeColor[currentType]" class="square"></span>
   </span>
+  <div *ngIf="result" class="fixed-width align-middle">{{ result }}</div>
 </div>
 <span *ngIf="!team[1] && team[0]" class="align-middle">
   <span *ngIf="showDisciplines">
@@ -13,5 +14,6 @@
   </span>
   {{ team[0].firstName }} {{ team[0].lastName }}
   <span *ngIf="showClubs"> ({{ team[0].club.clubName }}) </span>
+  <span *ngIf="result" class="fixed-width align-middle">{{ result }}</span>
 </span>
 <span *ngIf="!team[1] && !team[0]"> [Frei] </span>
