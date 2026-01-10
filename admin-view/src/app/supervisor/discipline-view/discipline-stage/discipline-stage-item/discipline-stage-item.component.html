@@ -1,12 +1,11 @@
 <div class="header-main-container">
   <span class="header-center-content">
     <div class="single-bordered two-column-container">
-      <toma-team-item [team]="match.team1" [showDisciplines]="true"></toma-team-item>
-      <div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 1 }}</div>
+      <toma-team-item [team]="match.team1" [showDisciplines]="true" [result]="match.result ? (match.result | resultPipe: 1) : null"></toma-team-item>
+      <div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 2 }}</div>
     </div>
     <div class="single-bordered two-column-container">
       <toma-team-item [team]="match.team2" [showDisciplines]="true" class="full-width"></toma-team-item>
-      <span *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 2 }}</span>
     </div>
   </span>
   <span class="header-right-content">
