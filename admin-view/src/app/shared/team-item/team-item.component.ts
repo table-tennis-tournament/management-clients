@@ -16,6 +16,8 @@ export class TeamItemComponent implements OnInit {
 
   @Input() showClubs = false;
 
+  @Input() result: string;
+
   typeColor: string[];
 
   constructor(private store: Store<any>) {}
