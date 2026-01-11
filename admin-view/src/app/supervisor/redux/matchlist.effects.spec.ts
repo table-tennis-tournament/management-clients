@@ -52,7 +52,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadMatchList(null));
 
-      matchListEffects.loadMatchList$.subscribe((result) => {
+      matchListEffects.loadMatchList.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -63,7 +63,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadMatchList(null));
 
-      matchListEffects.loadMatchList$.subscribe((result) => {
+      matchListEffects.loadMatchList.subscribe((result) => {
         expect(result.type).toEqual(MatchListActionTypes.LoadError);
         done();
       });
@@ -78,7 +78,7 @@ describe('the match effects', () => {
 
       actions.next(new AssignToMatchList(null));
 
-      matchListEffects.assignToMatchList$.subscribe((result) => {
+      matchListEffects.assignToMatchList.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -89,7 +89,7 @@ describe('the match effects', () => {
 
       actions.next(new AssignToMatchList(null));
 
-      matchListEffects.assignToMatchList$.subscribe((result) => {
+      matchListEffects.assignToMatchList.subscribe((result) => {
         expect(result.type).toEqual(MatchListActionTypes.AssignError);
         done();
       });
@@ -104,7 +104,7 @@ describe('the match effects', () => {
 
       actions.next(new DeleteMatchListItem('myId'));
 
-      matchListEffects.deleteMatchListItem$.subscribe((result) => {
+      matchListEffects.deleteMatchListItem.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -115,7 +115,7 @@ describe('the match effects', () => {
 
       actions.next(new DeleteMatchListItem(null));
 
-      matchListEffects.deleteMatchListItem$.subscribe((result) => {
+      matchListEffects.deleteMatchListItem.subscribe((result) => {
         expect(result.type).toEqual(MatchListActionTypes.DeleteItemError);
         done();
       });
@@ -130,7 +130,7 @@ describe('the match effects', () => {
 
       actions.next(new MoveMatchListItem({}));
 
-      matchListEffects.moveMatchListItem$.subscribe((result) => {
+      matchListEffects.moveMatchListItem.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -141,7 +141,7 @@ describe('the match effects', () => {
 
       actions.next(new MoveMatchListItem(null));
 
-      matchListEffects.moveMatchListItem$.subscribe((result) => {
+      matchListEffects.moveMatchListItem.subscribe((result) => {
         expect(result.type).toEqual(MatchListActionTypes.MoveItemError);
         done();
       });

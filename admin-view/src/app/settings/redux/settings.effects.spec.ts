@@ -53,7 +53,7 @@ describe('the settings effects', () => {
 
       actions.next(new LoadSettings());
 
-      settingsEffects.loadSettings$.subscribe((result) => {
+      settingsEffects.loadSettings.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -64,7 +64,7 @@ describe('the settings effects', () => {
 
       actions.next(new LoadSettings());
 
-      settingsEffects.loadSettings$.subscribe((result) => {
+      settingsEffects.loadSettings.subscribe((result) => {
         expect(result.type).toEqual(SettingsActionTypes.LoadError);
         done();
       });
@@ -79,7 +79,7 @@ describe('the settings effects', () => {
 
       actions.next(new LoadPrinters());
 
-      settingsEffects.loadPrinters$.subscribe((result) => {
+      settingsEffects.loadPrinters.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -90,7 +90,7 @@ describe('the settings effects', () => {
 
       actions.next(new LoadPrinters());
 
-      settingsEffects.loadPrinters$.subscribe((result) => {
+      settingsEffects.loadPrinters.subscribe((result) => {
         expect(result.type).toEqual(SettingsActionTypes.LoadPrintersError);
         done();
       });
@@ -105,7 +105,7 @@ describe('the settings effects', () => {
 
       actions.next(new SaveAssignAutomatically(true));
 
-      settingsEffects.saveAssignAutomatically$.subscribe((result) => {
+      settingsEffects.saveAssignAutomatically.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -116,7 +116,7 @@ describe('the settings effects', () => {
 
       actions.next(new SaveAssignAutomatically(true));
 
-      settingsEffects.saveAssignAutomatically$.subscribe((result) => {
+      settingsEffects.saveAssignAutomatically.subscribe((result) => {
         expect(result.type).toEqual(SettingsActionTypes.SaveAssignAutomaticallyError);
         done();
       });
@@ -131,7 +131,7 @@ describe('the settings effects', () => {
 
       actions.next(new SavePrintOnAssign(true));
 
-      settingsEffects.savePrintOnAssign$.subscribe((result) => {
+      settingsEffects.savePrintOnAssign.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -142,7 +142,7 @@ describe('the settings effects', () => {
 
       actions.next(new SavePrintOnAssign(false));
 
-      settingsEffects.savePrintOnAssign$.subscribe((result) => {
+      settingsEffects.savePrintOnAssign.subscribe((result) => {
         expect(result.type).toEqual(SettingsActionTypes.SavePrintOnAssignError);
         done();
       });
@@ -158,7 +158,7 @@ describe('the settings effects', () => {
 
       actions.next(new SetPrinter(printerName));
 
-      settingsEffects.setPrinter$.subscribe((result) => {
+      settingsEffects.setPrinter.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -169,7 +169,7 @@ describe('the settings effects', () => {
 
       actions.next(new SetPrinter('printerName'));
 
-      settingsEffects.setPrinter$.subscribe((result) => {
+      settingsEffects.setPrinter.subscribe((result) => {
         expect(result.type).toEqual(SettingsActionTypes.SetPrinterError);
         done();
       });

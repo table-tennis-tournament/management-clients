@@ -88,7 +88,7 @@ describe('the table effects', () => {
 
       actions.next(new LoadTables(null));
 
-      tableEffects.loadTables$.subscribe((result) => {
+      tableEffects.loadTables.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -99,7 +99,7 @@ describe('the table effects', () => {
 
       actions.next(new LoadTables(null));
 
-      tableEffects.loadTables$.subscribe((result) => {
+      tableEffects.loadTables.subscribe((result) => {
         expect(result.type).toEqual(TableActionTypes.LoadError);
         done();
       });
@@ -114,7 +114,7 @@ describe('the table effects', () => {
 
       actions.next(new AssignToSecondTable(assign2ndTablePayload));
 
-      tableEffects.assignToSecondTable$.subscribe((result) => {
+      tableEffects.assignToSecondTable.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -125,7 +125,7 @@ describe('the table effects', () => {
 
       actions.next(new AssignToSecondTable(assign2ndTablePayload));
 
-      tableEffects.assignToSecondTable$.subscribe((result) => {
+      tableEffects.assignToSecondTable.subscribe((result) => {
         expect(result.type).toEqual(TableActionTypes.AssignToSecondTableError);
         done();
       });
@@ -140,7 +140,7 @@ describe('the table effects', () => {
 
       actions.next(new ResultForMatch(resultForMatchPayload));
 
-      tableEffects.resultForMatch$.subscribe((result) => {
+      tableEffects.resultForMatch.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -151,7 +151,7 @@ describe('the table effects', () => {
 
       actions.next(new ResultForMatch(resultForMatchPayload));
 
-      tableEffects.resultForMatch$.subscribe((result) => {
+      tableEffects.resultForMatch.subscribe((result) => {
         expect(result.type).toEqual(TableActionTypes.ResultForMatchError);
         done();
       });
@@ -171,7 +171,7 @@ describe('the table effects', () => {
 
       actions.next(new AssignMatchToTable(assignMatchToTable));
 
-      tableEffects.assignMatchToTable$.subscribe((result) => {
+      tableEffects.assignMatchToTable.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -182,7 +182,7 @@ describe('the table effects', () => {
 
       actions.next(new AssignMatchToTable({}));
 
-      tableEffects.assignMatchToTable$.subscribe((result) => {
+      tableEffects.assignMatchToTable.subscribe((result) => {
         expect(result.type).toEqual(TableActionTypes.AssignMatchToTableError);
         done();
       });
@@ -195,7 +195,7 @@ describe('the table effects', () => {
 
       actions.next(new AssignMatchToTable({}));
 
-      tableEffects.assignMatchToTable$.subscribe((result) => {
+      tableEffects.assignMatchToTable.subscribe((result) => {
         console.log(result);
         expect(result).toEqual(expectedResult);
         done();
