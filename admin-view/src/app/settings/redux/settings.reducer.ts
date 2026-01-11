@@ -3,7 +3,6 @@ import { SettingsActionTypes, SettingsActionUnion } from './settings.actions';
 import { ALWAYS_PRINT_SETTING, AUTOSTART_SETTING, PRINTER_NAME_SETTING } from '../settings.coonstants';
 
 export interface SettingsState {
-  typeColor: string[];
   typeColors: TypeColorMap;
   settings: Settings[];
   printers: string[];
@@ -11,39 +10,6 @@ export interface SettingsState {
 }
 
 const initialState: SettingsState = {
-  typeColor: [
-    'brown darken-4',
-    'herren-d-einzel  white-text',
-    'herren-d-doppel',
-    'herren-b-einzel white-text',
-    'herren-b-doppel',
-    'damen-a-einzel white-text',
-    'damen-a-doppel',
-    'herren-c-einzel white-text',
-    'herren-c-doppel',
-    'herren-a-einzel white-text',
-    'herren-a-doppel',
-    'jungen-c-einzel white-text',
-    'jungen-c-doppel',
-    'maedchen-c-einzel white-text',
-    'maedchen-c-doppel',
-    'maedchen-a-einzel white-text',
-    'maedchen-a-doppel',
-    'jungen-a-einzel white-text',
-    'jungen-a-doppel',
-    'senioren-50-einzel white-text',
-    'senioren-50-doppel',
-    'deep-purple darken-4 white-text',
-    'deep-purple',
-    'light-green darken-1 white-text',
-    'green',
-    'red lighten-3 white-text',
-    'pink',
-    'grey white-text',
-    'grey darken-3',
-    'blue darken-1 white-text',
-    'indigo',
-  ],
   typeColors: {},
   settings: [],
   printers: [],
@@ -137,6 +103,5 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
 
 export const getSettings = (state: SettingsState) => state.settings;
 export const getSettingsLoading = (state: SettingsState) => state.settingsLoading;
-export const getTypeColor = (state: SettingsState) => state.typeColor;
 export const getTypeColors = (state: SettingsState) => state.typeColors;
 export const getPrinters = (state: SettingsState) => state.printers;

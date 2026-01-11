@@ -18,7 +18,8 @@
           collapsedHeight="40px"
           expandedHeight="40px"
         >
-          <mat-panel-title>
+          <mat-panel-title  [tomaTypeColor]="group?.matches[0]?.type.id"
+                            [typeColors]="typeColors">
             <mat-icon>perm_identity</mat-icon>
             Spieler
           </mat-panel-title>
@@ -36,7 +37,8 @@
           collapsedHeight="40px"
           expandedHeight="40px"
         >
-          <mat-panel-title>
+          <mat-panel-title [tomaTypeColor]="group?.matches[0]?.type.id"
+                           [typeColors]="typeColors">
             <mat-icon>view_list</mat-icon>
             Spiele
           </mat-panel-title>

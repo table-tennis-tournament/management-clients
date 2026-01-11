@@ -9,7 +9,8 @@
         (click)="matchesSelected.emit(currentMatch)"
         *ngFor="let currentMatch of matchAggregates"
       >
-        <div class="d-flex justify-content-between w-100">
+        <div class="d-flex justify-content-between w-100"  [tomaTypeColor]="currentMatch?.discipline?.id"
+             [typeColors]="typeColors">
           <div>
             {{ currentMatch.name }}
           </div>

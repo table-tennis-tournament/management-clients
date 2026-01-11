@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import {
   LoadPrinters,
   LoadSettings,
+  LoadTypeColors,
   SaveAssignAutomatically,
   SavePrintOnAssign,
-  SetPrinter,
-  LoadTypeColors,
   SaveTypeColor,
   SetBulkTypeColors,
+  SetPrinter
 } from './redux/settings.actions';
-import { getPrintersState, getSettingsState, getTypeColorsMapState, getTypeColorsState } from '../app-state.reducer';
+import { getPrintersState, getSettingsState, getTypeColorsMapState } from '../app-state.reducer';
 import { Observable } from 'rxjs';
 import { Settings, TypeColor, TypeColorMap } from './settings.model';
-import { getTypeColors } from './redux/settings.reducer';
 import { getDisciplineState } from '../discipline/redux';
 import { Discipline } from '../discipline/discipline.model';
 import { LoadDiscipline } from '../discipline/redux/discipline.actions';

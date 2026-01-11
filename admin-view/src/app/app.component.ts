@@ -5,6 +5,7 @@ import { LoadMatches } from './assign/redux/match.actions';
 import { LoadMatchList } from './supervisor/redux/matchlist.actions';
 import { LoadDiscipline } from './discipline/redux/discipline.actions';
 import { WebsocketHandlerService } from './websocket/websocket.handler.service';
+import { LoadTypeColors } from './settings/redux/settings.actions';
 
 @Component({
   selector: 'toma-root',
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.websocketService.connectToWebsocket();
+    this.store.dispatch(new LoadTypeColors());
     this.store.dispatch(new LoadDiscipline(null));
     this.store.dispatch(new LoadMatches(null));
     this.store.dispatch(new LoadTables(null));

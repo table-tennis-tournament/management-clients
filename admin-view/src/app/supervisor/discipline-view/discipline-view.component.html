@@ -1,4 +1,4 @@
-<div class="d-flex flex-wrap gap-05rem">
+<div class="d-flex flex-wrap gap-05rem" >
   <mat-spinner *ngIf="matchesLoading"></mat-spinner>
   <div *ngIf="selectedTab">{{ selectedTab.name }}</div>
   <div *ngFor="let currentTab of tabs">
@@ -6,10 +6,10 @@
       {{ currentTab.name }}
     </button>
   </div>
-  <mat-checkbox [(ngModel)]="showAllMatches">Alle</mat-checkbox>
+  <mat-checkbox [(ngModel)]="showAllMatches" >Alle</mat-checkbox>
   <mat-checkbox [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
   <mat-checkbox [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
-  <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh">Stop</mat-checkbox>
+  <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh">Stop Aktualisierungen</mat-checkbox>
 </div>
 <div *ngIf="selectedTab" [tomaTypeColor]="selectedTab.id" [typeColors]="typeColors">
   <div *ngIf="selectedTab.stages" class="row">
