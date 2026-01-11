@@ -16,5 +16,7 @@
   <span *ngIf="showClubs">({{ team[0].club.clubName }})</span>
   <span *ngIf="result !== undefined && result !== null" class="fixed-width align-middle">{{ result }}</span>
 </span>
-<span *ngIf="!team[1] && !team[0]">[Frei]<div *ngIf="result !== undefined && result !== null" class="fixed-width align-middle">{{ result }}</div>
+<span *ngIf="!team[1] && !team[0]">
+  [Frei]
+  <div *ngIf="result !== undefined && result !== null" class="fixed-width align-middle">{{ result }}</div>
 </span>

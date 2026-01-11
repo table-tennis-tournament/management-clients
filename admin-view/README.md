@@ -10,3 +10,7 @@ Run `docker build . -t holzleube/turniermanager-client:1.x` to build image.
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+## Formatting
+
+Run `npm run format` to format the code with prettier.
