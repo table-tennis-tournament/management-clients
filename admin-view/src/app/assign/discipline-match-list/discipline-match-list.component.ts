@@ -3,12 +3,13 @@ import { Match } from '../../shared/data/match.model';
 import { MatchList } from '../../supervisor/matchlist.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { MatchState } from '../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
-    selector: 'toma-discipline-match-list',
-    templateUrl: './discipline-match-list.component.html',
-    styleUrls: ['./discipline-match-list.component.scss'],
-    standalone: false
+  selector: 'toma-discipline-match-list',
+  templateUrl: './discipline-match-list.component.html',
+  styleUrls: ['./discipline-match-list.component.scss'],
+  standalone: false,
 })
 export class DisciplineMatchListComponent {
   private _matches: Match[];
@@ -48,7 +49,7 @@ export class DisciplineMatchListComponent {
   disciplines: Discipline[];
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   disciplineRefresh = new EventEmitter<number>();

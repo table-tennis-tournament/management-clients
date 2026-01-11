@@ -14,14 +14,7 @@
   <form class="d-flex justify-content-center">
     <mat-form-field>
       <mat-label>Ergebnis (bsp. -7 8 8 9)</mat-label>
-      <input
-        matInput
-        placeholder=""
-        [(ngModel)]="currentInput"
-        #answer
-        (keyup)="onKeyUp(answer.value)"
-        (keyup.enter)="onEnter()"
-      />
+      <input matInput placeholder="" [(ngModel)]="currentInput" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnter()" />
     </mat-form-field>
   </form>
 </div>

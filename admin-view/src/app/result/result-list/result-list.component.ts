@@ -6,10 +6,10 @@ import { ResultCheckerService } from '../../table/table-list/result-modal/result
 import { ResultCheckModel } from '../../table/table-list/result-modal/result-check.model';
 
 @Component({
-    selector: 'toma-result-list',
-    templateUrl: './result-list.component.html',
-    styleUrls: ['./result-list.component.scss'],
-    standalone: false
+  selector: 'toma-result-list',
+  templateUrl: './result-list.component.html',
+  styleUrls: ['./result-list.component.scss'],
+  standalone: false,
 })
 export class ResultListComponent {
   private _matches: Match[];

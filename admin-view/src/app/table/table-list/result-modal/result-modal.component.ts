@@ -5,10 +5,10 @@ import { Match } from '../../../shared/data/match.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-    selector: 'toma-result-modal',
-    templateUrl: './result-modal.component.html',
-    styleUrls: ['./result-modal.component.scss'],
-    standalone: false
+  selector: 'toma-result-modal',
+  templateUrl: './result-modal.component.html',
+  styleUrls: ['./result-modal.component.scss'],
+  standalone: false,
 })
 export class ResultModalComponent {
   checkerResult: ResultCheckModel = {

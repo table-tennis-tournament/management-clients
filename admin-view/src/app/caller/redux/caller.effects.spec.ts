@@ -48,7 +48,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadCallerMatches());
 
-      callerEffects.load$.subscribe((result) => {
+      callerEffects.load.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -59,7 +59,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadCallerMatches());
 
-      callerEffects.load$.subscribe((result) => {
+      callerEffects.load.subscribe((result) => {
         expect(result.type).toEqual(CallerActionTypes.LoadError);
         done();
       });
@@ -73,7 +73,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadRefereesList(null));
 
-      callerEffects.loadRefereeList$.subscribe((result) => {
+      callerEffects.loadRefereeList.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -84,7 +84,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadRefereesList(null));
 
-      callerEffects.loadRefereeList$.subscribe((result) => {
+      callerEffects.loadRefereeList.subscribe((result) => {
         expect(result.type).toEqual(CallerActionTypes.LoadRefereesError);
         done();
       });
@@ -98,7 +98,7 @@ describe('the match effects', () => {
 
       actions.next(new CallMatch([1]));
 
-      callerEffects.callMatch$.subscribe((result) => {
+      callerEffects.callMatch.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -109,7 +109,7 @@ describe('the match effects', () => {
 
       actions.next(new CallMatch(null));
 
-      callerEffects.callMatch$.subscribe((result) => {
+      callerEffects.callMatch.subscribe((result) => {
         expect(result.type).toEqual(CallerActionTypes.CallMatchError);
         done();
       });

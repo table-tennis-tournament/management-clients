@@ -5,7 +5,6 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import * as fromTables from './table/redux/table.reducer';
 import * as fromMatches from './assign/redux/match.reducer';
 import * as fromMatchList from './supervisor/redux/matchlist.reducer';
-import * as fromDisciplines from './discipline/redux/discipline.reducer';
 import * as fromSettings from './settings/redux/settings.reducer';
 import * as fromWebSocket from './websocket/redux/websocket.reducer';
 import * as fromCaller from './caller/redux/caller.reducer';
@@ -57,7 +56,7 @@ export const getResultMatchesLoading = createSelector(
 
 export const getSettingsState = createSelector((state: State) => state.settings, fromSettings.getSettings);
 export const getSettingsLoading = createSelector((state: State) => state.settings, fromSettings.getSettingsLoading);
-export const getTypeColorsState = createSelector((state: State) => state.settings, fromSettings.getTypeColor);
+export const getTypeColorsMapState = createSelector((state: State) => state.settings, fromSettings.getTypeColors);
 export const getPrintersState = createSelector((state: State) => state.settings, fromSettings.getPrinters);
 
 export const getWebSocketState = createSelector(

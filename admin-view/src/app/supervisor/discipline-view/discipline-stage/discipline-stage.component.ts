@@ -2,12 +2,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DisciplineStage } from '../models/discipline.stage.model';
 import { Match } from '../../../shared/data/match.model';
 import { MatchState } from '../../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../../settings/settings.model';
 
 @Component({
-    selector: 'toma-discipline-stage',
-    templateUrl: './discipline-stage.component.html',
-    styleUrls: ['./discipline-stage.component.scss'],
-    standalone: false
+  selector: 'toma-discipline-stage',
+  templateUrl: './discipline-stage.component.html',
+  styleUrls: ['./discipline-stage.component.scss'],
+  standalone: false,
 })
 export class DisciplineStageComponent {
   lineStageClass: string[] = ['first-stage', 'second-stage', 'third-stage', 'fourth-stage'];
@@ -15,7 +16,7 @@ export class DisciplineStageComponent {
   constructor() {}
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Input()
   stage: DisciplineStage;

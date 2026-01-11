@@ -44,7 +44,7 @@ describe('the Discipline effects', () => {
 
       actions.next(new LoadDiscipline(null));
 
-      disciplineEffects.loadDisciplines$.subscribe((result) => {
+      disciplineEffects.loadDisciplines.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -55,7 +55,7 @@ describe('the Discipline effects', () => {
 
       actions.next(new LoadDiscipline(null));
 
-      disciplineEffects.loadDisciplines$.subscribe((result) => {
+      disciplineEffects.loadDisciplines.subscribe((result) => {
         expect(result.type).toEqual(DisciplineActionTypes.LoadError);
         done();
       });

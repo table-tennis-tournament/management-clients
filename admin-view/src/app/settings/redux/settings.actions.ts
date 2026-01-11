@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+import { TypeColor, TypeColorMap } from '../settings.model';
 
 export enum SettingsActionTypes {
   Load = '[Settings] Load',
@@ -16,6 +17,15 @@ export enum SettingsActionTypes {
   SetPrinter = '[Settings] SetPrinter',
   SetPrinterSuccess = '[Settings]SetPrinter Success',
   SetPrinterError = '[Settings] SetPrinter Error',
+  LoadTypeColors = '[Settings] Load Type Colors',
+  LoadTypeColorsSuccess = '[Settings] Load Type Colors Success',
+  LoadTypeColorsError = '[Settings] Load Type Colors Error',
+  SaveTypeColor = '[Settings] Save Type Color',
+  SaveTypeColorSuccess = '[Settings] Save Type Color Success',
+  SaveTypeColorError = '[Settings] Save Type Color Error',
+  SetBulkTypeColors = '[Settings] Set Bulk Type Colors',
+  SetBulkTypeColorsSuccess = '[Settings] Set Bulk Type Colors Success',
+  SetBulkTypeColorsError = '[Settings] Set Bulk Type Colors Error',
 }
 
 export class LoadSettings implements Action {
@@ -108,6 +118,60 @@ export class SetPrinterError implements Action {
   constructor(public payload: any) {}
 }
 
+export class LoadTypeColors implements Action {
+  readonly type = SettingsActionTypes.LoadTypeColors;
+
+  constructor() {}
+}
+
+export class LoadTypeColorsSuccess implements Action {
+  readonly type = SettingsActionTypes.LoadTypeColorsSuccess;
+
+  constructor(public payload: TypeColorMap) {}
+}
+
+export class LoadTypeColorsError implements Action {
+  readonly type = SettingsActionTypes.LoadTypeColorsError;
+
+  constructor(public payload: any) {}
+}
+
+export class SaveTypeColor implements Action {
+  readonly type = SettingsActionTypes.SaveTypeColor;
+
+  constructor(public payload: { typeId: number; colorData: TypeColor }) {}
+}
+
+export class SaveTypeColorSuccess implements Action {
+  readonly type = SettingsActionTypes.SaveTypeColorSuccess;
+
+  constructor(public payload: { typeId: number; colorData: TypeColor }) {}
+}
+
+export class SaveTypeColorError implements Action {
+  readonly type = SettingsActionTypes.SaveTypeColorError;
+
+  constructor(public payload: any) {}
+}
+
+export class SetBulkTypeColors implements Action {
+  readonly type = SettingsActionTypes.SetBulkTypeColors;
+
+  constructor(public payload: TypeColorMap) {}
+}
+
+export class SetBulkTypeColorsSuccess implements Action {
+  readonly type = SettingsActionTypes.SetBulkTypeColorsSuccess;
+
+  constructor(public payload: TypeColorMap) {}
+}
+
+export class SetBulkTypeColorsError implements Action {
+  readonly type = SettingsActionTypes.SetBulkTypeColorsError;
+
+  constructor(public payload: any) {}
+}
+
 export type SettingsActionUnion =
   | LoadSettings
   | LoadSettingsSuccess
@@ -123,4 +187,13 @@ export type SettingsActionUnion =
   | SavePrintOnAssignError
   | SetPrinter
   | SetPrinterSuccess
-  | SetPrinterError;
+  | SetPrinterError
+  | LoadTypeColors
+  | LoadTypeColorsSuccess
+  | LoadTypeColorsError
+  | SaveTypeColor
+  | SaveTypeColorSuccess
+  | SaveTypeColorError
+  | SetBulkTypeColors
+  | SetBulkTypeColorsSuccess
+  | SetBulkTypeColorsError;

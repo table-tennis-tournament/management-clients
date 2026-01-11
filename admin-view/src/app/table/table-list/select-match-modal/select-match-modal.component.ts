@@ -3,10 +3,10 @@ import { Match } from '../../../shared/data/match.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-    selector: 'toma-select-match-modal',
-    templateUrl: './select-match-modal.component.html',
-    styleUrls: ['./select-match-modal.component.scss'],
-    standalone: false
+  selector: 'toma-select-match-modal',
+  templateUrl: './select-match-modal.component.html',
+  styleUrls: ['./select-match-modal.component.scss'],
+  standalone: false,
 })
 export class SelectMatchModalComponent {
   currentValues: boolean[] = [];

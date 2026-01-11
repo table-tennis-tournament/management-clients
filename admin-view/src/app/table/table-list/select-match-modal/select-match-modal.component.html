@@ -4,12 +4,7 @@
     <div class="row">
       <div class="col s10">
         <p *ngFor="let match of matches; let i = index">
-          <input
-            name="inputMatch{{ match.id }}"
-            type="checkbox"
-            id="inputMatch{{ match.id }}"
-            [(ngModel)]="currentValues[i]"
-          />
+          <input name="inputMatch{{ match.id }}" type="checkbox" id="inputMatch{{ match.id }}" [(ngModel)]="currentValues[i]" />
           <label for="inputMatch{{ match.id }}">
             {{ match.team1 | ttPlayerNameReducer }}
             -

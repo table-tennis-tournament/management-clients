@@ -1,10 +1,10 @@
-<span *ngIf="matches?.length === 1" class="text-truncate ">
+<span *ngIf="matches?.length === 1" class="text-truncate">
   <div class="d-flex justify-content-center">
-    <b *ngIf="!matches[0].group">{{ matches[0].matchType.name }} </b>
-    <b *ngIf="matches[0].group"> Gruppe {{ matches[0].group.name }}</b>
+    <b *ngIf="!matches[0].group">{{ matches[0].matchType.name }}</b>
+    <b *ngIf="matches[0].group">Gruppe {{ matches[0].group.name }}</b>
   </div>
   <div *ngIf="matches[0].result" class="d-flex align-items-center">
-    <b> {{ matches[0].result | resultPipe: 1 }}:{{ matches[0].result | resultPipe: 2 }}</b>
+    <b>{{ matches[0].result | resultPipe: 1 }}:{{ matches[0].result | resultPipe: 2 }}</b>
   </div>
   <div class="d-flex align-items-center text-truncate-custom">
     {{ matches[0].team1 | ttPlayerNameReducer }}
@@ -14,7 +14,8 @@
   </div>
 </span>
 <span *ngIf="matches?.length > 1">
-  <b>Gruppe </b><b *ngIf="matches[0].group">{{ matches[0].group.name }}</b
-  ><br />
+  <b>Gruppe</b>
+  <b *ngIf="matches[0].group">{{ matches[0].group.name }}</b>
+  <br />
   Offene Spiele: {{ matches.length }}
 </span>

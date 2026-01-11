@@ -51,7 +51,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadMatches(null));
 
-      matchEffects.loadMatches$.subscribe((result) => {
+      matchEffects.loadMatches.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -62,7 +62,7 @@ describe('the match effects', () => {
 
       actions.next(new LoadMatches(null));
 
-      matchEffects.loadMatches$.subscribe((result) => {
+      matchEffects.loadMatches.subscribe((result) => {
         expect(result.type).toEqual(MatchActionTypes.LoadError);
         done();
       });
@@ -78,7 +78,7 @@ describe('the match effects', () => {
 
       actions.next(new ReloadMatches());
 
-      matchEffects.reloadMatches$.subscribe((result) => {
+      matchEffects.reloadMatches.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });
@@ -89,7 +89,7 @@ describe('the match effects', () => {
 
       actions.next(new ReloadMatches());
 
-      matchEffects.reloadMatches$.subscribe((result) => {
+      matchEffects.reloadMatches.subscribe((result) => {
         expect(result.type).toEqual(MatchActionTypes.ReloadError);
         done();
       });

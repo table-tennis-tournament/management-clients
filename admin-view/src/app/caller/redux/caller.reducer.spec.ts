@@ -14,6 +14,7 @@ const initialState: CallerState = Object.freeze({
   refereesLoading: false,
   callerMatches: [],
   selectedMatchAggregate: null,
+  selectedSecondCallMatchAggregate: null,
   secondCallMatches: [],
   thirdCallMatches: [],
 });

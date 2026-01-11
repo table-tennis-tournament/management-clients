@@ -13,6 +13,7 @@ import { ALWAYS_PRINT_SETTING, AUTOSTART_SETTING, PRINTER_NAME_SETTING } from '.
 
 const initialState: SettingsState = Object.freeze({
   typeColor: [],
+  typeColors: {},
   settings: [],
   printers: [],
   settingsLoading: false,

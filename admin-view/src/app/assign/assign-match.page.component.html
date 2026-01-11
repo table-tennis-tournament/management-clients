@@ -6,10 +6,9 @@
         [matchesLoading]="matchesLoading | async"
         [matchList]="matchList | async"
         [disciplines]="disciplines | async"
-        [typeColor]="typeColor | async"
+        [typeColors]="typeColors | async"
         (disciplineRefresh)="onDisciplineRefresh($event)"
-      >
-      </toma-discipline-match-list>
+      ></toma-discipline-match-list>
     </div>
     <div class="col-10">
       <toma-table-list-page></toma-table-list-page>

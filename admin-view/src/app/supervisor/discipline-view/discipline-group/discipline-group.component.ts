@@ -2,12 +2,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DisciplineGroup } from '../models/discipline.group.model';
 import { Match } from '../../../shared/data/match.model';
 import { MatchState } from '../../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../../settings/settings.model';
 
 @Component({
-    selector: 'toma-discipline-group',
-    templateUrl: './discipline-group.component.html',
-    styleUrls: ['./discipline-group.component.scss'],
-    standalone: false
+  selector: 'toma-discipline-group',
+  templateUrl: './discipline-group.component.html',
+  styleUrls: ['./discipline-group.component.scss'],
+  standalone: false,
 })
 export class DisciplineGroupComponent {
   openMatchState: string = MatchState[MatchState.Open];
@@ -15,7 +16,7 @@ export class DisciplineGroupComponent {
   tableNumbers: any[];
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();

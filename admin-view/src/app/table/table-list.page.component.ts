@@ -1,7 +1,8 @@
 import { Component, ComponentRef, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { getTablesLoading, getTableState, getTypeColorsState } from '../app-state.reducer';
+import { getTablesLoading, getTableState, getTypeColorsMapState } from '../app-state.reducer';
+import { TypeColorMap } from '../settings/settings.model';
 import {
   AssignMatchToTable,
   AssignToSecondTable,
@@ -25,14 +26,14 @@ import { MatchToTable } from './table-list/tt-table/tt-table-content/matchtotabl
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-    selector: 'toma-table-list-page',
-    templateUrl: './table-list.page.component.html',
-    standalone: false
+  selector: 'toma-table-list-page',
+  templateUrl: './table-list.page.component.html',
+  standalone: false,
 })
 export class TableListPageComponent implements OnInit {
   tables: Observable<TableDto[]>;
   tablesLoading: Observable<boolean>;
-  typeColor: Observable<string[]>;
+  typeColors: Observable<TypeColorMap>;
 
   constructor(
     private store: Store<any>,
@@ -44,7 +45,7 @@ export class TableListPageComponent implements OnInit {
   ngOnInit() {
     this.tables = this.store.select(getTableState);
     this.tablesLoading = this.store.select(getTablesLoading);
-    this.typeColor = this.store.select(getTypeColorsState);
+    this.typeColors = this.store.select(getTypeColorsMapState);
   }
 
   onLockTable(tableNr: number) {

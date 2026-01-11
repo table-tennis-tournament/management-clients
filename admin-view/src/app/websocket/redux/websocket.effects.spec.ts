@@ -41,7 +41,7 @@ describe('the websocket effects', () => {
 
       actions.next(new ConnectWebSocket(null));
 
-      webSocketEffects.connectWebSocket$.subscribe((result) => {
+      webSocketEffects.connectWebSocket.subscribe((result) => {
         expect(result).toEqual(expectedResult);
         done();
       });

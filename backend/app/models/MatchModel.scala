@@ -41,6 +41,16 @@ object MatchModel {
     )
   }
 
+  implicit val typeColorDataWrites: Writes[TypeColorData] = (data: TypeColorData) => Json.obj(
+    "bgColor" -> data.bgColor,
+    "textColor" -> data.textColor
+  )
+
+  implicit val typeColorDataReads: Reads[TypeColorData] = (
+    (JsPath \ "bgColor").read[String] and
+    (JsPath \ "textColor").read[String]
+  )(TypeColorData.apply _)
+
   implicit val groupWrites: Writes[Group] = (group: Group) => Json.obj(
     "id" -> group.id,
     "name" -> group.name
@@ -266,6 +276,18 @@ case class Type(
     name: String,
     kind: Int,
     active: Boolean
+  )
+
+case class TypeColor(
+    id: Long,
+    typeId: Long,
+    bgColor: String,
+    textColor: String
+  )
+
+case class TypeColorData(
+    bgColor: String,
+    textColor: String
   )
 
 case class Group(

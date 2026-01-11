@@ -3,19 +3,20 @@ import { MatchList } from '../matchlist.model';
 import { MatchListItem } from '../matchlistitem.model';
 import { Match } from '../../shared/data/match.model';
 import { MatchState } from '../../shared/data/matchstate.model';
+import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
-    selector: 'toma-matchlist-view',
-    templateUrl: './matchlist-view.component.html',
-    styleUrls: ['./matchlist-view.component.scss'],
-    standalone: false
+  selector: 'toma-matchlist-view',
+  templateUrl: './matchlist-view.component.html',
+  styleUrls: ['./matchlist-view.component.scss'],
+  standalone: false,
 })
 export class MatchlistViewComponent {
   @Input()
   matchListMatches: MatchList[] = [];
 
   @Input()
-  typeColor: string[];
+  typeColors: TypeColorMap;
 
   @Output()
   matchListItemDelete = new EventEmitter<MatchList>();
