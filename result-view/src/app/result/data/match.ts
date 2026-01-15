@@ -1,7 +1,7 @@
-import {Group} from './group';
-import {MatchType} from './matchType';
-import {Player} from './player';
-import {Type} from './type';
+import { Group } from './group';
+import { MatchType } from './matchType';
+import { Player } from './player';
+import { Type } from './type';
 
 export interface Match {
   id?: number;

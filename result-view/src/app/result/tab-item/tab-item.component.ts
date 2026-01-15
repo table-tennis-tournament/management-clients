@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-tab-item',
-    templateUrl: './tab-item.component.html',
-    standalone: false
+  standalone: false,
+  selector: 'app-tab-item',
+  templateUrl: './tab-item.component.html',
 })
 export class TabItemComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
