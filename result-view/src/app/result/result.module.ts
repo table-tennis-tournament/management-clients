@@ -11,9 +11,11 @@ import { ResultPipe } from './result.pipe';
 import { StageViewComponent } from './stage-view/stage-view.component';
 import { TabItemComponent } from './tab-item/tab-item.component';
 import { TeamItemComponent } from './match-item/team-item/team-item.component';
+import { BracketViewComponent } from './bracket-view/bracket-view.component';
 
 @NgModule({
   declarations: [
+    BracketViewComponent,
     ResultComponent,
     StageViewComponent,
     GroupViewComponent,
