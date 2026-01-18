@@ -1,8 +1,8 @@
-import {Action, createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {DisciplineGroup} from '../data/discipline.group';
-import {DisciplineStage} from '../data/discipline.stage';
-import {Match} from '../data/match';
-import {Type} from '../data/type';
+import { Action, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
+import { DisciplineGroup } from '../data/discipline.group';
+import { DisciplineStage } from '../data/discipline.stage';
+import { Match } from '../data/match';
+import { Type } from '../data/type';
 import * as TableActions from './result.actions';
 
 export interface TypesState {
@@ -10,7 +10,7 @@ export interface TypesState {
 }
 
 export const initialState: TypesState = {
-  types: []
+  types: [],
 };
 
 export interface MatchState {
@@ -22,7 +22,7 @@ export interface MatchState {
 export const initialMatchState: MatchState = {
   matches: [],
   groups: [],
-  stages: []
+  stages: [],
 };
 
 export interface AppState {
@@ -32,19 +32,19 @@ export interface AppState {
 
 const typeReducer = createReducer(
   initialState,
-  on(TableActions.loadTypesSuccess, (state, {types}) => ({
+  on(TableActions.loadTypesSuccess, (state, { types }) => ({
     ...state,
-    types
+    types,
   }))
 );
 
 const matchesReducer = createReducer(
   initialMatchState,
-  on(TableActions.loadMatchesSuccess, (state, {matches, groups, stages}) => ({
+  on(TableActions.loadMatchesSuccess, (state, { matches, groups, stages }) => ({
     ...state,
     matches,
     groups,
-    stages
+    stages,
   }))
 );
 
@@ -59,22 +59,10 @@ export function matchReducer(state: MatchState | undefined, action: Action) {
 export const selectFeature = createFeatureSelector<AppState, TypesState>('disciplines');
 export const selectMatchFeature = createFeatureSelector<AppState, MatchState>('matches');
 
-export const getTypes = createSelector(
-  selectFeature,
-  (state: TypesState) => state.types
-);
+export const getTypes = createSelector(selectFeature, (state: TypesState) => state.types);
 
-export const getMatches = createSelector(
-  selectMatchFeature,
-  (state: MatchState) => state.matches
-);
+export const getMatches = createSelector(selectMatchFeature, (state: MatchState) => state.matches);
 
-export const getStages = createSelector(
-  selectMatchFeature,
-  (state: MatchState) => state.stages
-);
+export const getStages = createSelector(selectMatchFeature, (state: MatchState) => state.stages);
 
-export const getGroups = createSelector(
-  selectMatchFeature,
-  (state: MatchState) => state.groups
-);
+export const getGroups = createSelector(selectMatchFeature, (state: MatchState) => state.groups);

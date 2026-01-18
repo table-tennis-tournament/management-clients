@@ -1,21 +1,20 @@
-import {Injectable} from '@angular/core';
-import {DisciplineGroup} from '../data/discipline.group';
-import {DisciplineTab} from '../data/discipline.tab';
-import {Match} from '../data/match';
+import { Injectable } from '@angular/core';
+import { DisciplineGroup } from '../data/discipline.group';
+import { DisciplineTab } from '../data/discipline.tab';
+import { Match } from '../data/match';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 // TODO: do this on server
 export class DisciplineTabService {
-
   isMatchActive = true;
   isPlayerActive = true;
 
   public getTabForMatches(matches: Match[]): DisciplineTab {
     const currentItemTab: DisciplineTab = {
       groups: [],
-      stages: []
+      stages: [],
     };
     if (matches == null || matches.length < 1) {
       return currentItemTab;
@@ -24,8 +23,8 @@ export class DisciplineTabService {
     let currentIndex = 0;
     let allPlayerArray: boolean[] = [];
     let currentItem: Match = null;
-    for (let index = 0; index < matches.length; index++) {
-      currentItem = matches[index];
+    for (const match of matches) {
+      currentItem = match;
 
       if (!currentItem.group) {
         const localIndex = allStages[currentItem.matchType.name];
@@ -35,7 +34,7 @@ export class DisciplineTabService {
           currentItemTab.stages[currentIndex] = {
             name: currentItem.matchType.name,
             isComplete: true,
-            matches: []
+            matches: [],
           };
           currentStage = currentItemTab.stages[currentIndex];
           currentIndex++;
@@ -54,7 +53,7 @@ export class DisciplineTabService {
           isMatchActive: this.isMatchActive,
           isPlayerActive: this.isPlayerActive,
           players: [],
-          matches: []
+          matches: [],
         };
 
         allPlayerArray = [];
@@ -65,13 +64,12 @@ export class DisciplineTabService {
       currentGroup = this.addTableNumbers(currentItem, currentGroup);
 
       const allPlayers = currentItem.team1.concat(currentItem.team2);
-      for (let playerIndex = 0; playerIndex < allPlayers.length; playerIndex++) {
-        if (!allPlayerArray[allPlayers[playerIndex].id]) {
-          currentGroup.players.push(allPlayers[playerIndex]);
-          allPlayerArray[allPlayers[playerIndex].id] = true;
+      for (const player of allPlayers) {
+        if (!allPlayerArray[player.id]) {
+          currentGroup.players.push(player);
+          allPlayerArray[player.id] = true;
         }
       }
-
     }
     currentItemTab.groups = this.getCleanedGroups(currentItemTab.groups);
     return currentItemTab;
@@ -90,7 +88,7 @@ export class DisciplineTabService {
 
   getCleanedGroups(groupsToClean: DisciplineGroup[]) {
     const cleanedResult: DisciplineGroup[] = [];
-    groupsToClean.forEach(element => {
+    groupsToClean.forEach((element) => {
       if (element) {
         cleanedResult.push(element);
       }

@@ -1,12 +1,11 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-    selector: 'app-navigation',
-    templateUrl: './navigation.component.html',
-    styleUrls: ['./navigation.component.scss'],
-    standalone: false
+  standalone: false,
+  selector: 'app-navigation',
+  templateUrl: './navigation.component.html',
+  styleUrls: ['./navigation.component.scss'],
 })
 export class NavigationComponent {
-
-    disciplines = ['Herren A', 'Herren B', 'Herren C'];
+  disciplines = ['Herren A', 'Herren B', 'Herren C'];
 }

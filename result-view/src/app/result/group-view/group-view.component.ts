@@ -1,18 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {DisciplineGroup} from '../data/discipline.group';
+import { Component, Input, OnInit } from '@angular/core';
+import { DisciplineGroup } from '../data/discipline.group';
 
 @Component({
-    selector: 'app-group-view',
-    templateUrl: './group-view.component.html',
-    standalone: false
+  standalone: false,
+  selector: 'app-group-view',
+  templateUrl: './group-view.component.html',
 })
 export class GroupViewComponent implements OnInit {
-
-  constructor() { }
+  constructor() {}
 
   @Input() group: DisciplineGroup;
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

@@ -1,18 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {DisciplineStage} from '../data/discipline.stage';
+import { Component, Input, OnInit } from '@angular/core';
+import { DisciplineStage } from '../data/discipline.stage';
 
 @Component({
-    selector: 'app-stage-view',
-    templateUrl: './stage-view.component.html',
-    standalone: false
+  standalone: false,
+  selector: 'app-stage-view',
+  templateUrl: './stage-view.component.html',
 })
 export class StageViewComponent implements OnInit {
-
-  constructor() { }
+  constructor() {}
 
   @Input() stage: DisciplineStage;
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

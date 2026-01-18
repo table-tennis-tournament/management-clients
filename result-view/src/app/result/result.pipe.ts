@@ -1,11 +1,10 @@
-import {Pipe, PipeTransform} from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'resultPipe',
-    standalone: false
+  name: 'resultPipe',
+  standalone: false,
 })
 export class ResultPipe implements PipeTransform {
-
   transform(value: any[], firstPlayer: boolean): any {
     if (value == null || value.length < 1) {
       return '';
@@ -24,5 +23,4 @@ export class ResultPipe implements PipeTransform {
     }
     return secondPlayerSets;
   }
-
 }

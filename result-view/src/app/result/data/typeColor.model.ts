@@ -3,6 +3,4 @@ export interface TypeColor {
   textColor: string;
 }
 
-export interface TypeColorMap {
-  [typeId: number]: TypeColor;
-}
+export type TypeColorMap = Record<number, TypeColor>;

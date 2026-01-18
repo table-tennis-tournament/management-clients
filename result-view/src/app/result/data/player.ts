@@ -1,4 +1,4 @@
-import {Club} from './club';
+import { Club } from './club';
 
 export interface Player {
   id?: number;
