@@ -9,9 +9,10 @@
   </div>
 
   <div class="row ml-1" *ngIf="stages$">
-    <div *ngFor="let currentStage of stages$ | async" class="col-3">
-      <app-stage-view [stage]="currentStage"></app-stage-view>
-    </div>
+    <app-bracket-view [stages]="stages$ | async"></app-bracket-view>
+    <!--    <div *ngFor="let currentStage of stages$ | async" class="col-3">-->
+    <!--      <app-stage-view [stage]="currentStage"></app-stage-view>-->
+    <!--    </div>-->
   </div>
   <div class="row" *ngIf="groups$">
     <div *ngFor="let currentGroup of groups$ | async" class="col-3 mt-2">
