@@ -28,12 +28,12 @@ services:
       - app-tier
     depends_on:
       - "mariadb"
-  admin:
-    image: holzleube/ttt-clients:v6.5.1-sunday
-    ports:
-      - "80:8080"
-    networks:
-      - app-tier
-    depends_on:
-      - "backend"
+#  admin:
+#    image: holzleube/ttt-clients:v6.5.1-sunday
+#    ports:
+#      - "80:8080"
+#    networks:
+#      - app-tier
+#    depends_on:
+#      - "backend"
 
