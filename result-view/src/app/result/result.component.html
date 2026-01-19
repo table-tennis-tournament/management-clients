@@ -1,6 +1,6 @@
 <div class="mh-100 vh-100 p-2">
   <div class="row mb-3">
-    <div *ngFor="let currentType of types$ | async" class="ml-3">
+    <div *ngFor="let currentType of types$ | async" class="col-auto ml-3">
       <button mat-raised-button color="{{ getColor(currentType) }}" (click)="onTabSelected(currentType)">{{ currentType.name }}</button>
     </div>
     <div class="col">
