@@ -6,12 +6,12 @@
         <div class="match-content p-2 border rounded">
           <div class="team d-flex justify-content-between">
             <span>{{ match.team1[0]?.firstName }} {{ match.team1[0]?.lastName }}</span>
-            <span *ngIf="match.result">{{ match.result.split(':')[0] }}</span>
+            <span>{{ match.result | resultPipe: true }}</span>
           </div>
           <hr class="my-1" />
           <div class="team d-flex justify-content-between">
             <span>{{ match.team2[0]?.firstName }} {{ match.team2[0]?.lastName }}</span>
-            <span *ngIf="match.result">{{ match.result.split(':')[1] }}</span>
+            <span>{{ match.result | resultPipe: false }}</span>
           </div>
         </div>
       </div>
