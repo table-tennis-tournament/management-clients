@@ -1,15 +1,15 @@
-package de.ttt.management.match
+package de.ttt.management.registration.domain.player
 
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "matchtype")
-class MatchType(
+@Table(name = "club")
+class Club(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MaTy_ID")
+    @Column(name = "Club_ID")
     var id: Long? = null,
 
-    @Column(name = "MaTy_Name")
+    @Column(name = "Club_Name")
     var name: String? = null
 )

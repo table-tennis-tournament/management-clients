@@ -1,5 +1,8 @@
-package de.ttt.management.registration.domain.discipline
+package de.ttt.management.registration.application
 
+import de.ttt.management.registration.domain.discipline.Discipline
+import de.ttt.management.registration.domain.discipline.DisciplineColorRepository
+import de.ttt.management.registration.domain.discipline.DisciplineRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,7 +18,7 @@ class DisciplineService(
 
     fun getAllTypeColors(): Map<Long, DisciplineColorData> {
         return disciplineColorRepository.findAll().associate { 
-            it.discipline?.id!! to _root_ide_package_.de.ttt.management.registration.domain.discipline.DisciplineColorData(
+            it.discipline?.id!! to DisciplineColorData(
                 it.bgColor!!,
                 it.textColor!!
             )

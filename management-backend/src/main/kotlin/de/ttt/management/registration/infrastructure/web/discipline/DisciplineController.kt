@@ -1,6 +1,14 @@
-package de.ttt.management.registration.domain.discipline
+package de.ttt.management.registration.infrastructure.web.discipline
 
-import org.springframework.web.bind.annotation.*
+import de.ttt.management.registration.application.DisciplineColorData
+import de.ttt.management.registration.application.DisciplineService
+import de.ttt.management.registration.domain.discipline.Discipline
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/disciplines")
