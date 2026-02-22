@@ -1,4 +1,4 @@
-package de.ttt.management.match
+package de.ttt.management.registration.domain.match
 
 import jakarta.persistence.*
 import java.time.LocalDateTime

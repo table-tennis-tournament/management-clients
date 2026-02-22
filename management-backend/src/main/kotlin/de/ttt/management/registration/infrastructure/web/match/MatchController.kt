@@ -1,7 +1,7 @@
 package de.ttt.management.registration.infrastructure.web.match
 
-import de.ttt.management.match.Match
-import de.ttt.management.match.MatchService
+import de.ttt.management.registration.domain.match.Match
+import de.ttt.management.registration.domain.match.MatchService
 import org.springframework.web.bind.annotation.*
 
 @RestController

@@ -1,4 +1,4 @@
-package de.ttt.management.player
+package de.ttt.management.registration.domain.player
 
 import jakarta.persistence.*
 
