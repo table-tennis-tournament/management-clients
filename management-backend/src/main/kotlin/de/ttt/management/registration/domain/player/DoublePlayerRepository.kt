@@ -1,7 +1,7 @@
-package de.ttt.management.player
+package de.ttt.management.registration.domain.player
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ClubRepository : JpaRepository<Club, Long>
+interface DoublePlayerRepository : JpaRepository<DoublePlayer, Long>

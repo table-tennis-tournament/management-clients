@@ -1,4 +1,4 @@
-package de.ttt.management.match
+package de.ttt.management.registration.domain.match
 
 import de.ttt.management.registration.domain.match.MatchRepository
 import org.springframework.stereotype.Service

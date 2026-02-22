@@ -1,5 +1,9 @@
-package de.ttt.management.player
+package de.ttt.management.registration.application
 
+import de.ttt.management.registration.domain.player.ClubRepository
+import de.ttt.management.registration.domain.player.DoublePlayerRepository
+import de.ttt.management.registration.domain.player.Player
+import de.ttt.management.registration.domain.player.PlayerRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
