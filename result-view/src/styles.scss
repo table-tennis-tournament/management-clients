@@ -2,5 +2,14 @@
 
 @use "bootstrap/scss/bootstrap-reboot";
 @use "bootstrap/scss/bootstrap-grid";
-@use "bootstrap/scss/bootstrap-utilities";
+
+.float-right {
+  float: right !important;
+}
+
 @import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+html,
+body {
+  height: 100%;
+}

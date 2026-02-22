@@ -1,4 +1,3 @@
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResultComponent } from './result.component';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -18,15 +17,9 @@ describe('ResultComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ResultComponent],
-      imports: [
-          MatCheckboxModule,
-          MatButtonModule,
-          FormsModule
-      ],
-      providers: [
-          provideMockStore({ initialState })
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      imports: [MatCheckboxModule, MatButtonModule, FormsModule],
+      providers: [provideMockStore({ initialState })],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
   });
 
