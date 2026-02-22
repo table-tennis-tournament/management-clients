@@ -1,20 +1,20 @@
-<div class="bracket d-flex">
-  <div *ngFor="let stage of stages" class="stage me-5">
-    <h2 class="stage-title text-center mb-4">{{ stage.name }}</h2>
-    <div class="match-list d-flex flex-column justify-content-around h-100">
-      <div *ngFor="let match of stage.matches" class="match mb-3">
-        <div class="match-content p-2 border rounded">
-          <div class="team d-flex justify-content-between">
+<div class="bracket">
+  <div *ngFor="let stage of stages" class="stage">
+    <h2 class="stage-title">{{ stage.name }}</h2>
+    <ul class="match-list">
+      <li *ngFor="let match of stage.matches" class="match-item">
+        <div class="match-content">
+          <div class="team">
             <span>{{ match.team1[0]?.firstName }} {{ match.team1[0]?.lastName }}</span>
             <span>{{ match.result | resultPipe: true }}</span>
           </div>
-          <hr class="my-1" />
-          <div class="team d-flex justify-content-between">
+          <hr />
+          <div class="team">
             <span>{{ match.team2[0]?.firstName }} {{ match.team2[0]?.lastName }}</span>
             <span>{{ match.result | resultPipe: false }}</span>
           </div>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </div>
