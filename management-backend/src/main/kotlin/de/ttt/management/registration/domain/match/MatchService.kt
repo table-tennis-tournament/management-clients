@@ -1,6 +1,8 @@
 package de.ttt.management.registration.domain.match
 
-import de.ttt.management.registration.domain.match.MatchRepository
+import de.ttt.management.registration.infrastructure.database.MatchRepository
+import de.ttt.management.registration.infrastructure.database.MatchTypeRepository
+import de.ttt.management.registration.infrastructure.database.PlayGroupRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
