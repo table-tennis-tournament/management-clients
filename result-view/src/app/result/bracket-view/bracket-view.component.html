@@ -1,20 +1,23 @@
-<div class="bracket">
-  <div *ngFor="let stage of stages" class="stage">
-    <h2 class="stage-title">{{ stage.name }}</h2>
-    <ul class="match-list">
-      <li *ngFor="let match of stage.matches" class="match-item">
+<div class="bracket" [style.height.px]="bracketHeight" [style.width.px]="bracketWidth">
+  <div *ngFor="let round of rounds; let r = index" class="round" [style.left.px]="r * roundWidth">
+    <div class="stage-title">{{ names[r] }}</div>
+    <div class="round-matches" [style.height.px]="matchAreaHeight">
+      <div *ngFor="let entry of round" class="match" [style.top.px]="entry.top">
         <div class="match-content">
           <div class="team">
-            <span>{{ match.team1[0]?.firstName }} {{ match.team1[0]?.lastName }}</span>
-            <span>{{ match.result | resultPipe: true }}</span>
+            <span>{{ teamLabel(entry.match.team1) }}</span>
+            <span class="score">{{ entry.match.result | resultPipe: true }}</span>
           </div>
           <hr />
           <div class="team">
-            <span>{{ match.team2[0]?.firstName }} {{ match.team2[0]?.lastName }}</span>
-            <span>{{ match.result | resultPipe: false }}</span>
+            <span>{{ teamLabel(entry.match.team2) }}</span>
+            <span class="score">{{ entry.match.result | resultPipe: false }}</span>
           </div>
         </div>
-      </li>
-    </ul>
+        <div *ngIf="entry.hasIncoming" class="line line-incoming"></div>
+        <div *ngIf="entry.hasOutgoing" class="line line-outgoing"></div>
+        <div *ngIf="entry.vertical" class="line line-vertical" [style.top.px]="entry.vertical.top" [style.height.px]="entry.vertical.height"></div>
+      </div>
+    </div>
   </div>
 </div>
