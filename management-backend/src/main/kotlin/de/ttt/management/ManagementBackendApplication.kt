@@ -1,4 +1,4 @@
-package de.ttt.management.managementbackend
+package de.ttt.management
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
