@@ -1,8 +1,8 @@
 package de.ttt.management.registration.application
 
 import de.ttt.management.registration.domain.discipline.Discipline
-import de.ttt.management.registration.domain.discipline.DisciplineColorRepository
-import de.ttt.management.registration.domain.discipline.DisciplineRepository
+import de.ttt.management.registration.infrastructure.database.DisciplineColorRepository
+import de.ttt.management.registration.infrastructure.database.DisciplineRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
