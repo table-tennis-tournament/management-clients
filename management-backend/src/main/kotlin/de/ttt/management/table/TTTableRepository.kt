@@ -1,7 +1,10 @@
 package de.ttt.management.table
 
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
+import java.util.*
 
-@Repository
-interface TTTableRepository : JpaRepository<TTTable, Long>
+interface TTTableRepository {
+    fun findAll(): List<TTTable>
+    fun findById(id: Long): Optional<TTTable>
+    fun save(table: TTTable): TTTable
+    fun deleteAll()
+}
