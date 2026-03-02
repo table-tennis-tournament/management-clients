@@ -1,8 +1,9 @@
 package de.ttt.management.registration.application
 
 import de.ttt.management.registration.domain.discipline.Discipline
-import de.ttt.management.registration.infrastructure.database.DisciplineColorRepository
-import de.ttt.management.registration.infrastructure.database.DisciplineRepository
+import de.ttt.management.registration.domain.discipline.DisciplineColor
+import de.ttt.management.registration.domain.discipline.DisciplineColorRepository
+import de.ttt.management.registration.domain.discipline.DisciplineRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -28,9 +29,9 @@ class DisciplineService(
     @Transactional
     fun saveTypeColor(disciplineId: Long, bgColor: String, textColor: String): Boolean {
         val discipline = disciplineRepository.findById(disciplineId).orElse(null) ?: return false
-        val existingColor = disciplineColorRepository.findAll().find { it.discipline?.id == disciplineId }
+        val existingColor = disciplineColorRepository.findByDisciplineId(disciplineId).orElse(null)
         
-        val color = existingColor ?: _root_ide_package_.de.ttt.management.registration.domain.discipline.DisciplineColor(
+        val color = existingColor ?: DisciplineColor(
             discipline = discipline
         )
         color.bgColor = bgColor
