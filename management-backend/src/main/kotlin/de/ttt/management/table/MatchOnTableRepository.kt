@@ -1,8 +1,11 @@
 package de.ttt.management.table
 
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
-@Repository
-interface MatchOnTableRepository : JpaRepository<MatchOnTable, UUID>
+interface MatchOnTableRepository {
+    fun findAll(): List<MatchOnTable>
+    fun findById(id: UUID): Optional<MatchOnTable>
+    fun save(matchOnTable: MatchOnTable): MatchOnTable
+    fun deleteByMatchId(matchId: Long)
+    fun deleteAll()
+}
