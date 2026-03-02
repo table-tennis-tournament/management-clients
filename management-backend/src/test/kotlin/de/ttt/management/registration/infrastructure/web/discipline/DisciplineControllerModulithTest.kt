@@ -8,14 +8,48 @@ import de.ttt.management.registration.domain.discipline.DisciplineRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.modulith.test.ApplicationModuleTest
 import org.springframework.test.web.servlet.client.RestTestClient
+import javax.sql.DataSource
 
 @ApplicationModuleTest
 @AutoConfigureRestTestClient
+@Import(DisciplineControllerModulithTest.DataConfig::class)
 class DisciplineControllerModulithTest {
+
+    @TestConfiguration
+    class DataConfig {
+        @Bean
+        fun initData(dataSource: DataSource): CommandLineRunner {
+            return CommandLineRunner {
+                val conn = dataSource.connection
+                conn.createStatement().use { stmt ->
+                    stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS type (
+                            Type_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            Type_Name VARCHAR(255),
+                            Type_Kind INT,
+                            Type_Active BOOLEAN
+                        )
+                    """.trimIndent())
+                    stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS typecolors (
+                            tyco_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            tyco_type_id BIGINT,
+                            tyco_bg_color VARCHAR(255),
+                            tyco_text_color VARCHAR(255)
+                        )
+                    """.trimIndent())
+                }
+            }
+        }
+    }
 
     @Autowired
     lateinit var restTestClient: RestTestClient
@@ -36,7 +70,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `getAllDisciplines returns all disciplines successfully`() {
-        // Success case
         disciplineRepository.save(Discipline(name = "Men Singles", active = true))
         disciplineRepository.save(Discipline(name = "Women Singles", active = false))
 
@@ -52,7 +85,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `getAllDisciplines returns empty list when no data exists`() {
-        // Without data case
         restTestClient.get().uri("/api/disciplines")
             .exchange()
             .expectStatus().isOk
@@ -73,7 +105,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `getActiveDisciplines returns only active ones successfully`() {
-        // Success case
         disciplineRepository.save(Discipline(name = "Active Discipline", active = true))
         disciplineRepository.save(Discipline(name = "Inactive Discipline", active = false))
 
@@ -89,7 +120,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `getActiveDisciplines returns empty list when no active data exists`() {
-        // Without data case
         disciplineRepository.save(Discipline(name = "Inactive Discipline", active = false))
 
         restTestClient.get().uri("/api/disciplines/active")
@@ -112,7 +142,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `getAllTypeColors returns map of colors successfully`() {
-        // Success case
         val discipline = disciplineRepository.save(Discipline(name = "Colored Discipline", active = true))
         disciplineColorRepository.save(DisciplineColor(discipline = discipline, bgColor = "blue", textColor = "white"))
 
@@ -125,7 +154,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `getAllTypeColors returns empty map when no colors exist`() {
-        // Without data case
         restTestClient.get().uri("/api/disciplines/colors")
             .exchange()
             .expectStatus().isOk
@@ -148,7 +176,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `saveTypeColor saves color successfully`() {
-        // Success case
         val discipline = disciplineRepository.save(Discipline(name = "Test Discipline", active = true))
         val colorData = DisciplineColorData(bgColor = "green", textColor = "black")
 
@@ -166,7 +193,6 @@ class DisciplineControllerModulithTest {
 
     @Test
     fun `saveTypeColor returns failure for non-existing id`() {
-        // Without data case (non-existing ID)
         val colorData = DisciplineColorData(bgColor = "red", textColor = "white")
 
         restTestClient.post().uri("/api/disciplines/99999/color")
