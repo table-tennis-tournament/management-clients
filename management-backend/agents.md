@@ -45,10 +45,13 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
     - `application`: Use cases, services, port interfaces.
     - `infrastructure`: JPA repositories, external adapters, controllers.
 
-### 3. Testing
-- Always add unit tests for domain logic.
-- Use `ApplicationModuleTest` for integration tests that respect module boundaries.
+### 3. Testing & Verification
+- **Always run `mvn clean install`** before completing a task to ensure:
+    - Domain logic unit tests pass.
+    - `ApplicationModuleTest` integration tests (which respect module boundaries) pass.
+    - **Spring Modulith** architectural verification succeeds.
 - Use `@MockkBean` for mocking in Kotlin tests.
+- Verify that new modules or modified boundaries do not violate the Modulith structure.
 
 ## Key Files to Watch
 - `management-backend/pom.xml`: Dependency management.
