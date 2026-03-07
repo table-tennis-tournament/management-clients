@@ -1,7 +1,7 @@
 package de.ttt.management.registration.infrastructure.web.match
 
 import de.ttt.management.registration.domain.match.Match
-import de.ttt.management.registration.domain.match.MatchService
+import de.ttt.management.registration.MatchService
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -22,7 +22,7 @@ class MatchController(private val matchService: MatchService) {
         @PathVariable id: Long,
         @RequestBody resultRequest: ResultRequest
     ): Map<String, Any> {
-        val success = matchService.setResult(
+        val success = matchService.saveResult(
             id,
             resultRequest.resultRaw,
             resultRequest.sets1,

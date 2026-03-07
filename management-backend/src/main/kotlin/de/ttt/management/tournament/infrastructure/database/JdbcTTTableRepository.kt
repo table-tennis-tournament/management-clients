@@ -1,5 +1,7 @@
-package de.ttt.management.table
+package de.ttt.management.tournament.infrastructure.database
 
+import de.ttt.management.tournament.domain.TTTable
+import de.ttt.management.tournament.domain.TTTableRepository
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.jdbc.support.GeneratedKeyHolder
@@ -13,7 +15,7 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
         TTTable(
             id = rs.getLong("Tabl_ID"),
             name = rs.getString("Tabl_Name"),
-            active = true // Tables in this schema don't seem to have an active flag
+            active = true
         )
     }
 

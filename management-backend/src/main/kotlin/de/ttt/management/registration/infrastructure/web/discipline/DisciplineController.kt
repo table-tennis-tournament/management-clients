@@ -1,11 +1,12 @@
 package de.ttt.management.registration.infrastructure.web.discipline
 
-import de.ttt.management.registration.application.DisciplineColorData
-import de.ttt.management.registration.application.DisciplineService
+import de.ttt.management.registration.DisciplineColorData
+import de.ttt.management.registration.DisciplineService
 import de.ttt.management.registration.domain.discipline.Discipline
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -29,6 +30,12 @@ class DisciplineController(private val disciplineService: DisciplineService) {
         @RequestBody colorData: DisciplineColorData
     ): Map<String, Any> {
         val success = disciplineService.saveTypeColor(id, colorData.bgColor, colorData.textColor)
+        return mapOf("success" to success)
+    }
+
+    @PutMapping("/colors")
+    fun setBulkTypeColors(@RequestBody colors: Map<Long, DisciplineColorData>): Map<String, Any> {
+        val success = disciplineService.saveBulkTypeColors(colors)
         return mapOf("success" to success)
     }
 }

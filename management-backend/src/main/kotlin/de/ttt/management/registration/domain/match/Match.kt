@@ -1,8 +1,6 @@
 package de.ttt.management.registration.domain.match
-
 import de.ttt.management.registration.domain.player.Player
 import java.time.LocalDateTime
-
 class Match(
     var id: Long? = null,
     var player1: Player? = null,
