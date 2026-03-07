@@ -13,8 +13,8 @@ import java.util.*
 class JdbcDoublePlayerRepository(private val jdbcClient: JdbcClient) : DoublePlayerRepository {
 
     private val rowMapper = RowMapper { rs, _ ->
-        val p1Id = rs.getObject("doub_play1_id", Long::class.java)
-        val p2Id = rs.getObject("doub_play2_id", Long::class.java)
+        val p1Id = rs.getObject("doub_play1_id")?.let { (it as Number).toLong() }
+        val p2Id = rs.getObject("doub_play2_id")?.let { (it as Number).toLong() }
         DoublePlayer(
             id = rs.getLong("doub_id"),
             player1 = p1Id?.let { Player(id = it) },

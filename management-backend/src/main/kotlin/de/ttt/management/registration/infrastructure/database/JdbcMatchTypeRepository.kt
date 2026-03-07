@@ -13,8 +13,8 @@ class JdbcMatchTypeRepository(private val jdbcClient: JdbcClient) : MatchTypeRep
 
     private val rowMapper = RowMapper { rs, _ ->
         MatchType(
-            id = rs.getLong("ma_ty_id"),
-            name = rs.getString("ma_ty_name")
+            id = rs.getLong("maty_id"),
+            name = rs.getString("maty_name")
         )
     }
 
@@ -23,16 +23,16 @@ class JdbcMatchTypeRepository(private val jdbcClient: JdbcClient) : MatchTypeRep
     }
 
     override fun findById(id: Long): Optional<MatchType> {
-        return jdbcClient.sql("SELECT * FROM matchtype WHERE ma_ty_id = :id").param("id", id).query(rowMapper).optional()
+        return jdbcClient.sql("SELECT * FROM matchtype WHERE maty_id = :id").param("id", id).query(rowMapper).optional()
     }
 
     override fun save(matchType: MatchType): MatchType {
         if (matchType.id == null) {
             val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO matchtype (ma_ty_name) VALUES (:name)").param("name", matchType.name).update(keyHolder)
+            jdbcClient.sql("INSERT INTO matchtype (maty_name) VALUES (:name)").param("name", matchType.name).update(keyHolder)
             matchType.id = keyHolder.key?.toLong()
         } else {
-            jdbcClient.sql("UPDATE matchtype SET ma_ty_name = :name WHERE ma_ty_id = :id")
+            jdbcClient.sql("UPDATE matchtype SET maty_name = :name WHERE maty_id = :id")
                 .param("name", matchType.name).param("id", matchType.id).update()
         }
         return matchType
