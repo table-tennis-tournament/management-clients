@@ -13,14 +13,14 @@ import java.util.*
 class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepository {
 
     private val rowMapper = RowMapper { rs, _ ->
-        val clubId = rs.getObject("play_club_id", Long::class.java)
+        val clubId = rs.getObject("play_club_id")?.let { (it as Number).toLong() }
         val club = clubId?.let { Club(id = it) }
         Player(
             id = rs.getLong("play_id"),
-            firstName = rs.getString("play_first_name"),
-            lastName = rs.getString("play_last_name"),
+            firstName = rs.getString("play_firstname"),
+            lastName = rs.getString("play_lastname"),
             email = rs.getString("play_email"),
-            telNr = rs.getString("play_tel_nr"),
+            telNr = rs.getString("play_telnr"),
             location = rs.getString("play_location"),
             street = rs.getString("play_street"),
             plz = rs.getString("play_plz"),
@@ -43,7 +43,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
         if (player.id == null) {
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("""
-                INSERT INTO player (play_first_name, play_last_name, play_email, play_tel_nr, play_location, play_street, play_plz, play_sex, play_ttr, play_club_id, play_paid)
+                INSERT INTO player (play_firstname, play_lastname, play_email, play_telnr, play_location, play_street, play_plz, play_sex, play_ttr, play_club_id, play_paid)
                 VALUES (:firstName, :lastName, :email, :telNr, :location, :street, :plz, :sex, :ttr, :clubId, :paid)
             """.trimIndent())
                 .param("firstName", player.firstName)
@@ -61,7 +61,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
             player.id = keyHolder.key?.toLong()
         } else {
             jdbcClient.sql("""
-                UPDATE player SET play_first_name = :firstName, play_last_name = :lastName, play_email = :email, play_tel_nr = :telNr, 
+                UPDATE player SET play_firstname = :firstName, play_lastname = :lastName, play_email = :email, play_telnr = :telNr, 
                 play_location = :location, play_street = :street, play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid
                 WHERE play_id = :id
             """.trimIndent())
