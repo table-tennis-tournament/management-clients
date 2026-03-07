@@ -25,6 +25,10 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
         return jdbcClient.sql("SELECT * FROM tables WHERE Tabl_ID = :id").param("id", id).query(rowMapper).optional()
     }
 
+    override fun findByName(name: String): Optional<TTTable> {
+        return jdbcClient.sql("SELECT * FROM tables WHERE Tabl_Name = :name").param("name", name).query(rowMapper).optional()
+    }
+
     override fun save(table: TTTable): TTTable {
         if (table.id == null) {
             val keyHolder = GeneratedKeyHolder()
