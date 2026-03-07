@@ -1,7 +1,5 @@
-package de.ttt.management.table
-
+package de.ttt.management.tournament.domain
 import java.util.*
-
 interface TTTableRepository {
     fun findAll(): List<TTTable>
     fun findById(id: Long): Optional<TTTable>

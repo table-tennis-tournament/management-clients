@@ -1,9 +1,6 @@
-package de.ttt.management.table
-
-import java.util.UUID
-
+package de.ttt.management.tournament.domain
 class MatchOnTable(
-    var id: UUID? = null,
+    var id: String? = null,
     var matchId: Long? = null,
     var tableId: Long? = null
 )

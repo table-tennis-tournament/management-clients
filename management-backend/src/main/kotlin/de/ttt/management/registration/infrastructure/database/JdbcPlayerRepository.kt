@@ -25,9 +25,9 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
             street = rs.getString("play_street"),
             plz = rs.getString("play_plz"),
             sex = rs.getString("play_sex"),
-            ttr = rs.getInt("play_ttr"),
+            ttr = rs.getObject("play_ttr")?.let { (it as Number).toInt() },
             club = club,
-            paid = rs.getBoolean("play_paid")
+            paid = rs.getInt("play_paid") > 0
         )
     }
 
@@ -37,6 +37,17 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
 
     override fun findById(id: Long): Optional<Player> {
         return jdbcClient.sql("SELECT * FROM player WHERE play_id = :id").param("id", id).query(rowMapper).optional()
+    }
+
+    override fun findByTypeId(typeId: Long): List<Player> {
+        return jdbcClient.sql("""
+            SELECT p.* FROM player p
+            JOIN typeperplayer tpp ON p.play_id = tpp.typl_play_id
+            WHERE tpp.typl_type_id = :typeId
+        """.trimIndent())
+            .param("typeId", typeId)
+            .query(rowMapper)
+            .list()
     }
 
     override fun save(player: Player): Player {
@@ -61,8 +72,10 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
             player.id = keyHolder.key?.toLong()
         } else {
             jdbcClient.sql("""
-                UPDATE player SET play_firstname = :firstName, play_lastname = :lastName, play_email = :email, play_telnr = :telNr, 
-                play_location = :location, play_street = :street, play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid
+                UPDATE player 
+                SET play_firstname = :firstName, play_lastname = :lastName, play_email = :email, 
+                    play_telnr = :telNr, play_location = :location, play_street = :street, 
+                    play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid
                 WHERE play_id = :id
             """.trimIndent())
                 .param("firstName", player.firstName)
