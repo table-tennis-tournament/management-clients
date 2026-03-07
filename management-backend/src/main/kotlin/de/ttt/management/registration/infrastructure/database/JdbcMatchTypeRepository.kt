@@ -29,7 +29,8 @@ class JdbcMatchTypeRepository(private val jdbcClient: JdbcClient) : MatchTypeRep
     override fun save(matchType: MatchType): MatchType {
         if (matchType.id == null) {
             val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO matchtype (maty_name) VALUES (:name)").param("name", matchType.name).update(keyHolder)
+            jdbcClient.sql("INSERT INTO matchtype (maty_name) VALUES (:name)")
+                .param("name", matchType.name).update(keyHolder)
             matchType.id = keyHolder.key?.toLong()
         } else {
             jdbcClient.sql("UPDATE matchtype SET maty_name = :name WHERE maty_id = :id")

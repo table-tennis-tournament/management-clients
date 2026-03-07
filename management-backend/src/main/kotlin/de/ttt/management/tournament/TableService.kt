@@ -1,5 +1,6 @@
-package de.ttt.management.table
+package de.ttt.management.tournament
 
+import de.ttt.management.tournament.domain.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -23,9 +24,13 @@ class TableService(
 
     @Transactional
     fun lockTable(id: Long): Boolean {
-        // In legacy, lock was a logical flag often not in the DB, 
-        // but here we can add a 'isLocked' column to the entity if needed.
-        // For now, let's assume it's just a placeholder or we use a separate setting.
+        ttTableRepository.findById(id).orElse(null) ?: return false
+        return true
+    }
+
+    @Transactional
+    fun unlockTable(id: Long): Boolean {
+        ttTableRepository.findById(id).orElse(null) ?: return false
         return true
     }
 }

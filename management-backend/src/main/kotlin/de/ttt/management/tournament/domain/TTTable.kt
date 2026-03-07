@@ -1,5 +1,4 @@
-package de.ttt.management.table
-
+package de.ttt.management.tournament.domain
 class TTTable(
     var id: Long? = null,
     var name: String? = null,

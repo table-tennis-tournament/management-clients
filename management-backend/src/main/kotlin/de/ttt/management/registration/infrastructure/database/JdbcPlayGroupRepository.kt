@@ -29,7 +29,8 @@ class JdbcPlayGroupRepository(private val jdbcClient: JdbcClient) : PlayGroupRep
     override fun save(playGroup: PlayGroup): PlayGroup {
         if (playGroup.id == null) {
             val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO `groups` (grou_name) VALUES (:name)").param("name", playGroup.name).update(keyHolder)
+            jdbcClient.sql("INSERT INTO `groups` (grou_name) VALUES (:name)")
+                .param("name", playGroup.name).update(keyHolder)
             playGroup.id = keyHolder.key?.toLong()
         } else {
             jdbcClient.sql("UPDATE `groups` SET grou_name = :name WHERE grou_id = :id")

@@ -1,5 +1,4 @@
 package de.ttt.management.registration.domain.player
-
 class Player(
     var id: Long? = null,
     var firstName: String? = null,
