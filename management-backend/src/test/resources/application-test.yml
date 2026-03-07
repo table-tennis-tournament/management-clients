@@ -4,7 +4,15 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  flyway:
+    enabled: true
+    clean-disabled: false
   sql:
     init:
       mode: always
-      data-locations: classpath:sample_data.sql,classpath:init_extra.sql
+      schema-locations: []
+      data-locations: classpath:data.sql
+
+logging:
+  level:
+    org.flywaydb: DEBUG
