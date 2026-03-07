@@ -34,19 +34,19 @@ Configure your database connection using the following environment variables:
 
 ### Running the Application
 ```bash
-./mvnw spring-boot:run
+./mvn spring-boot:run
 ```
 
 ### Running Tests
 The project uses **ArchUnit** and **Spring Modulith Test** to verify architectural boundaries.
 ```bash
-./mvnw test
+./mvn test
 ```
 
 ## Modular Monolith Verification
 You can verify the module structure and generate documentation by running:
 ```bash
-./mvnw test -Dtest=ModularityTests
+./mvn test -Dtest=ModularityTests
 ```
 *(Ensure you have a test class that calls `ApplicationModules.of(ManagementBackendApplication::class.java).verify()`)
 
