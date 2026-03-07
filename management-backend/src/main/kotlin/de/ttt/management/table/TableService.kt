@@ -19,6 +19,8 @@ class TableService(
 
     fun getTable(id: Long): TTTable? = ttTableRepository.findById(id).orElse(null)
 
+    fun getTableByName(name: String): TTTable? = ttTableRepository.findByName(name).orElse(null)
+
     @Transactional
     fun lockTable(id: Long): Boolean {
         // In legacy, lock was a logical flag often not in the DB, 
