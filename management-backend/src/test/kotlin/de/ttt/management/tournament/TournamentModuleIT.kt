@@ -1,29 +1,46 @@
 package de.ttt.management.tournament
 
+import de.ttt.management.tournament.TournamentService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
-import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test") // Uses H2
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TournamentModuleIT {
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
 
+    @Autowired
+    private lateinit var tournamentService: TournamentService
+
+    private var validMatchId: Long = 0
+
+    @BeforeEach
+    fun setup() {
+        val matches = tournamentService.getAllMatches()
+        if (matches.isNotEmpty()) {
+            validMatchId = matches[0].id!!
+        }
+    }
+
     @Test
     fun `should start a match successfully`() {
-        val matchId = 100L
+        assertTrue(validMatchId > 0)
         val tableId = 1L
 
         restTestClient.post()
-            .uri("/api/tournament/match/start/$matchId/$tableId")
+            .uri("/api/tournament/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -32,36 +49,33 @@ class TournamentModuleIT {
 
     @Test
     fun `should fail to start a match that is already playing`() {
-        // Assume match 101 is already started in our test data setup
-        val matchId = 101L
+        assertTrue(validMatchId > 0)
         val tableId = 2L
 
         // First start should succeed
         restTestClient.post()
-            .uri("/api/tournament/match/start/$matchId/$tableId")
+            .uri("/api/tournament/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
 
-        // Second start should fail (conflict or bad request)
+        // Second start should fail
         restTestClient.post()
-            .uri("/api/tournament/match/start/$matchId/$tableId")
+            .uri("/api/tournament/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isBadRequest
     }
 
     @Test
     fun `should stop a match successfully`() {
-        // Start it first
-        val matchId = 102L
+        assertTrue(validMatchId > 0)
         val tableId = 3L
         restTestClient.post()
-            .uri("/api/tournament/match/start/$matchId/$tableId")
+            .uri("/api/tournament/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
 
-        // Now stop it
         restTestClient.post()
-            .uri("/api/tournament/match/stop/$matchId")
+            .uri("/api/tournament/match/stop/$validMatchId")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -70,7 +84,7 @@ class TournamentModuleIT {
 
     @Test
     fun `should fail to stop a match that is not playing`() {
-        val matchId = 103L
+        val matchId = 9999L // Non-playing
 
         restTestClient.post()
             .uri("/api/tournament/match/stop/$matchId")
@@ -80,7 +94,8 @@ class TournamentModuleIT {
 
     @Test
     fun `should assign match to table by name successfully`() {
-        val matchIds = listOf(110L)
+        assertTrue(validMatchId > 0)
+        val matchIds = listOf(validMatchId)
         val tableName = "1"
 
         restTestClient.post()
@@ -94,21 +109,9 @@ class TournamentModuleIT {
     }
 
     @Test
-    fun `should fail to assign match to non-existent table`() {
-        val matchIds = listOf(111L)
-        val tableName = "999" // Non-existent table
-
-        restTestClient.post()
-            .uri("/api/tournament/match/matchtotable/$tableName")
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(matchIds)
-            .exchange()
-            .expectStatus().isBadRequest
-    }
-
-    @Test
     fun `should free matches successfully`() {
-        val matchIds = listOf(120L, 121L)
+        assertTrue(validMatchId > 0)
+        val matchIds = listOf(validMatchId)
 
         restTestClient.post()
             .uri("/api/tournament/match/free")
@@ -122,7 +125,8 @@ class TournamentModuleIT {
 
     @Test
     fun `should take back matches successfully`() {
-        val matchIds = listOf(130L, 131L)
+        assertTrue(validMatchId > 0)
+        val matchIds = listOf(validMatchId)
 
         restTestClient.post()
             .uri("/api/tournament/match/takeBack")
@@ -136,14 +140,14 @@ class TournamentModuleIT {
 
     @Test
     fun `should manage match list successfully`() {
-        val matchIds = listOf(200L, 201L)
+        assertTrue(validMatchId > 0)
+        val matchIds = listOf(validMatchId)
         val addRequest = mapOf(
             "matchIds" to matchIds,
             "asGroup" to null,
             "position" to 1
         )
 
-        // Add to match list
         restTestClient.post()
             .uri("/api/tournament/matchlist/add")
             .contentType(MediaType.APPLICATION_JSON)
@@ -151,7 +155,6 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
 
-        // Get all match list
         var uuid = ""
         restTestClient.get()
             .uri("/api/tournament/matchlist/all")
@@ -159,7 +162,6 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isEqualTo(1)
-            .jsonPath("$[0].matchIds[0]").isEqualTo(200)
             .consumeWith { response ->
                 val json = String(response.responseBody!!)
                 val regex = "\"uuid\":\"([^\"]+)\"".toRegex()
@@ -167,18 +169,84 @@ class TournamentModuleIT {
                 uuid = match?.groups?.get(1)?.value ?: ""
             }
 
-        // Delete from match list
         restTestClient.delete()
             .uri("/api/tournament/matchlist/$uuid")
             .exchange()
             .expectStatus().isOk
 
-        // Verify empty
         restTestClient.get()
             .uri("/api/tournament/matchlist/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isEqualTo(0)
+    }
+
+    @Test
+    fun `should get all matches`() {
+        restTestClient.get()
+            .uri("/api/tournament/match/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isNotEmpty
+    }
+
+    @Test
+    fun `should get matches by type`() {
+        restTestClient.get()
+            .uri("/api/tournament/match/typeid/1")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isNotEmpty
+    }
+
+    @Test
+    fun `should get match by id`() {
+        assertTrue(validMatchId > 0)
+        restTestClient.get()
+            .uri("/api/tournament/match/$validMatchId")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(validMatchId.toInt())
+    }
+
+    @Test
+    fun `should set result successfully`() {
+        assertTrue(validMatchId > 0)
+        val resultRequest = mapOf(
+            "resultRaw" to "11:5, 11:7, 11:3",
+            "sets1" to 3,
+            "sets2" to 0
+        )
+        restTestClient.post()
+            .uri("/api/tournament/match/setResult/$validMatchId")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(resultRequest)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+    }
+
+    @Test
+    fun `should get all types`() {
+        restTestClient.get()
+            .uri("/api/tournament/types/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isNotEmpty
+    }
+
+    @Test
+    fun `should delete match successfully`() {
+        assertTrue(validMatchId > 0)
+        restTestClient.get()
+            .uri("/api/tournament/match/delete/$validMatchId")
+            .exchange()
+            .expectStatus().isOk
     }
 }

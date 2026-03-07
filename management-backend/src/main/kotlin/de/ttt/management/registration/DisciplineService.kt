@@ -1,9 +1,6 @@
-package de.ttt.management.registration.application
+package de.ttt.management.registration
 
-import de.ttt.management.registration.domain.discipline.Discipline
-import de.ttt.management.registration.domain.discipline.DisciplineColor
-import de.ttt.management.registration.domain.discipline.DisciplineColorRepository
-import de.ttt.management.registration.domain.discipline.DisciplineRepository
+import de.ttt.management.registration.domain.discipline.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -18,11 +15,8 @@ class DisciplineService(
     fun getActiveDisciplines(): List<Discipline> = disciplineRepository.findAll().filter { it.active }
 
     fun getAllTypeColors(): Map<Long, DisciplineColorData> {
-        return disciplineColorRepository.findAll().associate { 
-            it.discipline?.id!! to DisciplineColorData(
-                it.bgColor!!,
-                it.textColor!!
-            )
+        return disciplineColorRepository.findAll().associate {
+            it.discipline!!.id!! to DisciplineColorData(it.bgColor ?: "", it.textColor ?: "")
         }
     }
 
@@ -37,6 +31,14 @@ class DisciplineService(
         color.bgColor = bgColor
         color.textColor = textColor
         disciplineColorRepository.save(color)
+        return true
+    }
+
+    @Transactional
+    fun saveBulkTypeColors(colors: Map<Long, DisciplineColorData>): Boolean {
+        colors.forEach { (id, data) ->
+            saveTypeColor(id, data.bgColor, data.textColor)
+        }
         return true
     }
 }

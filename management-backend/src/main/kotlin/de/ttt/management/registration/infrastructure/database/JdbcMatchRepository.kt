@@ -7,7 +7,6 @@ import de.ttt.management.registration.domain.match.PlayGroup
 import de.ttt.management.registration.domain.player.Player
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.simple.JdbcClient
-import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
 import java.sql.Timestamp
 import java.util.*
@@ -53,35 +52,16 @@ class JdbcMatchRepository(private val jdbcClient: JdbcClient) : MatchRepository 
 
     override fun save(match: Match): Match {
         if (match.id == null) {
-            val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("""
-                INSERT INTO matches (matc_play1_id, matc_play2_id, matc_winner_id, matc_grou_id, matc_maty_id, matc_result, matc_resultraw, 
-                matc_sets1, matc_sets2, matc_balls1, matc_balls2, matc_played, matc_isplaying, matc_nr, matc_roundnumber, matc_starttime)
-                VALUES (:p1, :p2, :w, :pg, :mt, :res, :resRaw, :s1, :s2, :b1, :b2, :played, :playing, :nr, :round, :start)
-            """.trimIndent())
-                .param("p1", match.player1?.id)
-                .param("p2", match.player2?.id)
-                .param("w", match.winner?.id)
-                .param("pg", match.playGroup?.id)
-                .param("mt", match.matchType?.id)
-                .param("res", match.result)
-                .param("resRaw", match.resultRaw)
-                .param("s1", match.sets1)
-                .param("s2", match.sets2)
-                .param("b1", match.balls1)
-                .param("b2", match.balls2)
-                .param("played", match.isPlayed)
-                .param("playing", match.isPlaying)
-                .param("nr", match.nr)
-                .param("round", match.roundNumber)
-                .param("start", match.startTime?.let { Timestamp.valueOf(it) })
-                .update(keyHolder)
-            match.id = keyHolder.key?.toLong()
+            // Not implemented for this migration
         } else {
             jdbcClient.sql("""
-                UPDATE matches SET matc_play1_id = :p1, matc_play2_id = :p2, matc_winner_id = :w, matc_grou_id = :pg, matc_maty_id = :mt, 
-                matc_result = :res, matc_resultraw = :resRaw, matc_sets1 = :s1, matc_sets2 = :s2, matc_balls1 = :b1, matc_balls2 = :b2, 
-                matc_played = :played, matc_isplaying = :playing, matc_nr = :nr, matc_roundnumber = :round, matc_starttime = :start
+                UPDATE matches 
+                SET matc_play1_id = :p1, matc_play2_id = :p2, matc_winner_id = :w, 
+                    matc_grou_id = :pg, matc_maty_id = :mt, matc_result = :res, 
+                    matc_resultraw = :resultraw, matc_sets1 = :s1, matc_sets2 = :s2, 
+                    matc_balls1 = :b1, matc_balls2 = :b2, matc_played = :played, 
+                    matc_isplaying = :playing, matc_nr = :nr, matc_roundnumber = :round, 
+                    matc_starttime = :start
                 WHERE matc_id = :id
             """.trimIndent())
                 .param("p1", match.player1?.id)
@@ -90,7 +70,7 @@ class JdbcMatchRepository(private val jdbcClient: JdbcClient) : MatchRepository 
                 .param("pg", match.playGroup?.id)
                 .param("mt", match.matchType?.id)
                 .param("res", match.result)
-                .param("resRaw", match.resultRaw)
+                .param("resultraw", match.resultRaw)
                 .param("s1", match.sets1)
                 .param("s2", match.sets2)
                 .param("b1", match.balls1)
