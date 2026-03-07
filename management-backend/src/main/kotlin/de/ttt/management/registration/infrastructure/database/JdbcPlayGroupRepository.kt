@@ -19,26 +19,26 @@ class JdbcPlayGroupRepository(private val jdbcClient: JdbcClient) : PlayGroupRep
     }
 
     override fun findAll(): List<PlayGroup> {
-        return jdbcClient.sql("SELECT * FROM playgroups").query(rowMapper).list()
+        return jdbcClient.sql("SELECT * FROM `groups`").query(rowMapper).list()
     }
 
     override fun findById(id: Long): Optional<PlayGroup> {
-        return jdbcClient.sql("SELECT * FROM playgroups WHERE grou_id = :id").param("id", id).query(rowMapper).optional()
+        return jdbcClient.sql("SELECT * FROM `groups` WHERE grou_id = :id").param("id", id).query(rowMapper).optional()
     }
 
     override fun save(playGroup: PlayGroup): PlayGroup {
         if (playGroup.id == null) {
             val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO playgroups (grou_name) VALUES (:name)").param("name", playGroup.name).update(keyHolder)
+            jdbcClient.sql("INSERT INTO `groups` (grou_name) VALUES (:name)").param("name", playGroup.name).update(keyHolder)
             playGroup.id = keyHolder.key?.toLong()
         } else {
-            jdbcClient.sql("UPDATE playgroups SET grou_name = :name WHERE grou_id = :id")
+            jdbcClient.sql("UPDATE `groups` SET grou_name = :name WHERE grou_id = :id")
                 .param("name", playGroup.name).param("id", playGroup.id).update()
         }
         return playGroup
     }
 
     override fun deleteAll() {
-        jdbcClient.sql("DELETE FROM playgroups").update()
+        jdbcClient.sql("DELETE FROM `groups`").update()
     }
 }
