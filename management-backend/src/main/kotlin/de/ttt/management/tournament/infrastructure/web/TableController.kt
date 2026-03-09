@@ -1,6 +1,6 @@
 package de.ttt.management.tournament.infrastructure.web
 
-import de.ttt.management.tournament.TableService
+import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.TTTable
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
