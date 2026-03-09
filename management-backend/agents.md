@@ -74,7 +74,7 @@ Within each module, we follow the Onion Architecture:
   *   **Entities/Models**: Domain objects (e.g., `TournamentMatch`).
   *   **Repository Interfaces**: Abstractions for data access (e.g., `TournamentMatchRepository`).
 2.  **`application`**: Orchestrates business logic and transactions.
-  *   **Services**: Application logic (e.g., `TournamentService`).
+  *   **Services**: Application logic (e.g., `MatchService`, `TableService`, `MatchListService`).
 3.  **`infrastructure`**: Implementation details.
   *   **`database`**: Concrete repository implementations (e.g., `JdbcTournamentMatchRepository`).
   *   **`web`**: REST Controllers (e.g., `TournamentMatchController`).
