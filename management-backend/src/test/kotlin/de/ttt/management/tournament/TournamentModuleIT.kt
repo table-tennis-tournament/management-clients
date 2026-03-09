@@ -1,6 +1,6 @@
 package de.ttt.management.tournament
 
-import de.ttt.management.tournament.TournamentService
+import de.ttt.management.tournament.application.MatchService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,13 +22,13 @@ class TournamentModuleIT {
     private lateinit var restTestClient: RestTestClient
 
     @Autowired
-    private lateinit var tournamentService: TournamentService
+    private lateinit var matchService: MatchService
 
     private var validMatchId: Long = 0
 
     @BeforeEach
     fun setup() {
-        val matches = tournamentService.getAllMatches()
+        val matches = matchService.getAllMatches()
         if (matches.isNotEmpty()) {
             validMatchId = matches[0].id!!
         }
