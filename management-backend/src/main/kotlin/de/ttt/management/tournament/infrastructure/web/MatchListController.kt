@@ -1,6 +1,6 @@
 package de.ttt.management.tournament.infrastructure.web
 
-import de.ttt.management.tournament.TournamentService
+import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.domain.MatchList
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/tournament/matchlist")
 @Tag(name = "Match List Management", description = "Operations for managing the tournament match list/queue")
-class MatchListController(private val tournamentService: TournamentService) {
+class MatchListController(private val matchListService: MatchListService) {
 
     @GetMapping("/all")
     @Operation(summary = "Get all match list entries", description = "Retrieves the entire list of matches queued for play.")
     fun getAllMatchList(): ResponseEntity<List<MatchList>> {
-        return ResponseEntity.ok(tournamentService.getAllMatchList())
+        return ResponseEntity.ok(matchListService.getAllMatchList())
     }
 
     @GetMapping("/next")
     @Operation(summary = "Get next match", description = "Retrieves the next match from the match list queue.")
     fun getNext(): ResponseEntity<MatchList> {
-        val next = tournamentService.getNextMatchFromList()
+        val next = matchListService.getNextMatchFromList()
         return if (next != null) ResponseEntity.ok(next) else ResponseEntity.noContent().build()
     }
 
@@ -31,7 +31,7 @@ class MatchListController(private val tournamentService: TournamentService) {
     fun addMatch(
         @RequestBody request: AddMatchListRequest
     ): ResponseEntity<MatchList> {
-        val newList = tournamentService.addMatchToList(
+        val newList = matchListService.addMatchToList(
             matchIds = request.matchIds,
             asGroup = request.asGroup,
             position = request.position
@@ -44,7 +44,7 @@ class MatchListController(private val tournamentService: TournamentService) {
     fun deleteMatch(
         @Parameter(description = "UUID of the match list entry") @PathVariable uuid: String
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.deleteMatchFromList(uuid)
+        val success = matchListService.deleteMatchFromList(uuid)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -57,7 +57,7 @@ class MatchListController(private val tournamentService: TournamentService) {
     fun setActive(
         @Parameter(description = "Active state (true) or inactive (false)") @PathVariable isActive: Boolean
     ): ResponseEntity<Map<String, Any>> {
-        tournamentService.setMatchListActive(isActive)
+        matchListService.setMatchListActive(isActive)
         return ResponseEntity.ok(mapOf("success" to true))
     }
 
@@ -67,7 +67,7 @@ class MatchListController(private val tournamentService: TournamentService) {
         @Parameter(description = "UUID of the match list entry") @PathVariable uuid: String,
         @Parameter(description = "New position index") @PathVariable position: Int
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.moveMatchListEntry(uuid, position)
+        val success = matchListService.moveMatchListEntry(uuid, position)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {

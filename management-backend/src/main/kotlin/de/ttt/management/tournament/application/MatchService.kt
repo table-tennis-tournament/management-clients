@@ -1,20 +1,16 @@
-package de.ttt.management.tournament
+package de.ttt.management.tournament.application
 
 import de.ttt.management.tournament.domain.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.*
 
-@Service
-class TournamentService(
+@Service("tournamentMatchService")
+class MatchService(
     private val matchRepository: TournamentMatchRepository,
-    private val tableService: TableService,
-    private val disciplineRepository: TournamentDisciplineRepository
+    private val disciplineRepository: TournamentDisciplineRepository,
+    private val matchListService: MatchListService
 ) {
-
-    private val matchLists = mutableListOf<MatchList>()
-    private var matchListActive = true
 
     fun getAllMatches(): List<TournamentMatch> = matchRepository.findAll()
 
@@ -42,7 +38,7 @@ class TournamentService(
         }
 
         val updatedRows = matchRepository.startMatch(matchId, tableId, LocalDateTime.now())
-        matchLists.removeIf { it.matchIds.contains(matchId) }
+        matchListService.removeMatchFromList(matchId)
         return updatedRows > 0
     }
 
@@ -74,18 +70,6 @@ class TournamentService(
     }
 
     @Transactional
-    fun setMatchToTable(tableName: String, matchIds: List<Long>): Boolean {
-        val table = tableService.getTableByName(tableName) ?: return false
-        var allSuccess = true
-        for (matchId in matchIds) {
-            if (!startMatch(matchId, table.id!!)) {
-                allSuccess = false
-            }
-        }
-        return allSuccess
-    }
-
-    @Transactional
     fun freeMatches(matchIds: List<Long>): Boolean {
         var allSuccess = true
         for (matchId in matchIds) {
@@ -101,25 +85,5 @@ class TournamentService(
             if (matchRepository.takeBackMatch(matchId) == 0) allSuccess = false
         }
         return allSuccess
-    }
-
-    fun getAllMatchList(): List<MatchList> = matchLists.sortedBy { it.position }
-
-    fun addMatchToList(matchIds: List<Long>, asGroup: Long?, position: Int): MatchList {
-        val newList = MatchList(UUID.randomUUID().toString(), matchIds, asGroup, position)
-        matchLists.add(newList)
-        return newList
-    }
-
-    fun deleteMatchFromList(uuid: String): Boolean = matchLists.removeIf { it.uuid == uuid }
-
-    fun getNextMatchFromList(): MatchList? = if (matchListActive) matchLists.minByOrNull { it.position } else null
-
-    fun setMatchListActive(active: Boolean) { this.matchListActive = active }
-
-    fun moveMatchListEntry(uuid: String, newPosition: Int): Boolean {
-        val entry = matchLists.find { it.uuid == uuid } ?: return false
-        entry.position = newPosition
-        return true
     }
 }

@@ -1,6 +1,7 @@
 package de.ttt.management.tournament.infrastructure.web
 
-import de.ttt.management.tournament.TournamentService
+import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -11,19 +12,22 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/tournament")
 @Tag(name = "Tournament Match Management", description = "Comprehensive operations for managing tournament matches, types, and assignments")
-class TournamentMatchController(private val tournamentService: TournamentService) {
+class TournamentMatchController(
+    private val matchService: MatchService,
+    private val tableService: TableService
+) {
 
     @get:GetMapping("/match/all")
     @get:Operation(summary = "Get all tournament matches", description = "Retrieves a complete list of all matches in the tournament.")
     val allMatches: List<TournamentMatch>
-        get() = tournamentService.getAllMatches()
+        get() = matchService.getAllMatches()
 
     @GetMapping("/match/{id}")
     @Operation(summary = "Get tournament match by ID", description = "Retrieves details for a specific tournament match.")
     fun getMatch(
         @Parameter(description = "ID of the tournament match") @PathVariable id: Long
     ): ResponseEntity<TournamentMatch> {
-        val match = tournamentService.getMatch(id)
+        val match = matchService.getMatch(id)
         return if (match != null) ResponseEntity.ok(match) else ResponseEntity.notFound().build()
     }
 
@@ -31,29 +35,29 @@ class TournamentMatchController(private val tournamentService: TournamentService
     @Operation(summary = "Get matches by type", description = "Retrieves all matches belonging to a specific discipline type.")
     fun getMatchesByType(
         @Parameter(description = "ID of the discipline type") @PathVariable typeid: Long
-    ): List<TournamentMatch> = tournamentService.getMatchesByType(typeid)
+    ): List<TournamentMatch> = matchService.getMatchesByType(typeid)
 
     @get:GetMapping("/match/open/all")
     @get:Operation(summary = "Get all open matches", description = "Retrieves all matches that are currently open/not completed.")
     val openMatches: List<TournamentMatch>
-        get() = tournamentService.getOpenMatches()
+        get() = matchService.getOpenMatches()
 
     @GetMapping("/match/open/typeid/{typeid}")
     @Operation(summary = "Get open matches by type", description = "Retrieves open matches for a specific discipline type.")
     fun getOpenMatchesByTypeId(
         @Parameter(description = "ID of the discipline type") @PathVariable typeid: Long
-    ): List<TournamentMatch> = tournamentService.getOpenMatchesByTypeId(typeid)
+    ): List<TournamentMatch> = matchService.getOpenMatchesByTypeId(typeid)
 
     @get:GetMapping("/match/played/all")
     @get:Operation(summary = "Get all played matches", description = "Retrieves all matches that have been completed.")
     val playedMatches: List<TournamentMatch>
-        get() = tournamentService.getPlayedMatches()
+        get() = matchService.getPlayedMatches()
 
     @GetMapping("/match/played/typeid/{typeid}")
     @Operation(summary = "Get played matches by type", description = "Retrieves completed matches for a specific discipline type.")
     fun getPlayedMatchesByTypeId(
         @Parameter(description = "ID of the discipline type") @PathVariable typeid: Long
-    ): List<TournamentMatch> = tournamentService.getPlayedMatchesByTypeId(typeid)
+    ): List<TournamentMatch> = matchService.getPlayedMatchesByTypeId(typeid)
 
     @PostMapping("/match/start/{id}/{tableId}")
     @Operation(summary = "Start match on table", description = "Marks a match as started and assigns it to a specific table.")
@@ -61,7 +65,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
         @Parameter(description = "ID of the match") @PathVariable id: Long,
         @Parameter(description = "ID of the table") @PathVariable tableId: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.startMatch(id, tableId)
+        val success = matchService.startMatch(id, tableId)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -74,7 +78,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
     fun stopMatch(
         @Parameter(description = "ID of the match") @PathVariable id: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.stopMatch(id)
+        val success = matchService.stopMatch(id)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -88,7 +92,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
         @Parameter(description = "ID of the match") @PathVariable id: Long,
         @RequestBody result: ResultRequest
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.setResult(id, result.resultRaw, result.sets1, result.sets2)
+        val success = matchService.setResult(id, result.resultRaw, result.sets1, result.sets2)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -101,7 +105,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
     fun deleteMatch(
         @Parameter(description = "ID of the match") @PathVariable id: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.deleteMatch(id)
+        val success = matchService.deleteMatch(id)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -114,7 +118,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
     fun deleteType(
         @Parameter(description = "ID of the discipline type") @PathVariable id: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.deleteType(id)
+        val success = matchService.deleteType(id)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -128,7 +132,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
         @Parameter(description = "Name of the table") @PathVariable tableName: String,
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.setMatchToTable(tableName, matchIds)
+        val success = tableService.setMatchToTable(tableName, matchIds)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -141,7 +145,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
     fun freeMatches(
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.freeMatches(matchIds)
+        val success = matchService.freeMatches(matchIds)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -154,7 +158,7 @@ class TournamentMatchController(private val tournamentService: TournamentService
     fun takeBackMatches(
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        val success = tournamentService.takeBackMatches(matchIds)
+        val success = matchService.takeBackMatches(matchIds)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -165,12 +169,12 @@ class TournamentMatchController(private val tournamentService: TournamentService
     @get:GetMapping("/types/all")
     @get:Operation(summary = "Get all discipline types", description = "Retrieves all discipline types in the tournament.")
     val allTypes: List<TournamentDiscipline>
-        get() = tournamentService.getAllTypes()
+        get() = matchService.getAllTypes()
 
     @get:GetMapping("/types/open/all")
     @get:Operation(summary = "Get active discipline types", description = "Retrieves all active discipline types.")
     val activeTypes: List<TournamentDiscipline>
-        get() = tournamentService.getActiveTypes()
+        get() = matchService.getActiveTypes()
 
     @GetMapping("/match/allmatchtable")
     @Operation(summary = "Get all match table data", description = "Retrieves a mapping of matches to tables.")
