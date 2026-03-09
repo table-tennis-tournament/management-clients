@@ -1,19 +1,89 @@
-logs
-target
-.idea
-.idea_modules
-.classpath
-.settings
-/RUNNING_PID
-/bin
-/.cache-tests
-/.worksheed
-project/**
+# --- General / OS ---
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*~
+.claude
+.gemini/
+/tmp/
+
+# --- IDEs ---
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# --- Node / Angular / Frontend ---
+node_modules/
+.angular/
+dist/
+out-tsc/
+bazel-out/
+coverage/
+.sass-cache/
+connect.lock
+typings/
+libpeerconnection.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+testem.log
+chrome-profiler-events*.json
+speed-measure-plugin*.json
+
+# --- Java / Maven (Spring Boot) ---
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# If using Maven Wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# --- Scala / SBT / Play Framework ---
+.cache
+.history
+.lib/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+.sbt/
 .sbtserver/
 .cache-main
-node_modules/
-*.iml
-.angular
-dist
-.claude
-/backend/
+.cache-tests
+.worksheed
+RUNNING_PID
+bin/
+logs/
+
+# Play specific project ignores
+project/project/
+project/target/
+modules/*/target/
+
+# --- Environment / Secrets ---
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+.env
+.env.*
+!*.env.example
