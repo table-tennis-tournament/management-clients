@@ -6,29 +6,47 @@
       (assignMatchToTable)="assignMatchToTable.emit($event)"
     ></toma-tt-table-content>
   </mat-card-content>
-  <mat-card-actions *ngIf="!isGameAvailable()" class="d-flex flex-row-reverse">
-    <button mat-button *ngIf="!table.isLocked" (click)="lockTable.emit(table.number)">Sperren</button>
-    <button mat-button *ngIf="table.isLocked" (click)="unLockTable.emit(table.number)">Entsperren</button>
-  </mat-card-actions>
-  <mat-expansion-panel hideToggle *ngIf="isGameAvailable()">
-    <mat-expansion-panel-header>
-      <mat-panel-title>...</mat-panel-title>
-      <mat-panel-description>
-        <button mat-button *ngIf="isGameAvailable()" (click)="freeTable.emit(table)">Frei</button>
-        <button mat-button *ngIf="table?.matches?.length === 1" (click)="resultForTable.emit(table)">Eingeben</button>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-card-actions>
-      <div>
-        <button mat-button *ngIf="!table.isLocked" (click)="lockTable.emit(table.number)">Sperren</button>
-        <button mat-button *ngIf="table.isLocked" (click)="unLockTable.emit(table.number)">Entsperren</button>
-        <span *ngIf="isGameAvailable()">
-          <button mat-button (click)="takeBackTable.emit(table)">Zurück</button>
-          <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
-          <button mat-button (click)="printTable.emit(table)">Drucken</button>
-          <button mat-button (click)="assignSecondTable.emit(table)">2.Tisch</button>
-        </span>
-      </div>
+  @if (!isGameAvailable()) {
+    <mat-card-actions class="d-flex flex-row-reverse">
+      @if (!table.isLocked) {
+        <button mat-button (click)="lockTable.emit(table.number)">Sperren</button>
+      }
+      @if (table.isLocked) {
+        <button mat-button (click)="unLockTable.emit(table.number)">Entsperren</button>
+      }
     </mat-card-actions>
-  </mat-expansion-panel>
+  }
+  @if (isGameAvailable()) {
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>...</mat-panel-title>
+        <mat-panel-description>
+          @if (isGameAvailable()) {
+            <button mat-button (click)="freeTable.emit(table)">Frei</button>
+          }
+          @if (table?.matches?.length === 1) {
+            <button mat-button (click)="resultForTable.emit(table)">Eingeben</button>
+          }
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-card-actions>
+        <div>
+          @if (!table.isLocked) {
+            <button mat-button (click)="lockTable.emit(table.number)">Sperren</button>
+          }
+          @if (table.isLocked) {
+            <button mat-button (click)="unLockTable.emit(table.number)">Entsperren</button>
+          }
+          @if (isGameAvailable()) {
+            <span>
+              <button mat-button (click)="takeBackTable.emit(table)">Zurück</button>
+              <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
+              <button mat-button (click)="printTable.emit(table)">Drucken</button>
+              <button mat-button (click)="assignSecondTable.emit(table)">2.Tisch</button>
+            </span>
+          }
+        </div>
+      </mat-card-actions>
+    </mat-expansion-panel>
+  }
 </mat-card>

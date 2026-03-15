@@ -47,5 +47,9 @@ export class MatchEffects {
     )
   );
 
-  constructor(private actions$: Actions, private toastService: ToastrService, private matchService: MatchService) {}
+  constructor(
+    private actions$: Actions,
+    private toastService: ToastrService,
+    private matchService: MatchService
+  ) {}
 }

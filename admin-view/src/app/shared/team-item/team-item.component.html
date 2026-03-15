@@ -1,22 +1,48 @@
-<div *ngIf="team[1] && team[0]" class="full-width">
-  <span *ngIf="showDisciplines">
-    <span *ngFor="let currentType of team[0].types" class="square" [tomaTypeColor]="currentType" [typeColors]="typeColors"></span>
+@if (team[1] && team[0]) {
+  <div class="full-width">
+    @if (showDisciplines) {
+      <span>
+        @for (currentType of team[0].types; track currentType) {
+          <span class="square" [tomaTypeColor]="currentType" [typeColors]="typeColors"></span>
+        }
+      </span>
+    }
+    <span>{{ team[0].lastName }}/{{ team[1].lastName }}</span>
+    @if (showDisciplines) {
+      <span>
+        @for (currentType of team[1].types; track currentType) {
+          <span class="square" [tomaTypeColor]="currentType" [typeColors]="typeColors"></span>
+        }
+      </span>
+    }
+    @if (result !== undefined && result !== null) {
+      <div class="fixed-width align-middle">{{ result }}</div>
+    }
+  </div>
+}
+@if (!team[1] && team[0]) {
+  <span class="align-middle">
+    @if (showDisciplines) {
+      <span>
+        @for (currentType of team[0].types; track currentType) {
+          <span class="square" [tomaTypeColor]="currentType" [typeColors]="typeColors"></span>
+        }
+      </span>
+    }
+    {{ team[0].firstName }} {{ team[0].lastName }}
+    @if (showClubs) {
+      <span>({{ team[0].club.clubName }})</span>
+    }
+    @if (result !== undefined && result !== null) {
+      <span class="fixed-width align-middle">{{ result }}</span>
+    }
   </span>
-  <span>{{ team[0].lastName }}/{{ team[1].lastName }}</span>
-  <span *ngIf="showDisciplines">
-    <span *ngFor="let currentType of team[1].types" class="square" [tomaTypeColor]="currentType" [typeColors]="typeColors"></span>
+}
+@if (!team[1] && !team[0]) {
+  <span>
+    [Frei]
+    @if (result !== undefined && result !== null) {
+      <div class="fixed-width align-middle">{{ result }}</div>
+    }
   </span>
-  <div *ngIf="result !== undefined && result !== null" class="fixed-width align-middle">{{ result }}</div>
-</div>
-<span *ngIf="!team[1] && team[0]" class="align-middle">
-  <span *ngIf="showDisciplines">
-    <span *ngFor="let currentType of team[0].types" class="square" [tomaTypeColor]="currentType" [typeColors]="typeColors"></span>
-  </span>
-  {{ team[0].firstName }} {{ team[0].lastName }}
-  <span *ngIf="showClubs">({{ team[0].club.clubName }})</span>
-  <span *ngIf="result !== undefined && result !== null" class="fixed-width align-middle">{{ result }}</span>
-</span>
-<span *ngIf="!team[1] && !team[0]">
-  [Frei]
-  <div *ngIf="result !== undefined && result !== null" class="fixed-width align-middle">{{ result }}</div>
-</span>
+}

@@ -9,19 +9,25 @@
     </h5>
     <br />
     <br />
-    <div class="row" *ngIf="!players">
-      {{ currentTable?.matches[0]?.team1 | ttPlayerNameReducer }}
-      <br />
-      -
-      <br />
-      {{ currentTable?.matches[0]?.team2 | ttPlayerNameReducer }}
-    </div>
-    <div class="row" *ngIf="players">
-      <div><h5>Spieler:</h5></div>
-      <div *ngFor="let currentPlayer of players">
-        {{ [currentPlayer] | ttPlayerNameReducer }}
+    @if (!players) {
+      <div class="row">
+        {{ currentTable?.matches[0]?.team1 | ttPlayerNameReducer }}
+        <br />
+        -
+        <br />
+        {{ currentTable?.matches[0]?.team2 | ttPlayerNameReducer }}
       </div>
-    </div>
+    }
+    @if (players) {
+      <div class="row">
+        <div><h5>Spieler:</h5></div>
+        @for (currentPlayer of players; track currentPlayer) {
+          <div>
+            {{ [currentPlayer] | ttPlayerNameReducer }}
+          </div>
+        }
+      </div>
+    }
   </div>
 </div>
 <div mat-dialog-actions>
