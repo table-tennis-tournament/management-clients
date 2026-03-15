@@ -55,7 +55,7 @@ class TableModuleIT {
     @Test
     fun `should lock and unlock table`() {
         // Lock
-        restTestClient.get()
+        restTestClient.post()
             .uri("/api/table/1/lock")
             .exchange()
             .expectStatus().isOk
@@ -63,7 +63,7 @@ class TableModuleIT {
             .jsonPath("$.success").isEqualTo(true)
 
         // Unlock
-        restTestClient.get()
+        restTestClient.post()
             .uri("/api/table/1/unlock")
             .exchange()
             .expectStatus().isOk
@@ -73,7 +73,7 @@ class TableModuleIT {
 
     @Test
     fun `should fail to lock non-existent table`() {
-        restTestClient.get()
+        restTestClient.post()
             .uri("/api/table/9999/lock")
             .exchange()
             .expectStatus().isBadRequest
@@ -81,7 +81,7 @@ class TableModuleIT {
 
     @Test
     fun `should fail to unlock non-existent table`() {
-        restTestClient.get()
+        restTestClient.post()
             .uri("/api/table/9999/unlock")
             .exchange()
             .expectStatus().isBadRequest

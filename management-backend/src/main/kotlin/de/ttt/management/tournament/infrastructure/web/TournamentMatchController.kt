@@ -100,7 +100,7 @@ class TournamentMatchController(
         }
     }
 
-    @GetMapping("/match/delete/{id}")
+    @DeleteMapping("/match/{id}")
     @Operation(summary = "Delete match", description = "Removes a match from the tournament.")
     fun deleteMatch(
         @Parameter(description = "ID of the match") @PathVariable id: Long
@@ -113,7 +113,7 @@ class TournamentMatchController(
         }
     }
 
-    @GetMapping("/match/deleteType/{id}")
+    @DeleteMapping("/match/type/{id}")
     @Operation(summary = "Delete all matches for type", description = "Removes all matches belonging to a specific discipline type.")
     fun deleteType(
         @Parameter(description = "ID of the discipline type") @PathVariable id: Long
@@ -193,7 +193,7 @@ class TournamentMatchController(
         return ResponseEntity.ok(mapOf("success" to true))
     }
 
-    @GetMapping("/match/loadnew")
+    @PostMapping("/match/load-new")
     @Operation(summary = "Load new matches", description = "Triggers loading of new matches from the registration system.")
     fun loadNewMatches(): Map<String, Any> = mapOf("success" to true)
 

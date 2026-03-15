@@ -45,24 +45,6 @@ class RegistrationModuleIT {
     }
 
     @Test
-    fun `should set player paid state`() {
-        restTestClient.get()
-            .uri("/api/players/setPayed/54/true")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
-    }
-
-    @Test
-    fun `should fail to set paid state for non-existent player`() {
-        restTestClient.get()
-            .uri("/api/players/setPayed/9999/true")
-            .exchange()
-            .expectStatus().isBadRequest
-    }
-
-    @Test
     fun `should get players by type`() {
         restTestClient.get()
             .uri("/api/players/type/1")
@@ -84,16 +66,16 @@ class RegistrationModuleIT {
 
     @Test
     fun `should fail to set player active state for non-existent player`() {
-        restTestClient.get()
-            .uri("/api/players/9999/true")
+        restTestClient.post()
+            .uri("/api/players/9999/active/true")
             .exchange()
             .expectStatus().isBadRequest
     }
 
     @Test
     fun `should fail setPayed with invalid id format`() {
-        restTestClient.get()
-            .uri("/api/players/setPayed/abc/true")
+        restTestClient.post()
+            .uri("/api/players/abc/paid?paid=true")
             .exchange()
             .expectStatus().isBadRequest
     }

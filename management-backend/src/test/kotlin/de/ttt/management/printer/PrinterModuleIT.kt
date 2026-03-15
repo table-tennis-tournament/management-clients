@@ -25,54 +25,55 @@ class PrinterModuleIT {
             .expectBody()
             .jsonPath("$.length()").isNumber
     }
+@Test
+fun `should set printer successfully`() {
+    val printerName = "TestPrinter"
+    restTestClient.post()
+        .uri("/api/printer/set/$printerName")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.success").isEqualTo(true)
+}
 
-    @Test
-    fun `should set printer successfully`() {
-        val printerName = "TestPrinter"
-        restTestClient.get()
-            .uri("/api/printer/set/$printerName")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
-    }
+@Test
+fun `should fail to set non-existent printer`() {
+    val printerName = "NonExistent"
+    restTestClient.post()
+        .uri("/api/printer/set/$printerName")
+        .exchange()
+        .expectStatus().isBadRequest
+}
 
-    @Test
-    fun `should fail to set non-existent printer`() {
-        val printerName = "NonExistent"
-        restTestClient.get()
-            .uri("/api/printer/set/$printerName")
-            .exchange()
-            .expectStatus().isBadRequest
-    }
+@Test
+fun `should set print on start`() {
+    restTestClient.post()
+        .uri("/api/printer/setprintonstart/true")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.success").isEqualTo(true)
+}
 
-    @Test
-    fun `should set print on start`() {
-        restTestClient.get()
-            .uri("/api/printer/setprintonstart/true")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
-    }
+@Test
+fun `should print match successfully`() {
+    restTestClient.post()
+        .uri("/api/printer/print/1")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.success").isEqualTo(true)
+}
 
-    @Test
-    fun `should print match successfully`() {
-        restTestClient.get()
-            .uri("/api/printer/print/1")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
-    }
+@Test
+fun `should fail to print non-existent match`() {
+    val matchId = 9999L
+    restTestClient.post()
+        .uri("/api/printer/print/$matchId")
+        .exchange()
+        .expectStatus().isBadRequest
+}
 
-    @Test
-    fun `should fail to print non-existent match`() {
-        restTestClient.get()
-            .uri("/api/printer/print/9999")
-            .exchange()
-            .expectStatus().isBadRequest
-    }
 
     @Test
     fun `should get qr code`() {

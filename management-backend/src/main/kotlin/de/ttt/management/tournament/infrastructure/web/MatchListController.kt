@@ -52,7 +52,7 @@ class MatchListController(private val matchListService: MatchListService) {
         }
     }
 
-    @GetMapping("/active/{isActive}")
+    @PostMapping("/active/{isActive}")
     @Operation(summary = "Set match list active state", description = "Enables or disables the match list processing.")
     fun setActive(
         @Parameter(description = "Active state (true) or inactive (false)") @PathVariable isActive: Boolean
@@ -61,7 +61,7 @@ class MatchListController(private val matchListService: MatchListService) {
         return ResponseEntity.ok(mapOf("success" to true))
     }
 
-    @GetMapping("/move/{uuid}/{position}")
+    @PostMapping("/move/{uuid}/{position}")
     @Operation(summary = "Move match list entry", description = "Changes the position of a match list entry in the queue.")
     fun move(
         @Parameter(description = "UUID of the match list entry") @PathVariable uuid: String,
@@ -75,7 +75,7 @@ class MatchListController(private val matchListService: MatchListService) {
         }
     }
 
-    @GetMapping("/autostart")
+    @PostMapping("/auto-start")
     @Operation(summary = "Trigger auto-start", description = "Manually triggers the auto-start logic for matches.")
     fun autoStart(): Map<String, Any> = mapOf("success" to true)
 }

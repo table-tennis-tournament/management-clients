@@ -30,7 +30,7 @@ class TableController(private val tableService: TableService) {
         return if (table != null) ResponseEntity.ok(table) else ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/table/{nr}/lock")
+    @PostMapping("/table/{nr}/lock")
     @Operation(summary = "Lock table", description = "Locks a table to prevent it from being assigned to matches.")
     fun lockTable(
         @Parameter(description = "Number/ID of the table to lock") @PathVariable nr: Long
@@ -43,7 +43,7 @@ class TableController(private val tableService: TableService) {
         }
     }
 
-    @GetMapping("/table/{nr}/unlock")
+    @PostMapping("/table/{nr}/unlock")
     @Operation(summary = "Unlock table", description = "Unlocks a previously locked table.")
     fun unlockTable(
         @Parameter(description = "Number/ID of the table to unlock") @PathVariable nr: Long

@@ -244,8 +244,8 @@ class TournamentModuleIT {
     @Test
     fun `should delete match successfully`() {
         assertTrue(validMatchId > 0)
-        restTestClient.get()
-            .uri("/api/tournament/match/delete/$validMatchId")
+        restTestClient.delete()
+            .uri("/api/tournament/match/$validMatchId")
             .exchange()
             .expectStatus().isOk
     }
