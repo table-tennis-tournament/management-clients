@@ -3,11 +3,9 @@ import {SharedModule} from '../shared/shared.module';
 import {NavigationComponent} from './navigation.component';
 
 @NgModule({
-    declarations: [
-        NavigationComponent
-    ],
     imports: [
         SharedModule,
+        NavigationComponent,
     ],
     exports: [
         NavigationComponent

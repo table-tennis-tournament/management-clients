@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {select, Store} from '@ngrx/store';
 import {Observable, Subscription} from 'rxjs';
@@ -8,19 +8,27 @@ import * as MatchActions from './match/redux/match.actions';
 import * as TableActions from './redux/table-list.actions';
 import {AppState, getTables} from './redux/table-list.reducer';
 import {Table} from './tt-table/table.model';
+import { TtTableComponent } from './tt-table/tt-table.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-table-list',
     templateUrl: './table-list.component.html',
     styleUrls: ['./table-list.component.scss'],
-    standalone: false
+    imports: [TtTableComponent, AsyncPipe]
 })
 export class TableListComponent implements OnInit {
+  private store = inject<Store<AppState>>(Store);
+  private events = inject(WebsocketService);
+  private route = inject(ActivatedRoute);
+
 
   tables$: Observable<Table[]>;
   subscription: Subscription;
 
-  constructor(private store: Store<AppState>, private events: WebsocketService, private route: ActivatedRoute) {
+  constructor() {
+    const store = this.store;
+
     this.tables$ = store.pipe(select(getTables));
   }
 

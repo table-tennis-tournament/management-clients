@@ -1,33 +1,37 @@
 <h1 mat-dialog-title>Match Nr. {{match.match_id}}</h1>
 <div mat-dialog-content>
-    <div class="row">
-        <div class="col-8">
-            <div class="mat-body-strong mb-0">{{match.players_a | playerName}}</div>
-            <div *ngIf="match.players_a.length === 1">({{match.players_a | clubName}})</div>
-        </div>
-        <div class="col-4">
-            <div class="mat-display-1 mb-0">{{match.result.games_won_player_a}}</div>
-        </div>
+  <div class="row">
+    <div class="col-8">
+      <div class="mat-body-strong mb-0">{{match.players_a | playerName}}</div>
+      @if (match.players_a.length === 1) {
+        <div>({{match.players_a | clubName}})</div>
+      }
     </div>
-    <mat-divider></mat-divider>
-    <div class="row">
-        <div class="col-8">
-            <div class="mat-body-strong mb-0">{{match.players_b | playerName}}</div>
-            <div *ngIf="match.players_b.length === 1">({{match.players_b | clubName}})</div>
-        </div>
-        <div class="col-4">
-            <div class="mat-display-1 mb-0">{{match.result.games_won_player_b}}</div>
-        </div>
+    <div class="col-4">
+      <div class="mat-display-1 mb-0">{{match.result.games_won_player_a}}</div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <mat-form-field>
-                <input matInput cdkFocusInitial [(ngModel)]="resultString" (keyup.enter)="onOk()">
-            </mat-form-field>
-        </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="row">
+    <div class="col-8">
+      <div class="mat-body-strong mb-0">{{match.players_b | playerName}}</div>
+      @if (match.players_b.length === 1) {
+        <div>({{match.players_b | clubName}})</div>
+      }
     </div>
+    <div class="col-4">
+      <div class="mat-display-1 mb-0">{{match.result.games_won_player_b}}</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <mat-form-field>
+        <input matInput cdkFocusInitial [(ngModel)]="resultString" (keyup.enter)="onOk()">
+      </mat-form-field>
+    </div>
+  </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-raised-button color="accent" (click)="onOk()">Ok</button>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-raised-button color="accent" (click)="onOk()">Ok</button>
 </div>

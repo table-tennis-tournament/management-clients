@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {of} from 'rxjs';
@@ -8,6 +8,10 @@ import * as MatchActions from './match.actions';
 
 @Injectable()
 export class MatchEffects {
+  private actions$ = inject(Actions);
+  private snackBar = inject(MatSnackBar);
+  private matchService = inject(MatchService);
+
 
   updateMatchResult$ = createEffect(() => this.actions$.pipe(
     ofType(MatchActions.updateMatchResult),
@@ -95,12 +99,4 @@ export class MatchEffects {
       this.snackBar.open('Spiel konnte nicht zurück genommen werden.');
     })
   ), {dispatch: false});
-
-
-
-  constructor(
-    private actions$: Actions,
-    private snackBar: MatSnackBar,
-    private matchService: MatchService) {
-  }
 }

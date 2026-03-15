@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Store} from '@ngrx/store';
 import {WebsocketService} from '../services/websocket.service';
 import {updatedMatchToTable} from './redux/table-list.actions';
@@ -8,9 +8,9 @@ import {Table} from './tt-table/table.model';
     providedIn: 'root'
 })
 export class WebsocketHandlerService {
+    private store = inject<Store<any>>(Store);
+    private websocketService = inject(WebsocketService);
 
-    constructor(private store: Store<any>, private websocketService: WebsocketService) {
-    }
 
     public connectToWebsocket() {
         console.log('start connecting to socket');

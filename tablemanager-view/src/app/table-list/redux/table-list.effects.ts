@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {of} from 'rxjs';
@@ -8,6 +8,10 @@ import * as TableActions from './table-list.actions';
 
 @Injectable()
 export class TableListEffects {
+    private actions$ = inject(Actions);
+    private snackBar = inject(MatSnackBar);
+    private tableService = inject(TableService);
+
 
     loadTables$ = createEffect(() => this.actions$.pipe(
         ofType(TableActions.loadTables),
@@ -25,10 +29,4 @@ export class TableListEffects {
             this.snackBar.open('Tables could not be loaded.');
         })
     ), {dispatch: false});
-
-    constructor(
-        private actions$: Actions,
-        private snackBar: MatSnackBar,
-        private tableService: TableService) {
-    }
 }
