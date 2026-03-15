@@ -29,9 +29,11 @@
   <mat-form-field appearance="fill" class="col s4">
     <mat-label>Wähle Drucker</mat-label>
     <mat-select [(value)]="selectedPrinter">
-      <mat-option *ngFor="let printer of printers" [value]="printer">
+      @for (printer of printers; track printer) {
+      <mat-option [value]="printer">
         {{ printer }}
       </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <div class="col s6">
@@ -49,21 +51,24 @@
   <mat-form-field appearance="fill" class="col s4">
     <mat-label>Wähle Type</mat-label>
     <mat-select [(value)]="selectedTypeId" (selectionChange)="onTypeSelected()">
-      <mat-option *ngFor="let type of types" [value]="type.id">
+      @for (type of types; track type) {
+      <mat-option [value]="type.id">
         {{ type.name }}
       </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </div>
 
-<div class="row" *ngIf="selectedTypeId">
+@if (selectedTypeId) {
+<div class="row">
   <mat-form-field appearance="fill" class="col s4">
     <mat-label>Hintergrundfarbe (Hex)</mat-label>
     <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
     <mat-hint>Format: #RRGGBB</mat-hint>
   </mat-form-field>
-
-  <div class="col s2" *ngIf="selectedBgColor">
+  @if (selectedBgColor) {
+  <div class="col s2">
     <div
       [style.background-color]="selectedBgColor"
       [style.color]="selectedTextColor"
@@ -72,9 +77,10 @@
       A
     </div>
   </div>
+  }
 </div>
-
-<div class="row" *ngIf="selectedTypeId">
+} @if (selectedTypeId) {
+<div class="row">
   <mat-form-field appearance="fill" class="col s4">
     <mat-label>Textfarbe</mat-label>
     <mat-select [(value)]="selectedTextColor">
@@ -83,8 +89,8 @@
     </mat-select>
   </mat-form-field>
 </div>
-
-<div class="row" *ngIf="selectedTypeId">
+} @if (selectedTypeId) {
+<div class="row">
   <div class="col s6">
     <a class="waves-effect waves-light btn" (click)="saveTypeColorClick()">
       <i class="material-icons left">save</i>
@@ -92,6 +98,7 @@
     </a>
   </div>
 </div>
+}
 
 <div class="row">
   <h5>Schnellkonfiguration</h5>

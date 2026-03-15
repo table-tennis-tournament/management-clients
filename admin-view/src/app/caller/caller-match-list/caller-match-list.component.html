@@ -1,24 +1,25 @@
 <div class="pt-2">
-  <mat-spinner *ngIf="matchesLoading"></mat-spinner>
-  <div *ngIf="!matchesLoading && matchAggregates?.length > 0">
+  @if (matchesLoading) {
+  <mat-spinner></mat-spinner>
+  } @if (!matchesLoading && matchAggregates?.length > 0) {
+  <div>
     <h2>Spiele zum Ausrufen:</h2>
     <mat-list>
-      <mat-list-item
-        [tomaTypeColor]="currentMatch?.discipline?.id"
-        [typeColors]="typeColors"
-        (click)="matchesSelected.emit(currentMatch)"
-        *ngFor="let currentMatch of matchAggregates"
-      >
-        <div class="d-flex justify-content-between w-100"  [tomaTypeColor]="currentMatch?.discipline?.id"
-             [typeColors]="typeColors">
+      @for (currentMatch of matchAggregates; track currentMatch) {
+      <mat-list-item [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors" (click)="matchesSelected.emit(currentMatch)">
+        <div class="d-flex justify-content-between w-100" [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors">
           <div>
             {{ currentMatch.name }}
           </div>
           <div class="ms-auto">
-            <span class="circle" *ngFor="let tableNumber of currentMatch.tableNumbers">{{ tableNumber }}</span>
+            @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
+            <span class="circle">{{ tableNumber }}</span>
+            }
           </div>
         </div>
       </mat-list-item>
+      }
     </mat-list>
   </div>
+  }
 </div>

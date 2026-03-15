@@ -31,8 +31,10 @@
   </div>
 </div>
 <div class="row">
-  <mat-spinner *ngIf="playersLoading"></mat-spinner>
-  <div class="col-12 p-5" *ngIf="filteredPlayers?.length > 0">
+  @if (playersLoading) {
+  <mat-spinner></mat-spinner>
+  } @if (filteredPlayers?.length > 0) {
+  <div class="col-12 p-5">
     <table mat-table [dataSource]="filteredPlayers" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Nr</th>
@@ -68,12 +70,13 @@
           </section>
         </td>
       </ng-container>
-
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
-  <div *ngIf="filteredPlayers.length === 0" class="col-12 p-5 text-center">
+  } @if (filteredPlayers.length === 0) {
+  <div class="col-12 p-5 text-center">
     <h1>Keine Spieler verfügbar</h1>
   </div>
+  }
 </div>

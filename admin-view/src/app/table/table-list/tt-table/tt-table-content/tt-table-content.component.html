@@ -1,28 +1,37 @@
-<div *ngIf="table?.matches?.length > 0">
+@if (table?.matches?.length > 0) {
+<div>
   <mat-card-header class="p-0">
     <mat-card-title class="d-flex align-items-center">
-      <span *ngIf="table.number" class="circle">{{ table.number }}</span>
+      @if (table.number) {
+      <span class="circle">{{ table.number }}</span>
+      }
       <div class="flex-grow-1 text-truncate text-center">
         {{ table.matches[0].type.name }}
       </div>
     </mat-card-title>
   </mat-card-header>
-
   <p class="text-center text-truncate">
-    <b *ngIf="table.isLocked">
+    @if (table.isLocked) {
+    <b>
       Tisch wird gesperrt.
       <br />
     </b>
+    }
     <toma-tt-table-match-item [matches]="table.matches"></toma-tt-table-match-item>
   </p>
 </div>
-
-<span class="card-title activator" *ngIf="table?.matches?.length < 1" cdkDropList (cdkDropListDropped)="drop($event)">
+} @if (table?.matches?.length < 1) {
+<span class="card-title activator" cdkDropList (cdkDropListDropped)="drop($event)">
   <h5>
     <mat-card-title>
-      <span *ngIf="table.number" class="circle">{{ table.number }}</span>
-      <span *ngIf="!table.isLocked" id="unLockedId">Frei</span>
-      <span *ngIf="table.isLocked" id="unLockedId2">Gesperrt</span>
+      @if (table.number) {
+      <span class="circle">{{ table.number }}</span>
+      } @if (!table.isLocked) {
+      <span id="unLockedId">Frei</span>
+      } @if (table.isLocked) {
+      <span id="unLockedId2">Gesperrt</span>
+      }
     </mat-card-title>
   </h5>
 </span>
+}

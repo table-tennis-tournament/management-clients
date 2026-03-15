@@ -1,7 +1,9 @@
-<mat-spinner *ngIf="tablesLoading"></mat-spinner>
-
-<div *ngIf="!tablesLoading" class="tttable tttable--5cols">
-  <div *ngFor="let currentTable of tables" class="tttable-cell">
+@if (tablesLoading) {
+<mat-spinner></mat-spinner>
+} @if (!tablesLoading) {
+<div class="tttable tttable--5cols">
+  @for (currentTable of tables; track currentTable) {
+  <div class="tttable-cell">
     <toma-tt-table
       [table]="currentTable"
       [typeColors]="typeColors"
@@ -16,4 +18,6 @@
       (assignMatchToTable)="assignMatchToTable.emit($event)"
     ></toma-tt-table>
   </div>
+  }
 </div>
+}

@@ -1,34 +1,39 @@
-<div *ngIf="secondCalls" class="pt-2">
+@if (secondCalls) {
+<div class="pt-2">
   <h2>2. Aufruf:</h2>
   <mat-list>
-    <mat-list-item
-      [tomaTypeColor]="currentMatch?.discipline?.id"
-      [typeColors]="typeColors"
-      (click)="matchesSelected.emit(currentMatch)"
-      *ngFor="let currentMatch of secondCalls"
-    >
-      <div class="cut-text" *ngIf="currentMatch">
+    @for (currentMatch of secondCalls; track currentMatch) {
+    <mat-list-item [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors" (click)="matchesSelected.emit(currentMatch)">
+      @if (currentMatch) {
+      <div class="cut-text">
         {{ getStartTime(currentMatch) }} min.
         {{ currentMatch.name }}
-        <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{ tableNumber }}</span>
+        @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
+        <span class="circle right">{{ tableNumber }}</span>
+        }
       </div>
+      }
     </mat-list-item>
+    }
   </mat-list>
 </div>
-<div *ngIf="thirdCalls" class="pt-2">
+} @if (thirdCalls) {
+<div class="pt-2">
   <h2>3. Aufruf:</h2>
   <mat-list>
-    <mat-list-item
-      [tomaTypeColor]="currentMatch?.discipline?.id"
-      [typeColors]="typeColors"
-      (click)="matchesSelected.emit(currentMatch)"
-      *ngFor="let currentMatch of thirdCalls"
-    >
-      <div class="cut-text" *ngIf="currentMatch">
+    @for (currentMatch of thirdCalls; track currentMatch) {
+    <mat-list-item [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors" (click)="matchesSelected.emit(currentMatch)">
+      @if (currentMatch) {
+      <div class="cut-text">
         {{ getStartTime(currentMatch) }} min.
         {{ currentMatch.name }}
-        <span class="circle right" *ngFor="let tableNumber of currentMatch.tableNumbers">{{ tableNumber }}</span>
+        @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
+        <span class="circle right">{{ tableNumber }}</span>
+        }
       </div>
+      }
     </mat-list-item>
+    }
   </mat-list>
 </div>
+}

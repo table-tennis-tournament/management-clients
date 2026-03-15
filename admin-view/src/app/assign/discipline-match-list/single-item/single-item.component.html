@@ -9,8 +9,11 @@
       </div>
     </div>
     <div class="discipline-match-list-square indigo white-text text-center">
-      <span *ngIf="!currentMatch.group">{{ currentMatch.matchType | disciplineType }}</span>
-      <span *ngIf="currentMatch.group">{{ currentMatch.group.name }}</span>
+      @if (!currentMatch.group) {
+      <span>{{ currentMatch.matchType | disciplineType }}</span>
+      } @if (currentMatch.group) {
+      <span>{{ currentMatch.group.name }}</span>
+      }
     </div>
   </div>
 </div>

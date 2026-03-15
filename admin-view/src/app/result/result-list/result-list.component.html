@@ -1,4 +1,6 @@
-<mat-spinner *ngIf="matchesLoading"></mat-spinner>
+@if (matchesLoading) {
+<mat-spinner></mat-spinner>
+}
 <div>
   <div class="row">
     <div class="input-field col s10 m6">

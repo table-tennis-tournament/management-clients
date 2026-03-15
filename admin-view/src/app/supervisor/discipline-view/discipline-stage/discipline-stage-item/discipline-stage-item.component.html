@@ -18,10 +18,16 @@
     </div>
   </span>
   <span class="header-right-content">
-    <span *ngIf="match.table[0]" class="circle right">{{ match.table[0] }}</span>
-    <span *ngIf="isMatchInWaitingList()" class="circle right">W</span>
-    <span *ngIf="isMatchCallable()" class="circle right">A</span>
-    <span *ngIf="isMatchFinished()" class="circle right">F</span>
-    <i *ngIf="isMatchComplete()" class="material-icons right">done</i>
+    @if (match.table[0]) {
+    <span class="circle right">{{ match.table[0] }}</span>
+    } @if (isMatchInWaitingList()) {
+    <span class="circle right">W</span>
+    } @if (isMatchCallable()) {
+    <span class="circle right">A</span>
+    } @if (isMatchFinished()) {
+    <span class="circle right">F</span>
+    } @if (isMatchComplete()) {
+    <i class="material-icons right">done</i>
+    }
   </span>
 </div>

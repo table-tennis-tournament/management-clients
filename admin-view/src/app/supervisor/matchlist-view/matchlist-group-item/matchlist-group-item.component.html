@@ -1,14 +1,17 @@
 <mat-expansion-panel hideToggle>
   <mat-expansion-panel-header>
     <div class="black-text header-main-container">
-      <span class="header-center-content" *ngIf="matchListItem.matchinfo[0].group">
+      @if (matchListItem.matchinfo[0].group) {
+      <span class="header-center-content">
         <i class="material-icons m-0">group</i>
         <span class="align-top">Gruppe {{ matchListItem.matchinfo[0].group.name }}</span>
       </span>
-      <span class="header-center-content" *ngIf="!matchListItem.matchinfo[0].group">
+      } @if (!matchListItem.matchinfo[0].group) {
+      <span class="header-center-content">
         <i class="material-icons m-0">view_list</i>
         <span class="align-top">{{ matchListItem.matchinfo[0].matchType | disciplineType }}</span>
       </span>
+      }
       <span class="header-right-content">
         <a href="javascript:void(0)" (click)="matchListItemDelete.emit(matchListItem)">
           <i class="material-icons">close</i>
@@ -17,7 +20,8 @@
     </div>
   </mat-expansion-panel-header>
   <mat-list>
-    <div class="cut-text border-bottom border-dark" *ngFor="let matchGroup of matchListItem.matchinfo">
+    @for (matchGroup of matchListItem.matchinfo; track matchGroup) {
+    <div class="cut-text border-bottom border-dark">
       <div class="d-flex align-items-center">
         <toma-team-item [team]="matchGroup.team1"></toma-team-item>
       </div>
@@ -25,5 +29,6 @@
         <toma-team-item [team]="matchGroup.team2"></toma-team-item>
       </div>
     </div>
+    }
   </mat-list>
 </mat-expansion-panel>

@@ -2,9 +2,11 @@
   <mat-form-field appearance="fill" class="flex-grow-1">
     <mat-label>Konkurrenz</mat-label>
     <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
-      <mat-option *ngFor="let currentDiscipline of openDisciplines" [value]="currentDiscipline.id">
+      @for (currentDiscipline of openDisciplines; track currentDiscipline) {
+      <mat-option [value]="currentDiscipline.id">
         {{ currentDiscipline.name }}
       </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <button mat-mini-fab color="primary" (click)="disciplineRefresh.emit(+selectedDiscipline)" class="mt-2">
