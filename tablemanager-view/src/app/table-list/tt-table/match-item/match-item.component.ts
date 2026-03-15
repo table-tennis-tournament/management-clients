@@ -1,15 +1,21 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Match} from '../../match/match.model';
 import {PlayerDialogComponent} from '../player-dialog/player-dialog.component';
+import { MatBadge } from '@angular/material/badge';
+import { MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { PlayerNamePipe } from '../../player-name.pipe';
 
 @Component({
     selector: 'app-match-item',
     templateUrl: './match-item.component.html',
     styleUrls: ['./match-item.component.scss'],
-    standalone: false
+    imports: [MatBadge, MatMiniFabButton, MatIcon, PlayerNamePipe]
 })
 export class MatchItemComponent {
+  dialog = inject(MatDialog);
+
 
   @Input()
   match: Match;
@@ -19,8 +25,6 @@ export class MatchItemComponent {
 
   @Output()
   callPlayersForMatch = new EventEmitter();
-
-  constructor(public dialog: MatDialog) { }
 
 
   callPlayers() {
