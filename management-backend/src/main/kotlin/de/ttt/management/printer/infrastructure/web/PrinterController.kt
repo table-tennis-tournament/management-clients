@@ -20,7 +20,7 @@ class PrinterController(private val printerService: PrinterService) {
     @Operation(summary = "Get all printers", description = "Retrieves a list of names of all available printers on the system.")
     fun getAllPrinters(): List<String> = printerService.getAllPrinters()
 
-    @GetMapping("/set/{name}")
+    @PostMapping("/set/{name}")
     @Operation(summary = "Set selected printer", description = "Sets the active printer to be used for future print jobs.")
     fun setPrinter(
         @Parameter(description = "Name of the printer to select") @PathVariable name: String
@@ -33,7 +33,7 @@ class PrinterController(private val printerService: PrinterService) {
         }
     }
 
-    @GetMapping("/setprintonstart/{active}")
+    @PostMapping("/setprintonstart/{active}")
     @Operation(summary = "Set print-on-start state", description = "Enables or disables automatic printing when a match starts.")
     fun setPrintOnStart(
         @Parameter(description = "Enable (true) or disable (false) print-on-start") @PathVariable active: Boolean
@@ -42,7 +42,7 @@ class PrinterController(private val printerService: PrinterService) {
         return mapOf("success" to true)
     }
 
-    @GetMapping("/print/{id}")
+    @PostMapping("/print/{id}")
     @Operation(summary = "Print match details", description = "Triggers a print job for the specified match ID using the selected printer.")
     fun print(
         @Parameter(description = "ID of the match to print") @PathVariable id: Long

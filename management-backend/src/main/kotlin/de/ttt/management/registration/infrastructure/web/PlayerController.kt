@@ -38,27 +38,13 @@ class PlayerController(private val playerService: PlayerService) {
         return if (player != null) ResponseEntity.ok(player) else ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/setPayed/{id}/{paid}")
-    @Operation(summary = "Set player payment status (GET)", description = "Updates the payment status for a player. Use POST for better practice.")
-    fun setPayed(
-        @Parameter(description = "ID of the player") @PathVariable id: Long,
-        @Parameter(description = "Payment status (true for paid)") @PathVariable paid: Boolean
-    ): ResponseEntity<Map<String, Any>> {
-        val success = playerService.setPaid(id, paid)
-        return if (success) {
-            ResponseEntity.ok(mapOf("success" to true))
-        } else {
-            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Player not found"))
-        }
-    }
-
     @GetMapping("/type/{typeId}")
     @Operation(summary = "Get players by type", description = "Retrieves a list of players matching the specified type ID.")
     fun getPlayesByType(
         @Parameter(description = "ID of the player type") @PathVariable typeId: Long
     ): List<Player> = playerService.getPlayersByType(typeId)
 
-    @GetMapping("/{id}/{active}")
+    @PostMapping("/{id}/active/{active}")
     @Operation(summary = "Set player active state", description = "Updates the active/inactive state of a player.")
     fun setPlayerActiveState(
         @Parameter(description = "ID of the player") @PathVariable id: Long,
