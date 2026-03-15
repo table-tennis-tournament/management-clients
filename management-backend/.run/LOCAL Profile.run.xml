@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LOCAL Profile" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
     <option name="envFilePaths">
       <option value="$PROJECT_DIR$/local.env" />
     </option>
