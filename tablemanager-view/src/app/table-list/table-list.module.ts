@@ -18,7 +18,11 @@ import {MatchItemComponent} from './tt-table/match-item/match-item.component';
 import { SinglePlayerPipe } from './single-player.pipe';
 
 @NgModule({
-    declarations: [
+    imports: [
+        SharedModule,
+        StoreModule.forFeature('tables', fromTables.reducer),
+        EffectsModule.forFeature([MatchEffects, TableListEffects]),
+        ReactiveFormsModule,
         TtTableComponent,
         TableListComponent,
         PlayerNamePipe,
@@ -29,12 +33,6 @@ import { SinglePlayerPipe } from './single-player.pipe';
         ClubNamePipe,
         MatchItemComponent,
         SinglePlayerPipe
-    ],
-    imports: [
-        SharedModule,
-        StoreModule.forFeature('tables', fromTables.reducer),
-        EffectsModule.forFeature([MatchEffects, TableListEffects]),
-        ReactiveFormsModule
     ],
     exports: [TableListComponent]
 })

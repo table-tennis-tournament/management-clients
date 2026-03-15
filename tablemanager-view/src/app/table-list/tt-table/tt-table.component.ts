@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Game} from '../match/game.model';
 import {Match} from '../match/match.model';
@@ -7,14 +7,25 @@ import {GameDialogComponent} from './game-dialog/game-dialog.component';
 import {GameService} from './game.service';
 import {ResultDialogComponent} from './result-dialog/result-dialog.component';
 import {Table} from './table.model';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatBadge } from '@angular/material/badge';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import { MatchItemComponent } from './match-item/match-item.component';
+import { NgClass } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { ClubNamePipe } from '../club-name.pipe';
+import { SinglePlayerPipe } from '../single-player.pipe';
 
 @Component({
     selector: 'app-tt-table',
     templateUrl: './tt-table.component.html',
     styleUrls: ['./tt-table.component.scss'],
-    standalone: false
+    imports: [MatCard, MatCardHeader, MatCardTitle, MatBadge, MatChipSet, MatChip, MatCardContent, MatchItemComponent, NgClass, MatCardActions, MatButton, ClubNamePipe, SinglePlayerPipe]
 })
 export class TtTableComponent {
+  dialog = inject(MatDialog);
+  gameService = inject(GameService);
+
 
   @Input()
   table: Table;
@@ -35,9 +46,6 @@ export class TtTableComponent {
   takeBackMatch = new EventEmitter();
 
   maxGames = [0, 1, 2, 3, 4];
-
-  constructor(public dialog: MatDialog, public gameService: GameService) {
-  }
 
   currentMatch(): Match {
     return this.table.matches.find(match => match.state === 'Started');
@@ -78,7 +86,7 @@ export class TtTableComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (!!result) {
+      if (result) {
         this.updateMatchResult.emit({
           matchId: match.match_id,
           result
@@ -98,7 +106,7 @@ export class TtTableComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (!!result) {
+      if (result) {
         const newGame = this.gameService.createResult(result.result, result.isPlayerA);
         const newGames = this.currentMatch().result.games.concat(newGame);
         this.updateMatchResult.emit({
