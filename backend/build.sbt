@@ -1,6 +1,6 @@
 name := """TurnierManager"""
 
-version := "6.6"
+version := "6.7"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayPekkoHttpServer)
 
