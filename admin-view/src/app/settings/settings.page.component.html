@@ -1,5 +1,5 @@
-<div class="card">
-  <div class="card-content">
+<mat-card class="m-3">
+  <mat-card-content>
     <toma-settings-list
       [printers]="printers | async"
       [settings]="settings | async"
@@ -11,5 +11,5 @@
       (saveTypeColor)="onSaveTypeColor($event)"
       (setBulkTypeColors)="onSetBulkTypeColors($event)"
     ></toma-settings-list>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

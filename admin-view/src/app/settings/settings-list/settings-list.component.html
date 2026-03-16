@@ -1,120 +1,135 @@
-<div class="row">
-  <div class="col s2">
-    <p>
-      <input
-        type="checkbox"
-        class="filled-in"
-        [(ngModel)]="isPrintForAssign"
-        id="filled-in-box"
-        (change)="printForAssign.emit(isPrintForAssign)"
-      />
-      <label for="filled-in-box">Druck bei Ausruf</label>
-    </p>
-  </div>
-  <div class="col s2">
-    <p>
-      <input
-        type="checkbox"
-        class="filled-in"
-        [(ngModel)]="assignAutomatically"
-        id="automatically-assign"
-        (change)="automaticallyAssign.emit(assignAutomatically)"
-      />
-      <label for="automatically-assign">Automatisch Ausrufen</label>
-    </p>
-  </div>
-</div>
-
-<div class="row">
-  <mat-form-field appearance="fill" class="col s4">
-    <mat-label>Wähle Drucker</mat-label>
-    <mat-select [(value)]="selectedPrinter">
-      @for (printer of printers; track printer) {
-        <mat-option [value]="printer">
-          {{ printer }}
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-  <div class="col s6">
-    <button mat-mini-fab color="primary" (click)="savePrinter.emit(selectedPrinter)" class="mt-2">
-      <mat-icon>save</mat-icon>
-    </button>
-  </div>
-</div>
-
-<div class="row">
-  <h5>Type-Farben Konfiguration</h5>
-</div>
-
-<div class="row">
-  <mat-form-field appearance="fill" class="col s4">
-    <mat-label>Wähle Type</mat-label>
-    <mat-select [(value)]="selectedTypeId" (selectionChange)="onTypeSelected()">
-      @for (type of types; track type) {
-        <mat-option [value]="type.id">
-          {{ type.name }}
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-</div>
-
-@if (selectedTypeId) {
-  <div class="row">
-    <mat-form-field appearance="fill" class="col s4">
-      <mat-label>Hintergrundfarbe (Hex)</mat-label>
-      <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
-      <mat-hint>Format: #RRGGBB</mat-hint>
-    </mat-form-field>
-    @if (selectedBgColor) {
-      <div class="col s2">
-        <div
-          [style.background-color]="selectedBgColor"
-          [style.color]="selectedTextColor"
-          style="width: 50px; height: 50px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center"
-        >
-          A
+<div class="container-fluid p-3">
+  <!-- General Settings Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="mb-3">Allgemeine Einstellungen</h5>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <mat-checkbox
+            [(ngModel)]="isPrintForAssign"
+            (change)="printForAssign.emit(isPrintForAssign)"
+          >
+            Druck bei Ausruf
+          </mat-checkbox>
+        </div>
+        <div class="col-md-4 mb-3">
+          <mat-checkbox
+            [(ngModel)]="assignAutomatically"
+            (change)="automaticallyAssign.emit(assignAutomatically)"
+          >
+            Automatisch Ausrufen
+          </mat-checkbox>
         </div>
       </div>
-    }
-  </div>
-}
-@if (selectedTypeId) {
-  <div class="row">
-    <mat-form-field appearance="fill" class="col s4">
-      <mat-label>Textfarbe</mat-label>
-      <mat-select [(value)]="selectedTextColor">
-        <mat-option value="white">Weiß</mat-option>
-        <mat-option value="black">Schwarz</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-}
-@if (selectedTypeId) {
-  <div class="row">
-    <div class="col s6">
-      <a class="waves-effect waves-light btn" (click)="saveTypeColorClick()">
-        <i class="material-icons left">save</i>
-        Speichern
-      </a>
     </div>
   </div>
-}
 
-<div class="row">
-  <h5>Schnellkonfiguration</h5>
-</div>
+  <hr class="mb-4" />
 
-<section>
-  <div class="flex_container">
-    <button matFab extended color="primary" (click)="setSaturdayColors()" class="p-lg-3">
-      <mat-icon>palette</mat-icon>
-      Setze Samstag Farben
-    </button>
-    <button matFab extended color="primary" (click)="setSundayColors()" class="p-sm-3">
-      <mat-icon>palette</mat-icon>
-      Setze Sonntag Farben
-    </button>
+  <!-- Printer Section -->
+  <div class="row mb-4 align-items-center">
+    <div class="col-12 col-md-4">
+      <mat-form-field appearance="outline" class="w-100 h-100">
+        <mat-label>Wähle Drucker</mat-label>
+        <mat-select [(value)]="selectedPrinter">
+          @for (printer of printers; track printer) {
+            <mat-option [value]="printer">
+              {{ printer }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-auto mb-3">
+      <button mat-mini-fab color="primary" (click)="savePrinter.emit(selectedPrinter)" title="Drucker Speichern">
+        <mat-icon>save</mat-icon>
+      </button>
+    </div>
   </div>
-</section>
+
+  <hr class="mb-4" />
+
+  <!-- Type Color Configuration Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="mb-3">Type-Farben Konfiguration</h5>
+      
+      <div class="row mb-3 align-items-center">
+        <div class="col-12 col-md-4">
+          <mat-form-field appearance="outline" class="w-100 h-100">
+            <mat-label>Wähle Type</mat-label>
+            <mat-select [(value)]="selectedTypeId" (selectionChange)="onTypeSelected()">
+              @for (type of types; track type) {
+                <mat-option [value]="type.id">
+                  {{ type.name }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        @if (selectedTypeId) {
+          <div class="col-auto mb-3">
+            <button mat-mini-fab color="primary" (click)="saveTypeColorClick()" title="Farbe Speichern">
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (selectedTypeId) {
+        <div class="row align-items-center mb-3">
+          <div class="col-12 col-md-4">
+            <mat-form-field appearance="outline" class="w-100 h-100">
+              <mat-label>Hintergrundfarbe (Hex)</mat-label>
+              <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
+              <mat-hint>Format: #RRGGBB</mat-hint>
+            </mat-form-field>
+          </div>
+          @if (selectedBgColor) {
+            <div class="col-12 col-md-2 mb-3 d-flex flex-column align-items-center">
+              <span class="small text-muted mb-1">Vorschau</span>
+              <div
+                class="color-preview"
+                [style.background-color]="selectedBgColor"
+                [style.color]="selectedTextColor"
+              >
+                A
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-12 col-md-4">
+            <mat-form-field appearance="outline" class="w-100 h-100">
+              <mat-label>Textfarbe</mat-label>
+              <mat-select [(value)]="selectedTextColor">
+                <mat-option value="white">Weiß</mat-option>
+                <mat-option value="black">Schwarz</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <hr class="mb-4" />
+
+  <!-- Bulk Configuration Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="mb-3">Schnellkonfiguration</h5>
+      <div class="d-flex flex-wrap gap-3">
+        <button mat-raised-button color="accent" (click)="setSaturdayColors()">
+          <mat-icon>palette</mat-icon>
+          Setze Samstag Farben
+        </button>
+        <button mat-raised-button color="accent" (click)="setSundayColors()">
+          <mat-icon>palette</mat-icon>
+          Setze Sonntag Farben
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

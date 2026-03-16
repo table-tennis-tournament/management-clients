@@ -1,0 +1,31 @@
+.color-preview {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid {
+    max-width: 1200px;
+    margin: 0;
+}
+
+mat-checkbox {
+    margin-right: 1.5rem;
+}
+
+h5 {
+    color: #3f51b5; /* Material primary color hint */
+    font-weight: 500;
+}
