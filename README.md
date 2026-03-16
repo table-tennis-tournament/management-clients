@@ -22,3 +22,7 @@ The [backend](./backend/README.md) provides all functionality for the clients. I
 
 - **[arc42 Architecture](./docs/arc42/architecture.adoc)** - Complete architecture documentation
 - **[C4 Models](./docs/arc42/c4-models.adoc)** - System visualization and component diagrams
+
+## Licensing
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](./LICENSE) file for the full text.
