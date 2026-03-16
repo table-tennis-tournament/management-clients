@@ -41,8 +41,8 @@ describe('the match effects', () => {
         provideMockActions(() => actions),
       ],
     });
-    matchListService = TestBed.get(MatchListService);
-    matchListEffects = TestBed.get(MatchListEffects);
+    matchListService = TestBed.inject(MatchListService);
+    matchListEffects = TestBed.inject(MatchListEffects);
   });
 
   describe('loadMatchlist', () => {

@@ -13,7 +13,10 @@ import { LoadTypeColors } from './settings/redux/settings.actions';
   standalone: false,
 })
 export class AppComponent implements OnInit {
-  constructor(private store: Store<any>, private websocketService: WebsocketHandlerService) {}
+  constructor(
+    private store: Store<any>,
+    private websocketService: WebsocketHandlerService
+  ) {}
 
   ngOnInit(): void {
     this.websocketService.connectToWebsocket();

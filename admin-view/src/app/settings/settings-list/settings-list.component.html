@@ -30,9 +30,9 @@
     <mat-label>Wähle Drucker</mat-label>
     <mat-select [(value)]="selectedPrinter">
       @for (printer of printers; track printer) {
-      <mat-option [value]="printer">
-        {{ printer }}
-      </mat-option>
+        <mat-option [value]="printer">
+          {{ printer }}
+        </mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -52,52 +52,54 @@
     <mat-label>Wähle Type</mat-label>
     <mat-select [(value)]="selectedTypeId" (selectionChange)="onTypeSelected()">
       @for (type of types; track type) {
-      <mat-option [value]="type.id">
-        {{ type.name }}
-      </mat-option>
+        <mat-option [value]="type.id">
+          {{ type.name }}
+        </mat-option>
       }
     </mat-select>
   </mat-form-field>
 </div>
 
 @if (selectedTypeId) {
-<div class="row">
-  <mat-form-field appearance="fill" class="col s4">
-    <mat-label>Hintergrundfarbe (Hex)</mat-label>
-    <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
-    <mat-hint>Format: #RRGGBB</mat-hint>
-  </mat-form-field>
-  @if (selectedBgColor) {
-  <div class="col s2">
-    <div
-      [style.background-color]="selectedBgColor"
-      [style.color]="selectedTextColor"
-      style="width: 50px; height: 50px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center"
-    >
-      A
+  <div class="row">
+    <mat-form-field appearance="fill" class="col s4">
+      <mat-label>Hintergrundfarbe (Hex)</mat-label>
+      <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
+      <mat-hint>Format: #RRGGBB</mat-hint>
+    </mat-form-field>
+    @if (selectedBgColor) {
+      <div class="col s2">
+        <div
+          [style.background-color]="selectedBgColor"
+          [style.color]="selectedTextColor"
+          style="width: 50px; height: 50px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center"
+        >
+          A
+        </div>
+      </div>
+    }
+  </div>
+}
+@if (selectedTypeId) {
+  <div class="row">
+    <mat-form-field appearance="fill" class="col s4">
+      <mat-label>Textfarbe</mat-label>
+      <mat-select [(value)]="selectedTextColor">
+        <mat-option value="white">Weiß</mat-option>
+        <mat-option value="black">Schwarz</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+}
+@if (selectedTypeId) {
+  <div class="row">
+    <div class="col s6">
+      <a class="waves-effect waves-light btn" (click)="saveTypeColorClick()">
+        <i class="material-icons left">save</i>
+        Speichern
+      </a>
     </div>
   </div>
-  }
-</div>
-} @if (selectedTypeId) {
-<div class="row">
-  <mat-form-field appearance="fill" class="col s4">
-    <mat-label>Textfarbe</mat-label>
-    <mat-select [(value)]="selectedTextColor">
-      <mat-option value="white">Weiß</mat-option>
-      <mat-option value="black">Schwarz</mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-} @if (selectedTypeId) {
-<div class="row">
-  <div class="col s6">
-    <a class="waves-effect waves-light btn" (click)="saveTypeColorClick()">
-      <i class="material-icons left">save</i>
-      Speichern
-    </a>
-  </div>
-</div>
 }
 
 <div class="row">

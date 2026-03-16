@@ -2,7 +2,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+import { IndividualConfig } from 'ngx-toastr';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { MatchService } from '../match.service';
 
@@ -40,8 +40,8 @@ describe('the match effects', () => {
       ],
     });
 
-    matchEffects = TestBed.get(MatchEffects);
-    matchService = TestBed.get(MatchService);
+    matchEffects = TestBed.inject(MatchEffects);
+    matchService = TestBed.inject(MatchService);
   });
 
   describe('loadMatches', () => {

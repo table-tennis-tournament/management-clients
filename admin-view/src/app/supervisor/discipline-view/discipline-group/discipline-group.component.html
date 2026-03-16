@@ -4,15 +4,19 @@
       <div class="p-1 card-title group-view-header black-text" cdkDropList>
         <span cdkDrag [cdkDragDisabled]="!groupIsDraggable()" [cdkDragData]="group.matches">{{ group.name }}</span>
         @if (group.isComplete) {
-        <mat-icon>done</mat-icon>
-        } @if (groupIsNotPlayable()) {
-        <mat-icon>remove_circle_outline</mat-icon>
-        } @if (groupIsNotComplete()) {
-        <span class="float-end">{{ openMatches }}/{{ allMatchCount }}</span>
-        } @for (tableNumber of tableNumbers; track tableNumber) {
-        <span class="circle float-end">{{ tableNumber }}</span>
-        } @if (isGroupInWaitingList()) {
-        <span class="circle float-end">W</span>
+          <mat-icon>done</mat-icon>
+        }
+        @if (groupIsNotPlayable()) {
+          <mat-icon>remove_circle_outline</mat-icon>
+        }
+        @if (groupIsNotComplete()) {
+          <span class="float-end">{{ openMatches }}/{{ allMatchCount }}</span>
+        }
+        @for (tableNumber of tableNumbers; track tableNumber) {
+          <span class="circle float-end">{{ tableNumber }}</span>
+        }
+        @if (isGroupInWaitingList()) {
+          <span class="circle float-end">W</span>
         }
       </div>
     </mat-card-title>
@@ -31,9 +35,9 @@
         </mat-expansion-panel-header>
         <mat-list>
           @for (currentPlayer of group.players; track currentPlayer) {
-          <mat-list-item>
-            <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
-          </mat-list-item>
+            <mat-list-item>
+              <toma-team-item [team]="[currentPlayer]" [showDisciplines]="true"></toma-team-item>
+            </mat-list-item>
           }
         </mat-list>
       </mat-expansion-panel>
@@ -51,31 +55,33 @@
         </mat-expansion-panel-header>
         <mat-list cdkDropList>
           @for (currentMatch of group.matches; track currentMatch) {
-          <mat-list-item
-            (dblclick)="resultForMatch.emit(currentMatch)"
-            cdkDrag
-            [cdkDragDisabled]="currentMatch.state !== openMatchState"
-            [cdkDragData]="[currentMatch]"
-            class="collection-item"
-            [class.disabled-item]="currentMatch.state === inWaitingListState"
-          >
-            <div class="d-flex justify-content-between w-100">
-              <div class="text-truncate">
-                <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
-                -
-                <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
+            <mat-list-item
+              (dblclick)="resultForMatch.emit(currentMatch)"
+              cdkDrag
+              [cdkDragDisabled]="currentMatch.state !== openMatchState"
+              [cdkDragData]="[currentMatch]"
+              class="collection-item"
+              [class.disabled-item]="currentMatch.state === inWaitingListState"
+            >
+              <div class="d-flex justify-content-between w-100">
+                <div class="text-truncate">
+                  <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
+                  -
+                  <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
+                </div>
+                <div class="ms-auto">
+                  @if (currentMatch.table[0]) {
+                    <span class="circle right">{{ currentMatch.table[0] }}</span>
+                  }
+                  @if (currentMatch.result) {
+                    <span class="right">{{ currentMatch.result | resultPipe }}</span>
+                  }
+                  @if (currentMatch.state === inWaitingListState) {
+                    <span class="circle right">W</span>
+                  }
+                </div>
               </div>
-              <div class="ms-auto">
-                @if (currentMatch.table[0]) {
-                <span class="circle right">{{ currentMatch.table[0] }}</span>
-                } @if (currentMatch.result) {
-                <span class="right">{{ currentMatch.result | resultPipe }}</span>
-                } @if (currentMatch.state === inWaitingListState) {
-                <span class="circle right">W</span>
-                }
-              </div>
-            </div>
-          </mat-list-item>
+            </mat-list-item>
           }
         </mat-list>
       </mat-expansion-panel>

@@ -42,7 +42,10 @@ export class SupervisorPageComponent implements OnInit {
   private colors: TypeColorMap = {};
   currentColor: string;
 
-  constructor(private store: Store<any>, public dialog: MatDialog) {}
+  constructor(
+    private store: Store<any>,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.matches = this.store.select(getMatchesState);

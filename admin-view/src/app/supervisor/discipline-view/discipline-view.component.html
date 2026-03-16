@@ -1,14 +1,21 @@
 <div class="d-flex flex-wrap gap-05rem">
   @if (matchesLoading) {
-  <mat-spinner></mat-spinner>
-  } @if (selectedTab) {
-  <div>{{ selectedTab.name }}</div>
-  } @for (currentTab of tabs; track currentTab) {
-  <div>
-    <button mat-raised-button [tomaTypeColor]="currentTab.id" [typeColors]="typeColors" (click)="this.selectDiscipline.emit(currentTab.id)">
-      {{ currentTab.name }}
-    </button>
-  </div>
+    <mat-spinner></mat-spinner>
+  }
+  @if (selectedTab) {
+    <div>{{ selectedTab.name }}</div>
+  }
+  @for (currentTab of tabs; track currentTab) {
+    <div>
+      <button
+        mat-raised-button
+        [tomaTypeColor]="currentTab.id"
+        [typeColors]="typeColors"
+        (click)="this.selectDiscipline.emit(currentTab.id)"
+      >
+        {{ currentTab.name }}
+      </button>
+    </div>
   }
   <mat-checkbox [(ngModel)]="showAllMatches">Alle</mat-checkbox>
   <mat-checkbox [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
@@ -16,35 +23,36 @@
   <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh">Stop Aktualisierungen</mat-checkbox>
 </div>
 @if (selectedTab) {
-<div [tomaTypeColor]="selectedTab.id" [typeColors]="typeColors">
-  @if (selectedTab.stages) {
-  <div class="row">
-    @for (currentStage of selectedTab.stages; track currentStage; let r = $index) {
-    <div class="col-3 pt-2">
-      <toma-discipline-stage
-        [stage]="currentStage"
-        [typeColors]="typeColors"
-        (resultForMatch)="resultForMatch.emit($event)"
-        [index]="r"
-        (deleteStage)="onDeleteStage($event)"
-      ></toma-discipline-stage>
-    </div>
+  <div [tomaTypeColor]="selectedTab.id" [typeColors]="typeColors">
+    @if (selectedTab.stages) {
+      <div class="row">
+        @for (currentStage of selectedTab.stages; track currentStage; let r = $index) {
+          <div class="col-3 pt-2">
+            <toma-discipline-stage
+              [stage]="currentStage"
+              [typeColors]="typeColors"
+              (resultForMatch)="resultForMatch.emit($event)"
+              [index]="r"
+              (deleteStage)="onDeleteStage($event)"
+            ></toma-discipline-stage>
+          </div>
+        }
+      </div>
+    }
+    @if (selectedTab.groups) {
+      <div class="row">
+        @for (currentGroup of selectedTab.groups; track currentGroup) {
+          <div class="col-3">
+            <toma-discipline-group
+              [group]="currentGroup"
+              [typeColors]="typeColors"
+              [showMatches]="matchesAreOpen"
+              [showPlayers]="playersAreOpen"
+              (resultForMatch)="resultForMatch.emit($event)"
+            ></toma-discipline-group>
+          </div>
+        }
+      </div>
     }
   </div>
-  } @if (selectedTab.groups) {
-  <div class="row">
-    @for (currentGroup of selectedTab.groups; track currentGroup) {
-    <div class="col-3">
-      <toma-discipline-group
-        [group]="currentGroup"
-        [typeColors]="typeColors"
-        [showMatches]="matchesAreOpen"
-        [showPlayers]="playersAreOpen"
-        (resultForMatch)="resultForMatch.emit($event)"
-      ></toma-discipline-group>
-    </div>
-    }
-  </div>
-  }
-</div>
 }

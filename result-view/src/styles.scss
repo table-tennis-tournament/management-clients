@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "bootstrap/scss/bootstrap-reboot";
-@import "bootstrap/scss/bootstrap-grid";
-@import "bootstrap/scss/_utilities";
+@use "bootstrap/scss/bootstrap-reboot";
+@use "bootstrap/scss/bootstrap-grid";
+@use "bootstrap-utils.scss" as *;
 @import "@angular/material/prebuilt-themes/deeppurple-amber.css";

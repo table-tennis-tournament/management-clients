@@ -2,7 +2,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+import { IndividualConfig } from 'ngx-toastr';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { MatchService } from '../../assign/match.service';
 import { TableService } from '../table.service';
@@ -76,9 +76,9 @@ describe('the table effects', () => {
       ],
     });
 
-    tableEffects = TestBed.get(TableEffects);
-    tableService = TestBed.get(TableService);
-    matchService = TestBed.get(MatchService);
+    tableEffects = TestBed.inject(TableEffects);
+    tableService = TestBed.inject(TableService);
+    matchService = TestBed.inject(MatchService);
   });
 
   describe('loadTables', () => {

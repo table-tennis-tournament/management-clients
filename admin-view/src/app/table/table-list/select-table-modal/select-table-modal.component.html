@@ -4,7 +4,7 @@
     <mat-label>Wähle Tisch</mat-label>
     <mat-select [(value)]="selectedTable">
       @for (currentTable of data; track currentTable) {
-      <mat-option [value]="currentTable.number">Tisch Nr. {{ currentTable.number }}</mat-option>
+        <mat-option [value]="currentTable.number">Tisch Nr. {{ currentTable.number }}</mat-option>
       }
     </mat-select>
   </mat-form-field>

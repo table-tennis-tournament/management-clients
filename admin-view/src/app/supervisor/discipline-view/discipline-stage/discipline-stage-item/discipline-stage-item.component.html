@@ -19,15 +19,19 @@
   </span>
   <span class="header-right-content">
     @if (match.table[0]) {
-    <span class="circle right">{{ match.table[0] }}</span>
-    } @if (isMatchInWaitingList()) {
-    <span class="circle right">W</span>
-    } @if (isMatchCallable()) {
-    <span class="circle right">A</span>
-    } @if (isMatchFinished()) {
-    <span class="circle right">F</span>
-    } @if (isMatchComplete()) {
-    <i class="material-icons right">done</i>
+      <span class="circle right">{{ match.table[0] }}</span>
+    }
+    @if (isMatchInWaitingList()) {
+      <span class="circle right">W</span>
+    }
+    @if (isMatchCallable()) {
+      <span class="circle right">A</span>
+    }
+    @if (isMatchFinished()) {
+      <span class="circle right">F</span>
+    }
+    @if (isMatchComplete()) {
+      <i class="material-icons right">done</i>
     }
   </span>
 </div>

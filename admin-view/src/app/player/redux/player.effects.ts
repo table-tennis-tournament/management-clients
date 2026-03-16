@@ -45,5 +45,9 @@ export class PlayerEffects {
     )
   );
 
-  constructor(private actions$: Actions, private playerService: PlayerService, private toastService: ToastrService) {}
+  constructor(
+    private actions$: Actions,
+    private playerService: PlayerService,
+    private toastService: ToastrService
+  ) {}
 }

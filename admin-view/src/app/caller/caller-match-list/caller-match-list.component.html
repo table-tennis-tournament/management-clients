@@ -1,25 +1,30 @@
 <div class="pt-2">
   @if (matchesLoading) {
-  <mat-spinner></mat-spinner>
-  } @if (!matchesLoading && matchAggregates?.length > 0) {
-  <div>
-    <h2>Spiele zum Ausrufen:</h2>
-    <mat-list>
-      @for (currentMatch of matchAggregates; track currentMatch) {
-      <mat-list-item [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors" (click)="matchesSelected.emit(currentMatch)">
-        <div class="d-flex justify-content-between w-100" [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors">
-          <div>
-            {{ currentMatch.name }}
-          </div>
-          <div class="ms-auto">
-            @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
-            <span class="circle">{{ tableNumber }}</span>
-            }
-          </div>
-        </div>
-      </mat-list-item>
-      }
-    </mat-list>
-  </div>
+    <mat-spinner></mat-spinner>
+  }
+  @if (!matchesLoading && matchAggregates?.length > 0) {
+    <div>
+      <h2>Spiele zum Ausrufen:</h2>
+      <mat-list>
+        @for (currentMatch of matchAggregates; track currentMatch) {
+          <mat-list-item
+            [tomaTypeColor]="currentMatch?.discipline?.id"
+            [typeColors]="typeColors"
+            (click)="matchesSelected.emit(currentMatch)"
+          >
+            <div class="d-flex justify-content-between w-100" [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors">
+              <div>
+                {{ currentMatch.name }}
+              </div>
+              <div class="ms-auto">
+                @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
+                  <span class="circle">{{ tableNumber }}</span>
+                }
+              </div>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
   }
 </div>

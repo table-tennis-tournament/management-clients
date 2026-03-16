@@ -42,8 +42,8 @@ describe('the settings effects', () => {
         provideMockActions(() => actions),
       ],
     });
-    settingsService = TestBed.get(SettingsService);
-    settingsEffects = TestBed.get(SettingsEffects);
+    settingsService = TestBed.inject(SettingsService);
+    settingsEffects = TestBed.inject(SettingsEffects);
   });
 
   describe('loadSettings', () => {

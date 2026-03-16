@@ -14,28 +14,29 @@
       class="waiting-list-drop-zone p-0 border border-dark"
     >
       @for (currentMatch of matchListMatches; track currentMatch; let i = $index) {
-      <div
-        cdkDrag
-        class="border-bottom border-dark px-3"
-        [tomaTypeColor]="currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0"
-        [typeColors]="typeColors"
-      >
-        @if (!currentMatch.matchinfo[1] && currentMatch.matchinfo[0]) {
-        <div class="cut-text pt-1">
-          <toma-matchlist-single-item
-            [matchListItem]="currentMatch"
-            (matchListItemDelete)="matchListItemDelete.emit($event)"
-          ></toma-matchlist-single-item>
+        <div
+          cdkDrag
+          class="border-bottom border-dark px-3"
+          [tomaTypeColor]="currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0"
+          [typeColors]="typeColors"
+        >
+          @if (!currentMatch.matchinfo[1] && currentMatch.matchinfo[0]) {
+            <div class="cut-text pt-1">
+              <toma-matchlist-single-item
+                [matchListItem]="currentMatch"
+                (matchListItemDelete)="matchListItemDelete.emit($event)"
+              ></toma-matchlist-single-item>
+            </div>
+          }
+          @if (currentMatch.matchinfo[1]) {
+            <div class="cut-text">
+              <toma-matchlist-group-item
+                [matchListItem]="currentMatch"
+                (matchListItemDelete)="matchListItemDelete.emit($event)"
+              ></toma-matchlist-group-item>
+            </div>
+          }
         </div>
-        } @if (currentMatch.matchinfo[1]) {
-        <div class="cut-text">
-          <toma-matchlist-group-item
-            [matchListItem]="currentMatch"
-            (matchListItemDelete)="matchListItemDelete.emit($event)"
-          ></toma-matchlist-group-item>
-        </div>
-        }
-      </div>
       }
     </mat-list>
   </div>

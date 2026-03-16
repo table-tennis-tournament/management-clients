@@ -37,8 +37,8 @@ describe('the match effects', () => {
         provideMockActions(() => actions),
       ],
     });
-    callerService = TestBed.get(CallerService);
-    callerEffects = TestBed.get(CallerEffects);
+    callerService = TestBed.inject(CallerService);
+    callerEffects = TestBed.inject(CallerEffects);
   });
 
   describe('load', () => {

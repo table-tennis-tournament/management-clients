@@ -10,25 +10,25 @@
           <mat-icon>close</mat-icon>
         </button>
         @if (stage.isComplete) {
-        <mat-icon>done</mat-icon>
+          <mat-icon>done</mat-icon>
         }
       </span>
     </mat-panel-title>
   </mat-expansion-panel-header>
   <div class="collection" cdkDropList>
     @for (currentMatch of stage.matches; track currentMatch) {
-    <div
-      class="collection-item no-lines {{ lineStageClass[index % 4] }}"
-      (dblclick)="resultForMatch.emit(currentMatch)"
-      [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)"
-      cdkDrag
-      [cdkDragDisabled]="!isMatchOpen(currentMatch)"
-      [cdkDragData]="[currentMatch]"
-    >
-      <div class="match-item-padding">
-        <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>
+      <div
+        class="collection-item no-lines {{ lineStageClass[index % 4] }}"
+        (dblclick)="resultForMatch.emit(currentMatch)"
+        [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)"
+        cdkDrag
+        [cdkDragDisabled]="!isMatchOpen(currentMatch)"
+        [cdkDragData]="[currentMatch]"
+      >
+        <div class="match-item-padding">
+          <toma-discipline-stage-item [match]="currentMatch"></toma-discipline-stage-item>
+        </div>
       </div>
-    </div>
     }
   </div>
 </mat-expansion-panel>

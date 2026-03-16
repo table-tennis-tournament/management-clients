@@ -96,5 +96,9 @@ export class CallerEffects {
     )
   );
 
-  constructor(private actions$: Actions, private toastService: ToastrService, private callerService: CallerService) {}
+  constructor(
+    private actions$: Actions,
+    private toastService: ToastrService,
+    private callerService: CallerService
+  ) {}
 }

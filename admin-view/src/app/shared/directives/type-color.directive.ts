@@ -9,7 +9,10 @@ export class TypeColorDirective implements OnChanges {
   @Input() tomaTypeColor: number;
   @Input() typeColors: TypeColorMap;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {}
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tomaTypeColor'] || changes['typeColors']) {

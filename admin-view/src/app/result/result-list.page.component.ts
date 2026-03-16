@@ -21,7 +21,10 @@ export class ResultListPageComponent implements OnInit {
   disciplines: Observable<Discipline[]>;
   disciplinesLoading: Observable<boolean>;
 
-  constructor(private store: Store<any>, public dialog: MatDialog) {}
+  constructor(
+    private store: Store<any>,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.matches = this.store.select(getResultMatchesState);

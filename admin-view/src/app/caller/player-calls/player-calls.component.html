@@ -1,39 +1,48 @@
 @if (secondCalls) {
-<div class="pt-2">
-  <h2>2. Aufruf:</h2>
-  <mat-list>
-    @for (currentMatch of secondCalls; track currentMatch) {
-    <mat-list-item [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors" (click)="matchesSelected.emit(currentMatch)">
-      @if (currentMatch) {
-      <div class="cut-text">
-        {{ getStartTime(currentMatch) }} min.
-        {{ currentMatch.name }}
-        @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
-        <span class="circle right">{{ tableNumber }}</span>
-        }
-      </div>
+  <div class="pt-2">
+    <h2>2. Aufruf:</h2>
+    <mat-list>
+      @for (currentMatch of secondCalls; track currentMatch) {
+        <mat-list-item
+          [tomaTypeColor]="currentMatch?.discipline?.id"
+          [typeColors]="typeColors"
+          (click)="matchesSelected.emit(currentMatch)"
+        >
+          @if (currentMatch) {
+            <div class="cut-text">
+              {{ getStartTime(currentMatch) }} min.
+              {{ currentMatch.name }}
+              @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
+                <span class="circle right">{{ tableNumber }}</span>
+              }
+            </div>
+          }
+        </mat-list-item>
       }
-    </mat-list-item>
-    }
-  </mat-list>
-</div>
-} @if (thirdCalls) {
-<div class="pt-2">
-  <h2>3. Aufruf:</h2>
-  <mat-list>
-    @for (currentMatch of thirdCalls; track currentMatch) {
-    <mat-list-item [tomaTypeColor]="currentMatch?.discipline?.id" [typeColors]="typeColors" (click)="matchesSelected.emit(currentMatch)">
-      @if (currentMatch) {
-      <div class="cut-text">
-        {{ getStartTime(currentMatch) }} min.
-        {{ currentMatch.name }}
-        @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
-        <span class="circle right">{{ tableNumber }}</span>
-        }
-      </div>
+    </mat-list>
+  </div>
+}
+@if (thirdCalls) {
+  <div class="pt-2">
+    <h2>3. Aufruf:</h2>
+    <mat-list>
+      @for (currentMatch of thirdCalls; track currentMatch) {
+        <mat-list-item
+          [tomaTypeColor]="currentMatch?.discipline?.id"
+          [typeColors]="typeColors"
+          (click)="matchesSelected.emit(currentMatch)"
+        >
+          @if (currentMatch) {
+            <div class="cut-text">
+              {{ getStartTime(currentMatch) }} min.
+              {{ currentMatch.name }}
+              @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
+                <span class="circle right">{{ tableNumber }}</span>
+              }
+            </div>
+          }
+        </mat-list-item>
       }
-    </mat-list-item>
-    }
-  </mat-list>
-</div>
+    </mat-list>
+  </div>
 }

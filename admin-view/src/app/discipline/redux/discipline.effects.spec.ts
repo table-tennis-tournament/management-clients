@@ -2,7 +2,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+import { IndividualConfig } from 'ngx-toastr';
 import { of, ReplaySubject, throwError } from 'rxjs';
 
 import { DisciplineService } from '../discipline.service';
@@ -33,8 +33,8 @@ describe('the Discipline effects', () => {
       ],
     });
 
-    disciplineEffects = TestBed.get(DisciplineEffects);
-    disciplineService = TestBed.get(DisciplineService);
+    disciplineEffects = TestBed.inject(DisciplineEffects);
+    disciplineService = TestBed.inject(DisciplineService);
   });
 
   describe('loadDisciplines', () => {

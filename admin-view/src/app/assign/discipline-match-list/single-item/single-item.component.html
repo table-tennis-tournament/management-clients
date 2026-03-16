@@ -10,9 +10,10 @@
     </div>
     <div class="discipline-match-list-square indigo white-text text-center">
       @if (!currentMatch.group) {
-      <span>{{ currentMatch.matchType | disciplineType }}</span>
-      } @if (currentMatch.group) {
-      <span>{{ currentMatch.group.name }}</span>
+        <span>{{ currentMatch.matchType | disciplineType }}</span>
+      }
+      @if (currentMatch.group) {
+        <span>{{ currentMatch.group.name }}</span>
       }
     </div>
   </div>

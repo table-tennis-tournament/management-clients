@@ -10,103 +10,108 @@
 
 <div class="row">
   @if (matchesLoading) {
-  <mat-spinner></mat-spinner>
-  } @if (currentDisciplineId !== -1) {
-  <mat-list>
-    @for (currentMatch of currentMatchesToShow; track currentMatch; let i = $index) {
-    <div
-      class="mat-list-item border-bottom border-secondary"
-      cdkDropList
-      [tomaTypeColor]="currentMatch.type.id"
-      [typeColors]="typeColors"
-      [class.disabled-item]="!currentMatch.isPlayable"
-    >
-      <div
-        class="discipline-match-list-item col-10 d-flex flex-column h-100 ps-3"
-        [cdkDragDisabled]="!currentMatch.isPlayable"
-        cdkDrag
-        [cdkDragData]="[currentMatch]"
-      >
-        <i *cdkDragPreview class="material-icons">perm_identity</i>
-        <div class="flex-grow-1 d-flex align-items-center cut-text">
-          <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
-        </div>
-        <div class="flex-grow-1 d-flex align-items-center cut-text">
-          <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
-        </div>
-      </div>
-      @if (currentMatch.group) {
-      <div
-        cdkDrag
-        [cdkDragData]="getMatch(currentMatch.group.id)"
-        [cdkDragDisabled]="!currentMatch.isPlayable"
-        class="discipline-match-list-square indigo white-text col-2"
-      >
-        <i *cdkDragPreview class="material-icons">group</i>
-        {{ currentMatch.group.name }}
-      </div>
-      } @if (!currentMatch.group) {
-      <div class="discipline-match-list-square indigo white-text col-2">
-        {{ currentMatch.matchType | disciplineType }}
-      </div>
-      }
-    </div>
-    }
-  </mat-list>
-  } @if (currentDisciplineId === -1) {
-  <mat-list>
-    @for (currentMatch of matchList; track currentMatch; let i = $index) {
-    <div class="mat-list-item border-bottom border-secondary">
-      @if (currentMatch.matchinfo[0].group !== null) {
-      <div>
-        <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type.id" [typeColors]="typeColors">
-          @if (currentMatch.matchinfo.length === 1) {
-          <toma-single-item
-            [typeColors]="typeColors"
-            [currentMatch]="currentMatch.matchinfo[0]"
-            [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
-            cdkDrag
-            [cdkDragData]="currentMatch.matchinfo"
-          >
-            <i *cdkDragPreview class="material-icons">perm_identity</i>
-          </toma-single-item>
-          } @if (currentMatch.matchinfo.length > 1) {
-          <toma-matchlist-group
-            cdkDrag
-            [cdkDragData]="currentMatch.matchinfo"
-            [typeColors]="typeColors"
-            [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
-            [matchListItem]="currentMatch"
-          >
-            <i *cdkDragPreview class="material-icons">group</i>
-          </toma-matchlist-group>
-          }
-        </div>
-      </div>
-      } @if (currentMatch.matchinfo[0].group === null) {
-      <div>
-        @for (currentMatchItem of currentMatch.matchinfo; track currentMatchItem) {
+    <mat-spinner></mat-spinner>
+  }
+  @if (currentDisciplineId !== -1) {
+    <mat-list>
+      @for (currentMatch of currentMatchesToShow; track currentMatch; let i = $index) {
         <div
           class="mat-list-item border-bottom border-secondary"
           cdkDropList
-          [tomaTypeColor]="firstMatch(currentMatch).type.id"
+          [tomaTypeColor]="currentMatch.type.id"
           [typeColors]="typeColors"
+          [class.disabled-item]="!currentMatch.isPlayable"
         >
-          <toma-single-item
-            [typeColors]="typeColors"
-            [cdkDragDisabled]="!currentMatchItem.isPlayable"
-            [currentMatch]="currentMatchItem"
+          <div
+            class="discipline-match-list-item col-10 d-flex flex-column h-100 ps-3"
+            [cdkDragDisabled]="!currentMatch.isPlayable"
             cdkDrag
-            [cdkDragData]="[currentMatchItem]"
+            [cdkDragData]="[currentMatch]"
           >
             <i *cdkDragPreview class="material-icons">perm_identity</i>
-          </toma-single-item>
+            <div class="flex-grow-1 d-flex align-items-center cut-text">
+              <toma-team-item [team]="currentMatch.team1" [showDisciplines]="false"></toma-team-item>
+            </div>
+            <div class="flex-grow-1 d-flex align-items-center cut-text">
+              <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
+            </div>
+          </div>
+          @if (currentMatch.group) {
+            <div
+              cdkDrag
+              [cdkDragData]="getMatch(currentMatch.group.id)"
+              [cdkDragDisabled]="!currentMatch.isPlayable"
+              class="discipline-match-list-square indigo white-text col-2"
+            >
+              <i *cdkDragPreview class="material-icons">group</i>
+              {{ currentMatch.group.name }}
+            </div>
+          }
+          @if (!currentMatch.group) {
+            <div class="discipline-match-list-square indigo white-text col-2">
+              {{ currentMatch.matchType | disciplineType }}
+            </div>
+          }
         </div>
-        }
-      </div>
       }
-    </div>
-    }
-  </mat-list>
+    </mat-list>
+  }
+  @if (currentDisciplineId === -1) {
+    <mat-list>
+      @for (currentMatch of matchList; track currentMatch; let i = $index) {
+        <div class="mat-list-item border-bottom border-secondary">
+          @if (currentMatch.matchinfo[0].group !== null) {
+            <div>
+              <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type.id" [typeColors]="typeColors">
+                @if (currentMatch.matchinfo.length === 1) {
+                  <toma-single-item
+                    [typeColors]="typeColors"
+                    [currentMatch]="currentMatch.matchinfo[0]"
+                    [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
+                    cdkDrag
+                    [cdkDragData]="currentMatch.matchinfo"
+                  >
+                    <i *cdkDragPreview class="material-icons">perm_identity</i>
+                  </toma-single-item>
+                }
+                @if (currentMatch.matchinfo.length > 1) {
+                  <toma-matchlist-group
+                    cdkDrag
+                    [cdkDragData]="currentMatch.matchinfo"
+                    [typeColors]="typeColors"
+                    [cdkDragDisabled]="anyMatchIsNotPlayable(currentMatch)"
+                    [matchListItem]="currentMatch"
+                  >
+                    <i *cdkDragPreview class="material-icons">group</i>
+                  </toma-matchlist-group>
+                }
+              </div>
+            </div>
+          }
+          @if (currentMatch.matchinfo[0].group === null) {
+            <div>
+              @for (currentMatchItem of currentMatch.matchinfo; track currentMatchItem) {
+                <div
+                  class="mat-list-item border-bottom border-secondary"
+                  cdkDropList
+                  [tomaTypeColor]="firstMatch(currentMatch).type.id"
+                  [typeColors]="typeColors"
+                >
+                  <toma-single-item
+                    [typeColors]="typeColors"
+                    [cdkDragDisabled]="!currentMatchItem.isPlayable"
+                    [currentMatch]="currentMatchItem"
+                    cdkDrag
+                    [cdkDragData]="[currentMatchItem]"
+                  >
+                    <i *cdkDragPreview class="material-icons">perm_identity</i>
+                  </toma-single-item>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </mat-list>
   }
 </div>
