@@ -1,13 +1,21 @@
 <div>
-  <mat-spinner *ngIf="refereesLoading"></mat-spinner>
-  <div *ngIf="referees">
-    <h4>Schiedsrichter:</h4>
-    <mat-list>
-      <mat-list-item *ngFor="let currentReferee of referees">
-        <div class="cut-text" *ngIf="currentReferee">
-          {{ currentReferee.firstName }}
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </div>
+  @if (refereesLoading) {
+    <mat-spinner></mat-spinner>
+  }
+  @if (referees) {
+    <div>
+      <h4>Schiedsrichter:</h4>
+      <mat-list>
+        @for (currentReferee of referees; track currentReferee) {
+          <mat-list-item>
+            @if (currentReferee) {
+              <div class="cut-text">
+                {{ currentReferee.firstName }}
+              </div>
+            }
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
+  }
 </div>

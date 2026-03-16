@@ -1,37 +1,58 @@
-<div class="d-flex flex-wrap gap-05rem" >
-  <mat-spinner *ngIf="matchesLoading"></mat-spinner>
-  <div *ngIf="selectedTab">{{ selectedTab.name }}</div>
-  <div *ngFor="let currentTab of tabs">
-    <button mat-raised-button [tomaTypeColor]="currentTab.id" [typeColors]="typeColors" (click)="this.selectDiscipline.emit(currentTab.id)">
-      {{ currentTab.name }}
-    </button>
-  </div>
-  <mat-checkbox [(ngModel)]="showAllMatches" >Alle</mat-checkbox>
+<div class="d-flex flex-wrap gap-05rem">
+  @if (matchesLoading) {
+    <mat-spinner></mat-spinner>
+  }
+  @if (selectedTab) {
+    <div>{{ selectedTab.name }}</div>
+  }
+  @for (currentTab of tabs; track currentTab) {
+    <div>
+      <button
+        mat-raised-button
+        [tomaTypeColor]="currentTab.id"
+        [typeColors]="typeColors"
+        (click)="this.selectDiscipline.emit(currentTab.id)"
+      >
+        {{ currentTab.name }}
+      </button>
+    </div>
+  }
+  <mat-checkbox [(ngModel)]="showAllMatches">Alle</mat-checkbox>
   <mat-checkbox [(ngModel)]="playersAreOpen">Spieler</mat-checkbox>
   <mat-checkbox [(ngModel)]="matchesAreOpen">Spiele</mat-checkbox>
   <mat-checkbox (change)="this.setTabForId(this.selectedDiscipline)" [(ngModel)]="stopRefresh">Stop Aktualisierungen</mat-checkbox>
 </div>
-<div *ngIf="selectedTab" [tomaTypeColor]="selectedTab.id" [typeColors]="typeColors">
-  <div *ngIf="selectedTab.stages" class="row">
-    <div class="col-3 pt-2" *ngFor="let currentStage of selectedTab.stages; let r = index">
-      <toma-discipline-stage
-        [stage]="currentStage"
-        [typeColors]="typeColors"
-        (resultForMatch)="resultForMatch.emit($event)"
-        [index]="r"
-        (deleteStage)="onDeleteStage($event)"
-      ></toma-discipline-stage>
-    </div>
+@if (selectedTab) {
+  <div [tomaTypeColor]="selectedTab.id" [typeColors]="typeColors">
+    @if (selectedTab.stages) {
+      <div class="row">
+        @for (currentStage of selectedTab.stages; track currentStage; let r = $index) {
+          <div class="col-3 pt-2">
+            <toma-discipline-stage
+              [stage]="currentStage"
+              [typeColors]="typeColors"
+              (resultForMatch)="resultForMatch.emit($event)"
+              [index]="r"
+              (deleteStage)="onDeleteStage($event)"
+            ></toma-discipline-stage>
+          </div>
+        }
+      </div>
+    }
+    @if (selectedTab.groups) {
+      <div class="row">
+        @for (currentGroup of selectedTab.groups; track currentGroup) {
+          <div class="col-3">
+            <toma-discipline-group
+              [group]="currentGroup"
+              [typeColors]="typeColors"
+              [showMatches]="matchesAreOpen"
+              [showPlayers]="playersAreOpen"
+              (resultForMatch)="resultForMatch.emit($event)"
+            ></toma-discipline-group>
+          </div>
+        }
+      </div>
+    }
   </div>
-  <div *ngIf="selectedTab.groups" class="row">
-    <div *ngFor="let currentGroup of selectedTab.groups" class="col-3">
-      <toma-discipline-group
-        [group]="currentGroup"
-        [typeColors]="typeColors"
-        [showMatches]="matchesAreOpen"
-        [showPlayers]="playersAreOpen"
-        (resultForMatch)="resultForMatch.emit($event)"
-      ></toma-discipline-group>
-    </div>
-  </div>
-</div>
+}

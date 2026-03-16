@@ -23,7 +23,7 @@ export class WebsocketService {
     return new Observable((complete) => {
       this.websocket = new SockJS('/api/websocket');
       this.websocket.onopen = function () {
-        complete.next();
+        complete.next(undefined);
       };
       this.websocket.onmessage = function (e) {
         const jsonMessage = JSON.parse(e.data);

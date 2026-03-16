@@ -8,7 +8,7 @@ import {
   SavePrintOnAssign,
   SaveTypeColor,
   SetBulkTypeColors,
-  SetPrinter
+  SetPrinter,
 } from './redux/settings.actions';
 import { getPrintersState, getSettingsState, getTypeColorsMapState } from '../app-state.reducer';
 import { Observable } from 'rxjs';
