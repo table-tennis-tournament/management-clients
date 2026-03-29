@@ -26,15 +26,23 @@ test.describe('Table Manager UI Tests', () => {
 
   test('should show a game after assigning match to table via API', async ({ page, request }) => {
     // 0. Ensure match 1 is free
-    await request.post('/api/match/takeBack', {
+    const takeBackResponse = await request.post('/api/match/takeBack', {
       data: [1]
     });
+    console.log(`takeBack response status: ${takeBackResponse.status()}`);
+    if (!takeBackResponse.ok()) {
+      console.log(`takeBack response body: ${await takeBackResponse.text()}`);
+    }
 
     // 1. Assign match 1 to table 1
     // Using the same endpoint as in admin-view: POST api/match/matchtotable/{tableNr}
     const response = await request.post('/api/match/matchtotable/1', {
       data: [1]
     });
+    console.log(`matchtotable response status: ${response.status()}`);
+    if (!response.ok()) {
+      console.log(`matchtotable response body: ${await response.text()}`);
+    }
     expect(response.ok()).toBeTruthy();
 
     // 2. Wait for the table to reflect the change
@@ -46,14 +54,19 @@ test.describe('Table Manager UI Tests', () => {
 
   test('should be able to start a match', async ({ page, request }) => {
     // 0. Ensure match 1 is free
-    await request.post('/api/match/takeBack', {
+    const takeBackResponse = await request.post('/api/match/takeBack', {
       data: [1]
     });
+    console.log(`takeBack response status: ${takeBackResponse.status()}`);
 
     // 1. Ensure a match is assigned to table 1
-    await request.post('/api/match/matchtotable/1', {
+    const assignResponse = await request.post('/api/match/matchtotable/1', {
       data: [1]
     });
+    console.log(`matchtotable response status: ${assignResponse.status()}`);
+    if (!assignResponse.ok()) {
+      console.log(`matchtotable response body: ${await assignResponse.text()}`);
+    }
 
     // 2. Find the start button (it has a play_arrow icon)
     // The button is inside app-match-item which is inside app-tt-table
