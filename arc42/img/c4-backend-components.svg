@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <style>
+      .controller { fill: #1976d2; stroke: #0d47a1; stroke-width: 2; }
+      .service { fill: #388e3c; stroke: #1b5e20; stroke-width: 2; }
+      .dao { fill: #7b1fa2; stroke: #4a148c; stroke-width: 2; }
+      .actor { fill: #e65100; stroke: #bf360c; stroke-width: 2; }
+      .model { fill: #5d4037; stroke: #3e2723; stroke-width: 2; }
+      .database { fill: #424242; stroke: #212121; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 10px; fill: white; text-anchor: middle; }
+      .title { font-size: 12px; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" class="text title" style="fill: #333; font-size: 18px;">Tournament Management API - Backend Components</text>
+  
+  <!-- Controllers Layer -->
+  <rect x="50" y="80" width="1100" height="120" rx="5" style="fill: #e3f2fd; stroke: #1976d2; stroke-width: 2;"/>
+  <text x="80" y="100" class="text title" style="fill: #1976d2; text-anchor: start;">Controllers</text>
+  
+  <rect x="80" y="110" width="140" height="70" rx="5" class="controller"/>
+  <text x="150" y="135" class="text title">Application</text>
+  <text x="150" y="150" class="text title">Controller</text>
+  <text x="150" y="170" class="text">Health checks</text>
+  
+  <rect x="240" y="110" width="140" height="70" rx="5" class="controller"/>
+  <text x="310" y="135" class="text title">Match</text>
+  <text x="310" y="150" class="text title">Controller</text>
+  <text x="310" y="170" class="text">Match CRUD</text>
+  
+  <rect x="400" y="110" width="140" height="70" rx="5" class="controller"/>
+  <text x="470" y="135" class="text title">Player</text>
+  <text x="470" y="150" class="text title">Controller</text>
+  <text x="470" y="170" class="text">Player mgmt</text>
+  
+  <rect x="560" y="110" width="140" height="70" rx="5" class="controller"/>
+  <text x="630" y="135" class="text title">Table</text>
+  <text x="630" y="150" class="text title">Controller</text>
+  <text x="630" y="170" class="text">Table mgmt</text>
+  
+  <rect x="720" y="110" width="140" height="70" rx="5" class="controller"/>
+  <text x="790" y="135" class="text title">Settings</text>
+  <text x="790" y="150" class="text title">Controller</text>
+  <text x="790" y="170" class="text">Configuration</text>
+  
+  <rect x="880" y="110" width="140" height="70" rx="5" class="controller"/>
+  <text x="950" y="135" class="text title">SockJS</text>
+  <text x="950" y="150" class="text title">Controller</text>
+  <text x="950" y="170" class="text">WebSocket</text>
+  
+  <rect x="1040" y="110" width="100" height="70" rx="5" class="controller"/>
+  <text x="1090" y="135" class="text title">Printer</text>
+  <text x="1090" y="150" class="text title">Controller</text>
+  <text x="1090" y="170" class="text">PDF gen</text>
+  
+  <!-- Services Layer -->
+  <rect x="50" y="240" width="1100" height="120" rx="5" style="fill: #e8f5e8; stroke: #388e3c; stroke-width: 2;"/>
+  <text x="80" y="260" class="text title" style="fill: #388e3c; text-anchor: start;">Services</text>
+  
+  <rect x="120" y="270" width="140" height="70" rx="5" class="service"/>
+  <text x="190" y="295" class="text title">Match Service</text>
+  <text x="190" y="315" class="text">Business logic</text>
+  <text x="190" y="330" class="text">Match assignment</text>
+  
+  <rect x="280" y="270" width="140" height="70" rx="5" class="service"/>
+  <text x="350" y="295" class="text title">Player Service</text>
+  <text x="350" y="315" class="text">Player logic</text>
+  <text x="350" y="330" class="text">Team mgmt</text>
+  
+  <rect x="440" y="270" width="140" height="70" rx="5" class="service"/>
+  <text x="510" y="295" class="text title">Table Service</text>
+  <text x="510" y="315" class="text">Table logic</text>
+  <text x="510" y="330" class="text">Assignment</text>
+  
+  <rect x="600" y="270" width="140" height="70" rx="5" class="service"/>
+  <text x="670" y="295" class="text title">PDF Service</text>
+  <text x="670" y="315" class="text">Document</text>
+  <text x="670" y="330" class="text">generation</text>
+  
+  <rect x="760" y="270" width="140" height="70" rx="5" class="service"/>
+  <text x="830" y="295" class="text title">Settings Service</text>
+  <text x="830" y="315" class="text">Configuration</text>
+  <text x="830" y="330" class="text">management</text>
+  
+  <rect x="920" y="270" width="140" height="70" rx="5" class="service"/>
+  <text x="990" y="295" class="text title">Printer Service</text>
+  <text x="990" y="315" class="text">Print jobs</text>
+  <text x="990" y="330" class="text">Queue mgmt</text>
+  
+  <!-- Actors Layer -->
+  <rect x="50" y="400" width="550" height="120" rx="5" style="fill: #fff3e0; stroke: #e65100; stroke-width: 2;"/>
+  <text x="80" y="420" class="text title" style="fill: #e65100; text-anchor: start;">Actors (Pekko)</text>
+  
+  <rect x="80" y="430" width="120" height="70" rx="5" class="actor"/>
+  <text x="140" y="455" class="text title">WebSocket</text>
+  <text x="140" y="470" class="text title">Actor</text>
+  <text x="140" y="490" class="text">Connection mgmt</text>
+  
+  <rect x="220" y="430" width="120" height="70" rx="5" class="actor"/>
+  <text x="280" y="455" class="text title">Publisher</text>
+  <text x="280" y="470" class="text title">Actor</text>
+  <text x="280" y="490" class="text">Event broadcast</text>
+  
+  <rect x="360" y="430" width="120" height="70" rx="5" class="actor"/>
+  <text x="420" y="455" class="text title">Printer</text>
+  <text x="420" y="470" class="text title">Actor</text>
+  <text x="420" y="490" class="text">Print queue</text>
+  
+  <rect x="500" y="430" width="120" height="70" rx="5" class="actor"/>
+  <text x="560" y="455" class="text title">Scheduler</text>
+  <text x="560" y="470" class="text title">Actor</text>
+  <text x="560" y="490" class="text">Background jobs</text>
+  
+  <!-- Models Layer -->
+  <rect x="650" y="400" width="500" height="120" rx="5" style="fill: #efebe9; stroke: #5d4037; stroke-width: 2;"/>
+  <text x="680" y="420" class="text title" style="fill: #5d4037; text-anchor: start;">Models</text>
+  
+  <rect x="680" y="430" width="110" height="70" rx="5" class="model"/>
+  <text x="735" y="455" class="text title">Match</text>
+  <text x="735" y="470" class="text title">Models</text>
+  <text x="735" y="490" class="text">Domain objects</text>
+  
+  <rect x="810" y="430" width="110" height="70" rx="5" class="model"/>
+  <text x="865" y="455" class="text title">Player</text>
+  <text x="865" y="470" class="text title">Models</text>
+  <text x="865" y="490" class="text">Player/Team</text>
+  
+  <rect x="940" y="430" width="110" height="70" rx="5" class="model"/>
+  <text x="995" y="455" class="text title">Table</text>
+  <text x="995" y="470" class="text title">Models</text>
+  <text x="995" y="490" class="text">Table data</text>
+  
+  <rect x="1070" y="430" width="70" height="70" rx="5" class="model"/>
+  <text x="1105" y="455" class="text title">DTOs</text>
+  <text x="1105" y="475" class="text">Transfer</text>
+  <text x="1105" y="490" class="text">objects</text>
+  
+  <!-- DAO Layer -->
+  <rect x="50" y="560" width="700" height="120" rx="5" style="fill: #f3e5f5; stroke: #7b1fa2; stroke-width: 2;"/>
+  <text x="80" y="580" class="text title" style="fill: #7b1fa2; text-anchor: start;">Data Access Objects</text>
+  
+  <rect x="80" y="590" width="120" height="70" rx="5" class="dao"/>
+  <text x="140" y="615" class="text title">Match DAO</text>
+  <text x="140" y="635" class="text">Match data</text>
+  <text x="140" y="650" class="text">persistence</text>
+  
+  <rect x="220" y="590" width="120" height="70" rx="5" class="dao"/>
+  <text x="280" y="615" class="text title">Player DAO</text>
+  <text x="280" y="635" class="text">Player data</text>
+  <text x="280" y="650" class="text">persistence</text>
+  
+  <rect x="360" y="590" width="120" height="70" rx="5" class="dao"/>
+  <text x="420" y="615" class="text title">Table DAO</text>
+  <text x="420" y="635" class="text">Table data</text>
+  <text x="420" y="650" class="text">persistence</text>
+  
+  <rect x="500" y="590" width="140" height="70" rx="5" class="dao"/>
+  <text x="570" y="615" class="text title">Connection Pool</text>
+  <text x="570" y="635" class="text">DB connection</text>
+  <text x="570" y="650" class="text">management</text>
+  
+  <!-- Database -->
+  <rect x="800" y="560" width="200" height="120" rx="5" class="database"/>
+  <text x="900" y="595" class="text title">MariaDB</text>
+  <text x="900" y="615" class="text title">Database</text>
+  <text x="900" y="635" class="text">Tournament data</text>
+  <text x="900" y="655" class="text">persistence</text>
+  
+  <!-- Arrows -->
+  <!-- Controllers to Services -->
+  <line x1="310" y1="180" x2="190" y2="270" class="arrow"/>
+  <line x1="470" y1="180" x2="350" y2="270" class="arrow"/>
+  <line x1="630" y1="180" x2="510" y2="270" class="arrow"/>
+  <line x1="1090" y1="180" x2="990" y2="270" class="arrow"/>
+  
+  <!-- Services to DAOs -->
+  <line x1="190" y1="340" x2="140" y2="590" class="arrow"/>
+  <line x1="350" y1="340" x2="280" y2="590" class="arrow"/>
+  <line x1="510" y1="340" x2="420" y2="590" class="arrow"/>
+  
+  <!-- DAOs to Database -->
+  <line x1="640" y1="625" x2="800" y2="625" class="arrow"/>
+  
+  <!-- WebSocket Controller to Actors -->
+  <line x1="950" y1="180" x2="280" y2="430" class="arrow"/>
+  
+  <!-- Services to Actors -->
+  <line x1="190" y1="340" x2="280" y2="430" class="arrow"/>
+</svg>
