@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Game} from '../match/game.model';
-import {Match} from '../match/match.model';
-import {Player} from '../match/player.model';
-import {GameDialogComponent} from './game-dialog/game-dialog.component';
-import {GameService} from './game.service';
-import {ResultDialogComponent} from './result-dialog/result-dialog.component';
-import {Table} from './table.model';
+import { MatDialog } from '@angular/material/dialog';
+import { Game } from '../match/game.model';
+import { Match } from '../match/match.model';
+import { Player } from '../match/player.model';
+import { GameDialogComponent } from './game-dialog/game-dialog.component';
+import { GameService } from './game.service';
+import { ResultDialogComponent } from './result-dialog/result-dialog.component';
+import { Table } from './table.model';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatBadge } from '@angular/material/badge';
 import { MatChipSet, MatChip } from '@angular/material/chips';
@@ -17,15 +17,28 @@ import { ClubNamePipe } from '../club-name.pipe';
 import { SinglePlayerPipe } from '../single-player.pipe';
 
 @Component({
-    selector: 'app-tt-table',
-    templateUrl: './tt-table.component.html',
-    styleUrls: ['./tt-table.component.scss'],
-    imports: [MatCard, MatCardHeader, MatCardTitle, MatBadge, MatChipSet, MatChip, MatCardContent, MatchItemComponent, NgClass, MatCardActions, MatButton, ClubNamePipe, SinglePlayerPipe]
+  selector: 'app-tt-table',
+  templateUrl: './tt-table.component.html',
+  styleUrls: ['./tt-table.component.scss'],
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatBadge,
+    MatChipSet,
+    MatChip,
+    MatCardContent,
+    MatchItemComponent,
+    NgClass,
+    MatCardActions,
+    MatButton,
+    ClubNamePipe,
+    SinglePlayerPipe,
+  ],
 })
 export class TtTableComponent {
   dialog = inject(MatDialog);
   gameService = inject(GameService);
-
 
   @Input()
   table: Table;
@@ -48,15 +61,15 @@ export class TtTableComponent {
   maxGames = [0, 1, 2, 3, 4];
 
   currentMatch(): Match {
-    return this.table.matches.find(match => match.state === 'Started');
+    return this.table.matches.find((match) => match.state === 'Started');
   }
 
   isSecondCall() {
-    return this.table.matches.find(match => match.state === 'SecondCall');
+    return this.table.matches.find((match) => match.state === 'SecondCall');
   }
 
   isThirdCall() {
-    return this.table.matches.find(match => match.state === 'ThirdCall');
+    return this.table.matches.find((match) => match.state === 'ThirdCall');
   }
 
   tableHasStartedMatch(): boolean {
@@ -66,13 +79,14 @@ export class TtTableComponent {
   allGames(): Game[] {
     if (this.tableHasStartedMatch()) {
       const match = this.currentMatch();
-      return this.maxGames.map(index =>
+      return this.maxGames.map((index) =>
         match.result.games.length > index
           ? match.result.games[index]
-          : {
-            score_player_a: 0,
-            score_player_b: 0
-          } as Game);
+          : ({
+              score_player_a: 0,
+              score_player_b: 0,
+            } as Game)
+      );
     } else {
       return [];
     }
@@ -82,14 +96,14 @@ export class TtTableComponent {
     const match = this.currentMatch();
     const dialogRef = this.dialog.open(ResultDialogComponent, {
       width: '400px',
-      data: match
+      data: match,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.updateMatchResult.emit({
           matchId: match.match_id,
-          result
+          result,
         });
       }
     });
@@ -101,19 +115,19 @@ export class TtTableComponent {
       data: {
         player: playerWon,
         gameNr: this.getGameNumber(),
-        isPlayerA
-      }
+        isPlayerA,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         const newGame = this.gameService.createResult(result.result, result.isPlayerA);
         const newGames = this.currentMatch().result.games.concat(newGame);
         this.updateMatchResult.emit({
           matchId: this.currentMatch().match_id,
           result: {
-            games: newGames
-          }
+            games: newGames,
+          },
         });
       }
     });
@@ -122,7 +136,7 @@ export class TtTableComponent {
   startMatch(matchId) {
     this.startMatchOnTable.emit({
       tableId: this.table.table_id,
-      matchId
+      matchId,
     });
   }
 
@@ -141,6 +155,6 @@ export class TtTableComponent {
   }
 
   takeBack() {
-    this.takeBackMatch.emit({matchId: this.currentMatch().match_id});
+    this.takeBackMatch.emit({ matchId: this.currentMatch().match_id });
   }
 }

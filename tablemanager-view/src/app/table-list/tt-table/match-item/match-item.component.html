@@ -8,7 +8,8 @@
       [matBadgeHidden]="match.players_b[0].call_count < 2"
       matBadgeColor="warn"
       matBadgeOverlap="false"
-      >{{ match.players_b | playerName }}
+    >
+      {{ match.players_b | playerName }}
     </span>
   </div>
 </div>
@@ -16,13 +17,8 @@
   <button mat-mini-fab color="accent" (click)="callPlayers()">
     <mat-icon aria-hidden="false">alarm</mat-icon>
   </button>
-  
-  <button
-    mat-mini-fab
-    color="warn"
-    (click)="startMatch.emit(match.match_id)"
-    class="float-right"
-  >
+
+  <button mat-mini-fab color="warn" (click)="startMatch.emit(match.match_id)" class="float-right">
     <mat-icon aria-hidden="false">play_arrow</mat-icon>
   </button>
 </div>
