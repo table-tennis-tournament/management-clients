@@ -3,9 +3,9 @@
   <form [formGroup]="playersFormGroup">
     <ng-container formArrayName="players">
       @for (player of players; track player; let i = $index) {
-        <div >
+        <div>
           <mat-checkbox [formControlName]="i">
-            {{[player] | playerName}}
+            {{ [player] | playerName }}
           </mat-checkbox>
         </div>
       }

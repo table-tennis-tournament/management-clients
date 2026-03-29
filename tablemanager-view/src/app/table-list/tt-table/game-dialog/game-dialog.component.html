@@ -1,20 +1,16 @@
-<h1 mat-dialog-title>Satz Nr. {{gameData.gameNr + 1}}</h1>
+<h1 mat-dialog-title>Satz Nr. {{ gameData.gameNr + 1 }}</h1>
 <div mat-dialog-content>
   <div class="row">
-    <div class="col-12 text-center">
-      Sieger: {{gameData.player | playerName}}
-    </div>
+    <div class="col-12 text-center">Sieger: {{ gameData.player | playerName }}</div>
   </div>
   <div class="row">
-    <div class="col-12 text-center">
-      ({{gameData.player | clubName}})
-    </div>
+    <div class="col-12 text-center">({{ gameData.player | clubName }})</div>
   </div>
   <mat-divider></mat-divider>
   <div class="row">
     <div class="col-12 text-center">
       <mat-form-field>
-        <input type="number" matInput cdkFocusInitial [(ngModel)]="resultString" (keyup.enter)="onOk()">
+        <input type="number" matInput cdkFocusInitial [(ngModel)]="resultString" (keyup.enter)="onOk()" />
       </mat-form-field>
     </div>
   </div>

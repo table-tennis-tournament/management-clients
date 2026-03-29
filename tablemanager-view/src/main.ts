@@ -32,20 +32,18 @@ bootstrapApplication(AppComponent, {
         metaReducers,
         runtimeChecks: {
           strictStateImmutability: false,
-          strictActionImmutability: false
-        }
+          strictActionImmutability: false,
+        },
       }),
       EffectsModule.forRoot([]),
       StoreRouterConnectingModule.forRoot(),
       StoreDevtoolsModule.instrument({
         maxAge: 25,
         logOnly: environment.production,
-        connectInZone: true
+        connectInZone: true,
       })
     ),
     WebsocketService,
-    WebsocketHandlerService
-  ]
-})
-  .catch(err => console.error(err));
-
+    WebsocketHandlerService,
+  ],
+}).catch((err) => console.error(err));

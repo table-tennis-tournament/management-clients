@@ -3,27 +3,27 @@
     <mat-card-title>
       <div class="d-flex justify-content-between w-100">
         <div>
-          <span matBadge="{{table.table_number}}" matBadgeOverlap="false">Tisch</span>
+          <span matBadge="{{ table.table_number }}" matBadgeOverlap="false">Tisch</span>
         </div>
         <div>
           @if (isSecondCall()) {
-            <span class="call-color"> 2. Aufruf! </span>
+            <span class="call-color">2. Aufruf!</span>
           }
           @if (isThirdCall()) {
-            <span class="call-color"> 3. Aufruf! </span>
+            <span class="call-color">3. Aufruf!</span>
           }
         </div>
         @if (tableHasStartedMatch()) {
           <div>
             <mat-chip-set>
-              <mat-chip class="m-0" selected color="primary">{{currentMatch().classification}}</mat-chip>
+              <mat-chip class="m-0" selected color="primary">{{ currentMatch().classification }}</mat-chip>
             </mat-chip-set>
           </div>
         }
         @if (tableHasStartedMatch()) {
           <div>
             <mat-chip-set>
-              <mat-chip class="m-0" selected color="primary">{{currentMatch().stage}}</mat-chip>
+              <mat-chip class="m-0" selected color="primary">{{ currentMatch().stage }}</mat-chip>
             </mat-chip-set>
           </div>
         }
@@ -38,21 +38,21 @@
         </div>
       </div>
       @for (match of table.matches; track match) {
-        <app-match-item [match]="match"
+        <app-match-item
+          [match]="match"
           (callPlayersForMatch)="callPlayersForMatch.emit($event)"
-          (startMatch)="startMatch($event)">
-        </app-match-item>
+          (startMatch)="startMatch($event)"
+        ></app-match-item>
       }
     </mat-card-content>
   }
   @if (tableHasStartedMatch()) {
     <mat-card-content>
       <div class="row">
-        <div class="col-5">
-        </div>
+        <div class="col-5"></div>
         @for (game of maxGames; track game) {
           <div class="col-1 mat-small">
-            <p>{{game + 1}}</p>
+            <p>{{ game + 1 }}</p>
           </div>
         }
         <div class="col-1 mat-small">
@@ -60,49 +60,65 @@
         </div>
       </div>
       <div class="row">
-        <div  class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_a, true)" >
-          <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}"
-          class="mat-body-strong mb-0 text-truncate-custom">{{currentMatch().players_a[0] | singlePlayer}}</div>
+        <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_a, true)">
+          <div
+            [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a) }"
+            class="mat-body-strong mb-0 text-truncate-custom"
+          >
+            {{ currentMatch().players_a[0] | singlePlayer }}
+          </div>
           @if (currentMatch().players_a.length > 1) {
-            <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}"
-            class="mat-body-strong mb-0 text-truncate-custom">{{currentMatch().players_a[1] | singlePlayer}}</div>
+            <div
+              [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a) }"
+              class="mat-body-strong mb-0 text-truncate-custom"
+            >
+              {{ currentMatch().players_a[1] | singlePlayer }}
+            </div>
           }
           @if (currentMatch().players_a.length === 1) {
-            <div class="text-truncate-custom">{{currentMatch().players_a | clubName}}</div>
+            <div class="text-truncate-custom">{{ currentMatch().players_a | clubName }}</div>
           }
         </div>
         @for (game of allGames(); track game) {
           <div class="col-1">
-            <p [ngClass]="{'won': this.gameService.playerAWon(game)}" class="mat-body">{{game.score_player_a}}</p>
+            <p [ngClass]="{ won: this.gameService.playerAWon(game) }" class="mat-body">{{ game.score_player_a }}</p>
           </div>
         }
         <div class="col-1">
-          <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a)}"
-          class="mat-body">{{currentMatch().result.games_won_player_a}}</p>
+          <p [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a) }" class="mat-body">
+            {{ currentMatch().result.games_won_player_a }}
+          </p>
         </div>
       </div>
       <div class="row">
         <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_b, false)">
-          <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body-strong mb-0 text-truncate-custom">
-            {{currentMatch().players_b[0] | singlePlayer}}
+          <div
+            [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b) }"
+            class="mat-body-strong mb-0 text-truncate-custom"
+          >
+            {{ currentMatch().players_b[0] | singlePlayer }}
           </div>
           @if (currentMatch().players_b.length > 1) {
-            <div [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}"
-              class="mat-body-strong mb-0 text-truncate-custom">
-              {{currentMatch().players_b[1] | singlePlayer}}
+            <div
+              [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b) }"
+              class="mat-body-strong mb-0 text-truncate-custom"
+            >
+              {{ currentMatch().players_b[1] | singlePlayer }}
             </div>
           }
           @if (currentMatch().players_b.length === 1) {
-            <div class="text-truncate-custom">{{currentMatch().players_b | clubName}}</div>
+            <div class="text-truncate-custom">{{ currentMatch().players_b | clubName }}</div>
           }
         </div>
         @for (game of allGames(); track game) {
           <div class="col-1">
-            <p [ngClass]="{'won': this.gameService.playerBWon(game)}" class="mat-body">{{game.score_player_b}}</p>
+            <p [ngClass]="{ won: this.gameService.playerBWon(game) }" class="mat-body">{{ game.score_player_b }}</p>
           </div>
         }
         <div class="col-1">
-          <p [ngClass]="{'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b)}" class="mat-body">{{currentMatch().result.games_won_player_b}}</p>
+          <p [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b) }" class="mat-body">
+            {{ currentMatch().result.games_won_player_b }}
+          </p>
         </div>
       </div>
     </mat-card-content>
@@ -113,7 +129,7 @@
         <button mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
         <button mat-raised-button color="primary" (click)="takeBack()">Zurück</button>
         @if (this.gameService.playerHasWon(currentMatch().result)) {
-          <button  mat-raised-button color="accent" (click)="endMatch()" class="float-right">Beenden</button>
+          <button mat-raised-button color="accent" (click)="endMatch()" class="float-right">Beenden</button>
         }
       </div>
     </mat-card-actions>

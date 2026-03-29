@@ -5,15 +5,13 @@
     </button>
     <h1>Match-Management</h1>
   </mat-toolbar-row>
-
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav #sidenav>
     <mat-nav-list>
       @for (manager of managers; track manager) {
-        <a routerLinkActive="active" mat-list-item [routerLink]="'/tablemanager' + manager"
-          (click)="sidenav.toggle()">
-          Manager {{manager}}
+        <a routerLinkActive="active" mat-list-item [routerLink]="'/tablemanager' + manager" (click)="sidenav.toggle()">
+          Manager {{ manager }}
         </a>
       }
     </mat-nav-list>

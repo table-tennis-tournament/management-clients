@@ -1,12 +1,11 @@
-import {Injectable} from '@angular/core';
-import {Game} from '../match/game.model';
-import {Result} from '../match/result.model';
+import { Injectable } from '@angular/core';
+import { Game } from '../match/game.model';
+import { Result } from '../match/result.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameService {
-
   public getGames(valueToCheck: string): Game[] {
     const result: Game[] = [];
     const splitValue = valueToCheck.split(' ');
@@ -16,7 +15,7 @@ export class GameService {
         const otherValue = this.getOtherResult(resultWithoutMinus);
         result.push({
           score_player_a: resultWithoutMinus,
-          score_player_b: otherValue
+          score_player_b: otherValue,
         });
         continue;
       }
@@ -25,12 +24,11 @@ export class GameService {
         const otherResult = this.getOtherResult(gameResult);
         result.push({
           score_player_a: otherResult,
-          score_player_b: gameResult
+          score_player_b: gameResult,
         });
       }
     }
     return result;
-
   }
 
   isFirstCharAMinus(resultToCheck) {
@@ -69,12 +67,12 @@ export class GameService {
     if (isPlayerA) {
       return {
         score_player_a: otherResult,
-        score_player_b: result
+        score_player_b: result,
       };
     }
     return {
       score_player_a: result,
-      score_player_b: otherResult
+      score_player_b: otherResult,
     };
   }
 }

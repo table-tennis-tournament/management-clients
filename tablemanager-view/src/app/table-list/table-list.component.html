@@ -1,6 +1,6 @@
 @for (currentTable of tables$ | async; track currentTable) {
   <app-tt-table
-    [table]=currentTable
+    [table]="currentTable"
     (updateMatchResult)="onUpdateMatchResult($event)"
     (finishMatch)="onFinishMatch($event)"
     (startMatchOnTable)="onMatchOnTableStarted($event)"
