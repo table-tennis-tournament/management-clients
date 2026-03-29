@@ -25,6 +25,11 @@ test.describe('Table Manager UI Tests', () => {
   });
 
   test('should show a game after assigning match to table via API', async ({ page, request }) => {
+    // 0. Ensure match 1 is free
+    await request.post('/api/match/takeBack', {
+      data: [1]
+    });
+
     // 1. Assign match 1 to table 1
     // Using the same endpoint as in admin-view: POST api/match/matchtotable/{tableNr}
     const response = await request.post('/api/match/matchtotable/1', {
@@ -40,6 +45,11 @@ test.describe('Table Manager UI Tests', () => {
   });
 
   test('should be able to start a match', async ({ page, request }) => {
+    // 0. Ensure match 1 is free
+    await request.post('/api/match/takeBack', {
+      data: [1]
+    });
+
     // 1. Ensure a match is assigned to table 1
     await request.post('/api/match/matchtotable/1', {
       data: [1]
