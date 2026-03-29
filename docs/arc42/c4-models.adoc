@@ -243,7 +243,7 @@ The code-level diagram shows the detailed implementation of match management:
 
 == Deployment Containers
 
-image::c4-deployment.svg[C4 Deployment Diagram]
+image::deployment-view.svg[C4 Deployment Diagram]
 
 The deployment diagram shows how the system is deployed in production:
 

@@ -34,7 +34,7 @@
   
   <rect x="400" y="110" width="140" height="70" rx="5" class="component"/>
   <text x="470" y="135" class="text title">Modals</text>
-  <text x="470" y="150" class="text title">& Dialogs</text>
+  <text x="470" y="150" class="text title">Dialogs</text>
   <text x="470" y="170" class="text">Overlays</text>
   
   <rect x="560" y="110" width="140" height="70" rx="5" class="component"/>
@@ -44,7 +44,7 @@
   
   <rect x="720" y="110" width="140" height="70" rx="5" class="component"/>
   <text x="790" y="135" class="text title">Guards</text>
-  <text x="790" y="150" class="text title">& Interceptors</text>
+  <text x="790" y="150" class="text title">Interceptors</text>
   <text x="790" y="170" class="text">Auth/HTTP</text>
   
   <!-- State Management Layer -->
@@ -107,7 +107,7 @@
   
   <!-- Models Layer -->
   <rect x="50" y="580" width="900" height="100" rx="5" style="fill: #f3e5f5; stroke: #7b1fa2; stroke-width: 2;"/>
-  <text x="80" y="600" class="text title" style="fill: #7b1fa2; text-anchor: start;">Models & Types</text>
+  <text x="80" y="600" class="text title" style="fill: #7b1fa2; text-anchor: start;">Models Types</text>
   
   <rect x="80" y="610" width="140" height="60" rx="5" class="model"/>
   <text x="150" y="635" class="text title">TypeScript</text>

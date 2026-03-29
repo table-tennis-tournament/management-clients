@@ -203,7 +203,7 @@ The system consists of four main building blocks:
 
 === Level 2: Backend Components
 
-image::backend-components.svg[Backend Components]
+image::c4-backend-components.svg[Backend Components]
 
 [cols="1,3"]
 |===
@@ -232,7 +232,7 @@ image::backend-components.svg[Backend Components]
 
 Each Angular application follows a similar structure:
 
-image::frontend-components.svg[Frontend Components]
+image::c4-frontend-components.svg[Frontend Components]
 
 [cols="1,3"]
 |===
