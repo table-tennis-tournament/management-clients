@@ -80,7 +80,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           file: ./Dockerfile-clients
 
-  e2e-tests:
+  e2e-tablemanager:
     needs: lint-and-format
     runs-on: ubuntu-latest
     steps:
@@ -88,9 +88,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
+          cache-dependency-path: tablemanager-view/package-lock.json
       - name: Install dependencies
         working-directory: tablemanager-view
         run: npm ci
+      - name: Get Playwright version
+        id: playwright-version
+        working-directory: tablemanager-view
+        run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - name: Install Playwright Browsers
         working-directory: tablemanager-view
         run: npx playwright install --with-deps chromium
@@ -112,6 +125,55 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-report-tablemanager
           path: tablemanager-view/playwright-report/
+          retention-days: 30
+
+  e2e-resultview:
+    needs: lint-and-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: result-view/package-lock.json
+      - name: Install dependencies
+        working-directory: result-view
+        run: npm ci
+      - name: Get Playwright version
+        id: playwright-version
+        working-directory: result-view
+        run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - name: Install Playwright Browsers
+        working-directory: result-view
+        run: npx playwright install --with-deps chromium
+      - name: Start services with Docker Compose
+        run: docker compose up -d
+      - name: Wait for backend to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:9000/api/tables?table_manager=1 > /dev/null; then
+              echo "Backend is ready"
+              break
+            fi
+            echo "Waiting for backend..."
+            sleep 5
+          done
+      - name: Run Playwright tests
+        working-directory: result-view
+        run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-resultview
+          path: result-view/playwright-report/
           retention-days: 30
