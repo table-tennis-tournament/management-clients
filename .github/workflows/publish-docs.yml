@@ -1,0 +1,150 @@
+name: Publish Documentation
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build AsciiDoc
+        uses: asciidoctor/docker-asciidoctor@v1
+        with:
+          args: |
+            mkdir -p public/arc42
+            # Build the main architecture document
+            asciidoctor -D public/arc42 docs/arc42/architecture.adoc
+            # Build the C4 models document
+            asciidoctor -D public/arc42 docs/arc42/c4-models.adoc
+            # Copy images if the directory exists
+            if [ -d docs/arc42/img ]; then 
+              cp -r docs/arc42/img public/arc42/
+            fi
+            
+            # Create a simple portal index page
+            cat <<EOF > public/index.html
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Table Tennis Tournament Management System Documentation</title>
+                <style>
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+                        line-height: 1.6; 
+                        color: #333; 
+                        max-width: 800px; 
+                        margin: 0 auto; 
+                        padding: 2rem; 
+                        background-color: #f8f9fa; 
+                    }
+                    header {
+                        text-align: center;
+                        margin-bottom: 3rem;
+                    }
+                    h1 { 
+                        color: #2c3e50; 
+                        border-bottom: 2px solid #3498db; 
+                        padding-bottom: 0.5rem;
+                        display: inline-block;
+                    }
+                    .card-container { 
+                        display: grid; 
+                        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                        gap: 20px; 
+                        margin-top: 1rem; 
+                    }
+                    .card { 
+                        background: white; 
+                        border-radius: 8px; 
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+                        padding: 2rem; 
+                        display: flex;
+                        flex-direction: column;
+                        transition: transform 0.2s, box-shadow 0.2s; 
+                    }
+                    .card:hover { 
+                        transform: translateY(-5px); 
+                        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+                    }
+                    .card h2 { 
+                        margin-top: 0; 
+                        color: #2980b9; 
+                        font-size: 1.5rem;
+                    }
+                    .card p { 
+                        color: #666; 
+                        flex-grow: 1;
+                    }
+                    .btn { 
+                        display: inline-block; 
+                        background: #3498db; 
+                        color: white !important; 
+                        padding: 0.8rem 1.5rem; 
+                        border-radius: 4px; 
+                        text-decoration: none; 
+                        font-weight: bold; 
+                        text-align: center;
+                        margin-top: 1.5rem;
+                        transition: background 0.2s;
+                    }
+                    .btn:hover { 
+                        background: #217dbb; 
+                    }
+                    footer { 
+                        margin-top: 5rem; 
+                        text-align: center; 
+                        color: #95a5a6; 
+                        font-size: 0.85rem;
+                        border-top: 1px solid #eee;
+                        padding-top: 2rem;
+                    }
+                </style>
+            </head>
+            <body>
+                <header>
+                    <h1>Documentation Portal</h1>
+                    <p>Table Tennis Tournament Management System</p>
+                </header>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <h2>Architecture (arc42)</h2>
+                        <p>Comprehensive technical documentation following the arc42 template. Includes solution strategy, building blocks, and cross-cutting concepts.</p>
+                        <a href="arc42/architecture.html" class="btn">View Architecture</a>
+                    </div>
+                    <div class="card">
+                        <h2>C4 Models</h2>
+                        <p>Hierarchical diagrams visualizing the system architecture at different levels of abstraction: Context, Container, Component, and Code.</p>
+                        <a href="arc42/c4-models.html" class="btn">View C4 Models</a>
+                    </div>
+                </div>
+
+                <footer>
+                    Site generated by GitHub Actions for commit $(echo ${{ github.sha }} | cut -c1-7)
+                </footer>
+            </body>
+            </html>
+            EOF
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'docs: update documentation to ${{ github.sha }}'
