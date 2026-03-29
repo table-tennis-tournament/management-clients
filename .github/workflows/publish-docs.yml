@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/asciidoc-publishing
     tags:
       - 'v*'
   workflow_dispatch:
@@ -30,6 +29,9 @@ jobs:
             asciidoctor -D public/arc42 docs/arc42/c4-models.adoc &&
             if [ -d docs/arc42/img ]; then cp -r docs/arc42/img public/arc42/; fi
             "
+
+      - name: Fix permissions
+        run: sudo chown -R $USER:$USER public
 
       - name: Create Portal Index Page
         run: |
