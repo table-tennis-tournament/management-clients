@@ -17,14 +17,46 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: |
+            admin-view/package-lock.json
+            result-view/package-lock.json
+            tablemanager-view/package-lock.json
+
+      - name: admin-view - Install & Format Check
+        run: |
+          cd admin-view
+          npm ci
+          npm run format:check
+
+      - name: result-view - Install & Format Check
+        run: |
+          cd result-view
+          npm ci
+          npm run format:check
+
+      - name: tablemanager-view - Install & Format Check
+        run: |
+          cd tablemanager-view
+          npm ci
+          npm run format:check
+
   # This workflow contains a single job called "build"
   build:
+    needs: lint-and-format
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -49,6 +81,7 @@ jobs:
           file: ./Dockerfile-clients
 
   e2e-tests:
+    needs: lint-and-format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
