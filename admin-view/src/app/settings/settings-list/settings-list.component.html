@@ -5,18 +5,10 @@
       <h5 class="mb-3">Allgemeine Einstellungen</h5>
       <div class="row">
         <div class="col-md-4 mb-3">
-          <mat-checkbox
-            [(ngModel)]="isPrintForAssign"
-            (change)="printForAssign.emit(isPrintForAssign)"
-          >
-            Druck bei Ausruf
-          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="isPrintForAssign" (change)="printForAssign.emit(isPrintForAssign)">Druck bei Ausruf</mat-checkbox>
         </div>
         <div class="col-md-4 mb-3">
-          <mat-checkbox
-            [(ngModel)]="assignAutomatically"
-            (change)="automaticallyAssign.emit(assignAutomatically)"
-          >
+          <mat-checkbox [(ngModel)]="assignAutomatically" (change)="automaticallyAssign.emit(assignAutomatically)">
             Automatisch Ausrufen
           </mat-checkbox>
         </div>
@@ -53,7 +45,7 @@
   <div class="row mb-4">
     <div class="col-12">
       <h5 class="mb-3">Type-Farben Konfiguration</h5>
-      
+
       <div class="row mb-3 align-items-center">
         <div class="col-12 col-md-4">
           <mat-form-field appearance="outline" class="w-100 h-100">
@@ -88,13 +80,7 @@
           @if (selectedBgColor) {
             <div class="col-12 col-md-2 mb-3 d-flex flex-column align-items-center">
               <span class="small text-muted mb-1">Vorschau</span>
-              <div
-                class="color-preview"
-                [style.background-color]="selectedBgColor"
-                [style.color]="selectedTextColor"
-              >
-                A
-              </div>
+              <div class="color-preview" [style.background-color]="selectedBgColor" [style.color]="selectedTextColor">A</div>
             </div>
           }
         </div>

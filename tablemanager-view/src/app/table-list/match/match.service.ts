@@ -1,20 +1,18 @@
 import { HttpClient } from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Result} from './result.model';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Result } from './result.model';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class MatchService {
-
-  constructor(private http: HttpClient) {
-  }
+  private http = inject(HttpClient);
 
   // updateMatchResult(matchId: number, result: Result): Observable<any> {
   //   return this.http.put<any>(`api/matches/${matchId}/result`, result);
   // }
 
   updateMatchResult(matchId: number, result: Result): Observable<any> {
-    const results = result.games.map(game => [game.score_player_a, game.score_player_b]);
+    const results = result.games.map((game) => [game.score_player_a, game.score_player_b]);
     return this.http.post<any>(`api/match/${matchId}/updateResult`, results);
   }
 
@@ -23,7 +21,7 @@ export class MatchService {
   // }
 
   finishMatch(matchId: number, result: Result) {
-    const results = result.games.map(game => [game.score_player_a, game.score_player_b]);
+    const results = result.games.map((game) => [game.score_player_a, game.score_player_b]);
     return this.http.post<any>(`api/match/${matchId}/setResult`, results);
   }
 
@@ -32,7 +30,7 @@ export class MatchService {
   }
 
   callPlayersForMatch(playerIds: number[], matchId: number) {
-    return this.http.post<any>(`api/playercall/${matchId}`, {player_ids: playerIds});
+    return this.http.post<any>(`api/playercall/${matchId}`, { player_ids: playerIds });
   }
 
   takeBackMatch(matchId: number) {
