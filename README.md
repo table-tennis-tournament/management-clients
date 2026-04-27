@@ -14,9 +14,13 @@ The [result-view](./result-view/README.md) is designed to show current results o
 
 The [tablemanager-view](./tablemanager-view/README.md) is designed to manage special tables. You can enter a result (set and match) for a specific table. You can request a second call for player if he doesn't appear.
 
-## backend
+## backend (Legacy)
 
 The [backend](./backend/README.md) provides all functionality for the clients. It is a scala backend with play framework and a mariaDB.
+
+## management-backend (Next-Gen)
+
+The [management-backend](./management-backend/README.md) is the new Spring Boot 4.x (Kotlin) implementation following a modular monolith architecture with Spring Modulith.
 
 ## Architecture Documentation
 
