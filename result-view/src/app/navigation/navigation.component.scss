@@ -1,3 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+mat-sidenav-container {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
 .active {
   background: lightblue;
 }

@@ -4,3 +4,8 @@
 @use "bootstrap/scss/bootstrap-grid";
 @use "bootstrap/scss/bootstrap-utilities";
 @import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+html,
+body {
+  height: 100%;
+}
