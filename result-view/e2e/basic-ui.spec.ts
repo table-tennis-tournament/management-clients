@@ -21,19 +21,19 @@ test.describe('Result View Basic UI Tests', () => {
 
   test('should show groups and KO systems for the first discipline', async ({ page }) => {
     // Wait for the first discipline to be selected (default behavior in onTabSelected)
-    // and wait for either group-view or stage-view to appear
+    // and wait for either group-view or bracket-view to appear
     const groupView = page.locator('app-group-view');
-    const stageView = page.locator('app-stage-view');
+    const bracketView = page.locator('app-bracket-view');
 
     // At least one of them should eventually be visible if test data is present
-    await expect(groupView.first().or(stageView.first())).toBeVisible({ timeout: 15000 });
+    await expect(groupView.first().or(bracketView.first())).toBeVisible({ timeout: 15000 });
 
     const groupCount = await groupView.count();
-    const stageCount = await stageView.count();
+    const bracketCount = await bracketView.count();
 
-    console.log(`Found ${groupCount} groups and ${stageCount} KO stages.`);
+    console.log(`Found ${groupCount} groups and ${bracketCount} KO stages.`);
     
-    expect(groupCount + stageCount).toBeGreaterThan(0);
+    expect(groupCount + bracketCount).toBeGreaterThan(0);
   });
 
   test('should be able to switch between disciplines', async ({ page }) => {
@@ -45,8 +45,8 @@ test.describe('Result View Basic UI Tests', () => {
     
     // Verify that data is still loaded (or reloaded) for the new selection
     const groupView = page.locator('app-group-view');
-    const stageView = page.locator('app-stage-view');
-    await expect(groupView.first().or(stageView.first())).toBeVisible({ timeout: 10000 });
+    const bracketView = page.locator('app-bracket-view');
+    await expect(groupView.first().or(bracketView.first())).toBeVisible({ timeout: 10000 });
     
     console.log(`Switched to discipline: ${secondDisciplineName}`);
   });
