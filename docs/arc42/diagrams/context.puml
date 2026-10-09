@@ -1,0 +1,27 @@
+@startuml
+!include C4/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context diagram for the Table Tennis Tournament Management System
+
+Person(admin, "Tournament Administrator", "Runs the tournament: assigns matches to tables, calls matches, enters results")
+Person(tableManager, "Table Manager", "Manages the matches at a specific table: enters results, requests second and third calls")
+Person(player, "Player", "Reads the live results and standings")
+Person(sysadmin, "System Administrator", "Deploys, configures and monitors the system")
+
+System(tournamentSystem, "Table Tennis Tournament Management System", "Manages the flow of matches, results and tables during a tournament")
+
+System_Ext(clicktt, "click-TT", "External registration and ranking data source")
+System_Ext(mktt, "mktt", "Legacy tool that imports click-TT data, creates the database and sets up groups and the knockout system")
+
+Rel(admin, tournamentSystem, "Manages the tournament flow", "HTTPS")
+Rel(tableManager, tournamentSystem, "Manages a table and enters results", "HTTPS")
+Rel(player, tournamentSystem, "Views live results", "HTTPS")
+Rel(sysadmin, tournamentSystem, "Deploys and monitors", "HTTPS/SSH")
+
+Rel(clicktt, mktt, "Provides registration and ranking data", "data export")
+Rel(mktt, tournamentSystem, "Populates the tournament database", "offline database import")
+
+SHOW_LEGEND()
+@enduml

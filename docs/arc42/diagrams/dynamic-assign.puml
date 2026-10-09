@@ -1,0 +1,20 @@
+@startuml
+!include C4/C4_Dynamic.puml
+
+title Dynamic diagram: assign a match to a table
+
+Person(admin, "Tournament Administrator")
+Container(adminView, "Admin View", "Angular 21")
+Container(nginx, "Reverse Proxy", "Nginx")
+Container(backend, "Backend", "Scala Play")
+ContainerDb(mariadb, "Tournament Database", "MariaDB")
+
+RelIndex(1, admin, adminView, "Selects a match and a table")
+RelIndex(2, adminView, nginx, "Sends the assignment", "HTTPS")
+RelIndex(3, nginx, backend, "Proxies the request", "HTTP")
+RelIndex(4, backend, mariadb, "Persists the assignment", "JDBC")
+RelIndex(5, backend, nginx, "Broadcasts the match and table update", "WebSocket")
+RelIndex(6, nginx, adminView, "Pushes the update to all clients")
+
+SHOW_LEGEND()
+@enduml

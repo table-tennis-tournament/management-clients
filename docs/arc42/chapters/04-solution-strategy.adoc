@@ -1,0 +1,51 @@
+== Solution Strategy
+
+=== Technology Decisions
+
+[cols="1,2,2"]
+|===
+|Area |Decision |Rationale
+
+|Backend framework
+|Scala with Play Framework
+
+|Mature web framework with excellent WebSocket support.
+
+|Frontend framework
+|Angular with ngrx
+
+|Component-based architecture and predictable state management.
+
+|Database
+|MariaDB/MySQL with Slick
+
+|Relational model fits tournament data; proven reliability.
+
+|Real-time communication
+|WebSockets with SockJS fallback and Pekko actors
+
+|Bi-directional communication and a fallback for older browsers.
+
+|State management
+|ngrx (Redux pattern)
+
+|Predictable state, time-travel debugging, single store per application.
+
+|Containerization
+|Docker with Docker Compose
+
+|Simplified deployment and consistent environments.
+
+|Documentation rendering
+|PlantUML with the C4-PlantUML library
+
+|Text-based, versionable diagrams in a standard notation.
+|===
+
+=== Architecture Patterns
+
+* *Separate frontends per role*: three independent Angular applications share one backend.
+* *Event-driven real-time communication*: Pekko actors publish domain events that are broadcast over WebSockets.
+* *Layered backend*: controllers, a single data-access component and domain models.
+* *Repository-style data access*: one component (Tables) owns all persistence and the in-memory domain state.
+* *Redux store*: each frontend keeps its state in a single ngrx store.

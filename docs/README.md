@@ -34,9 +34,12 @@ The arc42 template consists of 12 sections that cover:
 
 ### Contents
 
-- `architecture.adoc` - Main architecture documentation following arc42 template
-- `c4-models.adoc` - C4 model diagrams and explanations
-- `img/` - Architecture diagrams and images
+- `architecture.adoc` - Master document; includes the chapters below.
+- `chapters/` - One AsciiDoc file per arc42 chapter.
+- `diagrams/` - C4-PlantUML sources for the context, container, component and dynamic diagrams.
+- `C4/` - Vendored C4-PlantUML library (used at build time).
+
+The canonical domain glossary lives at the repository root in `GLOSSARY.md` and is included into chapter 12.
 
 ### Viewing the Documentation
 

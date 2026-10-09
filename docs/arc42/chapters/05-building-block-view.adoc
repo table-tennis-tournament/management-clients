@@ -1,0 +1,116 @@
+== Building Block View
+
+This chapter describes the building blocks at two C4 levels: the container level (Level 2) and the component level (Level 3).
+
+=== Level 2: Containers
+
+[plantuml, target="container", format="svg"]
+----
+include::../diagrams/container.puml[]
+----
+
+[cols="1,3"]
+|===
+|Container |Responsibility
+
+|Admin View
+|Angular 21 SPA for tournament administration: match assignment, calling, queue management, results.
+
+|Result View
+|Angular 21 SPA for displaying live results and standings.
+
+|Table Manager View
+|Angular 19 SPA for table-specific match management and result entry.
+
+|Reverse Proxy
+|Nginx. Serves the three SPA bundles and proxies API and WebSocket traffic to the backend.
+
+|Backend
+|Scala 2.13 on Play Framework. REST API, WebSocket broadcasting and PDF generation.
+
+|Tournament Database
+|MariaDB/MySQL. Persists players, matches, tables, groups and settings.
+|===
+
+=== Level 3: Backend Components
+
+[plantuml, target="backend-components", format="svg"]
+----
+include::../diagrams/backend-components.puml[]
+----
+
+[cols="1,3"]
+|===
+|Component |Responsibility
+
+|Match Controller
+|REST endpoints for match assignment, state changes and results.
+
+|Match List Controller
+|Queue management endpoints.
+
+|Player Controller
+|Player, club and discipline data.
+
+|Table Controller
+|Table assignment and locking.
+
+|Printer Controller
+|PDF generation and print jobs.
+
+|Settings Controller
+|System settings.
+
+|SockJS Controller
+|WebSocket connection upgrade.
+
+|PDF Service
+|Renders match sheets and documents to PDF.
+
+|Tables (DAO)
+|The single data-access component: all persistence and the in-memory domain state.
+
+|Publisher
+|Pekko actor that distributes domain events to connected clients.
+
+|Printer Actor
+|Pekko actor that owns the print job queue.
+
+|WebSocket Actor
+|Pekko actor, one per client connection.
+
+|Scheduler
+|Background tasks and automatic match start.
+
+|Models
+|Scala case classes for the domain objects.
+|===
+
+=== Level 3: Frontend Components
+
+All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application.
+
+[plantuml, target="frontend-components", format="svg"]
+----
+include::../diagrams/frontend-components.puml[]
+----
+
+[cols="1,2,2,2"]
+|===
+|Layer |Admin View |Result View |Table Manager View
+
+|Feature modules
+|assign, caller, discipline, table, result, player, settings, supervisor
+|result
+|table-list
+
+|State management
+|ngrx store (actions, reducers, effects, selectors)
+|ngrx store
+|ngrx store
+
+|Communication
+|HTTP and WebSocket services
+|HTTP and WebSocket services
+|HTTP and WebSocket services
+|===

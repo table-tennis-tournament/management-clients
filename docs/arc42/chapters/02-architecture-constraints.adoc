@@ -1,0 +1,39 @@
+== Architecture Constraints
+
+=== Technical Constraints
+
+[cols="1,2,2"]
+|===
+|Constraint |Description |Impact
+
+|JVM backend
+|The backend runs on the JVM (Scala with Play Framework).
+
+|Technology stack is limited to JVM-compatible solutions.
+
+|Browser frontend
+|The user interfaces run in the browser.
+
+|Angular single-page applications are used for all three roles.
+
+|Relational database
+|Tournament data is persisted in a relational database.
+
+|MariaDB/MySQL with the Slick database library.
+
+|Real-time communication
+|Clients require live updates without manual refresh.
+
+|WebSockets (with a SockJS fallback) and Pekko actors are used.
+
+|Containerized deployment
+|The system is deployed with containers.
+
+|Docker images and Docker Compose are used.
+|===
+
+=== Organizational Constraints
+
+* The development team is familiar with Scala and Angular.
+* The existing infrastructure supports Docker deployments.
+* Tournament data is prepared offline by the legacy tool mktt, which imports data from click-TT and populates the database. The system therefore must operate on an externally prepared database.

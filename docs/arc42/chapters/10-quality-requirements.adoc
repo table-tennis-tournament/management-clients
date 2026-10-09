@@ -1,0 +1,50 @@
+== Quality Requirements
+
+=== Quality Tree
+
+[cols="1,2,2"]
+|===
+|Category |Requirement |Measurement
+
+|Performance
+|API responses below 500 ms.
+|Average response time monitoring.
+
+|Performance
+|Real-time updates delivered below 100 ms.
+|Message delivery time tracking.
+
+|Performance
+|Support a full tournament with many concurrent users.
+|Load testing.
+
+|Reliability
+|High availability during tournament hours.
+|Uptime monitoring.
+
+|Reliability
+|Automatic recovery from connection failures.
+|Reconnection testing.
+
+|Reliability
+|Consistent data across all clients.
+|State synchronization checks.
+
+|Usability
+|Intuitive interfaces for non-technical users.
+|Usability testing.
+
+|Usability
+|Mobile-responsive result display.
+|Responsive design checks.
+
+|Maintainability
+|Independent development and deployment of the frontends.
+|Build and deployment isolation.
+|===
+
+=== Quality Scenarios
+
+* When a result is entered at a table, every connected client shows the update within 100 ms.
+* When a WebSocket connection drops, the client reconnects automatically and re-synchronizes its state.
+* When a table is locked, no match is assigned to it automatically or manually.

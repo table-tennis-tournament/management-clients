@@ -20,8 +20,8 @@ The [backend](./backend/README.md) provides all functionality for the clients. I
 
 ## Architecture Documentation
 
-- **[arc42 Architecture](./docs/arc42/architecture.adoc)** - Complete architecture documentation
-- **[C4 Models](./docs/arc42/c4-models.adoc)** - System visualization and component diagrams
+- **[arc42 Architecture](./docs/arc42/architecture.adoc)** - Complete architecture documentation with embedded C4 diagrams (context, container and component levels)
+- **[Glossary](./GLOSSARY.md)** - Canonical domain language of the system
 
 ## Licensing
 

@@ -1,0 +1,45 @@
+@startuml
+!include C4/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Component diagram for the Backend
+
+Container_Boundary(backend, "Backend") {
+    Component(matchController, "Match Controller", "Play controller", "REST endpoints for match assignment, state changes and results")
+    Component(matchListController, "Match List Controller", "Play controller", "Queue management endpoints")
+    Component(playerController, "Player Controller", "Play controller", "Player, club and discipline data")
+    Component(tableController, "Table Controller", "Play controller", "Table assignment and locking")
+    Component(printerController, "Printer Controller", "Play controller", "PDF generation and print jobs")
+    Component(settingsController, "Settings Controller", "Play controller", "System settings")
+    Component(sockjsController, "SockJS Controller", "Play controller", "WebSocket connection upgrade")
+
+    Component(pdfService, "PDF Service", "Scala", "Renders match sheets and documents to PDF")
+    Component(tables, "Tables (DAO)", "Scala, Slick", "All data access and the in-memory domain state")
+    Component(publisher, "Publisher", "Pekko actor", "Distributes domain events to connected clients")
+    Component(printerActor, "Printer Actor", "Pekko actor", "Print job queue")
+    Component(webSocketActor, "WebSocket Actor", "Pekko actor", "One actor per client connection")
+    Component(scheduler, "Scheduler", "Pekko", "Background tasks and automatic match start")
+    Component(models, "Models", "Scala case classes", "Domain objects: Match, Player, Table, Group, Discipline")
+}
+
+ContainerDb(mariadb, "Tournament Database", "MariaDB/MySQL", "Stores the tournament data")
+
+Rel(matchController, tables, "Reads and updates match state")
+Rel(matchListController, tables, "Manages the queue")
+Rel(playerController, tables, "Reads player data")
+Rel(tableController, tables, "Assigns and locks tables")
+Rel(settingsController, tables, "Reads and writes settings")
+Rel(printerController, pdfService, "Requests PDFs")
+Rel(sockjsController, webSocketActor, "Creates")
+
+Rel(tables, publisher, "Publishes domain events")
+Rel(publisher, webSocketActor, "Broadcasts")
+Rel(webSocketActor, sockjsController, "Serves")
+Rel(pdfService, printerActor, "Queues print jobs")
+Rel(scheduler, tables, "Triggers automatic match start")
+
+Rel(tables, mariadb, "Reads and writes", "JDBC/Slick")
+
+SHOW_LEGEND()
+@enduml

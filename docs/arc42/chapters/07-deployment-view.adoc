@@ -1,0 +1,36 @@
+== Deployment View
+
+The system is deployed as three containers orchestrated by Docker Compose.
+
+[cols="1,2,2,1"]
+|===
+|Container |Image content |Port |Purpose
+
+|Clients (Nginx)
+|One image that builds the three SPAs and serves them with Nginx.
+
+|80 (host) → 8080 (container)
+|Serves the three SPA bundles and reverse-proxies `/api` and WebSocket traffic to the backend.
+
+|Backend
+|Scala Play application.
+
+|9000
+|REST API, WebSocket broadcasting and PDF generation.
+
+|Database
+|MariaDB.
+
+|3306
+|Data persistence.
+|===
+
+=== Production Topology
+
+The three SPAs are built together into a single Nginx image (`Dockerfile-clients`). Nginx serves the static bundles under `/admin-view`, `/result-view` and `/tablemanager-view`, and proxies `/api/` (and per-application API paths) plus WebSocket connections to the backend. The backend connects to MariaDB over JDBC.
+
+The production database is prepared offline by mktt; the running system only reads from and writes to the tournament data it contains.
+
+=== Development Environment
+
+In development, each frontend runs with its own `ng serve` (default port 4200) and the backend with `sbt run` (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.
