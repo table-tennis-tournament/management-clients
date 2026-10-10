@@ -1,0 +1,28 @@
+@startuml
+!include C4/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Component diagram for a frontend SPA (shared structure)
+
+Container_Boundary(spa, "Angular SPA (Admin View, Result View or Table Manager View)") {
+    Component(pages, "Page Components", "Angular", "Feature pages such as assign, caller, discipline, table, result, player and settings")
+    Component(ui, "UI Components", "Angular Material", "Reusable widgets, modals and navigation")
+    Component(services, "Services", "Angular, RxJS", "HTTP and WebSocket communication")
+    Component(store, "Store", "ngrx", "Actions, reducers, effects and selectors")
+    Component(models, "Models", "TypeScript", "Interfaces and enums mirroring the backend domain")
+    Component(guards, "Guards and Interceptors", "Angular", "Route protection and HTTP interception")
+}
+
+System_Ext(backend, "Backend", "REST API and WebSocket")
+
+Rel(pages, store, "Dispatches actions")
+Rel(store, services, "Effects call")
+Rel(services, backend, "REST and WebSocket", "HTTPS/WSS")
+Rel(services, store, "Dispatches results")
+Rel(store, pages, "Selects state")
+Rel(guards, services, "Intercepts")
+Rel(pages, ui, "Composes")
+
+SHOW_LEGEND()
+@enduml

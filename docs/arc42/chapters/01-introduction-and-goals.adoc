@@ -1,0 +1,65 @@
+== Introduction and Goals
+
+The Table Tennis Tournament Management System manages the complete flow of a table tennis tournament: it assigns matches to tables, calls matches, collects results and displays live standings. It consists of a Scala backend and three Angular single-page applications, one for each user role.
+
+=== Requirements Overview
+
+==== Functional Requirements
+
+* Match management: assignment of matches to tables, calling, and result entry.
+* A queue that lets the tournament run without manual interaction.
+* Real-time result display for players and spectators.
+* Table-specific management for table managers, including second and third calls.
+* Player, club and discipline management.
+* Automatic setup of the group stage and the knockout stage (prepared offline by mktt).
+* PDF generation of match sheets and tournament documents.
+* WebSocket-based real-time communication across all clients.
+
+==== Quality Goals
+
+[cols="1,2,2"]
+|===
+|Priority |Quality Goal |Description
+
+|1
+|Real-time performance
+|Updates must reach every connected client immediately.
+
+|2
+|Reliability
+|Tournament data must stay consistent during match operations.
+
+|3
+|Usability
+|Intuitive interfaces for each role, including non-technical users.
+
+|4
+|Maintainability
+|Modular architecture that allows independent development of the three frontends.
+
+|5
+|Scalability
+|The system must handle a full tournament with many concurrent users.
+|===
+
+=== Stakeholders
+
+[cols="1,2"]
+|===
+|Role |Expectations
+
+|Tournament Administrator
+|Runs the tournament: assigns matches, calls matches, manages the queue, enters results.
+
+|Table Manager
+|Manages the matches at a specific table: enters results, requests second and third calls.
+
+|Player
+|Reads the live results and standings of the tournament.
+
+|System Administrator
+|Deploys, configures and monitors the system.
+
+|Developer
+|Needs a clear architecture, maintainable code and accurate documentation.
+|===

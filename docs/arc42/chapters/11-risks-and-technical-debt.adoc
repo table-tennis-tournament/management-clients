@@ -1,0 +1,40 @@
+== Risks and Technical Debts
+
+=== Technical Risks
+
+[cols="1,2,2,1"]
+|===
+|Risk |Impact |Mitigation |Priority
+
+|WebSocket connection failures
+|Clients lose real-time updates.
+|Automatic reconnection and fallback.
+
+|High
+
+|Database performance
+|Slow responses during a large tournament.
+|Query optimization and indexing.
+
+|Medium
+
+|Single-threaded in-memory state
+|Contention or inconsistency under high load.
+|Careful synchronization; load testing.
+
+|Medium
+
+|Dependence on mktt and click-TT
+|Tournament data cannot be prepared without the legacy toolchain.
+|Document the offline workflow; consider a future import replacement.
+
+|Medium
+|===
+
+=== Technical Debt
+
+* Code duplication between the three frontend applications.
+* Version drift: the Admin View and Result View are on Angular 21, while the Table Manager View is on Angular 19.
+* Limited test coverage in some areas.
+* Missing documentation for some components.
+* Opportunity to extract a shared component library to reduce duplication.

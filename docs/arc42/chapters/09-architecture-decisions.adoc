@@ -1,0 +1,41 @@
+== Architecture Decisions
+
+=== Three Separate Frontend Applications
+
+*Decision*: use three independent Angular applications instead of one.
+
+*Rationale*: each role has distinct requirements; the applications can be developed and deployed independently and stay focused on their task.
+
+*Consequences*: some code duplication between applications, and additional deployment effort. The three applications share the same ngrx patterns and are served together by one Nginx image.
+
+=== WebSocket-based Real-time Communication
+
+*Decision*: push live updates over WebSockets (with a SockJS fallback) instead of client polling.
+
+*Rationale*: tournament management requires immediate updates; polling would add server load and latency.
+
+*Consequences*: added complexity in connection management, reconnection handling, and state synchronization across clients.
+
+=== Scala Play Backend with Pekko Actors
+
+*Decision*: Scala with Play Framework and Pekko actors for the backend.
+
+*Rationale*: excellent WebSocket support and a mature ecosystem; Pekko actors model the publish/subscribe broadcast cleanly.
+
+*Consequences*: JVM deployment requirements and a dependency on the Scala ecosystem.
+
+=== Single Data-Access Component
+
+*Decision*: keep all persistence and the in-memory domain state in one component (Tables) instead of separate per-entity DAOs.
+
+*Rationale*: the domain objects are tightly coupled (matches, players, tables, groups); one component keeps the in-memory state consistent without cross-DAO coordination.
+
+*Consequences*: a large single class; changes must be made carefully, but consistency is easier to guarantee.
+
+=== Offline Data Preparation by mktt
+
+*Decision*: rely on the legacy tool mktt to prepare the tournament database from click-TT data, rather than importing registrations at runtime.
+
+*Rationale*: grouping and knockout setup already exist in mktt; re-implementing them would be costly.
+
+*Consequences*: the system has no live registration integration and depends on an externally prepared database.

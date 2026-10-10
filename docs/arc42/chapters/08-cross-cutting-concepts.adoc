@@ -1,0 +1,28 @@
+== Cross-cutting Concepts
+
+=== Security
+
+* Input validation on all endpoints.
+* SQL injection prevention through the Slick database layer.
+* WebSocket connection authentication.
+* Environment-based configuration (database credentials and connection strings are supplied via environment variables).
+
+=== Error Handling
+
+* Centralized error handling in the backend.
+* User-friendly error messages in the frontends.
+* Structured logging for debugging and monitoring.
+* Graceful degradation and reconnection for WebSocket failures.
+
+=== Logging and Monitoring
+
+* Structured logging (SLF4J/Logback) in the backend.
+* Logging of database reads and domain-state changes.
+* WebSocket connection monitoring.
+
+=== Data Consistency
+
+* Database transactions for critical operations.
+* A single in-memory domain state in the Tables (DAO) component, kept in sync with the database.
+* Real-time synchronization across all clients via the Publisher and WebSocket actors.
+* Automatic recomputation of group standings once a group is completed.

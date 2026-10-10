@@ -1,0 +1,5 @@
+== Glossary
+
+The canonical domain language of the system lives in the repository root file `GLOSSARY.md`, which is the single source of truth. Its content is included below.
+
+include::../../../GLOSSARY.md[]

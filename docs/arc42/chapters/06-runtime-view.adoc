@@ -1,0 +1,25 @@
+== Runtime View
+
+This chapter describes two important runtime scenarios as C4 dynamic diagrams.
+
+=== Assign a Match to a Table
+
+[plantuml, target="dynamic-assign", format="svg"]
+----
+include::../diagrams/dynamic-assign.puml[]
+----
+
+The Tournament Administrator selects a match and a table. The backend persists the assignment, updates its in-memory state and publishes an event. The Publisher broadcasts the change to all connected clients over WebSockets, so the Table Manager View and Result View update immediately.
+
+=== Enter a Match Result
+
+[plantuml, target="dynamic-result", format="svg"]
+----
+include::../diagrams/dynamic-result.puml[]
+----
+
+The Table Manager enters the set and match results. The backend validates and persists the result, marks the match Completed, and — for knockout matches — writes the next knockout match. It then broadcasts the updated match and standings to all clients.
+
+=== Real-time Communication
+
+Real-time updates flow through a Pekko Publisher actor. The Tables (DAO) component publishes domain events; the Publisher distributes them to the WebSocket actors, one per connected client. Each SPA receives the events over its WebSocket connection and updates its ngrx store.

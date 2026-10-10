@@ -1,0 +1,24 @@
+== System Scope and Context
+
+This chapter defines the boundary of the system and its environment using a C4 Level 1 (system context) view.
+
+[plantuml, target="context", format="svg"]
+----
+include::../diagrams/context.puml[]
+----
+
+=== Business Context
+
+The system supports a single table tennis tournament. Four roles interact with it:
+
+* The *Tournament Administrator* runs the tournament: assigning matches to tables, calling matches, managing the queue and entering results.
+* The *Table Manager* manages the matches at a specific table and enters set and match results.
+* The *Player* reads the live results and standings.
+* The *System Administrator* deploys, configures and monitors the system.
+
+=== External Systems
+
+The system has no live, runtime integration with external systems. Two external systems are involved offline, before the tournament manager runs:
+
+* *click-TT* is the registration and ranking platform. It is the source of player and discipline data.
+* *mktt* is a legacy tool that imports data from click-TT, creates the tournament database and sets up the groups and the knockout system. The tournament manager then reads from that prepared database.

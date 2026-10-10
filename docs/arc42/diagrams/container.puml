@@ -1,0 +1,39 @@
+@startuml
+!include C4/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container diagram for the Table Tennis Tournament Management System
+
+Person(admin, "Tournament Administrator", "Runs the tournament")
+Person(tableManager, "Table Manager", "Manages a specific table")
+Person(player, "Player", "Reads live results")
+Person(sysadmin, "System Administrator", "Deploys and monitors")
+
+System_Boundary(tournamentSystem, "Table Tennis Tournament Management System") {
+    Container(adminView, "Admin View", "Angular 21, ngrx, Angular Material", "SPA for tournament administration: match assignment, calling, queue, results")
+    Container(resultView, "Result View", "Angular 21, ngrx", "SPA for displaying live results and standings")
+    Container(tableManagerView, "Table Manager View", "Angular 19, ngrx", "SPA for table-specific match management and result entry")
+    Container(nginx, "Reverse Proxy", "Nginx", "Serves the SPA bundles and proxies API and WebSocket traffic to the backend")
+    Container(backend, "Backend", "Scala 2.13, Play Framework, Pekko", "REST API, WebSocket broadcasting, PDF generation")
+    ContainerDb(mariadb, "Tournament Database", "MariaDB/MySQL", "Stores players, matches, tables, groups and settings")
+}
+
+System_Ext(mktt, "mktt", "Legacy tool that populates the tournament database")
+
+Rel(admin, adminView, "Uses", "HTTPS")
+Rel(tableManager, tableManagerView, "Uses", "HTTPS")
+Rel(player, resultView, "Uses", "HTTPS")
+Rel(sysadmin, nginx, "Configures and monitors", "SSH/HTTPS")
+
+Rel(adminView, nginx, "Served by and proxied through", "HTTPS/WSS")
+Rel(resultView, nginx, "Served by and proxied through", "HTTPS/WSS")
+Rel(tableManagerView, nginx, "Served by and proxied through", "HTTPS/WSS")
+
+Rel(nginx, backend, "Proxies API and WebSocket traffic", "HTTP/WebSocket")
+Rel(backend, mariadb, "Reads and writes", "JDBC")
+
+Rel(mktt, mariadb, "Populates the database", "offline import")
+
+SHOW_LEGEND()
+@enduml
