@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Table Tennis Tournament Management System Architecture</title>
+<title>Table Tennis Tournament Management System — Architecture Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -436,7 +436,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Table Tennis Tournament Management System Architecture</h1>
+<h1>Table Tennis Tournament Management System — Architecture Documentation</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -460,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_system_scope_and_context">3. System Scope and Context</a>
 <ul class="sectlevel2">
 <li><a href="#_business_context">3.1. Business Context</a></li>
-<li><a href="#_technical_context">3.2. Technical Context</a></li>
+<li><a href="#_external_systems">3.2. External Systems</a></li>
 </ul>
 </li>
 <li><a href="#_solution_strategy">4. Solution Strategy</a>
@@ -471,21 +471,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_building_block_view">5. Building Block View</a>
 <ul class="sectlevel2">
-<li><a href="#_level_1_system_overview">5.1. Level 1: System Overview</a></li>
-<li><a href="#_level_2_backend_components">5.2. Level 2: Backend Components</a></li>
+<li><a href="#_level_2_containers">5.1. Level 2: Containers</a></li>
+<li><a href="#_level_3_backend_components">5.2. Level 3: Backend Components</a></li>
 <li><a href="#_level_3_frontend_components">5.3. Level 3: Frontend Components</a></li>
 </ul>
 </li>
 <li><a href="#_runtime_view">6. Runtime View</a>
 <ul class="sectlevel2">
-<li><a href="#_match_assignment_flow">6.1. Match Assignment Flow</a></li>
-<li><a href="#_result_entry_flow">6.2. Result Entry Flow</a></li>
+<li><a href="#_assign_a_match_to_a_table">6.1. Assign a Match to a Table</a></li>
+<li><a href="#_enter_a_match_result">6.2. Enter a Match Result</a></li>
 <li><a href="#_real_time_communication">6.3. Real-time Communication</a></li>
 </ul>
 </li>
 <li><a href="#_deployment_view">7. Deployment View</a>
 <ul class="sectlevel2">
-<li><a href="#_production_deployment">7.1. Production Deployment</a></li>
+<li><a href="#_production_topology">7.1. Production Topology</a></li>
 <li><a href="#_development_environment">7.2. Development Environment</a></li>
 </ul>
 </li>
@@ -497,32 +497,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_data_consistency">8.4. Data Consistency</a></li>
 </ul>
 </li>
-<li><a href="#_recent_architecture_changes">9. Recent Architecture Changes</a>
+<li><a href="#_architecture_decisions">9. Architecture Decisions</a>
 <ul class="sectlevel2">
-<li><a href="#_angular_19_migration_completion_2025">9.1. Angular 19 Migration Completion (2025)</a></li>
+<li><a href="#_three_separate_frontend_applications">9.1. Three Separate Frontend Applications</a></li>
+<li><a href="#_websocket_based_real_time_communication">9.2. WebSocket-based Real-time Communication</a></li>
+<li><a href="#_scala_play_backend_with_pekko_actors">9.3. Scala Play Backend with Pekko Actors</a></li>
+<li><a href="#_single_data_access_component">9.4. Single Data-Access Component</a></li>
+<li><a href="#_offline_data_preparation_by_mktt">9.5. Offline Data Preparation by mktt</a></li>
 </ul>
 </li>
-<li><a href="#_design_decisions">10. Design Decisions</a>
+<li><a href="#_quality_requirements">10. Quality Requirements</a>
 <ul class="sectlevel2">
-<li><a href="#_multiple_frontend_applications">10.1. Multiple Frontend Applications</a></li>
-<li><a href="#_websocket_communication">10.2. WebSocket Communication</a></li>
-<li><a href="#_scala_play_framework">10.3. Scala Play Framework</a></li>
+<li><a href="#_quality_tree">10.1. Quality Tree</a></li>
+<li><a href="#_quality_scenarios">10.2. Quality Scenarios</a></li>
 </ul>
 </li>
-<li><a href="#_quality_requirements">11. Quality Requirements</a>
+<li><a href="#_risks_and_technical_debts">11. Risks and Technical Debts</a>
 <ul class="sectlevel2">
-<li><a href="#_performance_requirements">11.1. Performance Requirements</a></li>
-<li><a href="#_reliability_requirements">11.2. Reliability Requirements</a></li>
-<li><a href="#_usability_requirements">11.3. Usability Requirements</a></li>
+<li><a href="#_technical_risks">11.1. Technical Risks</a></li>
+<li><a href="#_technical_debt">11.2. Technical Debt</a></li>
 </ul>
 </li>
-<li><a href="#_risks_and_technical_debts">12. Risks and Technical Debts</a>
-<ul class="sectlevel2">
-<li><a href="#_technical_risks">12.1. Technical Risks</a></li>
-<li><a href="#_technical_debt">12.2. Technical Debt</a></li>
-</ul>
-</li>
-<li><a href="#_glossary">13. Glossary</a></li>
+<li><a href="#_glossary">12. Glossary</a></li>
 </ul>
 </div>
 </div>
@@ -530,35 +526,38 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_introduction_and_goals"><a class="anchor" href="#_introduction_and_goals"></a>1. Introduction and Goals</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The Table Tennis Tournament Management System manages the complete flow of a table tennis tournament: it assigns matches to tables, calls matches, collects results and displays live standings. It consists of a Scala backend and three Angular single-page applications, one for each user role.</p>
+</div>
 <div class="sect2">
 <h3 id="_requirements_overview"><a class="anchor" href="#_requirements_overview"></a>1.1. Requirements Overview</h3>
-<div class="paragraph">
-<p>The Table Tennis Tournament Management System is a comprehensive solution for managing table tennis tournaments with real-time capabilities. The system supports multiple user roles and provides specialized interfaces for different tournament management tasks.</p>
-</div>
 <div class="sect3">
 <h4 id="_functional_requirements"><a class="anchor" href="#_functional_requirements"></a>1.1.1. Functional Requirements</h4>
 <div class="ulist">
 <ul>
 <li>
-<p>Tournament flow management (match assignment, calling, result entry)</p>
+<p>Match management: assignment of matches to tables, calling, and result entry.</p>
 </li>
 <li>
-<p>Real-time result display for spectators</p>
+<p>A queue that lets the tournament run without manual interaction.</p>
 </li>
 <li>
-<p>Table-specific management interfaces</p>
+<p>Real-time result display for players and spectators.</p>
 </li>
 <li>
-<p>Player and team management</p>
+<p>Table-specific management for table managers, including second and third calls.</p>
 </li>
 <li>
-<p>Match scheduling and assignment</p>
+<p>Player, club and discipline management.</p>
 </li>
 <li>
-<p>PDF generation for tournament documents</p>
+<p>Automatic setup of the group stage and the knockout stage (prepared offline by mktt).</p>
 </li>
 <li>
-<p>WebSocket-based real-time communication</p>
+<p>PDF generation of match sheets and tournament documents.</p>
+</li>
+<li>
+<p>WebSocket-based real-time communication across all clients.</p>
 </li>
 </ul>
 </div>
@@ -581,28 +580,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time Performance</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">System must provide immediate updates across all connected clients</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Updates must reach every connected client immediately.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scalability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Support multiple concurrent tournaments and users</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reliability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament data must stay consistent during match operations.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reliability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">System must maintain data consistency during tournament operations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Intuitive interfaces for each role, including non-technical users.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Usability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Intuitive interfaces for different user roles (admin, table manager, viewer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maintainability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modular architecture that allows independent development of the three frontends.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maintainability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Modular architecture allowing independent development and deployment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scalability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system must handle a full tournament with many concurrent users.</p></td>
 </tr>
 </tbody>
 </table>
@@ -612,42 +611,35 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_stakeholders"><a class="anchor" href="#_stakeholders"></a>1.2. Stakeholders</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Role</th>
-<th class="tableblock halign-left valign-top">Contact</th>
 <th class="tableblock halign-left valign-top">Expectations</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tournament Administrator</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament officials</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Complete tournament management, match assignment, result entry</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runs the tournament: assigns matches, calls matches, manages the queue, enters results.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Table Manager</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Table officials</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Table-specific match management, result entry</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages the matches at a specific table: enters results, requests second and third calls.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Spectators</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament viewers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time access to current results and standings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reads the live results and standings of the tournament.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">System Administrator</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">IT staff</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">System deployment, monitoring, maintenance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploys, configures and monitors the system.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Developers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Development team</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clear architecture, maintainable code, good documentation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Needs a clear architecture, maintainable code and accurate documentation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -674,29 +666,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JVM Platform</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backend must run on JVM (Scala/Play Framework)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Technology stack limited to JVM-compatible solutions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JVM backend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The backend runs on the JVM (Scala with Play Framework).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technology stack is limited to JVM-compatible solutions.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Web-based Frontend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Browser-based user interfaces required</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Angular SPA architecture chosen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Browser frontend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user interfaces run in the browser.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Angular single-page applications are used for all three roles.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time Communication</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket support required</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SockJS implementation for browser compatibility</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Relational database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament data is persisted in a relational database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL with the Slick database library.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Relational database for data persistence</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL chosen for reliability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time communication</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clients require live updates without manual refresh.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSockets (with a SockJS fallback) and Pekko actors are used.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker Deployment</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Containerized deployment required</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Multi-container architecture with Docker Compose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Containerized deployment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system is deployed with containers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker images and Docker Compose are used.</p></td>
 </tr>
 </tbody>
 </table>
@@ -706,13 +698,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Development team familiar with Scala and Angular</p>
+<p>The development team is familiar with Scala and Angular.</p>
 </li>
 <li>
-<p>Existing infrastructure supports Docker deployments</p>
+<p>The existing infrastructure supports Docker deployments.</p>
 </li>
 <li>
-<p>Tournament regulations require specific data formats</p>
+<p>Tournament data is prepared offline by the legacy tool mktt, which imports data from click-TT and populates the database. The system therefore must operate on an externally prepared database.</p>
 </li>
 </ul>
 </div>
@@ -722,59 +714,48 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_system_scope_and_context"><a class="anchor" href="#_system_scope_and_context"></a>3. System Scope and Context</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_business_context"><a class="anchor" href="#_business_context"></a>3.1. Business Context</h3>
+<div class="paragraph">
+<p>This chapter defines the boundary of the system and its environment using a C4 Level 1 (system context) view.</p>
+</div>
 <div class="imageblock">
 <div class="content">
-<img src="img/business-context.svg" alt="Business Context Diagram">
+<img src="img/context.svg" alt="context" width="1231" height="785">
 </div>
 </div>
+<div class="sect2">
+<h3 id="_business_context"><a class="anchor" href="#_business_context"></a>3.1. Business Context</h3>
 <div class="paragraph">
-<p>The system operates within the context of table tennis tournament management, interfacing with:</p>
+<p>The system supports a single table tennis tournament. Four roles interact with it:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Tournament administrators managing the overall tournament flow</p>
+<p>The <strong>Tournament Administrator</strong> runs the tournament: assigning matches to tables, calling matches, managing the queue and entering results.</p>
 </li>
 <li>
-<p>Table managers handling specific table operations</p>
+<p>The <strong>Table Manager</strong> manages the matches at a specific table and enters set and match results.</p>
 </li>
 <li>
-<p>Spectators viewing live results</p>
+<p>The <strong>Player</strong> reads the live results and standings.</p>
 </li>
 <li>
-<p>External systems for tournament registration (future)</p>
+<p>The <strong>System Administrator</strong> deploys, configures and monitors the system.</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_technical_context"><a class="anchor" href="#_technical_context"></a>3.2. Technical Context</h3>
-<div class="imageblock">
-<div class="content">
-<img src="img/technical-context.svg" alt="Technical Context Diagram">
-</div>
-</div>
+<h3 id="_external_systems"><a class="anchor" href="#_external_systems"></a>3.2. External Systems</h3>
 <div class="paragraph">
-<p>The system consists of:</p>
+<p>The system has no live, runtime integration with external systems. Two external systems are involved offline, before the tournament manager runs:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Three Angular frontend applications</p>
+<p><strong>click-TT</strong> is the registration and ranking platform. It is the source of player and discipline data.</p>
 </li>
 <li>
-<p>Scala Play Framework backend</p>
-</li>
-<li>
-<p>MariaDB database</p>
-</li>
-<li>
-<p>WebSocket communication layer</p>
-</li>
-<li>
-<p>Docker containerization</p>
+<p><strong>mktt</strong> is a legacy tool that imports data from click-TT, creates the tournament database and sets up the groups and the knockout system. The tournament manager then reads from that prepared database.</p>
 </li>
 </ul>
 </div>
@@ -801,34 +782,39 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backend Framework</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala Play Framework</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Mature, scalable web framework with excellent WebSocket support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend framework</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scala with Play Framework</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mature web framework with excellent WebSocket support.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Frontend Framework</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frontend framework</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Angular with ngrx</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Component-based architecture, mature ecosystem, excellent state management</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Component-based architecture and predictable state management.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Relational model fits tournament data, proven reliability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL with Slick</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Relational model fits tournament data; proven reliability.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time Communication</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSockets with SockJS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bi-directional communication, fallback support for older browsers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time communication</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSockets with SockJS fallback and Pekko actors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bi-directional communication and a fallback for older browsers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">State management</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ngrx (Redux pattern)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Predictable state, time-travel debugging, single store per application.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Containerization</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Docker with Docker Compose</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Simplified deployment, environment consistency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simplified deployment and consistent environments.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">State Management</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Redux/ngrx pattern</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Predictable state management, time-travel debugging</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Documentation rendering</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PlantUML with the C4-PlantUML library</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text-based, versionable diagrams in a standard notation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -838,19 +824,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Microservices</strong>: Separate frontend applications for different user roles</p>
+<p><strong>Separate frontends per role</strong>: three independent Angular applications share one backend.</p>
 </li>
 <li>
-<p><strong>Event-driven</strong>: WebSocket-based real-time communication</p>
+<p><strong>Event-driven real-time communication</strong>: Pekko actors publish domain events that are broadcast over WebSockets.</p>
 </li>
 <li>
-<p><strong>Layered Architecture</strong>: Clear separation of presentation, business logic, and data layers</p>
+<p><strong>Layered backend</strong>: controllers, a single data-access component and domain models.</p>
 </li>
 <li>
-<p><strong>Repository Pattern</strong>: Data access abstraction in backend</p>
+<p><strong>Repository-style data access</strong>: one component (Tables) owns all persistence and the in-memory domain state.</p>
 </li>
 <li>
-<p><strong>Modern Frontend</strong>: Latest Angular 19 with incremental updates and modern tooling</p>
+<p><strong>Redux store</strong>: each frontend keeps its state in a single ngrx store.</p>
 </li>
 </ul>
 </div>
@@ -860,15 +846,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_building_block_view"><a class="anchor" href="#_building_block_view"></a>5. Building Block View</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>This chapter describes the building blocks at two C4 levels: the container level (Level 2) and the component level (Level 3).</p>
+</div>
 <div class="sect2">
-<h3 id="_level_1_system_overview"><a class="anchor" href="#_level_1_system_overview"></a>5.1. Level 1: System Overview</h3>
+<h3 id="_level_2_containers"><a class="anchor" href="#_level_2_containers"></a>5.1. Level 2: Containers</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/system-overview.svg" alt="System Overview">
+<img src="img/container.svg" alt="container" width="957" height="1296">
 </div>
-</div>
-<div class="paragraph">
-<p>The system consists of four main building blocks:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -877,35 +863,43 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Building Block</th>
+<th class="tableblock halign-left valign-top">Container</th>
 <th class="tableblock halign-left valign-top">Responsibility</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Admin View</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament administration interface - match assignment, calling, result entry (Angular 19)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Angular 21 SPA for tournament administration: match assignment, calling, queue management, results.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Result View</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Public display of tournament results and standings (Angular 19)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Angular 21 SPA for displaying live results and standings.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Table Manager View</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Table-specific management interface for match results (Angular 19)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Angular 19 SPA for table-specific match management and result entry.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reverse Proxy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nginx. Serves the three SPA bundles and proxies API and WebSocket traffic to the backend.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Business logic, data persistence, WebSocket communication, PDF generation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scala 2.13 on Play Framework. REST API, WebSocket broadcasting and PDF generation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament Database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL. Persists players, matches, tables, groups and settings.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_level_2_backend_components"><a class="anchor" href="#_level_2_backend_components"></a>5.2. Level 2: Backend Components</h3>
+<h3 id="_level_3_backend_components"><a class="anchor" href="#_level_3_backend_components"></a>5.2. Level 3: Backend Components</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/c4-backend-components.svg" alt="Backend Components">
+<img src="img/backend-components.svg" alt="backend components" width="2079" height="1090">
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -921,28 +915,60 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Controllers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP request handling, REST API endpoints</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST endpoints for match assignment, state changes and results.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Services</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Business logic implementation, PDF generation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match List Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Queue management endpoints.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Models</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Data structures and domain objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player, club and discipline data.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">DAO Layer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database access and persistence</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Table Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Table assignment and locking.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket Actors</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time communication handling</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Printer Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PDF generation and print jobs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Settings Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System settings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SockJS Controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket connection upgrade.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PDF Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Renders match sheets and documents to PDF.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tables (DAO)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The single data-access component: all persistence and the in-memory domain state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Publisher</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko actor that distributes domain events to connected clients.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Printer Actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko actor that owns the print job queue.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket Actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko actor, one per client connection.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scheduler</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Background job processing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Background tasks and automatic match start.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Models</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scala case classes for the domain objects.</p></td>
 </tr>
 </tbody>
 </table>
@@ -950,44 +976,46 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_level_3_frontend_components"><a class="anchor" href="#_level_3_frontend_components"></a>5.3. Level 3: Frontend Components</h3>
 <div class="paragraph">
-<p>Each Angular application follows a similar structure:</p>
+<p>All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="img/c4-frontend-components.svg" alt="Frontend Components">
+<img src="img/frontend-components.svg" alt="frontend components" width="726" height="879">
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5714%;">
+<col style="width: 28.5714%;">
+<col style="width: 28.5715%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Component</th>
-<th class="tableblock halign-left valign-top">Responsibility</th>
+<th class="tableblock halign-left valign-top">Layer</th>
+<th class="tableblock halign-left valign-top">Admin View</th>
+<th class="tableblock halign-left valign-top">Result View</th>
+<th class="tableblock halign-left valign-top">Table Manager View</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Components</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">UI components and pages</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feature modules</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">assign, caller, discipline, table, result, player, settings, supervisor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">result</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">table-list</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Services</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP communication, business logic</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">State management</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ngrx store (actions, reducers, effects, selectors)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ngrx store</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ngrx store</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Redux Store</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">State management (actions, reducers, effects)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Models</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TypeScript interfaces and data structures</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Guards/Interceptors</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Authentication, HTTP interceptors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Communication</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP and WebSocket services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP and WebSocket services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP and WebSocket services</p></td>
 </tr>
 </tbody>
 </table>
@@ -997,88 +1025,35 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_runtime_view"><a class="anchor" href="#_runtime_view"></a>6. Runtime View</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>This chapter describes two important runtime scenarios as C4 dynamic diagrams.</p>
+</div>
 <div class="sect2">
-<h3 id="_match_assignment_flow"><a class="anchor" href="#_match_assignment_flow"></a>6.1. Match Assignment Flow</h3>
+<h3 id="_assign_a_match_to_a_table"><a class="anchor" href="#_assign_a_match_to_a_table"></a>6.1. Assign a Match to a Table</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/match-assignment-flow.svg" alt="Match Assignment Flow">
+<img src="img/dynamic-assign.svg" alt="dynamic assign" width="376" height="914">
 </div>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Administrator selects match and table</p>
-</li>
-<li>
-<p>System updates match status</p>
-</li>
-<li>
-<p>WebSocket notification sent to all clients</p>
-</li>
-<li>
-<p>Table manager receives notification</p>
-</li>
-<li>
-<p>Match appears in table manager interface</p>
-</li>
-</ol>
+<div class="paragraph">
+<p>The Tournament Administrator selects a match and a table. The backend persists the assignment, updates its in-memory state and publishes an event. The Publisher broadcasts the change to all connected clients over WebSockets, so the Table Manager View and Result View update immediately.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_result_entry_flow"><a class="anchor" href="#_result_entry_flow"></a>6.2. Result Entry Flow</h3>
+<h3 id="_enter_a_match_result"><a class="anchor" href="#_enter_a_match_result"></a>6.2. Enter a Match Result</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/result-entry-flow.svg" alt="Result Entry Flow">
+<img src="img/dynamic-result.svg" alt="dynamic result" width="469" height="895">
 </div>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Table manager enters match result</p>
-</li>
-<li>
-<p>System validates and stores result</p>
-</li>
-<li>
-<p>WebSocket notification broadcasts update</p>
-</li>
-<li>
-<p>All connected clients receive real-time update</p>
-</li>
-<li>
-<p>Result view displays updated standings</p>
-</li>
-</ol>
+<div class="paragraph">
+<p>The Table Manager enters the set and match results. The backend validates and persists the result, marks the match Completed, and — for knockout matches — writes the next knockout match. It then broadcasts the updated match and standings to all clients.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_real_time_communication"><a class="anchor" href="#_real_time_communication"></a>6.3. Real-time Communication</h3>
-<div class="imageblock">
-<div class="content">
-<img src="img/websocket-communication.svg" alt="WebSocket Communication">
-</div>
-</div>
 <div class="paragraph">
-<p>The system uses WebSocket actors for real-time communication:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Client connects via WebSocket</p>
-</li>
-<li>
-<p>WebSocket actor created for connection</p>
-</li>
-<li>
-<p>Actor subscribes to relevant events</p>
-</li>
-<li>
-<p>System events trigger actor notifications</p>
-</li>
-<li>
-<p>Actor broadcasts to connected clients</p>
-</li>
-</ol>
+<p>Real-time updates flow through a Pekko Publisher actor. The Tables (DAO) component publishes domain events; the Publisher distributes them to the WebSocket actors, one per connected client. Each SPA receives the events over its WebSocket connection and updates its ngrx store.</p>
 </div>
 </div>
 </div>
@@ -1086,78 +1061,58 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_deployment_view"><a class="anchor" href="#_deployment_view"></a>7. Deployment View</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_production_deployment"><a class="anchor" href="#_production_deployment"></a>7.1. Production Deployment</h3>
-<div class="imageblock">
-<div class="content">
-<img src="img/deployment-view.svg" alt="Deployment View">
-</div>
-</div>
 <div class="paragraph">
-<p>The system is deployed using Docker containers:</p>
+<p>The system is deployed as three containers orchestrated by Docker Compose.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 16.6668%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Container</th>
-<th class="tableblock halign-left valign-top">Technology</th>
+<th class="tableblock halign-left valign-top">Image content</th>
+<th class="tableblock halign-left valign-top">Port</th>
 <th class="tableblock halign-left valign-top">Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Frontend Container</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Nginx + Angular builds</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Serves all three frontend applications</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clients (Nginx)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One image that builds the three SPAs and serves them with Nginx.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80 (host) → 8080 (container)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Serves the three SPA bundles and reverse-proxies <code>/api</code> and WebSocket traffic to the backend.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backend Container</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala Play application</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Business logic and API services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scala Play application.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST API, WebSocket broadcasting and PDF generation.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database Container</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Data persistence</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reverse Proxy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Nginx</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Load balancing and SSL termination</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3306</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Data persistence.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="sect2">
+<h3 id="_production_topology"><a class="anchor" href="#_production_topology"></a>7.1. Production Topology</h3>
+<div class="paragraph">
+<p>The three SPAs are built together into a single Nginx image (<code>Dockerfile-clients</code>). Nginx serves the static bundles under <code>/admin-view</code>, <code>/result-view</code> and <code>/tablemanager-view</code>, and proxies <code>/api/</code> (and per-application API paths) plus WebSocket connections to the backend. The backend connects to MariaDB over JDBC.</p>
+</div>
+<div class="paragraph">
+<p>The production database is prepared offline by mktt; the running system only reads from and writes to the tournament data it contains.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_development_environment"><a class="anchor" href="#_development_environment"></a>7.2. Development Environment</h3>
-<div class="imageblock">
-<div class="content">
-<img src="img/development-setup.svg" alt="Development Setup">
-</div>
-</div>
 <div class="paragraph">
-<p>Development setup uses:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Individual npm/ng serve for each frontend app</p>
-</li>
-<li>
-<p>sbt run for backend development</p>
-</li>
-<li>
-<p>Docker Compose for database</p>
-</li>
-<li>
-<p>Proxy configuration for API calls</p>
-</li>
-</ul>
+<p>In development, each frontend runs with its own <code>ng serve</code> (default port 4200) and the backend with <code>sbt run</code> (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.</p>
 </div>
 </div>
 </div>
@@ -1170,16 +1125,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Input validation on all endpoints</p>
+<p>Input validation on all endpoints.</p>
 </li>
 <li>
-<p>SQL injection prevention through ORM</p>
+<p>SQL injection prevention through the Slick database layer.</p>
 </li>
 <li>
-<p>WebSocket connection authentication</p>
+<p>WebSocket connection authentication.</p>
 </li>
 <li>
-<p>Environment-based configuration</p>
+<p>Environment-based configuration (database credentials and connection strings are supplied via environment variables).</p>
 </li>
 </ul>
 </div>
@@ -1189,16 +1144,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Centralized error handling in backend</p>
+<p>Centralized error handling in the backend.</p>
 </li>
 <li>
-<p>User-friendly error messages in frontend</p>
+<p>User-friendly error messages in the frontends.</p>
 </li>
 <li>
-<p>Logging for debugging and monitoring</p>
+<p>Structured logging for debugging and monitoring.</p>
 </li>
 <li>
-<p>Graceful degradation for WebSocket failures</p>
+<p>Graceful degradation and reconnection for WebSocket failures.</p>
 </li>
 </ul>
 </div>
@@ -1208,16 +1163,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Structured logging with Logback</p>
+<p>Structured logging (SLF4J/Logback) in the backend.</p>
 </li>
 <li>
-<p>Performance monitoring for database queries</p>
+<p>Logging of database reads and domain-state changes.</p>
 </li>
 <li>
-<p>WebSocket connection monitoring</p>
-</li>
-<li>
-<p>Error tracking and alerting</p>
+<p>WebSocket connection monitoring.</p>
 </li>
 </ul>
 </div>
@@ -1227,16 +1179,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Database transactions for critical operations</p>
+<p>Database transactions for critical operations.</p>
 </li>
 <li>
-<p>Optimistic locking for concurrent updates</p>
+<p>A single in-memory domain state in the Tables (DAO) component, kept in sync with the database.</p>
 </li>
 <li>
-<p>Event sourcing for audit trails</p>
+<p>Real-time synchronization across all clients via the Publisher and WebSocket actors.</p>
 </li>
 <li>
-<p>Real-time synchronization across clients</p>
+<p>Automatic recomputation of group standings once a group is completed.</p>
 </li>
 </ul>
 </div>
@@ -1244,107 +1196,75 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_recent_architecture_changes"><a class="anchor" href="#_recent_architecture_changes"></a>9. Recent Architecture Changes</h2>
+<h2 id="_architecture_decisions"><a class="anchor" href="#_architecture_decisions"></a>9. Architecture Decisions</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_angular_19_migration_completion_2025"><a class="anchor" href="#_angular_19_migration_completion_2025"></a>9.1. Angular 19 Migration Completion (2025)</h3>
+<h3 id="_three_separate_frontend_applications"><a class="anchor" href="#_three_separate_frontend_applications"></a>9.1. Three Separate Frontend Applications</h3>
 <div class="paragraph">
-<p><strong>Motivation</strong>: Modernize frontend applications to leverage latest Angular features and security updates</p>
+<p><strong>Decision</strong>: use three independent Angular applications instead of one.</p>
 </div>
 <div class="paragraph">
-<p><strong>Changes Implemented</strong>:
-* All three applications updated to Angular 19.2.14
-* Table Manager View: Incremental update from Angular 14 to Angular 19
-* Result View: Updated to Angular 19.2.14
-* Admin View: Already on Angular 19
-* Updated dependencies: Angular Material 19, ngrx 19, TypeScript 5.8
-* Fixed legacy Material component imports
-* Added <code>standalone: false</code> declarations for existing components
-* Updated build tools and CLI to latest versions</p>
+<p><strong>Rationale</strong>: each role has distinct requirements; the applications can be developed and deployed independently and stay focused on their task.</p>
 </div>
 <div class="paragraph">
-<p><strong>Impact</strong>:
-* Improved performance and bundle size optimization
-* Enhanced developer experience with latest tooling
-* Better security with updated dependencies
-* Foundation for future modernization of remaining applications</p>
+<p><strong>Consequences</strong>: some code duplication between applications, and additional deployment effort. The three applications share the same ngrx patterns and are served together by one Nginx image.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_websocket_based_real_time_communication"><a class="anchor" href="#_websocket_based_real_time_communication"></a>9.2. WebSocket-based Real-time Communication</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: push live updates over WebSockets (with a SockJS fallback) instead of client polling.</p>
 </div>
 <div class="paragraph">
-<p><strong>Next Steps</strong>:
-* ✅ All applications now on Angular 19
-* Consider migration to standalone components across all applications
-* Evaluate shared component library for code reuse
-* Optimize build pipelines for consistency</p>
+<p><strong>Rationale</strong>: tournament management requires immediate updates; polling would add server load and latency.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: added complexity in connection management, reconnection handling, and state synchronization across clients.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scala_play_backend_with_pekko_actors"><a class="anchor" href="#_scala_play_backend_with_pekko_actors"></a>9.3. Scala Play Backend with Pekko Actors</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: Scala with Play Framework and Pekko actors for the backend.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: excellent WebSocket support and a mature ecosystem; Pekko actors model the publish/subscribe broadcast cleanly.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: JVM deployment requirements and a dependency on the Scala ecosystem.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_single_data_access_component"><a class="anchor" href="#_single_data_access_component"></a>9.4. Single Data-Access Component</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: keep all persistence and the in-memory domain state in one component (Tables) instead of separate per-entity DAOs.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: the domain objects are tightly coupled (matches, players, tables, groups); one component keeps the in-memory state consistent without cross-DAO coordination.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: a large single class; changes must be made carefully, but consistency is easier to guarantee.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_offline_data_preparation_by_mktt"><a class="anchor" href="#_offline_data_preparation_by_mktt"></a>9.5. Offline Data Preparation by mktt</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: rely on the legacy tool mktt to prepare the tournament database from click-TT data, rather than importing registrations at runtime.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: grouping and knockout setup already exist in mktt; re-implementing them would be costly.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: the system has no live registration integration and depends on an externally prepared database.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_design_decisions"><a class="anchor" href="#_design_decisions"></a>10. Design Decisions</h2>
+<h2 id="_quality_requirements"><a class="anchor" href="#_quality_requirements"></a>10. Quality Requirements</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_multiple_frontend_applications"><a class="anchor" href="#_multiple_frontend_applications"></a>10.1. Multiple Frontend Applications</h3>
-<div class="paragraph">
-<p><strong>Decision</strong>: Three separate Angular applications instead of single application</p>
-</div>
-<div class="paragraph">
-<p><strong>Rationale</strong>:
-* Different user roles have distinct requirements
-* Allows independent development and deployment
-* Reduces application complexity
-* Better performance through focused functionality</p>
-</div>
-<div class="paragraph">
-<p><strong>Consequences</strong>:
-* Some code duplication between applications
-* Additional deployment complexity
-* Shared component libraries needed</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_websocket_communication"><a class="anchor" href="#_websocket_communication"></a>10.2. WebSocket Communication</h3>
-<div class="paragraph">
-<p><strong>Decision</strong>: WebSocket-based real-time communication</p>
-</div>
-<div class="paragraph">
-<p><strong>Rationale</strong>:
-* Tournament management requires immediate updates
-* Better user experience with live data
-* Reduced server load compared to polling</p>
-</div>
-<div class="paragraph">
-<p><strong>Consequences</strong>:
-* Additional complexity in connection management
-* Fallback mechanisms needed for connection failures
-* State synchronization challenges</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_scala_play_framework"><a class="anchor" href="#_scala_play_framework"></a>10.3. Scala Play Framework</h3>
-<div class="paragraph">
-<p><strong>Decision</strong>: Scala Play Framework for backend</p>
-</div>
-<div class="paragraph">
-<p><strong>Rationale</strong>:
-* Excellent WebSocket support
-* Mature ecosystem
-* Good performance characteristics
-* Team expertise</p>
-</div>
-<div class="paragraph">
-<p><strong>Consequences</strong>:
-* JVM deployment requirements
-* Learning curve for new team members
-* Dependency on Scala ecosystem</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_quality_requirements"><a class="anchor" href="#_quality_requirements"></a>11. Quality Requirements</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_performance_requirements"><a class="anchor" href="#_performance_requirements"></a>11.1. Performance Requirements</h3>
+<h3 id="_quality_tree"><a class="anchor" href="#_quality_tree"></a>10.1. Quality Tree</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -1353,69 +1273,72 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Metric</th>
+<th class="tableblock halign-left valign-top">Category</th>
 <th class="tableblock halign-left valign-top">Requirement</th>
 <th class="tableblock halign-left valign-top">Measurement</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Response Time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 500ms for API calls</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Average response time monitoring</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API responses below 500 ms.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Average response time monitoring.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket Latency</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 100ms for real-time updates</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Message delivery time tracking</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Real-time updates delivered below 100 ms.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Message delivery time tracking.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Concurrent Users</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Support 100+ concurrent users</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Load testing scenarios</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Support a full tournament with many concurrent users.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Load testing.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database Performance</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 100ms for simple queries</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Query execution time monitoring</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reliability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High availability during tournament hours.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uptime monitoring.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reliability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automatic recovery from connection failures.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reconnection testing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reliability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consistent data across all clients.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">State synchronization checks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Intuitive interfaces for non-technical users.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usability testing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mobile-responsive result display.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Responsive design checks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maintainability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Independent development and deployment of the frontends.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build and deployment isolation.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_reliability_requirements"><a class="anchor" href="#_reliability_requirements"></a>11.2. Reliability Requirements</h3>
+<h3 id="_quality_scenarios"><a class="anchor" href="#_quality_scenarios"></a>10.2. Quality Scenarios</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>99.9% uptime during tournament hours</p>
+<p>When a result is entered at a table, every connected client shows the update within 100 ms.</p>
 </li>
 <li>
-<p>Automatic recovery from connection failures</p>
+<p>When a WebSocket connection drops, the client reconnects automatically and re-synchronizes its state.</p>
 </li>
 <li>
-<p>Data consistency across all clients</p>
-</li>
-<li>
-<p>Graceful handling of high load scenarios</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_usability_requirements"><a class="anchor" href="#_usability_requirements"></a>11.3. Usability Requirements</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Intuitive interface for non-technical users</p>
-</li>
-<li>
-<p>Mobile-responsive design</p>
-</li>
-<li>
-<p>Accessibility compliance</p>
-</li>
-<li>
-<p>Multi-language support (future)</p>
+<p>When a table is locked, no match is assigned to it automatically or manually.</p>
 </li>
 </ul>
 </div>
@@ -1423,10 +1346,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_risks_and_technical_debts"><a class="anchor" href="#_risks_and_technical_debts"></a>12. Risks and Technical Debts</h2>
+<h2 id="_risks_and_technical_debts"><a class="anchor" href="#_risks_and_technical_debts"></a>11. Risks and Technical Debts</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_technical_risks"><a class="anchor" href="#_technical_risks"></a>12.1. Technical Risks</h3>
+<h3 id="_technical_risks"><a class="anchor" href="#_technical_risks"></a>11.1. Technical Risks</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1444,50 +1367,50 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket Connection Failures</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Users lose real-time updates</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Automatic reconnection, fallback mechanisms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket connection failures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clients lose real-time updates.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automatic reconnection and fallback.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database Performance</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Slow response times</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Query optimization, indexing strategy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Slow responses during a large tournament.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query optimization and indexing.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Browser Compatibility</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Limited user access</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Progressive enhancement, polyfills</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Single-threaded in-memory state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contention or inconsistency under high load.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Careful synchronization; load testing.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scalability Limits</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">System overload during large tournaments</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Load testing, performance monitoring</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dependence on mktt and click-TT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament data cannot be prepared without the legacy toolchain.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Document the offline workflow; consider a future import replacement.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_technical_debt"><a class="anchor" href="#_technical_debt"></a>12.2. Technical Debt</h3>
+<h3 id="_technical_debt"><a class="anchor" href="#_technical_debt"></a>11.2. Technical Debt</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Code duplication between frontend applications</p>
+<p>Code duplication between the three frontend applications.</p>
 </li>
 <li>
-<p>Code duplication between frontend applications (all now on Angular 19)</p>
+<p>Version drift: the Admin View and Result View are on Angular 21, while the Table Manager View is on Angular 19.</p>
 </li>
 <li>
-<p>Limited test coverage in some areas</p>
+<p>Limited test coverage in some areas.</p>
 </li>
 <li>
-<p>Missing documentation for some components</p>
+<p>Missing documentation for some components.</p>
 </li>
 <li>
-<p>Opportunity to consolidate shared components across applications</p>
+<p>Opportunity to extract a shared component library to reduce duplication.</p>
 </li>
 </ul>
 </div>
@@ -1495,64 +1418,132 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_glossary"><a class="anchor" href="#_glossary"></a>13. Glossary</h2>
+<h2 id="_glossary"><a class="anchor" href="#_glossary"></a>12. Glossary</h2>
 <div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Term</th>
-<th class="tableblock halign-left valign-top">Definition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Match</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A single game between two players or teams</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tournament</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A series of matches organized in a specific format</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Table Manager</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Person responsible for managing matches at a specific table</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Protocol for real-time bidirectional communication</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ngrx</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Redux pattern implementation for Angular</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SockJS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket-like object with fallback options</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Play Framework</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala web framework for building web applications</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Slick</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala database access library</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Actor-based toolkit for building concurrent applications</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>The canonical domain language of the system lives in the repository root file <code>GLOSSARY.md</code>, which is the single source of truth. Its content is included below.</p>
+</div>
+<div class="paragraph">
+<p>This glossary defines the canonical domain language of the Table Tennis Tournament Management System. It is the single source of truth for terminology used across the architecture documentation, the user interfaces and the codebase. Terms marked <strong>deprecated</strong> remain in the code but must not be used in new documentation or communication.</p>
+</div>
+<div class="paragraph">
+<p><strong>Core concepts</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Tournament</strong> — a single table tennis event. One running backend instance manages exactly one tournament.</p>
+</div>
+<div class="paragraph">
+<p><strong>Player</strong> — a person registered for a tournament. A player has a TTR rating, belongs to a Club and is registered for one or more disciplines. A player is also the person who reads live results in the Result View.</p>
+</div>
+<div class="paragraph">
+<p><strong>Club</strong> — the organization a player belongs to.</p>
+</div>
+<div class="paragraph">
+<p><strong>TTR</strong> — the official table tennis ranking used for players in Germany.</p>
+</div>
+<div class="paragraph">
+<p><strong>Discipline</strong> — a competition category within the tournament, for example "Herren A" or "Damen D 0-1500". Each discipline has a <strong>kind</strong> (Singles or Doubles) plus attributes such as a TTR range, an age range, a playing system and a knockout size. A discipline is stored in the <code>type</code> table.</p>
+</div>
+<div class="paragraph">
+<p><strong>Singles</strong> — a playing format in which a Side consists of one Player.</p>
+</div>
+<div class="paragraph">
+<p><strong>Doubles</strong> — a playing format in which a Side consists of two Players (a Double).</p>
+</div>
+<div class="paragraph">
+<p><strong>Double</strong> — a specific pairing of two Players that forms one Side in a doubles match. Stored in the <code>doubles</code> table.</p>
+</div>
+<div class="paragraph">
+<p><strong>Side</strong> — one of the two competitors in a match. A Side is one Player (Singles) or one Double (Doubles). <strong>Deprecated: "team".</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Match structure</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Match</strong> — an encounter between two Sides. A match is won by the first Side to win three Sets (best of five).</p>
+</div>
+<div class="paragraph">
+<p><strong>Set</strong> — a subunit of a match. A set is won by the first Side to reach eleven Points; from 10:10 a lead of two points is required. <strong>Deprecated: "game".</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Point</strong> — the atomic scoring unit within a set. <strong>Deprecated: "ball".</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Result</strong> — the recorded outcome of a match: the set scores and the winning Side.</p>
+</div>
+<div class="paragraph">
+<p><strong>Tournament flow</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Group</strong> — a round-robin group of players within a discipline. A group stage is played first; its results determine the knockout placement.</p>
+</div>
+<div class="paragraph">
+<p><strong>Knockout stage</strong> — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier <code>999</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Stage</strong> — where a match sits within its discipline: either the Group stage (Gruppenspiel) or a specific Knockout stage (Final, Semi-final, Quarter-final, Round of 16, Rounds 0–3, Third-place match, Placement matches, Top48/ER rounds). Stored in the <code>matchtype</code> table. In the knockout stage, the round number identifies the round within the bracket.</p>
+</div>
+<div class="paragraph">
+<p><strong>Queue</strong> — the ordered waiting list of matches used to let the tournament run without manual interaction. Matches in the queue are started automatically as tables become free. <strong>Deprecated code name: "MatchList".</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Call</strong> — the announcement of a match and its players. <strong>Second call</strong> and <strong>Third call</strong> are repeat announcements issued when a player has not appeared.</p>
+</div>
+<div class="paragraph">
+<p><strong>Infrastructure</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Table</strong> — a physical table tennis table on which matches are played.</p>
+</div>
+<div class="paragraph">
+<p><strong>Locked table</strong> — a table that is blocked from any match assignment, neither automatic nor manual.</p>
+</div>
+<div class="paragraph">
+<p><strong>Table group</strong> — a named set of tables.</p>
+</div>
+<div class="paragraph">
+<p><strong>Match state lifecycle</strong></p>
+</div>
+<div class="paragraph">
+<p>The lifecycle of a Match is expressed through its state:</p>
+</div>
+<div class="paragraph">
+<p><strong>Open</strong> — the match has been created but is neither in the queue nor played.</p>
+</div>
+<div class="paragraph">
+<p><strong>In Queue</strong> — the match has been placed in the Queue.</p>
+</div>
+<div class="paragraph">
+<p><strong>At Table</strong> — the match is assigned to a table but has not started.</p>
+</div>
+<div class="paragraph">
+<p><strong>Called</strong> — the first call for the match has been announced.</p>
+</div>
+<div class="paragraph">
+<p><strong>Second call</strong> / <strong>Third call</strong> — a repeat call has been announced because a player has not appeared.</p>
+</div>
+<div class="paragraph">
+<p><strong>Started</strong> — the match is being played.</p>
+</div>
+<div class="paragraph">
+<p><strong>Completed</strong> — the result has been entered and the match is finished.</p>
+</div>
+<div class="paragraph">
+<p><strong>Finished</strong> — the match has ended without a played result, for example a bye or a walkover ("free match"). Like Completed, it is a terminal state.</p>
+</div>
+<div class="paragraph">
+<p>The lifecycle state is represented in code by <code>MatchState</code>, whose values are <code>Open</code>, <code>InWaitingList</code>, <code>Callable</code>, <code>OnTable</code>, <code>SecondCall</code>, <code>ThirdCall</code>, <code>Started</code>, <code>Finished</code> and <code>Completed</code>. Two code names are counter-intuitive: assigning a match to a table sets the state <code>Callable</code>, while announcing the call sets the state <code>OnTable</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>External systems</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>click-TT</strong> — the external registration and ranking platform that provides player and discipline data. Data is imported offline; there is no runtime integration.</p>
+</div>
+<div class="paragraph">
+<p><strong>mktt</strong> — the legacy tool that imports data from click-TT, creates the tournament database and sets up the groups and the knockout system. It runs offline before the tournament manager is used.</p>
 </div>
 </div>
-</div>
-<div id="footer">
-<div id="footer-text">
-Last updated 2026-03-29 12:50:47 UTC
 </div>
 </div>
 </body>
