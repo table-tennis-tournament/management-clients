@@ -1,4 +1,4 @@
-import {Player} from '../../match/player.model';
+import { Player } from '../../match/player.model';
 
 export interface GameData {
   player: Player[];
