@@ -4,7 +4,7 @@
 title Dynamic diagram: enter a match result
 
 Person(tableManager, "Table Manager")
-Container(tableManagerView, "Table Manager View", "Angular 19")
+Container(tableManagerView, "Table Manager View", "Angular 21")
 Container(nginx, "Reverse Proxy", "Nginx")
 Container(backend, "Backend", "Scala Play")
 ContainerDb(mariadb, "Tournament Database", "MariaDB")

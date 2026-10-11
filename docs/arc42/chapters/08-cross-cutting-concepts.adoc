@@ -26,3 +26,11 @@
 * A single in-memory domain state in the Tables (DAO) component, kept in sync with the database.
 * Real-time synchronization across all clients via the Publisher and WebSocket actors.
 * Automatic recomputation of group standings once a group is completed.
+
+=== Testing
+
+* The backend is tested with ScalaTest and specs2.
+* The Admin View uses Karma/Jasmine unit tests.
+* The Result View uses Vitest unit tests.
+* The Result View and Table Manager View have Playwright end-to-end tests that run against the Docker Compose stack.
+* Formatting is checked with Prettier in CI for all three frontends.

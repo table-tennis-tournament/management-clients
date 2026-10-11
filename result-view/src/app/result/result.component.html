@@ -1,6 +1,6 @@
-<div class="mh-100 vh-100 p-2">
+<div class="mh-100 p-2">
   <div class="row mb-3">
-    <div *ngFor="let currentType of types$ | async" class="ml-3">
+    <div *ngFor="let currentType of types$ | async" class="col-auto ml-3">
       <button mat-raised-button color="{{ getColor(currentType) }}" (click)="onTabSelected(currentType)">{{ currentType.name }}</button>
     </div>
     <div class="col">
@@ -8,10 +8,11 @@
     </div>
   </div>
 
-  <div class="row ml-1" *ngIf="stages$">
-    <div *ngFor="let currentStage of stages$ | async" class="col-3">
-      <app-stage-view [stage]="currentStage"></app-stage-view>
-    </div>
+  <div class="row ml-1" *ngIf="(stages$ | async)?.length">
+    <app-bracket-view [stages]="stages$ | async"></app-bracket-view>
+    <!--    <div *ngFor="let currentStage of stages$ | async" class="col-3">-->
+    <!--      <app-stage-view [stage]="currentStage"></app-stage-view>-->
+    <!--    </div>-->
   </div>
   <div class="row" *ngIf="groups$">
     <div *ngFor="let currentGroup of groups$ | async" class="col-3 mt-2">

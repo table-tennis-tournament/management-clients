@@ -1,0 +1,97 @@
+:host {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.bracket {
+  position: relative;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.round {
+  position: absolute;
+  top: 0;
+  width: 200px;
+  height: 100%;
+}
+
+.stage-title {
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.round-matches {
+  position: relative;
+  width: 200px;
+}
+
+.match {
+  position: absolute;
+  left: 0;
+  width: 200px;
+  height: 70px;
+}
+
+.match-content {
+  background-color: #fff;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .divider {
+    height: 1px;
+    margin: 4px 0;
+    background-color: #ccc;
+    flex-shrink: 0;
+  }
+
+  .team {
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0;
+
+    .score {
+      font-weight: bold;
+    }
+  }
+}
+
+.line {
+  position: absolute;
+  background-color: #999;
+}
+
+.line-incoming {
+  left: -30px;
+  top: 34px;
+  width: 30px;
+  height: 2px;
+}
+
+.line-outgoing {
+  left: 200px;
+  top: 34px;
+  width: 30px;
+  height: 2px;
+}
+
+.line-vertical {
+  left: 229px;
+  width: 2px;
+}

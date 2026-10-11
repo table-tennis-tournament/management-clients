@@ -10,5 +10,13 @@ Run `docker build . -t holzleube/result-view:1.x` to build image.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm start` for a dev server on `http://localhost:4202/`. The app will automatically reload if you change any of the source files.
+
+## Testing
+
+Run `npm test` to execute the Vitest unit tests and `npm run e2e` to run the Playwright end-to-end tests.
+
+## Formatting
+
+Run `npm run format` to format the code with prettier.
 
