@@ -13,7 +13,7 @@ Person(sysadmin, "System Administrator", "Deploys and monitors")
 System_Boundary(tournamentSystem, "Table Tennis Tournament Management System") {
     Container(adminView, "Admin View", "Angular 21, ngrx, Angular Material", "SPA for tournament administration: match assignment, calling, queue, results")
     Container(resultView, "Result View", "Angular 21, ngrx", "SPA for displaying live results and standings")
-    Container(tableManagerView, "Table Manager View", "Angular 19, ngrx", "SPA for table-specific match management and result entry")
+    Container(tableManagerView, "Table Manager View", "Angular 21, ngrx", "SPA for table-specific match management and result entry")
     Container(nginx, "Reverse Proxy", "Nginx", "Serves the SPA bundles and proxies API and WebSocket traffic to the backend")
     Container(backend, "Backend", "Scala 2.13, Play Framework, Pekko", "REST API, WebSocket broadcasting, PDF generation")
     ContainerDb(mariadb, "Tournament Database", "MariaDB/MySQL", "Stores players, matches, tables, groups and settings")

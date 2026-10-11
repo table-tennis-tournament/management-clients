@@ -34,7 +34,7 @@
 === Technical Debt
 
 * Code duplication between the three frontend applications.
-* Version drift: the Admin View and Result View are on Angular 21, while the Table Manager View is on Angular 19.
-* Limited test coverage in some areas.
+* All three frontends are kept on the same major Angular version (currently Angular 21); keeping them in sync requires a coordinated upgrade effort.
+* Limited test coverage in some areas (the Table Manager View currently has no unit tests).
 * Missing documentation for some components.
 * Opportunity to extract a shared component library to reduce duplication.

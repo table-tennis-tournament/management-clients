@@ -33,4 +33,4 @@ The production database is prepared offline by mktt; the running system only rea
 
 === Development Environment
 
-In development, each frontend runs with its own `ng serve` (default port 4200) and the backend with `sbt run` (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.
+In development, each frontend runs with its own `ng serve` (Admin View on port 4201, Result View on port 4202, Table Manager View on port 4200) and the backend with `sbt run` (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.

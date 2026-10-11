@@ -1,6 +1,6 @@
 # management-clients
 
-In this repository you will find four components for table tennis tournament management. All clients are designed as SPAs and use angular as js framework. Also they use [ngrx](https://ngrx.io/) for client site state management.
+In this repository you will find four components for table tennis tournament management. The three clients are single-page applications (SPAs) built with Angular 21 and use [ngrx](https://ngrx.io/) for client-side state management. The backend is a Scala application on Play Framework 3.0.x with a MariaDB.
 
 ## admin-view
 
@@ -8,7 +8,7 @@ The [admin-view](./admin-view/README.md) is designed to manage the tournament fl
 
 ## result-view
 
-The [result-view](./result-view/README.md) is designed to show current results of the tournament.
+The [result-view](./result-view/README.md) is designed to show current results of the tournament, including a live bracket view for the knockout stage.
 
 ## tablemanager-view
 
