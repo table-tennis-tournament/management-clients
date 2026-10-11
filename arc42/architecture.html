@@ -495,6 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_error_handling">8.2. Error Handling</a></li>
 <li><a href="#_logging_and_monitoring">8.3. Logging and Monitoring</a></li>
 <li><a href="#_data_consistency">8.4. Data Consistency</a></li>
+<li><a href="#_testing">8.5. Testing</a></li>
 </ul>
 </li>
 <li><a href="#_architecture_decisions">9. Architecture Decisions</a>
@@ -878,7 +879,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Table Manager View</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Angular 19 SPA for table-specific match management and result entry.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Angular 21 SPA for table-specific match management and result entry.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reverse Proxy</p></td>
@@ -1112,7 +1113,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_development_environment"><a class="anchor" href="#_development_environment"></a>7.2. Development Environment</h3>
 <div class="paragraph">
-<p>In development, each frontend runs with its own <code>ng serve</code> (default port 4200) and the backend with <code>sbt run</code> (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.</p>
+<p>In development, each frontend runs with its own <code>ng serve</code> (Admin View on port 4201, Result View on port 4202, Table Manager View on port 4200) and the backend with <code>sbt run</code> (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.</p>
 </div>
 </div>
 </div>
@@ -1189,6 +1190,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li>
 <p>Automatic recomputation of group standings once a group is completed.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing"><a class="anchor" href="#_testing"></a>8.5. Testing</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>The backend is tested with ScalaTest and specs2.</p>
+</li>
+<li>
+<p>The Admin View uses Karma/Jasmine unit tests.</p>
+</li>
+<li>
+<p>The Result View uses Vitest unit tests.</p>
+</li>
+<li>
+<p>The Result View and Table Manager View have Playwright end-to-end tests that run against the Docker Compose stack.</p>
+</li>
+<li>
+<p>Formatting is checked with Prettier in CI for all three frontends.</p>
 </li>
 </ul>
 </div>
@@ -1401,10 +1424,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Code duplication between the three frontend applications.</p>
 </li>
 <li>
-<p>Version drift: the Admin View and Result View are on Angular 21, while the Table Manager View is on Angular 19.</p>
+<p>All three frontends are kept on the same major Angular version (currently Angular 21); keeping them in sync requires a coordinated upgrade effort.</p>
 </li>
 <li>
-<p>Limited test coverage in some areas.</p>
+<p>Limited test coverage in some areas (the Table Manager View currently has no unit tests).</p>
 </li>
 <li>
 <p>Missing documentation for some components.</p>
