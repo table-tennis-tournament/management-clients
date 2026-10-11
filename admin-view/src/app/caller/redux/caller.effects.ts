@@ -9,6 +9,7 @@ import {
   CallMatch,
   CallMatchError,
   CallMatchSuccess,
+  LoadCallerMatches,
   LoadCallerMatchesError,
   LoadRefereesListError,
   LoadRefereesListSuccess,
@@ -86,7 +87,7 @@ export class CallerEffects {
       ofType(CallerActionTypes.CallMatch),
       switchMap((action: CallMatch) => {
         return this.callerService.callMatch(action.payload).pipe(
-          map((state) => new CallMatchSuccess(state)),
+          switchMap((state) => [new CallMatchSuccess(state), new LoadCallerMatches()]),
           catchError((err) => {
             this.toastService.error('Fehler beim Ausrufen des Matches');
             return of(new CallMatchError(err));
