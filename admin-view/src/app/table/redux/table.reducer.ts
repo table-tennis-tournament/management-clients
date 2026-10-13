@@ -80,6 +80,16 @@ export function reduceTableState(state: TableState = initialState, action: Table
           };
         }),
       };
+    case TableActionTypes.FreeSuccess: {
+      const matchIds: number[] = action.payload.matchIds;
+      return {
+        ...state,
+        tables: state.tables.map((table) => ({
+          ...table,
+          matches: table.matches.filter((match) => !matchIds.includes(match.id)),
+        })),
+      };
+    }
     default:
       return state;
   }

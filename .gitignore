@@ -15,5 +15,7 @@ node_modules/
 *.iml
 .angular
 dist
+test-results/
+playwright-report/
 .claude
 /backend/
