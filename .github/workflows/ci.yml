@@ -108,7 +108,7 @@ jobs:
         working-directory: tablemanager-view
         run: npx playwright install --with-deps chromium
       - name: Start services with Docker Compose
-        run: docker compose up -d
+        run: docker compose up -d --build
       - name: Wait for backend to be ready
         run: |
           for i in {1..30}; do
@@ -157,7 +157,7 @@ jobs:
         working-directory: result-view
         run: npx playwright install --with-deps chromium
       - name: Start services with Docker Compose
-        run: docker compose up -d
+        run: docker compose up -d --build
       - name: Wait for backend to be ready
         run: |
           for i in {1..30}; do
@@ -206,7 +206,7 @@ jobs:
         working-directory: admin-view
         run: npx playwright install --with-deps chromium
       - name: Start services with Docker Compose
-        run: docker compose up -d
+        run: docker compose up -d --build
       - name: Wait for backend to be ready
         run: |
           for i in {1..30}; do

@@ -1,0 +1,15 @@
+# Keep the Docker build context clean: never ship host build artifacts
+# (incl. host-platform node_modules) or stale bundles into the image.
+**/node_modules
+**/dist
+**/.angular
+**/test-results
+**/playwright-report
+**/coverage
+**/*.log
+.git
+.github
+.idea
+/backend
+/target
+/docs

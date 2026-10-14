@@ -10,10 +10,20 @@ RUN cd ./admin-view && npm install && npm run build -- --output-path=./dist/out 
 RUN cd ./result-view && npm install && npm run build -- --output-path=./dist/out --configuration production --base-href=/result-view/
 RUN cd ./tablemanager-view && npm install && npm run build -- --output-path=./dist/out --configuration production --base-href=/tablemanager-view/
 
+# Angular's `application` builder emits the browser bundle under dist/out/browser,
+# while the legacy `browser` builder emits it directly under dist/out. Normalise
+# both layouts so the runtime stage copies one predictable path per app.
+RUN for app in admin-view result-view tablemanager-view; do \
+      if [ -d "$app/dist/out/browser" ]; then \
+        mv "$app/dist/out/browser" "$app/dist/final"; \
+      else \
+        mv "$app/dist/out" "$app/dist/final"; \
+      fi; \
+    done
 
 FROM nginx:alpine
-COPY --from=builder /admin-view/dist/out/browser/ /usr/share/nginx/html/admin-view
-COPY --from=builder /result-view/dist/out/browser/ /usr/share/nginx/html/result-view
-COPY --from=builder /tablemanager-view/dist/out/ /usr/share/nginx/html/tablemanager-view
+COPY --from=builder /admin-view/dist/final/ /usr/share/nginx/html/admin-view
+COPY --from=builder /result-view/dist/final/ /usr/share/nginx/html/result-view
+COPY --from=builder /tablemanager-view/dist/final/ /usr/share/nginx/html/tablemanager-view
 
 COPY my_server_block.conf /etc/nginx/nginx.conf
