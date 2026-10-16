@@ -16,7 +16,7 @@ class TournamentMatchTest {
     @org.junit.jupiter.api.Test
     fun `completes a match and records the winner`() {
         val match = match()
-        match.complete("11:5,11:7,11:3", sets1 = 3, sets2 = 0)
+        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
         assertEquals(MatchState.Completed, match.state)
         assertTrue(match.isPlayed)
@@ -24,27 +24,96 @@ class TournamentMatchTest {
         assertEquals(1L, match.winner?.id)
         assertEquals(3, match.sets1)
         assertEquals(0, match.sets2)
+        assertEquals(33, match.balls1)
+        assertEquals(15, match.balls2)
+        assertEquals("11=5,11=7,11=3", match.resultRaw)
+        assertEquals("3 : 0", match.result)
     }
 
     @org.junit.jupiter.api.Test
     fun `records player two as winner when they reach three sets`() {
         val match = match()
-        match.complete("5:11,7:11,11:8,9:11", sets1 = 1, sets2 = 3)
+        match.complete(listOf(SetResult(5, 11), SetResult(7, 11), SetResult(11, 8), SetResult(9, 11)))
 
         assertEquals(2L, match.winner?.id)
+        assertEquals(1, match.sets1)
+        assertEquals(3, match.sets2)
     }
 
     @org.junit.jupiter.api.Test
     fun `rejects a result where neither side reached three sets`() {
         assertFailsWith<IllegalArgumentException> {
-            match().complete("11:5,11:5", sets1 = 2, sets2 = 0)
+            match().complete(listOf(SetResult(11, 5), SetResult(11, 5)))
         }
     }
 
     @org.junit.jupiter.api.Test
-    fun `rejects an equal number of sets`() {
-        assertFailsWith<IllegalArgumentException> {
-            match().complete("x", sets1 = 2, sets2 = 2)
-        }
+    fun `rejects a result where both sides have an equal number of sets`() {
+        val sixSets = listOf(
+            SetResult(11, 5), SetResult(11, 5), SetResult(11, 5),
+            SetResult(5, 11), SetResult(5, 11), SetResult(5, 11)
+        )
+        assertFailsWith<IllegalArgumentException> { match().complete(sixSets) }
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `enters an interim result and puts the match into playing mode`() {
+        val match = match()
+        match.enterResult(listOf(SetResult(11, 5), SetResult(11, 7)))
+
+        assertTrue(match.isPlaying)
+        assertFalse(match.isPlayed)
+        assertEquals(MatchState.Started, match.state)
+        assertEquals(2, match.sets1)
+        assertEquals(0, match.sets2)
+        assertEquals(22, match.balls1)
+        assertEquals(12, match.balls2)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `starts a match`() {
+        val match = match()
+        match.start()
+
+        assertEquals(MatchState.Started, match.state)
+        assertTrue(match.isPlaying)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `rejects starting a completed match`() {
+        val match = match()
+        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+
+        assertFailsWith<IllegalArgumentException> { match.start() }
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `rejects starting a match that is already playing`() {
+        val match = match()
+        match.start()
+
+        assertFailsWith<IllegalArgumentException> { match.start() }
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `frees a match`() {
+        val match = match()
+        match.start()
+        match.free()
+
+        assertTrue(match.isPlayed)
+        assertFalse(match.isPlaying)
+        assertEquals(null, match.winner)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `takes a match back to the open state`() {
+        val match = match()
+        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+        match.takeBack()
+
+        assertFalse(match.isPlayed)
+        assertFalse(match.isPlaying)
+        assertEquals(MatchState.Open, match.state)
     }
 }

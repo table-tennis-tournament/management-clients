@@ -4,6 +4,10 @@ import de.ttt.management.outbound.application.OutboundService
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
 import de.ttt.management.tournament.MatchCompleted
+import de.ttt.management.tournament.MatchFreed
+import de.ttt.management.tournament.MatchResultUpdated
+import de.ttt.management.tournament.MatchStarted
+import de.ttt.management.tournament.MatchTakenBack
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
@@ -21,7 +25,27 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     }
 
     @EventListener
+    fun on(event: MatchStarted) {
+        outboundService.pushUpdate("MATCH_STARTED", event)
+    }
+
+    @EventListener
+    fun on(event: MatchResultUpdated) {
+        outboundService.pushUpdate("MATCH_RESULT_UPDATED", event)
+    }
+
+    @EventListener
     fun on(event: MatchCompleted) {
         outboundService.pushUpdate("MATCH_COMPLETED", event)
+    }
+
+    @EventListener
+    fun on(event: MatchFreed) {
+        outboundService.pushUpdate("MATCH_FREED", event)
+    }
+
+    @EventListener
+    fun on(event: MatchTakenBack) {
+        outboundService.pushUpdate("MATCH_TAKEN_BACK", event)
     }
 }

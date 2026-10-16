@@ -32,7 +32,7 @@ class TournamentModuleIT {
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
+        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
         val matches = matchService.getAllMatches()
         if (matches.isNotEmpty()) {
             validMatchId = matches[0].id!!
@@ -221,15 +221,10 @@ class TournamentModuleIT {
     @Test
     fun `should set result successfully`() {
         assertTrue(validMatchId > 0)
-        val resultRequest = mapOf(
-            "resultRaw" to "11:5, 11:7, 11:3",
-            "sets1" to 3,
-            "sets2" to 0
-        )
         restTestClient.post()
             .uri("/api/tournament/match/setResult/$validMatchId")
             .contentType(MediaType.APPLICATION_JSON)
-            .body(resultRequest)
+            .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()
             .expectStatus().isOk
             .expectBody()

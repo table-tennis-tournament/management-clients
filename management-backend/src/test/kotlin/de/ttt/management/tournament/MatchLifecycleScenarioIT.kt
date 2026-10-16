@@ -30,7 +30,7 @@ class MatchLifecycleScenarioIT {
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
+        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
         matchId = matchService.getAllMatches().first().id!!
     }
 
@@ -54,17 +54,27 @@ class MatchLifecycleScenarioIT {
             .exchange()
             .expectStatus().isOk
 
-        // 3. Enter the set results and finish the game
+        // 3. Enter the set results while the game is being played (interim)
         restTestClient.post()
-            .uri("/api/tournament/match/setResult/$matchId")
+            .uri("/api/tournament/match/updateResult/$matchId")
             .contentType(MediaType.APPLICATION_JSON)
-            .body(mapOf("resultRaw" to "11:5,11:7,11:3", "sets1" to 3, "sets2" to 0))
+            .body(listOf(listOf(11, 5), listOf(11, 7)))
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
 
-        // 4. The match is now completed
+        // 4. Finish the game with the final result
+        restTestClient.post()
+            .uri("/api/tournament/match/setResult/$matchId")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        // 5. The match is now completed
         val completed = matchService.getMatch(matchId)
         assertTrue(completed!!.isPlayed)
     }

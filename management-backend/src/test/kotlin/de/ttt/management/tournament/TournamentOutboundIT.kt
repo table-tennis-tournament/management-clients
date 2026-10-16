@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.domain.SetResult
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -53,7 +54,7 @@ class TournamentOutboundIT {
         })
 
         val matchId = matchService.getAllMatches().first().id!!
-        matchService.setResult(matchId, "11:5,11:7,11:3", sets1 = 3, sets2 = 0)
+        matchService.setResult(matchId, listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
         val message = messages.poll(10, TimeUnit.SECONDS)
         assertNotNull(message)
