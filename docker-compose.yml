@@ -3,7 +3,7 @@ networks:
     driver: bridge
 services:
   mariadb:
-    image: holzleube/mysql-docker-image:6.1
+    image: holzleube/mysql-docker-image:7.0.0
     ports:
       - "3306:3306"
     environment:
@@ -29,7 +29,7 @@ services:
     depends_on:
       - "mariadb"
   admin:
-    image: holzleube/ttt-clients:v7.0.0
+    image: holzleube/ttt-clients:v7.0.1
     build:
       context: .
       dockerfile: Dockerfile-clients
