@@ -31,7 +31,7 @@ class JdbcClubRepository(private val jdbcClient: JdbcClient) : ClubRepository {
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("INSERT INTO club (club_name) VALUES (:name)")
                 .param("name", club.name).update(keyHolder)
-            club.id = keyHolder.key?.toLong()
+            club.id = (keyHolder.keys?.get("club_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE club SET club_name = :name WHERE club_id = :id")
                 .param("name", club.name).param("id", club.id).update()

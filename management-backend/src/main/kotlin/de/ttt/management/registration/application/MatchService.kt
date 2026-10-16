@@ -1,4 +1,4 @@
-package de.ttt.management.registration
+package de.ttt.management.registration.application
 
 import de.ttt.management.registration.domain.match.Match
 import de.ttt.management.registration.domain.match.MatchRepository

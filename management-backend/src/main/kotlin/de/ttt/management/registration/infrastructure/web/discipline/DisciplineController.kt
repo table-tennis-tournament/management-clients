@@ -1,7 +1,7 @@
 package de.ttt.management.registration.infrastructure.web.discipline
 
-import de.ttt.management.registration.DisciplineColorData
-import de.ttt.management.registration.DisciplineService
+import de.ttt.management.registration.application.DisciplineColorData
+import de.ttt.management.registration.application.DisciplineService
 import de.ttt.management.registration.domain.discipline.Discipline
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter

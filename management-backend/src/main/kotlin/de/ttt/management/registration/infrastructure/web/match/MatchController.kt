@@ -1,7 +1,7 @@
 package de.ttt.management.registration.infrastructure.web.match
 
 import de.ttt.management.registration.domain.match.Match
-import de.ttt.management.registration.MatchService
+import de.ttt.management.registration.application.MatchService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag

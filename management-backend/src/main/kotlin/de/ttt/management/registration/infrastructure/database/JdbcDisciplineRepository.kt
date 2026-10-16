@@ -36,7 +36,7 @@ class JdbcDisciplineRepository(private val jdbcClient: JdbcClient) : DisciplineR
                 .param("kind", discipline.kind)
                 .param("active", if (discipline.active) 1 else 0)
                 .update(keyHolder)
-            discipline.id = keyHolder.key?.toLong()
+            discipline.id = (keyHolder.keys?.get("type_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE type SET type_name = :name, type_kind = :kind, type_active = :active WHERE type_id = :id")
                 .param("name", discipline.name)

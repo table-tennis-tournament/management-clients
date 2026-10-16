@@ -1,6 +1,8 @@
 package de.ttt.management.tournament.application
 
+import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.domain.*
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -9,7 +11,8 @@ import java.time.LocalDateTime
 class MatchService(
     private val matchRepository: TournamentMatchRepository,
     private val disciplineRepository: TournamentDisciplineRepository,
-    private val matchListService: MatchListService
+    private val matchListService: MatchListService,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
     fun getAllMatches(): List<TournamentMatch> = matchRepository.findAll()
@@ -55,8 +58,26 @@ class MatchService(
 
     @Transactional
     fun setResult(matchId: Long, resultRaw: String, sets1: Int, sets2: Int): Boolean {
-        val updatedRows = matchRepository.updateResult(matchId, resultRaw, sets1, sets2)
-        return updatedRows > 0
+        val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        return try {
+            match.complete(resultRaw, sets1, sets2)
+            val updatedRows = matchRepository.updateResult(matchId, resultRaw, sets1, sets2)
+            if (updatedRows > 0) {
+                eventPublisher.publishEvent(
+                    MatchCompleted(
+                        matchId = matchId,
+                        winnerId = match.winner?.id,
+                        sets1 = sets1,
+                        sets2 = sets2
+                    )
+                )
+                true
+            } else {
+                false
+            }
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
     @Transactional

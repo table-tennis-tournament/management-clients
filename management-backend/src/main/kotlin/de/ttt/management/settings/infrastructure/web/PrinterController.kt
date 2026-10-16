@@ -1,6 +1,6 @@
-package de.ttt.management.printer.infrastructure.web
+package de.ttt.management.settings.infrastructure.web
 
-import de.ttt.management.printer.PrinterService
+import de.ttt.management.settings.application.PrinterService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content

@@ -1,4 +1,4 @@
-package de.ttt.management.infrastructure.openapi
+package de.ttt.management
 
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info

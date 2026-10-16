@@ -5,5 +5,6 @@ interface PlayerRepository {
     fun findById(id: Long): Optional<Player>
     fun findByTypeId(typeId: Long): List<Player>
     fun save(player: Player): Player
+    fun deleteById(id: Long)
     fun deleteAll()
 }

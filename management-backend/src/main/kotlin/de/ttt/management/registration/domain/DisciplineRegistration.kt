@@ -1,4 +1,4 @@
-package de.ttt.management.registration
+package de.ttt.management.registration.domain
 
 class DisciplineRegistration(
     var id: Long? = null,

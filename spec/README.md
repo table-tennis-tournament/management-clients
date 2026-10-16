@@ -10,6 +10,7 @@ This folder contains the functional specifications for the tournament registrati
 4.  [**Match Lifecycle**](04_matches.md) - Match states (Open to Finished), player calling, and result entry.
 5.  [**Reporting and Printing**](05_reporting.md) - Generation of referee sheets and winning documents (Urkunden).
 6.  [**Real-time Updates**](06_live_updates.md) - WebSockets, Table Manager App, and Public Result View.
+7.  [**Backend Modular Monolith**](07_backend_modular_monolith.md) - Kotlin/Spring Boot migration target: modules, onion architecture, persistence, event flow, and the tracer-bullet slice.
 
 ## Architecture Overview
 

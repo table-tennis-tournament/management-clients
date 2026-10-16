@@ -13,7 +13,7 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
 
 ### Spring Modulith Rules
 - The root package is `de.ttt.management`.
-- Modules are located directly under the root package (e.g., `registration`, `table`).
+- Modules are located directly under the root package (`registration`, `grouping`, `tournament`, `settings`, `outbound`).
 - **Internal Visibility**: Classes in sub-packages of a module (e.g., `registration.infrastructure`) should be internal or not exported unless they are part of the module's API.
 - **Inter-module Communication**: Prefer **Spring ApplicationEvents** for loose coupling between modules. Avoid direct dependencies between modules if possible.
 - **Verification**: Always run `ApplicationModules.of(ManagementBackendApplication::class.java).verify()` in a test to ensure architectural integrity.
@@ -25,11 +25,11 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
 - Prefer `inline` and `reified` where appropriate.
 - Use `runCatching` or specific exception handling instead of Java-style try-catch for better idiomatic code.
 
-### JPA & Database (MariaDB)
-- Use `Spring Data JPA` repositories.
-- Map entities with standard JPA annotations, but consider Kotlin's properties.
+### Persistence (MariaDB / H2, plain JDBC)
+- Use `JdbcClient` with hand-written SQL. No JPA, no Hibernate.
+- Repository interfaces live in `domain`; implementations live in `infrastructure.database`.
 - Use `LocalDateTime` for timestamps.
-- Ensure all repository methods are tested with `@DataJpaTest` or `@SpringBootTest`.
+- Ensure repository methods are tested via `@SpringBootTest` with H2 in MySQL mode.
 
 ## Development Workflow for Agents
 
@@ -43,14 +43,14 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
 - Follow the **Domain-Driven Design (DDD)** approach within each module:
     - `domain`: Pure business logic, entities, value objects.
     - `application`: Use cases, services, port interfaces.
-    - `infrastructure`: JPA repositories, external adapters, controllers.
+    - `infrastructure`: JdbcClient repositories (`database`), REST controllers (`web`), event listeners (`messaging`).
 
 ### 3. Testing & Verification
 - **Always run `mvn clean install`** before completing a task to ensure:
     - Domain logic unit tests pass.
     - `ApplicationModuleTest` integration tests (which respect module boundaries) pass.
     - **Spring Modulith** architectural verification succeeds.
-- Use `@MockkBean` for mocking in Kotlin tests.
+- Use `@ApplicationModuleTest` (with `PublishedEvents`), `@SpringBootTest` + `RestTestClient`, and ArchUnit rules for testing.
 - Verify that new modules or modified boundaries do not violate the Modulith structure.
 
 ## Key Files to Watch
@@ -83,10 +83,10 @@ Within each module, we follow the Onion Architecture:
 
 To maintain decoupling and allow for easier evolution (or eventual microservices split):
 
-### 1. No Class Sharing between Modules
-Modules **MUST NOT** share domain classes or services directly.
-*   If the `tournament` module needs player information, it defines its own `TournamentPlayer` class.
-*   Do not import classes from `de.ttt.management.registration` into `de.ttt.management.tournament`.
+### 1. Bounded contexts, no direct class sharing
+Modules **MUST NOT** depend on another module's internal packages (`domain`, `application`, `infrastructure`).
+*   If the `tournament` module needs player information, it keeps its own lightweight `TournamentPlayer` projection.
+*   Shared contracts (domain events such as `PlayerRegistered`) live in the publishing module's base package and are the only types other modules may import.
 
 ### 2. Event-Based Communication
 Interaction between modules should primarily happen via **Events**.

@@ -31,7 +31,7 @@ class JdbcMatchTypeRepository(private val jdbcClient: JdbcClient) : MatchTypeRep
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("INSERT INTO matchtype (maty_name) VALUES (:name)")
                 .param("name", matchType.name).update(keyHolder)
-            matchType.id = keyHolder.key?.toLong()
+            matchType.id = (keyHolder.keys?.get("maty_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE matchtype SET maty_name = :name WHERE maty_id = :id")
                 .param("name", matchType.name).param("id", matchType.id).update()

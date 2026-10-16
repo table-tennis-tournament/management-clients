@@ -1,4 +1,4 @@
-package de.ttt.management.outbound
+package de.ttt.management.outbound.infrastructure.web
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry

@@ -1,4 +1,4 @@
-package de.ttt.management.settings
+package de.ttt.management.settings.application
 
 import de.ttt.management.settings.domain.Setting
 import de.ttt.management.settings.domain.SettingsRepository

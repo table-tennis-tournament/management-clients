@@ -69,7 +69,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 .param("clubId", player.club?.id)
                 .param("paid", player.paid)
                 .update(keyHolder)
-            player.id = keyHolder.key?.toLong()
+            player.id = (keyHolder.keys?.get("play_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("""
                 UPDATE player 
@@ -93,6 +93,10 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 .update()
         }
         return player
+    }
+
+    override fun deleteById(id: Long) {
+        jdbcClient.sql("DELETE FROM player WHERE play_id = :id").param("id", id).update()
     }
 
     override fun deleteAll() {

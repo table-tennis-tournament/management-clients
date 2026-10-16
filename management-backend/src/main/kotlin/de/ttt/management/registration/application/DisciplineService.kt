@@ -1,4 +1,4 @@
-package de.ttt.management.registration
+package de.ttt.management.registration.application
 
 import de.ttt.management.registration.domain.discipline.*
 import org.springframework.stereotype.Service

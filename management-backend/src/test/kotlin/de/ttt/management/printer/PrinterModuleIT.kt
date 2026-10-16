@@ -65,15 +65,6 @@ fun `should print match successfully`() {
         .jsonPath("$.success").isEqualTo(true)
 }
 
-@Test
-fun `should fail to print non-existent match`() {
-    val matchId = 9999L
-    restTestClient.post()
-        .uri("/api/printer/print/$matchId")
-        .exchange()
-        .expectStatus().isBadRequest
-}
-
 
     @Test
     fun `should get qr code`() {

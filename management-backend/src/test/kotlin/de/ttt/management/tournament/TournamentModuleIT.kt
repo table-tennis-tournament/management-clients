@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
@@ -24,10 +25,14 @@ class TournamentModuleIT {
     @Autowired
     private lateinit var matchService: MatchService
 
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
+
     private var validMatchId: Long = 0
 
     @BeforeEach
     fun setup() {
+        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
         val matches = matchService.getAllMatches()
         if (matches.isNotEmpty()) {
             validMatchId = matches[0].id!!

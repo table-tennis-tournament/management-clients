@@ -1,61 +1,62 @@
 # Management Backend
 
-Next-generation table tennis tournament management backend built with **Spring Boot 4.x**, **Kotlin**, and **Spring Modulith**.
+Next-generation table tennis tournament management backend built with **Spring Boot 4.1**, **Kotlin**, and **Spring Modulith**.
 
 ## Architecture
 
-This project follows a **Modular Monolith** architecture using **Spring Modulith**. It is designed to be highly maintainable and easily decomposable into microservices if needed.
+This project follows a **Modular Monolith** architecture using **Spring Modulith**. Each module follows an onion architecture (`domain` → `application` → `infrastructure`), is independently testable, and can be decomposed into a microservice if needed.
 
 ### Key Technologies
-- **Java 25**: Leveraging the latest JVM features.
-- **Kotlin 2.3.x**: Modern, expressive language with strong null-safety.
-- **Spring Boot 4.0.3**: Bleeding-edge Spring Boot features.
-- **Spring Modulith 2.0.x**: Domain-driven design with verified module boundaries.
-- **MariaDB**: Robust relational database for persistence.
-- **JPA / Hibernate**: For data mapping.
-- **WebSocket**: Real-time tournament updates.
+- **Java 25**
+- **Kotlin 2.3.x**
+- **Spring Boot 4.1.x**
+- **Spring Modulith 2.1.x**: Domain-driven design with verified module boundaries.
+- **MariaDB** in production, **H2** (MySQL mode) in tests.
+- **JdbcClient + plain SQL**: no JPA, no Hibernate.
 
 ### Modules
-- `registration`: Manages player and team registrations for disciplines.
-- `table`: Handles match assignments and table management.
+- `registration`: players, clubs, doubles, disciplines and registration state (paid/active/seed).
+- `grouping`: group formation and seeding (scaffolded, not yet implemented).
+- `tournament`: match lifecycle, Queue/MatchList, table assignment, results, caller and table-manager operations.
+- `settings`: system settings and printing (referee sheets, certificates).
+- `outbound`: the single WebSocket publisher, consuming domain events.
+
+### Onion layering per module
+- `domain`: aggregates, value objects and repository ports (interfaces).
+- `application`: use-case orchestration and event publication.
+- `infrastructure.database`: JdbcClient repository adapters.
+- `infrastructure.web`: REST controllers.
+- `infrastructure.messaging`: event listeners/publishers.
+
+Dependencies point inward: `infrastructure → application → domain`.
 
 ## Getting Started
 
 ### Prerequisites
 - JDK 25
 - Maven 3.9+
-- MariaDB (Local or Docker)
 
 ### Environment Variables
-Configure your database connection using the following environment variables:
-- `SPRING_DATASOURCE_URL`: JDBC URL for MariaDB (e.g., `jdbc:mariadb://localhost:3306/ttt`)
-- `SPRING_DATASOURCE_USERNAME`: Database user
-- `SPRING_DATASOURCE_PASSWORD`: Database password
+- `SPRING_DATASOURCE_URL`: JDBC URL (e.g., `jdbc:mariadb://localhost:3306/ttt`)
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
 
-### Running the Application
+### Running
 ```bash
-./mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
-### Running Tests
-The project uses **ArchUnit** and **Spring Modulith Test** to verify architectural boundaries.
+### Tests
 ```bash
-./mvn test
+./mvnw test
 ```
 
-## Modular Monolith Verification
-You can verify the module structure and generate documentation by running:
-```bash
-./mvn test -Dtest=ModularityTests
-```
-*(Ensure you have a test class that calls `ApplicationModules.of(ManagementBackendApplication::class.java).verify()`)
-
-## API Documentation
-Once running, the Swagger/OpenAPI UI is available at:
-`http://localhost:8080/swagger-ui.html` (if configured)
+- `OnionArchitectureTests` (ArchUnit) enforces the onion layering per module.
+- `ApplicationTests` runs `ApplicationModules.verify()` to enforce Modulith module boundaries.
+- `RegistrationModuleTest` is a `@ApplicationModuleTest` module integration test.
+- `OutboundModuleIT` is a `@SpringBootTest` that verifies a WebSocket message on player registration.
 
 ## Deployment
-The backend can be containerized using the provided Dockerfile:
 ```bash
 docker build -t ttt-management-backend .
 ```

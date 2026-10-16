@@ -31,7 +31,7 @@ class JdbcPlayGroupRepository(private val jdbcClient: JdbcClient) : PlayGroupRep
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("INSERT INTO `groups` (grou_name) VALUES (:name)")
                 .param("name", playGroup.name).update(keyHolder)
-            playGroup.id = keyHolder.key?.toLong()
+            playGroup.id = (keyHolder.keys?.get("grou_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE `groups` SET grou_name = :name WHERE grou_id = :id")
                 .param("name", playGroup.name).param("id", playGroup.id).update()

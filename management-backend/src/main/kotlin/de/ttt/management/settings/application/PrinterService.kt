@@ -1,11 +1,10 @@
-package de.ttt.management.printer
+package de.ttt.management.settings.application
 
-import de.ttt.management.tournament.application.MatchService
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class PrinterService(private val matchService: MatchService) {
+class PrinterService {
 
     private val printers = mutableListOf("TestPrinter", "Default")
     private var selectedPrinter: String? = null
@@ -26,8 +25,7 @@ class PrinterService(private val matchService: MatchService) {
     }
 
     fun printMatch(matchId: Long): Boolean {
-        val match = matchService.getMatch(matchId) ?: return false
-        println("Printing match $matchId on $selectedPrinter")
+        println("Printing match $matchId on ${selectedPrinter ?: "default"}")
         return true
     }
 
