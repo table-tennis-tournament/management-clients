@@ -18,7 +18,7 @@ class SettingsModuleIT {
     @Test
     fun `should get all settings`() {
         restTestClient.get()
-            .uri("/api/settings/all")
+            .uri("/api/v2/settings/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()

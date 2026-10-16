@@ -128,17 +128,42 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .update()
     }
 
-    override fun updateResult(matchId: Long, resultRaw: String, sets1: Int, sets2: Int): Int {
+    override fun updatePartialResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int): Int {
         return jdbcClient.sql(
             """
             UPDATE matches 
-            SET matc_resultraw = :resultRaw, matc_sets1 = :sets1, matc_sets2 = :sets2, matc_played = 1, matc_isplaying = 0, matc_tabl_id = NULL
+            SET matc_resultraw = :resultRaw, matc_result = :result, matc_sets1 = :sets1, matc_sets2 = :sets2,
+                matc_balls1 = :balls1, matc_balls2 = :balls2, matc_isplaying = 1, matc_played = 0
             WHERE matc_id = :id
             """.trimIndent()
         )
             .param("resultRaw", resultRaw)
+            .param("result", result)
             .param("sets1", sets1)
             .param("sets2", sets2)
+            .param("balls1", balls1)
+            .param("balls2", balls2)
+            .param("id", matchId)
+            .update()
+    }
+
+    override fun completeResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int, winnerId: Long?): Int {
+        return jdbcClient.sql(
+            """
+            UPDATE matches 
+            SET matc_resultraw = :resultRaw, matc_result = :result, matc_sets1 = :sets1, matc_sets2 = :sets2,
+                matc_balls1 = :balls1, matc_balls2 = :balls2, matc_winner_id = :winnerId,
+                matc_played = 1, matc_isplaying = 0, matc_tabl_id = NULL
+            WHERE matc_id = :id
+            """.trimIndent()
+        )
+            .param("resultRaw", resultRaw)
+            .param("result", result)
+            .param("sets1", sets1)
+            .param("sets2", sets2)
+            .param("balls1", balls1)
+            .param("balls2", balls2)
+            .param("winnerId", winnerId)
             .param("id", matchId)
             .update()
     }

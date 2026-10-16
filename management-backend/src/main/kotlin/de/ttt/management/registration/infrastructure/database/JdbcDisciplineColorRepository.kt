@@ -39,7 +39,7 @@ class JdbcDisciplineColorRepository(private val jdbcClient: JdbcClient) : Discip
                 .param("bg", disciplineColor.bgColor)
                 .param("text", disciplineColor.textColor)
                 .update(keyHolder)
-            disciplineColor.id = keyHolder.key?.toLong()
+            disciplineColor.id = (keyHolder.keys?.get("tyco_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE typecolors SET tyco_bg_color = :bg, tyco_text_color = :text WHERE tyco_type_id = :typeId")
                 .param("bg", disciplineColor.bgColor)

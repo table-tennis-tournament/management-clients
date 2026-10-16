@@ -1,6 +1,12 @@
 package de.ttt.management.tournament.application
 
+import de.ttt.management.tournament.MatchCompleted
+import de.ttt.management.tournament.MatchFreed
+import de.ttt.management.tournament.MatchResultUpdated
+import de.ttt.management.tournament.MatchStarted
+import de.ttt.management.tournament.MatchTakenBack
 import de.ttt.management.tournament.domain.*
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -9,7 +15,8 @@ import java.time.LocalDateTime
 class MatchService(
     private val matchRepository: TournamentMatchRepository,
     private val disciplineRepository: TournamentDisciplineRepository,
-    private val matchListService: MatchListService
+    private val matchListService: MatchListService,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
     fun getAllMatches(): List<TournamentMatch> = matchRepository.findAll()
@@ -32,14 +39,20 @@ class MatchService(
 
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean {
-        val isPlaying = matchRepository.isMatchPlaying(matchId)
-        if (isPlaying) {
-            return false
+        val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        return try {
+            match.start()
+            val updatedRows = matchRepository.startMatch(matchId, tableId, LocalDateTime.now())
+            if (updatedRows > 0) {
+                matchListService.removeMatchFromList(matchId)
+                eventPublisher.publishEvent(MatchStarted(matchId = matchId, tableId = tableId))
+                true
+            } else {
+                false
+            }
+        } catch (e: IllegalArgumentException) {
+            false
         }
-
-        val updatedRows = matchRepository.startMatch(matchId, tableId, LocalDateTime.now())
-        matchListService.removeMatchFromList(matchId)
-        return updatedRows > 0
     }
 
     @Transactional
@@ -54,9 +67,67 @@ class MatchService(
     }
 
     @Transactional
-    fun setResult(matchId: Long, resultRaw: String, sets1: Int, sets2: Int): Boolean {
-        val updatedRows = matchRepository.updateResult(matchId, resultRaw, sets1, sets2)
-        return updatedRows > 0
+    fun setResult(matchId: Long, sets: List<SetResult>): Boolean {
+        val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        return try {
+            match.complete(sets)
+            val updatedRows = matchRepository.completeResult(
+                matchId = matchId,
+                resultRaw = match.resultRaw ?: "",
+                result = match.result ?: "",
+                sets1 = match.sets1 ?: 0,
+                sets2 = match.sets2 ?: 0,
+                balls1 = match.balls1 ?: 0,
+                balls2 = match.balls2 ?: 0,
+                winnerId = match.winner?.id
+            )
+            if (updatedRows > 0) {
+                eventPublisher.publishEvent(
+                    MatchCompleted(
+                        matchId = matchId,
+                        winnerId = match.winner?.id,
+                        sets1 = match.sets1 ?: 0,
+                        sets2 = match.sets2 ?: 0
+                    )
+                )
+                true
+            } else {
+                false
+            }
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
+
+    @Transactional
+    fun updateResult(matchId: Long, sets: List<SetResult>): Boolean {
+        val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        return try {
+            match.enterResult(sets)
+            val updatedRows = matchRepository.updatePartialResult(
+                matchId = matchId,
+                resultRaw = match.resultRaw ?: "",
+                result = match.result ?: "",
+                sets1 = match.sets1 ?: 0,
+                sets2 = match.sets2 ?: 0,
+                balls1 = match.balls1 ?: 0,
+                balls2 = match.balls2 ?: 0
+            )
+            if (updatedRows > 0) {
+                eventPublisher.publishEvent(
+                    MatchResultUpdated(
+                        matchId = matchId,
+                        sets1 = match.sets1 ?: 0,
+                        sets2 = match.sets2 ?: 0
+                    )
+                )
+                true
+            } else {
+                false
+            }
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
     @Transactional
@@ -73,7 +144,17 @@ class MatchService(
     fun freeMatches(matchIds: List<Long>): Boolean {
         var allSuccess = true
         for (matchId in matchIds) {
-            if (matchRepository.freeMatch(matchId) == 0) allSuccess = false
+            val match = matchRepository.findById(matchId).orElse(null)
+            if (match == null) {
+                allSuccess = false
+                continue
+            }
+            match.free()
+            if (matchRepository.freeMatch(matchId) == 0) {
+                allSuccess = false
+            } else {
+                eventPublisher.publishEvent(MatchFreed(matchId = matchId))
+            }
         }
         return allSuccess
     }
@@ -82,7 +163,17 @@ class MatchService(
     fun takeBackMatches(matchIds: List<Long>): Boolean {
         var allSuccess = true
         for (matchId in matchIds) {
-            if (matchRepository.takeBackMatch(matchId) == 0) allSuccess = false
+            val match = matchRepository.findById(matchId).orElse(null)
+            if (match == null) {
+                allSuccess = false
+                continue
+            }
+            match.takeBack()
+            if (matchRepository.takeBackMatch(matchId) == 0) {
+                allSuccess = false
+            } else {
+                eventPublisher.publishEvent(MatchTakenBack(matchId = matchId))
+            }
         }
         return allSuccess
     }

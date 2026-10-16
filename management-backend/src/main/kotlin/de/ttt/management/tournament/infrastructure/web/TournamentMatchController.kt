@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/tournament")
+@RequestMapping
 @Tag(name = "Tournament Match Management", description = "Comprehensive operations for managing tournament matches, types, and assignments")
 class TournamentMatchController(
     private val matchService: MatchService,
@@ -87,16 +87,30 @@ class TournamentMatchController(
     }
 
     @PostMapping("/match/setResult/{id}")
-    @Operation(summary = "Set match result", description = "Records the final score and sets for a match.")
+    @Operation(summary = "Set match result", description = "Records the final sets and completes the match.")
     fun setResult(
         @Parameter(description = "ID of the match") @PathVariable id: Long,
-        @RequestBody result: ResultRequest
+        @RequestBody sets: List<List<Int>>
     ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.setResult(id, result.resultRaw, result.sets1, result.sets2)
+        val success = matchService.setResult(id, sets.toSetResults())
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
             ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not set result."))
+        }
+    }
+
+    @PostMapping("/match/updateResult/{id}")
+    @Operation(summary = "Update match result", description = "Records an interim set result for a match that is still being played.")
+    fun updateResult(
+        @Parameter(description = "ID of the match") @PathVariable id: Long,
+        @RequestBody sets: List<List<Int>>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.updateResult(id, sets.toSetResults())
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not update result."))
         }
     }
 
@@ -228,8 +242,8 @@ class TournamentMatchController(
     ): Map<String, Any> = mapOf("success" to true)
 }
 
-data class ResultRequest(
-    val resultRaw: String,
-    val sets1: Int,
-    val sets2: Int
-)
+private fun List<List<Int>>.toSetResults(): List<SetResult> =
+    map { pair ->
+        require(pair.size == 2) { "Each set must be a [player1, player2] pair" }
+        SetResult(pair[0], pair[1])
+    }

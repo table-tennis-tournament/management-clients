@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 @Tag(name = "Table Management", description = "Operations for managing table tennis tables, including locking and unlocking")
 class TableController(private val tableService: TableService) {
 

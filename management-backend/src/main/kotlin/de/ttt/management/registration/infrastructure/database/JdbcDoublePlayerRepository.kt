@@ -39,7 +39,7 @@ class JdbcDoublePlayerRepository(private val jdbcClient: JdbcClient) : DoublePla
                 .param("p2", doublePlayer.player2?.id)
                 .param("kind", doublePlayer.kind)
                 .update(keyHolder)
-            doublePlayer.id = keyHolder.key?.toLong()
+            doublePlayer.id = (keyHolder.keys?.get("doub_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE doubles SET doub_play1_id = :p1, doub_play2_id = :p2, doub_kind = :kind WHERE doub_id = :id")
                 .param("p1", doublePlayer.player1?.id)

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>de.ttt.management</groupId>
@@ -15,8 +15,8 @@
     <description>management-backend</description>
     <properties>
         <java.version>25</java.version>
-        <kotlin.version>2.3.10</kotlin.version>
-        <spring-modulith.version>2.0.3</spring-modulith.version>
+        <kotlin.version>2.3.21</kotlin.version>
+        <spring-modulith.version>2.1.1</spring-modulith.version>
     </properties>
     <dependencies>
         <dependency>
@@ -78,11 +78,6 @@
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-actuator</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.modulith</groupId>
-            <artifactId>spring-modulith-observability</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -169,6 +164,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Test.kt</include>
                         <include>**/*Tests.java</include>
                         <include>**/*Tests.kt</include>
                         <include>**/*IT.java</include>

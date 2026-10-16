@@ -1,7 +1,7 @@
 package de.ttt.management.registration.infrastructure.web
 
+import de.ttt.management.registration.application.PlayerService
 import de.ttt.management.registration.domain.player.Player
-import de.ttt.management.registration.PlayerService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/players")
+@RequestMapping("/players")
 @Tag(name = "Player Management", description = "Operations for managing tournament players")
 class PlayerController(private val playerService: PlayerService) {
 
@@ -25,9 +25,18 @@ class PlayerController(private val playerService: PlayerService) {
     @Operation(summary = "Get all players (legacy)", description = "Legacy endpoint to retrieve all registered players.")
     fun getAllPlayersLegacy(): List<Player> = playerService.getAllPlayers()
 
-    @GetMapping("/allTypePerPlayer")
-    @Operation(summary = "Get player types", description = "Retrieves a mapping of player IDs to their associated type IDs.")
-    fun getAllTypePerPlayer(): Map<Long, List<Long>> = emptyMap() // Placeholder
+    @PostMapping
+    @Operation(summary = "Register a player", description = "Registers a new player for the tournament.")
+    fun registerPlayer(@RequestBody request: RegisterPlayerRequest): ResponseEntity<Player> {
+        val player = playerService.registerPlayer(
+            firstName = request.firstName,
+            lastName = request.lastName,
+            ttr = request.ttr,
+            sex = request.sex,
+            clubId = request.clubId
+        )
+        return ResponseEntity.ok(player)
+    }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get player by ID", description = "Retrieves detailed information for a specific player.")
@@ -40,7 +49,7 @@ class PlayerController(private val playerService: PlayerService) {
 
     @GetMapping("/type/{typeId}")
     @Operation(summary = "Get players by type", description = "Retrieves a list of players matching the specified type ID.")
-    fun getPlayesByType(
+    fun getPlayersByType(
         @Parameter(description = "ID of the player type") @PathVariable typeId: Long
     ): List<Player> = playerService.getPlayersByType(typeId)
 
@@ -67,4 +76,21 @@ class PlayerController(private val playerService: PlayerService) {
         val success = playerService.setPaid(id, paid)
         return mapOf("success" to success)
     }
+
+    @PostMapping("/{id}/unregister")
+    @Operation(summary = "Unregister a player", description = "Removes a player from the tournament.")
+    fun unregisterPlayer(
+        @Parameter(description = "ID of the player") @PathVariable id: Long
+    ): Map<String, Any> {
+        val success = playerService.unregisterPlayer(id)
+        return mapOf("success" to success)
+    }
 }
+
+data class RegisterPlayerRequest(
+    val firstName: String,
+    val lastName: String,
+    val ttr: Int? = null,
+    val sex: String? = null,
+    val clubId: Long? = null
+)

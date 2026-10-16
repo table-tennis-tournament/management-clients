@@ -1,7 +1,7 @@
 package de.ttt.management.registration.infrastructure.web.discipline
 
-import de.ttt.management.registration.DisciplineColorData
-import de.ttt.management.registration.DisciplineService
+import de.ttt.management.registration.application.DisciplineColorData
+import de.ttt.management.registration.application.DisciplineService
 import de.ttt.management.registration.domain.discipline.Discipline
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/disciplines")
+@RequestMapping("/disciplines")
 @Tag(name = "Discipline Management", description = "Operations for managing tournament disciplines (e.g., Men's Singles, Women's Doubles)")
 class DisciplineController(private val disciplineService: DisciplineService) {
 

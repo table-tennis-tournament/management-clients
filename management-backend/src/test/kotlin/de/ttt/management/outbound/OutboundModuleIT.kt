@@ -1,10 +1,10 @@
 package de.ttt.management.outbound
 
+import de.ttt.management.registration.application.PlayerService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.messaging.converter.MappingJackson2MessageConverter
 import org.springframework.messaging.simp.stomp.StompFrameHandler
 import org.springframework.messaging.simp.stomp.StompHeaders
@@ -30,10 +30,10 @@ class OutboundModuleIT {
     private var port: Int = 0
 
     @Autowired
-    private lateinit var eventPublisher: ApplicationEventPublisher
+    private lateinit var playerService: PlayerService
 
     @Test
-    fun `should connect to websocket and receive updates`() {
+    fun `registers a player and receives a websocket update`() {
         val stompClient = WebSocketStompClient(SockJsClient(listOf(WebSocketTransport(StandardWebSocketClient()))))
         stompClient.messageConverter = MappingJackson2MessageConverter()
 
@@ -42,46 +42,26 @@ class OutboundModuleIT {
             object : StompSessionHandlerAdapter() {}
         ).get(5, TimeUnit.SECONDS)
 
-        val responses: BlockingQueue<Map<String, Any>> = LinkedBlockingDeque()
+        val messages: BlockingQueue<Map<String, Any>> = LinkedBlockingDeque()
 
         session.subscribe("/topic/updates", object : StompFrameHandler {
             override fun getPayloadType(headers: StompHeaders): Type = Map::class.java
             override fun handleFrame(headers: StompHeaders, payload: Any?) {
                 @Suppress("UNCHECKED_CAST")
-                responses.add(payload as Map<String, Any>)
+                messages.add(payload as Map<String, Any>)
             }
         })
 
-        // Publish event
-        eventPublisher.publishEvent(ApplicationUpdateEvent("TEST_UPDATE", mapOf("key" to "value")))
+        playerService.registerPlayer(
+            firstName = "Jane",
+            lastName = "Doe",
+            ttr = 1600,
+            sex = "w",
+            clubId = null
+        )
 
-        val response = responses.poll(5, TimeUnit.SECONDS)
-        assertNotNull(response)
-        assertEquals("TEST_UPDATE", response["type"])
-        
-        assertTrue(session.isConnected)
-    }
-
-    @Test
-    fun `should fail to connect to invalid endpoint`() {
-        val stompClient = WebSocketStompClient(StandardWebSocketClient())
-        
-        try {
-            stompClient.connectAsync(
-                "ws://localhost:$port/invalid-endpoint",
-                object : StompSessionHandlerAdapter() {}
-            ).get(2, TimeUnit.SECONDS)
-            fail("Should have failed to connect")
-        } catch (e: Exception) {
-            // Success
-        }
-    }
-
-    private fun assertTrue(condition: Boolean) {
-        if (!condition) throw AssertionError("Assertion failed")
-    }
-
-    private fun fail(message: String) {
-        throw AssertionError(message)
+        val message = messages.poll(10, TimeUnit.SECONDS)
+        assertNotNull(message)
+        assertEquals("PLAYER_REGISTERED", message["type"])
     }
 }

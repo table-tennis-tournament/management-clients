@@ -36,7 +36,7 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("INSERT INTO tables (Tabl_Name) VALUES (:name)")
                 .param("name", table.name).update(keyHolder)
-            table.id = keyHolder.key?.toLong()
+            table.id = (keyHolder.keys?.get("tabl_id") as? Number)?.toLong()
         } else {
             jdbcClient.sql("UPDATE tables SET Tabl_Name = :name WHERE Tabl_ID = :id")
                 .param("name", table.name).param("id", table.id).update()
