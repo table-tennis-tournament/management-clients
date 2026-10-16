@@ -45,7 +45,7 @@ class TournamentModuleIT {
         val tableId = 1L
 
         restTestClient.post()
-            .uri("/api/tournament/match/start/$validMatchId/$tableId")
+            .uri("/api/v2/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -59,13 +59,13 @@ class TournamentModuleIT {
 
         // First start should succeed
         restTestClient.post()
-            .uri("/api/tournament/match/start/$validMatchId/$tableId")
+            .uri("/api/v2/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
 
         // Second start should fail
         restTestClient.post()
-            .uri("/api/tournament/match/start/$validMatchId/$tableId")
+            .uri("/api/v2/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isBadRequest
     }
@@ -75,12 +75,12 @@ class TournamentModuleIT {
         assertTrue(validMatchId > 0)
         val tableId = 3L
         restTestClient.post()
-            .uri("/api/tournament/match/start/$validMatchId/$tableId")
+            .uri("/api/v2/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
 
         restTestClient.post()
-            .uri("/api/tournament/match/stop/$validMatchId")
+            .uri("/api/v2/match/stop/$validMatchId")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -92,7 +92,7 @@ class TournamentModuleIT {
         val matchId = 9999L // Non-playing
 
         restTestClient.post()
-            .uri("/api/tournament/match/stop/$matchId")
+            .uri("/api/v2/match/stop/$matchId")
             .exchange()
             .expectStatus().isBadRequest
     }
@@ -104,7 +104,7 @@ class TournamentModuleIT {
         val tableName = "1"
 
         restTestClient.post()
-            .uri("/api/tournament/match/matchtotable/$tableName")
+            .uri("/api/v2/match/matchtotable/$tableName")
             .contentType(MediaType.APPLICATION_JSON)
             .body(matchIds)
             .exchange()
@@ -119,7 +119,7 @@ class TournamentModuleIT {
         val matchIds = listOf(validMatchId)
 
         restTestClient.post()
-            .uri("/api/tournament/match/free")
+            .uri("/api/v2/match/free")
             .contentType(MediaType.APPLICATION_JSON)
             .body(matchIds)
             .exchange()
@@ -134,7 +134,7 @@ class TournamentModuleIT {
         val matchIds = listOf(validMatchId)
 
         restTestClient.post()
-            .uri("/api/tournament/match/takeBack")
+            .uri("/api/v2/match/takeBack")
             .contentType(MediaType.APPLICATION_JSON)
             .body(matchIds)
             .exchange()
@@ -154,7 +154,7 @@ class TournamentModuleIT {
         )
 
         restTestClient.post()
-            .uri("/api/tournament/matchlist/add")
+            .uri("/api/v2/matchlist/add")
             .contentType(MediaType.APPLICATION_JSON)
             .body(addRequest)
             .exchange()
@@ -162,7 +162,7 @@ class TournamentModuleIT {
 
         var uuid = ""
         restTestClient.get()
-            .uri("/api/tournament/matchlist/all")
+            .uri("/api/v2/matchlist/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -175,12 +175,12 @@ class TournamentModuleIT {
             }
 
         restTestClient.delete()
-            .uri("/api/tournament/matchlist/$uuid")
+            .uri("/api/v2/matchlist/$uuid")
             .exchange()
             .expectStatus().isOk
 
         restTestClient.get()
-            .uri("/api/tournament/matchlist/all")
+            .uri("/api/v2/matchlist/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -190,7 +190,7 @@ class TournamentModuleIT {
     @Test
     fun `should get all matches`() {
         restTestClient.get()
-            .uri("/api/tournament/match/all")
+            .uri("/api/v2/match/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -200,7 +200,7 @@ class TournamentModuleIT {
     @Test
     fun `should get matches by type`() {
         restTestClient.get()
-            .uri("/api/tournament/match/typeid/1")
+            .uri("/api/v2/match/typeid/1")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -211,7 +211,7 @@ class TournamentModuleIT {
     fun `should get match by id`() {
         assertTrue(validMatchId > 0)
         restTestClient.get()
-            .uri("/api/tournament/match/$validMatchId")
+            .uri("/api/v2/match/$validMatchId")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -222,7 +222,7 @@ class TournamentModuleIT {
     fun `should set result successfully`() {
         assertTrue(validMatchId > 0)
         restTestClient.post()
-            .uri("/api/tournament/match/setResult/$validMatchId")
+            .uri("/api/v2/match/setResult/$validMatchId")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()
@@ -234,7 +234,7 @@ class TournamentModuleIT {
     @Test
     fun `should get all types`() {
         restTestClient.get()
-            .uri("/api/tournament/types/all")
+            .uri("/api/v2/types/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -245,7 +245,7 @@ class TournamentModuleIT {
     fun `should delete match successfully`() {
         assertTrue(validMatchId > 0)
         restTestClient.delete()
-            .uri("/api/tournament/match/$validMatchId")
+            .uri("/api/v2/match/$validMatchId")
             .exchange()
             .expectStatus().isOk
     }

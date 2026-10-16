@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/tournament")
+@RequestMapping
 @Tag(name = "Tournament Match Management", description = "Comprehensive operations for managing tournament matches, types, and assignments")
 class TournamentMatchController(
     private val matchService: MatchService,

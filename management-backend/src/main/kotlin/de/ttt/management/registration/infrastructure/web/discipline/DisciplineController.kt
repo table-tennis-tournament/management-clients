@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/disciplines")
+@RequestMapping("/disciplines")
 @Tag(name = "Discipline Management", description = "Operations for managing tournament disciplines (e.g., Men's Singles, Women's Doubles)")
 class DisciplineController(private val disciplineService: DisciplineService) {
 

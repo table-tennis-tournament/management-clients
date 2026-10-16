@@ -32,7 +32,7 @@ class TournamentModuleTest {
         val matchId = matchService.getAllMatches().first().id!!
 
         restTestClient.post()
-            .uri("/api/tournament/match/setResult/$matchId")
+            .uri("/api/v2/match/setResult/$matchId")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()
@@ -54,7 +54,7 @@ class TournamentModuleTest {
         )
 
         restTestClient.post()
-            .uri("/api/tournament/match/updateResult/$matchId")
+            .uri("/api/v2/match/updateResult/$matchId")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(listOf(11, 5), listOf(11, 7)))
             .exchange()
@@ -76,7 +76,7 @@ class TournamentModuleTest {
         )
 
         restTestClient.post()
-            .uri("/api/tournament/match/matchtotable/1")
+            .uri("/api/v2/match/matchtotable/1")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(matchId))
             .exchange()

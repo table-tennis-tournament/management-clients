@@ -19,7 +19,7 @@ class PrinterModuleIT {
     @Test
     fun `should get all printers`() {
         restTestClient.get()
-            .uri("/api/printer/all")
+            .uri("/api/v2/printer/all")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -29,7 +29,7 @@ class PrinterModuleIT {
 fun `should set printer successfully`() {
     val printerName = "TestPrinter"
     restTestClient.post()
-        .uri("/api/printer/set/$printerName")
+        .uri("/api/v2/printer/set/$printerName")
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -40,7 +40,7 @@ fun `should set printer successfully`() {
 fun `should fail to set non-existent printer`() {
     val printerName = "NonExistent"
     restTestClient.post()
-        .uri("/api/printer/set/$printerName")
+        .uri("/api/v2/printer/set/$printerName")
         .exchange()
         .expectStatus().isBadRequest
 }
@@ -48,7 +48,7 @@ fun `should fail to set non-existent printer`() {
 @Test
 fun `should set print on start`() {
     restTestClient.post()
-        .uri("/api/printer/setprintonstart/true")
+        .uri("/api/v2/printer/setprintonstart/true")
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -58,7 +58,7 @@ fun `should set print on start`() {
 @Test
 fun `should print match successfully`() {
     restTestClient.post()
-        .uri("/api/printer/print/1")
+        .uri("/api/v2/printer/print/1")
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -69,7 +69,7 @@ fun `should print match successfully`() {
     @Test
     fun `should get qr code`() {
         restTestClient.get()
-            .uri("/api/printer/getQrCode/some-content")
+            .uri("/api/v2/printer/getQrCode/some-content")
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.IMAGE_PNG)

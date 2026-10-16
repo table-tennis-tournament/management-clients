@@ -40,7 +40,7 @@ class MatchLifecycleScenarioIT {
 
         // 1. Assign the match to table "1"
         restTestClient.post()
-            .uri("/api/tournament/match/matchtotable/1")
+            .uri("/api/v2/match/matchtotable/1")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(matchId))
             .exchange()
@@ -50,13 +50,13 @@ class MatchLifecycleScenarioIT {
 
         // 2. Call the players
         restTestClient.post()
-            .uri("/api/tournament/playercall/$matchId")
+            .uri("/api/v2/playercall/$matchId")
             .exchange()
             .expectStatus().isOk
 
         // 3. Enter the set results while the game is being played (interim)
         restTestClient.post()
-            .uri("/api/tournament/match/updateResult/$matchId")
+            .uri("/api/v2/match/updateResult/$matchId")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(listOf(11, 5), listOf(11, 7)))
             .exchange()
@@ -66,7 +66,7 @@ class MatchLifecycleScenarioIT {
 
         // 4. Finish the game with the final result
         restTestClient.post()
-            .uri("/api/tournament/match/setResult/$matchId")
+            .uri("/api/v2/match/setResult/$matchId")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()

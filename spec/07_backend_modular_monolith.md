@@ -61,11 +61,15 @@ Rules (enforced by `OnionArchitectureTests`, an ArchUnit test):
 - Shared contracts (domain events such as `PlayerRegistered`, `MatchCompleted`) live in the publishing module's base package and are the only types other modules may import.
 - `outbound` is the **only** component that publishes WebSocket messages; it listens for domain events and pushes `{"type": ..., "payload": ...}` to `/topic/updates` over STOMP/SockJS.
 
-## 6. Tracer Bullet
+## 6. API Versioning
+
+All REST endpoints are prefixed with `/api/v2` by a single global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers keep the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …). This lets the legacy backend serve `/api/…` (v1) and this backend serve `/api/v2/…` (v2) in parallel behind a version-switching router. WebSocket (`/ttt-websocket`) and actuator endpoints are unaffected. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
+
+## 7. Tracer Bullet
 
 The first vertical slice implemented end-to-end is the **match completion** flow in the `tournament` module:
 
-1. Client calls `POST /api/tournament/match/setResult/{id}` with a result body (`resultRaw`, `sets1`, `sets2`).
+1. Client calls `POST /api/v2/match/setResult/{id}` with a set body of `[points1, points2]` pairs, e.g. `[[11,5],[11,7],[11,3]]`.
 2. `MatchService` loads the `TournamentMatch` aggregate, validates the result, determines the winner and transitions the match state to `Completed`, then persists it.
 3. `MatchService` publishes a `MatchCompleted` domain event.
 4. The `outbound` module's event listener consumes `MatchCompleted` and pushes `{"type": "MATCH_COMPLETED", ...}` to `/topic/updates`.
@@ -75,9 +79,10 @@ This slice exercises every layer (`domain` → `application` → `infrastructure
 ### Domain model
 
 - `MatchState` enum: `Open`, `InQueue`, `OnTable`, `Started`, `Completed`, `Finished` (see `GLOSSARY.md`).
-- `TournamentMatch` aggregate with behaviour: `complete(result)` validates the set result and transitions to `Completed`, recording winner, sets and result.
+- `SetResult` value object encodes the per-set scoring rule (winner reaches 11, two-point lead from deuce) and the legacy `resultRaw` serialization.
+- `TournamentMatch` aggregate with behaviour: `enterResult(sets)` (playing mode), `complete(sets)` (best-of-five winner → `Completed`), `start()`, `free()`, `takeBack()`.
 
-## 7. Testing Strategy
+## 8. Testing Strategy
 
 | Kind | Class | What it verifies |
 |---|---|---|
@@ -89,3 +94,29 @@ This slice exercises every layer (`domain` → `application` → `infrastructure
 | Domain unit | `TournamentMatchTest` | Pure unit tests of aggregate behaviour against real objects (no mocks). |
 
 Every REST endpoint gets a module-level integration test with H2. Complex domain logic is unit-tested against real objects only.
+
+## 9. Current status & open work
+
+### Done (slices shipped)
+
+- Onion modules (`registration`, `grouping`, `tournament`, `settings`, `outbound`) + ArchUnit/Modulith verification.
+- Tracer: match `setResult`/`updateResult` end-to-end — `SetResult` scoring rules, `TournamentMatch` state machine (`start`/`free`/`takeBack`/`enterResult`/`complete`), `MatchCompleted`/`MatchStarted`/`MatchFreed`/`MatchTakenBack`/`MatchResultUpdated` events → `outbound` WebSocket.
+- API versioning: global `/api/v2` prefix (`ApiVersionConfig`), controllers on legacy path shapes (`/match`, `/matchlist`, `/table`, `/players`, `/disciplines`, `/settings`, `/printer`); stray `registration` match cluster removed.
+- 71 tests green (`cd management-backend && mvn test`).
+
+### Open work (next slices)
+
+- **Queue/MatchList** (`tournament`): `MatchListService` is in-memory only — needs persistence, match-state integration (`InQueue`) and events; `/matchlist/auto-start` is a stub.
+- **Caller / call state**: `callMatches`, `playercall/{id}`, and the `matchaggregates/caller|secondCall|thirdCall` endpoints are stubs; first/second/third call state is not modeled or persisted.
+- **Walkover**: `MatchState.Finished` is unused — `free()` currently maps to `Completed`; legacy `matc_kampflos` flag not wired.
+- **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.
+- **Table**: `lockTable`/`unlockTable` are no-ops (no `isLocked` persistence); `getByTablemanager` returns all tables (hardcoded manager→table mapping not migrated).
+- **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
+- **Settings/print**: PDF generation (Flying Saucer) and real printer/QR not ported; `PrinterService` is a stub.
+- **Registration**: `setPlayerActiveState` does not persist the active flag yet.
+- **Ops**: frontends still call `/api/match/…` (v1) — the `/api/v2` router/proxy switch (nginx) is not yet wired; swagger-ui reachability under the prefix unverified.
+- **`isMatchPlaying`** is kept (dead for now) — user intends to use it later.
+
+### Handoff note
+
+Slices 1–3 are committed (`9cdf1608`, `efe31da9`). The `/api/v2` slice is **uncommitted** in the working tree (`ApiVersionConfig.kt`, controller path changes, removed `registration` match files, test path updates). Continue in a fresh session by checking `git status`, then pick the next item from "Open work" above.

@@ -58,6 +58,14 @@
 
 *Consequences*: repository ports in `domain`, Jdbc adapters in `infrastructure.database`. H2 in MySQL mode is used for fast integration tests.
 
+=== API versioning via `/api/v2` path prefix
+
+*Decision*: every REST controller is prefixed with `/api/v2` through a global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers stay on the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …).
+
+*Rationale*: the legacy Scala backend keeps serving under `/api` while the new backend runs in parallel under `/api/v2`; a router can switch between them by version. A single prefix keeps the controllers clean and future version bumps localized.
+
+*Consequences*: clients must call `/api/v2/…`. WebSocket endpoints (`/ttt-websocket`) and actuator endpoints are unaffected, as they are not `@RestController` handlers. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
+
 === Single Data-Access Component
 
 *Status*: superseded by <<Onion Architecture per Module>>.

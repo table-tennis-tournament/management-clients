@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/tournament/matchlist")
+@RequestMapping("/matchlist")
 @Tag(name = "Match List Management", description = "Operations for managing the tournament match list/queue")
 class MatchListController(private val matchListService: MatchListService) {
 

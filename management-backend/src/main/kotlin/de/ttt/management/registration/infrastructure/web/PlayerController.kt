@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/players")
+@RequestMapping("/players")
 @Tag(name = "Player Management", description = "Operations for managing tournament players")
 class PlayerController(private val playerService: PlayerService) {
 

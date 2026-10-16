@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/printer")
+@RequestMapping("/printer")
 @Tag(name = "Printer Management", description = "Operations for managing printers, print jobs, and QR code generation")
 class PrinterController(private val printerService: PrinterService) {
 
