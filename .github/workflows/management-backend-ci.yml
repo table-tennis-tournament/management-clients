@@ -39,13 +39,14 @@ jobs:
         with:
           images: holzleube/ttt-management-backend
           tags: |
+            type=raw,value=latest
             type=raw,value=${{ github.sha }}-{{date 'YYYYMMDDHHmmss'}}
             type=ref,event=tag
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./
+          context: ./management-backend
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
