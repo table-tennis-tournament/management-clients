@@ -2,8 +2,8 @@ package de.ttt.management.tournament.domain
 import java.time.LocalDateTime
 class TournamentMatch(
     var id: Long? = null,
-    var player1: TournamentPlayer? = null,
-    var player2: TournamentPlayer? = null,
+    var players1: List<TournamentPlayer> = emptyList(),
+    var players2: List<TournamentPlayer> = emptyList(),
     var winner: TournamentPlayer? = null,
     var playGroup: TournamentPlayGroup? = null,
     var matchType: TournamentMatchType? = null,
@@ -24,6 +24,18 @@ class TournamentMatch(
     var roundNumber: Int? = null,
     var startTime: LocalDateTime? = null
 ) {
+
+    /**
+     * The first player of side A, kept as a convenience for singles-centric callers.
+     */
+    val player1: TournamentPlayer?
+        get() = players1.firstOrNull()
+
+    /**
+     * The first player of side B, kept as a convenience for singles-centric callers.
+     */
+    val player2: TournamentPlayer?
+        get() = players2.firstOrNull()
 
     /**
      * The per-set results, parsed from [resultRaw].
@@ -52,10 +64,10 @@ class TournamentMatch(
      * currently involved in a blocking match.
      */
     fun isPlayable(allMatches: Collection<TournamentMatch>): Boolean {
-        val p1 = player1?.id ?: return false
-        val p2 = player2?.id ?: return false
+        if (players1.isEmpty() || players2.isEmpty()) return false
+        val ids = (players1 + players2).mapNotNull { it.id }.toSet()
         return allMatches.none { m ->
-            m.isBlocking && (m.player1?.id == p1 || m.player1?.id == p2 || m.player2?.id == p1 || m.player2?.id == p2)
+            m.isBlocking && (m.players1 + m.players2).any { it.id in ids }
         }
     }
 

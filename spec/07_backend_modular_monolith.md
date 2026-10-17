@@ -108,11 +108,11 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Auto-start heuristics (`tournament`): `AutoStartHeuristic` (pure domain object) replicates the legacy `filterFirst`/`isPossibleMatch` player-blocking logic — a queued match is only started when both sides are present and no player is already in a blocking match (assigned or started); `TournamentMatch.isBlocking`/`isPlayable`; free tables iterated odd-then-even.
 - Walkover (`tournament`): `TournamentMatch.free()` transitions to `MatchState.Finished` (was `Completed`) and persists `matc_kampflos`; `takeBack()`/`complete()`/`enterResult()` clear the flag; `toMatch` reads `matc_kampflos`; the table-manager `state` mapping reports `Finished`.
 - Call aggregates name (`tournament`): `matchaggregates/*` `name` is now the matchtype name plus the group name (e.g. `Gruppenspiel 01 `), matching the legacy `getMatchAggregateNameFromMatch` (matchtype and group names joined in `findByCallState`).
-- 102 tests green (`cd management-backend && mvn test`).
+- Doubles resolution (`tournament`): `TournamentMatch` now models each side as a list of players (`players1`/`players2`); the repository resolves raw ids via the `doubles` table (`>= 100000` → two member player ids) and the `player` table for names/TTR, so `matchaggregates/*`, the table-manager view and `isPlayable`/`AutoStartHeuristic` blocking all see individual players for doubles.
+- 103 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Call aggregates fidelity (doubles)**: `matchaggregates/*` (and the table-manager view) resolve player names by joining `player` on `matc_play1/2_id`, which breaks for doubles — those ids are team ids (`>= 100000`) and must be resolved via the `doubles` table to the two individual players per side. This also affects `TournamentMatch.isPlayable`/`AutoStartHeuristic` blocking across singles and doubles.
 - **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.
 - **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
 - **Settings/print**: PDF generation (Flying Saucer) and real printer/QR not ported; `PrinterService` is a stub.
@@ -122,4 +122,4 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 
 ### Handoff note
 
-All completed slices up to and including the call-aggregate name suffix are implemented and green (102 tests). The call-aggregate name slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
+All completed slices up to and including the doubles resolution are implemented and green (103 tests). The doubles slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.

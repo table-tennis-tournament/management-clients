@@ -9,8 +9,8 @@ class TournamentMatchTest {
 
     private fun match() = TournamentMatch(
         id = 1L,
-        player1 = TournamentPlayer(id = 1L, firstName = "A"),
-        player2 = TournamentPlayer(id = 2L, firstName = "B")
+        players1 = listOf(TournamentPlayer(id = 1L, firstName = "A")),
+        players2 = listOf(TournamentPlayer(id = 2L, firstName = "B"))
     )
 
     @org.junit.jupiter.api.Test
@@ -210,8 +210,8 @@ class TournamentMatchTest {
         val match = match()
         val blocking = TournamentMatch(
             id = 2L,
-            player1 = TournamentPlayer(id = 1L),
-            player2 = TournamentPlayer(id = 9L),
+            players1 = listOf(TournamentPlayer(id = 1L)),
+            players2 = listOf(TournamentPlayer(id = 9L)),
             tableId = 7L
         )
 
@@ -220,7 +220,7 @@ class TournamentMatchTest {
 
     @org.junit.jupiter.api.Test
     fun `isPlayable is false when a side is missing`() {
-        val match = TournamentMatch(id = 1L, player1 = TournamentPlayer(id = 1L), player2 = null)
+        val match = TournamentMatch(id = 1L, players1 = listOf(TournamentPlayer(id = 1L)), players2 = emptyList())
         assertFalse(match.isPlayable(listOf(match)))
     }
 }
