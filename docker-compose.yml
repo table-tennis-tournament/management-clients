@@ -44,7 +44,7 @@ services:
     networks:
       - app-tier
   management-backend:
-    image: holzleube/ttt-management-backend:latest
+    image: holzleube/ttt-management:latest
     build:
       context: ./management-backend
       dockerfile: Dockerfile
