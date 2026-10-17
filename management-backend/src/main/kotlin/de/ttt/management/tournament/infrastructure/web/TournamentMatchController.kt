@@ -265,7 +265,7 @@ class TournamentMatchController(
             .map { (tableId, ms) ->
                 val head = ms.first()
                 val discipline = head.typeId?.let { disciplines[it] }
-                val players = ms.flatMap { listOfNotNull(it.player1, it.player2) }.distinctBy { it.id }
+                val players = ms.flatMap { it.players1 + it.players2 }.distinctBy { it.id }
                 MatchAggregate(
                     name = aggregateName(head),
                     startTime = head.startTime,
@@ -276,8 +276,8 @@ class TournamentMatchController(
                         CallerMatchDto(
                             id = m.id!!,
                             startTime = m.startTime,
-                            team1 = listOfNotNull(m.player1).map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },
-                            team2 = listOfNotNull(m.player2).map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) }
+                            team1 = m.players1.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },
+                            team2 = m.players2.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) }
                         )
                     }
                 )

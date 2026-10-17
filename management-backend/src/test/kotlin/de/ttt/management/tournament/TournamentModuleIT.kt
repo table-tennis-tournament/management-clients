@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -356,6 +358,18 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isEqualTo(1)
+    }
+
+    @Test
+    fun `caller aggregate resolves doubles team ids to individual players`() {
+        // Match 154 is a doubles match: side A references double team 100001 (= double 1: players 54, 158).
+        jdbcTemplate.update("UPDATE matches SET matc_callstate = 0, matc_tabl_id = 1, matc_played = 0 WHERE matc_id = 154")
+
+        val doubles = matchService.getMatchesByCallState(CallState.None).first { it.id == 154L }
+
+        assertEquals(setOf(54L, 158L), doubles.players1.mapNotNull { it.id }.toSet())
+        assertEquals(2, doubles.players1.size)
+        assertTrue(doubles.players1.all { it.firstName != null })
     }
 
     @Test
