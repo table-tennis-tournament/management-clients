@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -110,5 +111,45 @@ class TournamentModuleTest {
         assertThat(event.entries).anyMatch { it.matchIds.contains(matchId) }
 
         assertThat(matchService.getMatch(matchId)!!.state).isEqualTo(MatchState.InQueue)
+    }
+
+    @Test
+    fun `call endpoint announces the first call and publishes MatchCalled`(events: PublishedEvents) {
+        val matchId = matchService.getAllMatches().first().id!!
+        jdbcTemplate.update(
+            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 0, matc_tabl_id = NULL WHERE matc_id = ?",
+            matchId
+        )
+
+        restTestClient.post()
+            .uri("/api/v2/match/call")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(matchId))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        assertThat(events.ofType(MatchCalled::class.java)).hasSize(1)
+        assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.FirstCall)
+    }
+
+    @Test
+    fun `playercall endpoint advances to the second call and publishes MatchCalled`(events: PublishedEvents) {
+        val matchId = matchService.getAllMatches().first().id!!
+        jdbcTemplate.update(
+            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 1, matc_tabl_id = NULL WHERE matc_id = ?",
+            matchId
+        )
+
+        restTestClient.post()
+            .uri("/api/v2/playercall/$matchId")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        assertThat(events.ofType(MatchCalled::class.java)).hasSize(1)
+        assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.SecondCall)
     }
 }

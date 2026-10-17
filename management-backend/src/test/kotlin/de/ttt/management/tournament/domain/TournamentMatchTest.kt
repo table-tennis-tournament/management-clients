@@ -144,4 +144,42 @@ class TournamentMatchTest {
 
         assertEquals(MatchState.Started, match.state)
     }
+
+    @org.junit.jupiter.api.Test
+    fun `announces the first call`() {
+        val match = match()
+        match.call()
+
+        assertEquals(CallState.FirstCall, match.callState)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `advances the call from first to second to third`() {
+        val match = match()
+        match.call()
+        match.callAgain()
+        assertEquals(CallState.SecondCall, match.callState)
+
+        match.callAgain()
+        assertEquals(CallState.ThirdCall, match.callState)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `does not advance the call beyond the third call`() {
+        val match = match()
+        match.call()
+        match.callAgain()
+        match.callAgain()
+        match.callAgain()
+
+        assertEquals(CallState.ThirdCall, match.callState)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `rejects calling a completed match`() {
+        val match = match()
+        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+
+        assertFailsWith<IllegalArgumentException> { match.call() }
+    }
 }

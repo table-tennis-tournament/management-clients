@@ -213,15 +213,18 @@ class TournamentMatchController(
 
     @GetMapping("/matchaggregates/caller")
     @Operation(summary = "Get match aggregates for caller", description = "Retrieves summarized match data for the caller view.")
-    fun getMatchAggregateForCaller(): List<Map<String, Any>> = emptyList()
+    fun getMatchAggregateForCaller(): List<MatchAggregate> =
+        toMatchAggregates(matchService.getMatchesByCallState(CallState.None))
 
     @GetMapping("/matchaggregates/secondCall")
     @Operation(summary = "Get match aggregates for second call", description = "Retrieves summarized match data for the second call view.")
-    fun getMatchAggregateForSecondCall(): List<Map<String, Any>> = emptyList()
+    fun getMatchAggregateForSecondCall(): List<MatchAggregate> =
+        toMatchAggregates(matchService.getMatchesByCallState(CallState.SecondCall))
 
     @GetMapping("/matchaggregates/thirdCall")
     @Operation(summary = "Get match aggregates for third call", description = "Retrieves summarized match data for the third call view.")
-    fun getMatchAggregateForThirdCall(): List<Map<String, Any>> = emptyList()
+    fun getMatchAggregateForThirdCall(): List<MatchAggregate> =
+        toMatchAggregates(matchService.getMatchesByCallState(CallState.ThirdCall))
 
     @PostMapping("/match/remove/{tableId}")
     @Operation(summary = "Remove matches from table", description = "Removes all matches assigned to a specific table ID.")
@@ -233,13 +236,54 @@ class TournamentMatchController(
     @Operation(summary = "Call matches", description = "Marks a list of matches as 'called'.")
     fun callMatches(
         @RequestBody matchIds: List<Long>
-    ): Map<String, Any> = mapOf("success" to true)
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.callMatches(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not call all matches."))
+        }
+    }
 
     @PostMapping("/playercall/{matchId}")
     @Operation(summary = "Call players for match", description = "Triggers a player call for a specific match.")
     fun callPlayers(
         @Parameter(description = "ID of the match") @PathVariable matchId: Long
-    ): Map<String, Any> = mapOf("success" to true)
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.callPlayers(matchId)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Match not found"))
+        }
+    }
+
+    private fun toMatchAggregates(matches: List<TournamentMatch>): List<MatchAggregate> {
+        val disciplines = matchService.getAllTypes().associateBy { it.id }
+        return matches
+            .groupBy { it.tableId }
+            .map { (tableId, ms) ->
+                val head = ms.first()
+                val discipline = head.typeId?.let { disciplines[it] }
+                val players = ms.flatMap { listOfNotNull(it.player1, it.player2) }.distinctBy { it.id }
+                MatchAggregate(
+                    name = discipline?.name,
+                    startTime = head.startTime,
+                    tableNumbers = listOfNotNull(tableId),
+                    discipline = discipline?.let { DisciplineDto(it.id, it.name, it.kind, it.active) },
+                    players = players.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },
+                    matches = ms.map { m ->
+                        CallerMatchDto(
+                            id = m.id!!,
+                            startTime = m.startTime,
+                            team1 = listOfNotNull(m.player1).map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },
+                            team2 = listOfNotNull(m.player2).map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) }
+                        )
+                    }
+                )
+            }
+            .sortedBy { it.tableNumbers.firstOrNull() }
+    }
 }
 
 private fun List<List<Int>>.toSetResults(): List<SetResult> =
