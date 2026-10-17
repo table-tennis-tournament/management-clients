@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.domain.MatchState
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -129,6 +130,22 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
+    }
+
+    @Test
+    fun `freeing a match marks it as a walkover`() {
+        assertTrue(validMatchId > 0)
+
+        restTestClient.post()
+            .uri("/api/v2/match/free")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(validMatchId))
+            .exchange()
+            .expectStatus().isOk
+
+        val freed = matchService.getMatch(validMatchId)!!
+        assertTrue(freed.isKampflos)
+        assertTrue(freed.state == MatchState.Finished)
     }
 
     @Test
