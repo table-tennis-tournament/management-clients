@@ -28,6 +28,22 @@ services:
       - app-tier
     depends_on:
       - "mariadb"
+  management-backend:
+    image: holzleube/ttt-management-backend:latest
+    build:
+      context: ./management-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/tournamentManager
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.mariadb.jdbc.Driver
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=ttv01
+    networks:
+      - app-tier
+    depends_on:
+      - "mariadb"
   admin:
     image: holzleube/ttt-clients:v7.0.1
     build:
