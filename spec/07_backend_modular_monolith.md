@@ -109,11 +109,11 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Walkover (`tournament`): `TournamentMatch.free()` transitions to `MatchState.Finished` (was `Completed`) and persists `matc_kampflos`; `takeBack()`/`complete()`/`enterResult()` clear the flag; `toMatch` reads `matc_kampflos`; the table-manager `state` mapping reports `Finished`.
 - Call aggregates name (`tournament`): `matchaggregates/*` `name` is now the matchtype name plus the group name (e.g. `Gruppenspiel 01 `), matching the legacy `getMatchAggregateNameFromMatch` (matchtype and group names joined in `findByCallState`).
 - Doubles resolution (`tournament`): `TournamentMatch` now models each side as a list of players (`players1`/`players2`); the repository resolves raw ids via the `doubles` table (`>= 100000` → two member player ids) and the `player` table for names/TTR, so `matchaggregates/*`, the table-manager view and `isPlayable`/`AutoStartHeuristic` blocking all see individual players for doubles.
-- 103 tests green (`cd management-backend && mvn test`).
+- `TournamentMatchController` stubs: `load-new` → `GET /match/loadnew` (stateless no-op); `allmatchtable` → lists current `{matchId, tableId}` assignments; `matchtosecondtable/{tableName}` → assigns via `setMatchToTable`; `remove/{tableId}` → un-assigns matches (`removeFromTable` clears `matc_tabl_id`/`matc_isplaying`/`matc_callstate`).
+- 107 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.
 - **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
 - **Settings/print**: PDF generation (Flying Saucer) and real printer/QR not ported; `PrinterService` is a stub.
 - **Registration**: `setPlayerActiveState` does not persist the active flag yet.
@@ -122,4 +122,4 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 
 ### Handoff note
 
-All completed slices up to and including the doubles resolution are implemented and green (103 tests). The doubles slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
+All completed slices up to and including the `TournamentMatchController` stubs are implemented and green (107 tests). The stubs slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.

@@ -16,6 +16,7 @@ interface TournamentMatchRepository {
     fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
     fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
     fun stopMatch(matchId: Long): Int
+    fun removeFromTable(matchId: Long): Int
     fun freeMatch(matchId: Long): Int
     fun takeBackMatch(matchId: Long): Int
     fun setWaitingList(matchId: Long, waiting: Boolean): Int

@@ -91,6 +91,17 @@ class MatchService(
     }
 
     @Transactional
+    fun removeMatchesFromTable(matchIds: List<Long>): Boolean {
+        var allSuccess = true
+        for (matchId in matchIds) {
+            if (matchRepository.removeFromTable(matchId) == 0) {
+                allSuccess = false
+            }
+        }
+        return allSuccess
+    }
+
+    @Transactional
     fun setResult(matchId: Long, sets: List<SetResult>): Boolean {
         val match = matchRepository.findById(matchId).orElse(null) ?: return false
         return try {
