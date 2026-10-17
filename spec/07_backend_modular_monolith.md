@@ -110,16 +110,17 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Call aggregates name (`tournament`): `matchaggregates/*` `name` is now the matchtype name plus the group name (e.g. `Gruppenspiel 01 `), matching the legacy `getMatchAggregateNameFromMatch` (matchtype and group names joined in `findByCallState`).
 - Doubles resolution (`tournament`): `TournamentMatch` now models each side as a list of players (`players1`/`players2`); the repository resolves raw ids via the `doubles` table (`>= 100000` → two member player ids) and the `player` table for names/TTR, so `matchaggregates/*`, the table-manager view and `isPlayable`/`AutoStartHeuristic` blocking all see individual players for doubles.
 - `TournamentMatchController` stubs: `load-new` → `GET /match/loadnew` (stateless no-op); `allmatchtable` → lists current `{matchId, tableId}` assignments; `matchtosecondtable/{tableName}` → assigns via `setMatchToTable`; `remove/{tableId}` → un-assigns matches (`removeFromTable` clears `matc_tabl_id`/`matc_isplaying`/`matc_callstate`).
-- 107 tests green (`cd management-backend && mvn test`).
+- Settings/print (`settings`): real PDF generation via `openhtmltopdf` (`PdfGenerator` port → `OpenHtmlPdfGenerator`) rendering a Schirizettel template from a `MatchPrintInfo` read model (`MatchPrintRepository`/`JdbcMatchPrintRepository`, resolves singles and doubles names); real QR codes via ZXing (`QrCodeGenerator` → `ZxingQrCodeGenerator`); real printer enumeration via `PrintServiceLookup` (`PrinterGateway` → `SystemPrinterGateway`); `printpdf/{id}` returns a real PDF (404 for unknown match).
+- 109 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
 - **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
-- **Settings/print**: PDF generation (Flying Saucer) and real printer/QR not ported; `PrinterService` is a stub.
 - **Registration**: `setPlayerActiveState` does not persist the active flag yet.
 - **Ops**: frontends still call `/api/match/…` (v1) — the `/api/v2` router/proxy switch (nginx) is not yet wired; swagger-ui reachability under the prefix unverified.
 - **`isMatchPlaying`** is kept (dead for now) — user intends to use it later.
+- **Physical print jobs**: `print`/`printAll` still log rather than dispatch to a real printer (selected printer + `printOnStart` are tracked but no `DocPrintJob` is created).
 
 ### Handoff note
 
-All completed slices up to and including the `TournamentMatchController` stubs are implemented, green (107 tests) and committed. Remaining work is the "Open work" list above — the two large items are **Grouping** and **Settings/print**; **Registration `setPlayerActiveState`** mirrors a legacy no-op (no `active` column exists) and needs clarification before implementation.
+All completed slices up to and including the settings/print slice are implemented, green (109 tests) and committed. Remaining work is the "Open work" list above — the large item left is **Grouping**; **Registration `setPlayerActiveState`** mirrors a legacy no-op (no `active` column exists) and needs clarification before implementation.

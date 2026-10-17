@@ -59,7 +59,10 @@ class PrinterController(private val printerService: PrinterService) {
     @Operation(summary = "Print multiple matches", description = "Triggers print jobs for a list of match IDs.")
     fun printAll(
         @RequestBody ids: List<Long>
-    ): Map<String, Any> = mapOf("success" to true)
+    ): Map<String, Any> {
+        ids.forEach { printerService.printMatch(it) }
+        return mapOf("success" to true)
+    }
 
     @GetMapping("/printpdf/{id}", produces = [MediaType.APPLICATION_PDF_VALUE])
     @Operation(
@@ -75,7 +78,14 @@ class PrinterController(private val printerService: PrinterService) {
     )
     fun printPDF(
         @Parameter(description = "ID of the match") @PathVariable id: Long
-    ): ResponseEntity<ByteArray> = ResponseEntity.ok(ByteArray(0))
+    ): ResponseEntity<ByteArray> {
+        val pdf = printerService.generateMatchPdf(id)
+        return if (pdf != null) {
+            ResponseEntity.ok(pdf)
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
 
     @GetMapping("/getQrCode/{content}", produces = [MediaType.IMAGE_PNG_VALUE])
     @Operation(
