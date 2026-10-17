@@ -2,6 +2,7 @@ package de.ttt.management.tournament.application
 
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
+import de.ttt.management.tournament.MatchAssigned
 import de.ttt.management.tournament.MatchFreed
 import de.ttt.management.tournament.MatchResultUpdated
 import de.ttt.management.tournament.MatchStarted
@@ -36,9 +37,29 @@ class MatchService(
 
     fun getMatchesByCallState(callState: CallState): List<TournamentMatch> = matchRepository.findByCallState(callState)
 
+    fun getMatchesOnTables(tableIds: Collection<Long>): List<TournamentMatch> = matchRepository.findByTableIds(tableIds)
+
     fun getAllTypes(): List<TournamentDiscipline> = disciplineRepository.findAll()
 
     fun getActiveTypes(): List<TournamentDiscipline> = disciplineRepository.findAll().filter { it.active }
+
+    @Transactional
+    fun assignMatch(matchId: Long, tableId: Long): Boolean {
+        val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        return try {
+            match.assign(tableId)
+            val updatedRows = matchRepository.assignMatch(matchId, tableId, LocalDateTime.now())
+            if (updatedRows > 0) {
+                matchListService.removeMatchFromList(matchId)
+                eventPublisher.publishEvent(MatchAssigned(matchId = matchId, tableId = tableId))
+                true
+            } else {
+                false
+            }
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
 
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean {

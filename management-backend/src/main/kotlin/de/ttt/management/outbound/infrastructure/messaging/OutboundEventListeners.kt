@@ -5,6 +5,7 @@ import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
+import de.ttt.management.tournament.MatchAssigned
 import de.ttt.management.tournament.MatchFreed
 import de.ttt.management.tournament.MatchListChanged
 import de.ttt.management.tournament.MatchResultUpdated
@@ -29,6 +30,11 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     @EventListener
     fun on(event: MatchStarted) {
         outboundService.pushUpdate("MATCH_STARTED", event)
+    }
+
+    @EventListener
+    fun on(event: MatchAssigned) {
+        outboundService.pushUpdate("MATCH_ASSIGNED", event)
     }
 
     @EventListener

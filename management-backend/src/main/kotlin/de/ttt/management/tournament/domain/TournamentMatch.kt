@@ -33,9 +33,22 @@ class TournamentMatch(
         get() = when {
             isPlayed -> MatchState.Completed
             isPlaying -> MatchState.Started
+            tableId != null -> MatchState.OnTable
             waitingList -> MatchState.InQueue
             else -> MatchState.Open
         }
+
+    /**
+     * Assigns the match to a table without starting it, transitioning it to [MatchState.OnTable].
+     */
+    fun assign(tableId: Long) {
+        require(!isPlayed) { "A completed match cannot be assigned" }
+        require(!isPlaying) { "A match that is already playing cannot be reassigned" }
+        this.tableId = tableId
+        isPlaying = false
+        waitingList = false
+        callState = CallState.None
+    }
 
     /**
      * Starts the match, transitioning it to [MatchState.Started].
