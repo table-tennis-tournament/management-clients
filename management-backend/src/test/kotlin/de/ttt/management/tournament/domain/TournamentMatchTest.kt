@@ -182,4 +182,32 @@ class TournamentMatchTest {
 
         assertFailsWith<IllegalArgumentException> { match.call() }
     }
+
+    @org.junit.jupiter.api.Test
+    fun `an assigned match is blocking`() {
+        val match = match()
+        match.assign(tableId = 7)
+
+        assertTrue(match.isBlocking)
+        assertEquals(MatchState.OnTable, match.state)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `isPlayable is false when another match blocks one of its players`() {
+        val match = match()
+        val blocking = TournamentMatch(
+            id = 2L,
+            player1 = TournamentPlayer(id = 1L),
+            player2 = TournamentPlayer(id = 9L),
+            tableId = 7L
+        )
+
+        assertFalse(match.isPlayable(listOf(match, blocking)))
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `isPlayable is false when a side is missing`() {
+        val match = TournamentMatch(id = 1L, player1 = TournamentPlayer(id = 1L), player2 = null)
+        assertFalse(match.isPlayable(listOf(match)))
+    }
 }

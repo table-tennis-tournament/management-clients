@@ -39,6 +39,25 @@ class TournamentMatch(
         }
 
     /**
+     * A match blocks other matches involving the same players when it is assigned to a table
+     * or already being played.
+     */
+    val isBlocking: Boolean
+        get() = tableId != null
+
+    /**
+     * A match is playable when both sides are present and none of its players is
+     * currently involved in a blocking match.
+     */
+    fun isPlayable(allMatches: Collection<TournamentMatch>): Boolean {
+        val p1 = player1?.id ?: return false
+        val p2 = player2?.id ?: return false
+        return allMatches.none { m ->
+            m.isBlocking && (m.player1?.id == p1 || m.player1?.id == p2 || m.player2?.id == p1 || m.player2?.id == p2)
+        }
+    }
+
+    /**
      * Assigns the match to a table without starting it, transitioning it to [MatchState.OnTable].
      */
     fun assign(tableId: Long) {
