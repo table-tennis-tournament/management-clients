@@ -22,3 +22,7 @@ springdoc:
     path: /api-docs-ui
   api-docs:
     path: /v3/api-docs
+
+management:
+  printer:
+    default-name: ${DEFAULT_PRINTER:PDF}

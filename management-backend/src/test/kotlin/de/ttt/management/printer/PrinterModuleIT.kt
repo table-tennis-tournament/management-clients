@@ -64,13 +64,11 @@ class PrinterModuleIT {
     }
 
     @Test
-    fun `should print match successfully`() {
+    fun `printing an unknown match returns bad request`() {
         restTestClient.post()
-            .uri("/api/v2/printer/print/1")
+            .uri("/api/v2/printer/print/999999")
             .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectStatus().isBadRequest
     }
 
     @Test

@@ -1,6 +1,8 @@
 networks:
   app-tier:
     driver: bridge
+volumes:
+  cups-output:
 services:
   mariadb:
     image: holzleube/mysql-docker-image:7.0.0
@@ -28,6 +30,19 @@ services:
       - app-tier
     depends_on:
       - "mariadb"
+  cups:
+    build:
+      context: ./cups
+      dockerfile: Dockerfile
+    ports:
+      - "631:631"
+    environment:
+      - CUPS_PRINTER_URI=${CUPS_PRINTER_URI:-}
+      - CUPS_PRINTER_NAME=${CUPS_PRINTER_NAME:-}
+    volumes:
+      - cups-output:/var/spool/cups-pdf
+    networks:
+      - app-tier
   management-backend:
     image: holzleube/ttt-management-backend:latest
     build:
@@ -40,10 +55,13 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.mariadb.jdbc.Driver
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=ttv01
+      - CUPS_SERVER=cups
+      - DEFAULT_PRINTER=${DEFAULT_PRINTER:-PDF}
     networks:
       - app-tier
     depends_on:
       - "mariadb"
+      - "cups"
   admin:
     image: holzleube/ttt-clients:v7.0.1
     build:

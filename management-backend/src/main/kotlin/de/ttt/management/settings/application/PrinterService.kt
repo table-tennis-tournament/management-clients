@@ -5,6 +5,10 @@ import de.ttt.management.settings.domain.MatchPrintRepository
 import de.ttt.management.settings.domain.PdfGenerator
 import de.ttt.management.settings.domain.PrinterGateway
 import de.ttt.management.settings.domain.QrCodeGenerator
+import de.ttt.management.tournament.MatchAssigned
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import java.util.Base64
 
@@ -13,7 +17,8 @@ class PrinterService(
     private val printerGateway: PrinterGateway,
     private val qrCodeGenerator: QrCodeGenerator,
     private val pdfGenerator: PdfGenerator,
-    private val matchPrintRepository: MatchPrintRepository
+    private val matchPrintRepository: MatchPrintRepository,
+    @Value("\${management.printer.default-name:PDF}") private val defaultPrinterName: String
 ) {
 
     private var selectedPrinter: String? = null
@@ -34,8 +39,12 @@ class PrinterService(
     }
 
     fun printMatch(matchId: Long): Boolean {
-        println("Printing match $matchId on ${selectedPrinter ?: "default"}")
-        return true
+        val pdf = generateMatchPdf(matchId) ?: return false
+        return printerGateway.print(resolvePrinter(), pdf)
+    }
+
+    fun printMatches(matchIds: List<Long>): Boolean {
+        return matchIds.map { printMatch(it) }.all { it }
     }
 
     fun generateMatchPdf(matchId: Long): ByteArray? {
@@ -45,6 +54,18 @@ class PrinterService(
     }
 
     fun getQrCode(content: String): ByteArray = qrCodeGenerator.generate(content)
+
+    @EventListener
+    fun onMatchAssigned(event: MatchAssigned) {
+        if (!printOnStart) return
+        try {
+            printMatch(event.matchId)
+        } catch (e: Exception) {
+            log.warn("Print-on-assign failed for match {}", event.matchId, e)
+        }
+    }
+
+    private fun resolvePrinter(): String = selectedPrinter ?: defaultPrinterName
 
     private fun refereeSheetHtml(match: MatchPrintInfo, qrPng: ByteArray): String {
         val qrDataUri = "data:image/png;base64," + Base64.getEncoder().encodeToString(qrPng)
@@ -109,5 +130,9 @@ class PrinterService(
             </body>
             </html>
         """.trimIndent()
+    }
+
+    private companion object {
+        val log = LoggerFactory.getLogger(PrinterService::class.java)
     }
 }

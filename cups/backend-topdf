@@ -1,0 +1,11 @@
+#!/bin/sh
+# Custom CUPS backend: writes each print job as a PDF into the shared volume.
+# Invoked by cupsd with: backend job-id user title copies options [file]
+mkdir -p /var/spool/cups-pdf
+job_id="${1:-unknown}"
+if [ $# -ge 6 ]; then
+  cat "$6" > "/var/spool/cups-pdf/${job_id}.pdf"
+else
+  cat > "/var/spool/cups-pdf/${job_id}.pdf"
+fi
+exit 0
