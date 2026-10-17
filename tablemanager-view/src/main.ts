@@ -3,7 +3,7 @@ import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { environment } from './environments/environment';
 import { WebsocketService } from './app/services/websocket.service';
 import { WebsocketHandlerService } from './app/table-list/websocket-handler.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app/app-routing.module';
@@ -15,6 +15,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AppComponent } from './app/app.component';
+import { ApiVersionInterceptor } from './app/api-version.interceptor';
 
 if (environment.production) {
   enableProdMode();
@@ -45,5 +46,6 @@ bootstrapApplication(AppComponent, {
     ),
     WebsocketService,
     WebsocketHandlerService,
+    { provide: HTTP_INTERCEPTORS, useClass: ApiVersionInterceptor, multi: true },
   ],
 }).catch((err) => console.error(err));

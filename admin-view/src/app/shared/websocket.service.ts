@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import SockJS from 'sockjs-client';
+import { getApiVersion } from '../api-version';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class WebsocketService {
     disconnectListener.subscribe(listeners.disconnected);
 
     return new Observable((complete) => {
-      this.websocket = new SockJS('/api/websocket');
+      this.websocket = new SockJS(getApiVersion() === 'v2' ? '/ttt-websocket-legacy' : '/api/websocket');
       this.websocket.onopen = function () {
         complete.next(undefined);
       };

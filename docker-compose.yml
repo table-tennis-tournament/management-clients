@@ -1,9 +1,11 @@
 networks:
   app-tier:
     driver: bridge
+volumes:
+  cups-output:
 services:
   mariadb:
-    image: holzleube/mysql-docker-image:6.1
+    image: holzleube/mysql-docker-image:7.0.0
     ports:
       - "3306:3306"
     environment:
@@ -28,8 +30,40 @@ services:
       - app-tier
     depends_on:
       - "mariadb"
+  cups:
+    build:
+      context: ./cups
+      dockerfile: Dockerfile
+    ports:
+      - "631:631"
+    environment:
+      - CUPS_PRINTER_URI=${CUPS_PRINTER_URI:-}
+      - CUPS_PRINTER_NAME=${CUPS_PRINTER_NAME:-}
+    volumes:
+      - cups-output:/var/spool/cups-pdf
+    networks:
+      - app-tier
+  management-backend:
+    image: holzleube/ttt-management:latest
+    build:
+      context: ./management-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/tournamentManager
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.mariadb.jdbc.Driver
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=ttv01
+      - CUPS_SERVER=cups
+      - DEFAULT_PRINTER=${DEFAULT_PRINTER:-PDF}
+    networks:
+      - app-tier
+    depends_on:
+      - "mariadb"
+      - "cups"
   admin:
-    image: holzleube/ttt-clients:v7.0.0
+    image: holzleube/ttt-clients:v7.0.1
     build:
       context: .
       dockerfile: Dockerfile-clients
