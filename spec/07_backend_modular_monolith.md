@@ -113,15 +113,16 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Settings/print (`settings`): real PDF generation via `openhtmltopdf` (`PdfGenerator` port → `OpenHtmlPdfGenerator`) rendering a Schirizettel template from a `MatchPrintInfo` read model (`MatchPrintRepository`/`JdbcMatchPrintRepository`, resolves singles and doubles names); real QR codes via ZXing (`QrCodeGenerator` → `ZxingQrCodeGenerator`); real printer enumeration via `PrintServiceLookup` (`PrinterGateway` → `SystemPrinterGateway`); `printpdf/{id}` returns a real PDF (404 for unknown match).
 - Registration active flag (`registration`): `Player.active` persisted via `play_active` (Flyway `V5__player_active.sql`, default active); `setPlayerActiveState` now writes the flag.
 - v1/v2 switch: both backends run side by side (`backend:9000`, `management-backend:8080`) with nginx routing `/api/` → old and `/api/v2/` + `/ttt-websocket*` → new; the three frontends share an `apiVersion` localStorage key, an `HTTP_INTERCEPTOR` rewrites `/api` → `/api/v2` in v2 mode, and a temporary **legacy raw-SockJS endpoint** in the `outbound` module (`/ttt-websocket-legacy`) re-emits full v1 payloads (`UpdateMatches`/`UpdateTable`/`UpdateMatchList`/`UpdateTableManager`) so the existing clients work unchanged; toggles in admin settings, tablemanager menu and result header (experimental). `management-backend-ci.yml`/Dockerfile fixed (layertools removed, `latest` tag).
-- 113 tests green (`cd management-backend && mvn test`).
+- Grouping standings (`grouping`): `GroupStandingsCalculator` (pure) replicates `updatePlayerPerGroup` — tallies completed matches into matches/sets/points won+lost, ranks by `matchesWon` → `setsDiff` → `pointsWon`, assigns `position`; `GroupingService` listens to `MatchCompleted` and, once the group is complete, persists the standings to `playerpergroup` (`PlayerPerGroupRepository`/`GroupMatchRepository`).
+- 118 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
+- **Grouping (formation/knockout)**: group *formation* and seeding remain offline (mktt); the knockout placement (`writeNextKoMatch` — write the winner into the next KO match) is not migrated.
 - **STOMP migration**: replace the legacy raw-SockJS shim (`LegacyOutboundService`/`LegacyReadRepository`/`LegacyWebSocket*`) and the frontends' `new SockJS(...)` with a `@stomp/stompjs` client on `/topic/updates`.
 - **`isMatchPlaying`** is kept (dead for now) — user intends to use it later.
 - **Physical print jobs**: `print`/`printAll` still log rather than dispatch to a real printer (selected printer + `printOnStart` are tracked but no `DocPrintJob` is created).
 
 ### Handoff note
 
-All completed slices up to and including the v1/v2 backend switch are implemented, green (113 tests + all three frontend builds) and committed. Remaining work is the "Open work" list above — the large items are **Grouping** (skipped per user direction) and the **STOMP migration** that removes the temporary legacy raw-SockJS shim.
+All completed slices up to and including the grouping-standings slice are implemented, green (118 tests + all three frontend builds) and committed. Remaining work is the "Open work" list above — the large items are **grouping formation/knockout placement** and the **STOMP migration** that removes the temporary legacy raw-SockJS shim.
