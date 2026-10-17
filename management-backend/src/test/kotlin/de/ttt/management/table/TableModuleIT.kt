@@ -1,9 +1,11 @@
 package de.ttt.management.table
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 
@@ -14,6 +16,14 @@ class TableModuleIT {
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
+
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
+
+    @BeforeEach
+    fun setup() {
+        jdbcTemplate.update("UPDATE tables SET tabl_locked = 0")
+    }
 
     @Test
     fun `should get all tables`() {
@@ -54,7 +64,6 @@ class TableModuleIT {
 
     @Test
     fun `should lock and unlock table`() {
-        // Lock
         restTestClient.post()
             .uri("/api/v2/table/1/lock")
             .exchange()
@@ -62,13 +71,42 @@ class TableModuleIT {
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
 
-        // Unlock
         restTestClient.post()
             .uri("/api/v2/table/1/unlock")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
+    }
+
+    @Test
+    fun `locking a table persists the locked flag`() {
+        restTestClient.post()
+            .uri("/api/v2/table/1/lock")
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.get()
+            .uri("/api/v2/table/1")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.isLocked").isEqualTo(true)
+    }
+
+    @Test
+    fun `locked table is excluded from free tables`() {
+        restTestClient.post()
+            .uri("/api/v2/table/1/lock")
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.get()
+            .uri("/api/v2/table/free")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[?(@.id == 1)]").isEmpty()
     }
 
     @Test
@@ -94,5 +132,28 @@ class TableModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
+            .jsonPath("$.length()").isEqualTo(5)
+    }
+
+    @Test
+    fun `table manager mapping returns only that manager's tables`() {
+        restTestClient.get()
+            .uri("/api/v2/tables?table_manager=2")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(5)
+            .jsonPath("$[?(@.table_number == 6)]").isNotEmpty()
+            .jsonPath("$[?(@.table_number == 1)]").isEmpty()
+    }
+
+    @Test
+    fun `unknown table manager returns no tables`() {
+        restTestClient.get()
+            .uri("/api/v2/tables?table_manager=99")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(0)
     }
 }

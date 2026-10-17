@@ -70,7 +70,7 @@ class TournamentModuleTest {
     }
 
     @Test
-    fun `matchtotable endpoint assigns a match and publishes MatchStarted`(events: PublishedEvents) {
+    fun `matchtotable endpoint assigns a match and publishes MatchAssigned`(events: PublishedEvents) {
         val matchId = matchService.getAllMatches().first().id!!
         jdbcTemplate.update(
             "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
@@ -86,9 +86,11 @@ class TournamentModuleTest {
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
 
-        assertThat(events.ofType(MatchStarted::class.java)).hasSize(1)
-        val event = events.ofType(MatchStarted::class.java).iterator().next()
+        assertThat(events.ofType(MatchAssigned::class.java)).hasSize(1)
+        val event = events.ofType(MatchAssigned::class.java).iterator().next()
         assertThat(event.matchId).isEqualTo(matchId)
+
+        assertThat(matchService.getMatch(matchId)!!.state).isEqualTo(MatchState.OnTable)
     }
 
     @Test

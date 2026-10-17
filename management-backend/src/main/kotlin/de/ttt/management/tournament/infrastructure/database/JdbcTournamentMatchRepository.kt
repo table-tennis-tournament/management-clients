@@ -110,6 +110,40 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .list()
     }
 
+    override fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch> {
+        if (tableIds.isEmpty()) return emptyList()
+        return jdbcClient.sql(
+            """
+            SELECT m.*, 
+                   p1.play_firstname AS p1_firstname, p1.play_lastname AS p1_lastname, p1.play_ttr AS p1_ttr,
+                   p2.play_firstname AS p2_firstname, p2.play_lastname AS p2_lastname, p2.play_ttr AS p2_ttr,
+                   mt.maty_name AS match_type_name
+            FROM matches m
+            LEFT JOIN player p1 ON p1.play_id = m.matc_play1_id
+            LEFT JOIN player p2 ON p2.play_id = m.matc_play2_id
+            LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
+            WHERE m.matc_tabl_id IN (:tableIds)
+            ORDER BY m.matc_tabl_id, m.matc_id
+            """.trimIndent()
+        )
+            .param("tableIds", tableIds)
+            .query { rs, _ ->
+                toMatch(rs, withPlayers = true).apply {
+                    rs.getObject("matc_maty_id")?.let { (it as Number).toLong() }?.let { mtId ->
+                        matchType = TournamentMatchType(id = mtId, name = rs.getString("match_type_name"))
+                    }
+                }
+            }
+            .list()
+    }
+
+    override fun findTableIdsInUse(): Set<Long> {
+        return jdbcClient.sql("SELECT DISTINCT matc_tabl_id FROM matches WHERE matc_tabl_id IS NOT NULL")
+            .query { rs, _ -> rs.getLong("matc_tabl_id") }
+            .set()
+            .toSet()
+    }
+
     override fun isMatchPlaying(matchId: Long): Boolean {
         val result = jdbcClient.sql("SELECT matc_isplaying FROM matches WHERE matc_id = :id")
             .param("id", matchId)
@@ -117,6 +151,20 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .optional()
 
         return result.orElse(0) > 0
+    }
+
+    override fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int {
+        return jdbcClient.sql(
+            """
+            UPDATE matches 
+            SET matc_tabl_id = :tableId, matc_isplaying = 0, matc_waitinglist = 0, matc_callstate = 0, matc_starttime = :startTime
+            WHERE matc_id = :id
+            """.trimIndent()
+        )
+            .param("tableId", tableId)
+            .param("startTime", startTime)
+            .param("id", matchId)
+            .update()
     }
 
     override fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int {

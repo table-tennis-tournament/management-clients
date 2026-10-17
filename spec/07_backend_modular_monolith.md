@@ -104,15 +104,15 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - API versioning: global `/api/v2` prefix (`ApiVersionConfig`), controllers on legacy path shapes (`/match`, `/matchlist`, `/table`, `/players`, `/disciplines`, `/settings`, `/printer`); stray `registration` match cluster removed.
 - Queue/MatchList (`tournament`): persisted via Flyway `V2__match_list.sql` + `MatchListRepository`/`JdbcMatchListRepository`; match-state integration (`InQueue` via `matc_waitinglist`, `TournamentMatch.queue()`/`dequeue()`); `MatchListChanged` domain event → `outbound` (`MATCH_LIST_CHANGED`); `AutoStartService` replaces the `/matchlist/auto-start` stub (starts the next queued match on each free table).
 - Caller / call state (`tournament`): `CallState` (`None`/`FirstCall`/`SecondCall`/`ThirdCall`) persisted via `matc_callstate` (Flyway `V3__match_call_state.sql`); `TournamentMatch.call()`/`callAgain()`; `callMatches`/`playercall/{id}` and `matchaggregates/caller|secondCall|thirdCall` (grouped by `matc_tabl_id`, with player/discipline names joined) implemented; `MatchCalled` event → `outbound` (`MATCH_CALLED`).
-- 84 tests green (`cd management-backend && mvn test`).
+- Table (`tournament`): `isLocked` persisted (`tabl_locked`, Flyway `V4__table_locked.sql`); `lockTable`/`unlockTable` write the flag and `getFreeTables` excludes locked/occupied tables (keys off `matc_tabl_id`, not the removed `match_on_table`); `getByTablemanager` migrates the hardcoded manager→table-number mapping and returns `TableManagerTableInfo` (`table_id`/`table_number`/`table_manager_id`/`matches` with players, result games, `stage`, `classification`, legacy `state`); assignment split: `setMatchToTable` now assigns (`TournamentMatch.assign()` → `MatchState.OnTable`, `MatchAssigned` event → `MATCH_ASSIGNED`) instead of starting, while `/match/start/{id}/{tableId}` remains `Started`.
+- 88 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Auto-start heuristics**: `AutoStartService` starts the next match per free table but does not yet replicate the legacy player-blocking logic (`filterFirst`/`isPossibleMatch`); `getFreeTables` still keys off the (unpopulated) `match_on_table` table — see the Table slice.
+- **Auto-start heuristics**: `AutoStartService` starts the next match per free table but does not yet replicate the legacy player-blocking logic (`filterFirst`/`isPossibleMatch`).
 - **Call aggregates fidelity**: `matchaggregates/*` are singles-only (player names joined from `player` by `matc_play1/2_id`; doubles team ids not resolved) and `name` is the discipline name only (no `matchtype`/`group` suffix yet).
 - **Walkover**: `MatchState.Finished` is unused — `free()` currently maps to `Completed`; legacy `matc_kampflos` flag not wired.
 - **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.
-- **Table**: `lockTable`/`unlockTable` are no-ops (no `isLocked` persistence); `getByTablemanager` returns all tables (hardcoded manager→table mapping not migrated); match↔table assignment collapses "assigned" and "started" (`setMatchToTable` goes straight to `Started`, so the caller view only shows already-started matches).
 - **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
 - **Settings/print**: PDF generation (Flying Saucer) and real printer/QR not ported; `PrinterService` is a stub.
 - **Registration**: `setPlayerActiveState` does not persist the active flag yet.
@@ -121,4 +121,4 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 
 ### Handoff note
 
-Slices 1–3 are committed (`9cdf1608`, `efe31da9`). The `/api/v2` slice is **uncommitted** in the working tree (`ApiVersionConfig.kt`, controller path changes, removed `registration` match files, test path updates). Continue in a fresh session by checking `git status`, then pick the next item from "Open work" above.
+All completed slices up to and including the Table slice are implemented and green (88 tests). The Table slice (lock persistence, manager mapping, assigned-vs-started split) is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.

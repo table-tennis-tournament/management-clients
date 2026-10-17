@@ -1,6 +1,14 @@
 package de.ttt.management.tournament
 
 /**
+ * Published when a match is assigned to a table (but not yet started).
+ */
+data class MatchAssigned(
+    val matchId: Long,
+    val tableId: Long
+)
+
+/**
  * Published when a match is started on a table.
  */
 data class MatchStarted(

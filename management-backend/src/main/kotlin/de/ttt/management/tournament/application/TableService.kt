@@ -7,16 +7,18 @@ import org.springframework.transaction.annotation.Transactional
 @Service("tournamentTableService")
 class TableService(
     private val ttTableRepository: TTTableRepository,
-    private val matchOnTableRepository: MatchOnTableRepository,
+    private val matchRepository: TournamentMatchRepository,
     private val matchService: MatchService
 ) {
 
-    fun getAllTables(): List<TTTable> = ttTableRepository.findAll().sortedBy { it.name }
+    fun getAllTables(): List<TTTable> = ttTableRepository.findAll().sortedBy { it.name?.toIntOrNull() ?: Int.MAX_VALUE }
 
     fun getFreeTables(): List<TTTable> {
         val allTables = ttTableRepository.findAll()
-        val occupiedTableIds = matchOnTableRepository.findAll().mapNotNull { it.tableId }.toSet()
-        return allTables.filter { it.id !in occupiedTableIds }.sortedBy { it.name }
+        val occupiedTableIds = matchRepository.findTableIdsInUse()
+        return allTables
+            .filter { !it.isLocked && it.id !in occupiedTableIds }
+            .sortedBy { it.name?.toIntOrNull() ?: Int.MAX_VALUE }
     }
 
     fun getTable(id: Long): TTTable? = ttTableRepository.findById(id).orElse(null)
@@ -25,14 +27,12 @@ class TableService(
 
     @Transactional
     fun lockTable(id: Long): Boolean {
-        ttTableRepository.findById(id).orElse(null) ?: return false
-        return true
+        return ttTableRepository.setLocked(id, true) > 0
     }
 
     @Transactional
     fun unlockTable(id: Long): Boolean {
-        ttTableRepository.findById(id).orElse(null) ?: return false
-        return true
+        return ttTableRepository.setLocked(id, false) > 0
     }
 
     @Transactional
@@ -40,10 +40,31 @@ class TableService(
         val table = getTableByName(tableName) ?: return false
         var allSuccess = true
         for (matchId in matchIds) {
-            if (!matchService.startMatch(matchId, table.id!!)) {
+            if (!matchService.assignMatch(matchId, table.id!!)) {
                 allSuccess = false
             }
         }
         return allSuccess
+    }
+
+    fun getTablesForManager(managerId: Long): List<TTTable> {
+        val tableNumbers = TABLE_MANAGER_TABLES[managerId] ?: return emptyList()
+        return ttTableRepository.findAll()
+            .filter { it.name?.toIntOrNull() in tableNumbers }
+            .sortedBy { it.name?.toIntOrNull() ?: Int.MAX_VALUE }
+    }
+
+    companion object {
+        /**
+         * Maps a table-manager id to the physical table numbers that manager is responsible for.
+         * Migrated from the legacy backend's hardcoded `getByTablemanager` switch.
+         */
+        val TABLE_MANAGER_TABLES: Map<Long, Set<Int>> = mapOf(
+            1L to setOf(1, 2, 3, 4, 5),
+            2L to setOf(6, 7, 8, 11, 12),
+            3L to setOf(9, 10, 13, 14, 15),
+            4L to setOf(16, 17, 18, 19, 20),
+            5L to setOf(21, 22, 23, 24)
+        )
     }
 }

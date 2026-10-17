@@ -15,7 +15,8 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
         TTTable(
             id = rs.getLong("Tabl_ID"),
             name = rs.getString("Tabl_Name"),
-            active = true
+            active = true,
+            isLocked = rs.getInt("tabl_locked") > 0
         )
     }
 
@@ -34,14 +35,25 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
     override fun save(table: TTTable): TTTable {
         if (table.id == null) {
             val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO tables (Tabl_Name) VALUES (:name)")
-                .param("name", table.name).update(keyHolder)
+            jdbcClient.sql("INSERT INTO tables (Tabl_Name, tabl_locked) VALUES (:name, :locked)")
+                .param("name", table.name)
+                .param("locked", if (table.isLocked) 1 else 0)
+                .update(keyHolder)
             table.id = (keyHolder.keys?.get("tabl_id") as? Number)?.toLong()
         } else {
-            jdbcClient.sql("UPDATE tables SET Tabl_Name = :name WHERE Tabl_ID = :id")
-                .param("name", table.name).param("id", table.id).update()
+            jdbcClient.sql("UPDATE tables SET Tabl_Name = :name, tabl_locked = :locked WHERE Tabl_ID = :id")
+                .param("name", table.name)
+                .param("locked", if (table.isLocked) 1 else 0)
+                .param("id", table.id).update()
         }
         return table
+    }
+
+    override fun setLocked(id: Long, locked: Boolean): Int {
+        return jdbcClient.sql("UPDATE tables SET tabl_locked = :locked WHERE Tabl_ID = :id")
+            .param("locked", if (locked) 1 else 0)
+            .param("id", id)
+            .update()
     }
 
     override fun deleteAll() {

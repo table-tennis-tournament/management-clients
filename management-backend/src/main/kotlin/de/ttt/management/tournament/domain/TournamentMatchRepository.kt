@@ -10,7 +10,10 @@ interface TournamentMatchRepository {
     fun findPlayed(): List<TournamentMatch>
     fun findPlayedByTypeId(typeId: Long): List<TournamentMatch>
     fun findByCallState(callState: CallState): List<TournamentMatch>
+    fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch>
+    fun findTableIdsInUse(): Set<Long>
     fun isMatchPlaying(matchId: Long): Boolean
+    fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
     fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
     fun stopMatch(matchId: Long): Int
     fun freeMatch(matchId: Long): Int
