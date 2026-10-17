@@ -96,14 +96,27 @@ class TournamentMatchTest {
     }
 
     @org.junit.jupiter.api.Test
-    fun `frees a match`() {
+    fun `frees a match as a walkover`() {
         val match = match()
         match.start()
         match.free()
 
         assertTrue(match.isPlayed)
+        assertTrue(match.isKampflos)
         assertFalse(match.isPlaying)
+        assertEquals(MatchState.Finished, match.state)
         assertEquals(null, match.winner)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `takes back a walkover to the open state`() {
+        val match = match()
+        match.free()
+        match.takeBack()
+
+        assertFalse(match.isPlayed)
+        assertFalse(match.isKampflos)
+        assertEquals(MatchState.Open, match.state)
     }
 
     @org.junit.jupiter.api.Test

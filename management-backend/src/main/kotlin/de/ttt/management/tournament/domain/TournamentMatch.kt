@@ -15,6 +15,7 @@ class TournamentMatch(
     var balls2: Int? = null,
     var isPlayed: Boolean = false,
     var isPlaying: Boolean = false,
+    var isKampflos: Boolean = false,
     var waitingList: Boolean = false,
     var callState: CallState = CallState.None,
     var tableId: Long? = null,
@@ -31,6 +32,7 @@ class TournamentMatch(
 
     val state: MatchState
         get() = when {
+            isPlayed && isKampflos -> MatchState.Finished
             isPlayed -> MatchState.Completed
             isPlaying -> MatchState.Started
             tableId != null -> MatchState.OnTable
@@ -116,11 +118,12 @@ class TournamentMatch(
     }
 
     /**
-     * Frees the match (walkover), transitioning it to a terminal state.
+     * Frees the match (walkover), transitioning it to [MatchState.Finished].
      */
     fun free() {
         isPlayed = true
         isPlaying = false
+        isKampflos = true
         winner = null
     }
 
@@ -130,6 +133,7 @@ class TournamentMatch(
     fun takeBack() {
         isPlayed = false
         isPlaying = false
+        isKampflos = false
         winner = null
     }
 
@@ -141,6 +145,7 @@ class TournamentMatch(
         applySets(sets)
         this.isPlaying = true
         this.isPlayed = false
+        this.isKampflos = false
     }
 
     /**
@@ -156,6 +161,7 @@ class TournamentMatch(
         applySets(sets)
         this.isPlayed = true
         this.isPlaying = false
+        this.isKampflos = false
         this.winner = if (games1 > games2) player1 else player2
     }
 

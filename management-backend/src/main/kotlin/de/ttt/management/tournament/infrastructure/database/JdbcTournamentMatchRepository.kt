@@ -50,6 +50,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             balls2 = rs.getInt("matc_balls2"),
             isPlayed = rs.getBoolean("matc_played"),
             isPlaying = rs.getBoolean("matc_isplaying"),
+            isKampflos = rs.getInt("matc_kampflos") > 0,
             waitingList = rs.getBoolean("matc_waitinglist"),
             callState = CallState.fromCode(rs.getInt("matc_callstate")),
             tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() },
@@ -197,7 +198,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         return jdbcClient.sql(
             """
             UPDATE matches 
-            SET matc_isplaying = 0, matc_played = 1, matc_tabl_id = NULL
+            SET matc_isplaying = 0, matc_played = 1, matc_kampflos = 1, matc_tabl_id = NULL
             WHERE matc_id = :id
             """.trimIndent()
         )
@@ -209,7 +210,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         return jdbcClient.sql(
             """
             UPDATE matches 
-            SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL
+            SET matc_isplaying = 0, matc_played = 0, matc_kampflos = 0, matc_tabl_id = NULL
             WHERE matc_id = :id
             """.trimIndent()
         )

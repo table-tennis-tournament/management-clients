@@ -112,6 +112,7 @@ class TableController(
     }
 
     private fun legacyState(match: TournamentMatch): String = when {
+        match.isPlayed && match.isKampflos -> "Finished"
         match.isPlayed -> "Completed"
         match.isPlaying -> "Started"
         match.callState == CallState.ThirdCall -> "ThirdCall"
