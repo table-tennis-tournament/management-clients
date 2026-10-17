@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.domain.MatchState
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -87,5 +88,27 @@ class TournamentModuleTest {
         assertThat(events.ofType(MatchStarted::class.java)).hasSize(1)
         val event = events.ofType(MatchStarted::class.java).iterator().next()
         assertThat(event.matchId).isEqualTo(matchId)
+    }
+
+    @Test
+    fun `adding a match to the list publishes MatchListChanged and sets InQueue`(events: PublishedEvents) {
+        val matchId = matchService.getAllMatches().first().id!!
+        jdbcTemplate.update(
+            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_waitinglist = 0, matc_tabl_id = NULL WHERE matc_id = ?",
+            matchId
+        )
+
+        restTestClient.post()
+            .uri("/api/v2/matchlist/add")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(mapOf("matchIds" to listOf(matchId), "asGroup" to null, "position" to 0))
+            .exchange()
+            .expectStatus().isOk
+
+        assertThat(events.ofType(MatchListChanged::class.java)).hasSize(1)
+        val event = events.ofType(MatchListChanged::class.java).iterator().next()
+        assertThat(event.entries).anyMatch { it.matchIds.contains(matchId) }
+
+        assertThat(matchService.getMatch(matchId)!!.state).isEqualTo(MatchState.InQueue)
     }
 }

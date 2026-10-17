@@ -15,6 +15,7 @@ class TournamentMatch(
     var balls2: Int? = null,
     var isPlayed: Boolean = false,
     var isPlaying: Boolean = false,
+    var waitingList: Boolean = false,
     var nr: Int? = null,
     var roundNumber: Int? = null,
     var startTime: LocalDateTime? = null
@@ -29,6 +30,7 @@ class TournamentMatch(
         get() = when {
             isPlayed -> MatchState.Completed
             isPlaying -> MatchState.Started
+            waitingList -> MatchState.InQueue
             else -> MatchState.Open
         }
 
@@ -39,6 +41,23 @@ class TournamentMatch(
         require(!isPlayed) { "A completed match cannot be started" }
         require(!isPlaying) { "A match that is already playing cannot be started again" }
         isPlaying = true
+        waitingList = false
+    }
+
+    /**
+     * Places the match in the queue (MatchList), transitioning it to [MatchState.InQueue].
+     */
+    fun queue() {
+        require(!isPlayed) { "A completed match cannot be queued" }
+        require(!isPlaying) { "A match that is already playing cannot be queued" }
+        waitingList = true
+    }
+
+    /**
+     * Removes the match from the queue, returning it to [MatchState.Open].
+     */
+    fun dequeue() {
+        waitingList = false
     }
 
     /**
