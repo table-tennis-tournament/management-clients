@@ -1,5 +1,6 @@
 package de.ttt.management.tournament.infrastructure.web
 
+import de.ttt.management.tournament.application.AutoStartService
 import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.domain.MatchList
 import io.swagger.v3.oas.annotations.Operation
@@ -11,7 +12,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/matchlist")
 @Tag(name = "Match List Management", description = "Operations for managing the tournament match list/queue")
-class MatchListController(private val matchListService: MatchListService) {
+class MatchListController(
+    private val matchListService: MatchListService,
+    private val autoStartService: AutoStartService
+) {
 
     @GetMapping("/all")
     @Operation(summary = "Get all match list entries", description = "Retrieves the entire list of matches queued for play.")
@@ -77,7 +81,7 @@ class MatchListController(private val matchListService: MatchListService) {
 
     @PostMapping("/auto-start")
     @Operation(summary = "Trigger auto-start", description = "Manually triggers the auto-start logic for matches.")
-    fun autoStart(): Map<String, Any> = mapOf("success" to true)
+    fun autoStart(): Map<String, Any> = mapOf("success" to autoStartService.autoStart())
 }
 
 data class AddMatchListRequest(

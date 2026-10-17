@@ -195,9 +195,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isNotEmpty
-    }
-
-    @Test
+    }    @Test
     fun `should get matches by type`() {
         restTestClient.get()
             .uri("/api/v2/match/typeid/1")
@@ -248,5 +246,57 @@ class TournamentModuleIT {
             .uri("/api/v2/match/$validMatchId")
             .exchange()
             .expectStatus().isOk
+    }
+
+    @Test
+    fun `adding a match to the list sets it InQueue`() {
+        assertTrue(validMatchId > 0)
+        val addRequest = mapOf(
+            "matchIds" to listOf(validMatchId),
+            "asGroup" to null,
+            "position" to 0
+        )
+
+        restTestClient.post()
+            .uri("/api/v2/matchlist/add")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(addRequest)
+            .exchange()
+            .expectStatus().isOk
+
+        assertTrue(matchService.getMatch(validMatchId)!!.waitingList)
+    }
+
+    @Test
+    fun `auto-start starts the next match from the list`() {
+        assertTrue(validMatchId > 0)
+        val addRequest = mapOf(
+            "matchIds" to listOf(validMatchId),
+            "asGroup" to null,
+            "position" to 0
+        )
+
+        restTestClient.post()
+            .uri("/api/v2/matchlist/add")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(addRequest)
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.post()
+            .uri("/api/v2/matchlist/auto-start")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        assertTrue(matchService.getMatch(validMatchId)!!.isPlaying)
+
+        restTestClient.get()
+            .uri("/api/v2/matchlist/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(0)
     }
 }

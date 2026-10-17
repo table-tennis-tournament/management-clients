@@ -102,11 +102,12 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Onion modules (`registration`, `grouping`, `tournament`, `settings`, `outbound`) + ArchUnit/Modulith verification.
 - Tracer: match `setResult`/`updateResult` end-to-end — `SetResult` scoring rules, `TournamentMatch` state machine (`start`/`free`/`takeBack`/`enterResult`/`complete`), `MatchCompleted`/`MatchStarted`/`MatchFreed`/`MatchTakenBack`/`MatchResultUpdated` events → `outbound` WebSocket.
 - API versioning: global `/api/v2` prefix (`ApiVersionConfig`), controllers on legacy path shapes (`/match`, `/matchlist`, `/table`, `/players`, `/disciplines`, `/settings`, `/printer`); stray `registration` match cluster removed.
-- 71 tests green (`cd management-backend && mvn test`).
+- Queue/MatchList (`tournament`): persisted via Flyway `V2__match_list.sql` + `MatchListRepository`/`JdbcMatchListRepository`; match-state integration (`InQueue` via `matc_waitinglist`, `TournamentMatch.queue()`/`dequeue()`); `MatchListChanged` domain event → `outbound` (`MATCH_LIST_CHANGED`); `AutoStartService` replaces the `/matchlist/auto-start` stub (starts the next queued match on each free table).
+- 77 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Queue/MatchList** (`tournament`): `MatchListService` is in-memory only — needs persistence, match-state integration (`InQueue`) and events; `/matchlist/auto-start` is a stub.
+- **Auto-start heuristics**: `AutoStartService` starts the next match per free table but does not yet replicate the legacy player-blocking logic (`filterFirst`/`isPossibleMatch`); `getFreeTables` still keys off the (unpopulated) `match_on_table` table — see the Table slice.
 - **Caller / call state**: `callMatches`, `playercall/{id}`, and the `matchaggregates/caller|secondCall|thirdCall` endpoints are stubs; first/second/third call state is not modeled or persisted.
 - **Walkover**: `MatchState.Finished` is unused — `free()` currently maps to `Completed`; legacy `matc_kampflos` flag not wired.
 - **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.

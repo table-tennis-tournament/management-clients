@@ -116,4 +116,32 @@ class TournamentMatchTest {
         assertFalse(match.isPlaying)
         assertEquals(MatchState.Open, match.state)
     }
+
+    @org.junit.jupiter.api.Test
+    fun `queues a match and dequeues it back to open`() {
+        val match = match()
+        match.queue()
+
+        assertEquals(MatchState.InQueue, match.state)
+
+        match.dequeue()
+        assertEquals(MatchState.Open, match.state)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `rejects queueing a completed match`() {
+        val match = match()
+        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+
+        assertFailsWith<IllegalArgumentException> { match.queue() }
+    }
+
+    @org.junit.jupiter.api.Test
+    fun `starting a queued match clears the queue state`() {
+        val match = match()
+        match.queue()
+        match.start()
+
+        assertEquals(MatchState.Started, match.state)
+    }
 }

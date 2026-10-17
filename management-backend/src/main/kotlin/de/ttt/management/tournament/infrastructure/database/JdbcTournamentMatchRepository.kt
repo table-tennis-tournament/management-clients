@@ -32,6 +32,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             balls2 = rs.getInt("matc_balls2"),
             isPlayed = rs.getBoolean("matc_played"),
             isPlaying = rs.getBoolean("matc_isplaying"),
+            waitingList = rs.getBoolean("matc_waitinglist"),
             nr = rs.getInt("matc_nr"),
             roundNumber = rs.getInt("matc_roundnumber"),
             startTime = rs.getTimestamp("matc_starttime")?.toLocalDateTime()
@@ -124,6 +125,19 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             WHERE matc_id = :id
             """.trimIndent()
         )
+            .param("id", matchId)
+            .update()
+    }
+
+    override fun setWaitingList(matchId: Long, waiting: Boolean): Int {
+        return jdbcClient.sql(
+            """
+            UPDATE matches 
+            SET matc_waitinglist = :waiting
+            WHERE matc_id = :id
+            """.trimIndent()
+        )
+            .param("waiting", if (waiting) 1 else 0)
             .param("id", matchId)
             .update()
     }

@@ -14,6 +14,7 @@ interface TournamentMatchRepository {
     fun stopMatch(matchId: Long): Int
     fun freeMatch(matchId: Long): Int
     fun takeBackMatch(matchId: Long): Int
+    fun setWaitingList(matchId: Long, waiting: Boolean): Int
     fun updatePartialResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int): Int
     fun completeResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int, winnerId: Long?): Int
     fun deleteById(id: Long): Int
