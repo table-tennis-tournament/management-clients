@@ -59,7 +59,9 @@ class PlayerService(
 
     @Transactional
     fun setPlayerActiveState(id: Long, active: Boolean): Boolean {
-        playerRepository.findById(id).orElse(null) ?: return false
+        val player = playerRepository.findById(id).orElse(null) ?: return false
+        player.active = active
+        playerRepository.save(player)
         return true
     }
 }
