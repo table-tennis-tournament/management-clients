@@ -14,20 +14,14 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Extract layers
-RUN java -Djarmode=layertools -jar target/*.jar extract
-
 # Final stage
 FROM bellsoft/liberica-openjre-alpine:25
 WORKDIR /home/app
 
-# Copy layers from builder
-COPY --from=builder /home/app/dependencies/ ./
-COPY --from=builder /home/app/spring-boot-loader/ ./
-COPY --from=builder /home/app/snapshot-dependencies/ ./
-COPY --from=builder /home/app/application/ ./
+# Copy the executable fat jar
+COPY --from=builder /home/app/target/*.jar app.jar
 
 # Expose port (default Spring Boot port)
 EXPOSE 8080
 
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
