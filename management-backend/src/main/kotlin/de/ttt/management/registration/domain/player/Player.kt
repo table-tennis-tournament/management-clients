@@ -11,5 +11,6 @@ class Player(
     var sex: String? = null,
     var ttr: Int? = null,
     var club: Club? = null,
-    var paid: Boolean = false
+    var paid: Boolean = false,
+    var active: Boolean = true
 )

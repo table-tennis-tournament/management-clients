@@ -73,6 +73,23 @@ class RegistrationModuleIT {
     }
 
     @Test
+    fun `should persist player active state`() {
+        restTestClient.post()
+            .uri("/api/v2/players/54/active/false")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        restTestClient.get()
+            .uri("/api/v2/players/54")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.active").isEqualTo(false)
+    }
+
+    @Test
     fun `should fail setPayed with invalid id format`() {
         restTestClient.post()
             .uri("/api/v2/players/abc/paid?paid=true")

@@ -27,7 +27,8 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
             sex = rs.getString("play_sex"),
             ttr = rs.getObject("play_ttr")?.let { (it as Number).toInt() },
             club = club,
-            paid = rs.getInt("play_paid") > 0
+            paid = rs.getInt("play_paid") > 0,
+            active = rs.getInt("play_active") > 0
         )
     }
 
@@ -54,8 +55,8 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
         if (player.id == null) {
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("""
-                INSERT INTO player (play_firstname, play_lastname, play_email, play_telnr, play_location, play_street, play_plz, play_sex, play_ttr, play_club_id, play_paid)
-                VALUES (:firstName, :lastName, :email, :telNr, :location, :street, :plz, :sex, :ttr, :clubId, :paid)
+                INSERT INTO player (play_firstname, play_lastname, play_email, play_telnr, play_location, play_street, play_plz, play_sex, play_ttr, play_club_id, play_paid, play_active)
+                VALUES (:firstName, :lastName, :email, :telNr, :location, :street, :plz, :sex, :ttr, :clubId, :paid, :active)
             """.trimIndent())
                 .param("firstName", player.firstName)
                 .param("lastName", player.lastName)
@@ -68,6 +69,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 .param("ttr", player.ttr)
                 .param("clubId", player.club?.id)
                 .param("paid", player.paid)
+                .param("active", player.active)
                 .update(keyHolder)
             player.id = (keyHolder.keys?.get("play_id") as? Number)?.toLong()
         } else {
@@ -75,7 +77,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 UPDATE player 
                 SET play_firstname = :firstName, play_lastname = :lastName, play_email = :email, 
                     play_telnr = :telNr, play_location = :location, play_street = :street, 
-                    play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid
+                    play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid, play_active = :active
                 WHERE play_id = :id
             """.trimIndent())
                 .param("firstName", player.firstName)
@@ -89,6 +91,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 .param("ttr", player.ttr)
                 .param("clubId", player.club?.id)
                 .param("paid", player.paid)
+                .param("active", player.active)
                 .param("id", player.id)
                 .update()
         }
