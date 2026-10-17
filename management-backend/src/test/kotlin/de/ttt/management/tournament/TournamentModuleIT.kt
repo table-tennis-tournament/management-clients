@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,7 +33,9 @@ class TournamentModuleIT {
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
+        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 0, matc_tabl_id = NULL, matc_tabl2_id = 0, matc_waitinglist = 0")
+        jdbcTemplate.update("DELETE FROM match_list")
+        jdbcTemplate.update("UPDATE tables SET tabl_locked = 0")
         val matches = matchService.getAllMatches()
         if (matches.isNotEmpty()) {
             validMatchId = matches[0].id!!
@@ -300,6 +303,42 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isEqualTo(0)
+    }
+
+    @Test
+    fun `auto-start does not start a match whose player is already on a table`() {
+        val matches = matchService.getAllMatches()
+        assertTrue(matches.size >= 2)
+        val first = matches[0].id!!
+        val second = matches[1].id!!
+
+        // Start the first match on table "1" — its players are now blocking.
+        restTestClient.post()
+            .uri("/api/v2/match/start/$first/1")
+            .exchange()
+            .expectStatus().isOk
+
+        // Queue the second match (shares a player with the first in the test data).
+        restTestClient.post()
+            .uri("/api/v2/matchlist/add")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(mapOf("matchIds" to listOf(second), "asGroup" to null, "position" to 0))
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.post()
+            .uri("/api/v2/matchlist/auto-start")
+            .exchange()
+            .expectStatus().isOk
+
+        assertFalse(matchService.getMatch(second)!!.isPlaying)
+
+        restTestClient.get()
+            .uri("/api/v2/matchlist/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(1)
     }
 
     @Test

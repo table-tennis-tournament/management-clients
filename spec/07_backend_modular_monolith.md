@@ -105,11 +105,11 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Queue/MatchList (`tournament`): persisted via Flyway `V2__match_list.sql` + `MatchListRepository`/`JdbcMatchListRepository`; match-state integration (`InQueue` via `matc_waitinglist`, `TournamentMatch.queue()`/`dequeue()`); `MatchListChanged` domain event → `outbound` (`MATCH_LIST_CHANGED`); `AutoStartService` replaces the `/matchlist/auto-start` stub (starts the next queued match on each free table).
 - Caller / call state (`tournament`): `CallState` (`None`/`FirstCall`/`SecondCall`/`ThirdCall`) persisted via `matc_callstate` (Flyway `V3__match_call_state.sql`); `TournamentMatch.call()`/`callAgain()`; `callMatches`/`playercall/{id}` and `matchaggregates/caller|secondCall|thirdCall` (grouped by `matc_tabl_id`, with player/discipline names joined) implemented; `MatchCalled` event → `outbound` (`MATCH_CALLED`).
 - Table (`tournament`): `isLocked` persisted (`tabl_locked`, Flyway `V4__table_locked.sql`); `lockTable`/`unlockTable` write the flag and `getFreeTables` excludes locked/occupied tables (keys off `matc_tabl_id`, not the removed `match_on_table`); `getByTablemanager` migrates the hardcoded manager→table-number mapping and returns `TableManagerTableInfo` (`table_id`/`table_number`/`table_manager_id`/`matches` with players, result games, `stage`, `classification`, legacy `state`); assignment split: `setMatchToTable` now assigns (`TournamentMatch.assign()` → `MatchState.OnTable`, `MatchAssigned` event → `MATCH_ASSIGNED`) instead of starting, while `/match/start/{id}/{tableId}` remains `Started`.
-- 88 tests green (`cd management-backend && mvn test`).
+- Auto-start heuristics (`tournament`): `AutoStartHeuristic` (pure domain object) replicates the legacy `filterFirst`/`isPossibleMatch` player-blocking logic — a queued match is only started when both sides are present and no player is already in a blocking match (assigned or started); `TournamentMatch.isBlocking`/`isPlayable`; free tables iterated odd-then-even.
+- 100 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Auto-start heuristics**: `AutoStartService` starts the next match per free table but does not yet replicate the legacy player-blocking logic (`filterFirst`/`isPossibleMatch`).
 - **Call aggregates fidelity**: `matchaggregates/*` are singles-only (player names joined from `player` by `matc_play1/2_id`; doubles team ids not resolved) and `name` is the discipline name only (no `matchtype`/`group` suffix yet).
 - **Walkover**: `MatchState.Finished` is unused — `free()` currently maps to `Completed`; legacy `matc_kampflos` flag not wired.
 - **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.
@@ -121,4 +121,4 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 
 ### Handoff note
 
-All completed slices up to and including the Table slice are implemented and green (88 tests). The Table slice (lock persistence, manager mapping, assigned-vs-started split) is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
+All completed slices up to and including the auto-start heuristics are implemented and green (100 tests). The auto-start heuristic slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
