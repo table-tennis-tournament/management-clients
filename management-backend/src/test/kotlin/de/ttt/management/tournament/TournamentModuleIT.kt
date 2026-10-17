@@ -370,6 +370,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
+            .jsonPath("$[0].name").isEqualTo("Gruppenspiel 01 ")
 
         // First call
         restTestClient.post()
