@@ -191,8 +191,11 @@ class TournamentMatchController(
         get() = matchService.getActiveTypes()
 
     @GetMapping("/match/allmatchtable")
-    @Operation(summary = "Get all match table data", description = "Retrieves a mapping of matches to tables.")
-    fun allMatchTable(): List<Map<String, Any>> = emptyList()
+    @Operation(summary = "Get all match table data", description = "Retrieves the current match-to-table assignments.")
+    fun allMatchTable(): List<Map<String, Any>> =
+        matchService.getAllMatches()
+            .filter { it.tableId != null && it.id != null }
+            .map { mapOf<String, Any>("matchId" to it.id!!, "tableId" to it.tableId!!) }
 
     @GetMapping("/testsocket")
     @Operation(summary = "Test WebSocket connection", description = "Simple endpoint to verify WebSocket communication.")
@@ -204,10 +207,15 @@ class TournamentMatchController(
         @Parameter(description = "Name of the second table") @PathVariable tableName: String,
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        return ResponseEntity.ok(mapOf("success" to true))
+        val success = tableService.setMatchToTable(tableName, matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not assign all matches to table."))
+        }
     }
 
-    @PostMapping("/match/load-new")
+    @GetMapping("/match/loadnew")
     @Operation(summary = "Load new matches", description = "Triggers loading of new matches from the registration system.")
     fun loadNewMatches(): Map<String, Any> = mapOf("success" to true)
 
@@ -229,8 +237,16 @@ class TournamentMatchController(
     @PostMapping("/match/remove/{tableId}")
     @Operation(summary = "Remove matches from table", description = "Removes all matches assigned to a specific table ID.")
     fun removeMatchesFromTable(
-        @Parameter(description = "ID of the table") @PathVariable tableId: Long
-    ): Map<String, Any> = mapOf("success" to true)
+        @Parameter(description = "ID of the table") @PathVariable tableId: Long,
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.removeMatchesFromTable(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not remove all matches from table."))
+        }
+    }
 
     @PostMapping("/match/call")
     @Operation(summary = "Call matches", description = "Marks a list of matches as 'called'.")

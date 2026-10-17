@@ -120,6 +120,77 @@ class TournamentModuleIT {
     }
 
     @Test
+    fun `should assign match to second table`() {
+        assertTrue(validMatchId > 0)
+
+        restTestClient.post()
+            .uri("/api/v2/match/matchtosecondtable/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(validMatchId))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        assertTrue(matchService.getMatch(validMatchId)!!.tableId != null)
+    }
+
+    @Test
+    fun `should remove match from table`() {
+        assertTrue(validMatchId > 0)
+
+        restTestClient.post()
+            .uri("/api/v2/match/matchtotable/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(validMatchId))
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.post()
+            .uri("/api/v2/match/remove/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(validMatchId))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        val removed = matchService.getMatch(validMatchId)!!
+        assertTrue(removed.tableId == null)
+        assertFalse(removed.isPlaying)
+        assertTrue(removed.state == MatchState.Open)
+    }
+
+    @Test
+    fun `should list assigned matches via allmatchtable`() {
+        assertTrue(validMatchId > 0)
+
+        restTestClient.post()
+            .uri("/api/v2/match/matchtotable/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(validMatchId))
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.get()
+            .uri("/api/v2/match/allmatchtable")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(1)
+    }
+
+    @Test
+    fun `loadnew endpoint returns success`() {
+        restTestClient.get()
+            .uri("/api/v2/match/loadnew")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+    }
+
+    @Test
     fun `should free matches successfully`() {
         assertTrue(validMatchId > 0)
         val matchIds = listOf(validMatchId)

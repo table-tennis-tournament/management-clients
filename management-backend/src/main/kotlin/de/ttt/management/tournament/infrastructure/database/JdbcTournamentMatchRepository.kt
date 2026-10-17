@@ -239,6 +239,18 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .update()
     }
 
+    override fun removeFromTable(matchId: Long): Int {
+        return jdbcClient.sql(
+            """
+            UPDATE matches 
+            SET matc_tabl_id = NULL, matc_isplaying = 0, matc_callstate = 0
+            WHERE matc_id = :id
+            """.trimIndent()
+        )
+            .param("id", matchId)
+            .update()
+    }
+
     override fun freeMatch(matchId: Long): Int {
         return jdbcClient.sql(
             """
