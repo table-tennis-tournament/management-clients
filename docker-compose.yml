@@ -5,7 +5,7 @@ volumes:
   cups-output:
 services:
   mariadb:
-    image: holzleube/mysql-docker-image:7.0.0
+    image: mariadb:13
     ports:
       - "3306:3306"
     environment:
@@ -13,7 +13,7 @@ services:
     networks:
       - app-tier
     healthcheck:
-      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 15s
       timeout: 5s
       retries: 6
@@ -44,7 +44,7 @@ services:
     networks:
       - app-tier
   management-backend:
-    image: holzleube/ttt-management-backend:latest
+    image: holzleube/ttt-management:latest
     build:
       context: ./management-backend
       dockerfile: Dockerfile
