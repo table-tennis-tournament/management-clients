@@ -60,8 +60,8 @@ class PrinterController(private val printerService: PrinterService) {
     fun printAll(
         @RequestBody ids: List<Long>
     ): Map<String, Any> {
-        ids.forEach { printerService.printMatch(it) }
-        return mapOf("success" to true)
+        val success = printerService.printMatches(ids)
+        return mapOf("success" to success)
     }
 
     @GetMapping("/printpdf/{id}", produces = [MediaType.APPLICATION_PDF_VALUE])

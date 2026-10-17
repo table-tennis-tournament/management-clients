@@ -18,6 +18,9 @@ RUN mvn clean package -DskipTests
 FROM bellsoft/liberica-openjre-alpine:25
 WORKDIR /home/app
 
+# CUPS client tools for dispatching print jobs to the cups sidecar
+RUN apk add --no-cache cups-client
+
 # Copy the executable fat jar
 COPY --from=builder /home/app/target/*.jar app.jar
 
