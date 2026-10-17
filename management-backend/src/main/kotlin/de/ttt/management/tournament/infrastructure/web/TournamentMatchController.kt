@@ -267,7 +267,7 @@ class TournamentMatchController(
                 val discipline = head.typeId?.let { disciplines[it] }
                 val players = ms.flatMap { listOfNotNull(it.player1, it.player2) }.distinctBy { it.id }
                 MatchAggregate(
-                    name = discipline?.name,
+                    name = aggregateName(head),
                     startTime = head.startTime,
                     tableNumbers = listOfNotNull(tableId),
                     discipline = discipline?.let { DisciplineDto(it.id, it.name, it.kind, it.active) },
@@ -283,6 +283,12 @@ class TournamentMatchController(
                 )
             }
             .sortedBy { it.tableNumbers.firstOrNull() }
+    }
+
+    private fun aggregateName(match: TournamentMatch): String? {
+        val matchTypeName = match.matchType?.name ?: return null
+        val groupName = match.playGroup?.name
+        return if (groupName.isNullOrBlank()) matchTypeName else "$matchTypeName $groupName"
     }
 }
 

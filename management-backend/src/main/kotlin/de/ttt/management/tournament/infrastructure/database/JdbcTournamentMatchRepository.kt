@@ -12,8 +12,6 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
 
     private val rowMapper = RowMapper { rs, _ -> toMatch(rs, withPlayers = false) }
 
-    private val playerRowMapper = RowMapper { rs, _ -> toMatch(rs, withPlayers = true) }
-
     private fun toMatch(rs: java.sql.ResultSet, withPlayers: Boolean): TournamentMatch {
         val p1Id = rs.getObject("matc_play1_id")?.let { (it as Number).toLong() }
         val p2Id = rs.getObject("matc_play2_id")?.let { (it as Number).toLong() }
@@ -97,17 +95,30 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             """
             SELECT m.*, 
                    p1.play_firstname AS p1_firstname, p1.play_lastname AS p1_lastname, p1.play_ttr AS p1_ttr,
-                   p2.play_firstname AS p2_firstname, p2.play_lastname AS p2_lastname, p2.play_ttr AS p2_ttr
+                   p2.play_firstname AS p2_firstname, p2.play_lastname AS p2_lastname, p2.play_ttr AS p2_ttr,
+                   mt.maty_name AS match_type_name,
+                   g.grou_name AS group_name
             FROM matches m
             LEFT JOIN player p1 ON p1.play_id = m.matc_play1_id
             LEFT JOIN player p2 ON p2.play_id = m.matc_play2_id
+            LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
+            LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id
             WHERE m.matc_callstate = :callState
               AND m.matc_tabl_id IS NOT NULL
             ORDER BY m.matc_tabl_id, m.matc_id
             """.trimIndent()
         )
             .param("callState", callState.code)
-            .query(playerRowMapper)
+            .query { rs, _ ->
+                toMatch(rs, withPlayers = true).apply {
+                    rs.getObject("matc_maty_id")?.let { (it as Number).toLong() }?.let { mtId ->
+                        matchType = TournamentMatchType(id = mtId, name = rs.getString("match_type_name"))
+                    }
+                    rs.getObject("matc_grou_id")?.let { (it as Number).toLong() }?.let { gId ->
+                        playGroup = TournamentPlayGroup(id = gId, name = rs.getString("group_name"))
+                    }
+                }
+            }
             .list()
     }
 

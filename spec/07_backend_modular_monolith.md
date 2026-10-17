@@ -107,11 +107,12 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 - Table (`tournament`): `isLocked` persisted (`tabl_locked`, Flyway `V4__table_locked.sql`); `lockTable`/`unlockTable` write the flag and `getFreeTables` excludes locked/occupied tables (keys off `matc_tabl_id`, not the removed `match_on_table`); `getByTablemanager` migrates the hardcoded manager→table-number mapping and returns `TableManagerTableInfo` (`table_id`/`table_number`/`table_manager_id`/`matches` with players, result games, `stage`, `classification`, legacy `state`); assignment split: `setMatchToTable` now assigns (`TournamentMatch.assign()` → `MatchState.OnTable`, `MatchAssigned` event → `MATCH_ASSIGNED`) instead of starting, while `/match/start/{id}/{tableId}` remains `Started`.
 - Auto-start heuristics (`tournament`): `AutoStartHeuristic` (pure domain object) replicates the legacy `filterFirst`/`isPossibleMatch` player-blocking logic — a queued match is only started when both sides are present and no player is already in a blocking match (assigned or started); `TournamentMatch.isBlocking`/`isPlayable`; free tables iterated odd-then-even.
 - Walkover (`tournament`): `TournamentMatch.free()` transitions to `MatchState.Finished` (was `Completed`) and persists `matc_kampflos`; `takeBack()`/`complete()`/`enterResult()` clear the flag; `toMatch` reads `matc_kampflos`; the table-manager `state` mapping reports `Finished`.
+- Call aggregates name (`tournament`): `matchaggregates/*` `name` is now the matchtype name plus the group name (e.g. `Gruppenspiel 01 `), matching the legacy `getMatchAggregateNameFromMatch` (matchtype and group names joined in `findByCallState`).
 - 102 tests green (`cd management-backend && mvn test`).
 
 ### Open work (next slices)
 
-- **Call aggregates fidelity**: `matchaggregates/*` are singles-only (player names joined from `player` by `matc_play1/2_id`; doubles team ids not resolved) and `name` is the discipline name only (no `matchtype`/`group` suffix yet).
+- **Call aggregates fidelity (doubles)**: `matchaggregates/*` (and the table-manager view) resolve player names by joining `player` on `matc_play1/2_id`, which breaks for doubles — those ids are team ids (`>= 100000`) and must be resolved via the `doubles` table to the two individual players per side. This also affects `TournamentMatch.isPlayable`/`AutoStartHeuristic` blocking across singles and doubles.
 - **Stubs in `TournamentMatchController`**: `load-new`, `allmatchtable`, `matchtosecondtable`, `remove/{tableId}`.
 - **Grouping**: skeleton only — group formation and `PlayerPerGroup` standings (`updatePlayerPerGroup`: sort by matchesWon → setsDiff → pointsWon) not yet migrated.
 - **Settings/print**: PDF generation (Flying Saucer) and real printer/QR not ported; `PrinterService` is a stub.
@@ -121,4 +122,4 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 
 ### Handoff note
 
-All completed slices up to and including the walkover slice are implemented and green (102 tests). The walkover slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
+All completed slices up to and including the call-aggregate name suffix are implemented and green (102 tests). The call-aggregate name slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
