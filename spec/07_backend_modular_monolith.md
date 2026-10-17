@@ -122,4 +122,4 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 
 ### Handoff note
 
-All completed slices up to and including the `TournamentMatchController` stubs are implemented and green (107 tests). The stubs slice is **uncommitted** in the working tree — check `git status` before continuing, then pick the next item from "Open work" above.
+All completed slices up to and including the `TournamentMatchController` stubs are implemented, green (107 tests) and committed. Remaining work is the "Open work" list above — the two large items are **Grouping** and **Settings/print**; **Registration `setPlayerActiveState`** mirrors a legacy no-op (no `active` column exists) and needs clarification before implementation.
