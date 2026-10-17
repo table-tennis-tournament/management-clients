@@ -32,7 +32,7 @@ class TournamentModuleIT {
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
+        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
         val matches = matchService.getAllMatches()
         if (matches.isNotEmpty()) {
             validMatchId = matches[0].id!!
@@ -195,7 +195,9 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isNotEmpty
-    }    @Test
+    }
+
+    @Test
     fun `should get matches by type`() {
         restTestClient.get()
             .uri("/api/v2/match/typeid/1")
@@ -298,5 +300,55 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.length()").isEqualTo(0)
+    }
+
+    @Test
+    fun `a match moves through caller second and third call`() {
+        assertTrue(validMatchId > 0)
+        jdbcTemplate.update("UPDATE matches SET matc_callstate = 0, matc_tabl_id = 1 WHERE matc_id = ?", validMatchId)
+
+        // Not yet called -> appears in the caller view
+        restTestClient.get()
+            .uri("/api/v2/matchaggregates/caller")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
+
+        // First call
+        restTestClient.post()
+            .uri("/api/v2/match/call")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(validMatchId))
+            .exchange()
+            .expectStatus().isOk
+
+        // Second call
+        restTestClient.post()
+            .uri("/api/v2/playercall/$validMatchId")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+
+        restTestClient.get()
+            .uri("/api/v2/matchaggregates/secondCall")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
+
+        // Third call
+        restTestClient.post()
+            .uri("/api/v2/playercall/$validMatchId")
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.get()
+            .uri("/api/v2/matchaggregates/thirdCall")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
     }
 }

@@ -1,5 +1,6 @@
 package de.ttt.management.tournament.application
 
+import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchFreed
 import de.ttt.management.tournament.MatchResultUpdated
@@ -32,6 +33,8 @@ class MatchService(
     fun getPlayedMatches(): List<TournamentMatch> = matchRepository.findPlayed()
 
     fun getPlayedMatchesByTypeId(typeId: Long): List<TournamentMatch> = matchRepository.findPlayedByTypeId(typeId)
+
+    fun getMatchesByCallState(callState: CallState): List<TournamentMatch> = matchRepository.findByCallState(callState)
 
     fun getAllTypes(): List<TournamentDiscipline> = disciplineRepository.findAll()
 
@@ -176,5 +179,39 @@ class MatchService(
             }
         }
         return allSuccess
+    }
+
+    @Transactional
+    fun callMatches(matchIds: List<Long>): Boolean {
+        var allSuccess = true
+        for (matchId in matchIds) {
+            val match = matchRepository.findById(matchId).orElse(null)
+            if (match == null) {
+                allSuccess = false
+                continue
+            }
+            match.call()
+            if (matchRepository.updateCallState(matchId, match.callState) == 0) {
+                allSuccess = false
+            } else {
+                eventPublisher.publishEvent(MatchCalled(matchId = matchId, callState = match.callState.name))
+            }
+        }
+        return allSuccess
+    }
+
+    @Transactional
+    fun callPlayers(matchId: Long): Boolean {
+        val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        val previous = match.callState
+        match.callAgain()
+        if (match.callState == previous) {
+            return true
+        }
+        val updated = matchRepository.updateCallState(matchId, match.callState) > 0
+        if (updated) {
+            eventPublisher.publishEvent(MatchCalled(matchId = matchId, callState = match.callState.name))
+        }
+        return updated
     }
 }

@@ -16,6 +16,9 @@ class TournamentMatch(
     var isPlayed: Boolean = false,
     var isPlaying: Boolean = false,
     var waitingList: Boolean = false,
+    var callState: CallState = CallState.None,
+    var tableId: Long? = null,
+    var typeId: Long? = null,
     var nr: Int? = null,
     var roundNumber: Int? = null,
     var startTime: LocalDateTime? = null
@@ -58,6 +61,26 @@ class TournamentMatch(
      */
     fun dequeue() {
         waitingList = false
+    }
+
+    /**
+     * Announces the first call for the match, transitioning it to [CallState.FirstCall].
+     */
+    fun call() {
+        require(!isPlayed) { "A completed match cannot be called" }
+        callState = CallState.FirstCall
+    }
+
+    /**
+     * Announces the next call for the match (second or third), advancing [CallState.FirstCall]
+     * to [CallState.SecondCall] and [CallState.SecondCall] to [CallState.ThirdCall].
+     */
+    fun callAgain() {
+        callState = when (callState) {
+            CallState.FirstCall -> CallState.SecondCall
+            CallState.SecondCall -> CallState.ThirdCall
+            else -> callState
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package de.ttt.management.outbound.infrastructure.messaging
 import de.ttt.management.outbound.application.OutboundService
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
+import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchFreed
 import de.ttt.management.tournament.MatchListChanged
@@ -53,5 +54,10 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     @EventListener
     fun on(event: MatchListChanged) {
         outboundService.pushUpdate("MATCH_LIST_CHANGED", event)
+    }
+
+    @EventListener
+    fun on(event: MatchCalled) {
+        outboundService.pushUpdate("MATCH_CALLED", event)
     }
 }
