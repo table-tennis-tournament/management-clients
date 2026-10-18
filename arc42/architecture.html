@@ -472,7 +472,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_building_block_view">5. Building Block View</a>
 <ul class="sectlevel2">
 <li><a href="#_level_2_containers">5.1. Level 2: Containers</a></li>
-<li><a href="#_level_3_backend_components">5.2. Level 3: Backend Components</a></li>
+<li><a href="#_level_3_backend_modules">5.2. Level 3: Backend Modules</a></li>
 <li><a href="#_level_3_frontend_components">5.3. Level 3: Frontend Components</a></li>
 </ul>
 </li>
@@ -503,8 +503,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_three_separate_frontend_applications">9.1. Three Separate Frontend Applications</a></li>
 <li><a href="#_websocket_based_real_time_communication">9.2. WebSocket-based Real-time Communication</a></li>
 <li><a href="#_scala_play_backend_with_pekko_actors">9.3. Scala Play Backend with Pekko Actors</a></li>
-<li><a href="#_single_data_access_component">9.4. Single Data-Access Component</a></li>
-<li><a href="#_offline_data_preparation_by_mktt">9.5. Offline Data Preparation by mktt</a></li>
+<li><a href="#_spring_boot_modular_monolith">9.4. Spring Boot Modular Monolith</a></li>
+<li><a href="#_onion_architecture_per_module">9.5. Onion Architecture per Module</a></li>
+<li><a href="#_event_driven_module_integration">9.6. Event-driven Module Integration</a></li>
+<li><a href="#_plain_sql_via_jdbcclient">9.7. Plain SQL via JdbcClient</a></li>
+<li><a href="#_api_versioning_via_apiv2_path_prefix">9.8. API versioning via <code>/api/v2</code> path prefix</a></li>
+<li><a href="#_single_data_access_component">9.9. Single Data-Access Component</a></li>
+<li><a href="#_offline_data_preparation_by_mktt">9.10. Offline Data Preparation by mktt</a></li>
 </ul>
 </li>
 <li><a href="#_quality_requirements">10. Quality Requirements</a>
@@ -887,17 +892,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala 2.13 on Play Framework. REST API, WebSocket broadcasting and PDF generation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kotlin 2.3 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API, WebSocket broadcasting and PDF generation.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tournament Database</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL. Persists players, matches, tables, groups and settings.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL in production, H2 in tests. Persists players, matches, tables, groups and settings.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_level_3_backend_components"><a class="anchor" href="#_level_3_backend_components"></a>5.2. Level 3: Backend Components</h3>
+<h3 id="_level_3_backend_modules"><a class="anchor" href="#_level_3_backend_modules"></a>5.2. Level 3: Backend Modules</h3>
+<div class="paragraph">
+<p>The backend is a modular monolith. Each top-level package under <code>de.ttt.management</code> is a Spring Modulith module and follows an onion architecture (<code>domain</code> → <code>application</code> → <code>infrastructure</code>).</p>
+</div>
 <div class="imageblock">
 <div class="content">
 <img src="img/backend-components.svg" alt="backend components" width="2079" height="1090">
@@ -910,66 +918,71 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Component</th>
+<th class="tableblock halign-left valign-top">Module</th>
 <th class="tableblock halign-left valign-top">Responsibility</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Match Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">REST endpoints for match assignment, state changes and results.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">registration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Players, clubs, doubles, disciplines and registration state (paid/active/seed). Register/unregister players.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Match List Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Queue management endpoints.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">grouping</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Group formation, seeding and knockout placement. Currently scaffolded, not yet implemented.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Player Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Player, club and discipline data.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tournament</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match lifecycle and state machine, Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Table Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Table assignment and locking.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">settings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System settings and printing (referee sheets, certificates).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Printer Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PDF generation and print jobs.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">outbound</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The single WebSocket publisher. Consumes domain events and pushes updates to connected clients.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Settings Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">System settings.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shared configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OpenApiConfig</code> and other cross-cutting Spring configuration in the root package.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Each module internally layers as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Layer</th>
+<th class="tableblock halign-left valign-top">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aggregates, value objects, match-state enum and repository ports (interfaces only).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SockJS Controller</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket connection upgrade.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">application</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use-case orchestration, application services, event publication.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PDF Service</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Renders match sheets and documents to PDF.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">infrastructure.database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JdbcClient repository adapters (plain SQL, no JPA/Hibernate).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tables (DAO)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The single data-access component: all persistence and the in-memory domain state.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">infrastructure.web</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST controllers.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Publisher</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko actor that distributes domain events to connected clients.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Printer Actor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko actor that owns the print job queue.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket Actor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pekko actor, one per client connection.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scheduler</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Background tasks and automatic match start.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Models</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala case classes for the domain objects.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">infrastructure.messaging</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Event listeners/publishers.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1037,7 +1050,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>The Tournament Administrator selects a match and a table. The backend persists the assignment, updates its in-memory state and publishes an event. The Publisher broadcasts the change to all connected clients over WebSockets, so the Table Manager View and Result View update immediately.</p>
+<p>The Tournament Administrator selects a match and a table. The <code>tournament</code> module&#8217;s controller delegates to its application service, which validates the transition, persists it via a JdbcClient repository and publishes a domain event. The <code>outbound</code> module consumes that event and broadcasts the change to all connected clients over STOMP/SockJS, so the Table Manager View and Result View update immediately.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1048,13 +1061,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>The Table Manager enters the set and match results. The backend validates and persists the result, marks the match Completed, and — for knockout matches — writes the next knockout match. It then broadcasts the updated match and standings to all clients.</p>
+<p>The Table Manager enters the set and match results. The <code>tournament</code> module validates the result against the match aggregate (winner, sets), persists it, transitions the match to <code>Completed</code>, and — for knockout matches — writes the next knockout match. It publishes a <code>MatchCompleted</code> domain event; the <code>outbound</code> module pushes the updated match and standings to all clients.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_real_time_communication"><a class="anchor" href="#_real_time_communication"></a>6.3. Real-time Communication</h3>
 <div class="paragraph">
-<p>Real-time updates flow through a Pekko Publisher actor. The Tables (DAO) component publishes domain events; the Publisher distributes them to the WebSocket actors, one per connected client. Each SPA receives the events over its WebSocket connection and updates its ngrx store.</p>
+<p>Real-time updates flow through the <code>outbound</code> module, the only component with a WebSocket dependency. Application services in other modules publish Spring application events; <code>outbound</code> listens (<code>@EventListener</code>/<code>@ApplicationModuleListener</code>) and pushes a JSON message to <code>/topic/updates</code> via <code>SimpMessagingTemplate</code>. Each SPA receives the events over its STOMP/SockJS connection and updates its ngrx store.</p>
 </div>
 </div>
 </div>
@@ -1129,7 +1142,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Input validation on all endpoints.</p>
 </li>
 <li>
-<p>SQL injection prevention through the Slick database layer.</p>
+<p>SQL injection prevention through JdbcClient parameterized queries (prepared statements).</p>
 </li>
 <li>
 <p>WebSocket connection authentication.</p>
@@ -1180,13 +1193,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Database transactions for critical operations.</p>
+<p>Database transactions for critical operations (<code>@Transactional</code> on application services).</p>
 </li>
 <li>
-<p>A single in-memory domain state in the Tables (DAO) component, kept in sync with the database.</p>
+<p>Each module owns its data; cross-module state is synchronized via domain events.</p>
 </li>
 <li>
-<p>Real-time synchronization across all clients via the Publisher and WebSocket actors.</p>
+<p>Real-time synchronization across all clients via the <code>outbound</code> module&#8217;s WebSocket publisher.</p>
 </li>
 <li>
 <p>Automatic recomputation of group standings once a group is completed.</p>
@@ -1199,7 +1212,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>The backend is tested with ScalaTest and specs2.</p>
+<p>The backend is tested with JUnit 5 and the Spring Modulith test starter.</p>
+</li>
+<li>
+<p><code>OnionArchitectureTests</code> (ArchUnit) enforces the onion layering per module.</p>
+</li>
+<li>
+<p><code>ApplicationTests</code> runs <code>ApplicationModules.verify()</code> to enforce module boundaries.</p>
+</li>
+<li>
+<p><code>@ApplicationModuleTest</code> module tests (with <code>PublishedEvents</code>) verify use-case behaviour and endpoint calls in isolation.</p>
+</li>
+<li>
+<p><code>@SpringBootTest</code> tests with H2 (MySQL mode) and a STOMP client verify persistence and WebSocket outbound events.</p>
 </li>
 <li>
 <p>The Admin View uses Karma/Jasmine unit tests.</p>
@@ -1248,17 +1273,83 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_scala_play_backend_with_pekko_actors"><a class="anchor" href="#_scala_play_backend_with_pekko_actors"></a>9.3. Scala Play Backend with Pekko Actors</h3>
 <div class="paragraph">
+<p><strong>Status</strong>: superseded by <a href="#_spring_boot_modular_monolith">Spring Boot Modular Monolith</a>.</p>
+</div>
+<div class="paragraph">
 <p><strong>Decision</strong>: Scala with Play Framework and Pekko actors for the backend.</p>
 </div>
 <div class="paragraph">
 <p><strong>Rationale</strong>: excellent WebSocket support and a mature ecosystem; Pekko actors model the publish/subscribe broadcast cleanly.</p>
 </div>
 <div class="paragraph">
-<p><strong>Consequences</strong>: JVM deployment requirements and a dependency on the Scala ecosystem.</p>
+<p><strong>Consequences</strong>: JVM deployment requirements and a dependency on the Scala ecosystem. The backend is being migrated to Spring Boot with Kotlin.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_single_data_access_component"><a class="anchor" href="#_single_data_access_component"></a>9.4. Single Data-Access Component</h3>
+<h3 id="_spring_boot_modular_monolith"><a class="anchor" href="#_spring_boot_modular_monolith"></a>9.4. Spring Boot Modular Monolith</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: migrate the backend to Kotlin on Spring Boot 4.1, structured as a modular monolith with Spring Modulith 2.1.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: Kotlin/Spring Boot reduce the Scala/Pekko dependency footprint and align with the wider ecosystem. Spring Modulith enforces module boundaries at build/test time while keeping a single deployable.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: JVM deployment is retained. Modules are <code>registration</code>, <code>grouping</code>, <code>tournament</code>, <code>settings</code> and <code>outbound</code>. Module boundaries are verified with <code>ApplicationModules.verify()</code> and ArchUnit.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_onion_architecture_per_module"><a class="anchor" href="#_onion_architecture_per_module"></a>9.5. Onion Architecture per Module</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: every module uses the layers <code>domain</code> (aggregates, value objects and repository ports), <code>application</code> (use-case orchestration) and <code>infrastructure</code> (<code>database</code>, <code>web</code>, <code>messaging</code>), with dependencies pointing inward (<code>infrastructure → application → domain</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: keeps domain logic free of framework and persistence concerns, and makes each module independently testable and decomposable.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: repository interfaces live in <code>domain</code>, their JdbcClient implementations in <code>infrastructure.database</code>. The layering is enforced by ArchUnit rules (<code>OnionArchitectureTests</code>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_event_driven_module_integration"><a class="anchor" href="#_event_driven_module_integration"></a>9.6. Event-driven Module Integration</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: modules communicate through Spring application events (<code>ApplicationEventPublisher</code> / <code>@EventListener</code>); the <code>outbound</code> module is the only component that publishes WebSocket messages.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: keeps modules decoupled and gives a single, replaceable place for the WebSocket transport.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: <code>registration</code> publishes <code>PlayerRegistered</code>/<code>PlayerUnregistered</code>; <code>outbound</code> consumes them and pushes to <code>/topic/updates</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_plain_sql_via_jdbcclient"><a class="anchor" href="#_plain_sql_via_jdbcclient"></a>9.7. Plain SQL via JdbcClient</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: persist with <code>JdbcClient</code> and hand-written SQL only; no JPA or Hibernate.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: the schema is a legacy MySQL schema with naming conventions that map poorly to ORMs; plain SQL keeps full control and avoids framework coupling in the domain.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: repository ports in <code>domain</code>, Jdbc adapters in <code>infrastructure.database</code>. H2 in MySQL mode is used for fast integration tests.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_api_versioning_via_apiv2_path_prefix"><a class="anchor" href="#_api_versioning_via_apiv2_path_prefix"></a>9.8. API versioning via <code>/api/v2</code> path prefix</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: every REST controller is prefixed with <code>/api/v2</code> through a global <code>PathMatchConfigurer.addPathPrefix("/api/v2", …)</code> (see <code>ApiVersionConfig</code>), so controllers stay on the legacy path shape (<code>/match</code>, <code>/matchlist</code>, <code>/table</code>, <code>/players</code>, …).</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: the legacy Scala backend keeps serving under <code>/api</code> while the new backend runs in parallel under <code>/api/v2</code>; a router can switch between them by version. A single prefix keeps the controllers clean and future version bumps localized.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: clients must call <code>/api/v2/…</code>. WebSocket endpoints (<code>/ttt-websocket</code>) and actuator endpoints are unaffected, as they are not <code>@RestController</code> handlers. Spring Boot 4&#8217;s <code>spring.mvc.apiversion</code> remains available for version-specific controller mappings later.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_single_data_access_component"><a class="anchor" href="#_single_data_access_component"></a>9.9. Single Data-Access Component</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: superseded by <a href="#_onion_architecture_per_module">Onion Architecture per Module</a>.</p>
+</div>
 <div class="paragraph">
 <p><strong>Decision</strong>: keep all persistence and the in-memory domain state in one component (Tables) instead of separate per-entity DAOs.</p>
 </div>
@@ -1270,7 +1361,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_offline_data_preparation_by_mktt"><a class="anchor" href="#_offline_data_preparation_by_mktt"></a>9.5. Offline Data Preparation by mktt</h3>
+<h3 id="_offline_data_preparation_by_mktt"><a class="anchor" href="#_offline_data_preparation_by_mktt"></a>9.10. Offline Data Preparation by mktt</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: rely on the legacy tool mktt to prepare the tournament database from click-TT data, rather than importing registrations at runtime.</p>
 </div>
