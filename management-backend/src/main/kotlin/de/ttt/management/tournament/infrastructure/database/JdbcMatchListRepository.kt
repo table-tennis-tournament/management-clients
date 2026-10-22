@@ -20,10 +20,10 @@ class JdbcMatchListRepository(private val jdbcClient: JdbcClient) : MatchListRep
     }
 
     override fun findAll(): List<MatchList> =
-        jdbcClient.sql("SELECT * FROM match_list ORDER BY position").query(rowMapper).list()
+        jdbcClient.sql("SELECT * FROM mgmt_match_list ORDER BY position").query(rowMapper).list()
 
     override fun findById(uuid: String): Optional<MatchList> =
-        jdbcClient.sql("SELECT * FROM match_list WHERE uuid = :uuid")
+        jdbcClient.sql("SELECT * FROM mgmt_match_list WHERE uuid = :uuid")
             .param("uuid", uuid)
             .query(rowMapper)
             .optional()
@@ -32,7 +32,7 @@ class JdbcMatchListRepository(private val jdbcClient: JdbcClient) : MatchListRep
         if (findById(entry.uuid).isEmpty) {
             jdbcClient.sql(
                 """
-                INSERT INTO match_list (uuid, match_ids, as_group, position)
+                INSERT INTO mgmt_match_list (uuid, match_ids, as_group, position)
                 VALUES (:uuid, :matchIds, :asGroup, :position)
                 """.trimIndent()
             )
@@ -44,7 +44,7 @@ class JdbcMatchListRepository(private val jdbcClient: JdbcClient) : MatchListRep
         } else {
             jdbcClient.sql(
                 """
-                UPDATE match_list
+                UPDATE mgmt_match_list
                 SET match_ids = :matchIds, as_group = :asGroup, position = :position
                 WHERE uuid = :uuid
                 """.trimIndent()
@@ -59,10 +59,10 @@ class JdbcMatchListRepository(private val jdbcClient: JdbcClient) : MatchListRep
     }
 
     override fun deleteById(uuid: String): Boolean =
-        jdbcClient.sql("DELETE FROM match_list WHERE uuid = :uuid").param("uuid", uuid).update() > 0
+        jdbcClient.sql("DELETE FROM mgmt_match_list WHERE uuid = :uuid").param("uuid", uuid).update() > 0
 
     override fun deleteAll() {
-        jdbcClient.sql("DELETE FROM match_list").update()
+        jdbcClient.sql("DELETE FROM mgmt_match_list").update()
     }
 
     private fun toMatchIds(matchIds: List<Long>): String = matchIds.joinToString(",")

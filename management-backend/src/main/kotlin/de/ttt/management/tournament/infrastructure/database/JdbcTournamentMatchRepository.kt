@@ -97,34 +97,38 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         }
     }
 
+    private fun selectMatches(sql: String): String =
+        "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate FROM matches m " +
+            "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id $sql"
+
     override fun findAll(): List<TournamentMatch> {
-        return resolvePlayers(jdbcClient.sql("SELECT * FROM matches").query(rowMapper).list(), withNames = false)
+        return resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = false)
     }
 
     override fun findById(id: Long): Optional<TournamentMatch> {
-        return jdbcClient.sql("SELECT * FROM matches WHERE matc_id = :id").param("id", id).query(rowMapper).optional()
+        return jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).optional()
     }
 
     override fun findByTypeId(typeId: Long): List<TournamentMatch> {
-        return jdbcClient.sql("SELECT * FROM matches WHERE matc_type_id = :typeId")
+        return jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId"))
             .param("typeId", typeId).query(rowMapper).list()
     }
 
     override fun findOpen(): List<TournamentMatch> {
-        return jdbcClient.sql("SELECT * FROM matches WHERE matc_played = 0").query(rowMapper).list()
+        return jdbcClient.sql(selectMatches("WHERE m.matc_played = 0")).query(rowMapper).list()
     }
 
     override fun findOpenByTypeId(typeId: Long): List<TournamentMatch> {
-        return jdbcClient.sql("SELECT * FROM matches WHERE matc_type_id = :typeId AND matc_played = 0")
+        return jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 0"))
             .param("typeId", typeId).query(rowMapper).list()
     }
 
     override fun findPlayed(): List<TournamentMatch> {
-        return jdbcClient.sql("SELECT * FROM matches WHERE matc_played = 1").query(rowMapper).list()
+        return jdbcClient.sql(selectMatches("WHERE m.matc_played = 1")).query(rowMapper).list()
     }
 
     override fun findPlayedByTypeId(typeId: Long): List<TournamentMatch> {
-        return jdbcClient.sql("SELECT * FROM matches WHERE matc_type_id = :typeId AND matc_played = 1")
+        return jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 1"))
             .param("typeId", typeId).query(rowMapper).list()
     }
 
@@ -133,11 +137,13 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             """
             SELECT m.*, 
                    mt.maty_name AS match_type_name,
-                   g.grou_name AS group_name
+                   g.grou_name AS group_name,
+                   COALESCE(cs.call_state, 0) AS matc_callstate
             FROM matches m
             LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
             LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id
-            WHERE m.matc_callstate = :callState
+            LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id
+            WHERE COALESCE(cs.call_state, 0) = :callState
               AND m.matc_tabl_id IS NOT NULL
             ORDER BY m.matc_tabl_id, m.matc_id
             """.trimIndent()
@@ -163,9 +169,11 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         val raw = jdbcClient.sql(
             """
             SELECT m.*, 
-                   mt.maty_name AS match_type_name
+                   mt.maty_name AS match_type_name,
+                   COALESCE(cs.call_state, 0) AS matc_callstate
             FROM matches m
             LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
+            LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id
             WHERE m.matc_tabl_id IN (:tableIds)
             ORDER BY m.matc_tabl_id, m.matc_id
             """.trimIndent()
@@ -200,10 +208,10 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
     }
 
     override fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int {
-        return jdbcClient.sql(
+        val updated = jdbcClient.sql(
             """
             UPDATE matches 
-            SET matc_tabl_id = :tableId, matc_isplaying = 0, matc_waitinglist = 0, matc_callstate = 0, matc_starttime = :startTime
+            SET matc_tabl_id = :tableId, matc_isplaying = 0, matc_waitinglist = 0, matc_starttime = :startTime
             WHERE matc_id = :id
             """.trimIndent()
         )
@@ -211,6 +219,10 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .param("startTime", startTime)
             .param("id", matchId)
             .update()
+        jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
+            .param("id", matchId)
+            .update()
+        return updated
     }
 
     override fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int {
@@ -240,15 +252,19 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
     }
 
     override fun removeFromTable(matchId: Long): Int {
-        return jdbcClient.sql(
+        val updated = jdbcClient.sql(
             """
             UPDATE matches 
-            SET matc_tabl_id = NULL, matc_isplaying = 0, matc_callstate = 0
+            SET matc_tabl_id = NULL, matc_isplaying = 0
             WHERE matc_id = :id
             """.trimIndent()
         )
             .param("id", matchId)
             .update()
+        jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
+            .param("id", matchId)
+            .update()
+        return updated
     }
 
     override fun freeMatch(matchId: Long): Int {
@@ -291,9 +307,8 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
     override fun updateCallState(matchId: Long, callState: CallState): Int {
         return jdbcClient.sql(
             """
-            UPDATE matches 
-            SET matc_callstate = :callState
-            WHERE matc_id = :id
+            INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (:id, :callState)
+            ON DUPLICATE KEY UPDATE call_state = :callState
             """.trimIndent()
         )
             .param("callState", callState.code)

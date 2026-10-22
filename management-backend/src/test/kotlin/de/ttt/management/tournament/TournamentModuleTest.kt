@@ -119,9 +119,10 @@ class TournamentModuleTest {
     fun `call endpoint announces the first call and publishes MatchCalled`(events: PublishedEvents) {
         val matchId = matchService.getAllMatches().first().id!!
         jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 0, matc_tabl_id = NULL WHERE matc_id = ?",
+            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
             matchId
         )
+        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = ?", matchId)
 
         restTestClient.post()
             .uri("/api/v2/match/call")
@@ -140,9 +141,11 @@ class TournamentModuleTest {
     fun `playercall endpoint advances to the second call and publishes MatchCalled`(events: PublishedEvents) {
         val matchId = matchService.getAllMatches().first().id!!
         jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 1, matc_tabl_id = NULL WHERE matc_id = ?",
+            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
             matchId
         )
+        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = ?", matchId)
+        jdbcTemplate.update("INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (?, 1)", matchId)
 
         restTestClient.post()
             .uri("/api/v2/playercall/$matchId")

@@ -32,20 +32,24 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
         )
     }
 
+    private fun selectPlayers(sql: String): String =
+        "SELECT p.*, COALESCE(pa.active, 1) AS play_active FROM player p " +
+            "LEFT JOIN mgmt_player_active pa ON pa.play_id = p.play_id $sql"
+
     override fun findAll(): List<Player> {
-        return jdbcClient.sql("SELECT * FROM player").query(rowMapper).list()
+        return jdbcClient.sql(selectPlayers("")).query(rowMapper).list()
     }
 
     override fun findById(id: Long): Optional<Player> {
-        return jdbcClient.sql("SELECT * FROM player WHERE play_id = :id").param("id", id).query(rowMapper).optional()
+        return jdbcClient.sql(selectPlayers("WHERE p.play_id = :id")).param("id", id).query(rowMapper).optional()
     }
 
     override fun findByTypeId(typeId: Long): List<Player> {
-        return jdbcClient.sql("""
-            SELECT p.* FROM player p
-            JOIN typeperplayer tpp ON p.play_id = tpp.typl_play_id
-            WHERE tpp.typl_type_id = :typeId
-        """.trimIndent())
+        return jdbcClient.sql(
+            selectPlayers(
+                "JOIN typeperplayer tpp ON p.play_id = tpp.typl_play_id WHERE tpp.typl_type_id = :typeId"
+            )
+        )
             .param("typeId", typeId)
             .query(rowMapper)
             .list()
@@ -55,8 +59,8 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
         if (player.id == null) {
             val keyHolder = GeneratedKeyHolder()
             jdbcClient.sql("""
-                INSERT INTO player (play_firstname, play_lastname, play_email, play_telnr, play_location, play_street, play_plz, play_sex, play_ttr, play_club_id, play_paid, play_active)
-                VALUES (:firstName, :lastName, :email, :telNr, :location, :street, :plz, :sex, :ttr, :clubId, :paid, :active)
+                INSERT INTO player (play_firstname, play_lastname, play_email, play_telnr, play_location, play_street, play_plz, play_sex, play_ttr, play_club_id, play_paid)
+                VALUES (:firstName, :lastName, :email, :telNr, :location, :street, :plz, :sex, :ttr, :clubId, :paid)
             """.trimIndent())
                 .param("firstName", player.firstName)
                 .param("lastName", player.lastName)
@@ -69,7 +73,6 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 .param("ttr", player.ttr)
                 .param("clubId", player.club?.id)
                 .param("paid", player.paid)
-                .param("active", player.active)
                 .update(keyHolder)
             player.id = (keyHolder.keys?.get("play_id") as? Number)?.toLong()
         } else {
@@ -77,7 +80,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 UPDATE player 
                 SET play_firstname = :firstName, play_lastname = :lastName, play_email = :email, 
                     play_telnr = :telNr, play_location = :location, play_street = :street, 
-                    play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid, play_active = :active
+                    play_plz = :plz, play_sex = :sex, play_ttr = :ttr, play_club_id = :clubId, play_paid = :paid
                 WHERE play_id = :id
             """.trimIndent())
                 .param("firstName", player.firstName)
@@ -91,18 +94,29 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
                 .param("ttr", player.ttr)
                 .param("clubId", player.club?.id)
                 .param("paid", player.paid)
-                .param("active", player.active)
                 .param("id", player.id)
                 .update()
         }
+        saveActive(player.id!!, player.active)
         return player
     }
 
     override fun deleteById(id: Long) {
         jdbcClient.sql("DELETE FROM player WHERE play_id = :id").param("id", id).update()
+        jdbcClient.sql("DELETE FROM mgmt_player_active WHERE play_id = :id").param("id", id).update()
     }
 
     override fun deleteAll() {
         jdbcClient.sql("DELETE FROM player").update()
+        jdbcClient.sql("DELETE FROM mgmt_player_active").update()
+    }
+
+    private fun saveActive(playId: Long, active: Boolean) {
+        if (active) {
+            jdbcClient.sql("DELETE FROM mgmt_player_active WHERE play_id = :id").param("id", playId).update()
+        } else {
+            jdbcClient.sql("INSERT INTO mgmt_player_active (play_id, active) VALUES (:id, 0) ON DUPLICATE KEY UPDATE active = 0")
+                .param("id", playId).update()
+        }
     }
 }

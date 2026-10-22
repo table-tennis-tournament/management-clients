@@ -36,9 +36,10 @@ class TournamentModuleIT {
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_callstate = 0, matc_tabl_id = NULL, matc_tabl2_id = 0, matc_waitinglist = 0")
-        jdbcTemplate.update("DELETE FROM match_list")
-        jdbcTemplate.update("UPDATE tables SET tabl_locked = 0")
+        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0, matc_waitinglist = 0")
+        jdbcTemplate.update("DELETE FROM mgmt_match_call_state")
+        jdbcTemplate.update("DELETE FROM mgmt_match_list")
+        jdbcTemplate.update("DELETE FROM mgmt_table_lock")
         val matches = matchService.getAllMatches()
         if (matches.isNotEmpty()) {
             validMatchId = matches[0].id!!
@@ -434,7 +435,8 @@ class TournamentModuleIT {
     @Test
     fun `caller aggregate resolves doubles team ids to individual players`() {
         // Match 154 is a doubles match: side A references double team 100001 (= double 1: players 54, 158).
-        jdbcTemplate.update("UPDATE matches SET matc_callstate = 0, matc_tabl_id = 1, matc_played = 0 WHERE matc_id = 154")
+        jdbcTemplate.update("UPDATE matches SET matc_tabl_id = 1, matc_played = 0 WHERE matc_id = 154")
+        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = 154")
 
         val doubles = matchService.getMatchesByCallState(CallState.None).first { it.id == 154L }
 
@@ -446,7 +448,8 @@ class TournamentModuleIT {
     @Test
     fun `a match moves through caller second and third call`() {
         assertTrue(validMatchId > 0)
-        jdbcTemplate.update("UPDATE matches SET matc_callstate = 0, matc_tabl_id = 1 WHERE matc_id = ?", validMatchId)
+        jdbcTemplate.update("UPDATE matches SET matc_tabl_id = 1 WHERE matc_id = ?", validMatchId)
+        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = ?", validMatchId)
 
         // Not yet called -> appears in the caller view
         restTestClient.get()

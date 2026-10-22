@@ -22,7 +22,7 @@ class TableModuleIT {
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE tables SET tabl_locked = 0")
+        jdbcTemplate.update("DELETE FROM mgmt_table_lock")
     }
 
     @Test

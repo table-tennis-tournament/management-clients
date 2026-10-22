@@ -61,7 +61,10 @@ class JdbcLegacyReadRepository(private val jdbcClient: JdbcClient) : LegacyReadR
     }
 
     override fun fetchAllTables(): List<LegacyTableInfo> {
-        val tables = jdbcClient.sql("SELECT tabl_id, tabl_name, tabl_locked FROM tables")
+        val tables = jdbcClient.sql(
+            "SELECT t.tabl_id, t.tabl_name, COALESCE(tl.locked, 0) AS tabl_locked FROM tables t " +
+                "LEFT JOIN mgmt_table_lock tl ON tl.tabl_id = t.tabl_id"
+        )
             .query { rs, _ ->
                 Triple(rs.getLong("tabl_id"), rs.getString("tabl_name")?.toIntOrNull() ?: 0, rs.getInt("tabl_locked") > 0)
             }
@@ -78,7 +81,7 @@ class JdbcLegacyReadRepository(private val jdbcClient: JdbcClient) : LegacyReadR
     }
 
     override fun fetchMatchList(): List<LegacyMatchListInfo> {
-        val entries = jdbcClient.sql("SELECT uuid, match_ids, as_group, position FROM match_list ORDER BY position")
+        val entries = jdbcClient.sql("SELECT uuid, match_ids, as_group, position FROM mgmt_match_list ORDER BY position")
             .query { rs, _ ->
                 LegacyMatchListItem(
                     id = rs.getString("uuid"),
@@ -114,13 +117,14 @@ class JdbcLegacyReadRepository(private val jdbcClient: JdbcClient) : LegacyReadR
                    m.matc_maty_id, mt.maty_name,
                    m.matc_type_id, t.type_name, t.type_kind, t.type_active,
                    m.matc_grou_id, g.grou_name,
-                   m.matc_played, m.matc_isplaying, m.matc_kampflos, m.matc_waitinglist, m.matc_callstate,
+                   m.matc_played, m.matc_isplaying, m.matc_kampflos, m.matc_waitinglist, COALESCE(cs.call_state, 0) AS matc_callstate,
                    m.matc_tabl_id, tb.tabl_name
             FROM matches m
             LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
             LEFT JOIN type t ON t.type_id = m.matc_type_id
             LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id
             LEFT JOIN tables tb ON tb.tabl_id = m.matc_tabl_id
+            LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id
             ORDER BY m.matc_id
             """.trimIndent()
         )

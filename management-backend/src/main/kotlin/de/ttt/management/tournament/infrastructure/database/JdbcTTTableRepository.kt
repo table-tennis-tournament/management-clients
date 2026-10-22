@@ -20,40 +20,54 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
         )
     }
 
+    private fun selectTables(sql: String): String =
+        "SELECT t.*, COALESCE(tl.locked, 0) AS tabl_locked FROM tables t " +
+            "LEFT JOIN mgmt_table_lock tl ON tl.tabl_id = t.tabl_id $sql"
+
     override fun findAll(): List<TTTable> {
-        return jdbcClient.sql("SELECT * FROM tables").query(rowMapper).list()
+        return jdbcClient.sql(selectTables("")).query(rowMapper).list()
     }
 
     override fun findById(id: Long): Optional<TTTable> {
-        return jdbcClient.sql("SELECT * FROM tables WHERE Tabl_ID = :id").param("id", id).query(rowMapper).optional()
+        return jdbcClient.sql(selectTables("WHERE t.tabl_id = :id")).param("id", id).query(rowMapper).optional()
     }
 
     override fun findByName(name: String): Optional<TTTable> {
-        return jdbcClient.sql("SELECT * FROM tables WHERE Tabl_Name = :name").param("name", name).query(rowMapper).optional()
+        return jdbcClient.sql(selectTables("WHERE t.tabl_name = :name")).param("name", name).query(rowMapper).optional()
     }
 
     override fun save(table: TTTable): TTTable {
         if (table.id == null) {
             val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO tables (Tabl_Name, tabl_locked) VALUES (:name, :locked)")
+            jdbcClient.sql("INSERT INTO tables (Tabl_Name) VALUES (:name)")
                 .param("name", table.name)
-                .param("locked", if (table.isLocked) 1 else 0)
                 .update(keyHolder)
             table.id = (keyHolder.keys?.get("tabl_id") as? Number)?.toLong()
         } else {
-            jdbcClient.sql("UPDATE tables SET Tabl_Name = :name, tabl_locked = :locked WHERE Tabl_ID = :id")
+            jdbcClient.sql("UPDATE tables SET Tabl_Name = :name WHERE Tabl_ID = :id")
                 .param("name", table.name)
-                .param("locked", if (table.isLocked) 1 else 0)
                 .param("id", table.id).update()
         }
+        setLocked(table.id!!, table.isLocked)
         return table
     }
 
     override fun setLocked(id: Long, locked: Boolean): Int {
-        return jdbcClient.sql("UPDATE tables SET tabl_locked = :locked WHERE Tabl_ID = :id")
-            .param("locked", if (locked) 1 else 0)
+        val exists = jdbcClient.sql("SELECT tabl_id FROM tables WHERE tabl_id = :id")
             .param("id", id)
-            .update()
+            .query { rs, _ -> rs.getLong("tabl_id") }
+            .optional()
+            .isPresent
+        if (!exists) return 0
+        return if (locked) {
+            jdbcClient.sql("INSERT INTO mgmt_table_lock (tabl_id, locked) VALUES (:id, 1) ON DUPLICATE KEY UPDATE locked = 1")
+                .param("id", id)
+                .update()
+        } else {
+            jdbcClient.sql("DELETE FROM mgmt_table_lock WHERE tabl_id = :id")
+                .param("id", id)
+                .update()
+        }
     }
 
     override fun deleteAll() {
