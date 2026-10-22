@@ -30,13 +30,16 @@ services:
     ports:
       - "9000:9000"
     environment:
-      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/sunday_test
+      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/saturday_test
       - MYSQL_USER=root
       - MYSQL_PW=ttv01
-    networks: 
+    networks:
       - app-tier
     depends_on:
-      - "mariadb"
+      mariadb:
+        condition: service_healthy
+      management-backend:
+        condition: service_healthy
   cups:
     build:
       context: ./cups
@@ -65,10 +68,17 @@ services:
     networks:
       - app-tier
     depends_on:
-      - "mariadb"
-      - "cups"
+      mariadb:
+        condition: service_healthy
+      cups:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
   admin:
-    image: holzleube/ttt-clients:v7.0.1
     build:
       context: .
       dockerfile: Dockerfile-clients
