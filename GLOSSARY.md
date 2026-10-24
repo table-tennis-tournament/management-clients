@@ -6,6 +6,8 @@ This glossary defines the canonical domain language of the Table Tennis Tourname
 
 **Player** — a person registered for a tournament. A player has a TTR rating, belongs to a Club and is registered for one or more disciplines. A player is also the person who reads live results in the Result View.
 
+**Active player** — a player whose registration is active and who therefore takes part in the tournament. An inactive player is retained in the system but excluded from play.
+
 **Club** — the organization a player belongs to.
 
 **TTR** — the official table tennis ranking used for players in Germany.

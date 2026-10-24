@@ -1,17 +1,26 @@
 networks:
   app-tier:
     driver: bridge
+volumes:
+  cups-output:
+  mariadb-data:
 services:
   mariadb:
-    image: holzleube/mysql-docker-image:6.1
+    image: mariadb:13
     ports:
       - "3306:3306"
     environment:
       - MARIADB_ROOT_PASSWORD=ttv01
+      - MARIADB_DATABASE=tournamentManager
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./testdata/lower_case_table_names.cnf:/etc/mysql/conf.d/lower_case_table_names.cnf:ro
+      - ./testdata/create-saturday.sql:/docker-entrypoint-initdb.d/01-create-saturday.sql:ro
+      - ./testdata/create-sunday.sql:/docker-entrypoint-initdb.d/02-create-sunday.sql:ro
     networks:
       - app-tier
     healthcheck:
-      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 15s
       timeout: 5s
       retries: 6
@@ -21,15 +30,55 @@ services:
     ports:
       - "9000:9000"
     environment:
-      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/tournamentManager
+      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/saturday_test
       - MYSQL_USER=root
       - MYSQL_PW=ttv01
-    networks: 
+    networks:
       - app-tier
     depends_on:
-      - "mariadb"
+      mariadb:
+        condition: service_healthy
+      management-backend:
+        condition: service_healthy
+  cups:
+    build:
+      context: ./cups
+      dockerfile: Dockerfile
+    environment:
+      - CUPS_PRINTER_URI=${CUPS_PRINTER_URI:-}
+      - CUPS_PRINTER_NAME=${CUPS_PRINTER_NAME:-}
+    volumes:
+      - cups-output:/var/spool/cups-pdf
+    networks:
+      - app-tier
+  management-backend:
+    image: holzleube/ttt-management:latest
+    build:
+      context: ./management-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/saturday_test
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.mariadb.jdbc.Driver
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=ttv01
+      - CUPS_SERVER=cups
+      - DEFAULT_PRINTER=${DEFAULT_PRINTER:-PDF}
+    networks:
+      - app-tier
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      cups:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
   admin:
-    image: holzleube/ttt-clients:v7.0.0
     build:
       context: .
       dockerfile: Dockerfile-clients
