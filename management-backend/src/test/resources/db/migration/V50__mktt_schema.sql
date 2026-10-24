@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `grouprounds` (
   PRIMARY KEY (`GrRo_ID`)
 );
 
-CREATE TABLE IF NOT EXISTS `groups` (
+CREATE TABLE IF NOT EXISTS `playgroups` (
   `grou_id` int(10) NOT NULL AUTO_INCREMENT,
   `grou_name` varchar(255) DEFAULT NULL,
   `grou_tour_id` int(10) DEFAULT NULL,

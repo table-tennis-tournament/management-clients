@@ -19,7 +19,7 @@ class JdbcMatchPrintRepository(private val jdbcClient: JdbcClient) : MatchPrintR
                    tb.tabl_name AS table_name
             FROM matches m
             LEFT JOIN type t ON t.type_id = m.matc_type_id
-            LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id
+            LEFT JOIN playgroups g ON g.grou_id = m.matc_grou_id
             LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
             LEFT JOIN tables tb ON tb.tabl_id = m.matc_tabl_id
             WHERE m.matc_id = :id

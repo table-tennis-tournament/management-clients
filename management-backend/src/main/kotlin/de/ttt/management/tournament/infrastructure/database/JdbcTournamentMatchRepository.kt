@@ -103,7 +103,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             "FROM matches m " +
             "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id " +
             "LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id " +
-            "LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id $sql"
+            "LEFT JOIN playgroups g ON g.grou_id = m.matc_grou_id $sql"
 
     override fun findAll(): List<TournamentMatch> {
         return resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = true)

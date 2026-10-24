@@ -9292,7 +9292,7 @@ INSERT INTO `doubles` (`Doub_ID`, `Doub_Play1_ID`, `Doub_Play2_ID`, `Doub_Type_I
 
 
 
-INSERT INTO `groups` (`Grou_ID`, `Grou_Name`, `Grou_Tour_ID`, `Grou_Timestamp`, `Grou_QualPos`, `Grou_Type_ID`, `Grou_GroupType`) VALUES
+INSERT INTO `playgroups` (`Grou_ID`, `Grou_Name`, `Grou_Tour_ID`, `Grou_Timestamp`, `Grou_QualPos`, `Grou_Type_ID`, `Grou_GroupType`) VALUES
 	(1, '01 ', 1, '2018-01-07 00:06:54', '2', 1, 0),
 	(2, '02 ', 1, '2018-01-07 00:06:54', '2', 1, 0),
 	(3, '03 ', 1, '2018-01-07 00:06:54', '2', 1, 0),

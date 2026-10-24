@@ -122,7 +122,7 @@ class JdbcLegacyReadRepository(private val jdbcClient: JdbcClient) : LegacyReadR
             FROM matches m
             LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
             LEFT JOIN type t ON t.type_id = m.matc_type_id
-            LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id
+            LEFT JOIN playgroups g ON g.grou_id = m.matc_grou_id
             LEFT JOIN tables tb ON tb.tabl_id = m.matc_tabl_id
             LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id
             ORDER BY m.matc_id
