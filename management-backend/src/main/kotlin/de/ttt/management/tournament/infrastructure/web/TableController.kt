@@ -22,11 +22,11 @@ class TableController(
 
     @GetMapping("/table/all")
     @Operation(summary = "Get all tables", description = "Retrieves a list of all tables in the tournament.")
-    fun getAllTables(): List<TTTable> = tableService.getAllTables()
+    fun getAllTables(): List<TableInfo> = toTableInfo(tableService.getAllTables())
 
     @GetMapping("/table/free")
     @Operation(summary = "Get free tables", description = "Retrieves a list of tables that are currently not assigned to a match.")
-    fun getFreeTables(): List<TTTable> = tableService.getFreeTables()
+    fun getFreeTables(): List<TableInfo> = toTableInfo(tableService.getFreeTables())
 
     @GetMapping("/table/{id}")
     @Operation(summary = "Get table by ID", description = "Retrieves details for a specific table.")
@@ -81,6 +81,18 @@ class TableController(
                 matches = matches
                     .filter { it.tableId == table.id }
                     .map { toTableManagerMatch(it, disciplines[it.typeId]?.name) }
+            )
+        }
+    }
+
+    private fun toTableInfo(tables: List<TTTable>): List<TableInfo> {
+        val matches = matchService.getMatchesOnTables(tables.mapNotNull { it.id })
+        return tables.map { table ->
+            TableInfo(
+                id = table.id,
+                number = table.name?.toIntOrNull(),
+                isLocked = table.isLocked,
+                matches = matches.filter { it.tableId == table.id }
             )
         }
     }

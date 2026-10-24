@@ -7,14 +7,17 @@ export interface Match {
   id?: number;
   startTime?: string;
   result?: any;
-  isInWaitingList?: boolean;
+  waitingList?: boolean;
   state?: string;
-  table?: number[];
+  tableId?: number;
   team1?: Player[];
   team2?: Player[];
   matchType?: StageType;
   type?: Discipline;
-  group?: Group;
+  playGroup?: Group;
   isPlayable?: boolean;
   isPlayed?: boolean;
+  isPlaying?: boolean;
+  isKampflos?: boolean;
+  callState?: string;
 }
