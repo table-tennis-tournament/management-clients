@@ -76,7 +76,8 @@ async function waitForBackend(timeoutMs = 180000): Promise<void> {
 export async function resetDatabase(): Promise<void> {
   dockerCompose('up', '-d', 'mariadb', 'management-backend');
   await waitForMariadb();
-  mariadbExec(`DROP DATABASE IF EXISTS tournamentManager;\n${readFileSync(seedFile, 'utf8')}`);
+  const seed = readFileSync(seedFile, 'utf8').replace(/tournamentManager/g, 'saturday_test');
+  mariadbExec(`DROP DATABASE IF EXISTS saturday_test;\n${seed}`);
   dockerCompose('restart', 'management-backend');
   await waitForBackend();
 }
