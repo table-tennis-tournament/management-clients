@@ -47,6 +47,6 @@ object AutoStartHeuristic {
     private fun playerIdsOf(entry: MatchList, matchesById: Map<Long, TournamentMatch>): Set<Long> =
         entry.matchIds.flatMap { id ->
             val match = matchesById[id]
-            (match?.players1.orEmpty() + match?.players2.orEmpty()).mapNotNull { it.id }
+            (match?.team1.orEmpty() + match?.team2.orEmpty()).mapNotNull { it.id }
         }.toSet()
 }

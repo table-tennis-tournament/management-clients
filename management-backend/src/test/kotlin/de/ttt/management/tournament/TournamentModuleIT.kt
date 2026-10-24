@@ -445,9 +445,9 @@ class TournamentModuleIT {
 
         val doubles = matchService.getMatchesByCallState(CallState.None).first { it.id == 154L }
 
-        assertEquals(setOf(54L, 158L), doubles.players1.mapNotNull { it.id }.toSet())
-        assertEquals(2, doubles.players1.size)
-        assertTrue(doubles.players1.all { it.firstName != null })
+        assertEquals(setOf(54L, 158L), doubles.team1.mapNotNull { it.id }.toSet())
+        assertEquals(2, doubles.team1.size)
+        assertTrue(doubles.team1.all { it.firstName != null })
     }
 
     @Test

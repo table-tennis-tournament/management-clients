@@ -93,8 +93,8 @@ class TableController(
                 games_won_player_a = match.sets.count { it.pointsPlayer1 > it.pointsPlayer2 },
                 games_won_player_b = match.sets.count { it.pointsPlayer2 > it.pointsPlayer1 }
             ),
-            players_a = match.players1.map { toTableManagerPlayer(it) },
-            players_b = match.players2.map { toTableManagerPlayer(it) },
+            players_a = match.team1.map { toTableManagerPlayer(it) },
+            players_b = match.team2.map { toTableManagerPlayer(it) },
             stage = match.matchType?.name,
             classification = classification,
             state = legacyState(match)

@@ -8,8 +8,8 @@ class AutoStartHeuristicTest {
 
     private fun match(id: Long, p1: Long?, p2: Long?, tableId: Long? = null) = TournamentMatch(
         id = id,
-        players1 = p1?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
-        players2 = p2?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
+        team1 = p1?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
+        team2 = p2?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
         tableId = tableId
     )
 

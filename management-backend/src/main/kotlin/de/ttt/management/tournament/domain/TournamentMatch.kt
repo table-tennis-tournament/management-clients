@@ -2,8 +2,8 @@ package de.ttt.management.tournament.domain
 import java.time.LocalDateTime
 class TournamentMatch(
     var id: Long? = null,
-    var players1: List<TournamentPlayer> = emptyList(),
-    var players2: List<TournamentPlayer> = emptyList(),
+    var team1: List<TournamentPlayer> = emptyList(),
+    var team2: List<TournamentPlayer> = emptyList(),
     var winner: TournamentPlayer? = null,
     var playGroup: TournamentPlayGroup? = null,
     var matchType: TournamentMatchType? = null,
@@ -20,6 +20,7 @@ class TournamentMatch(
     var callState: CallState = CallState.None,
     var tableId: Long? = null,
     var typeId: Long? = null,
+    var type: TournamentDiscipline? = null,
     var nr: Int? = null,
     var roundNumber: Int? = null,
     var startTime: LocalDateTime? = null
@@ -29,13 +30,13 @@ class TournamentMatch(
      * The first player of side A, kept as a convenience for singles-centric callers.
      */
     val player1: TournamentPlayer?
-        get() = players1.firstOrNull()
+        get() = team1.firstOrNull()
 
     /**
      * The first player of side B, kept as a convenience for singles-centric callers.
      */
     val player2: TournamentPlayer?
-        get() = players2.firstOrNull()
+        get() = team2.firstOrNull()
 
     /**
      * The per-set results, parsed from [resultRaw].
@@ -64,10 +65,10 @@ class TournamentMatch(
      * currently involved in a blocking match.
      */
     fun isPlayable(allMatches: Collection<TournamentMatch>): Boolean {
-        if (players1.isEmpty() || players2.isEmpty()) return false
-        val ids = (players1 + players2).mapNotNull { it.id }.toSet()
+        if (team1.isEmpty() || team2.isEmpty()) return false
+        val ids = (team1 + team2).mapNotNull { it.id }.toSet()
         return allMatches.none { m ->
-            m.isBlocking && (m.players1 + m.players2).any { it.id in ids }
+            m.isBlocking && (m.team1 + m.team2).any { it.id in ids }
         }
     }
 
