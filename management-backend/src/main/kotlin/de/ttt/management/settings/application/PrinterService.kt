@@ -22,9 +22,13 @@ class PrinterService(
 ) {
 
     private var selectedPrinter: String? = null
-    private var printOnStart: Boolean = false
+    private var printOnStart: Boolean = true
 
     fun getAllPrinters(): List<String> = printerGateway.listPrinters()
+
+    fun getSelectedPrinterName(): String? = selectedPrinter
+
+    fun getPrintOnStart(): Boolean = printOnStart
 
     fun setSelectedPrinter(name: String): Boolean {
         val found = printerGateway.listPrinters().contains(name)

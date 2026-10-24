@@ -1,5 +1,6 @@
 package de.ttt.management.tournament.application
 
+import de.ttt.management.tournament.AutoStartState
 import de.ttt.management.tournament.MatchListChanged
 import de.ttt.management.tournament.domain.MatchList
 import de.ttt.management.tournament.domain.MatchListRepository
@@ -15,10 +16,10 @@ class MatchListService(
     private val matchListRepository: MatchListRepository,
     private val matchRepository: TournamentMatchRepository,
     private val eventPublisher: ApplicationEventPublisher
-) {
+) : AutoStartState {
 
     @Volatile
-    private var matchListActive = true
+    private var matchListActive = false
 
     fun getAllMatchList(): List<MatchList> = matchListRepository.findAll()
 
@@ -58,6 +59,8 @@ class MatchListService(
     }
 
     fun isActive(): Boolean = matchListActive
+
+    override fun isAutoStartActive(): Boolean = matchListActive
 
     @Transactional
     fun moveMatchListEntry(uuid: String, newPosition: Int): Boolean {

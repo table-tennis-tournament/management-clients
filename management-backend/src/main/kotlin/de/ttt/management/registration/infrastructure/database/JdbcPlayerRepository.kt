@@ -1,5 +1,7 @@
 package de.ttt.management.registration.infrastructure.database
 
+import de.ttt.management.registration.domain.PlayerTypeRegistration
+import de.ttt.management.registration.domain.discipline.Discipline
 import de.ttt.management.registration.domain.player.Club
 import de.ttt.management.registration.domain.player.Player
 import de.ttt.management.registration.domain.player.PlayerRepository
@@ -14,7 +16,7 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
 
     private val rowMapper = RowMapper { rs, _ ->
         val clubId = rs.getObject("play_club_id")?.let { (it as Number).toLong() }
-        val club = clubId?.let { Club(id = it) }
+        val club = clubId?.let { Club(id = it, name = rs.getString("club_name")) }
         Player(
             id = rs.getLong("play_id"),
             firstName = rs.getString("play_firstname"),
@@ -33,8 +35,9 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
     }
 
     private fun selectPlayers(sql: String): String =
-        "SELECT p.*, COALESCE(pa.active, 1) AS play_active FROM player p " +
-            "LEFT JOIN mgmt_player_active pa ON pa.play_id = p.play_id $sql"
+        "SELECT p.*, COALESCE(pa.active, 1) AS play_active, c.club_name FROM player p " +
+            "LEFT JOIN mgmt_player_active pa ON pa.play_id = p.play_id " +
+            "LEFT JOIN club c ON c.club_id = p.play_club_id $sql"
 
     override fun findAll(): List<Player> {
         return jdbcClient.sql(selectPlayers("")).query(rowMapper).list()
@@ -53,6 +56,52 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
             .param("typeId", typeId)
             .query(rowMapper)
             .list()
+    }
+
+    override fun findAllTypePerPlayer(): List<PlayerTypeRegistration> {
+        return jdbcClient.sql(
+            """
+            SELECT tpp.typl_id, tpp.typl_paid,
+                   p.play_id, p.play_firstname, p.play_lastname, p.play_ttr, p.play_sex, p.play_club_id,
+                   c.club_name,
+                   t.type_id, t.type_name, t.type_kind, t.type_active
+            FROM typeperplayer tpp
+            JOIN player p ON p.play_id = tpp.typl_play_id
+            JOIN type t ON t.type_id = tpp.typl_type_id
+            LEFT JOIN club c ON c.club_id = p.play_club_id
+            WHERE t.type_kind != 2
+              AND t.type_id NOT IN (SELECT DISTINCT matc_type_id FROM matches WHERE matc_type_id IS NOT NULL)
+            ORDER BY p.play_lastname, p.play_firstname, p.play_id
+            """.trimIndent()
+        ).query { rs, _ ->
+            PlayerTypeRegistration(
+                id = rs.getLong("typl_id"),
+                player = Player(
+                    id = rs.getLong("play_id"),
+                    firstName = rs.getString("play_firstname"),
+                    lastName = rs.getString("play_lastname"),
+                    ttr = rs.getObject("play_ttr")?.let { (it as Number).toInt() },
+                    sex = rs.getString("play_sex"),
+                    club = rs.getObject("play_club_id")?.let {
+                        Club(id = (it as Number).toLong(), name = rs.getString("club_name"))
+                    }
+                ),
+                type = Discipline(
+                    id = rs.getLong("type_id"),
+                    name = rs.getString("type_name"),
+                    kind = rs.getInt("type_kind"),
+                    active = rs.getInt("type_active") > 0
+                ),
+                paid = rs.getInt("typl_paid") > 0
+            )
+        }.list()
+    }
+
+    override fun setTypePerPlayerPaid(typlId: Long, paid: Boolean): Boolean {
+        return jdbcClient.sql("UPDATE typeperplayer SET typl_paid = :paid WHERE typl_id = :id")
+            .param("paid", if (paid) 1 else 0)
+            .param("id", typlId)
+            .update() > 0
     }
 
     override fun save(player: Player): Player {

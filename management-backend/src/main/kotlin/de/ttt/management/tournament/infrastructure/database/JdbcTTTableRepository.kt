@@ -22,18 +22,19 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
 
     private fun selectTables(sql: String): String =
         "SELECT t.*, COALESCE(tl.locked, 0) AS tabl_locked FROM tables t " +
-            "LEFT JOIN mgmt_table_lock tl ON tl.tabl_id = t.tabl_id $sql"
+            "LEFT JOIN mgmt_table_lock tl ON tl.tabl_id = t.tabl_id " +
+            "WHERE t.tabl_name != '0' $sql"
 
     override fun findAll(): List<TTTable> {
         return jdbcClient.sql(selectTables("")).query(rowMapper).list()
     }
 
     override fun findById(id: Long): Optional<TTTable> {
-        return jdbcClient.sql(selectTables("WHERE t.tabl_id = :id")).param("id", id).query(rowMapper).optional()
+        return jdbcClient.sql(selectTables("AND t.tabl_id = :id")).param("id", id).query(rowMapper).optional()
     }
 
     override fun findByName(name: String): Optional<TTTable> {
-        return jdbcClient.sql(selectTables("WHERE t.tabl_name = :name")).param("name", name).query(rowMapper).optional()
+        return jdbcClient.sql(selectTables("AND t.tabl_name = :name")).param("name", name).query(rowMapper).optional()
     }
 
     override fun save(table: TTTable): TTTable {

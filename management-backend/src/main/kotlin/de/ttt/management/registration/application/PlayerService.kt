@@ -2,6 +2,7 @@ package de.ttt.management.registration.application
 
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
+import de.ttt.management.registration.domain.PlayerTypeRegistration
 import de.ttt.management.registration.domain.player.Club
 import de.ttt.management.registration.domain.player.Player
 import de.ttt.management.registration.domain.player.PlayerRepository
@@ -20,6 +21,8 @@ class PlayerService(
     fun getPlayer(id: Long): Player? = playerRepository.findById(id).orElse(null)
 
     fun getPlayersByType(typeId: Long): List<Player> = playerRepository.findByTypeId(typeId)
+
+    fun getAllTypePerPlayer(): List<PlayerTypeRegistration> = playerRepository.findAllTypePerPlayer()
 
     @Transactional
     fun registerPlayer(firstName: String, lastName: String, ttr: Int?, sex: String?, clubId: Long?): Player {
@@ -51,10 +54,7 @@ class PlayerService(
 
     @Transactional
     fun setPaid(id: Long, paid: Boolean): Boolean {
-        val player = playerRepository.findById(id).orElse(null) ?: return false
-        player.paid = paid
-        playerRepository.save(player)
-        return true
+        return playerRepository.setTypePerPlayerPaid(id, paid)
     }
 
     @Transactional

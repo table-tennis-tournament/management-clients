@@ -1,6 +1,7 @@
 package de.ttt.management.registration.infrastructure.web
 
 import de.ttt.management.registration.application.PlayerService
+import de.ttt.management.registration.domain.PlayerTypeRegistration
 import de.ttt.management.registration.domain.player.Player
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -24,6 +25,10 @@ class PlayerController(private val playerService: PlayerService) {
     @GetMapping("/all")
     @Operation(summary = "Get all players (legacy)", description = "Legacy endpoint to retrieve all registered players.")
     fun getAllPlayersLegacy(): List<Player> = playerService.getAllPlayers()
+
+    @GetMapping("/allTypePerPlayer")
+    @Operation(summary = "Get all registrations grouped by player and type", description = "Retrieves each player's type registrations for types that have no matches yet (excluding doubles).")
+    fun getAllTypePerPlayer(): List<PlayerTypeRegistration> = playerService.getAllTypePerPlayer()
 
     @PostMapping
     @Operation(summary = "Register a player", description = "Registers a new player for the tournament.")

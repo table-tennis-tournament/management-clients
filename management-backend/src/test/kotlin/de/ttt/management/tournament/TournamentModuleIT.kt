@@ -380,6 +380,11 @@ class TournamentModuleIT {
             .expectStatus().isOk
 
         restTestClient.post()
+            .uri("/api/v2/matchlist/active/true")
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.post()
             .uri("/api/v2/matchlist/auto-start")
             .exchange()
             .expectStatus().isOk

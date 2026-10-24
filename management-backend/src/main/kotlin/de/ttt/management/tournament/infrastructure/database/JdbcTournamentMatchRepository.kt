@@ -13,19 +13,20 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
     private val rowMapper = RowMapper { rs, _ -> toMatch(rs) }
 
     private fun toMatch(rs: java.sql.ResultSet): TournamentMatch {
-        val p1Id = rs.getObject("matc_play1_id")?.let { (it as Number).toLong() }
-        val p2Id = rs.getObject("matc_play2_id")?.let { (it as Number).toLong() }
-        val wId = rs.getObject("matc_winner_id")?.let { (it as Number).toLong() }
-        val pgId = rs.getObject("matc_grou_id")?.let { (it as Number).toLong() }
-        val mtId = rs.getObject("matc_maty_id")?.let { (it as Number).toLong() }
+        val p1Id = rs.getObject("matc_play1_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 }
+        val p2Id = rs.getObject("matc_play2_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 }
+        val wId = rs.getObject("matc_winner_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 }
+        val mtId = rs.getObject("matc_maty_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 }
+        val pgId = rs.getObject("matc_grou_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 }
+        val groupName = rs.getString("group_name")
 
         return TournamentMatch(
             id = rs.getLong("matc_id"),
             players1 = p1Id?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
             players2 = p2Id?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
             winner = wId?.let { TournamentPlayer(id = it) },
-            playGroup = pgId?.let { TournamentPlayGroup(id = it) },
-            matchType = mtId?.let { TournamentMatchType(id = it) },
+            playGroup = pgId?.takeIf { groupName != null }?.let { TournamentPlayGroup(id = it, name = groupName) },
+            matchType = mtId?.let { TournamentMatchType(id = it, name = rs.getString("match_type_name")) },
             result = rs.getString("matc_result"),
             resultRaw = rs.getString("matc_resultraw"),
             sets1 = rs.getInt("matc_sets1"),
@@ -37,7 +38,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             isKampflos = rs.getInt("matc_kampflos") > 0,
             waitingList = rs.getBoolean("matc_waitinglist"),
             callState = CallState.fromCode(rs.getInt("matc_callstate")),
-            tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() },
+            tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 },
             typeId = rs.getObject("matc_type_id")?.let { (it as Number).toLong() },
             nr = rs.getInt("matc_nr"),
             roundNumber = rs.getInt("matc_roundnumber"),
@@ -98,101 +99,72 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
     }
 
     private fun selectMatches(sql: String): String =
-        "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate FROM matches m " +
-            "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id $sql"
+        "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate, mt.maty_name AS match_type_name, g.grou_name AS group_name " +
+            "FROM matches m " +
+            "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id " +
+            "LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id " +
+            "LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id $sql"
 
     override fun findAll(): List<TournamentMatch> {
-        return resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = false)
+        return resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = true)
     }
 
     override fun findById(id: Long): Optional<TournamentMatch> {
-        return jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).optional()
+        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).list(), withNames = true)
+            .firstOrNull()
+            .let { Optional.ofNullable(it) }
     }
 
     override fun findByTypeId(typeId: Long): List<TournamentMatch> {
-        return jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId"))
-            .param("typeId", typeId).query(rowMapper).list()
+        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId"))
+            .param("typeId", typeId).query(rowMapper).list(), withNames = true)
     }
 
     override fun findOpen(): List<TournamentMatch> {
-        return jdbcClient.sql(selectMatches("WHERE m.matc_played = 0")).query(rowMapper).list()
+        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_played = 0")).query(rowMapper).list(), withNames = true)
     }
 
     override fun findOpenByTypeId(typeId: Long): List<TournamentMatch> {
-        return jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 0"))
-            .param("typeId", typeId).query(rowMapper).list()
+        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 0"))
+            .param("typeId", typeId).query(rowMapper).list(), withNames = true)
     }
 
     override fun findPlayed(): List<TournamentMatch> {
-        return jdbcClient.sql(selectMatches("WHERE m.matc_played = 1")).query(rowMapper).list()
+        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_played = 1")).query(rowMapper).list(), withNames = true)
     }
 
     override fun findPlayedByTypeId(typeId: Long): List<TournamentMatch> {
-        return jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 1"))
-            .param("typeId", typeId).query(rowMapper).list()
+        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 1"))
+            .param("typeId", typeId).query(rowMapper).list(), withNames = true)
     }
 
     override fun findByCallState(callState: CallState): List<TournamentMatch> {
-        val raw = jdbcClient.sql(
-            """
-            SELECT m.*, 
-                   mt.maty_name AS match_type_name,
-                   g.grou_name AS group_name,
-                   COALESCE(cs.call_state, 0) AS matc_callstate
-            FROM matches m
-            LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
-            LEFT JOIN `groups` g ON g.grou_id = m.matc_grou_id
-            LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id
-            WHERE COALESCE(cs.call_state, 0) = :callState
-              AND m.matc_tabl_id IS NOT NULL
-            ORDER BY m.matc_tabl_id, m.matc_id
-            """.trimIndent()
+        return resolvePlayers(
+            jdbcClient.sql(
+                selectMatches("WHERE COALESCE(cs.call_state, 0) = :callState AND m.matc_tabl_id > 0 ORDER BY m.matc_tabl_id, m.matc_id")
+            )
+                .param("callState", callState.code)
+                .query(rowMapper)
+                .list(),
+            withNames = true
         )
-            .param("callState", callState.code)
-            .query { rs, _ ->
-                toMatch(rs).apply {
-                    rs.getObject("matc_maty_id")?.let { (it as Number).toLong() }?.let { mtId ->
-                        matchType = TournamentMatchType(id = mtId, name = rs.getString("match_type_name"))
-                    }
-                    rs.getObject("matc_grou_id")?.let { (it as Number).toLong() }?.let { gId ->
-                        playGroup = TournamentPlayGroup(id = gId, name = rs.getString("group_name"))
-                    }
-                }
-            }
-            .list()
-
-        return resolvePlayers(raw, withNames = true)
     }
 
     override fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch> {
         if (tableIds.isEmpty()) return emptyList()
-        val raw = jdbcClient.sql(
-            """
-            SELECT m.*, 
-                   mt.maty_name AS match_type_name,
-                   COALESCE(cs.call_state, 0) AS matc_callstate
-            FROM matches m
-            LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id
-            LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id
-            WHERE m.matc_tabl_id IN (:tableIds)
-            ORDER BY m.matc_tabl_id, m.matc_id
-            """.trimIndent()
+        return resolvePlayers(
+            jdbcClient.sql(
+                selectMatches("WHERE m.matc_tabl_id IN (:tableIds) ORDER BY m.matc_tabl_id, m.matc_id")
+            )
+                .param("tableIds", tableIds)
+                .query(rowMapper)
+                .list(),
+            withNames = true
         )
-            .param("tableIds", tableIds)
-            .query { rs, _ ->
-                toMatch(rs).apply {
-                    rs.getObject("matc_maty_id")?.let { (it as Number).toLong() }?.let { mtId ->
-                        matchType = TournamentMatchType(id = mtId, name = rs.getString("match_type_name"))
-                    }
-                }
-            }
-            .list()
-
-        return resolvePlayers(raw, withNames = true)
     }
 
     override fun findTableIdsInUse(): Set<Long> {
-        return jdbcClient.sql("SELECT DISTINCT matc_tabl_id FROM matches WHERE matc_tabl_id IS NOT NULL")
+        return jdbcClient.sql("SELECT DISTINCT matc_tabl_id FROM matches WHERE matc_tabl_id > 0")
             .query { rs, _ -> rs.getLong("matc_tabl_id") }
             .set()
             .toSet()
@@ -222,6 +194,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
             .param("id", matchId)
             .update()
+        insertMatchTable(matchId, tableId)
         return updated
     }
 
@@ -264,6 +237,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
             .param("id", matchId)
             .update()
+        deleteMatchTableForMatch(matchId)
         return updated
     }
 
@@ -277,6 +251,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         )
             .param("id", matchId)
             .update()
+            .also { deleteMatchTableForMatch(matchId) }
     }
 
     override fun takeBackMatch(matchId: Long): Int {
@@ -289,6 +264,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         )
             .param("id", matchId)
             .update()
+            .also { deleteMatchTableForMatch(matchId) }
     }
 
     override fun setWaitingList(matchId: Long, waiting: Boolean): Int {
@@ -354,13 +330,28 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .param("winnerId", winnerId)
             .param("id", matchId)
             .update()
+            .also { deleteMatchTableForMatch(matchId) }
     }
 
     override fun deleteById(id: Long): Int {
         return jdbcClient.sql("DELETE FROM matches WHERE matc_id = :id").param("id", id).update()
     }
 
-    override fun deleteByTypeId(typeId: Long): Int {
+    private fun insertMatchTable(matchId: Long, tableId: Long) {
+        jdbcClient.sql(
+            "INSERT INTO mgmt_matchtable (id, tableId, matchId, timestamp) VALUES (:id, :tableId, :matchId, CURRENT_TIMESTAMP)"
+        )
+            .param("id", java.util.UUID.randomUUID().toString())
+            .param("tableId", tableId)
+            .param("matchId", matchId)
+            .update()
+    }
+
+    private fun deleteMatchTableForMatch(matchId: Long) {
+        jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId = :matchId")
+            .param("matchId", matchId)
+            .update()
+    }    override fun deleteByTypeId(typeId: Long): Int {
         return jdbcClient.sql("DELETE FROM matches WHERE matc_type_id = :typeId").param("typeId", typeId).update()
     }
 }
