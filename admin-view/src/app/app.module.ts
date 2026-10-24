@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -23,7 +23,6 @@ import { ResultEffects } from './result/redux/result.effects';
 import { SharedModule } from './shared/shared.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminRootModule } from './admin-root/admin-root.module';
-import { ApiVersionInterceptor } from './api-version.interceptor';
 
 const components = [AppComponent];
 
@@ -70,8 +69,7 @@ const components = [AppComponent];
     TableService,
     WebsocketService,
     WebsocketHandlerService,
-    provideHttpClient(withInterceptorsFromDi()),
-    { provide: HTTP_INTERCEPTORS, useClass: ApiVersionInterceptor, multi: true },
+    provideHttpClient(),
   ],
 })
 export class AppModule {}

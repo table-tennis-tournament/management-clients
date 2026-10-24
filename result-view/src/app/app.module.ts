@@ -1,4 +1,4 @@
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,7 +13,6 @@ import { AppComponent } from './app.component';
 import { NavigationModule } from './navigation/navigation.module';
 import { metaReducers, reducers } from './reducers';
 import { ResultModule } from './result/result.module';
-import { ApiVersionInterceptor } from './api-version.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +34,7 @@ import { ApiVersionInterceptor } from './api-version.interceptor';
     StoreRouterConnectingModule.forRoot({ serializer: FullRouterStateSerializer }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: ApiVersionInterceptor, multi: true }],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

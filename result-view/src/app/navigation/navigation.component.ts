@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { getApiVersion, setApiVersion } from '../api-version';
 
 @Component({
   standalone: false,
@@ -9,10 +8,4 @@ import { getApiVersion, setApiVersion } from '../api-version';
 })
 export class NavigationComponent {
   disciplines = ['Herren A', 'Herren B', 'Herren C'];
-  apiVersionV2: boolean = getApiVersion() === 'v2';
-
-  onApiVersionChange() {
-    setApiVersion(this.apiVersionV2 ? 'v2' : 'v1');
-    location.reload();
-  }
 }

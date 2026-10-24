@@ -11,10 +11,10 @@ export class TypeService {
   constructor(private http: HttpClient) {}
 
   getOpenTypes(): Observable<Type[]> {
-    return this.http.get<Type[]>(`/api/types/open/all`);
+    return this.http.get<Type[]>(`/api/v2/types/open/all`);
   }
 
   getTypeColors(): Observable<TypeColorMap> {
-    return this.http.get<TypeColorMap>(`/api/settings/typecolors`);
+    return this.http.get<TypeColorMap>(`/api/v2/disciplines/colors`);
   }
 }

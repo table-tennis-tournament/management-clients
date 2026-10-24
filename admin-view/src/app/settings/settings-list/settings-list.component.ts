@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Settings, TypeColor, TypeColorMap } from '../settings.model';
-import { getApiVersion, setApiVersion } from '../../api-version';
 
 @Component({
   selector: 'toma-settings-list',
@@ -20,8 +19,6 @@ export class SettingsListComponent {
   selectedTypeId: number;
   selectedBgColor: string = '#FF0000';
   selectedTextColor: string = 'white';
-
-  apiVersionV2: boolean = getApiVersion() === 'v2';
 
   constructor() {}
 
@@ -68,11 +65,6 @@ export class SettingsListComponent {
 
   onTypeSelected() {
     this.updateSelectedColors();
-  }
-
-  onApiVersionChange() {
-    setApiVersion(this.apiVersionV2 ? 'v2' : 'v1');
-    location.reload();
   }
 
   private updateSelectedColors() {
