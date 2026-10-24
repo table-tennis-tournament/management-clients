@@ -1,6 +1,6 @@
 {
   "name": "match-management-app",
-  "version": "1.0.0",
+  "version": "8.0.1-beta",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config backend/proxy.conf.json",
