@@ -215,12 +215,12 @@ class TournamentMatchTest {
             tableId = 7L
         )
 
-        assertFalse(match.isPlayable(listOf(match, blocking)))
+        assertFalse(match.isPlayableAgainst(listOf(match, blocking)))
     }
 
     @org.junit.jupiter.api.Test
     fun `isPlayable is false when a side is missing`() {
         val match = TournamentMatch(id = 1L, team1 = listOf(TournamentPlayer(id = 1L)), team2 = emptyList())
-        assertFalse(match.isPlayable(listOf(match)))
+        assertFalse(match.isPlayableAgainst(listOf(match)))
     }
 }

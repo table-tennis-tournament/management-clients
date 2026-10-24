@@ -61,10 +61,17 @@ class TournamentMatch(
         get() = tableId != null
 
     /**
+     * Whether both sides are present and none of this match's players is currently
+     * involved in a blocking match. Computed against the full match list and serialized
+     * to the client as `isPlayable`.
+     */
+    var isPlayable: Boolean = false
+
+    /**
      * A match is playable when both sides are present and none of its players is
      * currently involved in a blocking match.
      */
-    fun isPlayable(allMatches: Collection<TournamentMatch>): Boolean {
+    fun isPlayableAgainst(allMatches: Collection<TournamentMatch>): Boolean {
         if (team1.isEmpty() || team2.isEmpty()) return false
         val ids = (team1 + team2).mapNotNull { it.id }.toSet()
         return allMatches.none { m ->

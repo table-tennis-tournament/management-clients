@@ -39,7 +39,7 @@ object AutoStartHeuristic {
     }
 
     fun isPossibleMatch(entry: MatchList, matchesById: Map<Long, TournamentMatch>): Boolean =
-        entry.matchIds.all { id -> matchesById[id]?.isPlayable(matchesById.values) == true }
+        entry.matchIds.all { id -> matchesById[id]?.isPlayableAgainst(matchesById.values) == true }
 
     private fun noSharedPlayer(a: MatchList, b: MatchList, matchesById: Map<Long, TournamentMatch>): Boolean =
         playerIdsOf(a, matchesById).none { it in playerIdsOf(b, matchesById) }
