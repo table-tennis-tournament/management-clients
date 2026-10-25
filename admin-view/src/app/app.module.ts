@@ -65,11 +65,6 @@ const components = [AppComponent];
     NoopAnimationsModule,
     AdminRootModule,
   ],
-  providers: [
-    TableService,
-    WebsocketService,
-    WebsocketHandlerService,
-    provideHttpClient(),
-  ],
+  providers: [TableService, WebsocketService, WebsocketHandlerService, provideHttpClient()],
 })
 export class AppModule {}
