@@ -10966,27 +10966,6 @@ DELETE FROM `playsystem`;
 /*!40000 ALTER TABLE `playsystem` DISABLE KEYS */;
 /*!40000 ALTER TABLE `playsystem` ENABLE KEYS */;
 
-
--- Exportiere Struktur von Tabelle mktt_demo.play_evolutions
-CREATE TABLE IF NOT EXISTS `play_evolutions` (
-  `id` int(11) NOT NULL,
-  `hash` varchar(255) NOT NULL,
-  `applied_at` timestamp NOT NULL,
-  `apply_script` mediumtext DEFAULT NULL,
-  `revert_script` mediumtext DEFAULT NULL,
-  `state` varchar(255) DEFAULT NULL,
-  `last_problem` mediumtext DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Exportiere Daten aus Tabelle mktt_demo.play_evolutions: ~0 rows (ungefähr)
-DELETE FROM `play_evolutions`;
-/*!40000 ALTER TABLE `play_evolutions` DISABLE KEYS */;
-INSERT INTO `play_evolutions` (`id`, `hash`, `applied_at`, `apply_script`, `revert_script`, `state`, `last_problem`) VALUES
-	(1, 'e31b108dd895cce3c2962ecb8d8a180cbdd68d21', '2023-11-17 12:09:45', 'CREATE TABLE IF NOT EXISTS `matchtable` (\n`id` char(50) NOT NULL,\n`tableId` int(10) NOT NULL,\n`matchId` int(10) NOT NULL,\n`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\nPRIMARY KEY (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;', 'DROP TABLE IF EXISTS `matchtable`;', 'applied', '');
-/*!40000 ALTER TABLE `play_evolutions` ENABLE KEYS */;
-
-
 -- Exportiere Struktur von Tabelle mktt_demo.schedule
 CREATE TABLE IF NOT EXISTS `schedule` (
   `Sche_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
