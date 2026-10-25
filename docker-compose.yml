@@ -25,21 +25,21 @@ services:
       timeout: 5s
       retries: 6
       start_period: 30s
-  backend:
-    image: holzleube/turniermanager:7.0
-    ports:
-      - "9000:9000"
-    environment:
-      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/saturday_test
-      - MYSQL_USER=root
-      - MYSQL_PW=ttv01
-    networks:
-      - app-tier
-    depends_on:
-      mariadb:
-        condition: service_healthy
-      management-backend:
-        condition: service_healthy
+#  backend:
+#    image: holzleube/turniermanager:7.0
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      - MYSQL_JDBC=jdbc:mysql://mariadb:3306/saturday_test
+#      - MYSQL_USER=root
+#      - MYSQL_PW=ttv01
+#    networks:
+#      - app-tier
+#    depends_on:
+#      mariadb:
+#        condition: service_healthy
+#      management-backend:
+#        condition: service_healthy
   cups:
     build:
       context: ./cups
@@ -52,7 +52,6 @@ services:
     networks:
       - app-tier
   management-backend:
-    image: holzleube/ttt-management:latest
     build:
       context: ./management-backend
       dockerfile: Dockerfile
@@ -87,5 +86,5 @@ services:
     networks:
       - app-tier
     depends_on:
-      - "backend"
+      - "management-backend"
 

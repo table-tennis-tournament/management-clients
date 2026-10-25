@@ -20,8 +20,8 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'docker compose -f ../docker-compose.yml up mariadb backend',
-      url: 'http://localhost:9000/',
+      command: 'docker compose -f ../docker-compose.yml up mariadb management-backend',
+      url: 'http://localhost:8080/',
       reuseExistingServer: !!process.env['CI'],
       timeout: 180000,
     },
