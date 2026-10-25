@@ -8,7 +8,7 @@ test.describe('Ergebnisse View', () => {
 
   test('freigeben moves a match to Ergebnisse and entering a result removes it', async ({ page, request }) => {
     // 1. Put match 3 (Priyanka Sow vs Babajide Santos) on table 1 via the API.
-    const assignResponse = await request.post('/api/match/matchtotable/1', { data: [3] });
+    const assignResponse = await request.post('/api/v2/match/matchtotable/1', { data: [3] });
     expect(assignResponse.ok()).toBeTruthy();
 
     // 2. Free the match (freigeben) instead of completing it.

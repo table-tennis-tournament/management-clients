@@ -28,21 +28,21 @@ test.describe('Table Manager UI Tests', () => {
     const firstTable = page.locator('app-tt-table').first();
 
     // 0. Idempotent reset: take match 3 back (sets it Open and removes it from any table)
-    const takeBackResponse = await request.post('/api/match/takeBack', { data: [3] });
+    const takeBackResponse = await request.post('/api/v2/match/takeBack', { data: [3] });
     expect(takeBackResponse.ok()).toBeTruthy();
 
     // 1. The first table must be empty
     await expect(firstTable.locator('app-match-item')).toHaveCount(0, { timeout: 15000 });
 
     // 2. Assign match 3 to table_number 1 (same endpoint as admin-view)
-    const assignResponse = await request.post('/api/match/matchtotable/1', { data: [3] });
+    const assignResponse = await request.post('/api/v2/match/matchtotable/1', { data: [3] });
     expect(assignResponse.ok()).toBeTruthy();
 
-    // 3. Match 3 (Kestutis Zeimys vs Samuel Amann) appears on the first table via websocket
+    // 3. Match 3 (Priyanka Sow vs Babajide Santos) appears on the first table via websocket
     const matchItem = firstTable.locator('app-match-item');
     await expect(matchItem).toHaveCount(1, { timeout: 15000 });
-    await expect(matchItem).toContainText('Kestutis Zeimys');
-    await expect(matchItem).toContainText('Samuel Amann');
+    await expect(matchItem).toContainText('Priyanka Sow');
+    await expect(matchItem).toContainText('Babajide Santos');
 
     // 4. Two buttons are available: second call (alarm) and start (play_arrow)
     const secondCallButton = firstTable.locator('button:has(mat-icon:has-text("alarm"))');
@@ -62,20 +62,21 @@ test.describe('Table Manager UI Tests', () => {
     const firstTable = page.locator('app-tt-table').first();
 
     // 0. Idempotent reset: clear matches 3 and 4 (match 3 is left started by the previous test)
-    const resetResponse = await request.post('/api/match/takeBack', { data: [3, 4] });
+    const resetResponse = await request.post('/api/v2/match/takeBack', { data: [3, 4] });
     expect(resetResponse.ok()).toBeTruthy();
 
     // 1. The first table is empty
     await expect(firstTable.locator('app-match-item')).toHaveCount(0, { timeout: 15000 });
 
     // 2. Assign match 4 to table_number 1
-    const assignResponse = await request.post('/api/match/matchtotable/1', { data: [4] });
+    const assignResponse = await request.post('/api/v2/match/matchtotable/1', { data: [4] });
     expect(assignResponse.ok()).toBeTruthy();
 
-    // 3. Match 4 (Sebastian Gailing vs Francesco Maragioglio) appears
+    // 3. Match 4 (Ji-hoon Mensah vs Mei Castro) appears
     const matchItem = firstTable.locator('app-match-item');
     await expect(matchItem).toHaveCount(1, { timeout: 15000 });
-    await expect(matchItem).toContainText('Sebastian Gailing');
+    await expect(matchItem).toContainText('Ji-hoon Mensah');
+    await expect(matchItem).toContainText('Mei Castro');
 
     // 4. Start the match so the "Erfassen" button becomes available
     await firstTable.locator('button:has(mat-icon:has-text("play_arrow"))').click();

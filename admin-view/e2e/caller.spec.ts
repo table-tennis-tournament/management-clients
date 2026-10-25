@@ -8,7 +8,7 @@ test.describe('Ausrufer View', () => {
 
   test('should show an assigned match and remove it after clicking OK', async ({ page, request }) => {
     // Assign match 3 (Priyanka Sow vs Babajide Santos) to table 1 via the API.
-    const assignResponse = await request.post('/api/match/matchtotable/1', { data: [3] });
+    const assignResponse = await request.post('/api/v2/match/matchtotable/1', { data: [3] });
     expect(assignResponse.ok()).toBeTruthy();
 
     await page.goto('/admin-view/callerView');
