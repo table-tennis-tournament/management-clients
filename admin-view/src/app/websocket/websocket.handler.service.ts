@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
-import { TableDto } from '../table/tabledto.model';
-import { UpdateTablesSuccess } from '../table/redux/table.actions';
-import { Match } from '../shared/data/match.model';
-import { UpdateMatchesSuccess } from '../assign/redux/match.actions';
-import { MatchList } from '../supervisor/matchlist.model';
-import { LoadMatchListSuccess } from '../supervisor/redux/matchlist.actions';
 import { Store } from '@ngrx/store';
+import { LoadTables } from '../table/redux/table.actions';
+import { LoadMatches } from '../assign/redux/match.actions';
+import { LoadMatchList } from '../supervisor/redux/matchlist.actions';
 import { LoadCallerMatches, LoadSecondCallMatches, LoadThirdCallMatches } from '../caller/redux/caller.actions';
+import { LoadDiscipline } from '../discipline/redux/discipline.actions';
+import { LoadResults } from '../result/redux/result.actions';
 import { ConnectWebSocket } from './redux/websocket.actions';
-import { UpdateResults } from '../result/redux/result.actions';
-import { MatchState } from '../shared/data/matchstate.model';
+import { WebsocketMessage } from '../shared/websocket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,42 +20,51 @@ export class WebsocketHandlerService {
     this.store.dispatch(
       new ConnectWebSocket({
         connected: this.handleWebsocketMessage.bind(this),
-        disconnected: this.connectToWebsocket.bind(this),
+        disconnected: this.handleDisconnect.bind(this),
       })
     );
   }
 
-  private handleWebsocketMessage(data: any) {
+  private handleDisconnect(event: any) {
+    console.log('websocket disconnected', event);
+  }
+
+  private handleWebsocketMessage(message: WebsocketMessage) {
     console.log('handle websocket message: ');
-    console.log(data);
-    if (data.UpdateTable && data.UpdateTable.length > 0) {
-      const updatedTables: TableDto[] = data.UpdateTable;
-      this.store.dispatch(new UpdateTablesSuccess(updatedTables));
-    }
-    if (data.UpdateMatchList) {
-      const newMatchlistItems: MatchList[] = data.UpdateMatchList;
-      this.store.dispatch(new LoadMatchListSuccess(newMatchlistItems));
-    }
-    if (data.UpdateMatches) {
-      const updatedMatches: Match[] = data.UpdateMatches;
-      this.store.dispatch(new UpdateMatchesSuccess(updatedMatches));
-      this.store.dispatch(new LoadCallerMatches());
-      this.store.dispatch(
-        new UpdateResults(updatedMatches.filter((match) => this.matchesAreFinishedOrCompleted(match)))
-      );
-      const secondOrThirdCallMatches = updatedMatches.filter((match) => this.matchHasSecondOrThirdCall(match));
-      if (secondOrThirdCallMatches.length > 0) {
+    console.log(message);
+    switch (message.type) {
+      case 'MATCH_ASSIGNED':
+      case 'MATCH_STARTED':
+      case 'MATCH_FREED':
+      case 'MATCH_TAKEN_BACK':
+        this.store.dispatch(new LoadMatches(null));
+        this.store.dispatch(new LoadTables(null));
+        this.store.dispatch(new LoadCallerMatches());
+        this.store.dispatch(new LoadResults(null));
+        break;
+      case 'MATCH_RESULT_UPDATED':
+      case 'MATCH_COMPLETED':
+        this.store.dispatch(new LoadMatches(null));
+        this.store.dispatch(new LoadTables(null));
+        this.store.dispatch(new LoadCallerMatches());
+        this.store.dispatch(new LoadResults(null));
         this.store.dispatch(new LoadSecondCallMatches());
         this.store.dispatch(new LoadThirdCallMatches());
-      }
+        break;
+      case 'MATCH_CALLED':
+        this.store.dispatch(new LoadCallerMatches());
+        this.store.dispatch(new LoadSecondCallMatches());
+        this.store.dispatch(new LoadThirdCallMatches());
+        break;
+      case 'MATCH_LIST_CHANGED':
+        this.store.dispatch(new LoadMatchList(null));
+        break;
+      case 'PLAYER_REGISTERED':
+      case 'PLAYER_UNREGISTERED':
+        this.store.dispatch(new LoadDiscipline(null));
+        break;
+      default:
+        console.warn('unknown websocket message type', message.type);
     }
-  }
-
-  private matchesAreFinishedOrCompleted(match) {
-    return [MatchState[MatchState.Finished], MatchState[MatchState.Completed]].indexOf(match.state) > -1;
-  }
-
-  private matchHasSecondOrThirdCall(match: Match) {
-    return [MatchState[MatchState.SecondCall], MatchState[MatchState.ThirdCall]].indexOf(match.state) > -1;
   }
 }

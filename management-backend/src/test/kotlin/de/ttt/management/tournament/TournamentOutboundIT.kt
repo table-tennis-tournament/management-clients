@@ -1,25 +1,13 @@
 package de.ttt.management.tournament
 
+import de.ttt.management.StompTestSupport
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.domain.SetResult
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.messaging.converter.MappingJackson2MessageConverter
-import org.springframework.messaging.simp.stomp.StompFrameHandler
-import org.springframework.messaging.simp.stomp.StompHeaders
-import org.springframework.messaging.simp.stomp.StompSession
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.web.socket.client.standard.StandardWebSocketClient
-import org.springframework.web.socket.messaging.WebSocketStompClient
-import org.springframework.web.socket.sockjs.client.SockJsClient
-import org.springframework.web.socket.sockjs.client.WebSocketTransport
-import java.lang.reflect.Type
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingDeque
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -35,29 +23,20 @@ class TournamentOutboundIT {
 
     @Test
     fun `completing a match broadcasts a websocket update`() {
-        val stompClient = WebSocketStompClient(SockJsClient(listOf(WebSocketTransport(StandardWebSocketClient()))))
-        stompClient.messageConverter = MappingJackson2MessageConverter()
-
-        val session: StompSession = stompClient.connectAsync(
-            "ws://localhost:$port/ttt-websocket",
-            object : StompSessionHandlerAdapter() {}
-        ).get(5, TimeUnit.SECONDS)
-
-        val messages: BlockingQueue<Map<String, Any>> = LinkedBlockingDeque()
-
-        session.subscribe("/topic/updates", object : StompFrameHandler {
-            override fun getPayloadType(headers: StompHeaders): Type = Map::class.java
-            override fun handleFrame(headers: StompHeaders, payload: Any?) {
-                @Suppress("UNCHECKED_CAST")
-                messages.add(payload as Map<String, Any>)
-            }
-        })
+        val session = StompTestSupport.connect(port)
+        val messages = StompTestSupport.subscribe(session)
 
         val matchId = matchService.getAllMatches().first().id!!
         matchService.setResult(matchId, listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
-        val message = messages.poll(10, TimeUnit.SECONDS)
+        val message = StompTestSupport.poll(messages)
         assertNotNull(message)
         assertEquals("MATCH_COMPLETED", message["type"])
+
+        @Suppress("UNCHECKED_CAST")
+        val payload = message["payload"] as Map<String, Any>
+        assertEquals(matchId.toLong(), (payload["matchId"] as Number).toLong())
+        assertEquals(3, payload["sets1"])
+        assertEquals(0, payload["sets2"])
     }
 }

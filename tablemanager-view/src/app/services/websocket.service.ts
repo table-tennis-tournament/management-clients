@@ -1,32 +1,52 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import * as SockJS from 'sockjs-client';
+import { Injectable } from '@angular/core';
+import { Client, IMessage } from '@stomp/stompjs';
+import { Observable, Subject } from 'rxjs';
+
+export interface WebsocketMessage {
+  type: string;
+  payload: any;
+}
+
+export interface WebsocketListeners {
+  connected: (message: WebsocketMessage) => void;
+  disconnected: (event: any) => void;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebsocketService {
-  websocket: any;
+  private client: Client;
 
-  connectSocks(listeners: any): Observable<any> {
-    const connectListener = new EventEmitter<any>();
-    connectListener.subscribe(listeners.connected);
-    const disconnectListener = new EventEmitter<any>();
-    disconnectListener.subscribe(listeners.disconnected);
+  connect(listeners: WebsocketListeners): Observable<void> {
+    const connected = new Subject<void>();
 
-    return new Observable((complete) => {
-      this.websocket = new SockJS('/ttt-websocket-legacy');
-      this.websocket.onopen = () => complete.next();
-      this.websocket.onmessage = (e) => {
-        const jsonMessage = JSON.parse(e.data);
-        connectListener.emit(jsonMessage);
-      };
-      this.websocket.onclose = (e) => {
-        console.log('websocket error event');
-        console.log(e);
-        connectListener.complete();
-        disconnectListener.emit(e);
-      };
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    this.client = new Client({
+      brokerURL: `${protocol}${window.location.host}/ttt-websocket`,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 10000,
+      heartbeatOutgoing: 10000,
+      onConnect: () => {
+        this.client.subscribe('/topic/updates', (message: IMessage) => {
+          const parsed = JSON.parse(message.body) as WebsocketMessage;
+          listeners.connected(parsed);
+        });
+        connected.next();
+        connected.complete();
+      },
+      onStompError: (frame) => {
+        console.error('stomp error', frame);
+        listeners.disconnected(frame);
+      },
+      onWebSocketClose: (event) => {
+        console.log('websocket closed', event);
+        listeners.disconnected(event);
+      },
     });
+
+    this.client.activate();
+
+    return connected.asObservable();
   }
 }
