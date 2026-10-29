@@ -93,6 +93,9 @@ jobs:
       - name: Install dependencies
         working-directory: tablemanager-view
         run: npm ci
+      - name: Run unit tests
+        working-directory: tablemanager-view
+        run: npm run test-ci
       - name: Get Playwright version
         id: playwright-version
         working-directory: tablemanager-view

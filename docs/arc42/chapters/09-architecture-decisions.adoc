@@ -10,11 +10,19 @@
 
 === WebSocket-based Real-time Communication
 
-*Decision*: push live updates over WebSockets (with a SockJS fallback) instead of client polling.
+*Decision*: push live updates over STOMP on a native WebSocket (`/ttt-websocket`, no SockJS fallback) instead of client polling. The messages are thin update events; clients re-fetch the affected state over REST (ADR 0002).
 
-*Rationale*: tournament management requires immediate updates; polling would add server load and latency.
+*Rationale*: tournament management requires immediate updates; polling would add server load and latency. All clients are modern browsers, so a SockJS fallback adds no value.
 
 *Consequences*: added complexity in connection management, reconnection handling, and state synchronization across clients.
+
+=== Topic-scoped Update Events
+
+*Decision*: the `outbound` module publishes update events on five topics instead of one: `/topic/matches` (match lifecycle and results), `/topic/tables` (assignment, locking, table manager), `/topic/queue` (match list), `/topic/players` (registration, payment) and `/topic/settings` (discipline colors, automation switches). Each event carries a scope (discipline, table, match) in the message body. Events are published after the originating transaction commits (ADR 0003).
+
+*Rationale*: a client reloads only for events its views render. The topics follow the existing modules and use cases, so each application subscribes to a small, stable set: admin-view to all five, tablemanager-view to `tables` and `matches`, result-view (planned) to `matches` and `settings`.
+
+*Consequences*: clients filter by scope on their side; there are no per-scope topics. There is no event replay: after a (re)connect every client resynchronizes the state it displays through REST. Every state-changing use case must publish an event on its topic.
 
 === Scala Play Backend with Pekko Actors
 

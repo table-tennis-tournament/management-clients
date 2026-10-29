@@ -1,9 +1,12 @@
 package de.ttt.management.tournament
 
 /**
- * Published when a match's call state advances (first, second or third call).
+ * Published once per call operation when the call state of matches advances
+ * (first, second or third call).
  */
 data class MatchCalled(
-    val matchId: Long,
-    val callState: String
+    val matchIds: List<Long>,
+    val callState: String,
+    val typeIds: List<Long> = emptyList(),
+    val tableIds: List<Long> = emptyList()
 )

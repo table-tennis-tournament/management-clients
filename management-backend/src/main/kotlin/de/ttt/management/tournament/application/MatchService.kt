@@ -2,6 +2,7 @@ package de.ttt.management.tournament.application
 
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
+import de.ttt.management.tournament.MatchDeleted
 import de.ttt.management.tournament.MatchAssigned
 import de.ttt.management.tournament.MatchFreed
 import de.ttt.management.tournament.MatchResultUpdated
@@ -46,12 +47,13 @@ class MatchService(
     @Transactional
     fun assignMatch(matchId: Long, tableId: Long): Boolean {
         val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        val previousTableId = match.tableId
         return try {
             match.assign(tableId)
             val updatedRows = matchRepository.assignMatch(matchId, tableId, LocalDateTime.now())
             if (updatedRows > 0) {
                 matchListService.removeMatchFromList(matchId)
-                eventPublisher.publishEvent(MatchAssigned(matchId = matchId, tableId = tableId))
+                eventPublisher.publishEvent(MatchAssigned(matchId = matchId, tableId = tableId, typeId = match.typeId, previousTableId = previousTableId))
                 true
             } else {
                 false
@@ -64,12 +66,13 @@ class MatchService(
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean {
         val match = matchRepository.findById(matchId).orElse(null) ?: return false
+        val previousTableId = match.tableId
         return try {
             match.start()
             val updatedRows = matchRepository.startMatch(matchId, tableId, LocalDateTime.now())
             if (updatedRows > 0) {
                 matchListService.removeMatchFromList(matchId)
-                eventPublisher.publishEvent(MatchStarted(matchId = matchId, tableId = tableId))
+                eventPublisher.publishEvent(MatchStarted(matchId = matchId, tableId = tableId, typeId = match.typeId, previousTableId = previousTableId))
                 true
             } else {
                 false
@@ -79,6 +82,10 @@ class MatchService(
         }
     }
 
+    /**
+     * Takes a running match back from its table (the table manager's "back" action).
+     * Publishes [MatchTakenBack] like the administrator's take back.
+     */
     @Transactional
     fun stopMatch(matchId: Long): Boolean {
         val isPlaying = matchRepository.isMatchPlaying(matchId)
@@ -86,17 +93,28 @@ class MatchService(
             return false
         }
 
+        val match = matchRepository.findById(matchId).orElse(null)
         val updatedRows = matchRepository.stopMatch(matchId)
+        if (updatedRows > 0) {
+            eventPublisher.publishEvent(takenBackEvent(listOfNotNull(match)))
+        }
         return updatedRows > 0
     }
 
     @Transactional
     fun removeMatchesFromTable(matchIds: List<Long>): Boolean {
         var allSuccess = true
+        val removed = mutableListOf<TournamentMatch>()
         for (matchId in matchIds) {
+            val match = matchRepository.findById(matchId).orElse(null)
             if (matchRepository.removeFromTable(matchId) == 0) {
                 allSuccess = false
+            } else if (match != null) {
+                removed.add(match)
             }
+        }
+        if (removed.isNotEmpty()) {
+            eventPublisher.publishEvent(takenBackEvent(removed))
         }
         return allSuccess
     }
@@ -122,7 +140,9 @@ class MatchService(
                         matchId = matchId,
                         winnerId = match.winner?.id,
                         sets1 = match.sets1 ?: 0,
-                        sets2 = match.sets2 ?: 0
+                        sets2 = match.sets2 ?: 0,
+                        typeId = match.typeId,
+                        tableId = match.tableId
                     )
                 )
                 true
@@ -153,7 +173,9 @@ class MatchService(
                     MatchResultUpdated(
                         matchId = matchId,
                         sets1 = match.sets1 ?: 0,
-                        sets2 = match.sets2 ?: 0
+                        sets2 = match.sets2 ?: 0,
+                        typeId = match.typeId,
+                        tableId = match.tableId
                     )
                 )
                 true
@@ -167,17 +189,27 @@ class MatchService(
 
     @Transactional
     fun deleteMatch(id: Long): Boolean {
-        return matchRepository.deleteById(id) > 0
+        val typeId = matchRepository.findById(id).orElse(null)?.typeId
+        val deleted = matchRepository.deleteById(id) > 0
+        if (deleted) {
+            eventPublisher.publishEvent(MatchDeleted(matchIds = listOf(id), typeIds = listOfNotNull(typeId)))
+        }
+        return deleted
     }
 
     @Transactional
     fun deleteType(id: Long): Boolean {
-        return matchRepository.deleteByTypeId(id) > 0
+        val deleted = matchRepository.deleteByTypeId(id) > 0
+        if (deleted) {
+            eventPublisher.publishEvent(MatchDeleted(typeIds = listOf(id)))
+        }
+        return deleted
     }
 
     @Transactional
     fun freeMatches(matchIds: List<Long>): Boolean {
         var allSuccess = true
+        val freed = mutableListOf<TournamentMatch>()
         for (matchId in matchIds) {
             val match = matchRepository.findById(matchId).orElse(null)
             if (match == null) {
@@ -188,8 +220,13 @@ class MatchService(
             if (matchRepository.freeMatch(matchId) == 0) {
                 allSuccess = false
             } else {
-                eventPublisher.publishEvent(MatchFreed(matchId = matchId))
+                freed.add(match)
             }
+        }
+        if (freed.isNotEmpty()) {
+            eventPublisher.publishEvent(
+                MatchFreed(freed.mapNotNull { it.id }, freed.mapNotNull { it.typeId }, freed.mapNotNull { it.tableId })
+            )
         }
         return allSuccess
     }
@@ -197,6 +234,7 @@ class MatchService(
     @Transactional
     fun takeBackMatches(matchIds: List<Long>): Boolean {
         var allSuccess = true
+        val affected = mutableListOf<TournamentMatch>()
         for (matchId in matchIds) {
             val match = matchRepository.findById(matchId).orElse(null)
             if (match == null) {
@@ -207,8 +245,11 @@ class MatchService(
             if (matchRepository.takeBackMatch(matchId) == 0) {
                 allSuccess = false
             } else {
-                eventPublisher.publishEvent(MatchTakenBack(matchId = matchId))
+                affected.add(match)
             }
+        }
+        if (affected.isNotEmpty()) {
+            eventPublisher.publishEvent(takenBackEvent(affected))
         }
         return allSuccess
     }
@@ -216,6 +257,7 @@ class MatchService(
     @Transactional
     fun callMatches(matchIds: List<Long>): Boolean {
         var allSuccess = true
+        val called = mutableListOf<TournamentMatch>()
         for (matchId in matchIds) {
             val match = matchRepository.findById(matchId).orElse(null)
             if (match == null) {
@@ -226,8 +268,11 @@ class MatchService(
             if (matchRepository.updateCallState(matchId, match.callState) == 0) {
                 allSuccess = false
             } else {
-                eventPublisher.publishEvent(MatchCalled(matchId = matchId, callState = match.callState.name))
+                called.add(match)
             }
+        }
+        if (called.isNotEmpty()) {
+            eventPublisher.publishEvent(calledEvent(called, CallState.FirstCall))
         }
         return allSuccess
     }
@@ -242,8 +287,21 @@ class MatchService(
         }
         val updated = matchRepository.updateCallState(matchId, match.callState) > 0
         if (updated) {
-            eventPublisher.publishEvent(MatchCalled(matchId = matchId, callState = match.callState.name))
+            eventPublisher.publishEvent(calledEvent(listOf(match), match.callState))
         }
         return updated
     }
+
+    private fun takenBackEvent(matches: List<TournamentMatch>) = MatchTakenBack(
+        matchIds = matches.mapNotNull { it.id },
+        typeIds = matches.mapNotNull { it.typeId },
+        tableIds = matches.mapNotNull { it.tableId }
+    )
+
+    private fun calledEvent(matches: List<TournamentMatch>, callState: CallState) = MatchCalled(
+        matchIds = matches.mapNotNull { it.id },
+        callState = callState.name,
+        typeIds = matches.mapNotNull { it.typeId },
+        tableIds = matches.mapNotNull { it.tableId }
+    )
 }

@@ -1,9 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs/operators';
-import { WebsocketService } from '../services/websocket.service';
+import { Subject } from 'rxjs';
+import { auditTime, take } from 'rxjs/operators';
+import { WebsocketMessage, WebsocketService } from '../services/websocket.service';
 import { loadTables } from './redux/table-list.actions';
-import { getTableManagerId } from './redux/table-list.reducer';
+import { getTableManagerId, getTables } from './redux/table-list.reducer';
+import { RELOAD_AUDIT_MS, relevanceOf, TABLEMANAGER_TOPICS } from './update-events';
 
 @Injectable({
   providedIn: 'root',
@@ -11,37 +13,49 @@ import { getTableManagerId } from './redux/table-list.reducer';
 export class WebsocketHandlerService {
   private store = inject<Store<any>>(Store);
   private websocketService = inject(WebsocketService);
+  private reloads$ = new Subject<void>();
+
+  constructor() {
+    // a burst of events (for example a bulk call) results in one reload of the latest state
+    this.reloads$.pipe(auditTime(RELOAD_AUDIT_MS)).subscribe(() => this.reloadTables());
+  }
 
   public connectToWebsocket() {
-    console.log('start connecting to socket');
     this.websocketService
       .connect({
-        connected: this.handleWebsocketMessage.bind(this),
+        topics: TABLEMANAGER_TOPICS,
+        message: this.handleWebsocketMessage.bind(this),
+        connected: this.handleConnected.bind(this),
         disconnected: this.handleDisconnect.bind(this),
       })
       .subscribe();
+  }
+
+  private handleConnected(reconnect: boolean) {
+    // the route loads the tables initially; after a reconnect events may have been missed
+    if (reconnect) {
+      this.reloads$.next();
+    }
   }
 
   private handleDisconnect(event: any) {
     console.log('websocket disconnected', event);
   }
 
-  private handleWebsocketMessage(message: { type: string; payload: any }) {
-    console.log('handle websocket message: ');
-    console.log(message);
-    switch (message.type) {
-      case 'MATCH_ASSIGNED':
-      case 'MATCH_STARTED':
-      case 'MATCH_RESULT_UPDATED':
-      case 'MATCH_COMPLETED':
-      case 'MATCH_FREED':
-      case 'MATCH_TAKEN_BACK':
-      case 'MATCH_CALLED':
-        this.reloadTables();
-        break;
-      default:
-        console.warn('unknown websocket message type', message.type);
-    }
+  private handleWebsocketMessage(message: WebsocketMessage) {
+    this.store
+      .select(getTables)
+      .pipe(take(1))
+      .subscribe((tables) => {
+        switch (relevanceOf(message, tables)) {
+          case 'reload':
+            this.reloads$.next();
+            break;
+          case 'unknown':
+            console.warn('unknown websocket message type', message.type);
+            break;
+        }
+      });
   }
 
   private reloadTables() {

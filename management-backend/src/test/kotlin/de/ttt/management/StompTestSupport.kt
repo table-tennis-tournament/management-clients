@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Test helper for connecting to the native STOMP WebSocket endpoint and collecting
- * messages from `/topic/updates`.
+ * messages from the update topics (see ADR 0003).
  */
 object StompTestSupport {
 
@@ -27,18 +27,33 @@ object StompTestSupport {
         ).get(5, TimeUnit.SECONDS)
     }
 
-    fun subscribe(session: StompSession): BlockingQueue<Map<String, Any>> {
+    val ALL_TOPICS = listOf("matches", "tables", "queue", "players", "settings")
+
+    /**
+     * Subscribes to the given topics (all five by default). Each received message is the
+     * envelope map plus a `topic` entry with the topic name it arrived on.
+     */
+    fun subscribe(session: StompSession, topics: List<String> = ALL_TOPICS): BlockingQueue<Map<String, Any>> {
         val messages: BlockingQueue<Map<String, Any>> = LinkedBlockingDeque()
-        session.subscribe("/topic/updates", object : StompFrameHandler {
-            override fun getPayloadType(headers: StompHeaders): Type = Map::class.java
-            override fun handleFrame(headers: StompHeaders, payload: Any?) {
-                @Suppress("UNCHECKED_CAST")
-                messages.add(payload as Map<String, Any>)
-            }
-        })
+        topics.forEach { topic ->
+            session.subscribe("/topic/$topic", object : StompFrameHandler {
+                override fun getPayloadType(headers: StompHeaders): Type = Map::class.java
+                override fun handleFrame(headers: StompHeaders, payload: Any?) {
+                    @Suppress("UNCHECKED_CAST")
+                    messages.add((payload as Map<String, Any>) + ("topic" to topic))
+                }
+            })
+        }
+        // The simple broker sends no receipts, so give it time to register the subscriptions
+        // before the test publishes events (otherwise the first event can be lost).
+        Thread.sleep(300)
         return messages
     }
 
     fun poll(messages: BlockingQueue<Map<String, Any>>): Map<String, Any>? =
         messages.poll(10, TimeUnit.SECONDS)
+
+    /** Polls briefly and returns null when nothing arrives, to assert the absence of events. */
+    fun pollNone(messages: BlockingQueue<Map<String, Any>>, millis: Long = 1000): Map<String, Any>? =
+        messages.poll(millis, TimeUnit.MILLISECONDS)
 }

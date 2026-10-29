@@ -36,6 +36,7 @@ class OutboundModuleIT {
         val message = StompTestSupport.poll(messages)
         assertNotNull(message)
         assertEquals("PLAYER_REGISTERED", message["type"])
+        assertEquals("players", message["topic"])
 
         @Suppress("UNCHECKED_CAST")
         val payload = message["payload"] as Map<String, Any>

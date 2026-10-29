@@ -12,4 +12,5 @@ The clients' real-time updates moved from raw SockJS snapshot-push to STOMP over
 
 - The backend STOMP endpoint `/ttt-websocket` is registered without `.withSockJS()`; clients connect with `@stomp/stompjs` using a native `brokerURL`.
 - Client state is refreshed by mapping each event `type` to the existing `Load*`/`Reload*` actions; a match/table event triggers a re-fetch rather than a local state patch.
+- The single `/topic/updates` topic is superseded by five topics, see ADR 0003.
 - Integration tests (`OutboundModuleIT`, `TournamentOutboundIT`, `MatchLifecycleOutboundIT`) connect a native `StandardWebSocketClient` and assert the event `type` and `payload` on `/topic/updates`.

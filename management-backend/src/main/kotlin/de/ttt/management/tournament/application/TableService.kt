@@ -1,6 +1,8 @@
 package de.ttt.management.tournament.application
 
 import de.ttt.management.tournament.domain.*
+import de.ttt.management.tournament.TableLockChanged
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -8,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 class TableService(
     private val ttTableRepository: TTTableRepository,
     private val matchRepository: TournamentMatchRepository,
-    private val matchService: MatchService
+    private val matchService: MatchService,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
     fun getAllTables(): List<TTTable> = ttTableRepository.findAll().sortedBy { it.name?.toIntOrNull() ?: Int.MAX_VALUE }
@@ -27,12 +30,20 @@ class TableService(
 
     @Transactional
     fun lockTable(id: Long): Boolean {
-        return ttTableRepository.setLocked(id, true) > 0
+        return setLocked(id, true)
     }
 
     @Transactional
     fun unlockTable(id: Long): Boolean {
-        return ttTableRepository.setLocked(id, false) > 0
+        return setLocked(id, false)
+    }
+
+    private fun setLocked(id: Long, locked: Boolean): Boolean {
+        val updated = ttTableRepository.setLocked(id, locked) > 0
+        if (updated) {
+            eventPublisher.publishEvent(TableLockChanged(tableId = id, locked = locked))
+        }
+        return updated
     }
 
     @Transactional

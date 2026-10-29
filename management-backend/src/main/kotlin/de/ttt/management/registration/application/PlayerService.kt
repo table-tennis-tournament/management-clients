@@ -1,5 +1,6 @@
 package de.ttt.management.registration.application
 
+import de.ttt.management.registration.PlayerPaid
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
 import de.ttt.management.registration.domain.PlayerTypeRegistration
@@ -54,7 +55,11 @@ class PlayerService(
 
     @Transactional
     fun setPaid(id: Long, paid: Boolean): Boolean {
-        return playerRepository.setTypePerPlayerPaid(id, paid)
+        val updated = playerRepository.setTypePerPlayerPaid(id, paid)
+        if (updated) {
+            eventPublisher.publishEvent(PlayerPaid(registrationId = id, paid = paid))
+        }
+        return updated
     }
 
     @Transactional

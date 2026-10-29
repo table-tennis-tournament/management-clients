@@ -6,5 +6,7 @@ package de.ttt.management.tournament
 data class MatchResultUpdated(
     val matchId: Long,
     val sets1: Int,
-    val sets2: Int
+    val sets2: Int,
+    val typeId: Long? = null,
+    val tableId: Long? = null
 )
