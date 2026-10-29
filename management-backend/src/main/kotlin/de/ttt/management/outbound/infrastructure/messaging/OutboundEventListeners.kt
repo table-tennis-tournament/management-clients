@@ -4,6 +4,7 @@ import de.ttt.management.outbound.application.OutboundService
 import de.ttt.management.outbound.domain.Topic
 import de.ttt.management.outbound.domain.UpdateScope
 import de.ttt.management.registration.DisciplineColorsChanged
+import de.ttt.management.registration.PlayerActiveChanged
 import de.ttt.management.registration.PlayerPaid
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
@@ -76,7 +77,7 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchDeleted) {
-        push(Topic.MATCHES, "MATCH_DELETED", scope(event.matchIds, event.typeIds, emptyList()), event)
+        push(Topic.MATCHES, "MATCH_DELETED", scope(event.matchIds, event.typeIds, event.tableIds), event)
     }
 
     // --- tables ------------------------------------------------------------
@@ -104,6 +105,11 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: PlayerUnregistered) {
         push(Topic.PLAYERS, "PLAYER_UNREGISTERED", UpdateScope(), event)
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun on(event: PlayerActiveChanged) {
+        push(Topic.PLAYERS, "PLAYER_ACTIVE_CHANGED", UpdateScope(), event)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)

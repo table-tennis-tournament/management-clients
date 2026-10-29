@@ -25,16 +25,6 @@ const tableReducer = createReducer(
   on(TableActions.loadTablesSuccess, (state, { tables }) => ({
     ...state,
     tables,
-  })),
-  on(TableActions.updatedMatchToTable, (state, { tables }) => ({
-    ...state,
-    tables: state.tables.map((existingTable) => {
-      const availableTable = tables.filter((tab) => tab.table_id === existingTable.table_id);
-      if (availableTable.length > 0) {
-        return availableTable[0];
-      }
-      return existingTable;
-    }),
   }))
 );
 

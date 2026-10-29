@@ -38,9 +38,14 @@ describe('relevanceOf', () => {
     expect(relevanceOf(message, [{ matches: [] }, { table_id: null as any, matches: [] }])).toBe('reload');
   });
 
-  it('reloads for a deleted match, which does not name its table', () => {
-    const message = { type: 'MATCH_DELETED', scope: { matchIds: [1] }, payload: {} };
+  it('reloads for a match deleted from a displayed table', () => {
+    const message = { type: 'MATCH_DELETED', scope: { matchIds: [1], tableIds: [1] }, payload: {} };
     expect(relevanceOf(message, tables(1))).toBe('reload');
+  });
+
+  it('ignores a match deleted from another table', () => {
+    const message = { type: 'MATCH_DELETED', scope: { matchIds: [1], tableIds: [9] }, payload: {} };
+    expect(relevanceOf(message, tables(1))).toBe('ignore');
   });
 
   it('ignores table lock events, which the tablemanager does not render', () => {

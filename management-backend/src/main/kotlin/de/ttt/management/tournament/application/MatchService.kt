@@ -189,19 +189,32 @@ class MatchService(
 
     @Transactional
     fun deleteMatch(id: Long): Boolean {
-        val typeId = matchRepository.findById(id).orElse(null)?.typeId
+        val match = matchRepository.findById(id).orElse(null)
         val deleted = matchRepository.deleteById(id) > 0
         if (deleted) {
-            eventPublisher.publishEvent(MatchDeleted(matchIds = listOf(id), typeIds = listOfNotNull(typeId)))
+            eventPublisher.publishEvent(
+                MatchDeleted(
+                    matchIds = listOf(id),
+                    typeIds = listOfNotNull(match?.typeId),
+                    tableIds = listOfNotNull(match?.tableId)
+                )
+            )
         }
         return deleted
     }
 
     @Transactional
     fun deleteType(id: Long): Boolean {
+        val matches = matchRepository.findByTypeId(id)
         val deleted = matchRepository.deleteByTypeId(id) > 0
         if (deleted) {
-            eventPublisher.publishEvent(MatchDeleted(typeIds = listOf(id)))
+            eventPublisher.publishEvent(
+                MatchDeleted(
+                    matchIds = matches.mapNotNull { it.id },
+                    typeIds = listOf(id),
+                    tableIds = matches.mapNotNull { it.tableId }
+                )
+            )
         }
         return deleted
     }

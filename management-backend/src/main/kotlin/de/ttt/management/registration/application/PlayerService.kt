@@ -1,5 +1,6 @@
 package de.ttt.management.registration.application
 
+import de.ttt.management.registration.PlayerActiveChanged
 import de.ttt.management.registration.PlayerPaid
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
@@ -66,7 +67,8 @@ class PlayerService(
     fun setPlayerActiveState(id: Long, active: Boolean): Boolean {
         val player = playerRepository.findById(id).orElse(null) ?: return false
         player.active = active
-        playerRepository.save(player)
+        val saved = playerRepository.save(player)
+        eventPublisher.publishEvent(PlayerActiveChanged(playerId = saved.id!!, active = saved.active))
         return true
     }
 }

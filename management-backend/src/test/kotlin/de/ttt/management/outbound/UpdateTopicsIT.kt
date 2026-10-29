@@ -166,6 +166,31 @@ class UpdateTopicsIT {
     }
 
     @Test
+    fun `player payment and activity publish on the players topic`() {
+        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val registration = playerService.getAllTypePerPlayer().first()
+        val player = playerService.getAllPlayers().first()
+        val wasActive = player.active
+
+        try {
+            assertTrue(playerService.setPaid(registration.id, !registration.paid))
+            val paid = StompTestSupport.poll(messages)
+            assertNotNull(paid)
+            assertEquals("PLAYER_PAID", paid["type"])
+            assertEquals("players", paid["topic"])
+
+            assertTrue(playerService.setPlayerActiveState(player.id!!, !wasActive))
+            val activity = StompTestSupport.poll(messages)
+            assertNotNull(activity)
+            assertEquals("PLAYER_ACTIVE_CHANGED", activity["type"])
+            assertEquals("players", activity["topic"])
+        } finally {
+            playerService.setPaid(registration.id, registration.paid)
+            playerService.setPlayerActiveState(player.id!!, wasActive)
+        }
+    }
+
+    @Test
     fun `a client only receives events of the topics it subscribed to`() {
         val messages = StompTestSupport.subscribe(StompTestSupport.connect(port), listOf("players"))
 

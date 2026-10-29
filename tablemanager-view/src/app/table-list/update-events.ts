@@ -16,10 +16,8 @@ const TABLE_SCOPED_EVENTS = [
   'MATCH_FREED',
   'MATCH_TAKEN_BACK',
   'MATCH_CALLED',
+  'MATCH_DELETED',
 ];
-
-/** Events that can concern any table, because a deleted match does not carry its table. */
-const UNSCOPED_EVENTS = ['MATCH_DELETED'];
 
 /** Events that are not rendered by the tablemanager. */
 const IGNORED_EVENTS = ['TABLE_LOCKED', 'TABLE_UNLOCKED'];
@@ -35,9 +33,6 @@ export type EventRelevance = 'reload' | 'ignore' | 'unknown';
 export function relevanceOf(message: WebsocketMessage, displayedTables: Table[]): EventRelevance {
   if (IGNORED_EVENTS.includes(message.type)) {
     return 'ignore';
-  }
-  if (UNSCOPED_EVENTS.includes(message.type)) {
-    return 'reload';
   }
   if (!TABLE_SCOPED_EVENTS.includes(message.type)) {
     return 'unknown';

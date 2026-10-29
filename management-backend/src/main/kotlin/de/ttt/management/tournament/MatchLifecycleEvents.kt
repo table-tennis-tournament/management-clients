@@ -49,5 +49,6 @@ data class MatchTakenBack(
  */
 data class MatchDeleted(
     val matchIds: List<Long> = emptyList(),
-    val typeIds: List<Long> = emptyList()
+    val typeIds: List<Long> = emptyList(),
+    val tableIds: List<Long> = emptyList()
 )

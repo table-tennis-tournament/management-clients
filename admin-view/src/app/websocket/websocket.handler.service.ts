@@ -61,6 +61,7 @@ export const RELOAD_TARGETS_BY_EVENT: { [type: string]: ReloadTarget[] } = {
   PLAYER_REGISTERED: ['discipline', 'players'],
   PLAYER_UNREGISTERED: ['discipline', 'players'],
   PLAYER_PAID: ['players'],
+  PLAYER_ACTIVE_CHANGED: ['players', 'discipline'],
   DISCIPLINE_COLORS_CHANGED: ['typeColors'],
 };
 

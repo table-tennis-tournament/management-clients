@@ -50,6 +50,7 @@ describe('the websocket handler service', () => {
       'PLAYER_REGISTERED',
       'PLAYER_UNREGISTERED',
       'PLAYER_PAID',
+      'PLAYER_ACTIVE_CHANGED',
       'DISCIPLINE_COLORS_CHANGED',
     ];
     backendEvents.forEach((type) => expect(RELOAD_TARGETS_BY_EVENT[type]).toBeDefined());
