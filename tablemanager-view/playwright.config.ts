@@ -21,7 +21,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'docker compose -f ../docker-compose.yml up mariadb management-backend',
-      url: 'http://localhost:8080/',
+      url: 'http://localhost:8080/actuator/health',
       reuseExistingServer: !!process.env['CI'],
       timeout: 180000,
     },
