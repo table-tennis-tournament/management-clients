@@ -901,7 +901,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
     def * = (id, name, kind, active) <> (Type.tupled, Type.unapply)
   }
 
-  class TypeColorTable(tag: Tag) extends Table[TypeColor](tag, "typecolors") {
+  class TypeColorTable(tag: Tag) extends Table[TypeColor](tag, "mgmt_typecolors") {
     def id = column[Long]("tyco_id", O.PrimaryKey, O.AutoInc)
     def typeId = column[Long]("tyco_type_id")
     def bgColor = column[String]("tyco_bg_color")
@@ -909,7 +909,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
     def * = (id, typeId, bgColor, textColor) <> (TypeColor.tupled, TypeColor.unapply)
 
-    def typeFK = foreignKey("fk_typecolors_type", typeId, types)(_.id, onDelete=ForeignKeyAction.Cascade)
+    def typeFK = foreignKey("fk_mgmt_typecolors_type", typeId, types)(_.id, onDelete=ForeignKeyAction.Cascade)
     def uniqueType = index("unique_type", typeId, unique = true)
   }
 
@@ -1036,7 +1036,7 @@ class Tables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 
   implicit val uuidToString = MappedColumnType.base[UUID, String](_.toString, UUID.fromString)
 
-  class TTMatchTable(tag: Tag) extends Table[MatchTable](tag, "matchtable") {
+  class TTMatchTable(tag: Tag) extends Table[MatchTable](tag, "mgmt_matchtable") {
     def uuid = column[UUID]("id", O.PrimaryKey, SqlType("CHAR"))(uuidToString)
     def tableId = column[Long]("tableId")
     def matchId = column[Long]("matchId")

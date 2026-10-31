@@ -4,7 +4,7 @@ import { resetDatabase } from './db-helper';
 test.describe('Einstellungen View', () => {
   test.beforeAll(async () => {
     await resetDatabase();
-  });
+  }, { timeout: 300000 });
 
   test('should show all settings sections', async ({ page }) => {
     await page.goto('/admin-view/settingsView');

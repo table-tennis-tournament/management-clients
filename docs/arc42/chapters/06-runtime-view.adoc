@@ -9,7 +9,7 @@ This chapter describes two important runtime scenarios as C4 dynamic diagrams.
 include::../diagrams/dynamic-assign.puml[]
 ----
 
-The Tournament Administrator selects a match and a table. The backend persists the assignment, updates its in-memory state and publishes an event. The Publisher broadcasts the change to all connected clients over WebSockets, so the Table Manager View and Result View update immediately.
+The Tournament Administrator selects a match and a table. The `tournament` module's controller delegates to its application service, which validates the transition, persists it via a JdbcClient repository and publishes a domain event. The `outbound` module consumes that event and broadcasts the change to the connected clients over STOMP, so the Table Manager View updates immediately.
 
 === Enter a Match Result
 
@@ -18,8 +18,8 @@ The Tournament Administrator selects a match and a table. The backend persists t
 include::../diagrams/dynamic-result.puml[]
 ----
 
-The Table Manager enters the set and match results. The backend validates and persists the result, marks the match Completed, and — for knockout matches — writes the next knockout match. It then broadcasts the updated match and standings to all clients.
+The Table Manager enters the set and match results. The `tournament` module validates the result against the match aggregate (winner, sets), persists it, transitions the match to `Completed`, and — for knockout matches — writes the next knockout match. It publishes a `MatchCompleted` domain event; the `outbound` module pushes the updated match and standings to all clients.
 
 === Real-time Communication
 
-Real-time updates flow through a Pekko Publisher actor. The Tables (DAO) component publishes domain events; the Publisher distributes them to the WebSocket actors, one per connected client. Each SPA receives the events over its WebSocket connection and updates its ngrx store.
+Real-time updates flow through the `outbound` module, the only component with a WebSocket dependency. Application services in other modules publish Spring application events; after the transaction commits, `outbound` listens (`@TransactionalEventListener`) and pushes a thin JSON event to the matching topic (`/topic/matches`, `/topic/tables`, `/topic/queue`, `/topic/players` or `/topic/settings`) via `SimpMessagingTemplate`. Each SPA receives the events over its STOMP connection, ignores events whose scope does not concern its view, and re-fetches the affected state over REST into its ngrx store. After every (re)connect the SPA reloads the state it displays.

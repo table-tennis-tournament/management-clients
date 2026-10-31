@@ -6,7 +6,7 @@ import { TableDto } from './tabledto.model';
 
 @Injectable()
 export class TableService {
-  private allTablesUrl = '/api/table/all';
+  private allTablesUrl = '/api/v2/table/all';
 
   constructor(private http: HttpClient) {}
 
@@ -15,14 +15,14 @@ export class TableService {
   }
 
   lockTable(tableNr: number): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`api/table/${tableNr}/lock`);
+    return this.http.post<StatusDto>(`/api/v2/table/${tableNr}/lock`, null);
   }
 
   unLockTable(tableNr: number): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`api/table/${tableNr}/unlock`);
+    return this.http.post<StatusDto>(`/api/v2/table/${tableNr}/unlock`, null);
   }
 
   getFreeTables(): Observable<TableDto[]> {
-    return this.http.get<TableDto[]>('api/table/free');
+    return this.http.get<TableDto[]>('/api/v2/table/free');
   }
 }

@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { WebsocketService } from '../services/websocket.service';
 import { Match } from './match/match.model';
 import * as MatchActions from './match/redux/match.actions';
 import * as TableActions from './redux/table-list.actions';
@@ -19,7 +18,6 @@ import { AsyncPipe } from '@angular/common';
 })
 export class TableListComponent implements OnInit {
   private store = inject<Store<AppState>>(Store);
-  private events = inject(WebsocketService);
   private route = inject(ActivatedRoute);
 
   tables$: Observable<Table[]>;

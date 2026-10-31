@@ -10,6 +10,6 @@ export class StagePipe implements PipeTransform {
     if (value.matchType) {
       return value.matchType.name;
     }
-    return value.group.name;
+    return value.playGroup.name;
   }
 }

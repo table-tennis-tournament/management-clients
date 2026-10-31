@@ -70,8 +70,8 @@
                   <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
                 </div>
                 <div class="ms-auto">
-                  @if (currentMatch.table[0]) {
-                    <span class="circle right">{{ currentMatch.table[0] }}</span>
+                  @if (currentMatch.tableId) {
+                    <span class="circle right">{{ currentMatch.tableId }}</span>
                   }
                   @if (currentMatch.result) {
                     <span class="right">{{ currentMatch.result | resultPipe }}</span>

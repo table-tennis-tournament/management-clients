@@ -10,21 +10,73 @@
 
 === WebSocket-based Real-time Communication
 
-*Decision*: push live updates over WebSockets (with a SockJS fallback) instead of client polling.
+*Decision*: push live updates over STOMP on a native WebSocket (`/ttt-websocket`, no SockJS fallback) instead of client polling. The messages are thin update events; clients re-fetch the affected state over REST (ADR 0002).
 
-*Rationale*: tournament management requires immediate updates; polling would add server load and latency.
+*Rationale*: tournament management requires immediate updates; polling would add server load and latency. All clients are modern browsers, so a SockJS fallback adds no value.
 
 *Consequences*: added complexity in connection management, reconnection handling, and state synchronization across clients.
 
+=== Topic-scoped Update Events
+
+*Decision*: the `outbound` module publishes update events on five topics instead of one: `/topic/matches` (match lifecycle and results), `/topic/tables` (assignment, locking, table manager), `/topic/queue` (match list), `/topic/players` (registration, payment) and `/topic/settings` (discipline colors, automation switches). Each event carries a scope (discipline, table, match) in the message body. Events are published after the originating transaction commits (ADR 0003).
+
+*Rationale*: a client reloads only for events its views render. The topics follow the existing modules and use cases, so each application subscribes to a small, stable set: admin-view to all five, tablemanager-view to `tables` and `matches`, result-view (planned) to `matches` and `settings`.
+
+*Consequences*: clients filter by scope on their side; there are no per-scope topics. There is no event replay: after a (re)connect every client resynchronizes the state it displays through REST. Every state-changing use case must publish an event on its topic.
+
 === Scala Play Backend with Pekko Actors
+
+*Status*: superseded by <<Spring Boot Modular Monolith>>.
 
 *Decision*: Scala with Play Framework and Pekko actors for the backend.
 
 *Rationale*: excellent WebSocket support and a mature ecosystem; Pekko actors model the publish/subscribe broadcast cleanly.
 
-*Consequences*: JVM deployment requirements and a dependency on the Scala ecosystem.
+*Consequences*: JVM deployment requirements and a dependency on the Scala ecosystem. The backend is being migrated to Spring Boot with Kotlin.
+
+=== Spring Boot Modular Monolith
+
+*Decision*: migrate the backend to Kotlin on Spring Boot 4.1, structured as a modular monolith with Spring Modulith 2.1.
+
+*Rationale*: Kotlin/Spring Boot reduce the Scala/Pekko dependency footprint and align with the wider ecosystem. Spring Modulith enforces module boundaries at build/test time while keeping a single deployable.
+
+*Consequences*: JVM deployment is retained. Modules are `registration`, `grouping`, `tournament`, `settings` and `outbound`. Module boundaries are verified with `ApplicationModules.verify()` and ArchUnit.
+
+=== Onion Architecture per Module
+
+*Decision*: every module uses the layers `domain` (aggregates, value objects and repository ports), `application` (use-case orchestration) and `infrastructure` (`database`, `web`, `messaging`), with dependencies pointing inward (`infrastructure → application → domain`).
+
+*Rationale*: keeps domain logic free of framework and persistence concerns, and makes each module independently testable and decomposable.
+
+*Consequences*: repository interfaces live in `domain`, their JdbcClient implementations in `infrastructure.database`. The layering is enforced by ArchUnit rules (`OnionArchitectureTests`).
+
+=== Event-driven Module Integration
+
+*Decision*: modules communicate through Spring application events (`ApplicationEventPublisher` / `@EventListener`); the `outbound` module is the only component that publishes WebSocket messages.
+
+*Rationale*: keeps modules decoupled and gives a single, replaceable place for the WebSocket transport.
+
+*Consequences*: `registration` publishes `PlayerRegistered`/`PlayerUnregistered`; `outbound` consumes them and pushes to `/topic/updates`.
+
+=== Plain SQL via JdbcClient
+
+*Decision*: persist with `JdbcClient` and hand-written SQL only; no JPA or Hibernate.
+
+*Rationale*: the schema is a legacy MySQL schema with naming conventions that map poorly to ORMs; plain SQL keeps full control and avoids framework coupling in the domain.
+
+*Consequences*: repository ports in `domain`, Jdbc adapters in `infrastructure.database`. H2 in MySQL mode is used for fast integration tests.
+
+=== API versioning via `/api/v2` path prefix
+
+*Decision*: every REST controller is prefixed with `/api/v2` through a global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers stay on the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …).
+
+*Rationale*: the legacy Scala backend keeps serving under `/api` while the new backend runs in parallel under `/api/v2`; a router can switch between them by version. A single prefix keeps the controllers clean and future version bumps localized.
+
+*Consequences*: clients must call `/api/v2/…`. WebSocket endpoints (`/ttt-websocket`) and actuator endpoints are unaffected, as they are not `@RestController` handlers. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
 
 === Single Data-Access Component
+
+*Status*: superseded by <<Onion Architecture per Module>>.
 
 *Decision*: keep all persistence and the in-memory domain state in one component (Tables) instead of separate per-entity DAOs.
 

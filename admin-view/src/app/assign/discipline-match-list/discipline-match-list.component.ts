@@ -86,8 +86,8 @@ export class DisciplineMatchListComponent {
   isMatchInGroup(groupId: number, currentMatch: Match) {
     return (
       currentMatch != null &&
-      currentMatch.group != null &&
-      currentMatch.group.id === groupId &&
+      currentMatch.playGroup != null &&
+      currentMatch.playGroup.id === groupId &&
       this.isMatchOpenOrInWaitingList(currentMatch)
     );
   }

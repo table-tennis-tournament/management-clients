@@ -18,8 +18,8 @@
     </div>
   </span>
   <span class="header-right-content">
-    @if (match.table[0]) {
-      <span class="circle right">{{ match.table[0] }}</span>
+    @if (match.tableId) {
+      <span class="circle right">{{ match.tableId }}</span>
     }
     @if (isMatchInWaitingList()) {
       <span class="circle right">W</span>

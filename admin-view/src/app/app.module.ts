@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -65,6 +65,6 @@ const components = [AppComponent];
     NoopAnimationsModule,
     AdminRootModule,
   ],
-  providers: [TableService, WebsocketService, WebsocketHandlerService, provideHttpClient(withInterceptorsFromDi())],
+  providers: [TableService, WebsocketService, WebsocketHandlerService, provideHttpClient()],
 })
 export class AppModule {}

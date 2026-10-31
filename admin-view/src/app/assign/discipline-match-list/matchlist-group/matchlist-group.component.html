@@ -3,13 +3,13 @@
     <mat-expansion-panel-header>
       <mat-panel-title>
         <div class="black-text header-main-container">
-          @if (matchListItem.matchinfo[0].group) {
+          @if (matchListItem.matchinfo[0].playGroup) {
             <span class="header-center-content">
               <i class="material-icons m-0">group</i>
-              <span class="align-top">Gruppe {{ matchListItem.matchinfo[0].group.name }}</span>
+              <span class="align-top">Gruppe {{ matchListItem.matchinfo[0].playGroup.name }}</span>
             </span>
           }
-          @if (!matchListItem.matchinfo[0].group) {
+          @if (!matchListItem.matchinfo[0].playGroup) {
             <span class="header-center-content">
               <i class="material-icons m-0">view_list</i>
               <span class="align-top">{{ matchListItem.matchinfo[0].matchType | disciplineType }}</span>

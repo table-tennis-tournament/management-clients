@@ -10,6 +10,6 @@ export class DisciplineService {
   constructor(private http: HttpClient) {}
 
   loadAllDisciplines(): Observable<Discipline[]> {
-    return this.http.get<Discipline[]>(`api/types/all`);
+    return this.http.get<Discipline[]>(`/api/v2/types/all`);
   }
 }
