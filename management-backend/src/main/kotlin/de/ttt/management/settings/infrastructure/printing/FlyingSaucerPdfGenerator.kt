@@ -1,20 +1,19 @@
 package de.ttt.management.settings.infrastructure.printing
 
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import de.ttt.management.settings.domain.PdfGenerator
 import org.springframework.stereotype.Component
+import org.xhtmlrenderer.pdf.ITextRenderer
 import java.io.ByteArrayOutputStream
 
 @Component
-class OpenHtmlPdfGenerator : PdfGenerator {
+class FlyingSaucerPdfGenerator : PdfGenerator {
 
     override fun generate(html: String): ByteArray {
         val out = ByteArrayOutputStream()
-        val builder = PdfRendererBuilder()
-        builder.useFastMode()
-        builder.withHtmlContent(html, null)
-        builder.toStream(out)
-        builder.run()
+        val renderer = ITextRenderer()
+        renderer.setDocumentFromString(html)
+        renderer.layout()
+        renderer.createPDF(out)
         return out.toByteArray()
     }
 }

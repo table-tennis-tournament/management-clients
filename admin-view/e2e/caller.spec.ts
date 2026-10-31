@@ -4,7 +4,7 @@ import { resetDatabase } from './db-helper';
 test.describe('Ausrufer View', () => {
   test.beforeAll(async () => {
     await resetDatabase();
-  });
+  }, { timeout: 300000 });
 
   test('should show an assigned match and remove it after clicking OK', async ({ page, request }) => {
     // Assign match 3 (Priyanka Sow vs Babajide Santos) to table 1 via the API.

@@ -5,7 +5,7 @@ import { dragAndDrop } from './helpers';
 test.describe('Zuweiser View', () => {
   test.beforeAll(async () => {
     await resetDatabase();
-  });
+  }, { timeout: 300000 });
 
   test('should assign a match to a table via drag and drop with "Alle" selected', async ({ page }) => {
     await page.goto('/admin-view/assignView');

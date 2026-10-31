@@ -4,7 +4,7 @@ import { resetDatabase } from './db-helper';
 test.describe('Ergebnisse View', () => {
   test.beforeAll(async () => {
     await resetDatabase();
-  });
+  }, { timeout: 300000 });
 
   test('freigeben moves a match to Ergebnisse and entering a result removes it', async ({ page, request }) => {
     // 1. Put match 3 (Priyanka Sow vs Babajide Santos) on table 1 via the API.

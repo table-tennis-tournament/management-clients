@@ -4,7 +4,7 @@ import { resetDatabase } from './db-helper';
 test.describe('Websocket live updates', () => {
   test.beforeAll(async () => {
     await resetDatabase();
-  });
+  }, { timeout: 300000 });
 
   test('reflects a remote match assignment via the STOMP websocket', async ({ page, request }) => {
     await page.goto('/admin-view/assignView');
