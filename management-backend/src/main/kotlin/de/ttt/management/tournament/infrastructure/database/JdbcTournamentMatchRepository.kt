@@ -364,7 +364,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         jdbcClient.sql(
             "INSERT INTO mgmt_matchtable (id, tableId, matchId, timestamp) VALUES (:id, :tableId, :matchId, CURRENT_TIMESTAMP)"
         )
-            .param("id", java.util.UUID.randomUUID().toString())
+            .param("id", UUID.randomUUID().toString())
             .param("tableId", tableId)
             .param("matchId", matchId)
             .update()

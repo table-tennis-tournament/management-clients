@@ -35,7 +35,7 @@ class TournamentOutboundIT {
 
         @Suppress("UNCHECKED_CAST")
         val payload = message["payload"] as Map<String, Any>
-        assertEquals(matchId.toLong(), (payload["matchId"] as Number).toLong())
+        assertEquals(matchId, (payload["matchId"] as Number).toLong())
         assertEquals(3, payload["sets1"])
         assertEquals(0, payload["sets2"])
     }
