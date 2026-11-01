@@ -22,9 +22,9 @@
 |Relational model fits tournament data; proven reliability.
 
 |Real-time communication
-|WebSockets with SockJS fallback and Pekko actors
+|STOMP over a native WebSocket, no SockJS fallback
 
-|Bi-directional communication and a fallback for older browsers.
+|Bi-directional communication; all clients are modern browsers, so no fallback is needed.
 
 |State management
 |ngrx (Redux pattern)
@@ -45,7 +45,7 @@
 === Architecture Patterns
 
 * *Separate frontends per role*: three independent Angular applications share one backend.
-* *Event-driven real-time communication*: Pekko actors publish domain events that are broadcast over WebSockets.
+* *Event-driven real-time communication*: Spring application events are published after commit on five topics and broadcast over STOMP/WebSocket; clients re-fetch the affected state over REST.
 * *Layered backend*: controllers, a single data-access component and domain models.
 * *Repository-style data access*: one component (Tables) owns all persistence and the in-memory domain state.
 * *Redux store*: each frontend keeps its state in a single ngrx store.

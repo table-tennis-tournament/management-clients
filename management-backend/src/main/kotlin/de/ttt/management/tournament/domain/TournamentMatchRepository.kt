@@ -1,0 +1,28 @@
+package de.ttt.management.tournament.domain
+import java.time.LocalDateTime
+import java.util.*
+interface TournamentMatchRepository {
+    fun findAll(): List<TournamentMatch>
+    fun findById(id: Long): Optional<TournamentMatch>
+    fun findByTypeId(typeId: Long): List<TournamentMatch>
+    fun findOpen(): List<TournamentMatch>
+    fun findOpenByTypeId(typeId: Long): List<TournamentMatch>
+    fun findPlayed(): List<TournamentMatch>
+    fun findPlayedByTypeId(typeId: Long): List<TournamentMatch>
+    fun findByCallState(callState: CallState): List<TournamentMatch>
+    fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch>
+    fun findTableIdsInUse(): Set<Long>
+    fun isMatchPlaying(matchId: Long): Boolean
+    fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
+    fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
+    fun stopMatch(matchId: Long): Int
+    fun removeFromTable(matchId: Long): Int
+    fun freeMatch(matchId: Long): Int
+    fun takeBackMatch(matchId: Long): Int
+    fun setWaitingList(matchId: Long, waiting: Boolean): Int
+    fun updateCallState(matchId: Long, callState: CallState): Int
+    fun updatePartialResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int): Int
+    fun completeResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int, winnerId: Long?): Int
+    fun deleteById(id: Long): Int
+    fun deleteByTypeId(typeId: Long): Int
+}

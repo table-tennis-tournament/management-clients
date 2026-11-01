@@ -13,6 +13,7 @@ import {
   FreeTable,
   FreeTableError,
   FreeTableSuccess,
+  LoadTables,
   LoadTablesError,
   LoadTablesSuccess,
   LockTable,
@@ -35,6 +36,7 @@ import {
   UnLockTableError,
   UnLockTableSuccess,
 } from './table.actions';
+import { LoadMatches } from '../../assign/redux/match.actions';
 import { TableService } from '../table.service';
 import { MatchService } from '../../assign/match.service';
 import { PrintService } from '../../shared/print.service';
@@ -209,6 +211,14 @@ export class TableEffects {
           })
         );
       })
+    )
+  );
+
+  // the initiating client must not depend on the websocket event to see its own change
+  reloadAfterRemoveMatchFromTable = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TableActionTypes.RemoveSuccess),
+      mergeMap(() => [new LoadTables(null), new LoadMatches(null)])
     )
   );
 }

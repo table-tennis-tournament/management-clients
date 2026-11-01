@@ -18,15 +18,11 @@ export class WebSocketEffects {
       ofType(WebSocketActionTypes.ConnectWebsocket),
       mergeMap((action: ConnectWebSocket) => {
         return this.websocketService.connectTable(action.payload).pipe(
-          map(
-            () => {
-              return new ConnectWebSocketSuccess(true);
-            },
-            catchError((err) => {
-              this.toastService.error('Fehler beim Verbinden mit Websocket');
-              return of(new ConnectWebSocketError(err));
-            })
-          )
+          map(() => new ConnectWebSocketSuccess(true)),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Verbinden mit Websocket');
+            return of(new ConnectWebSocketError(err));
+          })
         );
       })
     )

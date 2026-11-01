@@ -9,12 +9,12 @@ export interface Match {
   isPlayed?: boolean;
   result?: any;
   isPlayable?: boolean;
-  isInWaitingList?: boolean;
-  table?: number[];
+  waitingList?: boolean;
+  tableId?: number;
   team1?: Player[];
   team2?: Player[];
   matchType?: MatchType;
   type?: Type;
-  group?: Group;
+  playGroup?: Group;
   state?: string;
 }

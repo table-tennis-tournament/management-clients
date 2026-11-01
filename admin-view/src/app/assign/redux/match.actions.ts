@@ -5,7 +5,6 @@ export enum MatchActionTypes {
   Load = '[Match] Load',
   LoadSuccess = '[Match] Load Success',
   LoadError = '[Match] Load Error',
-  UpdateSuccess = '[Match] Update Success',
   Reload = '[Match] Reload',
   ReloadSuccess = '[Match] Reload Success',
   ReloadError = '[Match] Reload Error',
@@ -27,12 +26,6 @@ export class LoadMatchesError implements Action {
   readonly type = MatchActionTypes.LoadError;
 
   constructor(public payload: any) {}
-}
-
-export class UpdateMatchesSuccess implements Action {
-  readonly type = MatchActionTypes.UpdateSuccess;
-
-  constructor(public payload: Match[]) {}
 }
 
 export class ReloadMatches implements Action {
@@ -57,7 +50,6 @@ export type MatchActionsUnion =
   | LoadMatches
   | LoadMatchesSuccess
   | LoadMatchesError
-  | UpdateMatchesSuccess
   | ReloadMatches
   | ReloadMatchesSuccess
   | ReloadMatchesError;

@@ -6,7 +6,7 @@ title Dynamic diagram: assign a match to a table
 Person(admin, "Tournament Administrator")
 Container(adminView, "Admin View", "Angular 21")
 Container(nginx, "Reverse Proxy", "Nginx")
-Container(backend, "Backend", "Scala Play")
+Container(backend, "Backend", "Kotlin Spring Boot")
 ContainerDb(mariadb, "Tournament Database", "MariaDB")
 
 RelIndex(1, admin, adminView, "Selects a match and a table")

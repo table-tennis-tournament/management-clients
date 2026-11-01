@@ -1,0 +1,22 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: management-db
+    ports:
+      - "3307:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=management
+      - MARIADB_USER=user
+      - MARIADB_PASSWORD=password
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - management-network
+
+networks:
+  management-network:
+    driver: bridge

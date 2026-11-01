@@ -19,7 +19,7 @@ export const MatchTestData: Match[] = [
         sex: 'M',
         club: {
           id: 5,
-          clubName: 'TTV Albersweiler',
+          name: 'TTV Albersweiler',
         },
         hasMatches: false,
         types: [],
@@ -34,7 +34,7 @@ export const MatchTestData: Match[] = [
         sex: 'M',
         club: {
           id: 7,
-          clubName: 'TG Aue 1895',
+          name: 'TG Aue 1895',
         },
         hasMatches: true,
         types: [2],
@@ -50,12 +50,12 @@ export const MatchTestData: Match[] = [
       kind: 1,
       active: true,
     },
-    group: {
+    playGroup: {
       id: 1,
       name: '01 ',
     },
     isPlayable: true,
-    isInWaitingList: false,
-    table: [],
+    waitingList: false,
+    tableId: undefined,
   },
 ];

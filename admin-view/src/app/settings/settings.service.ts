@@ -11,34 +11,34 @@ export class SettingsService {
   constructor(private http: HttpClient) {}
 
   loadSettings(): Observable<Settings[]> {
-    return this.http.get<Settings[]>(`api/settings/all`);
+    return this.http.get<Settings[]>(`/api/v2/settings/all`);
   }
 
   loadPrinters(): Observable<string[]> {
-    return this.http.get<string[]>(`api/printer/all`);
+    return this.http.get<string[]>(`/api/v2/printer/all`);
   }
 
   saveAssignAutomatically(shouldAssignAutomatically: boolean): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`api/matchlist/active/${shouldAssignAutomatically}`);
+    return this.http.post<StatusDto>(`/api/v2/matchlist/active/${shouldAssignAutomatically}`, null);
   }
 
   savePrintOnAssign(savePrintOnAssign: boolean): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`api/printer/setprintonstart/${savePrintOnAssign}`);
+    return this.http.post<StatusDto>(`/api/v2/printer/setprintonstart/${savePrintOnAssign}`, null);
   }
 
   setPrinter(printerName: string): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`api/printer/set/${printerName}`);
+    return this.http.post<StatusDto>(`/api/v2/printer/set/${printerName}`, null);
   }
 
   loadTypeColors(): Observable<TypeColorMap> {
-    return this.http.get<TypeColorMap>('api/settings/typecolors');
+    return this.http.get<TypeColorMap>('/api/v2/disciplines/colors');
   }
 
   saveTypeColor(typeId: number, colorData: TypeColor): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/settings/typecolors/${typeId}`, colorData);
+    return this.http.post<StatusDto>(`/api/v2/disciplines/${typeId}/color`, colorData);
   }
 
   setBulkTypeColors(typeColors: TypeColorMap): Observable<StatusDto> {
-    return this.http.put<StatusDto>('api/settings/typecolors', typeColors);
+    return this.http.put<StatusDto>('/api/v2/disciplines/colors', typeColors);
   }
 }

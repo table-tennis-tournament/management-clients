@@ -31,7 +31,7 @@
     }
     {{ team[0].firstName }} {{ team[0].lastName }}
     @if (showClubs) {
-      <span>({{ team[0].club.clubName }})</span>
+      <span>({{ team[0].club.name }})</span>
     }
     @if (result !== undefined && result !== null) {
       <span class="fixed-width align-middle">{{ result }}</span>

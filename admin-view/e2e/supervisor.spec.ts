@@ -5,7 +5,7 @@ import { clearMatchList, dragAndDrop } from './helpers';
 test.describe('Supervisor View', () => {
   test.beforeAll(async () => {
     await resetDatabase();
-  });
+  }, { timeout: 300000 });
 
   test.beforeEach(async ({ request }) => {
     await clearMatchList(request);

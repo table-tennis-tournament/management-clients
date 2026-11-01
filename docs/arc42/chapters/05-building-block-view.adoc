@@ -26,13 +26,15 @@ include::../diagrams/container.puml[]
 |Nginx. Serves the three SPA bundles and proxies API and WebSocket traffic to the backend.
 
 |Backend
-|Scala 2.13 on Play Framework. REST API, WebSocket broadcasting and PDF generation.
+|Kotlin 2.3 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API, WebSocket broadcasting and PDF generation.
 
 |Tournament Database
-|MariaDB/MySQL. Persists players, matches, tables, groups and settings.
+|MariaDB/MySQL in production, H2 in tests. Persists players, matches, tables, groups and settings.
 |===
 
-=== Level 3: Backend Components
+=== Level 3: Backend Modules
+
+The backend is a modular monolith. Each top-level package under `de.ttt.management` is a Spring Modulith module and follows an onion architecture (`domain` → `application` → `infrastructure`).
 
 [plantuml, target="backend-components", format="svg"]
 ----
@@ -41,49 +43,47 @@ include::../diagrams/backend-components.puml[]
 
 [cols="1,3"]
 |===
-|Component |Responsibility
+|Module |Responsibility
 
-|Match Controller
-|REST endpoints for match assignment, state changes and results.
+|registration
+|Players, clubs, doubles, disciplines and registration state (paid/active/seed). Register/unregister players.
 
-|Match List Controller
-|Queue management endpoints.
+|grouping
+|Group formation, seeding and knockout placement. Currently scaffolded, not yet implemented.
 
-|Player Controller
-|Player, club and discipline data.
+|tournament
+|Match lifecycle and state machine, Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations.
 
-|Table Controller
-|Table assignment and locking.
+|settings
+|System settings and printing (referee sheets, certificates).
 
-|Printer Controller
-|PDF generation and print jobs.
+|outbound
+|The single WebSocket publisher. Consumes domain events and pushes updates to connected clients.
 
-|Settings Controller
-|System settings.
+|Shared configuration
+|`OpenApiConfig` and other cross-cutting Spring configuration in the root package.
+|===
 
-|SockJS Controller
-|WebSocket connection upgrade.
+Each module internally layers as follows:
 
-|PDF Service
-|Renders match sheets and documents to PDF.
+[cols="1,3"]
+|===
+|Layer |Responsibility
 
-|Tables (DAO)
-|The single data-access component: all persistence and the in-memory domain state.
+|domain
+|Aggregates, value objects, match-state enum and repository ports (interfaces only).
 
-|Publisher
-|Pekko actor that distributes domain events to connected clients.
+|application
+|Use-case orchestration, application services, event publication.
 
-|Printer Actor
-|Pekko actor that owns the print job queue.
+|infrastructure.database
+|JdbcClient repository adapters (plain SQL, no JPA/Hibernate).
 
-|WebSocket Actor
-|Pekko actor, one per client connection.
+|infrastructure.web
+|REST controllers.
 
-|Scheduler
-|Background tasks and automatic match start.
-
-|Models
-|Scala case classes for the domain objects.
+|infrastructure.messaging
+|Event listeners/publishers.
 |===
 
 === Level 3: Frontend Components

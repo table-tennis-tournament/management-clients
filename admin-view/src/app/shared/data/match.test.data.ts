@@ -19,7 +19,7 @@ export const oneMatch: Match = {
       sex: 'M',
       club: {
         id: 5,
-        clubName: 'TTV Albersweiler',
+        name: 'TTV Albersweiler',
       },
       hasMatches: false,
       types: [],
@@ -34,7 +34,7 @@ export const oneMatch: Match = {
       sex: 'M',
       club: {
         id: 7,
-        clubName: 'TG Aue 1895',
+        name: 'TG Aue 1895',
       },
       hasMatches: true,
       types: [2],
@@ -50,13 +50,13 @@ export const oneMatch: Match = {
     kind: 1,
     active: true,
   },
-  group: {
+  playGroup: {
     id: 1,
     name: '01',
   },
   isPlayable: true,
-  isInWaitingList: false,
-  table: [],
+  waitingList: false,
+  tableId: undefined,
 };
 
 export const ThreeMatches: Match[] = [
@@ -78,7 +78,7 @@ export const ThreeMatches: Match[] = [
         sex: 'M',
         club: {
           id: 5,
-          clubName: 'TTV Albersweiler',
+          name: 'TTV Albersweiler',
         },
         hasMatches: false,
         types: [],
@@ -93,7 +93,7 @@ export const ThreeMatches: Match[] = [
         sex: 'M',
         club: {
           id: 7,
-          clubName: 'TG Aue 1895',
+          name: 'TG Aue 1895',
         },
         hasMatches: true,
         types: [2],
@@ -109,13 +109,13 @@ export const ThreeMatches: Match[] = [
       kind: 1,
       active: true,
     },
-    group: {
+    playGroup: {
       id: 1,
       name: '01 ',
     },
     isPlayable: true,
-    isInWaitingList: false,
-    table: [],
+    waitingList: false,
+    tableId: undefined,
   },
   {
     id: 2,
@@ -135,7 +135,7 @@ export const ThreeMatches: Match[] = [
         sex: 'M',
         club: {
           id: 5,
-          clubName: 'TTV Albersweiler',
+          name: 'TTV Albersweiler',
         },
         hasMatches: false,
         types: [],
@@ -150,7 +150,7 @@ export const ThreeMatches: Match[] = [
         sex: 'M',
         club: {
           id: 15,
-          clubName: 'VfR Fehlheim 1929',
+          name: 'VfR Fehlheim 1929',
         },
         hasMatches: true,
         types: [1],
@@ -166,13 +166,13 @@ export const ThreeMatches: Match[] = [
       kind: 1,
       active: true,
     },
-    group: {
+    playGroup: {
       id: 1,
       name: '01 ',
     },
     isPlayable: true,
-    isInWaitingList: false,
-    table: [],
+    waitingList: false,
+    tableId: undefined,
   },
   {
     id: 3,
@@ -192,7 +192,7 @@ export const ThreeMatches: Match[] = [
         sex: 'M',
         club: {
           id: 7,
-          clubName: 'TG Aue 1895',
+          name: 'TG Aue 1895',
         },
         hasMatches: true,
         types: [2],
@@ -207,7 +207,7 @@ export const ThreeMatches: Match[] = [
         sex: 'M',
         club: {
           id: 15,
-          clubName: 'VfR Fehlheim 1929',
+          name: 'VfR Fehlheim 1929',
         },
         hasMatches: true,
         types: [1],
@@ -223,13 +223,13 @@ export const ThreeMatches: Match[] = [
       kind: 1,
       active: true,
     },
-    group: {
+    playGroup: {
       id: 1,
       name: '01 ',
     },
     isPlayable: true,
-    isInWaitingList: false,
-    table: [],
+    waitingList: false,
+    tableId: undefined,
   },
 ];
 

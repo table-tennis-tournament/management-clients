@@ -5,7 +5,6 @@ export enum ResultActionTypes {
   Load = '[Result] Load',
   LoadSuccess = '[Result] Load Success',
   LoadError = '[Result] Load Error',
-  UpdateResult = '[Result] Update',
 }
 
 export class LoadResults implements Action {
@@ -26,10 +25,4 @@ export class LoadResultsError implements Action {
   constructor(public payload: any) {}
 }
 
-export class UpdateResults implements Action {
-  readonly type = ResultActionTypes.UpdateResult;
-
-  constructor(public payload: any) {}
-}
-
-export type ResultActionsUnion = LoadResults | LoadResultsSuccess | LoadResultsError | UpdateResults;
+export type ResultActionsUnion = LoadResults | LoadResultsSuccess | LoadResultsError;

@@ -3,7 +3,7 @@
 === Security
 
 * Input validation on all endpoints.
-* SQL injection prevention through the Slick database layer.
+* SQL injection prevention through JdbcClient parameterized queries (prepared statements).
 * WebSocket connection authentication.
 * Environment-based configuration (database credentials and connection strings are supplied via environment variables).
 
@@ -22,14 +22,18 @@
 
 === Data Consistency
 
-* Database transactions for critical operations.
-* A single in-memory domain state in the Tables (DAO) component, kept in sync with the database.
-* Real-time synchronization across all clients via the Publisher and WebSocket actors.
+* Database transactions for critical operations (`@Transactional` on application services).
+* Each module owns its data; cross-module state is synchronized via domain events.
+* Real-time synchronization across all clients via the `outbound` module's WebSocket publisher.
 * Automatic recomputation of group standings once a group is completed.
 
 === Testing
 
-* The backend is tested with ScalaTest and specs2.
+* The backend is tested with JUnit 5 and the Spring Modulith test starter.
+* `OnionArchitectureTests` (ArchUnit) enforces the onion layering per module.
+* `ApplicationTests` runs `ApplicationModules.verify()` to enforce module boundaries.
+* `@ApplicationModuleTest` module tests (with `PublishedEvents`) verify use-case behaviour and endpoint calls in isolation.
+* `@SpringBootTest` tests with H2 (MySQL mode) and a STOMP client verify persistence and WebSocket outbound events.
 * The Admin View uses Karma/Jasmine unit tests.
 * The Result View uses Vitest unit tests.
 * The Result View and Table Manager View have Playwright end-to-end tests that run against the Docker Compose stack.

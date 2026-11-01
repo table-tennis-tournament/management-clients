@@ -1,0 +1,6 @@
+[mariadbd]
+# The SQL dumps in sql-scripts/ were exported from Windows (HeidiSQL), where
+# table names are case-insensitive. Some views reference tables with different
+# casing (e.g. `Team` vs `team`), which fails on Linux where MariaDB defaults
+# to lower_case_table_names=0. Match the Windows behaviour so the dumps load.
+lower_case_table_names=1

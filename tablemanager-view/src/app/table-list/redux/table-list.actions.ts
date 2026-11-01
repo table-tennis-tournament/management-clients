@@ -5,6 +5,4 @@ export const loadTables = createAction('[Tables] Load', props<{ tableManagerId: 
 
 export const loadTablesSuccess = createAction('[Tables] Load Success', props<{ tables: Table[] }>());
 
-export const updatedMatchToTable = createAction('[Tables] UpdatedMatchToTable', props<{ tables: Table[] }>());
-
 export const loadTablesError = createAction('[Tables] Load Tables Error');

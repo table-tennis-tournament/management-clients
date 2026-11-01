@@ -87,7 +87,7 @@ export class PlayerListComponent {
   }
 
   filterByClub(value: string) {
-    this.filterPlayers(value, (p) => p.player.club.clubName);
+    this.filterPlayers(value, (p) => p.player.club.name);
   }
 
   private containsValue(value: string, input: string) {

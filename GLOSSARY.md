@@ -6,6 +6,8 @@ This glossary defines the canonical domain language of the Table Tennis Tourname
 
 **Player** — a person registered for a tournament. A player has a TTR rating, belongs to a Club and is registered for one or more disciplines. A player is also the person who reads live results in the Result View.
 
+**Active player** — a player whose registration is active and who therefore takes part in the tournament. An inactive player is retained in the system but excluded from play.
+
 **Club** — the organization a player belongs to.
 
 **TTR** — the official table tennis ranking used for players in Germany.
@@ -64,6 +66,8 @@ The lifecycle of a Match is expressed through its state:
 
 **Second call** / **Third call** — a repeat call has been announced because a player has not appeared.
 
+**Take back** — returning a match from its Table to Open, either by the administrator or by the table manager ("Zurück"). *Deprecated: "stop".*
+
 **Started** — the match is being played.
 
 **Completed** — the result has been entered and the match is finished.
@@ -71,6 +75,16 @@ The lifecycle of a Match is expressed through its state:
 **Finished** — the match has ended without a played result, for example a bye or a walkover ("free match"). Like Completed, it is a terminal state.
 
 The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InWaitingList`, `Callable`, `OnTable`, `SecondCall`, `ThirdCall`, `Started`, `Finished` and `Completed`. Two code names are counter-intuitive: assigning a match to a table sets the state `Callable`, while announcing the call sets the state `OnTable`.
+
+**Live updates**
+
+**Update event** — a short notification that something in the tournament changed, for example that a match was completed. It does not carry the full data; each client fetches the current state it needs itself. *Deprecated: "snapshot" (full state pushed to clients).*
+
+**Topic** — a named channel for update events about one functional area. The topics are Matches (match lifecycle and results), Tables (table assignment and locking), Queue (the ordered waiting list), Players (registration and payment) and Settings (discipline colors and automation switches). A client listens only to the topics its view needs.
+
+**Scope** — the part of the tournament an update event refers to, such as a discipline, a table or a single match. A client uses the scope to ignore events that do not concern what it currently displays.
+
+**Resynchronization** — a client reloading the complete state it displays after it may have missed update events, for example after its connection dropped and was re-established.
 
 **External systems**
 

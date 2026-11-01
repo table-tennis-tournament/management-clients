@@ -24,7 +24,7 @@
 |Real-time communication
 |Clients require live updates without manual refresh.
 
-|WebSockets (with a SockJS fallback) and Pekko actors are used.
+|STOMP over a native WebSocket (`/ttt-websocket`) is used; no SockJS fallback.
 
 |Containerized deployment
 |The system is deployed with containers.

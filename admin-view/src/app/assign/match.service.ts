@@ -11,8 +11,8 @@ import { TableMatchEvent } from '../table/redux/table.match.event';
   providedIn: 'root',
 })
 export class MatchService {
-  private freeMatchUrl = 'api/match/free';
-  private takeBackMatchUrl = 'api/match/takeBack';
+  private freeMatchUrl = '/api/v2/match/free';
+  private takeBackMatchUrl = '/api/v2/match/takeBack';
 
   constructor(private http: HttpClient) {}
 
@@ -25,30 +25,30 @@ export class MatchService {
   }
 
   assignToSecondTable(tableNr: number, matchIds: number[]): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/match/matchtosecondtable/${tableNr}`, matchIds);
+    return this.http.post<StatusDto>(`/api/v2/match/matchtosecondtable/${tableNr}`, matchIds);
   }
 
   resultForMatch(matchResult: TTMatchResult): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/match/${matchResult.match.id}/setResult`, matchResult.result);
+    return this.http.post<StatusDto>(`/api/v2/match/setResult/${matchResult.match.id}`, matchResult.result);
   }
 
   loadAllMatches(): Observable<Match[]> {
-    return this.http.get<Match[]>(`api/match/all`);
+    return this.http.get<Match[]>(`/api/v2/match/all`);
   }
 
   assignMatchToTable(matchToTable: MatchToTable): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/match/matchtotable/${matchToTable.tableNr}`, matchToTable.matchIds);
+    return this.http.post<StatusDto>(`/api/v2/match/matchtotable/${matchToTable.tableNr}`, matchToTable.matchIds);
   }
 
   reloadMatchesFromDb(): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`/api/match/loadnew`);
+    return this.http.get<StatusDto>(`/api/v2/match/loadnew`);
   }
 
   loadPlayedMatches(): Observable<Match[]> {
-    return this.http.get<Match[]>(`/api/match/played/all`);
+    return this.http.get<Match[]>(`/api/v2/match/played/all`);
   }
 
   removeMatchFromTable(payload: TableMatchEvent): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`/api/match/remove/${payload.tableId}`, payload.matchIds);
+    return this.http.post<StatusDto>(`/api/v2/match/remove/${payload.tableId}`, payload.matchIds);
   }
 }

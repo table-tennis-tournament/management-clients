@@ -29,7 +29,7 @@ export class DisciplineStageComponent {
   @Output()
   deleteStage: EventEmitter<DisciplineStage> = new EventEmitter<DisciplineStage>();
 
-  isInWaitingListOrOnTableOrCallable(currentMatch: Match) {
+  waitingListOrOnTableOrCallable(currentMatch: Match) {
     return (
       currentMatch.state === MatchState[MatchState.InWaitingList] ||
       currentMatch.state === MatchState[MatchState.Callable] ||

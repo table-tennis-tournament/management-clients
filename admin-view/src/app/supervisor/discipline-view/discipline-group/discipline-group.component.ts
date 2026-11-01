@@ -69,11 +69,9 @@ export class DisciplineGroupComponent {
   setTables() {
     const numberArray = [];
     this.group.matches.forEach((element) => {
-      element.table.forEach((tableNumber) => {
-        if (numberArray.indexOf(tableNumber) < 0) {
-          numberArray.push(tableNumber);
-        }
-      });
+      if (element.tableId && numberArray.indexOf(element.tableId) < 0) {
+        numberArray.push(element.tableId);
+      }
     });
     this.tableNumbers = numberArray;
   }

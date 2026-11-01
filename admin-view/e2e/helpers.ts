@@ -17,11 +17,11 @@ export async function dragAndDrop(page: Page, source: Locator, target: Locator):
 }
 
 export async function clearMatchList(request: APIRequestContext): Promise<void> {
-  const response = await request.get('/api/matchlist/all');
-  const items: Array<{ matchListItem?: { id?: string } }> = await response.json();
+  const response = await request.get('/api/v2/matchlist/all');
+  const items: Array<{ uuid?: string }> = await response.json();
   for (const item of items) {
-    if (item.matchListItem?.id) {
-      await request.delete(`/api/matchlist/deleteMatch/${item.matchListItem.id}`);
+    if (item.uuid) {
+      await request.delete(`/api/v2/matchlist/${item.uuid}`);
     }
   }
 }

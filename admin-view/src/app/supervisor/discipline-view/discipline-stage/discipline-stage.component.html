@@ -20,7 +20,7 @@
       <div
         class="collection-item no-lines {{ lineStageClass[index % 4] }}"
         (dblclick)="resultForMatch.emit(currentMatch)"
-        [class.disabled-item]="isInWaitingListOrOnTableOrCallable(currentMatch)"
+        [class.disabled-item]="waitingListOrOnTableOrCallable(currentMatch)"
         cdkDrag
         [cdkDragDisabled]="!isMatchOpen(currentMatch)"
         [cdkDragData]="[currentMatch]"

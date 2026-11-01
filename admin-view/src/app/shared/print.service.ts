@@ -10,6 +10,6 @@ export class PrintService {
   constructor(private http: HttpClient) {}
 
   public printMatch(matchId: number): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`api/printer/print/${matchId}`);
+    return this.http.post<StatusDto>(`/api/v2/printer/print/${matchId}`, null);
   }
 }

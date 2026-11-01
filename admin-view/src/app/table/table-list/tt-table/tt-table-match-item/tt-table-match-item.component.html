@@ -1,11 +1,11 @@
 @if (matches?.length === 1) {
   <span class="text-truncate">
     <div class="d-flex justify-content-center">
-      @if (!matches[0].group) {
+      @if (!matches[0].playGroup) {
         <b>{{ matches[0].matchType.name }}</b>
       }
-      @if (matches[0].group) {
-        <b>Gruppe {{ matches[0].group.name }}</b>
+      @if (matches[0].playGroup) {
+        <b>Gruppe {{ matches[0].playGroup.name }}</b>
       }
     </div>
     @if (matches[0].result) {
@@ -24,8 +24,8 @@
 @if (matches?.length > 1) {
   <span>
     <b>Gruppe</b>
-    @if (matches[0].group) {
-      <b>{{ matches[0].group.name }}</b>
+    @if (matches[0].playGroup) {
+      <b>{{ matches[0].playGroup.name }}</b>
     }
     <br />
     Offene Spiele: {{ matches.length }}

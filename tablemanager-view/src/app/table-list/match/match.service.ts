@@ -7,33 +7,25 @@ import { Result } from './result.model';
 export class MatchService {
   private http = inject(HttpClient);
 
-  // updateMatchResult(matchId: number, result: Result): Observable<any> {
-  //   return this.http.put<any>(`api/matches/${matchId}/result`, result);
-  // }
-
   updateMatchResult(matchId: number, result: Result): Observable<any> {
     const results = result.games.map((game) => [game.score_player_a, game.score_player_b]);
-    return this.http.post<any>(`api/match/${matchId}/updateResult`, results);
+    return this.http.post<any>(`/api/v2/match/updateResult/${matchId}`, results);
   }
-
-  // finishMatch(matchId: number) {
-  //   return this.http.put<any>(`api/matches/${matchId}/state`, {state: 'FINISHED'});
-  // }
 
   finishMatch(matchId: number, result: Result) {
     const results = result.games.map((game) => [game.score_player_a, game.score_player_b]);
-    return this.http.post<any>(`api/match/${matchId}/setResult`, results);
+    return this.http.post<any>(`/api/v2/match/setResult/${matchId}`, results);
   }
 
   startMatch(tableId: number, matchId: number): Observable<any> {
-    return this.http.get<any>(`api/match/start/${matchId}/${tableId}`);
+    return this.http.post<any>(`/api/v2/match/start/${matchId}/${tableId}`, null);
   }
 
   callPlayersForMatch(playerIds: number[], matchId: number) {
-    return this.http.post<any>(`api/playercall/${matchId}`, { player_ids: playerIds });
+    return this.http.post<any>(`/api/v2/playercall/${matchId}`, null);
   }
 
   takeBackMatch(matchId: number) {
-    return this.http.get<any>(`api/match/stop/${matchId}`);
+    return this.http.post<any>(`/api/v2/match/stop/${matchId}`, null);
   }
 }

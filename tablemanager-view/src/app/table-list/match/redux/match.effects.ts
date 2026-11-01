@@ -1,16 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { MatchService } from '../match.service';
 import * as MatchActions from './match.actions';
+import { loadTables } from '../../redux/table-list.actions';
+import { getTableManagerId } from '../../redux/table-list.reducer';
 
 @Injectable()
 export class MatchEffects {
   private actions$ = inject(Actions);
   private snackBar = inject(MatSnackBar);
   private matchService = inject(MatchService);
+  private store = inject<Store<any>>(Store);
 
   updateMatchResult$ = createEffect(() =>
     this.actions$.pipe(
@@ -125,5 +129,15 @@ export class MatchEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  // the initiating table manager must not depend on the websocket event to see the match taken back
+  reloadTablesAfterTakeBack$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(MatchActions.takeBackMatchSuccess),
+      withLatestFrom(this.store.select(getTableManagerId)),
+      filter(([, tableManagerId]) => tableManagerId != null),
+      map(([, tableManagerId]) => loadTables({ tableManagerId: tableManagerId as number }))
+    )
   );
 }
