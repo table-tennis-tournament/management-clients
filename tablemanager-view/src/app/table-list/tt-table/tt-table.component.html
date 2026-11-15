@@ -46,7 +46,7 @@
       }
     </mat-card-content>
   }
-  @if (tableHasStartedMatch()) {
+  @if (scoreboard) {
     <mat-card-content>
       <div class="row">
         <div class="col-5"></div>
@@ -61,17 +61,11 @@
       </div>
       <div class="row">
         <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_a, true)">
-          <div
-            [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a) }"
-            class="mat-body-strong mb-0 text-truncate-custom"
-          >
+          <div [ngClass]="{ 'match-won': scoreboard.winner === 1 }" class="mat-body-strong mb-0 text-truncate-custom">
             {{ currentMatch().players_a[0] | singlePlayer }}
           </div>
           @if (currentMatch().players_a.length > 1) {
-            <div
-              [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a) }"
-              class="mat-body-strong mb-0 text-truncate-custom"
-            >
+            <div [ngClass]="{ 'match-won': scoreboard.winner === 1 }" class="mat-body-strong mb-0 text-truncate-custom">
               {{ currentMatch().players_a[1] | singlePlayer }}
             </div>
           }
@@ -79,30 +73,24 @@
             <div class="text-truncate-custom">{{ currentMatch().players_a | clubName }}</div>
           }
         </div>
-        @for (game of allGames(); track game) {
+        @for (set of scoreboard.sets; track $index) {
           <div class="col-1">
-            <p [ngClass]="{ won: this.gameService.playerAWon(game) }" class="mat-body">{{ game.score_player_a }}</p>
+            <p [ngClass]="{ won: set.winner === 1 }" class="mat-body">{{ set.pointsPlayer1 }}</p>
           </div>
         }
         <div class="col-1">
-          <p [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_a) }" class="mat-body">
-            {{ currentMatch().result.games_won_player_a }}
+          <p [ngClass]="{ 'match-won': scoreboard.winner === 1 }" class="mat-body">
+            {{ scoreboard.setsWon.player1 }}
           </p>
         </div>
       </div>
       <div class="row">
         <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_b, false)">
-          <div
-            [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b) }"
-            class="mat-body-strong mb-0 text-truncate-custom"
-          >
+          <div [ngClass]="{ 'match-won': scoreboard.winner === 2 }" class="mat-body-strong mb-0 text-truncate-custom">
             {{ currentMatch().players_b[0] | singlePlayer }}
           </div>
           @if (currentMatch().players_b.length > 1) {
-            <div
-              [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b) }"
-              class="mat-body-strong mb-0 text-truncate-custom"
-            >
+            <div [ngClass]="{ 'match-won': scoreboard.winner === 2 }" class="mat-body-strong mb-0 text-truncate-custom">
               {{ currentMatch().players_b[1] | singlePlayer }}
             </div>
           }
@@ -110,25 +98,25 @@
             <div class="text-truncate-custom">{{ currentMatch().players_b | clubName }}</div>
           }
         </div>
-        @for (game of allGames(); track game) {
+        @for (set of scoreboard.sets; track $index) {
           <div class="col-1">
-            <p [ngClass]="{ won: this.gameService.playerBWon(game) }" class="mat-body">{{ game.score_player_b }}</p>
+            <p [ngClass]="{ won: set.winner === 2 }" class="mat-body">{{ set.pointsPlayer2 }}</p>
           </div>
         }
         <div class="col-1">
-          <p [ngClass]="{ 'match-won': this.gameService.playerWonMatch(currentMatch().result.games_won_player_b) }" class="mat-body">
-            {{ currentMatch().result.games_won_player_b }}
+          <p [ngClass]="{ 'match-won': scoreboard.winner === 2 }" class="mat-body">
+            {{ scoreboard.setsWon.player2 }}
           </p>
         </div>
       </div>
     </mat-card-content>
   }
-  @if (tableHasStartedMatch()) {
+  @if (scoreboard) {
     <mat-card-actions>
       <div class="d-flex justify-content-between w-100">
         <button mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
         <button mat-raised-button color="primary" (click)="takeBack()">Zurück</button>
-        @if (this.gameService.playerHasWon(currentMatch().result)) {
+        @if (scoreboard.winner !== null) {
           <button mat-raised-button color="accent" (click)="endMatch()" class="float-right">Beenden</button>
         }
       </div>

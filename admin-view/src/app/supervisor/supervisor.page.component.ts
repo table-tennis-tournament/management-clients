@@ -87,8 +87,9 @@ export class SupervisorPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((matchResult) => {
-      console.log('The dialog was closed');
-      this.store.dispatch(new ResultForMatch(matchResult));
+      if (matchResult) {
+        this.store.dispatch(new ResultForMatch(matchResult));
+      }
     });
     return;
   }

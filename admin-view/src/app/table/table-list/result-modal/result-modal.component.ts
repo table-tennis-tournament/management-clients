@@ -1,9 +1,10 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { ResultCheckerService } from './result-checker.service';
-import { ResultCheckModel } from './result-check.model';
+import { Component, Inject } from '@angular/core';
 import { Match } from '../../../shared/data/match.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { formatResult, isFinalResult, matchWinner, parseResult, SetScore, Side } from '../../../shared/result-entry/result-entry';
+import { TTMatchResult } from './ttmatch-result.model';
 
+/** Enters the final result of a match. Closes with a [TTMatchResult], or with nothing on cancel. */
 @Component({
   selector: 'toma-result-modal',
   templateUrl: './result-modal.component.html',
@@ -11,61 +12,36 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   standalone: false,
 })
 export class ResultModalComponent {
-  checkerResult: ResultCheckModel = {
-    firstPlayerWinning: false,
-    secondPlayerWinning: false,
-    currentResult: [],
-  };
-
   currentInput: string;
-
-  @ViewChild('answer', { read: ElementRef, static: false })
-  private elementRef: ElementRef;
+  sets: SetScore[] | null = [];
+  winner: Side | null = null;
 
   constructor(
-    private resultCheckerService: ResultCheckerService,
     public dialogRef: MatDialogRef<ResultModalComponent>,
     @Inject(MAT_DIALOG_DATA) public currentMatch: Match
   ) {
-    this.setInputIfAvailable();
+    this.currentInput = formatResult(currentMatch.sets);
+    this.onKeyUp(this.currentInput);
   }
 
-  onKeyUp(value) {
-    this.checkerResult = this.resultCheckerService.checkResult(value);
+  onKeyUp(value: string) {
+    this.sets = parseResult(value);
+    this.winner = matchWinner(this.sets);
   }
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
-  getResult(): any {
-    if (this.checkerResult.firstPlayerWinning || this.checkerResult.secondPlayerWinning) {
-      return {
-        result: this.checkerResult.currentResult,
-        match: this.currentMatch,
-      };
+  getResult(): TTMatchResult | undefined {
+    if (this.resultNotValid()) {
+      return undefined;
     }
+    return { result: this.sets, match: this.currentMatch };
   }
 
   resultNotValid(): boolean {
-    return !this.checkerResult.firstPlayerWinning && !this.checkerResult.secondPlayerWinning;
-  }
-
-  private setInputIfAvailable() {
-    const matchToSet = this.currentMatch;
-    let resultString = '';
-    if (matchToSet.result) {
-      matchToSet.result.forEach((element) => {
-        if (element[0] > element[1]) {
-          resultString += element[1] + ' ';
-        } else {
-          resultString += '-' + element[0] + ' ';
-        }
-      });
-      resultString = resultString.substr(0, resultString.length - 1);
-      this.onKeyUp(resultString);
-    }
-    this.currentInput = resultString;
+    return !isFinalResult(this.sets);
   }
 
   onEnter() {

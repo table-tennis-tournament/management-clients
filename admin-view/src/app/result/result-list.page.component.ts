@@ -44,8 +44,10 @@ export class ResultListPageComponent implements OnInit {
       data: match,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      this.store.dispatch(new ResultForMatch(result));
+    dialogRef.afterClosed().subscribe((matchResult) => {
+      if (matchResult) {
+        this.store.dispatch(new ResultForMatch(matchResult));
+      }
     });
   }
 

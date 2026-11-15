@@ -2,15 +2,15 @@ import { Group } from './group.model';
 import { Player } from './player.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { StageType } from './stagetype.model';
-import { SetResult } from './set-result.model';
+import { SetScore } from '../result-entry/result-entry';
 
 export interface Match {
   id?: number;
   startTime?: string;
   /** The set summary, e.g. `3 : 1`; also bound to the quick-entry input of the result list. */
   result?: any;
-  /** The per-set points of the match. */
-  sets?: SetResult[];
+  /** The per-set points of the match. Read them through `shared/result-entry`. */
+  sets?: SetScore[];
   waitingList?: boolean;
   state?: string;
   tableId?: number;

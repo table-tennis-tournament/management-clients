@@ -30,7 +30,6 @@ result-view has no WebSocket code. Wiring it up is a separate piece of work. It 
 
 - `result.component.ts` selects `types[0]` on every `types` emission, so an event-driven reload would reset the selected tab. Keep `currentTabId` in the store.
 - `result.component.ts` dispatches a hardcoded `loadMatches({typeId: 8})`.
-- `result.pipe.ts` calls `forEach` on a string result (`"3 : 0"`) and throws.
 - `team-item.component.html` reads `team[0].club.name`, but the backend `TournamentPlayer` has no `club`.
 - `Finished` (walkover) is not treated as complete in `discipline-tab.service.ts`.
 - No `trackBy` and no `OnPush`; every reload re-renders all group cards and the bracket.

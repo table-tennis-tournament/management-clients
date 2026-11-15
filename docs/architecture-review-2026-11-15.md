@@ -9,7 +9,7 @@ The defects listed below were found by reading the code. None of them were repro
 | # | Candidate | Strength |
 |---|-----------|----------|
 | 1 | Deepen the Match lifecycle module | Strong (done) |
-| 2 | One Result entry module for the clients | Strong |
+| 2 | One Result entry module for the clients | Strong (done) |
 | 3 | One answer to "what state is this Match in?" | Worth exploring |
 | 4 | A shared Update event module for the clients | Worth exploring |
 | 5 | Collapse admin-view's command plumbing | Speculative |
@@ -50,6 +50,8 @@ The defects listed below were found by reading the code. None of them were repro
 ---
 
 ## 2. One Result entry module for the clients (Strong)
+
+**Status: done.** Each client has an identical copy of `src/app/shared/result-entry/result-entry.ts` and its spec (one copy per app, by decision; keep the copies identical). `ResultCheckerService`, `GameService` and the two hand-written pipes and formatters are gone; modals, dialogs, pipes and `tt-table` call the module. The cancelled-modal dispatches are guarded.
 
 **Files**
 - `admin-view/src/app/table/table-list/result-modal/result-checker.service.ts` (57 lines), `result-modal.component.ts`
@@ -163,9 +165,8 @@ The page component branches single-Match vs multi-Match in five handlers. `onRem
 **result-view:** 1 trivial "should create" spec.
 
 **Untested core logic:**
-- `GameService`
-- both result pipes
+- ~~`GameService`~~, ~~both result pipes~~ (replaced by `result-entry`, see candidate 2)
 - result-view `DisciplineTabService` (about 90% the same as the admin copy)
 - the admin component state predicates
-- the result-modal input formatting
+- ~~the result-modal input formatting~~ (`formatResult`)
 - both STOMP transport services

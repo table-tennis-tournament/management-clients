@@ -1,10 +1,18 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Game } from '../match/game.model';
+import {
+  matchWinner,
+  SetScore,
+  SetsWon,
+  setsWon,
+  setWinner,
+  setWonBy,
+  Side,
+} from '../../shared/result-entry/result-entry';
+import { toGames, toSets } from '../match/games';
 import { Match } from '../match/match.model';
 import { Player } from '../match/player.model';
 import { GameDialogComponent } from './game-dialog/game-dialog.component';
-import { GameService } from './game.service';
 import { ResultDialogComponent } from './result-dialog/result-dialog.component';
 import { Table } from './table.model';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -15,6 +23,13 @@ import { NgClass } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { ClubNamePipe } from '../club-name.pipe';
 import { SinglePlayerPipe } from '../single-player.pipe';
+
+interface Scoreboard {
+  /** Always five Sets; Sets not played yet are 0:0 without a winner. */
+  sets: (SetScore & { winner: Side | null })[];
+  setsWon: SetsWon;
+  winner: Side | null;
+}
 
 @Component({
   selector: 'app-tt-table',
@@ -38,10 +53,20 @@ import { SinglePlayerPipe } from '../single-player.pipe';
 })
 export class TtTableComponent {
   dialog = inject(MatDialog);
-  gameService = inject(GameService);
+  private _table: Table;
+
+  /** The scoreboard of the started match, computed whenever the table changes. */
+  scoreboard: Scoreboard | null = null;
 
   @Input()
-  table: Table;
+  set table(table: Table) {
+    this._table = table;
+    this.scoreboard = this.buildScoreboard();
+  }
+
+  get table(): Table {
+    return this._table;
+  }
 
   @Output()
   updateMatchResult = new EventEmitter();
@@ -76,20 +101,21 @@ export class TtTableComponent {
     return this.currentMatch() !== undefined;
   }
 
-  allGames(): Game[] {
-    if (this.tableHasStartedMatch()) {
-      const match = this.currentMatch();
-      return this.maxGames.map((index) =>
-        match.result.games.length > index
-          ? match.result.games[index]
-          : ({
-              score_player_a: 0,
-              score_player_b: 0,
-            } as Game)
-      );
-    } else {
-      return [];
+  private buildScoreboard(): Scoreboard | null {
+    const match = this.table ? this.currentMatch() : undefined;
+    if (!match) {
+      return null;
     }
+    const sets = toSets(match.result?.games);
+    const empty: SetScore = { pointsPlayer1: 0, pointsPlayer2: 0 };
+    return {
+      sets: this.maxGames.map((index) => {
+        const set = sets[index] ?? empty;
+        return { ...set, winner: setWinner(set) };
+      }),
+      setsWon: setsWon(sets),
+      winner: matchWinner(sets),
+    };
   }
 
   openResultDialog() {
@@ -121,7 +147,7 @@ export class TtTableComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const newGame = this.gameService.createResult(result.result, result.isPlayerA);
+        const newGame = toGames([setWonBy(result.isPlayerA ? 1 : 2, Number(result.result))]);
         const newGames = this.currentMatch().result.games.concat(newGame);
         this.updateMatchResult.emit({
           matchId: this.currentMatch().match_id,
@@ -144,14 +170,10 @@ export class TtTableComponent {
     this.finishMatch.emit(this.currentMatch());
   }
 
+  /** The index of the first Set without a winner, or 0. */
   private getGameNumber() {
-    const games = this.currentMatch().result.games;
-    for (let index = 0; index < games.length; index++) {
-      if (this.gameService.gameHasNoResult(games[index])) {
-        return index;
-      }
-    }
-    return 0;
+    const index = toSets(this.currentMatch().result.games).findIndex((set) => setWinner(set) === null);
+    return index >= 0 ? index : 0;
   }
 
   takeBack() {

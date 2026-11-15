@@ -3,6 +3,7 @@ import { StatusDto } from '../shared/statusdto.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { TTMatchResult } from '../table/table-list/result-modal/ttmatch-result.model';
+import { toRequestBody } from '../shared/result-entry/result-entry';
 import { Match } from '../shared/data/match.model';
 import { MatchToTable } from '../table/table-list/tt-table/tt-table-content/matchtotable.model';
 import { TableMatchEvent } from '../table/redux/table.match.event';
@@ -29,7 +30,7 @@ export class MatchService {
   }
 
   resultForMatch(matchResult: TTMatchResult): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`/api/v2/match/setResult/${matchResult.match.id}`, matchResult.result);
+    return this.http.post<StatusDto>(`/api/v2/match/setResult/${matchResult.match.id}`, toRequestBody(matchResult.result));
   }
 
   loadAllMatches(): Observable<Match[]> {

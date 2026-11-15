@@ -159,7 +159,9 @@ export class TableListPageComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((matchResult) => {
-        this.store.dispatch(new ResultForMatch(matchResult));
+        if (matchResult) {
+          this.store.dispatch(new ResultForMatch(matchResult));
+        }
       });
       return;
     }

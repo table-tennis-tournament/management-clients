@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { MatchState } from '../../shared/data/matchstate.model';
-import { ResultCheckerService } from '../../table/table-list/result-modal/result-checker.service';
-import { ResultCheckModel } from '../../table/table-list/result-modal/result-check.model';
+import { isFinalResult, matchWinner, parseResult, SetScore, Side } from '../../shared/result-entry/result-entry';
+import { TTMatchResult } from '../../table/table-list/result-modal/ttmatch-result.model';
 
 @Component({
   selector: 'toma-result-list',
@@ -17,7 +17,10 @@ export class ResultListComponent {
 
   displayedColumns: string[] = ['back', 'id', 'player1', 'player2', 'type', 'discipline', 'fastCapture', 'endCapture'];
 
-  checkerResultList: ResultCheckModel[] = [];
+  /** The Sets typed into each row's quick-entry input, by row index. */
+  enteredSets: (SetScore[] | null)[] = [];
+  /** The winner of each row's entered Sets, by row index. */
+  enteredWinners: (Side | null)[] = [];
 
   @Input()
   set matches(value: Match[]) {
@@ -39,7 +42,7 @@ export class ResultListComponent {
   resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
 
   @Output()
-  resultCompleteForMatch: EventEmitter<any> = new EventEmitter<any>();
+  resultCompleteForMatch: EventEmitter<TTMatchResult> = new EventEmitter<TTMatchResult>();
 
   @Output()
   refreshResultList: EventEmitter<any> = new EventEmitter<any>();
@@ -48,8 +51,6 @@ export class ResultListComponent {
   matchesLoading: boolean;
 
   selectedMatches: Match[] = [];
-
-  constructor(private resultChecker: ResultCheckerService) {}
 
   onTypeChanged(disciplineId) {
     this.selectedDisciplineId = disciplineId;
@@ -75,17 +76,15 @@ export class ResultListComponent {
   }
 
   onKeyUp(input: string, index: number) {
-    const result = this.resultChecker.checkResult(input);
-    this.checkerResultList[index] = result;
+    this.enteredSets[index] = parseResult(input);
+    this.enteredWinners[index] = matchWinner(this.enteredSets[index]);
   }
 
-  checkResultAndClose(checkerResult: ResultCheckModel, match: Match) {
-    if (checkerResult.secondPlayerWinning || checkerResult.firstPlayerWinning) {
-      this.resultCompleteForMatch.emit({
-        result: checkerResult.currentResult,
-        match: match,
-      });
-      this.checkerResultList = [];
+  checkResultAndClose(sets: SetScore[] | null, match: Match) {
+    if (isFinalResult(sets)) {
+      this.resultCompleteForMatch.emit({ result: sets, match });
+      this.enteredSets = [];
+      this.enteredWinners = [];
     }
   }
 }

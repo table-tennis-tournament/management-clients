@@ -1,33 +1,26 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SetResult } from '../data/set-result.model';
+import { SetScore, setsWon } from '../result-entry/result-entry';
 
+/**
+ * Shows the Sets won: `sets | resultPipe` gives `3 : 1`, `sets | resultPipe: 1` (or `: 2`) the
+ * Sets won by that Side. No Sets give an empty string.
+ */
 @Pipe({
   name: 'resultPipe',
   standalone: false,
 })
 export class ResultPipe implements PipeTransform {
-  FIRST_PLAYER_SETS = 1;
-  SECOND_PLAYER_SETS = 2;
-
-  transform(value: SetResult[], setsForPlayer?: number): any {
-    if (!Array.isArray(value) || value.length < 1) {
+  transform(sets: SetScore[] | null | undefined, side?: 1 | 2): string | number {
+    if (!Array.isArray(sets) || sets.length < 1) {
       return '';
     }
-    let firstPlayerSets = 0;
-    let secondPlayerSets = 0;
-    value.forEach((set) => {
-      if (set.pointsPlayer1 > set.pointsPlayer2) {
-        firstPlayerSets++;
-        return;
-      }
-      secondPlayerSets++;
-    });
-    if (setsForPlayer === this.FIRST_PLAYER_SETS) {
-      return firstPlayerSets;
+    const won = setsWon(sets);
+    if (side === 1) {
+      return won.player1;
     }
-    if (setsForPlayer === this.SECOND_PLAYER_SETS) {
-      return secondPlayerSets;
+    if (side === 2) {
+      return won.player2;
     }
-    return firstPlayerSets + ' : ' + secondPlayerSets;
+    return `${won.player1} : ${won.player2}`;
   }
 }

@@ -4,10 +4,11 @@ import { Discipline } from '../../discipline/discipline.model';
 export const oneMatch: Match = {
   id: 1,
   isPlayed: true,
-  result: [
-    [11, 5],
-    [11, 5],
-    [11, 5],
+  result: '3 : 0',
+  sets: [
+    { pointsPlayer1: 11, pointsPlayer2: 5 },
+    { pointsPlayer1: 11, pointsPlayer2: 5 },
+    { pointsPlayer1: 11, pointsPlayer2: 5 },
   ],
   state: 'Open',
   team1: [
@@ -63,10 +64,11 @@ export const ThreeMatches: Match[] = [
   {
     id: 1,
     isPlayed: true,
-    result: [
-      [11, 5],
-      [11, 5],
-      [11, 5],
+    result: '3 : 0',
+    sets: [
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
     ],
     state: 'Open',
     team1: [
@@ -120,10 +122,11 @@ export const ThreeMatches: Match[] = [
   {
     id: 2,
     isPlayed: true,
-    result: [
-      [11, 5],
-      [11, 5],
-      [11, 5],
+    result: '3 : 0',
+    sets: [
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
     ],
     state: 'Open',
     team1: [
@@ -178,10 +181,11 @@ export const ThreeMatches: Match[] = [
     id: 3,
     isPlayed: true,
     state: 'Open',
-    result: [
-      [11, 5],
-      [11, 5],
-      [11, 5],
+    result: '3 : 0',
+    sets: [
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
+      { pointsPlayer1: 11, pointsPlayer2: 5 },
     ],
     team1: [
       {
