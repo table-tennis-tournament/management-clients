@@ -1,7 +1,14 @@
 import { Component, Inject } from '@angular/core';
 import { Match } from '../../../shared/data/match.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { formatResult, isFinalResult, matchWinner, parseResult, SetScore, Side } from '../../../shared/result-entry/result-entry';
+import {
+  formatResult,
+  isFinalResult,
+  matchWinner,
+  parseResult,
+  SetScore,
+  Side,
+} from '../../../shared/result-entry/result-entry';
 import { TTMatchResult } from './ttmatch-result.model';
 
 /** Enters the final result of a match. Closes with a [TTMatchResult], or with nothing on cancel. */
