@@ -1,11 +1,17 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { of, ReplaySubject, throwError } from 'rxjs';
 
-import { IndividualConfig, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
+
 import { CallerEffects } from './caller.effects';
+
 import { CallerService } from '../caller.service';
+
 import {
   CallerActionTypes,
   CallMatch,
@@ -22,7 +28,7 @@ describe('the match effects', () => {
   let callerService: CallerService;
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
   };
 
   beforeEach(() => {
@@ -37,8 +43,8 @@ describe('the match effects', () => {
         provideMockActions(() => actions),
       ],
     });
-    callerService = TestBed.get(CallerService);
-    callerEffects = TestBed.get(CallerEffects);
+    callerService = TestBed.inject(CallerService);
+    callerEffects = TestBed.inject(CallerEffects);
   });
 
   describe('load', () => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Player } from './data/player.model';
 import { HttpClient } from '@angular/common/http';
 import { PlayerType } from './data/player.type.model';
@@ -8,7 +8,7 @@ import { StatusDto } from '../shared/statusdto.model';
   providedIn: 'root',
 })
 export class PlayerService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getAllPlayers() {
     return this.http.get<Player[]>('/api/v2/players/all');

@@ -4,12 +4,33 @@ import { MatchList } from '../../supervisor/matchlist.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { TypeColorMap } from '../../settings/settings.model';
 import { isWaiting } from '../../shared/match-state/match-state';
+import { DisciplineSelectComponent } from '../../discipline/discipline-select/discipline-select.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatList } from '@angular/material/list';
+import { CdkDropList, CdkDrag, CdkDragPreview } from '@angular/cdk/drag-drop';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { TeamItemComponent } from '../../shared/team-item/team-item.component';
+import { SingleItemComponent } from './single-item/single-item.component';
+import { MatchlistGroupComponent } from './matchlist-group/matchlist-group.component';
+import { DisciplineTypePipe } from '../../shared/pipes/discipline-type.pipe';
 
 @Component({
   selector: 'toma-discipline-match-list',
   templateUrl: './discipline-match-list.component.html',
   styleUrls: ['./discipline-match-list.component.scss'],
-  standalone: false,
+  imports: [
+    DisciplineSelectComponent,
+    MatProgressSpinner,
+    MatList,
+    CdkDropList,
+    TypeColorDirective,
+    CdkDrag,
+    CdkDragPreview,
+    TeamItemComponent,
+    SingleItemComponent,
+    MatchlistGroupComponent,
+    DisciplineTypePipe,
+  ],
 })
 export class DisciplineMatchListComponent {
   private _matches: Match[];
@@ -64,10 +85,7 @@ export class DisciplineMatchListComponent {
     }
 
     if (+disciplineId === -1) {
-      this.currentMatchesToShow = [].concat.apply(
-        [],
-        this.matchList.map((item) => item.matchinfo)
-      );
+      this.currentMatchesToShow = [].concat(...this.matchList.map((item) => item.matchinfo));
       return;
     }
     const filteredMatches = this.matches.filter((match) => match.type.id === +disciplineId).filter(isWaiting);

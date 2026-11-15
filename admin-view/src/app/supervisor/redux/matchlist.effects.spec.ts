@@ -1,9 +1,13 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { of, ReplaySubject, throwError } from 'rxjs';
 
 import { MatchListEffects } from './matchlist.effects';
+
 import {
   AssignToMatchList,
   AssignToMatchListSuccess,
@@ -15,9 +19,12 @@ import {
   MoveMatchListItem,
   MoveMatchListItemSuccess,
 } from './matchlist.actions';
+
 import { testData } from './test.data';
+
 import { MatchListService } from '../matchlist.service';
-import { IndividualConfig, ToastrService } from 'ngx-toastr';
+
+import { ToastrService } from 'ngx-toastr';
 
 describe('the match effects', () => {
   let actions: ReplaySubject<any>;
@@ -25,8 +32,8 @@ describe('the match effects', () => {
   let matchListService: MatchListService;
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
-    info: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
+    info: () => null,
   };
 
   beforeEach(() => {
@@ -41,8 +48,8 @@ describe('the match effects', () => {
         provideMockActions(() => actions),
       ],
     });
-    matchListService = TestBed.get(MatchListService);
-    matchListEffects = TestBed.get(MatchListEffects);
+    matchListService = TestBed.inject(MatchListService);
+    matchListEffects = TestBed.inject(MatchListEffects);
   });
 
   describe('loadMatchlist', () => {

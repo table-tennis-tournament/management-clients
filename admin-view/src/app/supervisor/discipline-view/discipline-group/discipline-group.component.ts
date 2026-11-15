@@ -3,12 +3,35 @@ import { DisciplineGroup } from '../models/discipline.group.model';
 import { Match } from '../../../shared/data/match.model';
 import { TypeColorMap } from '../../../settings/settings.model';
 import { isOpen, isOver, isQueued } from '../../../shared/match-state/match-state';
+import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { MatIcon } from '@angular/material/icon';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { TypeColorDirective } from '../../../shared/directives/type-color.directive';
+import { MatList, MatListItem } from '@angular/material/list';
+import { TeamItemComponent } from '../../../shared/team-item/team-item.component';
+import { ResultPipe } from '../../../shared/pipes/result.pipe';
 
 @Component({
   selector: 'toma-discipline-group',
   templateUrl: './discipline-group.component.html',
   styleUrls: ['./discipline-group.component.scss'],
-  standalone: false,
+  imports: [
+    MatCard,
+    MatCardTitle,
+    CdkDropList,
+    CdkDrag,
+    MatIcon,
+    MatCardContent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    TypeColorDirective,
+    MatExpansionPanelTitle,
+    MatList,
+    MatListItem,
+    TeamItemComponent,
+    ResultPipe,
+  ],
 })
 export class DisciplineGroupComponent {
   readonly isOpen = isOpen;

@@ -4,12 +4,56 @@ import { Discipline } from '../../discipline/discipline.model';
 import { isFinalResult, matchWinner, parseResult, SetScore, Side } from '../../shared/result-entry/result-entry';
 import { TTMatchResult } from '../../table/table-list/result-modal/ttmatch-result.model';
 import { isFinished } from '../../shared/match-state/match-state';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { DisciplineSelectComponent } from '../../discipline/discipline-select/discipline-select.component';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
+import { MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { TeamItemComponent } from '../../shared/team-item/team-item.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { DisciplinePipe } from '../pipes/discipline.pipe';
+import { StagePipe } from '../pipes/stage.pipe';
 
 @Component({
   selector: 'toma-result-list',
   templateUrl: './result-list.component.html',
   styleUrls: ['./result-list.component.scss'],
-  standalone: false,
+  imports: [
+    MatProgressSpinner,
+    DisciplineSelectComponent,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatMiniFabButton,
+    MatIcon,
+    TeamItemComponent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    DisciplinePipe,
+    StagePipe,
+  ],
 })
 export class ResultListComponent {
   private _matches: Match[];

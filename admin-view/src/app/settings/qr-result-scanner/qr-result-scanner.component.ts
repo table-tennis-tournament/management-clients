@@ -1,15 +1,18 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 //import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+
 import { FreeTable } from '../../table/redux/table.actions';
 
 @Component({
   selector: 'toma-qr-result-scanner',
   templateUrl: './qr-result-scanner.component.html',
   styleUrls: ['./qr-result-scanner.component.scss'],
-  standalone: false,
 })
-export class QrResultScannerComponent implements OnInit {
+export class QrResultScannerComponent {
+  private store = inject<Store<any>>(Store);
+
   @Output()
   freeMatch: EventEmitter<number> = new EventEmitter();
 
@@ -32,17 +35,6 @@ export class QrResultScannerComponent implements OnInit {
 
   get selectedDevice(): string {
     return this._selectedDevice;
-  }
-
-  constructor(private store: Store<any>) {}
-
-  ngOnInit() {
-    // this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
-    //   this.hasCameras = true;
-    //
-    //   console.log('Devices: ', devices);
-    //   this.availableDevices = devices;
-    // });
   }
 
   handleQrCodeResult(result) {

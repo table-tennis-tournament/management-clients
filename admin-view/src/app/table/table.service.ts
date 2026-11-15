@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { StatusDto } from '../shared/statusdto.model';
 import { TableDto } from './tabledto.model';
 
 @Injectable()
 export class TableService {
-  private allTablesUrl = '/api/v2/table/all';
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private allTablesUrl = '/api/v2/table/all';
 
   getAllTables(): Observable<TableDto[]> {
     return this.http.get<TableDto[]>(this.allTablesUrl);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -22,6 +22,10 @@ import {
 
 @Injectable()
 export class CallerEffects {
+  private actions$ = inject(Actions);
+  private toastService = inject(ToastrService);
+  private callerService = inject(CallerService);
+
   load = createEffect(() =>
     this.actions$.pipe(
       ofType(CallerActionTypes.Load),
@@ -96,10 +100,4 @@ export class CallerEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private toastService: ToastrService,
-    private callerService: CallerService
-  ) {}
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Player } from '../shared/data/player.model';
 import { HttpClient } from '@angular/common/http';
@@ -9,7 +9,7 @@ import { MatchAggregate } from '../shared/data/match.aggregate';
   providedIn: 'root',
 })
 export class CallerService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   loadAvailableReferees(): Observable<Player[]> {
     return Observable.create([]);

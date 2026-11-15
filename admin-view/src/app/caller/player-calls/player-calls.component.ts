@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { TypeColorMap } from '../../settings/settings.model';
+import { MatList, MatListItem } from '@angular/material/list';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
 
 @Component({
   selector: 'toma-player-calls',
   templateUrl: './player-calls.component.html',
   styleUrls: ['./player-calls.component.scss'],
-  standalone: false,
+  imports: [MatList, MatListItem, TypeColorDirective],
 })
 export class PlayerCallsComponent {
   @Input()

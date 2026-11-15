@@ -31,8 +31,7 @@ const imports = [
 const moduleExports = [AdminRootPageComponent, AdminRootComponent];
 
 @NgModule({
-  imports: imports,
+  imports: [...imports, ...moduleExports, NavigationComponent],
   exports: moduleExports,
-  declarations: [...moduleExports, NavigationComponent],
 })
 export class AdminRootModule {}

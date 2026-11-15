@@ -1,13 +1,19 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+
 import { of, ReplaySubject, throwError } from 'rxjs';
 
 import { DisciplineService } from '../discipline.service';
+
 import { DisciplineActionTypes, LoadDiscipline, LoadDisciplineSuccess } from './discipline.actions';
+
 import { DisciplineEffects } from './discipline.effects';
+
 import { DisciplineTestData } from './test-data';
 
 describe('the Discipline effects', () => {
@@ -17,7 +23,7 @@ describe('the Discipline effects', () => {
   const responseDisciplines = DisciplineTestData;
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
   };
 
   beforeEach(() => {
@@ -33,8 +39,8 @@ describe('the Discipline effects', () => {
       ],
     });
 
-    disciplineEffects = TestBed.get(DisciplineEffects);
-    disciplineService = TestBed.get(DisciplineService);
+    disciplineEffects = TestBed.inject(DisciplineEffects);
+    disciplineService = TestBed.inject(DisciplineService);
   });
 
   describe('loadDisciplines', () => {

@@ -58,7 +58,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
           return table;
         }),
       };
-    case TableActionTypes.ResultForMatchSuccess:
+    case TableActionTypes.ResultForMatchSuccess: {
       const resultForMatch: TTMatchResult = action.payload;
       return {
         ...state,
@@ -69,6 +69,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
           };
         }),
       };
+    }
     case TableActionTypes.FreeSuccess: {
       const matchIds: number[] = action.payload.matchIds;
       return {

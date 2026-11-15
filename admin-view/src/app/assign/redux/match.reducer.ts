@@ -1,6 +1,6 @@
 import { MatchActionsUnion, MatchActionTypes } from './match.actions';
+
 import { Match } from '../../shared/data/match.model';
-import { TableActionTypes } from '../../table/redux/table.actions';
 
 export interface MatchesState {
   matches: Match[];

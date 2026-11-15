@@ -1,11 +1,17 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { of, ReplaySubject, throwError } from 'rxjs';
 
-import { IndividualConfig, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
+
 import { SettingsEffects } from './settings.effects';
+
 import { SettingsService } from '../settings.service';
+
 import {
   LoadPrinters,
   LoadPrintersSuccess,
@@ -19,6 +25,7 @@ import {
   SetPrinterSuccess,
   SettingsActionTypes,
 } from './settings.actions';
+
 import { settingsTestData } from './test.data';
 
 describe('the settings effects', () => {
@@ -27,7 +34,7 @@ describe('the settings effects', () => {
   let settingsService: SettingsService;
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
   };
 
   beforeEach(() => {
@@ -42,8 +49,8 @@ describe('the settings effects', () => {
         provideMockActions(() => actions),
       ],
     });
-    settingsService = TestBed.get(SettingsService);
-    settingsEffects = TestBed.get(SettingsEffects);
+    settingsService = TestBed.inject(SettingsService);
+    settingsEffects = TestBed.inject(SettingsEffects);
   });
 
   describe('loadSettings', () => {

@@ -22,8 +22,7 @@ const components = [
 ];
 
 @NgModule({
-  declarations: [...components],
-  imports: [SharedModule, DisciplineModule],
+  imports: [SharedModule, DisciplineModule, ...components],
   providers: [],
   exports: [SupervisorPageComponent],
 })

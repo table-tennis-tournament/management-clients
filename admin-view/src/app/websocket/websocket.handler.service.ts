@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { auditTime, groupBy, mergeMap } from 'rxjs/operators';
@@ -72,9 +72,11 @@ export const RELOAD_AUDIT_MS = 200;
   providedIn: 'root',
 })
 export class WebsocketHandlerService {
+  private store = inject<Store<any>>(Store);
+
   private reloads$ = new Subject<ReloadTarget>();
 
-  constructor(private store: Store<any>) {
+  constructor() {
     // per target: at most one reload per window, always for the latest trigger
     this.reloads$
       .pipe(

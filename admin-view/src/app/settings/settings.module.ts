@@ -7,8 +7,7 @@ import { QrResultScannerComponent } from './qr-result-scanner/qr-result-scanner.
 const components = [SettingsPageComponent, SettingsListComponent, QrResultScannerComponent];
 
 @NgModule({
-  declarations: [...components],
-  imports: [SharedModule],
+  imports: [SharedModule, ...components],
   providers: [],
   exports: [SettingsPageComponent],
 })

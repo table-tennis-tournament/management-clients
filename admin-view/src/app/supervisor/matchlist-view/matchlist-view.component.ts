@@ -4,12 +4,26 @@ import { MatchListItem } from '../matchlistitem.model';
 import { Match } from '../../shared/data/match.model';
 import { TypeColorMap } from '../../settings/settings.model';
 import { isOpen } from '../../shared/match-state/match-state';
+import { FormsModule } from '@angular/forms';
+import { MatList } from '@angular/material/list';
+import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { MatchlistSingleItemComponent } from './matchlist-single-item/matchlist-single-item.component';
+import { MatchlistGroupItemComponent } from './matchlist-group-item/matchlist-group-item.component';
 
 @Component({
   selector: 'toma-matchlist-view',
   templateUrl: './matchlist-view.component.html',
   styleUrls: ['./matchlist-view.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    MatList,
+    CdkDropList,
+    CdkDrag,
+    TypeColorDirective,
+    MatchlistSingleItemComponent,
+    MatchlistGroupItemComponent,
+  ],
 })
 export class MatchlistViewComponent {
   @Input()

@@ -1,12 +1,17 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+
 import { of, ReplaySubject, throwError } from 'rxjs';
+
 import { MatchService } from '../match.service';
 
 import { MatchEffects } from './match.effects';
+
 import {
   LoadMatches,
   LoadMatchesSuccess,
@@ -14,6 +19,7 @@ import {
   ReloadMatches,
   ReloadMatchesSuccess,
 } from './match.actions';
+
 import { MatchTestData } from './test-data';
 
 describe('the match effects', () => {
@@ -23,8 +29,8 @@ describe('the match effects', () => {
   const responseMatches = MatchTestData;
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
-    success: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
+    success: () => null,
   };
 
   beforeEach(() => {
@@ -40,8 +46,8 @@ describe('the match effects', () => {
       ],
     });
 
-    matchEffects = TestBed.get(MatchEffects);
-    matchService = TestBed.get(MatchService);
+    matchEffects = TestBed.inject(MatchEffects);
+    matchService = TestBed.inject(MatchService);
   });
 
   describe('loadMatches', () => {

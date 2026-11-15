@@ -8,12 +8,14 @@ import {
   isQueued,
   isWaiting,
 } from '../../../../shared/match-state/match-state';
+import { TeamItemComponent } from '../../../../shared/team-item/team-item.component';
+import { ResultPipe } from '../../../../shared/pipes/result.pipe';
 
 @Component({
   selector: 'toma-discipline-stage-item',
   templateUrl: './discipline-stage-item.component.html',
   styleUrls: ['./discipline-stage-item.component.scss'],
-  standalone: false,
+  imports: [TeamItemComponent, ResultPipe],
 })
 export class DisciplineStageItemComponent {
   @Input()

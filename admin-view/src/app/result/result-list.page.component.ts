@@ -1,30 +1,41 @@
-import { Component, ComponentRef, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import { getResultMatchesLoading, getResultMatchesState } from '../app-state.reducer';
+
 import { Observable } from 'rxjs';
+
 import { Match } from '../shared/data/match.model';
+
 import { Discipline } from '../discipline/discipline.model';
+
 import { ResultForMatch, TakeBackTable } from '../table/redux/table.actions';
+
 import { ResultModalComponent } from '../table/table-list/result-modal/result-modal.component';
+
 import { LoadResults } from './redux/result.actions';
+
 import { getDisciplineLoading, getDisciplineState } from '../discipline/redux';
+
 import { MatDialog } from '@angular/material/dialog';
+
+import { ResultListComponent } from './result-list/result-list.component';
+
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-result-list-page',
   templateUrl: './result-list.page.component.html',
-  standalone: false,
+  imports: [ResultListComponent, AsyncPipe],
 })
 export class ResultListPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+  dialog = inject(MatDialog);
+
   matches: Observable<Match[]>;
   matchesLoading: Observable<boolean>;
   disciplines: Observable<Discipline[]>;
   disciplinesLoading: Observable<boolean>;
-
-  constructor(
-    private store: Store<any>,
-    public dialog: MatDialog
-  ) {}
 
   ngOnInit() {
     this.matches = this.store.select(getResultMatchesState);

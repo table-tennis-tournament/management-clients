@@ -15,8 +15,7 @@ const components = [
 ];
 
 @NgModule({
-  imports: [SharedModule, TableModule, DisciplineModule],
+  imports: [SharedModule, TableModule, DisciplineModule, ...components],
   exports: [AssignMatchPageComponent],
-  declarations: [...components],
 })
 export class AssignModule {}

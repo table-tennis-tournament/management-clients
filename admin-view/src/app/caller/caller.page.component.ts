@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { Observable } from 'rxjs';
+
 import { Store } from '@ngrx/store';
+
 import {
   getCallerMatchAggregateState,
   getRefereesLoading,
@@ -10,7 +13,9 @@ import {
   getThirdCallMatchesState,
   getTypeColorsMapState,
 } from '../app-state.reducer';
+
 import { MatchAggregate } from '../shared/data/match.aggregate';
+
 import {
   CallMatch,
   LoadCallerMatches,
@@ -19,14 +24,33 @@ import {
   SetSelectedMatchAggregate,
   SetSelectedSecondCallMatchAggregate,
 } from './redux/caller.actions';
+
 import { TypeColorMap } from '../settings/settings.model';
+
+import { CallerMatchListComponent } from './caller-match-list/caller-match-list.component';
+
+import { CallerMatchDetailComponent } from './caller-match-detail/caller-match-detail.component';
+
+import { SecondCallMatchDetailComponent } from './second-call-match-detail/second-call-match-detail.component';
+
+import { PlayerCallsComponent } from './player-calls/player-calls.component';
+
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-caller-page',
   templateUrl: './caller.page.component.html',
-  standalone: false,
+  imports: [
+    CallerMatchListComponent,
+    CallerMatchDetailComponent,
+    SecondCallMatchDetailComponent,
+    PlayerCallsComponent,
+    AsyncPipe,
+  ],
 })
 export class CallerPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+
   selectedItem: Observable<MatchAggregate>;
   selectedSecondCallItem: Observable<MatchAggregate>;
   typeColors: Observable<TypeColorMap>;
@@ -34,8 +58,6 @@ export class CallerPageComponent implements OnInit {
   matchAggregates: Observable<MatchAggregate[]>;
   secondCalls: Observable<MatchAggregate[]>;
   thirdCalls: Observable<MatchAggregate[]>;
-
-  constructor(private store: Store<any>) {}
 
   ngOnInit() {
     this.store.dispatch(new LoadCallerMatches());
@@ -72,7 +94,7 @@ export class CallerPageComponent implements OnInit {
     this.store.dispatch(new CallMatch(matchIds));
   }
 
-  onSecondCallCalled(matchIds: number[]) {
+  onSecondCallCalled() {
     this.store.dispatch(new SetSelectedSecondCallMatchAggregate(null));
   }
 }

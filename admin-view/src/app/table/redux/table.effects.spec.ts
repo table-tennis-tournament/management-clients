@@ -1,11 +1,17 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+
 import { of, ReplaySubject, throwError } from 'rxjs';
+
 import { MatchService } from '../../assign/match.service';
+
 import { TableService } from '../table.service';
+
 import {
   AssignMatchToTable,
   AssignMatchToTableError,
@@ -18,9 +24,13 @@ import {
   ResultForMatchSuccess,
   TableActionTypes,
 } from './table.actions';
+
 import { TableEffects } from './table.effects';
+
 import { TTMatchResult } from '../table-list/result-modal/ttmatch-result.model';
+
 import { MatchToTable } from '../table-list/tt-table/tt-table-content/matchtotable.model';
+
 import { StatusDto } from '../../shared/statusdto.model';
 
 describe('the table effects', () => {
@@ -59,7 +69,7 @@ describe('the table effects', () => {
   };
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
   };
 
   beforeEach(() => {
@@ -76,9 +86,9 @@ describe('the table effects', () => {
       ],
     });
 
-    tableEffects = TestBed.get(TableEffects);
-    tableService = TestBed.get(TableService);
-    matchService = TestBed.get(MatchService);
+    tableEffects = TestBed.inject(TableEffects);
+    tableService = TestBed.inject(TableService);
+    matchService = TestBed.inject(MatchService);
   });
 
   describe('loadTables', () => {

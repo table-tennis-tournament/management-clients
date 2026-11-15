@@ -1,11 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Discipline } from '../discipline.model';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'toma-discipline-select',
   templateUrl: './discipline-select.component.html',
   styleUrls: ['./discipline-select.component.scss'],
-  standalone: false,
+  imports: [MatFormField, MatLabel, MatSelect, MatOption, MatMiniFabButton, MatIcon],
 })
 export class DisciplineSelectComponent {
   selectedDiscipline: number;

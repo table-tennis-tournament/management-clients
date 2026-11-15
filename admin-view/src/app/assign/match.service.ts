@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { StatusDto } from '../shared/statusdto.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -12,10 +12,10 @@ import { TableMatchEvent } from '../table/redux/table.match.event';
   providedIn: 'root',
 })
 export class MatchService {
+  private http = inject(HttpClient);
+
   private freeMatchUrl = '/api/v2/match/free';
   private takeBackMatchUrl = '/api/v2/match/takeBack';
-
-  constructor(private http: HttpClient) {}
 
   freeMatches(matchIds: number[]): Observable<StatusDto> {
     return this.http.post<StatusDto>(this.freeMatchUrl, matchIds);

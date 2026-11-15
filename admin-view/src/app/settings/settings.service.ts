@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Settings, TypeColor, TypeColorMap } from './settings.model';
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { StatusDto } from '../shared/statusdto.model';
   providedIn: 'root',
 })
 export class SettingsService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   loadSettings(): Observable<Settings[]> {
     return this.http.get<Settings[]>(`/api/v2/settings/all`);

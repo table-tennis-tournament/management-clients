@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { AdminRootComponent } from './admin-root.component';
 
 @Component({
   selector: 'toma-admin-root.page',
   templateUrl: './admin-root.page.component.html',
   styleUrls: ['./admin-root.page.component.scss'],
-  standalone: false,
+  imports: [AdminRootComponent],
 })
 export class AdminRootPageComponent {
   constructor() {}

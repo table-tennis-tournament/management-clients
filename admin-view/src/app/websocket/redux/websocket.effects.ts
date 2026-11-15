@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -13,6 +13,10 @@ import { WebsocketService } from '../../shared/websocket.service';
 
 @Injectable()
 export class WebSocketEffects {
+  private actions$ = inject(Actions);
+  private toastService = inject(ToastrService);
+  private websocketService = inject(WebsocketService);
+
   connectWebSocket = createEffect(() =>
     this.actions$.pipe(
       ofType(WebSocketActionTypes.ConnectWebsocket),
@@ -27,10 +31,4 @@ export class WebSocketEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private toastService: ToastrService,
-    private websocketService: WebsocketService
-  ) {}
 }

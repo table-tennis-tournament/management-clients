@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match } from '../shared/data/match.model';
 import { Store } from '@ngrx/store';
@@ -9,20 +9,24 @@ import { LoadMatchList } from '../supervisor/redux/matchlist.actions';
 import { LoadMatches } from './redux/match.actions';
 import { getDisciplineState } from '../discipline/redux';
 import { TypeColorMap } from '../settings/settings.model';
+import { CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { DisciplineMatchListComponent } from './discipline-match-list/discipline-match-list.component';
+import { TableListPageComponent } from '../table/table-list.page.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-assign-match.page',
   templateUrl: './assign-match.page.component.html',
-  standalone: false,
+  imports: [CdkDropListGroup, DisciplineMatchListComponent, TableListPageComponent, AsyncPipe],
 })
 export class AssignMatchPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+
   matches: Observable<Match[]>;
   matchesLoading: Observable<boolean>;
   matchList: Observable<MatchList[]>;
   disciplines: Observable<Discipline[]>;
   typeColors: Observable<TypeColorMap>;
-
-  constructor(private store: Store<any>) {}
 
   ngOnInit() {
     this.matches = this.store.select(getMatchesState);

@@ -1,8 +1,12 @@
-import { Component, ComponentRef, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import { Observable } from 'rxjs';
+
 import { getTablesLoading, getTableState, getTypeColorsMapState } from '../app-state.reducer';
+
 import { TypeColorMap } from '../settings/settings.model';
+
 import {
   AssignMatchToTable,
   AssignToSecondTable,
@@ -15,32 +19,47 @@ import {
   TakeBackTable,
   UnLockTable,
 } from './redux/table.actions';
+
 import { TableDto } from './tabledto.model';
+
 import { TableMatchEvent } from './redux/table.match.event';
+
 import { ResultModalComponent } from './table-list/result-modal/result-modal.component';
+
 import { SelectMatchModalComponent } from './table-list/select-match-modal/select-match-modal.component';
+
 import { TableService } from './table.service';
+
 import { SelectTableModalComponent } from './table-list/select-table-modal/select-table-modal.component';
+
 import { ToastrService } from 'ngx-toastr';
+
 import { MatchToTable } from './table-list/tt-table/tt-table-content/matchtotable.model';
+
 import { MatDialog } from '@angular/material/dialog';
+
+import { TableListComponent } from './table-list/table-list.component';
+
+import { MatFabButton } from '@angular/material/button';
+
+import { MatIcon } from '@angular/material/icon';
+
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-table-list-page',
   templateUrl: './table-list.page.component.html',
-  standalone: false,
+  imports: [TableListComponent, MatFabButton, MatIcon, AsyncPipe],
 })
 export class TableListPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+  private tableService = inject(TableService);
+  private toastService = inject(ToastrService);
+  dialog = inject(MatDialog);
+
   tables: Observable<TableDto[]>;
   tablesLoading: Observable<boolean>;
   typeColors: Observable<TypeColorMap>;
-
-  constructor(
-    private store: Store<any>,
-    private tableService: TableService,
-    private toastService: ToastrService,
-    public dialog: MatDialog
-  ) {}
 
   ngOnInit() {
     this.tables = this.store.select(getTableState);

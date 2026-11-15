@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { DisciplineTabService } from './discipline-tab.service';
 import { DisciplineTab } from './models/discipline.tab.model';
@@ -7,14 +7,31 @@ import { DisciplineStage } from './models/discipline.stage.model';
 import { DisciplineGroup } from './models/discipline.group.model';
 import { TypeColorMap } from '../../settings/settings.model';
 import deepEqual from 'deep-equal';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatButton } from '@angular/material/button';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { DisciplineStageComponent } from './discipline-stage/discipline-stage.component';
+import { DisciplineGroupComponent } from './discipline-group/discipline-group.component';
 
 @Component({
   selector: 'toma-discipline-view',
   templateUrl: './discipline-view.component.html',
   styleUrls: ['./discipline-view.component.scss'],
-  standalone: false,
+  imports: [
+    MatProgressSpinner,
+    MatButton,
+    TypeColorDirective,
+    MatCheckbox,
+    FormsModule,
+    DisciplineStageComponent,
+    DisciplineGroupComponent,
+  ],
 })
 export class DisciplineViewComponent {
+  private disciplineTabService = inject(DisciplineTabService);
+
   tabs: DisciplineTab[];
   selectedTab: DisciplineTab;
 
@@ -79,8 +96,6 @@ export class DisciplineViewComponent {
 
   @Output()
   selectDiscipline: EventEmitter<number> = new EventEmitter<number>();
-
-  constructor(private disciplineTabService: DisciplineTabService) {}
 
   setTabForId(id: number) {
     if (id < 1) {

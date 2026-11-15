@@ -1,12 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import { Match } from '../data/match.model';
 
-@Pipe({
-  name: 'ttMatchDiscipline',
-  standalone: false,
-})
+@Pipe({ name: 'ttMatchDiscipline' })
 export class TtMatchDisciplinePipe implements PipeTransform {
-  transform(match: Match, args?: any): any {
+  transform(match: Match): any {
     return match.type.name + ' ' + match.matchType.name;
   }
 }

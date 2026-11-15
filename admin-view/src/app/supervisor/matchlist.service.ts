@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +11,7 @@ import { MatchListEntry } from './matchlist-entry.model';
   providedIn: 'root',
 })
 export class MatchListService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   /**
    * Loads the queue. The v2 backend only delivers the match ids of each entry; the matches

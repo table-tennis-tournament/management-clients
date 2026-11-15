@@ -1,11 +1,17 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 import { TestBed } from '@angular/core/testing';
+
 import { provideMockActions } from '@ngrx/effects/testing';
+
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
+
 import { of, ReplaySubject } from 'rxjs';
+
 import { WebSocketEffects } from './websocket.effects';
+
 import { WebsocketService } from '../../shared/websocket.service';
+
 import { ConnectWebSocket, ConnectWebSocketSuccess } from './websocket.actions';
 
 describe('the websocket effects', () => {
@@ -14,7 +20,7 @@ describe('the websocket effects', () => {
   let webSocketService: WebsocketService;
 
   const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
+    error: () => null,
   };
 
   beforeEach(() => {
@@ -30,8 +36,8 @@ describe('the websocket effects', () => {
       ],
     });
 
-    webSocketEffects = TestBed.get(WebSocketEffects);
-    webSocketService = TestBed.get(WebsocketService);
+    webSocketEffects = TestBed.inject(WebSocketEffects);
+    webSocketService = TestBed.inject(WebsocketService);
   });
 
   describe('connectWebsocket', () => {

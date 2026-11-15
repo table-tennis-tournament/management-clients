@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -8,6 +8,10 @@ import { DisciplineActionTypes, LoadDisciplineError, LoadDisciplineSuccess } fro
 
 @Injectable()
 export class DisciplineEffects {
+  private actions$ = inject(Actions);
+  private toastService = inject(ToastrService);
+  private disciplineService = inject(DisciplineService);
+
   loadDisciplines = createEffect(() =>
     this.actions$.pipe(
       ofType(DisciplineActionTypes.Load),
@@ -22,10 +26,4 @@ export class DisciplineEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private toastService: ToastrService,
-    private disciplineService: DisciplineService
-  ) {}
 }

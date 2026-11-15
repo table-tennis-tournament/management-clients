@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -43,13 +43,11 @@ import { PrintService } from '../../shared/print.service';
 
 @Injectable()
 export class TableEffects {
-  constructor(
-    private actions$: Actions,
-    private tableService: TableService,
-    private toastService: ToastrService,
-    private matchService: MatchService,
-    private printService: PrintService
-  ) {}
+  private actions$ = inject(Actions);
+  private tableService = inject(TableService);
+  private toastService = inject(ToastrService);
+  private matchService = inject(MatchService);
+  private printService = inject(PrintService);
 
   loadTables = createEffect(() =>
     this.actions$.pipe(
