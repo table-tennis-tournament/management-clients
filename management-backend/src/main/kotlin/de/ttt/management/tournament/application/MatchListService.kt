@@ -5,6 +5,7 @@ import de.ttt.management.tournament.MatchListChanged
 import de.ttt.management.tournament.domain.MatchList
 import de.ttt.management.tournament.domain.MatchListRepository
 import de.ttt.management.tournament.domain.MatchState
+import de.ttt.management.tournament.domain.TournamentMatch
 import de.ttt.management.tournament.domain.TournamentMatchRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -37,7 +38,7 @@ class MatchListService(
         val newEntry = MatchList(UUID.randomUUID().toString(), newIds, asGroup, position)
         matchListRepository.save(newEntry)
 
-        newIds.forEach { matchRepository.setWaitingList(it, true) }
+        newIds.forEach { id -> updateMatch(id) { it.queue() } }
         publishChange()
         return newEntry
     }
@@ -46,7 +47,7 @@ class MatchListService(
     fun deleteMatchFromList(uuid: String): Boolean {
         val entry = matchListRepository.findById(uuid).orElse(null) ?: return false
         matchListRepository.deleteById(uuid)
-        entry.matchIds.forEach { matchRepository.setWaitingList(it, false) }
+        entry.matchIds.forEach { id -> updateMatch(id) { it.dequeue() } }
         publishChange()
         return true
     }
@@ -80,6 +81,10 @@ class MatchListService(
         return true
     }
 
+    /**
+     * Removes [matchId] from every queue entry. Called after the match has been assigned or
+     * started, which already cleared its queue flag.
+     */
     @Transactional
     fun removeMatchFromList(matchId: Long) {
         val entries = matchListRepository.findAll().filter { matchId in it.matchIds }
@@ -91,10 +96,15 @@ class MatchListService(
                 matchListRepository.save(entry.copy(matchIds = remaining))
             }
         }
-        matchRepository.setWaitingList(matchId, false)
         if (entries.isNotEmpty()) {
             publishChange()
         }
+    }
+
+    private fun updateMatch(matchId: Long, transition: (TournamentMatch) -> Unit) {
+        val match = matchRepository.findById(matchId).orElse(null) ?: return
+        transition(match)
+        matchRepository.save(match)
     }
 
     private fun publishChange() {

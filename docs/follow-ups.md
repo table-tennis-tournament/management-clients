@@ -41,7 +41,7 @@ The PlantUML diagrams (`docs/arc42/diagrams`, e.g. `backend-components.puml`, `c
 
 ## 6. Rename "stop" to "take back"
 
-The domain term is **Take back** (see `GLOSSARY.md`), but the table manager's "Zurück" still calls `POST /api/v2/match/stop/{id}`, which maps to `MatchService.stopMatch` and `TournamentMatchRepository.stopMatch`. Rename the endpoint (keeping the old path as an alias for a release), the service method and the repository method. The update event is already `MATCH_TAKEN_BACK`.
+The domain term is **Take back** (see `GLOSSARY.md`), but the table manager's "Zurück" still calls `POST /api/v2/match/stop/{id}`, which maps to `MatchService.stopMatch` and `TournamentMatchRepository.stopMatch`. Rename the endpoint (keeping the old path as an alias for a release) and the service method. The repository method no longer exists: `stopMatch` is now `TournamentMatch.takeBack()` plus `save`, guarded by the Match being in play. The update event is already `MATCH_TAKEN_BACK`.
 
 ## 7. Other open items
 

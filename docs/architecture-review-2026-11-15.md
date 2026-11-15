@@ -8,7 +8,7 @@ The defects listed below were found by reading the code. None of them were repro
 
 | # | Candidate | Strength |
 |---|-----------|----------|
-| 1 | Deepen the Match lifecycle module | Strong |
+| 1 | Deepen the Match lifecycle module | Strong (done) |
 | 2 | One Result entry module for the clients | Strong |
 | 3 | One answer to "what state is this Match in?" | Worth exploring |
 | 4 | A shared Update event module for the clients | Worth exploring |
@@ -19,6 +19,8 @@ The defects listed below were found by reading the code. None of them were repro
 ---
 
 ## 1. Deepen the Match lifecycle module (Strong)
+
+**Status: done.** `TournamentMatch` owns every transition, `TournamentMatchRepository.save(match)` replaced the ten write methods, and `MatchService` derives event scopes from the table before the transition. Covered by `TournamentMatchTest` and `JdbcTournamentMatchRepositoryIT`.
 
 **Files** (under `management-backend/src/main/kotlin/de/ttt/management/tournament/`)
 - `domain/TournamentMatch.kt` (197 lines)

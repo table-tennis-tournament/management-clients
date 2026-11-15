@@ -81,22 +81,27 @@ class TournamentMatch(
 
     /**
      * Assigns the match to a table without starting it, transitioning it to [MatchState.OnTable].
+     * Any previous call is cleared.
      */
-    fun assign(tableId: Long) {
+    fun assign(tableId: Long, now: LocalDateTime = LocalDateTime.now()) {
         require(!isPlayed) { "A completed match cannot be assigned" }
         require(!isPlaying) { "A match that is already playing cannot be reassigned" }
         this.tableId = tableId
+        startTime = now
         isPlaying = false
         waitingList = false
         callState = CallState.None
     }
 
     /**
-     * Starts the match, transitioning it to [MatchState.Started].
+     * Starts the match on [tableId] (by default the table it is assigned to),
+     * transitioning it to [MatchState.Started].
      */
-    fun start() {
+    fun start(tableId: Long? = this.tableId, now: LocalDateTime = LocalDateTime.now()) {
         require(!isPlayed) { "A completed match cannot be started" }
         require(!isPlaying) { "A match that is already playing cannot be started again" }
+        this.tableId = tableId
+        startTime = now
         isPlaying = true
         waitingList = false
     }
@@ -145,16 +150,19 @@ class TournamentMatch(
         isPlaying = false
         isKampflos = true
         winner = null
+        leaveTable()
     }
 
     /**
-     * Takes a match back to [MatchState.Open] so it can be played again later.
+     * Takes a match back from its table to [MatchState.Open] so it can be played again later.
+     * Used for the administrator's take back and the table manager's "Zurück".
      */
     fun takeBack() {
         isPlayed = false
         isPlaying = false
         isKampflos = false
         winner = null
+        leaveTable()
     }
 
     /**
@@ -183,6 +191,12 @@ class TournamentMatch(
         this.isPlaying = false
         this.isKampflos = false
         this.winner = if (games1 > games2) player1 else player2
+        leaveTable()
+    }
+
+    private fun leaveTable() {
+        tableId = null
+        callState = CallState.None
     }
 
     private fun applySets(sets: List<SetResult>) {

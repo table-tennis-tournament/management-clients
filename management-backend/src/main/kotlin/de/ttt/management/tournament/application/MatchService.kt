@@ -12,7 +12,6 @@ import de.ttt.management.tournament.domain.*
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service("tournamentMatchService")
 class MatchService(
@@ -45,147 +44,53 @@ class MatchService(
     fun getActiveTypes(): List<TournamentDiscipline> = disciplineRepository.findAll().filter { it.active }
 
     @Transactional
-    fun assignMatch(matchId: Long, tableId: Long): Boolean {
-        val match = matchRepository.findById(matchId).orElse(null) ?: return false
-        val previousTableId = match.tableId
-        return try {
-            match.assign(tableId)
-            val updatedRows = matchRepository.assignMatch(matchId, tableId, LocalDateTime.now())
-            if (updatedRows > 0) {
-                matchListService.removeMatchFromList(matchId)
-                eventPublisher.publishEvent(MatchAssigned(matchId = matchId, tableId = tableId, typeId = match.typeId, previousTableId = previousTableId))
-                true
-            } else {
-                false
-            }
-        } catch (e: IllegalArgumentException) {
-            false
+    fun assignMatch(matchId: Long, tableId: Long): Boolean =
+        transition(listOf(matchId), { it.assign(tableId) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
+            MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.previousTableId)
         }
-    }
 
     @Transactional
-    fun startMatch(matchId: Long, tableId: Long): Boolean {
-        val match = matchRepository.findById(matchId).orElse(null) ?: return false
-        val previousTableId = match.tableId
-        return try {
-            match.start()
-            val updatedRows = matchRepository.startMatch(matchId, tableId, LocalDateTime.now())
-            if (updatedRows > 0) {
-                matchListService.removeMatchFromList(matchId)
-                eventPublisher.publishEvent(MatchStarted(matchId = matchId, tableId = tableId, typeId = match.typeId, previousTableId = previousTableId))
-                true
-            } else {
-                false
-            }
-        } catch (e: IllegalArgumentException) {
-            false
+    fun startMatch(matchId: Long, tableId: Long): Boolean =
+        transition(listOf(matchId), { it.start(tableId) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
+            MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.previousTableId)
         }
-    }
 
     /**
      * Takes a running match back from its table (the table manager's "back" action).
      * Publishes [MatchTakenBack] like the administrator's take back.
      */
     @Transactional
-    fun stopMatch(matchId: Long): Boolean {
-        val isPlaying = matchRepository.isMatchPlaying(matchId)
-        if (!isPlaying) {
-            return false
-        }
-
-        val match = matchRepository.findById(matchId).orElse(null)
-        val updatedRows = matchRepository.stopMatch(matchId)
-        if (updatedRows > 0) {
-            eventPublisher.publishEvent(takenBackEvent(listOfNotNull(match)))
-        }
-        return updatedRows > 0
-    }
+    fun stopMatch(matchId: Long): Boolean =
+        transition(listOf(matchId), { require(it.isPlaying) { "Only a running match can be stopped" }; it.takeBack() }, event = ::takenBackEvent)
 
     @Transactional
-    fun removeMatchesFromTable(matchIds: List<Long>): Boolean {
-        var allSuccess = true
-        val removed = mutableListOf<TournamentMatch>()
-        for (matchId in matchIds) {
-            val match = matchRepository.findById(matchId).orElse(null)
-            if (matchRepository.removeFromTable(matchId) == 0) {
-                allSuccess = false
-            } else if (match != null) {
-                removed.add(match)
-            }
-        }
-        if (removed.isNotEmpty()) {
-            eventPublisher.publishEvent(takenBackEvent(removed))
-        }
-        return allSuccess
-    }
+    fun removeMatchesFromTable(matchIds: List<Long>): Boolean =
+        transition(matchIds, TournamentMatch::takeBack, event = ::takenBackEvent)
 
     @Transactional
-    fun setResult(matchId: Long, sets: List<SetResult>): Boolean {
-        val match = matchRepository.findById(matchId).orElse(null) ?: return false
-        return try {
-            match.complete(sets)
-            val updatedRows = matchRepository.completeResult(
+    fun setResult(matchId: Long, sets: List<SetResult>): Boolean =
+        transition(listOf(matchId), { it.complete(sets) }) { (t) ->
+            MatchCompleted(
                 matchId = matchId,
-                resultRaw = match.resultRaw ?: "",
-                result = match.result ?: "",
-                sets1 = match.sets1 ?: 0,
-                sets2 = match.sets2 ?: 0,
-                balls1 = match.balls1 ?: 0,
-                balls2 = match.balls2 ?: 0,
-                winnerId = match.winner?.id
+                winnerId = t.match.winner?.id,
+                sets1 = t.match.sets1 ?: 0,
+                sets2 = t.match.sets2 ?: 0,
+                typeId = t.match.typeId,
+                tableId = t.previousTableId
             )
-            if (updatedRows > 0) {
-                eventPublisher.publishEvent(
-                    MatchCompleted(
-                        matchId = matchId,
-                        winnerId = match.winner?.id,
-                        sets1 = match.sets1 ?: 0,
-                        sets2 = match.sets2 ?: 0,
-                        typeId = match.typeId,
-                        tableId = match.tableId
-                    )
-                )
-                true
-            } else {
-                false
-            }
-        } catch (e: IllegalArgumentException) {
-            false
         }
-    }
 
     @Transactional
-    fun updateResult(matchId: Long, sets: List<SetResult>): Boolean {
-        val match = matchRepository.findById(matchId).orElse(null) ?: return false
-        return try {
-            match.enterResult(sets)
-            val updatedRows = matchRepository.updatePartialResult(
+    fun updateResult(matchId: Long, sets: List<SetResult>): Boolean =
+        transition(listOf(matchId), { it.enterResult(sets) }) { (t) ->
+            MatchResultUpdated(
                 matchId = matchId,
-                resultRaw = match.resultRaw ?: "",
-                result = match.result ?: "",
-                sets1 = match.sets1 ?: 0,
-                sets2 = match.sets2 ?: 0,
-                balls1 = match.balls1 ?: 0,
-                balls2 = match.balls2 ?: 0
+                sets1 = t.match.sets1 ?: 0,
+                sets2 = t.match.sets2 ?: 0,
+                typeId = t.match.typeId,
+                tableId = t.previousTableId
             )
-            if (updatedRows > 0) {
-                eventPublisher.publishEvent(
-                    MatchResultUpdated(
-                        matchId = matchId,
-                        sets1 = match.sets1 ?: 0,
-                        sets2 = match.sets2 ?: 0,
-                        typeId = match.typeId,
-                        tableId = match.tableId
-                    )
-                )
-                true
-            } else {
-                false
-            }
-        } catch (e: IllegalArgumentException) {
-            false
         }
-    }
 
     @Transactional
     fun deleteMatch(id: Long): Boolean {
@@ -220,101 +125,81 @@ class MatchService(
     }
 
     @Transactional
-    fun freeMatches(matchIds: List<Long>): Boolean {
-        var allSuccess = true
-        val freed = mutableListOf<TournamentMatch>()
-        for (matchId in matchIds) {
-            val match = matchRepository.findById(matchId).orElse(null)
-            if (match == null) {
-                allSuccess = false
-                continue
-            }
-            match.free()
-            if (matchRepository.freeMatch(matchId) == 0) {
-                allSuccess = false
-            } else {
-                freed.add(match)
-            }
+    fun freeMatches(matchIds: List<Long>): Boolean =
+        transition(matchIds, TournamentMatch::free) { freed ->
+            MatchFreed(freed.mapNotNull { it.match.id }, freed.mapNotNull { it.match.typeId }, freed.mapNotNull { it.previousTableId })
         }
-        if (freed.isNotEmpty()) {
-            eventPublisher.publishEvent(
-                MatchFreed(freed.mapNotNull { it.id }, freed.mapNotNull { it.typeId }, freed.mapNotNull { it.tableId })
-            )
-        }
-        return allSuccess
-    }
 
     @Transactional
-    fun takeBackMatches(matchIds: List<Long>): Boolean {
-        var allSuccess = true
-        val affected = mutableListOf<TournamentMatch>()
-        for (matchId in matchIds) {
-            val match = matchRepository.findById(matchId).orElse(null)
-            if (match == null) {
-                allSuccess = false
-                continue
-            }
-            match.takeBack()
-            if (matchRepository.takeBackMatch(matchId) == 0) {
-                allSuccess = false
-            } else {
-                affected.add(match)
-            }
-        }
-        if (affected.isNotEmpty()) {
-            eventPublisher.publishEvent(takenBackEvent(affected))
-        }
-        return allSuccess
-    }
+    fun takeBackMatches(matchIds: List<Long>): Boolean =
+        transition(matchIds, TournamentMatch::takeBack, event = ::takenBackEvent)
 
     @Transactional
-    fun callMatches(matchIds: List<Long>): Boolean {
-        var allSuccess = true
-        val called = mutableListOf<TournamentMatch>()
-        for (matchId in matchIds) {
-            val match = matchRepository.findById(matchId).orElse(null)
-            if (match == null) {
-                allSuccess = false
-                continue
-            }
-            match.call()
-            if (matchRepository.updateCallState(matchId, match.callState) == 0) {
-                allSuccess = false
-            } else {
-                called.add(match)
-            }
-        }
-        if (called.isNotEmpty()) {
-            eventPublisher.publishEvent(calledEvent(called, CallState.FirstCall))
-        }
-        return allSuccess
-    }
+    fun callMatches(matchIds: List<Long>): Boolean =
+        transition(matchIds, TournamentMatch::call) { calledEvent(it, CallState.FirstCall) }
 
     @Transactional
     fun callPlayers(matchId: Long): Boolean {
         val match = matchRepository.findById(matchId).orElse(null) ?: return false
-        val previous = match.callState
-        match.callAgain()
-        if (match.callState == previous) {
-            return true
+        if (match.callState == CallState.None || match.callState == CallState.ThirdCall) {
+            return true // nothing to advance
         }
-        val updated = matchRepository.updateCallState(matchId, match.callState) > 0
-        if (updated) {
-            eventPublisher.publishEvent(calledEvent(listOf(match), match.callState))
-        }
-        return updated
+        return transition(listOf(matchId), TournamentMatch::callAgain) { calledEvent(it, it.first().match.callState) }
     }
 
-    private fun takenBackEvent(matches: List<TournamentMatch>) = MatchTakenBack(
-        matchIds = matches.mapNotNull { it.id },
-        typeIds = matches.mapNotNull { it.typeId },
-        tableIds = matches.mapNotNull { it.tableId }
+    /** A match after a transition, together with the table it was on before. */
+    private class Transitioned(val match: TournamentMatch, val previousTableId: Long?)
+
+    /**
+     * Loads each match, lets it decide the transition, saves it and publishes one event built
+     * from the transitioned matches. [onSaved] runs for each saved match before the event is
+     * published. A missing match, a rejected transition or a failed save
+     * counts as a failure; the other matches are still processed.
+     */
+    private fun transition(
+        matchIds: List<Long>,
+        apply: (TournamentMatch) -> Unit,
+        onSaved: (TournamentMatch) -> Unit = {},
+        event: (List<Transitioned>) -> Any
+    ): Boolean {
+        var allSuccess = true
+        val transitioned = mutableListOf<Transitioned>()
+        for (matchId in matchIds) {
+            val match = matchRepository.findById(matchId).orElse(null)
+            if (match == null) {
+                allSuccess = false
+                continue
+            }
+            val previousTableId = match.tableId
+            try {
+                apply(match)
+            } catch (e: IllegalArgumentException) {
+                allSuccess = false
+                continue
+            }
+            if (matchRepository.save(match) == 0) {
+                allSuccess = false
+            } else {
+                onSaved(match)
+                transitioned.add(Transitioned(match, previousTableId))
+            }
+        }
+        if (transitioned.isNotEmpty()) {
+            eventPublisher.publishEvent(event(transitioned))
+        }
+        return allSuccess
+    }
+
+    private fun takenBackEvent(matches: List<Transitioned>) = MatchTakenBack(
+        matchIds = matches.mapNotNull { it.match.id },
+        typeIds = matches.mapNotNull { it.match.typeId },
+        tableIds = matches.mapNotNull { it.previousTableId }
     )
 
-    private fun calledEvent(matches: List<TournamentMatch>, callState: CallState) = MatchCalled(
-        matchIds = matches.mapNotNull { it.id },
+    private fun calledEvent(matches: List<Transitioned>, callState: CallState) = MatchCalled(
+        matchIds = matches.mapNotNull { it.match.id },
         callState = callState.name,
-        typeIds = matches.mapNotNull { it.typeId },
-        tableIds = matches.mapNotNull { it.tableId }
+        typeIds = matches.mapNotNull { it.match.typeId },
+        tableIds = matches.mapNotNull { it.previousTableId }
     )
 }

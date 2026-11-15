@@ -224,4 +224,46 @@ class TournamentMatchTest {
         val match = TournamentMatch(id = 1L, team1 = listOf(TournamentPlayer(id = 1L)), team2 = emptyList())
         assertFalse(match.isPlayableAgainst(listOf(match)))
     }
+
+    @Test
+    fun `starting on a table puts the match on that table`() {
+        val match = match()
+        match.start(tableId = 4L)
+
+        assertEquals(4L, match.tableId)
+        assertEquals(MatchState.Started, match.state)
+    }
+
+    @Test
+    fun `taking a match back leaves the table and clears the call`() {
+        val match = match()
+        match.assign(tableId = 7)
+        match.call()
+        match.start()
+        match.takeBack()
+
+        assertEquals(null, match.tableId)
+        assertEquals(CallState.None, match.callState)
+        assertEquals(MatchState.Open, match.state)
+    }
+
+    @Test
+    fun `completing a match leaves the table`() {
+        val match = match()
+        match.assign(tableId = 7)
+        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+
+        assertEquals(null, match.tableId)
+        assertFalse(match.isBlocking)
+    }
+
+    @Test
+    fun `freeing a match leaves the table`() {
+        val match = match()
+        match.assign(tableId = 7)
+        match.free()
+
+        assertEquals(null, match.tableId)
+        assertEquals(MatchState.Finished, match.state)
+    }
 }

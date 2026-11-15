@@ -4,7 +4,6 @@ import de.ttt.management.tournament.domain.*
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 import java.util.*
 
 @Repository
@@ -193,167 +192,69 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             .toSet()
     }
 
-    override fun isMatchPlaying(matchId: Long): Boolean {
-        val result = jdbcClient.sql("SELECT matc_isplaying FROM matches WHERE matc_id = :id")
-            .param("id", matchId)
-            .query(Int::class.java)
-            .optional()
+    /**
+     * Writes only the lifecycle columns; players, discipline, number and round belong to mktt
+     * (ADR-0001). The call state and the table history live in the `mgmt_` sidecar tables.
+     */
+    override fun save(match: TournamentMatch): Int {
+        val id = requireNotNull(match.id) { "Only an existing match can be saved" }
+        val persistedTableId = jdbcClient.sql("SELECT matc_tabl_id FROM matches WHERE matc_id = :id")
+            .param("id", id)
+            .query { rs, _ -> rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 } }
+            .list()
+            .firstOrNull()
 
-        return result.orElse(0) > 0
-    }
-
-    override fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int {
         val updated = jdbcClient.sql(
             """
-            UPDATE matches 
-            SET matc_tabl_id = :tableId, matc_isplaying = 0, matc_waitinglist = 0, matc_starttime = :startTime
+            UPDATE matches
+            SET matc_tabl_id = :tableId, matc_isplaying = :playing, matc_played = :played,
+                matc_kampflos = :kampflos, matc_waitinglist = :waiting, matc_starttime = :startTime,
+                matc_winner_id = :winnerId, matc_result = :result, matc_resultraw = :resultRaw,
+                matc_sets1 = :sets1, matc_sets2 = :sets2, matc_balls1 = :balls1, matc_balls2 = :balls2
             WHERE matc_id = :id
             """.trimIndent()
         )
-            .param("tableId", tableId)
-            .param("startTime", startTime)
-            .param("id", matchId)
+            .param("tableId", match.tableId)
+            .param("playing", if (match.isPlaying) 1 else 0)
+            .param("played", if (match.isPlayed) 1 else 0)
+            .param("kampflos", if (match.isKampflos) 1 else 0)
+            .param("waiting", if (match.waitingList) 1 else 0)
+            .param("startTime", match.startTime)
+            .param("winnerId", match.winner?.id)
+            .param("result", match.result)
+            .param("resultRaw", match.resultRaw)
+            .param("sets1", match.sets1 ?: 0)
+            .param("sets2", match.sets2 ?: 0)
+            .param("balls1", match.balls1 ?: 0)
+            .param("balls2", match.balls2 ?: 0)
+            .param("id", id)
             .update()
-        jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
-            .param("id", matchId)
-            .update()
-        insertMatchTable(matchId, tableId)
+        if (updated == 0) return 0
+
+        saveCallState(id, match.callState)
+        if (persistedTableId != match.tableId) {
+            deleteMatchTableForMatch(id)
+            match.tableId?.let { insertMatchTable(id, it) }
+        }
         return updated
     }
 
-    override fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_isplaying = 1, matc_tabl_id = :tableId, matc_starttime = :startTime
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("tableId", tableId)
-            .param("startTime", startTime)
-            .param("id", matchId)
-            .update()
-    }
-
-    override fun stopMatch(matchId: Long): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_isplaying = 0, matc_tabl_id = NULL
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("id", matchId)
-            .update()
-    }
-
-    override fun removeFromTable(matchId: Long): Int {
-        val updated = jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_tabl_id = NULL, matc_isplaying = 0
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("id", matchId)
-            .update()
-        jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
-            .param("id", matchId)
-            .update()
-        deleteMatchTableForMatch(matchId)
-        return updated
-    }
-
-    override fun freeMatch(matchId: Long): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_isplaying = 0, matc_played = 1, matc_kampflos = 1, matc_tabl_id = NULL
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("id", matchId)
-            .update()
-            .also { deleteMatchTableForMatch(matchId) }
-    }
-
-    override fun takeBackMatch(matchId: Long): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_isplaying = 0, matc_played = 0, matc_kampflos = 0, matc_tabl_id = NULL
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("id", matchId)
-            .update()
-            .also { deleteMatchTableForMatch(matchId) }
-    }
-
-    override fun setWaitingList(matchId: Long, waiting: Boolean): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_waitinglist = :waiting
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("waiting", if (waiting) 1 else 0)
-            .param("id", matchId)
-            .update()
-    }
-
-    override fun updateCallState(matchId: Long, callState: CallState): Int {
-        return jdbcClient.sql(
-            """
-            INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (:id, :callState)
-            ON DUPLICATE KEY UPDATE call_state = :callState
-            """.trimIndent()
-        )
-            .param("callState", callState.code)
-            .param("id", matchId)
-            .update()
-    }
-
-    override fun updatePartialResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_resultraw = :resultRaw, matc_result = :result, matc_sets1 = :sets1, matc_sets2 = :sets2,
-                matc_balls1 = :balls1, matc_balls2 = :balls2, matc_isplaying = 1, matc_played = 0, matc_kampflos = 0
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("resultRaw", resultRaw)
-            .param("result", result)
-            .param("sets1", sets1)
-            .param("sets2", sets2)
-            .param("balls1", balls1)
-            .param("balls2", balls2)
-            .param("id", matchId)
-            .update()
-    }
-
-    override fun completeResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int, winnerId: Long?): Int {
-        return jdbcClient.sql(
-            """
-            UPDATE matches 
-            SET matc_resultraw = :resultRaw, matc_result = :result, matc_sets1 = :sets1, matc_sets2 = :sets2,
-                matc_balls1 = :balls1, matc_balls2 = :balls2, matc_winner_id = :winnerId,
-                matc_played = 1, matc_isplaying = 0, matc_kampflos = 0, matc_tabl_id = NULL
-            WHERE matc_id = :id
-            """.trimIndent()
-        )
-            .param("resultRaw", resultRaw)
-            .param("result", result)
-            .param("sets1", sets1)
-            .param("sets2", sets2)
-            .param("balls1", balls1)
-            .param("balls2", balls2)
-            .param("winnerId", winnerId)
-            .param("id", matchId)
-            .update()
-            .also { deleteMatchTableForMatch(matchId) }
+    private fun saveCallState(matchId: Long, callState: CallState) {
+        if (callState == CallState.None) {
+            jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
+                .param("id", matchId)
+                .update()
+        } else {
+            jdbcClient.sql(
+                """
+                INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (:id, :callState)
+                ON DUPLICATE KEY UPDATE call_state = :callState
+                """.trimIndent()
+            )
+                .param("callState", callState.code)
+                .param("id", matchId)
+                .update()
+        }
     }
 
     override fun deleteById(id: Long): Int {
@@ -374,7 +275,9 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId = :matchId")
             .param("matchId", matchId)
             .update()
-    }    override fun deleteByTypeId(typeId: Long): Int {
+    }
+
+    override fun deleteByTypeId(typeId: Long): Int {
         return jdbcClient.sql("DELETE FROM matches WHERE matc_type_id = :typeId").param("typeId", typeId).update()
     }
 }

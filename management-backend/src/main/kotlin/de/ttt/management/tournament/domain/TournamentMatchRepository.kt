@@ -1,5 +1,4 @@
 package de.ttt.management.tournament.domain
-import java.time.LocalDateTime
 import java.util.*
 interface TournamentMatchRepository {
     fun findAll(): List<TournamentMatch>
@@ -12,17 +11,12 @@ interface TournamentMatchRepository {
     fun findByCallState(callState: CallState): List<TournamentMatch>
     fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch>
     fun findTableIdsInUse(): Set<Long>
-    fun isMatchPlaying(matchId: Long): Boolean
-    fun assignMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
-    fun startMatch(matchId: Long, tableId: Long, startTime: LocalDateTime): Int
-    fun stopMatch(matchId: Long): Int
-    fun removeFromTable(matchId: Long): Int
-    fun freeMatch(matchId: Long): Int
-    fun takeBackMatch(matchId: Long): Int
-    fun setWaitingList(matchId: Long, waiting: Boolean): Int
-    fun updateCallState(matchId: Long, callState: CallState): Int
-    fun updatePartialResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int): Int
-    fun completeResult(matchId: Long, resultRaw: String, result: String, sets1: Int, sets2: Int, balls1: Int, balls2: Int, winnerId: Long?): Int
+    /**
+     * Persists the lifecycle state the match holds (table, playing/played flags, walkover,
+     * queue flag, start time, winner, result and call state). Returns the number of updated
+     * match rows, `0` if the match does not exist.
+     */
+    fun save(match: TournamentMatch): Int
     fun deleteById(id: Long): Int
     fun deleteByTypeId(typeId: Long): Int
 }
