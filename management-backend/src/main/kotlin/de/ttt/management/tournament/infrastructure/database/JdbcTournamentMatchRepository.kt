@@ -320,7 +320,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             """
             UPDATE matches 
             SET matc_resultraw = :resultRaw, matc_result = :result, matc_sets1 = :sets1, matc_sets2 = :sets2,
-                matc_balls1 = :balls1, matc_balls2 = :balls2, matc_isplaying = 1, matc_played = 0
+                matc_balls1 = :balls1, matc_balls2 = :balls2, matc_isplaying = 1, matc_played = 0, matc_kampflos = 0
             WHERE matc_id = :id
             """.trimIndent()
         )
@@ -340,7 +340,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
             UPDATE matches 
             SET matc_resultraw = :resultRaw, matc_result = :result, matc_sets1 = :sets1, matc_sets2 = :sets2,
                 matc_balls1 = :balls1, matc_balls2 = :balls2, matc_winner_id = :winnerId,
-                matc_played = 1, matc_isplaying = 0, matc_tabl_id = NULL
+                matc_played = 1, matc_isplaying = 0, matc_kampflos = 0, matc_tabl_id = NULL
             WHERE matc_id = :id
             """.trimIndent()
         )

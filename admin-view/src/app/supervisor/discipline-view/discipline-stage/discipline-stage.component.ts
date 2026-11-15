@@ -31,7 +31,7 @@ export class DisciplineStageComponent {
 
   waitingListOrOnTableOrCallable(currentMatch: Match) {
     return (
-      currentMatch.state === MatchState[MatchState.InWaitingList] ||
+      currentMatch.state === MatchState[MatchState.InQueue] ||
       currentMatch.state === MatchState[MatchState.Callable] ||
       currentMatch.state === MatchState[MatchState.OnTable] ||
       currentMatch.state === MatchState[MatchState.Started] ||

@@ -10,6 +10,8 @@ import * as fromWebSocket from './websocket/redux/websocket.reducer';
 import * as fromCaller from './caller/redux/caller.reducer';
 import * as fromResult from './result/redux/result.reducer';
 import { environment } from '../environments/environment';
+import { Match } from './shared/data/match.model';
+import { MatchList } from './supervisor/matchlist.model';
 
 export interface State {
   router: fromRouter.RouterReducerState;
@@ -41,7 +43,25 @@ export const getTablesLoading = createSelector((state: State) => state.table, fr
 export const getMatchesState = createSelector((state: State) => state.matches, fromMatches.getMatches);
 export const getMatchesLoading = createSelector((state: State) => state.matches, fromMatches.getMatchesLoading);
 
-export const getMatchListState = createSelector((state: State) => state.matchList, fromMatchList.getMatchList);
+const getMatchListEntries = createSelector((state: State) => state.matchList, fromMatchList.getMatchList);
+
+/**
+ * The queue with the matches of each entry resolved from the matches state. Entries whose
+ * matches are not (yet) loaded are left out, as every queue view renders the entry's first match.
+ */
+export const getMatchListState = createSelector(
+  getMatchListEntries,
+  getMatchesState,
+  (entries: MatchList[], matches: Match[]): MatchList[] => {
+    const matchesById = new Map((matches ?? []).map((match) => [match.id, match]));
+    return (entries ?? [])
+      .map((entry) => ({
+        ...entry,
+        matchinfo: (entry.matchListItem?.matchIds ?? []).map((id) => matchesById.get(id)).filter((match) => !!match),
+      }))
+      .filter((entry) => entry.matchinfo.length > 0);
+  }
+);
 export const getMatchListLoading = createSelector((state: State) => state.matchList, fromMatchList.getMatchListLoading);
 export const getSelectedDiscipline = createSelector(
   (state: State) => state.matchList,

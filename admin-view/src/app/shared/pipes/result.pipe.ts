@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TTResult } from '../../table/table-list/result-modal/ttresult.model';
+import { SetResult } from '../data/set-result.model';
 
 @Pipe({
   name: 'resultPipe',
@@ -9,14 +9,14 @@ export class ResultPipe implements PipeTransform {
   FIRST_PLAYER_SETS = 1;
   SECOND_PLAYER_SETS = 2;
 
-  transform(value: TTResult[], setsForPlayer?: number): any {
-    if (value == null || value.length < 1) {
+  transform(value: SetResult[], setsForPlayer?: number): any {
+    if (!Array.isArray(value) || value.length < 1) {
       return '';
     }
     let firstPlayerSets = 0;
     let secondPlayerSets = 0;
-    value.forEach((element) => {
-      if (element[0] > element[1]) {
+    value.forEach((set) => {
+      if (set.pointsPlayer1 > set.pointsPlayer2) {
         firstPlayerSets++;
         return;
       }

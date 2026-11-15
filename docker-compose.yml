@@ -25,6 +25,8 @@ services:
       timeout: 5s
       retries: 6
       start_period: 30s
+      # probe often while starting, so dependants (management-backend) start as soon as the DB is up
+      start_interval: 2s
   cups:
     build:
       context: ./cups
@@ -40,6 +42,8 @@ services:
     build:
       context: ./management-backend
       dockerfile: Dockerfile
+    # always (re)build on `up` so the stack never runs a stale image of the current sources
+    pull_policy: build
     ports:
       - "8080:8080"
     environment:

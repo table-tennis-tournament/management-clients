@@ -73,8 +73,8 @@
                   @if (currentMatch.tableId) {
                     <span class="circle right">{{ currentMatch.tableId }}</span>
                   }
-                  @if (currentMatch.result) {
-                    <span class="right">{{ currentMatch.result | resultPipe }}</span>
+                  @if (currentMatch.sets?.length) {
+                    <span class="right">{{ currentMatch.sets | resultPipe }}</span>
                   }
                   @if (currentMatch.state === inWaitingListState) {
                     <span class="circle right">W</span>

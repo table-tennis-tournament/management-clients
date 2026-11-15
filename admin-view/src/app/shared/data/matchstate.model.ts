@@ -1,6 +1,6 @@
 export enum MatchState {
   Open = <any>'Open',
-  InWaitingList = <any>'InWaitingList',
+  InQueue = <any>'InQueue',
   Callable = <any>'Callable',
   OnTable = <any>'OnTable',
   Finished = <any>'Finished',

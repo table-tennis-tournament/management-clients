@@ -4,7 +4,7 @@
       <toma-team-item
         [team]="match.team1"
         [showDisciplines]="true"
-        [result]="match.result ? (match.result | resultPipe: 1) : null"
+        [result]="match.sets?.length ? (match.sets | resultPipe: 1) : null"
       ></toma-team-item>
       <!--div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 2 }}</div-->
     </div>
@@ -12,7 +12,7 @@
       <toma-team-item
         [team]="match.team2"
         [showDisciplines]="true"
-        [result]="match.result ? (match.result | resultPipe: 2) : null"
+        [result]="match.sets?.length ? (match.sets | resultPipe: 2) : null"
       ></toma-team-item>
       <!--div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 2 }}</div-->
     </div>

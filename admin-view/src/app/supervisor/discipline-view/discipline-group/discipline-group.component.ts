@@ -12,7 +12,7 @@ import { TypeColorMap } from '../../../settings/settings.model';
 })
 export class DisciplineGroupComponent {
   openMatchState: string = MatchState[MatchState.Open];
-  inWaitingListState: string = MatchState[MatchState.InWaitingList];
+  inWaitingListState: string = MatchState[MatchState.InQueue];
   tableNumbers: any[];
 
   @Input()
@@ -90,7 +90,7 @@ export class DisciplineGroupComponent {
   }
 
   isGroupInWaitingList() {
-    const playableMatches = this.group.matches.filter((match) => match.state === MatchState[MatchState.InWaitingList]);
+    const playableMatches = this.group.matches.filter((match) => match.state === MatchState[MatchState.InQueue]);
     return playableMatches.length === this.group.matches.length;
   }
 

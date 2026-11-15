@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { MatchList } from './matchlist.model';
 import { StatusDto } from '../shared/statusdto.model';
 import { MatchListItem } from './matchlistitem.model';
+import { MatchListEntry } from './matchlist-entry.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +13,26 @@ import { MatchListItem } from './matchlistitem.model';
 export class MatchListService {
   constructor(private http: HttpClient) {}
 
+  /**
+   * Loads the queue. The v2 backend only delivers the match ids of each entry; the matches
+   * themselves are joined from the matches state (see `getMatchListState`).
+   */
   loadAllMatchListItems(): Observable<MatchList[]> {
-    return this.http.get<MatchList[]>(`/api/v2/matchlist/all`);
+    return this.http
+      .get<MatchListEntry[]>(`/api/v2/matchlist/all`)
+      .pipe(map((entries) => entries.map((entry) => this.toMatchList(entry))));
+  }
+
+  private toMatchList(entry: MatchListEntry): MatchList {
+    return {
+      matchListItem: {
+        id: entry.uuid,
+        matchIds: entry.matchIds,
+        position: entry.position,
+        group: entry.asGroup,
+      },
+      matchinfo: [],
+    };
   }
 
   assignToMatchList(matches: MatchListItem): Observable<StatusDto> {

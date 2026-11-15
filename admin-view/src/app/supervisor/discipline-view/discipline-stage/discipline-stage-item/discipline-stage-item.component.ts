@@ -21,7 +21,7 @@ export class DisciplineStageItemComponent {
   }
 
   isMatchInWaitingList() {
-    return this.match.state === MatchState[MatchState.InWaitingList];
+    return this.match.state === MatchState[MatchState.InQueue];
   }
 
   isMatchCallable() {

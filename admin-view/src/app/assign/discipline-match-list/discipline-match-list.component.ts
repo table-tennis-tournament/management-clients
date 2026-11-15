@@ -80,7 +80,7 @@ export class DisciplineMatchListComponent {
   }
 
   private isMatchOpenOrInWaitingList(match) {
-    return match.state === MatchState[MatchState.Open] || match.state === MatchState[MatchState.InWaitingList];
+    return match.state === MatchState[MatchState.Open] || match.state === MatchState[MatchState.InQueue];
   }
 
   isMatchInGroup(groupId: number, currentMatch: Match) {
