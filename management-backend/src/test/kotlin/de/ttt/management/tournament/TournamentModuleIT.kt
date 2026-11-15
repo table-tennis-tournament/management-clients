@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
 import org.junit.jupiter.api.BeforeEach
@@ -31,6 +32,9 @@ class TournamentModuleIT {
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
+
+    @Autowired
+    private lateinit var tableService: TableService
 
     private var validMatchId: Long = 0
 
@@ -500,5 +504,35 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
+    }
+
+    @Test
+    fun `the table manager DTO carries the match state and the call number`() {
+        val tableId = tableService.getTableByName("1")!!.id!!
+        matchService.assignMatch(validMatchId, tableId)
+        matchService.callMatches(listOf(validMatchId))
+        matchService.callPlayers(validMatchId)
+
+        restTestClient.get()
+            .uri("/api/v2/tables?table_manager=1")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].table_number").isEqualTo(1)
+            .jsonPath("$[0].matches[0].match_id").isEqualTo(validMatchId)
+            .jsonPath("$[0].matches[0].state").isEqualTo("OnTable")
+            .jsonPath("$[0].matches[0].callNumber").isEqualTo(2)
+            .jsonPath("$[0].matches[0].players_a[0].call_count").isEqualTo(2)
+    }
+
+    @Test
+    fun `every match DTO carries the call number`() {
+        restTestClient.get()
+            .uri("/api/v2/match/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].state").isEqualTo("Open")
+            .jsonPath("$[0].callNumber").isEqualTo(0)
     }
 }

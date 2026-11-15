@@ -14,7 +14,10 @@ data class TableManagerMatch(
     val players_b: List<TableManagerPlayer>,
     val stage: String?,
     val classification: String?,
-    val state: String?
+    /** The [de.ttt.management.tournament.domain.MatchState] name, as on every other Match DTO. */
+    val state: String,
+    /** See [de.ttt.management.tournament.domain.TournamentMatch.callNumber]. */
+    val callNumber: Int
 )
 
 data class TableManagerResult(

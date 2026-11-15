@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { Discipline } from '../../discipline/discipline.model';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { isFinalResult, matchWinner, parseResult, SetScore, Side } from '../../shared/result-entry/result-entry';
 import { TTMatchResult } from '../../table/table-list/result-modal/ttmatch-result.model';
+import { isFinished } from '../../shared/match-state/match-state';
 
 @Component({
   selector: 'toma-result-list',
@@ -71,8 +71,9 @@ export class ResultListComponent {
     this.selectedMatches = filteredMatches;
   }
 
+  /** Freed matches (Finished, no played result yet) wait here for their result. */
   matchIsReadyForResult(match: Match) {
-    return match.state === MatchState[MatchState.Finished];
+    return isFinished(match);
   }
 
   onKeyUp(input: string, index: number) {

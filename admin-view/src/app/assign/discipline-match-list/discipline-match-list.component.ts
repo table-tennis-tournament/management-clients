@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { MatchList } from '../../supervisor/matchlist.model';
 import { Discipline } from '../../discipline/discipline.model';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
+import { isWaiting } from '../../shared/match-state/match-state';
 
 @Component({
   selector: 'toma-discipline-match-list',
@@ -59,10 +59,7 @@ export class DisciplineMatchListComponent {
   onDisciplineSelected(disciplineId: number) {
     this.currentDisciplineId = disciplineId;
     if (+disciplineId === 0) {
-      this.currentMatchesToShow = Object.assign(
-        [],
-        this.matches.filter((match) => this.isMatchOpenOrInWaitingList(match))
-      );
+      this.currentMatchesToShow = Object.assign([], this.matches.filter(isWaiting));
       return;
     }
 
@@ -73,14 +70,8 @@ export class DisciplineMatchListComponent {
       );
       return;
     }
-    const filteredMatches = this.matches
-      .filter((match) => match.type.id === +disciplineId)
-      .filter((match) => this.isMatchOpenOrInWaitingList(match));
+    const filteredMatches = this.matches.filter((match) => match.type.id === +disciplineId).filter(isWaiting);
     this.currentMatchesToShow = filteredMatches;
-  }
-
-  private isMatchOpenOrInWaitingList(match) {
-    return match.state === MatchState[MatchState.Open] || match.state === MatchState[MatchState.InQueue];
   }
 
   isMatchInGroup(groupId: number, currentMatch: Match) {
@@ -88,7 +79,7 @@ export class DisciplineMatchListComponent {
       currentMatch != null &&
       currentMatch.playGroup != null &&
       currentMatch.playGroup.id === groupId &&
-      this.isMatchOpenOrInWaitingList(currentMatch)
+      isWaiting(currentMatch)
     );
   }
 

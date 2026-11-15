@@ -1,6 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { Match } from '../../../../shared/data/match.model';
-import { MatchState } from '../../../../shared/data/matchstate.model';
+import {
+  callNumber,
+  isAtTable,
+  isCompleted,
+  isFinished,
+  isQueued,
+  isWaiting,
+} from '../../../../shared/match-state/match-state';
 
 @Component({
   selector: 'toma-discipline-stage-item',
@@ -13,26 +20,23 @@ export class DisciplineStageItemComponent {
   match: Match;
 
   isMatchComplete() {
-    return this.match.state === MatchState[MatchState.Completed];
-  }
-
-  isMatchOpen() {
-    return this.match.state === MatchState[MatchState.Open];
+    return isCompleted(this.match);
   }
 
   isMatchInWaitingList() {
-    return this.match.state === MatchState[MatchState.InQueue];
+    return isQueued(this.match);
   }
 
+  /** At its table and waiting for the first Call ("A" badge). */
   isMatchCallable() {
-    return this.match.state === MatchState[MatchState.Callable];
+    return isAtTable(this.match) && callNumber(this.match) === 0;
   }
 
   isMatchFinished() {
-    return this.match.state === MatchState[MatchState.Finished];
+    return isFinished(this.match);
   }
 
   isMatchBlocked() {
-    return (this.isMatchInWaitingList() || this.isMatchOpen()) && !this.match.isPlayable;
+    return isWaiting(this.match) && !this.match.isPlayable;
   }
 }

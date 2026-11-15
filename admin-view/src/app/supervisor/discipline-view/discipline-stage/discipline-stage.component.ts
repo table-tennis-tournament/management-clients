@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DisciplineStage } from '../models/discipline.stage.model';
 import { Match } from '../../../shared/data/match.model';
-import { MatchState } from '../../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../../settings/settings.model';
+import { isInProgress, isOpen } from '../../../shared/match-state/match-state';
 
 @Component({
   selector: 'toma-discipline-stage',
@@ -29,18 +29,6 @@ export class DisciplineStageComponent {
   @Output()
   deleteStage: EventEmitter<DisciplineStage> = new EventEmitter<DisciplineStage>();
 
-  waitingListOrOnTableOrCallable(currentMatch: Match) {
-    return (
-      currentMatch.state === MatchState[MatchState.InQueue] ||
-      currentMatch.state === MatchState[MatchState.Callable] ||
-      currentMatch.state === MatchState[MatchState.OnTable] ||
-      currentMatch.state === MatchState[MatchState.Started] ||
-      currentMatch.state === MatchState[MatchState.SecondCall] ||
-      currentMatch.state === MatchState[MatchState.ThirdCall]
-    );
-  }
-
-  isMatchOpen(currentMatch: Match) {
-    return currentMatch.state === MatchState[MatchState.Open];
-  }
+  readonly isInProgress = isInProgress;
+  readonly isOpen = isOpen;
 }

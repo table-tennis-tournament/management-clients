@@ -10,6 +10,7 @@ import {
   Side,
 } from '../../shared/result-entry/result-entry';
 import { toGames, toSets } from '../match/games';
+import { callNumber, isAtTable, isBeingPlayed } from '../../shared/match-state/match-state';
 import { Match } from '../match/match.model';
 import { Player } from '../match/player.model';
 import { GameDialogComponent } from './game-dialog/game-dialog.component';
@@ -86,15 +87,15 @@ export class TtTableComponent {
   maxGames = [0, 1, 2, 3, 4];
 
   currentMatch(): Match {
-    return this.table.matches.find((match) => match.state === 'Started');
+    return this.table.matches.find(isBeingPlayed);
   }
 
   isSecondCall() {
-    return this.table.matches.find((match) => match.state === 'SecondCall');
+    return this.table.matches.find((match) => isAtTable(match) && callNumber(match) === 2);
   }
 
   isThirdCall() {
-    return this.table.matches.find((match) => match.state === 'ThirdCall');
+    return this.table.matches.find((match) => isAtTable(match) && callNumber(match) === 3);
   }
 
   tableHasStartedMatch(): boolean {

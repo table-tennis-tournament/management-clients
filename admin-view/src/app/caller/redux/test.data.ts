@@ -1,3 +1,5 @@
+import { MatchAggregate } from '../../shared/data/match.aggregate';
+
 export const testPlayers = [
   {
     id: 278,
@@ -27,7 +29,7 @@ export const testPlayers = [
   },
 ];
 
-export const testAggregate = [
+export const testAggregate: MatchAggregate[] = [
   {
     name: 'Gruppenspiel 01 ',
     startTime: '19/01/2019 16:13:21',
@@ -98,7 +100,7 @@ export const testAggregate = [
         type: { id: 7, name: 'Herren C', kind: 1, active: true },
         playGroup: { id: 1, name: '01 ' },
         isPlayable: false,
-        state: 'Callable',
+        state: 'OnTable',
         tableId: 6,
       },
       {
@@ -133,7 +135,7 @@ export const testAggregate = [
         type: { id: 7, name: 'Herren C', kind: 1, active: true },
         playGroup: { id: 1, name: '01 ' },
         isPlayable: false,
-        state: 'Callable',
+        state: 'OnTable',
         tableId: 6,
       },
     ],

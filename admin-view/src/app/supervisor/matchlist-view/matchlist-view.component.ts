@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchList } from '../matchlist.model';
 import { MatchListItem } from '../matchlistitem.model';
 import { Match } from '../../shared/data/match.model';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
+import { isOpen } from '../../shared/match-state/match-state';
 
 @Component({
   selector: 'toma-matchlist-view',
@@ -50,13 +50,9 @@ export class MatchlistViewComponent {
 
   assignMatchesToMatchList(matches: Match[], index: number) {
     const matchListItem = {
-      matchIds: matches.filter((match) => this.isMatchOpen(match)).map((match) => match.id),
+      matchIds: matches.filter(isOpen).map((match) => match.id),
       position: index,
     };
     this.assignMatchListItem.emit(matchListItem);
-  }
-
-  private isMatchOpen(match: Match) {
-    return match.state === MatchState[MatchState.Open];
   }
 }

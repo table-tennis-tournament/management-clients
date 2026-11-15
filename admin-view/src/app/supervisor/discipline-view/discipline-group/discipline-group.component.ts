@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DisciplineGroup } from '../models/discipline.group.model';
 import { Match } from '../../../shared/data/match.model';
-import { MatchState } from '../../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../../settings/settings.model';
+import { isOpen, isOver, isQueued } from '../../../shared/match-state/match-state';
 
 @Component({
   selector: 'toma-discipline-group',
@@ -11,8 +11,8 @@ import { TypeColorMap } from '../../../settings/settings.model';
   standalone: false,
 })
 export class DisciplineGroupComponent {
-  openMatchState: string = MatchState[MatchState.Open];
-  inWaitingListState: string = MatchState[MatchState.InQueue];
+  readonly isOpen = isOpen;
+  readonly isQueued = isQueued;
   tableNumbers: any[];
 
   @Input()
@@ -42,7 +42,7 @@ export class DisciplineGroupComponent {
   }
 
   get openMatches() {
-    return this.group.matches.filter((match) => match.state !== MatchState[MatchState.Completed]).length;
+    return this.group.matches.filter((match) => !isOver(match)).length;
   }
 
   @Input()
@@ -90,8 +90,7 @@ export class DisciplineGroupComponent {
   }
 
   isGroupInWaitingList() {
-    const playableMatches = this.group.matches.filter((match) => match.state === MatchState[MatchState.InQueue]);
-    return playableMatches.length === this.group.matches.length;
+    return this.group.matches.every(isQueued);
   }
 
   groupIsNotPlayable() {
@@ -99,12 +98,10 @@ export class DisciplineGroupComponent {
   }
 
   groupIsNotComplete() {
-    const notFinishedMatches = this.group.matches.filter((match) => match.state !== MatchState[MatchState.Completed]);
-    return notFinishedMatches.length > 0;
+    return this.group.matches.some((match) => !isOver(match));
   }
 
   groupIsDraggable() {
-    const openMatches = this.group.matches.filter((match) => match.state === MatchState[MatchState.Open]);
-    return openMatches.length > 0;
+    return this.group.matches.some(isOpen);
   }
 }

@@ -1,3 +1,4 @@
+import { MatchStateName } from '../match-state/match-state';
 import { Group } from './group.model';
 import { Player } from './player.model';
 import { Discipline } from '../../discipline/discipline.model';
@@ -12,7 +13,10 @@ export interface Match {
   /** The per-set points of the match. Read them through `shared/result-entry`. */
   sets?: SetScore[];
   waitingList?: boolean;
-  state?: string;
+  /** The lifecycle state; ask `shared/match-state` instead of comparing it. */
+  state?: MatchStateName;
+  /** How many Calls have been announced (0-3). */
+  callNumber?: number;
   tableId?: number;
   team1?: Player[];
   team2?: Player[];

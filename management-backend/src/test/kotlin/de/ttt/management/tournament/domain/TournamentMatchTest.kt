@@ -266,4 +266,18 @@ class TournamentMatchTest {
         assertEquals(null, match.tableId)
         assertEquals(MatchState.Finished, match.state)
     }
+
+    @Test
+    fun `the call number counts the announced calls`() {
+        val match = match()
+        match.assign(tableId = 7)
+        assertEquals(0, match.callNumber)
+
+        match.call()
+        assertEquals(1, match.callNumber)
+
+        match.callAgain()
+        match.callAgain()
+        assertEquals(3, match.callNumber)
+    }
 }

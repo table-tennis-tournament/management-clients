@@ -54,6 +54,13 @@ class TournamentMatch(
         }
 
     /**
+     * How many Calls have been announced for the match: 0 (none), 1, 2 (Second call) or 3
+     * (Third call). Serialized next to [state] so clients never derive it themselves.
+     */
+    val callNumber: Int
+        get() = callState.code
+
+    /**
      * A match blocks other matches involving the same players when it is assigned to a table
      * or already being played.
      */

@@ -1,3 +1,4 @@
+import { MatchStateName } from '../../shared/match-state/match-state';
 import { SetScore } from '../../shared/result-entry/result-entry';
 import { Group } from './group';
 import { MatchType } from './matchType';
@@ -20,5 +21,8 @@ export interface Match {
   matchType?: MatchType;
   type?: Type;
   playGroup?: Group;
-  state?: string;
+  /** The lifecycle state; ask `shared/match-state` instead of comparing it. */
+  state?: MatchStateName;
+  /** How many Calls have been announced (0-3). */
+  callNumber?: number;
 }

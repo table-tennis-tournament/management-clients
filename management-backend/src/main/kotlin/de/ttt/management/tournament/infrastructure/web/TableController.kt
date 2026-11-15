@@ -2,7 +2,6 @@ package de.ttt.management.tournament.infrastructure.web
 
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.application.TableService
-import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.TTTable
 import de.ttt.management.tournament.domain.TournamentMatch
 import de.ttt.management.tournament.domain.TournamentPlayer
@@ -105,33 +104,22 @@ class TableController(
                 games_won_player_a = match.sets.count { it.pointsPlayer1 > it.pointsPlayer2 },
                 games_won_player_b = match.sets.count { it.pointsPlayer2 > it.pointsPlayer1 }
             ),
-            players_a = match.team1.map { toTableManagerPlayer(it) },
-            players_b = match.team2.map { toTableManagerPlayer(it) },
+            players_a = match.team1.map { toTableManagerPlayer(it, match.callNumber) },
+            players_b = match.team2.map { toTableManagerPlayer(it, match.callNumber) },
             stage = match.matchType?.name,
             classification = classification,
-            state = legacyState(match)
+            state = match.state.name,
+            callNumber = match.callNumber
         )
     }
 
-    private fun toTableManagerPlayer(player: TournamentPlayer): TableManagerPlayer {
+    private fun toTableManagerPlayer(player: TournamentPlayer, callNumber: Int): TableManagerPlayer {
         return TableManagerPlayer(
             player_id = player.id,
             first_name = player.firstName,
             last_name = player.lastName,
             club = null,
-            call_count = 1
+            call_count = callNumber
         )
-    }
-
-    private fun legacyState(match: TournamentMatch): String = when {
-        match.isPlayed && match.isKampflos -> "Finished"
-        match.isPlayed -> "Completed"
-        match.isPlaying -> "Started"
-        match.callState == CallState.ThirdCall -> "ThirdCall"
-        match.callState == CallState.SecondCall -> "SecondCall"
-        match.callState == CallState.FirstCall -> "OnTable"
-        match.tableId != null -> "Callable"
-        match.waitingList -> "InWaitingList"
-        else -> "Open"
     }
 }

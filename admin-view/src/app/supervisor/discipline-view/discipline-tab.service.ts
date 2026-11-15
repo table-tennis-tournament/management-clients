@@ -3,7 +3,7 @@ import { Match } from '../../shared/data/match.model';
 import { DisciplineTab } from './models/discipline.tab.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { DisciplineGroup } from './models/discipline.group.model';
-import { MatchState } from '../../shared/data/matchstate.model';
+import { isOver } from '../../shared/match-state/match-state';
 
 @Injectable({
   providedIn: 'root',
@@ -80,8 +80,9 @@ export class DisciplineTabService {
     return currentItemTab;
   }
 
+  /** A Completed or Finished (walkover) match counts as done. */
   private isMatchComplete(currentItem: Match) {
-    return MatchState[currentItem.state] === MatchState.Completed;
+    return isOver(currentItem);
   }
 
   public getTabsForDisciplines(disciplines: Discipline[]): DisciplineTab[] {

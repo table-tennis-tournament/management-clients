@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DisciplineGroup } from '../data/discipline.group';
 import { DisciplineTab } from '../data/discipline.tab';
+import { isOver } from '../../shared/match-state/match-state';
 import { Match } from '../data/match';
 
 @Injectable({
@@ -75,8 +76,9 @@ export class DisciplineTabService {
     return currentItemTab;
   }
 
+  /** A Completed or Finished (walkover) match counts as done. */
   private isMatchComplete(currentItem: Match) {
-    return currentItem.state === 'Completed';
+    return isOver(currentItem);
   }
 
   private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {

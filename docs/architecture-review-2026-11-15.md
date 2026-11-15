@@ -10,7 +10,7 @@ The defects listed below were found by reading the code. None of them were repro
 |---|-----------|----------|
 | 1 | Deepen the Match lifecycle module | Strong (done) |
 | 2 | One Result entry module for the clients | Strong (done) |
-| 3 | One answer to "what state is this Match in?" | Worth exploring |
+| 3 | One answer to "what state is this Match in?" | Worth exploring (done) |
 | 4 | A shared Update event module for the clients | Worth exploring |
 | 5 | Collapse admin-view's command plumbing | Speculative |
 
@@ -80,6 +80,8 @@ The defects listed below were found by reading the code. None of them were repro
 ---
 
 ## 3. One answer to "what state is this Match in?" (Worth exploring)
+
+**Status: done.** Every Match DTO, the tablemanager DTO included, carries `state` and `callNumber`; `legacyState` is deleted. Each client has an identical copy of `src/app/shared/match-state/match-state.ts` and its spec, and the enums and string comparisons are gone. *Finished* counts as over (`isOver`) in the supervisor and result-view completion checks.
 
 **Files**
 - backend: `TournamentMatch.state`, `TableController.legacyState`, `MatchState.kt`, `CallState`
@@ -167,6 +169,6 @@ The page component branches single-Match vs multi-Match in five handlers. `onRem
 **Untested core logic:**
 - ~~`GameService`~~, ~~both result pipes~~ (replaced by `result-entry`, see candidate 2)
 - result-view `DisciplineTabService` (about 90% the same as the admin copy)
-- the admin component state predicates
+- ~~the admin component state predicates~~ (`match-state`, see candidate 3)
 - ~~the result-modal input formatting~~ (`formatResult`)
 - both STOMP transport services

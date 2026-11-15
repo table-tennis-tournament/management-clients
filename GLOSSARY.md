@@ -74,7 +74,7 @@ The lifecycle of a Match is expressed through its state:
 
 **Finished** — the match has ended without a played result, for example a bye or a walkover ("free match"). Like Completed, it is a terminal state.
 
-The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InWaitingList`, `Callable`, `OnTable`, `SecondCall`, `ThirdCall`, `Started`, `Finished` and `Completed`. Two code names are counter-intuitive: assigning a match to a table sets the state `Callable`, while announcing the call sets the state `OnTable`.
+The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InQueue`, `OnTable` (At Table), `Started`, `Completed` and `Finished`. The calls are not states: every Match DTO carries `callNumber` next to `state` (0 = not called yet, 1 = Called, 2 = Second call, 3 = Third call). Clients ask the questions in `src/app/shared/match-state/match-state.ts` (`isWaiting`, `isAtTable`, `isBeingPlayed`, `isOver`, `callNumber`, …) instead of comparing state names. The legacy names `InWaitingList`, `Callable`, `SecondCall` and `ThirdCall` are gone.
 
 **Live updates**
 

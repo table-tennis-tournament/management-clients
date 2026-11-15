@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
 
 @Component({
@@ -21,12 +20,5 @@ export class CallerMatchDetailComponent {
 
   onMatchCalled() {
     this.matchCalled.emit(this.matchAggregate.matches.map((match) => match.id));
-  }
-
-  stateIsCallable() {
-    const notCallableMatches = this.matchAggregate.matches
-      .map((match) => match.state)
-      .filter((state) => state !== MatchState.Callable.toString());
-    return notCallableMatches.length < 1;
   }
 }
