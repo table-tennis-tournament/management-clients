@@ -3,8 +3,10 @@ import { resetDatabase } from './db-helper';
 
 test.describe('Ausrufer View', () => {
   test.beforeAll(async () => {
+    // a cold start may (re)build the backend image and initialise MariaDB, so the hook needs more than the default 30s
+    test.setTimeout(600_000);
     await resetDatabase();
-  }, { timeout: 300000 });
+  });
 
   test('should show an assigned match and remove it after clicking OK', async ({ page, request }) => {
     // Assign match 3 (Priyanka Sow vs Babajide Santos) to table 1 via the API.
