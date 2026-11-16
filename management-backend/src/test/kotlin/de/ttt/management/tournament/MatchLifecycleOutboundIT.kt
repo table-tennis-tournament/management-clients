@@ -1,21 +1,22 @@
 package de.ttt.management.tournament
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.StompTestSupport
 import de.ttt.management.tournament.application.MatchService
-import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.SetResult
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class MatchLifecycleOutboundIT {
 
     @LocalServerPort
@@ -25,27 +26,21 @@ class MatchLifecycleOutboundIT {
     private lateinit var matchService: MatchService
 
     @Autowired
-    private lateinit var tableService: TableService
+    private lateinit var db: DatabaseHelper
 
-    @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
-
-    private var matchId: Long = 0
+    private val matchId = 1L
+    private val tableId = 1L
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
-        matchId = matchService.getAllMatches().first().id!!
+        db.clean()
+        db.insertSingleOpenMatch()
     }
 
     @Test
     fun `match lifecycle publishes the full event set over the websocket`() {
-        assertTrue(matchId > 0)
-
         val session = StompTestSupport.connect(port)
         val messages = StompTestSupport.subscribe(session)
-
-        val tableId = tableService.getAllTables().first().id!!
 
         matchService.assignMatch(matchId, tableId)                                    // MATCH_ASSIGNED
         matchService.callMatches(listOf(matchId))                                     // MATCH_CALLED

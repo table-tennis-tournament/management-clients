@@ -1,5 +1,7 @@
 package de.ttt.management.tournament.infrastructure.database
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.SetResult
 import de.ttt.management.tournament.domain.TournamentMatch
@@ -7,16 +9,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.transaction.annotation.Transactional
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @SpringBootTest
 @ActiveProfiles("test") // Uses H2
-@Transactional
+@Import(DatabaseHelperConfiguration::class)
 class JdbcTournamentMatchRepositoryIT {
 
     @Autowired
@@ -25,14 +27,15 @@ class JdbcTournamentMatchRepositoryIT {
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
-    private var matchId: Long = 0
+    @Autowired
+    private lateinit var db: DatabaseHelper
+
+    private val matchId = 1L
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_waitinglist = 0")
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state")
-        jdbcTemplate.update("DELETE FROM mgmt_matchtable")
-        matchId = repository.findAll().first().id!!
+        db.clean()
+        db.insertSingleOpenMatch()
     }
 
     private fun load(): TournamentMatch = repository.findById(matchId).orElseThrow()

@@ -1,15 +1,18 @@
 package de.ttt.management.tournament
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.modulith.test.ApplicationModuleTest
 import org.springframework.modulith.test.PublishedEvents
 import org.springframework.test.context.ActiveProfiles
@@ -18,6 +21,7 @@ import org.springframework.test.web.servlet.client.RestTestClient
 @ApplicationModuleTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class TournamentModuleTest {
 
     @Autowired
@@ -27,11 +31,17 @@ class TournamentModuleTest {
     private lateinit var matchService: MatchService
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var db: DatabaseHelper
+
+    @BeforeEach
+    fun setup() {
+        db.clean()
+        db.insertSingleOpenMatch()
+    }
 
     @Test
     fun `setResult endpoint completes a match and publishes MatchCompleted`(events: PublishedEvents) {
-        val matchId = matchService.getAllMatches().first().id!!
+        val matchId = 1L
 
         restTestClient.post()
             .uri("/api/v2/match/setResult/$matchId")
@@ -49,11 +59,7 @@ class TournamentModuleTest {
 
     @Test
     fun `updateResult endpoint puts a match into playing mode and publishes MatchResultUpdated`(events: PublishedEvents) {
-        val matchId = matchService.getAllMatches().first().id!!
-        jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
-            matchId
-        )
+        val matchId = 1L
 
         restTestClient.post()
             .uri("/api/v2/match/updateResult/$matchId")
@@ -71,11 +77,7 @@ class TournamentModuleTest {
 
     @Test
     fun `matchtotable endpoint assigns a match and publishes MatchAssigned`(events: PublishedEvents) {
-        val matchId = matchService.getAllMatches().first().id!!
-        jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
-            matchId
-        )
+        val matchId = 1L
 
         restTestClient.post()
             .uri("/api/v2/match/matchtotable/1")
@@ -95,11 +97,7 @@ class TournamentModuleTest {
 
     @Test
     fun `adding a match to the list publishes MatchListChanged and sets InQueue`(events: PublishedEvents) {
-        val matchId = matchService.getAllMatches().first().id!!
-        jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_waitinglist = 0, matc_tabl_id = NULL WHERE matc_id = ?",
-            matchId
-        )
+        val matchId = 1L
 
         restTestClient.post()
             .uri("/api/v2/matchlist/add")
@@ -117,12 +115,7 @@ class TournamentModuleTest {
 
     @Test
     fun `call endpoint announces the first call and publishes MatchCalled`(events: PublishedEvents) {
-        val matchId = matchService.getAllMatches().first().id!!
-        jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
-            matchId
-        )
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = ?", matchId)
+        val matchId = 1L
 
         restTestClient.post()
             .uri("/api/v2/match/call")
@@ -139,13 +132,8 @@ class TournamentModuleTest {
 
     @Test
     fun `playercall endpoint advances to the second call and publishes MatchCalled`(events: PublishedEvents) {
-        val matchId = matchService.getAllMatches().first().id!!
-        jdbcTemplate.update(
-            "UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL WHERE matc_id = ?",
-            matchId
-        )
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = ?", matchId)
-        jdbcTemplate.update("INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (?, 1)", matchId)
+        val matchId = 1L
+        db.insertCallState(matchId, callState = 1)
 
         restTestClient.post()
             .uri("/api/v2/playercall/$matchId")

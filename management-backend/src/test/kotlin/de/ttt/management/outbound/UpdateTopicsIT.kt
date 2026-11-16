@@ -1,5 +1,7 @@
 package de.ttt.management.outbound
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.StompTestSupport
 import de.ttt.management.registration.application.DisciplineService
 import de.ttt.management.registration.application.PlayerService
@@ -11,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
@@ -25,6 +27,7 @@ import kotlin.test.assertTrue
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class UpdateTopicsIT {
 
     @LocalServerPort
@@ -43,21 +46,30 @@ class UpdateTopicsIT {
     private lateinit var disciplineService: DisciplineService
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var db: DatabaseHelper
 
     @Autowired
     private lateinit var transactionManager: PlatformTransactionManager
 
-    private var matchId: Long = 0
-    private var tableId: Long = 0
+    private val matchId = 1L
+    private val tableId = 1L
+    private val disciplineId = 1L
 
+    /**
+     * Discipline 1 with the open matches 1 (players 1 vs 2), 2 (3 vs 4) and 3 (5 vs 6), table 1, and
+     * discipline 2 without matches, in which player 1 is registered (registration 1, not paid).
+     */
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state")
-        jdbcTemplate.update("DELETE FROM mgmt_table_lock")
-        matchId = matchService.getAllMatches().first().id!!
-        tableId = tableService.getAllTables().first().id!!
+        db.clean()
+        db.insertDiscipline(disciplineId, "Herren")
+        db.insertDiscipline(2, "Damen")
+        (1L..6L).forEach { db.insertPlayer(it, "First$it", "Last$it") }
+        db.insertMatch(1, 1, 2, disciplineId)
+        db.insertMatch(2, 3, 4, disciplineId)
+        db.insertMatch(3, 5, 6, disciplineId)
+        db.insertTable(tableId)
+        db.insertRegistration(1, playerId = 1, disciplineId = 2)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -68,7 +80,6 @@ class UpdateTopicsIT {
     @Test
     fun `match events arrive on the matches topic with match, discipline and table scope`() {
         val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
-        val typeId = matchService.getMatch(matchId)!!.typeId
 
         matchService.assignMatch(matchId, tableId)
 
@@ -78,7 +89,7 @@ class UpdateTopicsIT {
         assertEquals("matches", message["topic"])
         assertEquals(listOf(matchId), ids(scope(message)["matchIds"]))
         assertEquals(listOf(tableId), ids(scope(message)["tableIds"]))
-        assertEquals(listOfNotNull(typeId), ids(scope(message)["typeIds"]))
+        assertEquals(listOf(disciplineId), ids(scope(message)["typeIds"]))
     }
 
     @Test
@@ -125,7 +136,7 @@ class UpdateTopicsIT {
 
     @Test
     fun `a bulk operation publishes a single event with all match ids`() {
-        val matchIds = matchService.getAllMatches().take(3).map { it.id!! }
+        val matchIds = listOf(1L, 2L, 3L)
         val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
 
         assertTrue(matchService.callMatches(matchIds))
@@ -155,7 +166,6 @@ class UpdateTopicsIT {
     @Test
     fun `discipline colors publish on the settings topic`() {
         val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
-        val disciplineId = disciplineService.getAllDisciplines().first().id!!
 
         assertTrue(disciplineService.saveTypeColor(disciplineId, "#fff", "#000"))
 
@@ -169,26 +179,18 @@ class UpdateTopicsIT {
     @Test
     fun `player payment and activity publish on the players topic`() {
         val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
-        val registration = playerService.getAllTypePerPlayer().first()
-        val player = playerService.getAllPlayers().first()
-        val wasActive = player.active
 
-        try {
-            assertTrue(playerService.setPaid(registration.id, !registration.paid))
-            val paid = StompTestSupport.poll(messages)
-            assertNotNull(paid)
-            assertEquals("PLAYER_PAID", paid["type"])
-            assertEquals("players", paid["topic"])
+        assertTrue(playerService.setPaid(1, true))
+        val paid = StompTestSupport.poll(messages)
+        assertNotNull(paid)
+        assertEquals("PLAYER_PAID", paid["type"])
+        assertEquals("players", paid["topic"])
 
-            assertTrue(playerService.setPlayerActiveState(player.id!!, !wasActive))
-            val activity = StompTestSupport.poll(messages)
-            assertNotNull(activity)
-            assertEquals("PLAYER_ACTIVE_CHANGED", activity["type"])
-            assertEquals("players", activity["topic"])
-        } finally {
-            playerService.setPaid(registration.id, registration.paid)
-            playerService.setPlayerActiveState(player.id!!, wasActive)
-        }
+        assertTrue(playerService.setPlayerActiveState(1, false))
+        val activity = StompTestSupport.poll(messages)
+        assertNotNull(activity)
+        assertEquals("PLAYER_ACTIVE_CHANGED", activity["type"])
+        assertEquals("players", activity["topic"])
     }
 
     @Test

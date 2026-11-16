@@ -1,9 +1,13 @@
 package de.ttt.management.registration
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
@@ -11,10 +15,32 @@ import org.springframework.test.web.servlet.client.RestTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class RegistrationModuleIT {
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
+
+    @Autowired
+    private lateinit var db: DatabaseHelper
+
+    /**
+     * Club 1, disciplines 1 and 2, players 1 and 2 (club 1) registered for discipline 1,
+     * player 3 (no club, no registration), and a color for discipline 2.
+     */
+    @BeforeEach
+    fun setup() {
+        db.clean()
+        db.insertClub(1, "TTC Musterstadt")
+        db.insertDiscipline(1, "Herren")
+        db.insertDiscipline(2, "Damen")
+        db.insertPlayer(1, "Jane", "Doe", ttr = 1600, sex = "w", clubId = 1)
+        db.insertPlayer(2, "John", "Roe", ttr = 1500, sex = "m", clubId = 1)
+        db.insertPlayer(3, "Max", "Mustermann")
+        db.insertRegistration(1, playerId = 1, disciplineId = 1)
+        db.insertRegistration(2, playerId = 2, disciplineId = 1)
+        db.insertDisciplineColor(2, "#ff0000", "#fff")
+    }
 
     @Test
     fun `should get all players`() {
@@ -23,17 +49,19 @@ class RegistrationModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.length()").isNotEmpty
+            .jsonPath("$[*].id").isEqualTo(listOf(1, 2, 3))
     }
 
     @Test
     fun `should get player by id`() {
         restTestClient.get()
-            .uri("/api/v2/players/54")
+            .uri("/api/v2/players/1")
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo(54)
+            .jsonPath("$.id").isEqualTo(1)
+            .jsonPath("$.firstName").isEqualTo("Jane")
+            .jsonPath("$.club.name").isEqualTo("TTC Musterstadt")
     }
 
     @Test
@@ -51,7 +79,7 @@ class RegistrationModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.length()").isNotEmpty
+            .jsonPath("$[*].id").isEqualTo(listOf(1, 2))
     }
 
     @Test
@@ -75,14 +103,14 @@ class RegistrationModuleIT {
     @Test
     fun `should persist player active state`() {
         restTestClient.post()
-            .uri("/api/v2/players/54/active/false")
+            .uri("/api/v2/players/1/active/false")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
 
         restTestClient.get()
-            .uri("/api/v2/players/54")
+            .uri("/api/v2/players/1")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -104,6 +132,7 @@ class RegistrationModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
+            .json("""{"2": {"bgColor": "#ff0000", "textColor": "#fff"}}""")
     }
 
     @Test

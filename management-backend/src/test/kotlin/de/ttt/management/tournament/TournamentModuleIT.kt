@@ -1,5 +1,8 @@
 package de.ttt.management.tournament
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.CallState
@@ -9,9 +12,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 import kotlin.test.assertEquals
@@ -21,7 +23,7 @@ import kotlin.test.assertTrue
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test") // Uses H2
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Import(DatabaseHelperConfiguration::class)
 class TournamentModuleIT {
 
     @Autowired
@@ -31,28 +33,43 @@ class TournamentModuleIT {
     private lateinit var matchService: MatchService
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
-
-    @Autowired
     private lateinit var tableService: TableService
 
-    private var validMatchId: Long = 0
+    @Autowired
+    private lateinit var matchListService: MatchListService
 
+    @Autowired
+    private lateinit var db: DatabaseHelper
+
+    private val validMatchId = 1L
+
+    /**
+     * Singles discipline 1 ("Herren") with group A and the open "Gruppenspiel" matches
+     * 1 (players 1 vs 2) and 2 (players 1 vs 3, shares player 1 with match 1);
+     * doubles discipline 2 with the open match 3 (double 1 = players 1, 2 vs double 2 = players 3, 4);
+     * tables 1 to 3, all free.
+     */
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0, matc_waitinglist = 0")
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state")
-        jdbcTemplate.update("DELETE FROM mgmt_match_list")
-        jdbcTemplate.update("DELETE FROM mgmt_table_lock")
-        val matches = matchService.getAllMatches()
-        if (matches.isNotEmpty()) {
-            validMatchId = matches[0].id!!
-        }
+        db.clean()
+        // the auto-start flag lives in memory and survives between tests sharing the context
+        matchListService.setMatchListActive(false)
+
+        db.insertDiscipline(1, "Herren")
+        db.insertDiscipline(2, "Herren", kind = 2)
+        db.insertMatchType(1, "Gruppenspiel")
+        db.insertGroup(1, "A", disciplineId = 1)
+        (1L..4L).forEach { db.insertPlayer(it, "First$it", "Last$it") }
+        db.insertDouble(1, player1Id = 1, player2Id = 2, disciplineId = 2)
+        db.insertDouble(2, player1Id = 3, player2Id = 4, disciplineId = 2)
+        db.insertMatch(1, 1, 2, disciplineId = 1, groupId = 1, matchTypeId = 1)
+        db.insertMatch(2, 1, 3, disciplineId = 1, groupId = 1, matchTypeId = 1)
+        db.insertMatch(3, 100001, 100002, disciplineId = 2, matchTypeId = 1)
+        db.insertTables(1L..3L)
     }
 
     @Test
     fun `should start a match successfully`() {
-        assertTrue(validMatchId > 0)
         val tableId = 1L
 
         restTestClient.post()
@@ -65,7 +82,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should fail to start a match that is already playing`() {
-        assertTrue(validMatchId > 0)
         val tableId = 2L
 
         // First start should succeed
@@ -83,7 +99,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should stop a match successfully`() {
-        assertTrue(validMatchId > 0)
         val tableId = 3L
         restTestClient.post()
             .uri("/api/v2/match/start/$validMatchId/$tableId")
@@ -110,7 +125,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should assign match to table by name successfully`() {
-        assertTrue(validMatchId > 0)
         val matchIds = listOf(validMatchId)
         val tableName = "1"
 
@@ -126,7 +140,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should assign match to second table`() {
-        assertTrue(validMatchId > 0)
 
         restTestClient.post()
             .uri("/api/v2/match/matchtosecondtable/2")
@@ -142,7 +155,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should remove match from table`() {
-        assertTrue(validMatchId > 0)
 
         restTestClient.post()
             .uri("/api/v2/match/matchtotable/1")
@@ -168,7 +180,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should list assigned matches via allmatchtable`() {
-        assertTrue(validMatchId > 0)
 
         restTestClient.post()
             .uri("/api/v2/match/matchtotable/1")
@@ -197,7 +208,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should free matches successfully`() {
-        assertTrue(validMatchId > 0)
         val matchIds = listOf(validMatchId)
 
         restTestClient.post()
@@ -212,7 +222,6 @@ class TournamentModuleIT {
 
     @Test
     fun `freeing a match marks it as a walkover`() {
-        assertTrue(validMatchId > 0)
 
         restTestClient.post()
             .uri("/api/v2/match/free")
@@ -228,7 +237,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should take back matches successfully`() {
-        assertTrue(validMatchId > 0)
         val matchIds = listOf(validMatchId)
 
         restTestClient.post()
@@ -243,7 +251,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should manage match list successfully`() {
-        assertTrue(validMatchId > 0)
         val matchIds = listOf(validMatchId)
         val addRequest = mapOf(
             "matchIds" to matchIds,
@@ -292,7 +299,7 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.length()").isNotEmpty
+            .jsonPath("$[*].id").isEqualTo(listOf(1, 2, 3))
     }
 
     @Test
@@ -302,12 +309,11 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.length()").isNotEmpty
+            .jsonPath("$[*].id").isEqualTo(listOf(1, 2))
     }
 
     @Test
     fun `should get match by id`() {
-        assertTrue(validMatchId > 0)
         restTestClient.get()
             .uri("/api/v2/match/$validMatchId")
             .exchange()
@@ -318,7 +324,6 @@ class TournamentModuleIT {
 
     @Test
     fun `should set result successfully`() {
-        assertTrue(validMatchId > 0)
         restTestClient.post()
             .uri("/api/v2/match/setResult/$validMatchId")
             .contentType(MediaType.APPLICATION_JSON)
@@ -336,28 +341,21 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.length()").isNotEmpty
+            .jsonPath("$[*].id").isEqualTo(listOf(1, 2))
     }
 
     @Test
     fun `should delete match successfully`() {
-        // Delete a throwaway copy, not seed data: the H2 database is shared with the other ITs.
-        val throwawayId = 999001L
-        jdbcTemplate.update("DELETE FROM matches WHERE matc_id = ?", throwawayId)
-        jdbcTemplate.update(
-            "INSERT INTO matches (matc_id, matc_play1_id, matc_play2_id, matc_type_id, matc_maty_id, matc_grou_id, matc_roundnumber, matc_nr) " +
-                "SELECT ?, matc_play1_id, matc_play2_id, matc_type_id, matc_maty_id, matc_grou_id, matc_roundnumber, matc_nr FROM matches WHERE matc_id = ?",
-            throwawayId, validMatchId
-        )
         restTestClient.delete()
-            .uri("/api/v2/match/$throwawayId")
+            .uri("/api/v2/match/$validMatchId")
             .exchange()
             .expectStatus().isOk
+
+        assertEquals(null, matchService.getMatch(validMatchId))
     }
 
     @Test
     fun `adding a match to the list sets it InQueue`() {
-        assertTrue(validMatchId > 0)
         val addRequest = mapOf(
             "matchIds" to listOf(validMatchId),
             "asGroup" to null,
@@ -376,7 +374,6 @@ class TournamentModuleIT {
 
     @Test
     fun `auto-start starts the next match from the list`() {
-        assertTrue(validMatchId > 0)
         val addRequest = mapOf(
             "matchIds" to listOf(validMatchId),
             "asGroup" to null,
@@ -414,10 +411,8 @@ class TournamentModuleIT {
 
     @Test
     fun `auto-start does not start a match whose player is already on a table`() {
-        val matches = matchService.getAllMatches()
-        assertTrue(matches.size >= 2)
-        val first = matches[0].id!!
-        val second = matches[1].id!!
+        val first = 1L
+        val second = 2L // shares player 1 with the first match
 
         // Start the first match on table "1" — its players are now blocking.
         restTestClient.post()
@@ -425,11 +420,16 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
 
-        // Queue the second match (shares a player with the first in the test data).
+        // Queue the second match.
         restTestClient.post()
             .uri("/api/v2/matchlist/add")
             .contentType(MediaType.APPLICATION_JSON)
             .body(mapOf("matchIds" to listOf(second), "asGroup" to null, "position" to 0))
+            .exchange()
+            .expectStatus().isOk
+
+        restTestClient.post()
+            .uri("/api/v2/matchlist/active/true")
             .exchange()
             .expectStatus().isOk
 
@@ -450,22 +450,21 @@ class TournamentModuleIT {
 
     @Test
     fun `caller aggregate resolves doubles team ids to individual players`() {
-        // Match 154 is a doubles match: side A references double team 100001 (= double 1: players 54, 158).
-        jdbcTemplate.update("UPDATE matches SET matc_tabl_id = 1, matc_played = 0 WHERE matc_id = 154")
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = 154")
+        // Match 3 is a doubles match: side A references double team 100001 (= double 1: players 1, 2).
+        matchService.assignMatch(3, 1)
 
-        val doubles = matchService.getMatchesByCallState(CallState.None).first { it.id == 154L }
+        val doubles = matchService.getMatchesByCallState(CallState.None).single()
 
-        assertEquals(setOf(54L, 158L), doubles.team1.mapNotNull { it.id }.toSet())
+        assertEquals(3L, doubles.id)
+        assertEquals(listOf(1L, 2L), doubles.team1.map { it.id })
+        assertEquals(listOf(3L, 4L), doubles.team2.map { it.id })
         assertEquals(2, doubles.team1.size)
         assertTrue(doubles.team1.all { it.firstName != null })
     }
 
     @Test
     fun `a match moves through caller second and third call`() {
-        assertTrue(validMatchId > 0)
-        jdbcTemplate.update("UPDATE matches SET matc_tabl_id = 1 WHERE matc_id = ?", validMatchId)
-        jdbcTemplate.update("DELETE FROM mgmt_match_call_state WHERE matc_id = ?", validMatchId)
+        matchService.assignMatch(validMatchId, 1)
 
         // Not yet called -> appears in the caller view
         restTestClient.get()
@@ -474,7 +473,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
-            .jsonPath("$[0].name").isEqualTo("Gruppenspiel 01 ")
+            .jsonPath("$[0].name").isEqualTo("Gruppenspiel A")
 
         // First call
         restTestClient.post()
@@ -526,7 +525,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$[0].table_number").isEqualTo(1)
-            .jsonPath("$[0].matches[0].match_id").isEqualTo(validMatchId)
+            .jsonPath("$[0].matches[0].match_id").isEqualTo(validMatchId.toInt())
             .jsonPath("$[0].matches[0].state").isEqualTo("OnTable")
             .jsonPath("$[0].matches[0].callNumber").isEqualTo(2)
             .jsonPath("$[0].matches[0].players_a[0].call_count").isEqualTo(2)

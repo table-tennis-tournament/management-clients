@@ -1,13 +1,16 @@
 package de.ttt.management.printer
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.settings.application.PrinterService
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 import kotlin.test.assertTrue
@@ -15,6 +18,7 @@ import kotlin.test.assertTrue
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class PrinterModuleIT {
 
     @Autowired
@@ -24,7 +28,20 @@ class PrinterModuleIT {
     private lateinit var printerService: PrinterService
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var db: DatabaseHelper
+
+    /** Match 1 (players 1 vs 2) of discipline 1, group A, on table 1. */
+    @BeforeEach
+    fun setup() {
+        db.clean()
+        db.insertDiscipline(1, "Herren")
+        db.insertGroup(1, "A", disciplineId = 1)
+        db.insertMatchType(1, "Gruppenspiel")
+        db.insertTable(1)
+        db.insertPlayer(1, "Jane", "Doe")
+        db.insertPlayer(2, "John", "Roe")
+        db.insertMatch(1, 1, 2, disciplineId = 1, groupId = 1, matchTypeId = 1, tableId = 1)
+    }
 
     @Test
     fun `should get all printers`() {
@@ -86,10 +103,8 @@ class PrinterModuleIT {
 
     @Test
     fun `should generate a match pdf`() {
-        // Other ITs share the H2 database and may delete seed matches, so don't hardcode an id.
-        val matchId = jdbcTemplate.queryForObject("SELECT MIN(matc_id) FROM matches", Long::class.java)!!
         restTestClient.get()
-            .uri("/api/v2/printer/printpdf/{id}", matchId)
+            .uri("/api/v2/printer/printpdf/1")
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_PDF)

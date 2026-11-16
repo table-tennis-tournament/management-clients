@@ -1,28 +1,40 @@
 package de.ttt.management.table
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class TableModuleIT {
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var db: DatabaseHelper
 
+    /**
+     * Tables 1 to 12 (table manager 1 has 1-5, manager 2 has 6, 7, 8, 11, 12); table 2 holds
+     * match 1, so the free tables are 1 and 3 to 12.
+     */
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("DELETE FROM mgmt_table_lock")
+        db.clean()
+        db.insertTables(1L..12L)
+        db.insertDiscipline(1, "Herren")
+        db.insertPlayer(1, "Jane", "Doe")
+        db.insertPlayer(2, "John", "Roe")
+        db.insertMatch(1, 1, 2, disciplineId = 1, tableId = 2)
     }
 
     @Test
@@ -32,7 +44,8 @@ class TableModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.length()").isNotEmpty
+            .jsonPath("$[*].number").isEqualTo((1..12).toList())
+            .jsonPath("$[1].matches[*].id").isEqualTo(listOf(1))
     }
 
     @Test
@@ -42,6 +55,7 @@ class TableModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectBody()
+            .jsonPath("$[*].number").isEqualTo(listOf(1) + (3..12).toList())
     }
 
     @Test

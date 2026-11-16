@@ -1,13 +1,15 @@
 package de.ttt.management.tournament
 
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.tournament.application.MatchService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 import kotlin.test.assertTrue
@@ -15,6 +17,7 @@ import kotlin.test.assertTrue
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
+@Import(DatabaseHelperConfiguration::class)
 class MatchLifecycleScenarioIT {
 
     @Autowired
@@ -24,20 +27,18 @@ class MatchLifecycleScenarioIT {
     private lateinit var matchService: MatchService
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var db: DatabaseHelper
 
-    private var matchId: Long = 0
+    private val matchId = 1L
 
     @BeforeEach
     fun setup() {
-        jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
-        matchId = matchService.getAllMatches().first().id!!
+        db.clean()
+        db.insertSingleOpenMatch()
     }
 
     @Test
     fun `a match walks through table assignment, call and completion`() {
-        assertTrue(matchId > 0)
-
         // 1. Assign the match to table "1"
         restTestClient.post()
             .uri("/api/v2/match/matchtotable/1")
