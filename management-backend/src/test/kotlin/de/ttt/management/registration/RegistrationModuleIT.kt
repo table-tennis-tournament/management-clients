@@ -2,6 +2,8 @@ package de.ttt.management.registration
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.expectExactJson
+import de.ttt.management.expectJson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +28,7 @@ class RegistrationModuleIT {
 
     /**
      * Club 1, disciplines 1 and 2, players 1 and 2 (club 1) registered for discipline 1,
-     * player 3 (no club, no registration), and a color for discipline 2.
+     * player 3 (no club, no registration), and a color for discipline 2. Discipline 3 is inactive.
      */
     @BeforeEach
     fun setup() {
@@ -34,6 +36,7 @@ class RegistrationModuleIT {
         db.insertClub(1, "TTC Musterstadt")
         db.insertDiscipline(1, "Herren")
         db.insertDiscipline(2, "Damen")
+        db.insertDiscipline(3, "Senioren", active = false)
         db.insertPlayer(1, "Jane", "Doe", ttr = 1600, sex = "w", clubId = 1)
         db.insertPlayer(2, "John", "Roe", ttr = 1500, sex = "m", clubId = 1)
         db.insertPlayer(3, "Max", "Mustermann")
@@ -48,8 +51,34 @@ class RegistrationModuleIT {
             .uri("/api/v2/players")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[*].id").isEqualTo(listOf(1, 2, 3))
+            .expectJson("registration/players")
+    }
+
+    @Test
+    fun `the legacy all players endpoint returns the same players`() {
+        restTestClient.get()
+            .uri("/api/v2/players/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectJson("registration/players")
+    }
+
+    @Test
+    fun `should get the registrations of disciplines without matches`() {
+        restTestClient.get()
+            .uri("/api/v2/players/allTypePerPlayer")
+            .exchange()
+            .expectStatus().isOk
+            .expectJson("registration/all-type-per-player")
+    }
+
+    @Test
+    fun `the load endpoint reports success`() {
+        restTestClient.get()
+            .uri("/api/v2/players/load")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -58,10 +87,7 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/1")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.id").isEqualTo(1)
-            .jsonPath("$.firstName").isEqualTo("Jane")
-            .jsonPath("$.club.name").isEqualTo("TTC Musterstadt")
+            .expectJson("registration/player-1")
     }
 
     @Test
@@ -78,8 +104,7 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/type/1")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[*].id").isEqualTo(listOf(1, 2))
+            .expectJson("registration/players-type-1")
     }
 
     @Test
@@ -88,8 +113,7 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/type/9999")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(0)
+            .expectExactJson("[]")
     }
 
     @Test
@@ -106,15 +130,13 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/1/active/false")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         restTestClient.get()
             .uri("/api/v2/players/1")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.active").isEqualTo(false)
+            .expectJson("registration/player-1-inactive")
     }
 
     @Test
@@ -131,8 +153,25 @@ class RegistrationModuleIT {
             .uri("/api/v2/disciplines/colors")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .json("""{"2": {"bgColor": "#ff0000", "textColor": "#fff"}}""")
+            .expectExactJson("""{"2": {"bgColor": "#ff0000", "textColor": "#fff"}}""")
+    }
+
+    @Test
+    fun `should get all disciplines`() {
+        restTestClient.get()
+            .uri("/api/v2/disciplines")
+            .exchange()
+            .expectStatus().isOk
+            .expectJson("registration/disciplines")
+    }
+
+    @Test
+    fun `should get the active disciplines`() {
+        restTestClient.get()
+            .uri("/api/v2/disciplines/active")
+            .exchange()
+            .expectStatus().isOk
+            .expectJson("registration/disciplines-active")
     }
 
     @Test
@@ -144,8 +183,15 @@ class RegistrationModuleIT {
             .body(colorData)
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
+
+        restTestClient.get()
+            .uri("/api/v2/disciplines/colors")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson(
+                """{"1": {"bgColor": "red", "textColor": "white"}, "2": {"bgColor": "#ff0000", "textColor": "#fff"}}"""
+            )
     }
 
     @Test
@@ -157,8 +203,7 @@ class RegistrationModuleIT {
             .body(colorData)
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(false)
+            .expectExactJson("""{"success": false}""")
     }
 
     @Test
@@ -170,7 +215,14 @@ class RegistrationModuleIT {
             .body(colors)
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
+
+        restTestClient.get()
+            .uri("/api/v2/disciplines/colors")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson(
+                """{"1": {"bgColor": "blue", "textColor": "black"}, "2": {"bgColor": "#ff0000", "textColor": "#fff"}}"""
+            )
     }
 }

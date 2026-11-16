@@ -1,0 +1,12 @@
+{
+  "type" : "TABLE_LOCKED",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ ],
+    "tableIds" : [ 1 ]
+  },
+  "payload" : {
+    "tableId" : 1,
+    "locked" : true
+  }
+}

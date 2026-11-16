@@ -2,6 +2,7 @@ package de.ttt.management.tournament.infrastructure.database
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.DeterministicTestConfiguration.Companion.NOW
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.SetResult
 import de.ttt.management.tournament.domain.TournamentMatch
@@ -49,23 +50,23 @@ class JdbcTournamentMatchRepositoryIT {
     @Test
     fun `persists an assignment, a call and the table history`() {
         val match = load()
-        match.assign(3L)
+        match.assign(3L, now = NOW)
         match.call()
         assertEquals(1, repository.save(match))
 
         val reloaded = load()
         assertEquals(3L, reloaded.tableId)
         assertEquals(CallState.FirstCall, reloaded.callState)
-        assertTrue(reloaded.startTime != null)
+        assertEquals(NOW, reloaded.startTime)
         assertEquals(listOf(3L), matchTableRows())
     }
 
     @Test
     fun `moving a match to another table replaces its table history row`() {
         val match = load()
-        match.assign(3L)
+        match.assign(3L, now = NOW)
         repository.save(match)
-        match.start(5L)
+        match.start(5L, now = NOW)
         repository.save(match)
 
         assertEquals(listOf(5L), matchTableRows())
@@ -75,7 +76,7 @@ class JdbcTournamentMatchRepositoryIT {
     @Test
     fun `taking a match back clears the table, the call state and the table history`() {
         val match = load()
-        match.assign(3L)
+        match.assign(3L, now = NOW)
         match.call()
         repository.save(match)
 
@@ -95,7 +96,7 @@ class JdbcTournamentMatchRepositoryIT {
             "SELECT matc_play1_id, matc_play2_id, matc_type_id, matc_nr, matc_roundnumber FROM matches WHERE matc_id = ?", matchId
         )
         val match = load()
-        match.start(3L)
+        match.start(3L, now = NOW)
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
         repository.save(match)
 

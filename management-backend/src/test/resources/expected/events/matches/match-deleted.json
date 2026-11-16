@@ -1,0 +1,13 @@
+{
+  "type" : "MATCH_DELETED",
+  "scope" : {
+    "matchIds" : [ 1 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ 1 ]
+  },
+  "payload" : {
+    "matchIds" : [ 1 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ 1 ]
+  }
+}

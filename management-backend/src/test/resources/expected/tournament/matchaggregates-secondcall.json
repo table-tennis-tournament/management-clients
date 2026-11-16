@@ -1,0 +1,58 @@
+[ {
+  "name" : "Finale",
+  "startTime" : "2026-11-16T10:00:00",
+  "tableNumbers" : [ 2 ],
+  "discipline" : {
+    "id" : 2,
+    "name" : "Herren",
+    "kind" : 2,
+    "active" : true
+  },
+  "players" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410
+  }, {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : 1420
+  }, {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430
+  }, {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : 1440
+  } ],
+  "matches" : [ {
+    "id" : 4,
+    "startTime" : "2026-11-16T10:00:00",
+    "team1" : [ {
+      "id" : 1,
+      "firstName" : "First1",
+      "lastName" : "Last1",
+      "ttr" : 1410
+    }, {
+      "id" : 2,
+      "firstName" : "First2",
+      "lastName" : "Last2",
+      "ttr" : 1420
+    } ],
+    "team2" : [ {
+      "id" : 3,
+      "firstName" : "First3",
+      "lastName" : "Last3",
+      "ttr" : 1430
+    }, {
+      "id" : 4,
+      "firstName" : "First4",
+      "lastName" : "Last4",
+      "ttr" : 1440
+    } ]
+  } ]
+} ]

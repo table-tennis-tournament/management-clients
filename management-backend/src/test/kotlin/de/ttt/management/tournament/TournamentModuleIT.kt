@@ -2,9 +2,10 @@ package de.ttt.management.tournament
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.expectExactJson
+import de.ttt.management.expectJson
 import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
-import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
 import org.junit.jupiter.api.BeforeEach
@@ -31,9 +32,6 @@ class TournamentModuleIT {
 
     @Autowired
     private lateinit var matchService: MatchService
-
-    @Autowired
-    private lateinit var tableService: TableService
 
     @Autowired
     private lateinit var matchListService: MatchListService
@@ -76,8 +74,7 @@ class TournamentModuleIT {
             .uri("/api/v2/match/start/$validMatchId/$tableId")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -109,8 +106,7 @@ class TournamentModuleIT {
             .uri("/api/v2/match/stop/$validMatchId")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -134,8 +130,7 @@ class TournamentModuleIT {
             .body(matchIds)
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -147,8 +142,7 @@ class TournamentModuleIT {
             .body(listOf(validMatchId))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertTrue(matchService.getMatch(validMatchId)!!.tableId != null)
     }
@@ -169,8 +163,7 @@ class TournamentModuleIT {
             .body(listOf(validMatchId))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         val removed = matchService.getMatch(validMatchId)!!
         assertTrue(removed.tableId == null)
@@ -192,8 +185,7 @@ class TournamentModuleIT {
             .uri("/api/v2/match/allmatchtable")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(1)
+            .expectExactJson("""[{"matchId": 1, "tableId": 1}]""")
     }
 
     @Test
@@ -202,8 +194,7 @@ class TournamentModuleIT {
             .uri("/api/v2/match/loadnew")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -216,8 +207,7 @@ class TournamentModuleIT {
             .body(matchIds)
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -245,8 +235,7 @@ class TournamentModuleIT {
             .body(matchIds)
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -265,19 +254,13 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
 
-        var uuid = ""
+        // the first generated UUID of a test
+        val uuid = "00000000-0000-0000-0000-000000000001"
         restTestClient.get()
             .uri("/api/v2/matchlist/all")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(1)
-            .consumeWith { response ->
-                val json = String(response.responseBody!!)
-                val regex = "\"uuid\":\"([^\"]+)\"".toRegex()
-                val match = regex.find(json)
-                uuid = match?.groups?.get(1)?.value ?: ""
-            }
+            .expectExactJson("""[{"uuid": "$uuid", "matchIds": [1], "asGroup": null, "position": 1}]""")
 
         restTestClient.delete()
             .uri("/api/v2/matchlist/$uuid")
@@ -288,38 +271,7 @@ class TournamentModuleIT {
             .uri("/api/v2/matchlist/all")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(0)
-    }
-
-    @Test
-    fun `should get all matches`() {
-        restTestClient.get()
-            .uri("/api/v2/match/all")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[*].id").isEqualTo(listOf(1, 2, 3))
-    }
-
-    @Test
-    fun `should get matches by type`() {
-        restTestClient.get()
-            .uri("/api/v2/match/typeid/1")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[*].id").isEqualTo(listOf(1, 2))
-    }
-
-    @Test
-    fun `should get match by id`() {
-        restTestClient.get()
-            .uri("/api/v2/match/$validMatchId")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.id").isEqualTo(validMatchId.toInt())
+            .expectExactJson("[]")
     }
 
     @Test
@@ -330,18 +282,7 @@ class TournamentModuleIT {
             .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
-    }
-
-    @Test
-    fun `should get all types`() {
-        restTestClient.get()
-            .uri("/api/v2/types/all")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[*].id").isEqualTo(listOf(1, 2))
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -396,8 +337,7 @@ class TournamentModuleIT {
             .uri("/api/v2/matchlist/auto-start")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertTrue(matchService.getMatch(validMatchId)!!.isPlaying)
 
@@ -405,8 +345,7 @@ class TournamentModuleIT {
             .uri("/api/v2/matchlist/all")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(0)
+            .expectExactJson("[]")
     }
 
     @Test
@@ -444,8 +383,8 @@ class TournamentModuleIT {
             .uri("/api/v2/matchlist/all")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(1)
+            // UUID 1 went to the table history row written when match 1 was started
+            .expectExactJson("""[{"uuid": "00000000-0000-0000-0000-000000000002", "matchIds": [2], "asGroup": null, "position": 0}]""")
     }
 
     @Test
@@ -471,9 +410,7 @@ class TournamentModuleIT {
             .uri("/api/v2/matchaggregates/caller")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
-            .jsonPath("$[0].name").isEqualTo("Gruppenspiel A")
+            .expectJson("tournament/caller-flow-not-called")
 
         // First call
         restTestClient.post()
@@ -488,15 +425,13 @@ class TournamentModuleIT {
             .uri("/api/v2/playercall/$validMatchId")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         restTestClient.get()
             .uri("/api/v2/matchaggregates/secondCall")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
+            .expectJson("tournament/caller-flow-second-call")
 
         // Third call
         restTestClient.post()
@@ -508,37 +443,10 @@ class TournamentModuleIT {
             .uri("/api/v2/matchaggregates/thirdCall")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[0].matches[0].id").isEqualTo(validMatchId.toInt())
-    }
+            .expectJson("tournament/caller-flow-third-call")
 
-    @Test
-    fun `the table manager DTO carries the match state and the call number`() {
-        val tableId = tableService.getTableByName("1")!!.id!!
-        matchService.assignMatch(validMatchId, tableId)
-        matchService.callMatches(listOf(validMatchId))
-        matchService.callPlayers(validMatchId)
-
-        restTestClient.get()
-            .uri("/api/v2/tables?table_manager=1")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[0].table_number").isEqualTo(1)
-            .jsonPath("$[0].matches[0].match_id").isEqualTo(validMatchId.toInt())
-            .jsonPath("$[0].matches[0].state").isEqualTo("OnTable")
-            .jsonPath("$[0].matches[0].callNumber").isEqualTo(2)
-            .jsonPath("$[0].matches[0].players_a[0].call_count").isEqualTo(2)
-    }
-
-    @Test
-    fun `every match DTO carries the call number`() {
-        restTestClient.get()
-            .uri("/api/v2/match/all")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[0].state").isEqualTo("Open")
-            .jsonPath("$[0].callNumber").isEqualTo(0)
+        // a called match no longer shows up in the views of the earlier calls
+        restTestClient.get().uri("/api/v2/matchaggregates/caller").exchange().expectStatus().isOk.expectExactJson("[]")
+        restTestClient.get().uri("/api/v2/matchaggregates/secondCall").exchange().expectStatus().isOk.expectExactJson("[]")
     }
 }

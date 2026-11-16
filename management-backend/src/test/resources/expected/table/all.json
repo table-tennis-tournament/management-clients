@@ -1,0 +1,121 @@
+[ {
+  "id" : 1,
+  "number" : 1,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 2,
+  "number" : 2,
+  "isLocked" : false,
+  "matches" : [ {
+    "id" : 1,
+    "team1" : [ {
+      "id" : 1,
+      "firstName" : "Jane",
+      "lastName" : "Doe",
+      "ttr" : null,
+      "paid" : false
+    } ],
+    "team2" : [ {
+      "id" : 2,
+      "firstName" : "John",
+      "lastName" : "Roe",
+      "ttr" : null,
+      "paid" : false
+    } ],
+    "winner" : null,
+    "playGroup" : null,
+    "matchType" : null,
+    "result" : null,
+    "resultRaw" : null,
+    "sets1" : 0,
+    "sets2" : 0,
+    "balls1" : 0,
+    "balls2" : 0,
+    "isPlayed" : false,
+    "isPlaying" : false,
+    "isKampflos" : false,
+    "waitingList" : false,
+    "callState" : "None",
+    "tableId" : 2,
+    "typeId" : 1,
+    "type" : {
+      "id" : 1,
+      "name" : "Herren",
+      "kind" : 1,
+      "active" : true
+    },
+    "nr" : 1,
+    "roundNumber" : 1,
+    "startTime" : null,
+    "callNumber" : 0,
+    "isBlocking" : true,
+    "isPlayable" : false,
+    "player1" : {
+      "id" : 1,
+      "firstName" : "Jane",
+      "lastName" : "Doe",
+      "ttr" : null,
+      "paid" : false
+    },
+    "player2" : {
+      "id" : 2,
+      "firstName" : "John",
+      "lastName" : "Roe",
+      "ttr" : null,
+      "paid" : false
+    },
+    "sets" : [ ],
+    "state" : "OnTable"
+  } ]
+}, {
+  "id" : 3,
+  "number" : 3,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 4,
+  "number" : 4,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 5,
+  "number" : 5,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 6,
+  "number" : 6,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 7,
+  "number" : 7,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 8,
+  "number" : 8,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 9,
+  "number" : 9,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 10,
+  "number" : 10,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 11,
+  "number" : 11,
+  "isLocked" : false,
+  "matches" : [ ]
+}, {
+  "id" : 12,
+  "number" : 12,
+  "isLocked" : false,
+  "matches" : [ ]
+} ]

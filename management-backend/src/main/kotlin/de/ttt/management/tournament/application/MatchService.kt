@@ -12,13 +12,16 @@ import de.ttt.management.tournament.domain.*
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Clock
+import java.time.LocalDateTime
 
 @Service("tournamentMatchService")
 class MatchService(
     private val matchRepository: TournamentMatchRepository,
     private val disciplineRepository: TournamentDisciplineRepository,
     private val matchListService: MatchListService,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val clock: Clock
 ) {
 
     fun getAllMatches(): List<TournamentMatch> = matchRepository.findAll()
@@ -45,13 +48,13 @@ class MatchService(
 
     @Transactional
     fun assignMatch(matchId: Long, tableId: Long): Boolean =
-        transition(listOf(matchId), { it.assign(tableId) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
+        transition(listOf(matchId), { it.assign(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
             MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.previousTableId)
         }
 
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean =
-        transition(listOf(matchId), { it.start(tableId) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
+        transition(listOf(matchId), { it.start(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
             MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.previousTableId)
         }
 

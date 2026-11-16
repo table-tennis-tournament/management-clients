@@ -1,0 +1,14 @@
+{
+  "type" : "MATCH_CALLED",
+  "scope" : {
+    "matchIds" : [ 1, 2, 3 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "matchIds" : [ 1, 2, 3 ],
+    "callState" : "FirstCall",
+    "typeIds" : [ 1, 1, 1 ],
+    "tableIds" : [ ]
+  }
+}

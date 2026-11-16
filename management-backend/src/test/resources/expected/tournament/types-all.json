@@ -1,0 +1,16 @@
+[ {
+  "id" : 1,
+  "name" : "Herren",
+  "kind" : 1,
+  "active" : true
+}, {
+  "id" : 2,
+  "name" : "Herren-Doppel",
+  "kind" : 2,
+  "active" : true
+}, {
+  "id" : 3,
+  "name" : "Senioren",
+  "kind" : 1,
+  "active" : false
+} ]

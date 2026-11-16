@@ -4,10 +4,14 @@ import de.ttt.management.tournament.domain.*
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Repository
+import org.springframework.util.IdGenerator
 import java.util.*
 
 @Repository
-class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : TournamentMatchRepository {
+class JdbcTournamentMatchRepository(
+    private val jdbcClient: JdbcClient,
+    private val idGenerator: IdGenerator
+) : TournamentMatchRepository {
 
     private val rowMapper = RowMapper { rs, _ -> toMatch(rs) }
 
@@ -265,7 +269,7 @@ class JdbcTournamentMatchRepository(private val jdbcClient: JdbcClient) : Tourna
         jdbcClient.sql(
             "INSERT INTO mgmt_matchtable (id, tableId, matchId, timestamp) VALUES (:id, :tableId, :matchId, CURRENT_TIMESTAMP)"
         )
-            .param("id", UUID.randomUUID().toString())
+            .param("id", idGenerator.generateId().toString())
             .param("tableId", tableId)
             .param("matchId", matchId)
             .update()

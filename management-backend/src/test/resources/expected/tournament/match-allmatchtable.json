@@ -1,0 +1,10 @@
+[ {
+  "matchId" : 2,
+  "tableId" : 1
+}, {
+  "matchId" : 4,
+  "tableId" : 2
+}, {
+  "matchId" : 6,
+  "tableId" : 3
+} ]

@@ -1,0 +1,76 @@
+[ {
+  "id" : 4,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false
+  }, {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : 1420,
+    "paid" : false
+  } ],
+  "team2" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false
+  }, {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : 1440,
+    "paid" : false
+  } ],
+  "winner" : null,
+  "playGroup" : null,
+  "matchType" : {
+    "id" : 2,
+    "name" : "Finale"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "callState" : "SecondCall",
+  "tableId" : 2,
+  "typeId" : 2,
+  "type" : {
+    "id" : 2,
+    "name" : "Herren",
+    "kind" : 2,
+    "active" : true
+  },
+  "nr" : 4,
+  "roundNumber" : 3,
+  "startTime" : "2026-11-16T10:00:00",
+  "callNumber" : 2,
+  "isBlocking" : true,
+  "isPlayable" : false,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false
+  },
+  "player2" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false
+  },
+  "sets" : [ ],
+  "state" : "OnTable"
+} ]

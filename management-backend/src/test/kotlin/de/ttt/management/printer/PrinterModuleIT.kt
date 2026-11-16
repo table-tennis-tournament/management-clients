@@ -2,6 +2,7 @@ package de.ttt.management.printer
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.expectExactJson
 import de.ttt.management.settings.application.PrinterService
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
@@ -11,8 +12,10 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
+import tools.jackson.databind.json.JsonMapper
 import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,11 +52,13 @@ class PrinterModuleIT {
             .uri("/api/v2/printer/all")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isNumber
+            // the printers depend on the machine, so compare with what the gateway reports
+            .expectExactJson(JsonMapper.builder().build().writeValueAsString(printerService.getAllPrinters()))
     }
 
     @Test
+    // the selected printer is kept in memory and cannot be unset; don't leak it into other tests
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     fun `should set an available printer successfully`() {
         val printers = printerService.getAllPrinters()
         Assumptions.assumeTrue(printers.isNotEmpty(), "no system printers available")
@@ -62,8 +67,7 @@ class PrinterModuleIT {
             .uri("/api/v2/printer/set/{name}", printers.first())
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test
@@ -80,8 +84,7 @@ class PrinterModuleIT {
             .uri("/api/v2/printer/setprintonstart/true")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
     }
 
     @Test

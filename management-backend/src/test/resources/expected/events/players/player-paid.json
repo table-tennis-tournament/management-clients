@@ -1,0 +1,12 @@
+{
+  "type" : "PLAYER_PAID",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "registrationId" : 1,
+    "paid" : true
+  }
+}

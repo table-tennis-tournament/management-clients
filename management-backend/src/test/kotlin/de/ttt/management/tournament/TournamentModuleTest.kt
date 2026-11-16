@@ -2,6 +2,7 @@ package de.ttt.management.tournament
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.expectExactJson
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
@@ -49,8 +50,7 @@ class TournamentModuleTest {
             .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertThat(events.ofType(MatchCompleted::class.java)).hasSize(1)
         val event = events.ofType(MatchCompleted::class.java).iterator().next()
@@ -67,8 +67,7 @@ class TournamentModuleTest {
             .body(listOf(listOf(11, 5), listOf(11, 7)))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertThat(events.ofType(MatchResultUpdated::class.java)).hasSize(1)
         val event = events.ofType(MatchResultUpdated::class.java).iterator().next()
@@ -85,8 +84,7 @@ class TournamentModuleTest {
             .body(listOf(matchId))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertThat(events.ofType(MatchAssigned::class.java)).hasSize(1)
         val event = events.ofType(MatchAssigned::class.java).iterator().next()
@@ -123,8 +121,7 @@ class TournamentModuleTest {
             .body(listOf(matchId))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertThat(events.ofType(MatchCalled::class.java)).hasSize(1)
         assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.FirstCall)
@@ -139,8 +136,7 @@ class TournamentModuleTest {
             .uri("/api/v2/playercall/$matchId")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         assertThat(events.ofType(MatchCalled::class.java)).hasSize(1)
         assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.SecondCall)

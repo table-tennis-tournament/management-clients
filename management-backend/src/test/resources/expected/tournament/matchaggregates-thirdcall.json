@@ -1,0 +1,38 @@
+[ {
+  "name" : "Gruppenspiel A",
+  "startTime" : "2026-11-16T10:00:00",
+  "tableNumbers" : [ 3 ],
+  "discipline" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "players" : [ {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : 1450
+  }, {
+    "id" : 6,
+    "firstName" : "First6",
+    "lastName" : "Last6",
+    "ttr" : 1460
+  } ],
+  "matches" : [ {
+    "id" : 6,
+    "startTime" : "2026-11-16T10:00:00",
+    "team1" : [ {
+      "id" : 5,
+      "firstName" : "First5",
+      "lastName" : "Last5",
+      "ttr" : 1450
+    } ],
+    "team2" : [ {
+      "id" : 6,
+      "firstName" : "First6",
+      "lastName" : "Last6",
+      "ttr" : 1460
+    } ]
+  } ]
+} ]

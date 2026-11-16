@@ -53,8 +53,24 @@ Dependencies point inward: `infrastructure → application → domain`.
 
 - `OnionArchitectureTests` (ArchUnit) enforces the onion layering per module.
 - `ApplicationTests` runs `ApplicationModules.verify()` to enforce Modulith module boundaries.
-- `RegistrationModuleTest` is a `@ApplicationModuleTest` module integration test.
-- `OutboundModuleIT` is a `@SpringBootTest` that verifies a WebSocket message on player registration.
+- `RegistrationModuleTest` and `TournamentModuleTest` are `@ApplicationModuleTest` module integration tests.
+- `*IT` classes are `@SpringBootTest`s against an in-memory H2 database.
+
+Integration tests are deterministic:
+
+- `DatabaseHelper` (via `@Import(DatabaseHelperConfiguration::class)`) empties every table before each test;
+  each test inserts exactly the rows it needs.
+- `DeterministicTestConfiguration` replaces the `Clock` (2026-11-16 10:00, Europe/Berlin) and the
+  `IdGenerator` (UUIDs `…0001`, `…0002`, … restarted by `DatabaseHelper.clean()`).
+
+REST responses and WebSocket events are compared completely (every field, array order, no extra
+fields) with the files in `src/test/resources/expected/`. After an intended change to a response or an
+event, re-record the files and review the diff before committing:
+
+```bash
+./mvnw test -DupdateExpected=true
+git diff src/test/resources/expected
+```
 
 ## Deployment
 ```bash

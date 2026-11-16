@@ -2,6 +2,7 @@ package de.ttt.management.tournament
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.expectExactJson
 import de.ttt.management.tournament.application.MatchService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -46,8 +47,7 @@ class MatchLifecycleScenarioIT {
             .body(listOf(matchId))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         // 2. Call the players
         restTestClient.post()
@@ -62,8 +62,7 @@ class MatchLifecycleScenarioIT {
             .body(listOf(listOf(11, 5), listOf(11, 7)))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         // 4. Finish the game with the final result
         restTestClient.post()
@@ -72,8 +71,7 @@ class MatchLifecycleScenarioIT {
             .body(listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3)))
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.success").isEqualTo(true)
+            .expectExactJson("""{"success": true}""")
 
         // 5. The match is now completed
         val completed = matchService.getMatch(matchId)

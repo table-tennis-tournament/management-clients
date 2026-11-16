@@ -3,8 +3,10 @@ package de.ttt.management.outbound
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.StompTestSupport
+import de.ttt.management.StompTestSupport.assertNextEvent
 import de.ttt.management.registration.application.DisciplineService
 import de.ttt.management.registration.application.PlayerService
+import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.application.TableService
 import de.ttt.management.tournament.domain.SetResult
@@ -17,13 +19,13 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Verifies topic routing, the event scope and after-commit publication (ADR 0003).
+ * Verifies topic routing, the event scope, the payload and after-commit publication (ADR 0003).
+ * Every received envelope is compared completely with `expected/events/<topic>/<name>.json`;
+ * together the tests cover every event type the backend publishes.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -35,6 +37,9 @@ class UpdateTopicsIT {
 
     @Autowired
     private lateinit var matchService: MatchService
+
+    @Autowired
+    private lateinit var matchListService: MatchListService
 
     @Autowired
     private lateinit var tableService: TableService
@@ -72,141 +77,186 @@ class UpdateTopicsIT {
         db.insertRegistration(1, playerId = 1, disciplineId = 2)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun scope(message: Map<String, Any>) = message["scope"] as Map<String, List<Number>>
+    private fun subscribe(topics: List<String> = StompTestSupport.ALL_TOPICS) =
+        StompTestSupport.subscribe(StompTestSupport.connect(port), topics)
 
-    private fun ids(values: List<Number>?) = values.orEmpty().map { it.toLong() }
+    // --- matches -----------------------------------------------------------------
 
     @Test
-    fun `match events arrive on the matches topic with match, discipline and table scope`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+    fun `assigning a match publishes MATCH_ASSIGNED with match, discipline and table scope`() {
+        val messages = subscribe()
 
         matchService.assignMatch(matchId, tableId)
 
-        val message = StompTestSupport.poll(messages)
-        assertNotNull(message)
-        assertEquals("MATCH_ASSIGNED", message["type"])
-        assertEquals("matches", message["topic"])
-        assertEquals(listOf(matchId), ids(scope(message)["matchIds"]))
-        assertEquals(listOf(tableId), ids(scope(message)["tableIds"]))
-        assertEquals(listOf(disciplineId), ids(scope(message)["typeIds"]))
+        assertNextEvent(messages, "matches", "match-assigned")
     }
 
     @Test
-    fun `completing a match carries the table it was played on`() {
+    fun `starting a match publishes MATCH_STARTED`() {
+        matchService.assignMatch(matchId, tableId)
+        val messages = subscribe()
+
+        matchService.startMatch(matchId, tableId)
+
+        assertNextEvent(messages, "matches", "match-started")
+    }
+
+    @Test
+    fun `an interim result publishes MATCH_RESULT_UPDATED with the table it is played on`() {
+        matchService.startMatch(matchId, tableId)
+        val messages = subscribe()
+
+        matchService.updateResult(matchId, listOf(SetResult(11, 5), SetResult(11, 7)))
+
+        assertNextEvent(messages, "matches", "match-result-updated")
+    }
+
+    @Test
+    fun `completing a match publishes MATCH_COMPLETED with the table it was played on`() {
         matchService.assignMatch(matchId, tableId)
         matchService.startMatch(matchId, tableId)
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
         matchService.setResult(matchId, listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
-        val message = StompTestSupport.poll(messages)
-        assertNotNull(message)
-        assertEquals("MATCH_COMPLETED", message["type"])
-        assertEquals(listOf(tableId), ids(scope(message)["tableIds"]))
+        assertNextEvent(messages, "matches", "match-completed")
     }
 
     @Test
     fun `taking a running match back publishes MATCH_TAKEN_BACK with the table it was on`() {
         matchService.assignMatch(matchId, tableId)
         matchService.startMatch(matchId, tableId)
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
         assertTrue(matchService.stopMatch(matchId))
 
-        val message = StompTestSupport.poll(messages)
-        assertNotNull(message)
-        assertEquals("MATCH_TAKEN_BACK", message["type"])
-        assertEquals("matches", message["topic"])
-        assertEquals(listOf(tableId), ids(scope(message)["tableIds"]))
+        assertNextEvent(messages, "matches", "match-taken-back")
     }
 
     @Test
     fun `removing matches from a table publishes MATCH_TAKEN_BACK with the table they were on`() {
         matchService.assignMatch(matchId, tableId)
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
         assertTrue(matchService.removeMatchesFromTable(listOf(matchId)))
 
-        val message = StompTestSupport.poll(messages)
-        assertNotNull(message)
-        assertEquals("MATCH_TAKEN_BACK", message["type"])
-        assertEquals(listOf(tableId), ids(scope(message)["tableIds"]))
+        assertNextEvent(messages, "matches", "match-taken-back")
+    }
+
+    @Test
+    fun `freeing a match on a table publishes MATCH_FREED with that table`() {
+        matchService.assignMatch(matchId, tableId)
+        val messages = subscribe()
+
+        assertTrue(matchService.freeMatches(listOf(matchId)))
+
+        assertNextEvent(messages, "matches", "match-freed")
+    }
+
+    @Test
+    fun `deleting a match publishes MATCH_DELETED`() {
+        matchService.assignMatch(matchId, tableId)
+        val messages = subscribe()
+
+        assertTrue(matchService.deleteMatch(matchId))
+
+        assertNextEvent(messages, "matches", "match-deleted")
     }
 
     @Test
     fun `a bulk operation publishes a single event with all match ids`() {
-        val matchIds = listOf(1L, 2L, 3L)
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
-        assertTrue(matchService.callMatches(matchIds))
+        assertTrue(matchService.callMatches(listOf(1L, 2L, 3L)))
 
-        val message = StompTestSupport.poll(messages)
-        assertNotNull(message)
-        assertEquals("MATCH_CALLED", message["type"])
-        assertEquals(matchIds.sorted(), ids(scope(message)["matchIds"]).sorted())
+        assertNextEvent(messages, "matches", "match-called-bulk")
         assertNull(StompTestSupport.pollNone(messages))
     }
 
+    // --- queue -------------------------------------------------------------------
+
+    @Test
+    fun `queueing a match publishes MATCH_LIST_CHANGED with the whole queue`() {
+        matchListService.addMatchToList(listOf(1L), asGroup = null, position = 0)
+        val messages = subscribe()
+
+        matchListService.addMatchToList(listOf(2L, 3L), asGroup = 7, position = 0)
+
+        assertNextEvent(messages, "queue", "match-list-changed")
+    }
+
+    // --- tables ------------------------------------------------------------------
+
     @Test
     fun `locking and unlocking a table publish on the tables topic`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
         assertTrue(tableService.lockTable(tableId))
-        val locked = StompTestSupport.poll(messages)
-        assertNotNull(locked)
-        assertEquals("TABLE_LOCKED", locked["type"])
-        assertEquals("tables", locked["topic"])
-        assertEquals(listOf(tableId), ids(scope(locked)["tableIds"]))
+        assertNextEvent(messages, "tables", "table-locked")
 
         assertTrue(tableService.unlockTable(tableId))
-        assertEquals("TABLE_UNLOCKED", StompTestSupport.poll(messages)?.get("type"))
+        assertNextEvent(messages, "tables", "table-unlocked")
     }
+
+    // --- settings ----------------------------------------------------------------
 
     @Test
     fun `discipline colors publish on the settings topic`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
         assertTrue(disciplineService.saveTypeColor(disciplineId, "#fff", "#000"))
 
-        val message = StompTestSupport.poll(messages)
-        assertNotNull(message)
-        assertEquals("DISCIPLINE_COLORS_CHANGED", message["type"])
-        assertEquals("settings", message["topic"])
-        assertEquals(listOf(disciplineId), ids(scope(message)["typeIds"]))
+        assertNextEvent(messages, "settings", "discipline-colors-changed")
+    }
+
+    // --- players -----------------------------------------------------------------
+
+    @Test
+    fun `registering a player publishes PLAYER_REGISTERED`() {
+        val messages = subscribe()
+
+        playerService.registerPlayer("Jane", "Doe", 1600, "w", null)
+
+        // players 1 to 6 exist, so the new player gets id 7
+        assertNextEvent(messages, "players", "player-registered")
+    }
+
+    @Test
+    fun `unregistering a player publishes PLAYER_UNREGISTERED`() {
+        val messages = subscribe()
+
+        assertTrue(playerService.unregisterPlayer(6))
+
+        assertNextEvent(messages, "players", "player-unregistered")
     }
 
     @Test
     fun `player payment and activity publish on the players topic`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
 
         assertTrue(playerService.setPaid(1, true))
-        val paid = StompTestSupport.poll(messages)
-        assertNotNull(paid)
-        assertEquals("PLAYER_PAID", paid["type"])
-        assertEquals("players", paid["topic"])
+        assertNextEvent(messages, "players", "player-paid")
 
         assertTrue(playerService.setPlayerActiveState(1, false))
-        val activity = StompTestSupport.poll(messages)
-        assertNotNull(activity)
-        assertEquals("PLAYER_ACTIVE_CHANGED", activity["type"])
-        assertEquals("players", activity["topic"])
+        assertNextEvent(messages, "players", "player-active-changed")
     }
+
+    // --- routing and transactions ------------------------------------------------
 
     @Test
     fun `a client only receives events of the topics it subscribed to`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port), listOf("players"))
+        val messages = subscribe(listOf("players"))
 
         matchService.assignMatch(matchId, tableId)
         assertNull(StompTestSupport.pollNone(messages))
 
-        playerService.registerPlayer("Only", "Players", 1500, "m", null)
-        assertEquals("PLAYER_REGISTERED", StompTestSupport.poll(messages)?.get("type"))
+        playerService.registerPlayer("Jane", "Doe", 1600, "w", null)
+        assertNextEvent(messages, "players", "player-registered")
     }
 
     @Test
     fun `events are published only after the transaction commits`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
         val transaction = TransactionTemplate(transactionManager)
 
         transaction.executeWithoutResult {
@@ -214,12 +264,12 @@ class UpdateTopicsIT {
             assertNull(StompTestSupport.pollNone(messages, 700), "event must not be sent before commit")
         }
 
-        assertEquals("MATCH_ASSIGNED", StompTestSupport.poll(messages)?.get("type"))
+        assertNextEvent(messages, "matches", "match-assigned")
     }
 
     @Test
     fun `a rolled back transaction publishes no event`() {
-        val messages = StompTestSupport.subscribe(StompTestSupport.connect(port))
+        val messages = subscribe()
         val transaction = TransactionTemplate(transactionManager)
 
         transaction.executeWithoutResult { status ->

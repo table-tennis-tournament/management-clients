@@ -1,0 +1,14 @@
+{
+  "type" : "MATCH_ASSIGNED",
+  "scope" : {
+    "matchIds" : [ 1 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ 1 ]
+  },
+  "payload" : {
+    "matchId" : 1,
+    "tableId" : 1,
+    "typeId" : 1,
+    "previousTableId" : null
+  }
+}

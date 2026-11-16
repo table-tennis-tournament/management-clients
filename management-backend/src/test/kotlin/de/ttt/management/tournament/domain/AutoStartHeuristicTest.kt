@@ -14,7 +14,8 @@ class AutoStartHeuristicTest {
         tableId = tableId
     )
 
-    private fun entry(position: Int, vararg matchIds: Long) = MatchList(matchIds = matchIds.toList(), position = position)
+    private fun entry(position: Int, vararg matchIds: Long) =
+        MatchList(uuid = "entry-$position", matchIds = matchIds.toList(), position = position)
 
     @Test
     fun `returns null for an empty queue`() {

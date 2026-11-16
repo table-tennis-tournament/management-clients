@@ -10,13 +10,14 @@ import de.ttt.management.tournament.domain.TournamentMatchRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import org.springframework.util.IdGenerator
 
 @Service("tournamentMatchListService")
 class MatchListService(
     private val matchListRepository: MatchListRepository,
     private val matchRepository: TournamentMatchRepository,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val idGenerator: IdGenerator
 ) : AutoStartState {
 
     @Volatile
@@ -35,7 +36,7 @@ class MatchListService(
         entries.filter { it.position >= position }.forEach { it.position += 1 }
         entries.forEach { matchListRepository.save(it) }
 
-        val newEntry = MatchList(UUID.randomUUID().toString(), newIds, asGroup, position)
+        val newEntry = MatchList(idGenerator.generateId().toString(), newIds, asGroup, position)
         matchListRepository.save(newEntry)
 
         newIds.forEach { id -> updateMatch(id) { it.queue() } }

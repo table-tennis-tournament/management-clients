@@ -1,6 +1,7 @@
 package de.ttt.management
 
-import org.springframework.messaging.converter.MappingJackson2MessageConverter
+import org.springframework.messaging.MessageHeaders
+import org.springframework.messaging.converter.StringMessageConverter
 import org.springframework.messaging.simp.stomp.StompFrameHandler
 import org.springframework.messaging.simp.stomp.StompHeaders
 import org.springframework.messaging.simp.stomp.StompSession
@@ -11,6 +12,8 @@ import java.lang.reflect.Type
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 /**
  * Test helper for connecting to the native STOMP WebSocket endpoint and collecting
@@ -18,9 +21,15 @@ import java.util.concurrent.TimeUnit
  */
 object StompTestSupport {
 
+    /** An update event as it arrived: the topic and the raw JSON envelope `{type, scope, payload}`. */
+    data class Message(val topic: String, val json: String)
+
     fun connect(port: Int): StompSession {
         val client = WebSocketStompClient(StandardWebSocketClient())
-        client.messageConverter = MappingJackson2MessageConverter()
+        // keep the raw JSON so it can be compared exactly; the server sends application/json
+        client.messageConverter = object : StringMessageConverter() {
+            override fun supportsMimeType(headers: MessageHeaders?) = true
+        }
         return client.connectAsync(
             "ws://localhost:$port/ttt-websocket",
             object : StompSessionHandlerAdapter() {}
@@ -29,18 +38,14 @@ object StompTestSupport {
 
     val ALL_TOPICS = listOf("matches", "tables", "queue", "players", "settings")
 
-    /**
-     * Subscribes to the given topics (all five by default). Each received message is the
-     * envelope map plus a `topic` entry with the topic name it arrived on.
-     */
-    fun subscribe(session: StompSession, topics: List<String> = ALL_TOPICS): BlockingQueue<Map<String, Any>> {
-        val messages: BlockingQueue<Map<String, Any>> = LinkedBlockingDeque()
+    /** Subscribes to the given topics (all five by default) and collects every received message. */
+    fun subscribe(session: StompSession, topics: List<String> = ALL_TOPICS): BlockingQueue<Message> {
+        val messages: BlockingQueue<Message> = LinkedBlockingDeque()
         topics.forEach { topic ->
             session.subscribe("/topic/$topic", object : StompFrameHandler {
-                override fun getPayloadType(headers: StompHeaders): Type = Map::class.java
+                override fun getPayloadType(headers: StompHeaders): Type = String::class.java
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
-                    @Suppress("UNCHECKED_CAST")
-                    messages.add((payload as Map<String, Any>) + ("topic" to topic))
+                    messages.add(Message(topic, payload as String))
                 }
             })
         }
@@ -50,10 +55,21 @@ object StompTestSupport {
         return messages
     }
 
-    fun poll(messages: BlockingQueue<Map<String, Any>>): Map<String, Any>? =
+    fun poll(messages: BlockingQueue<Message>): Message? =
         messages.poll(10, TimeUnit.SECONDS)
 
     /** Polls briefly and returns null when nothing arrives, to assert the absence of events. */
-    fun pollNone(messages: BlockingQueue<Map<String, Any>>, millis: Long = 1000): Map<String, Any>? =
+    fun pollNone(messages: BlockingQueue<Message>, millis: Long = 1000): Message? =
         messages.poll(millis, TimeUnit.MILLISECONDS)
+
+    /**
+     * Polls the next message and asserts it completely: it arrived on [topic] and its envelope
+     * equals the expected file `events/<topic>/<name>.json` (see [ExpectedJson]).
+     */
+    fun assertNextEvent(messages: BlockingQueue<Message>, topic: String, name: String) {
+        val message = poll(messages)
+        assertNotNull(message, "expected an event $name on /topic/$topic, but none arrived")
+        assertEquals(topic, message.topic)
+        ExpectedJson.assertMatches("events/$topic/$name", message.json)
+    }
 }

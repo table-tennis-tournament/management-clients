@@ -2,17 +2,21 @@ package de.ttt.management
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 
 /**
- * Registers [DatabaseHelper] for integration tests. Import it with
+ * Registers [DatabaseHelper] for integration tests, together with the fixed clock and the
+ * sequential UUIDs of [DeterministicTestConfiguration]. Import it with
  * `@Import(DatabaseHelperConfiguration::class)` and inject the helper.
  */
 @TestConfiguration(proxyBeanMethods = false)
+@Import(DeterministicTestConfiguration::class)
 class DatabaseHelperConfiguration {
 
     @Bean
-    fun databaseHelper(jdbcTemplate: JdbcTemplate) = DatabaseHelper(jdbcTemplate)
+    fun databaseHelper(jdbcTemplate: JdbcTemplate, idGenerator: SequentialIdGenerator) =
+        DatabaseHelper(jdbcTemplate, idGenerator)
 }
 
 /**
@@ -22,9 +26,12 @@ class DatabaseHelperConfiguration {
  * All ITs share one in-memory H2 database, so each test calls [clean] in its `@BeforeEach`
  * and must not rely on rows written by another test.
  */
-class DatabaseHelper(private val jdbc: JdbcTemplate) {
+class DatabaseHelper(private val jdbc: JdbcTemplate, private val idGenerator: SequentialIdGenerator) {
 
-    /** Deletes every row of every table except Flyway's history and restarts the id sequences. */
+    /**
+     * Deletes every row of every table except Flyway's history and restarts the id sequences,
+     * including the generated UUIDs.
+     */
     fun clean() {
         val tables = jdbc.queryForList(
             """
@@ -35,6 +42,7 @@ class DatabaseHelper(private val jdbc: JdbcTemplate) {
             String::class.java
         )
         tables.forEach { jdbc.execute("TRUNCATE TABLE `$it` RESTART IDENTITY") }
+        idGenerator.reset()
     }
 
     // --- registration ----------------------------------------------------------

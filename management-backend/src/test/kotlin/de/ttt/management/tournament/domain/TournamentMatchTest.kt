@@ -5,8 +5,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import java.time.LocalDateTime
 
 class TournamentMatchTest {
+
+    private val now = LocalDateTime.of(2026, 11, 16, 10, 0)
 
     private fun match() = TournamentMatch(
         id = 1L,
@@ -74,7 +77,7 @@ class TournamentMatchTest {
     @Test
     fun `starts a match`() {
         val match = match()
-        match.start()
+        match.start(now = now)
 
         assertEquals(MatchState.Started, match.state)
         assertTrue(match.isPlaying)
@@ -85,21 +88,21 @@ class TournamentMatchTest {
         val match = match()
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
-        assertFailsWith<IllegalArgumentException> { match.start() }
+        assertFailsWith<IllegalArgumentException> { match.start(now = now) }
     }
 
     @Test
     fun `rejects starting a match that is already playing`() {
         val match = match()
-        match.start()
+        match.start(now = now)
 
-        assertFailsWith<IllegalArgumentException> { match.start() }
+        assertFailsWith<IllegalArgumentException> { match.start(now = now) }
     }
 
     @Test
     fun `frees a match as a walkover`() {
         val match = match()
-        match.start()
+        match.start(now = now)
         match.free()
 
         assertTrue(match.isPlayed)
@@ -154,7 +157,7 @@ class TournamentMatchTest {
     fun `starting a queued match clears the queue state`() {
         val match = match()
         match.queue()
-        match.start()
+        match.start(now = now)
 
         assertEquals(MatchState.Started, match.state)
     }
@@ -200,7 +203,7 @@ class TournamentMatchTest {
     @Test
     fun `an assigned match is blocking`() {
         val match = match()
-        match.assign(tableId = 7)
+        match.assign(tableId = 7, now = now)
 
         assertTrue(match.isBlocking)
         assertEquals(MatchState.OnTable, match.state)
@@ -228,7 +231,7 @@ class TournamentMatchTest {
     @Test
     fun `starting on a table puts the match on that table`() {
         val match = match()
-        match.start(tableId = 4L)
+        match.start(tableId = 4L, now = now)
 
         assertEquals(4L, match.tableId)
         assertEquals(MatchState.Started, match.state)
@@ -237,9 +240,9 @@ class TournamentMatchTest {
     @Test
     fun `taking a match back leaves the table and clears the call`() {
         val match = match()
-        match.assign(tableId = 7)
+        match.assign(tableId = 7, now = now)
         match.call()
-        match.start()
+        match.start(now = now)
         match.takeBack()
 
         assertEquals(null, match.tableId)
@@ -250,7 +253,7 @@ class TournamentMatchTest {
     @Test
     fun `completing a match leaves the table`() {
         val match = match()
-        match.assign(tableId = 7)
+        match.assign(tableId = 7, now = now)
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
         assertEquals(null, match.tableId)
@@ -260,7 +263,7 @@ class TournamentMatchTest {
     @Test
     fun `freeing a match leaves the table`() {
         val match = match()
-        match.assign(tableId = 7)
+        match.assign(tableId = 7, now = now)
         match.free()
 
         assertEquals(null, match.tableId)
@@ -270,7 +273,7 @@ class TournamentMatchTest {
     @Test
     fun `the call number counts the announced calls`() {
         val match = match()
-        match.assign(tableId = 7)
+        match.assign(tableId = 7, now = now)
         assertEquals(0, match.callNumber)
 
         match.call()

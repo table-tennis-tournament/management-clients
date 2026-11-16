@@ -2,6 +2,7 @@ package de.ttt.management.settings
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.expectExactJson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,8 +35,12 @@ class SettingsModuleIT {
             .uri("/api/v2/settings/all")
             .exchange()
             .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(3)
-            .jsonPath("$[*].key").isEqualTo(listOf("printerName", "alwaysPrint", "autoStart"))
+            .expectExactJson(
+                """[
+                    {"key": "printerName", "value": ""},
+                    {"key": "alwaysPrint", "value": true},
+                    {"key": "autoStart", "value": false}
+                ]"""
+            )
     }
 }

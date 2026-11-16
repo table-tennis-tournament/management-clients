@@ -90,7 +90,7 @@ class TournamentMatch(
      * Assigns the match to a table without starting it, transitioning it to [MatchState.OnTable].
      * Any previous call is cleared.
      */
-    fun assign(tableId: Long, now: LocalDateTime = LocalDateTime.now()) {
+    fun assign(tableId: Long, now: LocalDateTime) {
         require(!isPlayed) { "A completed match cannot be assigned" }
         require(!isPlaying) { "A match that is already playing cannot be reassigned" }
         this.tableId = tableId
@@ -104,7 +104,7 @@ class TournamentMatch(
      * Starts the match on [tableId] (by default the table it is assigned to),
      * transitioning it to [MatchState.Started].
      */
-    fun start(tableId: Long? = this.tableId, now: LocalDateTime = LocalDateTime.now()) {
+    fun start(tableId: Long? = this.tableId, now: LocalDateTime) {
         require(!isPlayed) { "A completed match cannot be started" }
         require(!isPlaying) { "A match that is already playing cannot be started again" }
         this.tableId = tableId
