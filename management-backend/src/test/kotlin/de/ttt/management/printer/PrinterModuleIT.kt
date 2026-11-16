@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 import kotlin.test.assertTrue
@@ -21,6 +22,9 @@ class PrinterModuleIT {
 
     @Autowired
     private lateinit var printerService: PrinterService
+
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
 
     @Test
     fun `should get all printers`() {
@@ -82,8 +86,10 @@ class PrinterModuleIT {
 
     @Test
     fun `should generate a match pdf`() {
+        // Other ITs share the H2 database and may delete seed matches, so don't hardcode an id.
+        val matchId = jdbcTemplate.queryForObject("SELECT MIN(matc_id) FROM matches", Long::class.java)!!
         restTestClient.get()
-            .uri("/api/v2/printer/printpdf/1")
+            .uri("/api/v2/printer/printpdf/{id}", matchId)
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_PDF)

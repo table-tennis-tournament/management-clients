@@ -341,9 +341,16 @@ class TournamentModuleIT {
 
     @Test
     fun `should delete match successfully`() {
-        assertTrue(validMatchId > 0)
+        // Delete a throwaway copy, not seed data: the H2 database is shared with the other ITs.
+        val throwawayId = 999001L
+        jdbcTemplate.update("DELETE FROM matches WHERE matc_id = ?", throwawayId)
+        jdbcTemplate.update(
+            "INSERT INTO matches (matc_id, matc_play1_id, matc_play2_id, matc_type_id, matc_maty_id, matc_grou_id, matc_roundnumber, matc_nr) " +
+                "SELECT ?, matc_play1_id, matc_play2_id, matc_type_id, matc_maty_id, matc_grou_id, matc_roundnumber, matc_nr FROM matches WHERE matc_id = ?",
+            throwawayId, validMatchId
+        )
         restTestClient.delete()
-            .uri("/api/v2/match/$validMatchId")
+            .uri("/api/v2/match/$throwawayId")
             .exchange()
             .expectStatus().isOk
     }

@@ -55,6 +55,7 @@ class UpdateTopicsIT {
     fun setup() {
         jdbcTemplate.update("UPDATE matches SET matc_isplaying = 0, matc_played = 0, matc_tabl_id = NULL, matc_tabl2_id = 0")
         jdbcTemplate.update("DELETE FROM mgmt_match_call_state")
+        jdbcTemplate.update("DELETE FROM mgmt_table_lock")
         matchId = matchService.getAllMatches().first().id!!
         tableId = tableService.getAllTables().first().id!!
     }
