@@ -2,8 +2,6 @@ import { enableProdMode, provideZoneChangeDetection, importProvidersFrom } from 
 
 import { environment } from './environments/environment';
 import { TableService } from './app/table/table.service';
-import { WebsocketService } from './app/shared/websocket.service';
-import { WebsocketHandlerService } from './app/websocket/websocket.handler.service';
 import { provideHttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app/navigation/app-routing.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -18,7 +16,6 @@ import { MatchEffects } from './app/assign/redux/match.effects';
 import { MatchListEffects } from './app/supervisor/redux/matchlist.effects';
 import { DisciplineEffects } from './app/discipline/redux/discipline.effects';
 import { SettingsEffects } from './app/settings/redux/settings.effects';
-import { WebSocketEffects } from './app/websocket/redux/websocket.effects';
 import { CallerEffects } from './app/caller/redux/caller.effects';
 import { ResultEffects } from './app/result/redux/result.effects';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -62,7 +59,6 @@ bootstrapApplication(AppComponent, {
         MatchListEffects,
         DisciplineEffects,
         SettingsEffects,
-        WebSocketEffects,
         CallerEffects,
         ResultEffects,
       ]),
@@ -70,8 +66,6 @@ bootstrapApplication(AppComponent, {
       AdminRootModule
     ),
     TableService,
-    WebsocketService,
-    WebsocketHandlerService,
     provideHttpClient(),
   ],
 }).catch((err) => console.log(err));

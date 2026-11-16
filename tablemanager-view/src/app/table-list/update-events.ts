@@ -1,11 +1,8 @@
-import { UpdateTopic, WebsocketMessage } from '../services/websocket.service';
+import { touchesAny, UpdateClientConfig } from '../shared/update-events/update-events';
 import { Table } from './tt-table/table.model';
 
-/** The tablemanager renders the tables and the matches on them. */
-export const TABLEMANAGER_TOPICS: UpdateTopic[] = ['tables', 'matches'];
-
-/** Burst window: at most one reload per period, however many events arrive. */
-export const RELOAD_AUDIT_MS = 200;
+/** The tablemanager reloads one thing: the tables of the displayed table manager. */
+export type TablemanagerReloadTarget = 'tables';
 
 /** Events that change a match on a table; they only concern the manager owning that table. */
 const TABLE_SCOPED_EVENTS = [
@@ -19,34 +16,24 @@ const TABLE_SCOPED_EVENTS = [
   'MATCH_DELETED',
 ];
 
-/** Events that are not rendered by the tablemanager. */
-const IGNORED_EVENTS = ['TABLE_LOCKED', 'TABLE_UNLOCKED'];
-
-export type EventRelevance = 'reload' | 'ignore' | 'unknown';
-
 /**
- * Decides whether an update event requires a reload of the tables of the displayed table manager.
- *
- * Events whose scope names tables only matter when one of them is displayed. Without a scope
- * (or before the tables were loaded) the event is treated as relevant, because reloading is safe.
+ * The tablemanager's update events: it renders the `tables` and `matches` Topics, and an event
+ * only matters when its scope names one of the [displayedTables]. Before the tables are loaded
+ * (or when they carry no usable id) every event is relevant, because reloading is safe.
  */
-export function relevanceOf(message: WebsocketMessage, displayedTables: Table[]): EventRelevance {
-  if (IGNORED_EVENTS.includes(message.type)) {
-    return 'ignore';
-  }
-  if (!TABLE_SCOPED_EVENTS.includes(message.type)) {
-    return 'unknown';
-  }
-  const tableIds = message.scope?.tableIds;
-  if (!tableIds) {
-    return 'reload';
-  }
-  const displayedIds = displayedTables
-    .filter((table) => table.table_id != null)
-    .map((table) => Number(table.table_id))
-    .filter((id) => !Number.isNaN(id));
-  if (displayedIds.length === 0) {
-    return 'reload';
-  }
-  return tableIds.some((id) => displayedIds.includes(Number(id))) ? 'reload' : 'ignore';
+export function tablemanagerUpdates(displayedTables: () => Table[]): UpdateClientConfig<TablemanagerReloadTarget> {
+  return {
+    topics: ['tables', 'matches'],
+    reloads: Object.fromEntries(TABLE_SCOPED_EVENTS.map((type) => [type, ['tables']])),
+    // table locks are not rendered by the tablemanager
+    ignored: ['TABLE_LOCKED', 'TABLE_UNLOCKED'],
+    resync: ['tables'],
+    isRelevant: (_target, scope) => {
+      const displayedIds = displayedTables()
+        .filter((table) => table.table_id != null)
+        .map((table) => Number(table.table_id))
+        .filter((id) => !Number.isNaN(id));
+      return displayedIds.length === 0 || touchesAny(scope.tableIds, displayedIds);
+    },
+  };
 }

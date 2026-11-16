@@ -19,7 +19,7 @@ Resolved by architecture review candidate 3: the clients use the backend `MatchS
 
 ## 4. result-view
 
-result-view has no WebSocket code. Wiring it up is a separate piece of work. It needs `@stomp/stompjs`, a `/ttt-websocket` entry in `backend/proxy.conf.json`, and subscriptions to `/topic/matches` and `/topic/settings`. Prerequisites and known defects:
+result-view has no WebSocket code. Wiring it up is a separate piece of work: copy `src/app/shared/update-events/` from admin-view, declare an `UpdateClientConfig` for `matches` and `settings`, and add `@stomp/stompjs` and a `/ttt-websocket` entry in `backend/proxy.conf.json`. Prerequisites and known defects:
 
 - `result.component.ts` selects `types[0]` on every `types` emission, so an event-driven reload would reset the selected tab. Keep `currentTabId` in the store.
 - `result.component.ts` dispatches a hardcoded `loadMatches({typeId: 8})`.

@@ -11,7 +11,7 @@ The defects listed below were found by reading the code. None of them were repro
 | 1 | Deepen the Match lifecycle module | Strong (done) |
 | 2 | One Result entry module for the clients | Strong (done) |
 | 3 | One answer to "what state is this Match in?" | Worth exploring (done) |
-| 4 | A shared Update event module for the clients | Worth exploring |
+| 4 | A shared Update event module for the clients | Worth exploring (done) |
 | 5 | Collapse admin-view's command plumbing | Speculative |
 
 **Top recommendation: candidate 1.** It is the most-changed code in the repo, its copies have already drifted into defects, and it makes candidate 3 and follow-up 6 (stop → take back) small.
@@ -110,6 +110,8 @@ Components compare names through `MatchState[MatchState.X]` at about 30 sites, a
 
 ## 4. A shared Update event module for the clients (Worth exploring)
 
+**Status: done.** admin-view and tablemanager-view have identical copies of `src/app/shared/update-events/` (one copy per app, as for candidates 2 and 3). `connectUpdates` owns connecting, resubscribing, Scope filtering, per-target coalescing and Resynchronization over an `UpdateTransport` seam with two adapters (`StompUpdateTransport`, `InMemoryUpdateTransport`). Each app only declares an `UpdateClientConfig` (`websocket/admin-updates.ts`, `table-list/update-events.ts`). admin-view now skips the table and call-list reloads for events whose scope names no table, and its ngrx connect triple is deleted. result-view is not wired yet (follow-up 4).
+
 **Files**
 - `admin-view/src/app/shared/websocket.service.ts` (87 lines), `websocket/websocket.handler.service.ts`, `websocket/redux/*` (about 95 lines)
 - `tablemanager-view/src/app/services/websocket.service.ts` (85 lines), `table-list/update-events.ts`
@@ -171,4 +173,4 @@ The page component branches single-Match vs multi-Match in five handlers. `onRem
 - result-view `DisciplineTabService` (about 90% the same as the admin copy)
 - ~~the admin component state predicates~~ (`match-state`, see candidate 3)
 - ~~the result-modal input formatting~~ (`formatResult`)
-- both STOMP transport services
+- ~~both STOMP transport services~~ (`update-events` spec with the in-memory adapter, see candidate 4)

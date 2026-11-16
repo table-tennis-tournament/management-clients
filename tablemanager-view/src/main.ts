@@ -1,8 +1,6 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 
 import { environment } from './environments/environment';
-import { WebsocketService } from './app/services/websocket.service';
-import { WebsocketHandlerService } from './app/table-list/websocket-handler.service';
 import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -43,7 +41,5 @@ bootstrapApplication(AppComponent, {
         connectInZone: true,
       })
     ),
-    WebsocketService,
-    WebsocketHandlerService,
   ],
 }).catch((err) => console.error(err));

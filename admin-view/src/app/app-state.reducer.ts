@@ -6,7 +6,6 @@ import * as fromTables from './table/redux/table.reducer';
 import * as fromMatches from './assign/redux/match.reducer';
 import * as fromMatchList from './supervisor/redux/matchlist.reducer';
 import * as fromSettings from './settings/redux/settings.reducer';
-import * as fromWebSocket from './websocket/redux/websocket.reducer';
 import * as fromCaller from './caller/redux/caller.reducer';
 import * as fromResult from './result/redux/result.reducer';
 import { environment } from '../environments/environment';
@@ -19,7 +18,6 @@ export interface State {
   matches: fromMatches.MatchesState;
   matchList: fromMatchList.MatchListState;
   settings: fromSettings.SettingsState;
-  websocket: fromWebSocket.WebSocketState;
   caller: fromCaller.CallerState;
   result: fromResult.ResultState;
 }
@@ -30,7 +28,6 @@ export const reducers: ActionReducerMap<State> = {
   matches: fromMatches.reduceMatchState,
   matchList: fromMatchList.reduceMatchListState,
   settings: fromSettings.reduceSettingsState,
-  websocket: fromWebSocket.reduceWebsocketState,
   caller: fromCaller.reduceCallerState,
   result: fromResult.reduceResultState,
 };
@@ -78,11 +75,6 @@ export const getSettingsState = createSelector((state: State) => state.settings,
 export const getSettingsLoading = createSelector((state: State) => state.settings, fromSettings.getSettingsLoading);
 export const getTypeColorsMapState = createSelector((state: State) => state.settings, fromSettings.getTypeColors);
 export const getPrintersState = createSelector((state: State) => state.settings, fromSettings.getPrinters);
-
-export const getWebSocketState = createSelector(
-  (state: State) => state.websocket,
-  fromWebSocket.getWebsocketConnectedState
-);
 
 export const getRefereesState = createSelector((state: State) => state.caller, fromCaller.getReferees);
 export const getRefereesLoading = createSelector((state: State) => state.caller, fromCaller.getRefereesLoading);

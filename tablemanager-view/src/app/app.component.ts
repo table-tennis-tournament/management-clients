@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { WebsocketHandlerService } from './table-list/websocket-handler.service';
+import { TableUpdatesService } from './table-list/table-updates.service';
 import { NavigationComponent } from './navigation/navigation.component';
 import { RouterOutlet } from '@angular/router';
 
@@ -10,9 +10,9 @@ import { RouterOutlet } from '@angular/router';
   imports: [NavigationComponent, RouterOutlet],
 })
 export class AppComponent implements OnInit {
-  private websocketHandler = inject(WebsocketHandlerService);
+  private tableUpdates = inject(TableUpdatesService);
 
   ngOnInit(): void {
-    this.websocketHandler.connectToWebsocket();
+    this.tableUpdates.start();
   }
 }
