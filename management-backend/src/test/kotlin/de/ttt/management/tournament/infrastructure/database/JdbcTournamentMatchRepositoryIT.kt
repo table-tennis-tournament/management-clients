@@ -3,7 +3,6 @@ package de.ttt.management.tournament.infrastructure.database
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.DeterministicTestConfiguration.Companion.NOW
-import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.SetResult
 import de.ttt.management.tournament.domain.TournamentMatch
 import org.junit.jupiter.api.BeforeEach
@@ -13,10 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
+import java.sql.Timestamp
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
+/**
+ * Compares whole database rows: the `matches` row against its state before the save plus the columns
+ * the save is expected to change, so a write to any other (mktt-owned) column breaks the test.
+ */
 @SpringBootTest
 @ActiveProfiles("test") // Uses H2
 @Import(DatabaseHelperConfiguration::class)
@@ -33,19 +35,30 @@ class JdbcTournamentMatchRepositoryIT {
 
     private val matchId = 1L
 
+    private lateinit var openRow: Map<String, Any?>
+
     @BeforeEach
     fun setup() {
         db.clean()
         db.insertSingleOpenMatch()
+        openRow = matchRow()
     }
 
     private fun load(): TournamentMatch = repository.findById(matchId).orElseThrow()
 
-    private fun matchTableRows(): List<Long> =
-        jdbcTemplate.queryForList("SELECT tableId FROM mgmt_matchtable WHERE matchId = ?", Long::class.java, matchId).filterNotNull()
+    private fun matchRow(): Map<String, Any?> =
+        jdbcTemplate.queryForMap("SELECT * FROM matches WHERE matc_id = ?", matchId).mapKeys { it.key.lowercase() }
 
-    private fun callStateRows(): Int =
-        jdbcTemplate.queryForObject("SELECT COUNT(*) FROM mgmt_match_call_state WHERE matc_id = ?", Int::class.java, matchId)!!
+    /** The `mgmt_matchtable` rows without `timestamp`, which the database sets from its own clock. */
+    private fun matchTableRows(): List<Map<String, Any?>> =
+        jdbcTemplate.queryForList("SELECT id, tableId, matchId FROM mgmt_matchtable ORDER BY id")
+            .map { row -> row.mapKeys { it.key.lowercase() } }
+
+    private fun callStateRows(): List<Map<String, Any?>> =
+        jdbcTemplate.queryForList("SELECT * FROM mgmt_match_call_state ORDER BY matc_id")
+            .map { row -> row.mapKeys { it.key.lowercase() } }
+
+    private fun uuid(n: Int) = "00000000-0000-0000-0000-%012d".format(n)
 
     @Test
     fun `persists an assignment, a call and the table history`() {
@@ -54,11 +67,12 @@ class JdbcTournamentMatchRepositoryIT {
         match.call()
         assertEquals(1, repository.save(match))
 
-        val reloaded = load()
-        assertEquals(3L, reloaded.tableId)
-        assertEquals(CallState.FirstCall, reloaded.callState)
-        assertEquals(NOW, reloaded.startTime)
-        assertEquals(listOf(3L), matchTableRows())
+        assertEquals(
+            openRow + mapOf<String, Any?>("matc_tabl_id" to 3, "matc_starttime" to Timestamp.valueOf(NOW)),
+            matchRow()
+        )
+        assertEquals(listOf(mapOf<String, Any?>("id" to uuid(1), "tableid" to 3, "matchid" to 1)), matchTableRows())
+        assertEquals(listOf(mapOf<String, Any?>("matc_id" to 1L, "call_state" to 1)), callStateRows())
     }
 
     @Test
@@ -69,8 +83,12 @@ class JdbcTournamentMatchRepositoryIT {
         match.start(5L, now = NOW)
         repository.save(match)
 
-        assertEquals(listOf(5L), matchTableRows())
-        assertTrue(load().isPlaying)
+        assertEquals(
+            openRow + mapOf<String, Any?>("matc_tabl_id" to 5, "matc_isplaying" to 1, "matc_starttime" to Timestamp.valueOf(NOW)),
+            matchRow()
+        )
+        assertEquals(listOf(mapOf<String, Any?>("id" to uuid(2), "tableid" to 5, "matchid" to 1)), matchTableRows())
+        assertEquals(emptyList(), callStateRows())
     }
 
     @Test
@@ -83,38 +101,42 @@ class JdbcTournamentMatchRepositoryIT {
         match.takeBack()
         repository.save(match)
 
-        val reloaded = load()
-        assertNull(reloaded.tableId)
-        assertEquals(CallState.None, reloaded.callState)
-        assertEquals(0, callStateRows())
-        assertTrue(matchTableRows().isEmpty())
+        // the start time of the assignment stays
+        assertEquals(openRow + mapOf<String, Any?>("matc_starttime" to Timestamp.valueOf(NOW)), matchRow())
+        assertEquals(emptyList(), matchTableRows())
+        assertEquals(emptyList(), callStateRows())
     }
 
     @Test
     fun `completing a match persists the result and leaves mktt-owned columns untouched`() {
-        val before = jdbcTemplate.queryForMap(
-            "SELECT matc_play1_id, matc_play2_id, matc_type_id, matc_nr, matc_roundnumber FROM matches WHERE matc_id = ?", matchId
-        )
         val match = load()
         match.start(3L, now = NOW)
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
         repository.save(match)
 
-        val reloaded = load()
-        assertTrue(reloaded.isPlayed)
-        assertNull(reloaded.tableId)
-        assertEquals("3 : 0", reloaded.result)
-        assertEquals("11=5,11=7,11=3", reloaded.resultRaw)
-        assertEquals(33, reloaded.balls1)
-        assertEquals(match.winner?.id, reloaded.winner?.id)
-        assertTrue(matchTableRows().isEmpty())
-        assertEquals(before, jdbcTemplate.queryForMap(
-            "SELECT matc_play1_id, matc_play2_id, matc_type_id, matc_nr, matc_roundnumber FROM matches WHERE matc_id = ?", matchId
-        ))
+        assertEquals(
+            openRow + mapOf<String, Any?>(
+                "matc_played" to 1,
+                "matc_starttime" to Timestamp.valueOf(NOW),
+                "matc_winner_id" to 1,
+                "matc_result" to "3 : 0",
+                "matc_resultraw" to "11=5,11=7,11=3",
+                "matc_sets1" to 3,
+                "matc_sets2" to 0,
+                "matc_balls1" to 33,
+                "matc_balls2" to 15
+            ),
+            matchRow()
+        )
+        assertEquals(emptyList(), matchTableRows())
+        assertEquals(emptyList(), callStateRows())
     }
 
     @Test
     fun `saving an unknown match updates nothing`() {
         assertEquals(0, repository.save(TournamentMatch(id = -1L)))
+        assertEquals(openRow, matchRow())
+        assertEquals(emptyList(), matchTableRows())
+        assertEquals(emptyList(), callStateRows())
     }
 }

@@ -52,9 +52,10 @@ class TournamentModuleTest {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertThat(events.ofType(MatchCompleted::class.java)).hasSize(1)
-        val event = events.ofType(MatchCompleted::class.java).iterator().next()
-        assertThat(event.matchId).isEqualTo(matchId)
+        // the match was never on a table, so the event carries no table
+        assertThat(events.ofType(MatchCompleted::class.java)).containsExactly(
+            MatchCompleted(matchId = matchId, winnerId = 1L, sets1 = 3, sets2 = 0, typeId = 1L, tableId = null)
+        )
     }
 
     @Test
@@ -69,9 +70,9 @@ class TournamentModuleTest {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertThat(events.ofType(MatchResultUpdated::class.java)).hasSize(1)
-        val event = events.ofType(MatchResultUpdated::class.java).iterator().next()
-        assertThat(event.matchId).isEqualTo(matchId)
+        assertThat(events.ofType(MatchResultUpdated::class.java)).containsExactly(
+            MatchResultUpdated(matchId = matchId, sets1 = 2, sets2 = 0, typeId = 1L, tableId = null)
+        )
     }
 
     @Test
@@ -86,9 +87,9 @@ class TournamentModuleTest {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertThat(events.ofType(MatchAssigned::class.java)).hasSize(1)
-        val event = events.ofType(MatchAssigned::class.java).iterator().next()
-        assertThat(event.matchId).isEqualTo(matchId)
+        assertThat(events.ofType(MatchAssigned::class.java)).containsExactly(
+            MatchAssigned(matchId = matchId, tableId = 1L, typeId = 1L, previousTableId = null)
+        )
 
         assertThat(matchService.getMatch(matchId)!!.state).isEqualTo(MatchState.OnTable)
     }
@@ -104,9 +105,18 @@ class TournamentModuleTest {
             .exchange()
             .expectStatus().isOk
 
-        assertThat(events.ofType(MatchListChanged::class.java)).hasSize(1)
-        val event = events.ofType(MatchListChanged::class.java).iterator().next()
-        assertThat(event.entries).anyMatch { it.matchIds.contains(matchId) }
+        assertThat(events.ofType(MatchListChanged::class.java)).containsExactly(
+            MatchListChanged(
+                listOf(
+                    MatchListChanged.Entry(
+                        uuid = "00000000-0000-0000-0000-000000000001",
+                        matchIds = listOf(matchId),
+                        asGroup = null,
+                        position = 0
+                    )
+                )
+            )
+        )
 
         assertThat(matchService.getMatch(matchId)!!.state).isEqualTo(MatchState.InQueue)
     }
@@ -123,7 +133,9 @@ class TournamentModuleTest {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertThat(events.ofType(MatchCalled::class.java)).hasSize(1)
+        assertThat(events.ofType(MatchCalled::class.java)).containsExactly(
+            MatchCalled(matchIds = listOf(matchId), callState = "FirstCall", typeIds = listOf(1L), tableIds = emptyList())
+        )
         assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.FirstCall)
     }
 
@@ -138,7 +150,9 @@ class TournamentModuleTest {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertThat(events.ofType(MatchCalled::class.java)).hasSize(1)
+        assertThat(events.ofType(MatchCalled::class.java)).containsExactly(
+            MatchCalled(matchIds = listOf(matchId), callState = "SecondCall", typeIds = listOf(1L), tableIds = emptyList())
+        )
         assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.SecondCall)
     }
 }

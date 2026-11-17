@@ -7,7 +7,6 @@ import de.ttt.management.expectJson
 import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.domain.CallState
-import de.ttt.management.tournament.domain.MatchState
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,8 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
@@ -66,6 +63,21 @@ class TournamentModuleIT {
         db.insertTables(1L..3L)
     }
 
+    /** Compares the whole `GET /match/{id}` body with `expected/tournament/<name>.json`. */
+    private fun expectMatch(id: Long, name: String) {
+        restTestClient.get()
+            .uri("/api/v2/match/$id")
+            .exchange()
+            .expectStatus().isOk
+            .expectJson("tournament/$name")
+    }
+
+    private fun post(uri: String, body: Any? = null) {
+        val request = restTestClient.post().uri(uri)
+        if (body != null) request.contentType(MediaType.APPLICATION_JSON).body(body)
+        request.exchange().expectStatus().isOk
+    }
+
     @Test
     fun `should start a match successfully`() {
         val tableId = 1L
@@ -75,6 +87,8 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+
+        expectMatch(validMatchId, "after-start")
     }
 
     @Test
@@ -107,14 +121,25 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+
+        expectMatch(validMatchId, "after-stop")
     }
 
     @Test
     fun `should fail to stop a match that is not playing`() {
-        val matchId = 9999L // Non-playing
-
+        // an existing, open match
         restTestClient.post()
-            .uri("/api/v2/match/stop/$matchId")
+            .uri("/api/v2/match/stop/$validMatchId")
+            .exchange()
+            .expectStatus().isBadRequest
+
+        expectMatch(validMatchId, "open")
+    }
+
+    @Test
+    fun `should fail to stop an unknown match`() {
+        restTestClient.post()
+            .uri("/api/v2/match/stop/9999")
             .exchange()
             .expectStatus().isBadRequest
     }
@@ -131,6 +156,8 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+
+        expectMatch(validMatchId, "after-assign")
     }
 
     @Test
@@ -144,7 +171,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertTrue(matchService.getMatch(validMatchId)!!.tableId != null)
+        expectMatch(validMatchId, "after-assign-second-table")
     }
 
     @Test
@@ -165,10 +192,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        val removed = matchService.getMatch(validMatchId)!!
-        assertTrue(removed.tableId == null)
-        assertFalse(removed.isPlaying)
-        assertTrue(removed.state == MatchState.Open)
+        expectMatch(validMatchId, "after-remove")
     }
 
     @Test
@@ -198,36 +222,23 @@ class TournamentModuleIT {
     }
 
     @Test
-    fun `should free matches successfully`() {
-        val matchIds = listOf(validMatchId)
-
-        restTestClient.post()
-            .uri("/api/v2/match/free")
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(matchIds)
-            .exchange()
-            .expectStatus().isOk
-            .expectExactJson("""{"success": true}""")
-    }
-
-    @Test
     fun `freeing a match marks it as a walkover`() {
-
         restTestClient.post()
             .uri("/api/v2/match/free")
             .contentType(MediaType.APPLICATION_JSON)
             .body(listOf(validMatchId))
             .exchange()
             .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
 
-        val freed = matchService.getMatch(validMatchId)!!
-        assertTrue(freed.isKampflos)
-        assertTrue(freed.state == MatchState.Finished)
+        expectMatch(validMatchId, "after-free")
     }
 
     @Test
     fun `should take back matches successfully`() {
         val matchIds = listOf(validMatchId)
+        post("/api/v2/match/start/$validMatchId/1")
+        post("/api/v2/match/call", listOf(validMatchId))
 
         restTestClient.post()
             .uri("/api/v2/match/takeBack")
@@ -236,6 +247,8 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+
+        expectMatch(validMatchId, "after-take-back")
     }
 
     @Test
@@ -283,6 +296,8 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+
+        expectMatch(validMatchId, "after-set-result")
     }
 
     @Test
@@ -310,7 +325,7 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
 
-        assertTrue(matchService.getMatch(validMatchId)!!.waitingList)
+        expectMatch(validMatchId, "after-queue")
     }
 
     @Test
@@ -339,7 +354,7 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertTrue(matchService.getMatch(validMatchId)!!.isPlaying)
+        expectMatch(validMatchId, "after-auto-start")
 
         restTestClient.get()
             .uri("/api/v2/matchlist/all")
@@ -377,7 +392,7 @@ class TournamentModuleIT {
             .exchange()
             .expectStatus().isOk
 
-        assertFalse(matchService.getMatch(second)!!.isPlaying)
+        expectMatch(second, "after-auto-start-blocked")
 
         restTestClient.get()
             .uri("/api/v2/matchlist/all")
@@ -395,10 +410,8 @@ class TournamentModuleIT {
         val doubles = matchService.getMatchesByCallState(CallState.None).single()
 
         assertEquals(3L, doubles.id)
-        assertEquals(listOf(1L, 2L), doubles.team1.map { it.id })
-        assertEquals(listOf(3L, 4L), doubles.team2.map { it.id })
-        assertEquals(2, doubles.team1.size)
-        assertTrue(doubles.team1.all { it.firstName != null })
+        assertEquals(listOf(1L to "First1", 2L to "First2"), doubles.team1.map { it.id to it.firstName })
+        assertEquals(listOf(3L to "First3", 4L to "First4"), doubles.team2.map { it.id to it.firstName })
     }
 
     @Test

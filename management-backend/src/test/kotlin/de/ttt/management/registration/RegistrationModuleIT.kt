@@ -3,6 +3,7 @@ package de.ttt.management.registration
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.expectExactJson
+import de.ttt.management.expectExactJsonIgnoring
 import de.ttt.management.expectJson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -96,6 +97,7 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/9999")
             .exchange()
             .expectStatus().isNotFound
+            .expectBody().isEmpty()
     }
 
     @Test
@@ -122,6 +124,7 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/9999/active/true")
             .exchange()
             .expectStatus().isBadRequest
+            .expectExactJson("""{"success": false, "message": "Player not found"}""")
     }
 
     @Test
@@ -145,6 +148,11 @@ class RegistrationModuleIT {
             .uri("/api/v2/players/abc/paid?paid=true")
             .exchange()
             .expectStatus().isBadRequest
+            // Spring's default error body
+            .expectExactJsonIgnoring(
+                """{"timestamp": "ignored", "status": 400, "error": "Bad Request", "path": "/api/v2/players/abc/paid"}""",
+                "timestamp"
+            )
     }
 
     @Test

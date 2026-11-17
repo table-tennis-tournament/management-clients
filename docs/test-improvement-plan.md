@@ -10,8 +10,8 @@ found on the way, and what to do next.
 |------|------|-------|
 | 1 | Deterministic test data: clean database per test, fixed ids | Done, `92d48024` |
 | 2 | Expected-JSON files for every REST read endpoint and every WebSocket event | Done for the backend, `694be63f` |
-| 3 | Whole-object equality for domain events, `TournamentMatch` and database rows | Open |
-| 4 | Fix or delete tests that cannot fail | Partly done |
+| 3 | Whole-object equality for domain events, `TournamentMatch` and database rows | Done |
+| 4 | Fix or delete tests that cannot fail | Done |
 | 5 | Mutation testing (PIT) on the `domain` packages | Open |
 | 6 | Frontend: strengthen unit tests, reuse the backend expected files as fixtures | Open |
 
@@ -29,7 +29,14 @@ All in `management-backend/src/test/kotlin/de/ttt/management/`:
 - **`ExpectedJson`**: `expectJson("<name>")` / `assertMatches(...)` compare with
   `src/test/resources/expected/<name>.json` in JSONAssert STRICT mode; `expectExactJson("...")` compares with
   inline JSON. Re-record after an intended change and **review the diff**:
-  `./mvnw test -DupdateExpected=true && git diff src/test/resources/expected`.
+  `mvn test -DupdateExpected=true && git diff src/test/resources/expected` (there is no Maven wrapper).
+- **`expectExactJsonIgnoring(json, "timestamp")`**: like `expectExactJson`, but the values at the given paths
+  may differ (Spring's default error body carries a timestamp).
+- **Whole objects elsewhere:** domain events with `containsExactly(Event(...))`; `TournamentMatch` with
+  `assertMatch(match) { <changed fields> }` (AssertJ recursive comparison against a fresh match);
+  database rows with `queryForMap` against the row before plus the changed columns
+  (`JdbcTournamentMatchRepositoryIT`). Type expected maps as `mapOf<String, Any?>(...)`: without it Kotlin
+  turns `1` into a `Long` when the same map holds a `1L`, and the maps are not equal.
 - **`StompTestSupport.assertNextEvent(messages, topic, name)`**: compares the raw envelope of the next
   WebSocket message with `expected/events/<topic>/<name>.json`.
 - **Coverage:** `TournamentReadModelIT` (every tournament read endpoint, one match in every state),
@@ -68,35 +75,24 @@ re-record the affected files.
    settings endpoint exposes it. Tests work around it with `@DirtiesContext`.
 7. **`StompTestSupport.subscribe` sleeps 300 ms** because the simple broker sends no receipts. A possible source
    of flakiness on slow CI machines.
+8. **Taking back a completed match keeps its result.** `TournamentMatch.takeBack()` clears the winner, the
+   table and the call, but `sets`, `sets1/2`, `balls1/2`, `result` and `resultRaw` stay, so an Open match can
+   show "3 : 0" (`TournamentMatchTest` "takes a match back to the open state"). Stop, remove and take back
+   also keep `startTime` (`expected/tournament/after-take-back.json`).
+9. **The `mgmt_matchtable` timestamp ignores the `Clock`.** `JdbcTournamentMatchRepository.insertMatchTable`
+   writes the database's `CURRENT_TIMESTAMP`, so tests cannot pin it and leave the column out.
 
 ## Next steps
 
-### Step 3: whole-object equality in the backend
+### Steps 3 and 4: done
 
-- `TournamentModuleTest` and `RegistrationModuleTest`: replace `hasSize(1)` plus single-field checks with
-  `assertThat(events.ofType(X::class.java)).containsExactly(X(...))` (all events are data classes). Only
-  `RegistrationModuleTest` does this so far.
-- `TournamentMatchTest`: `TournamentMatch` is a plain class without `equals`. Use AssertJ
-  `assertThat(match).usingRecursiveComparison().isEqualTo(expected)` with a complete expected match per
-  test, instead of a few fields (e.g. "completes a match" never checks `tableId`, `callState`,
-  `waitingList`). Pass `now = …` explicitly; `assign`/`start` have no default time any more.
-- `JdbcTournamentMatchRepositoryIT`: compare the whole `matches` row (`queryForMap`) and the whole
-  `mgmt_matchtable` / `mgmt_match_call_state` rows instead of re-reading through the repository.
-- `TournamentModuleIT` state checks after a POST (`assertTrue(freed.isKampflos)`, …): compare the whole
-  match, or the `GET /match/{id}` body with an expected file.
-- `GroupingModuleIT`: already compares the relevant columns; extend to all `playerpergroup` columns written
-  by `JdbcPlayerPerGroupRepository.save`.
-
-### Step 4: tests that cannot fail (remaining)
-
-- `TournamentModuleIT` "should take back matches successfully" takes back a match that is already open.
-  Assign or start it first, then check the match.
-- "should fail to stop a match that is not playing" uses the unknown id 9999; use an existing match that
-  is not playing.
-- "should start a match", "should free matches", "should set result" only check `{"success": true}`;
-  also check the resulting match (or merge with the existing state tests).
-- `PrinterModuleIT` "should set print on start" never reads the setting back; check `GET /settings/all`.
-- Error bodies of `PrinterController` and the player endpoints are not compared yet (status only).
+`TournamentModuleTest` compares whole events; `TournamentMatchTest` compares the whole match after every
+transition; `JdbcTournamentMatchRepositoryIT` compares whole `matches`, `mgmt_matchtable` and
+`mgmt_match_call_state` rows; `TournamentModuleIT` compares `GET /match/{id}` with
+`expected/tournament/after-*.json` after every state change (take back now starts and calls the match first,
+"stop a match that is not playing" uses an open match); `GroupingModuleIT` compares every `playerpergroup`
+column `save` writes; `PrinterModuleIT` reads print-on-start back from `/settings/all`; the error bodies of
+`PrinterController` and the player endpoints are compared.
 
 ### Step 5: mutation testing
 

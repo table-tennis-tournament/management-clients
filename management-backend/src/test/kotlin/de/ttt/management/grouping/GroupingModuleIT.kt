@@ -52,11 +52,22 @@ class GroupingModuleIT {
         db.insertMatch(12, 2, 3, disciplineId = 1, groupId = 1, result = match12)
     }
 
-    private fun standings() = jdbcTemplate.queryForList(
-        "SELECT ppgr_play_id, ppgr_position, ppgr_gamesw, ppgr_checked FROM playerpergroup WHERE ppgr_grou_id = 1 ORDER BY ppgr_position, ppgr_play_id"
-    ).map { row ->
-        listOf("ppgr_play_id", "ppgr_position", "ppgr_gamesw", "ppgr_checked").map { (row[it] as Number).toInt() }
-    }
+    /** Every column `JdbcPlayerPerGroupRepository.save` writes, plus the player, as one row per player. */
+    private val columns = listOf(
+        "ppgr_play_id", "ppgr_position", "ppgr_gamesw", "ppgr_gamesl", "ppgr_setw", "ppgr_setl",
+        "ppgr_pointsw", "ppgr_pointsl", "ppgr_games", "ppgr_sets", "ppgr_points", "ppgr_checked", "ppgr_setdiff"
+    )
+
+    private fun standings(): List<List<Any?>> = jdbcTemplate.queryForList(
+        "SELECT ${columns.joinToString()} FROM playerpergroup WHERE ppgr_grou_id = 1 ORDER BY ppgr_position, ppgr_play_id"
+    ).map { row -> columns.map { row[it] } }
+
+    // [player, position, matches won, lost, sets won, lost, points won, lost, games, sets, points, checked, set difference]
+    private val completedGroup = listOf(
+        listOf(1, 1, 2, 0, 6, 0, 66, 30, "2 : 0", "6 : 0", "66 : 30", 1, 6),
+        listOf(2, 2, 1, 1, 3, 3, 48, 48, "1 : 1", "3 : 3", "48 : 48", 1, 0),
+        listOf(3, 3, 0, 2, 0, 6, 30, 66, "0 : 2", "0 : 6", "30 : 66", 1, -6)
+    )
 
     @Test
     fun `updateStandings ranks the players of a completed group`() {
@@ -65,8 +76,7 @@ class GroupingModuleIT {
 
         groupingService.updateStandings(1)
 
-        // [player, position, matches won, checked]
-        assertEquals(listOf(listOf(1, 1, 2, 1), listOf(2, 2, 1, 1), listOf(3, 3, 0, 1)), standings())
+        assertEquals(completedGroup, standings())
     }
 
     @Test
@@ -75,7 +85,11 @@ class GroupingModuleIT {
 
         groupingService.updateStandings(1)
 
-        assertEquals(listOf(listOf(1, 0, 0, 0), listOf(2, 0, 0, 0), listOf(3, 0, 0, 0)), standings())
+        // the rows as inserted: nothing computed yet
+        assertEquals(
+            (1..3).map { listOf(it, 0, 0, 0, 0, 0, 0, 0, null, null, null, 0, 0) },
+            standings()
+        )
     }
 
     @Test
@@ -84,6 +98,6 @@ class GroupingModuleIT {
 
         matchService.setResult(12, listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
-        assertEquals(listOf(listOf(1, 1, 2, 1), listOf(2, 2, 1, 1), listOf(3, 3, 0, 1)), standings())
+        assertEquals(completedGroup, standings())
     }
 }

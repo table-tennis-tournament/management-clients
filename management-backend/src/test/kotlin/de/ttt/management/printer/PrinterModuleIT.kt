@@ -76,15 +76,33 @@ class PrinterModuleIT {
             .uri("/api/v2/printer/set/DefinitelyNotARealPrinter12345")
             .exchange()
             .expectStatus().isBadRequest
+            .expectExactJson("""{"success": false, "message": "Printer not found"}""")
     }
 
     @Test
     fun `should set print on start`() {
+        // print on start is on by default and kept in memory: switch it off, read it back, switch it on again
         restTestClient.post()
-            .uri("/api/v2/printer/setprintonstart/true")
+            .uri("/api/v2/printer/setprintonstart/false")
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+
+        try {
+            restTestClient.get()
+                .uri("/api/v2/settings/all")
+                .exchange()
+                .expectStatus().isOk
+                .expectExactJson(
+                    """[
+                        {"key": "printerName", "value": ""},
+                        {"key": "alwaysPrint", "value": false},
+                        {"key": "autoStart", "value": false}
+                    ]"""
+                )
+        } finally {
+            printerService.setPrintOnStart(true)
+        }
     }
 
     @Test
@@ -93,6 +111,7 @@ class PrinterModuleIT {
             .uri("/api/v2/printer/print/999999")
             .exchange()
             .expectStatus().isBadRequest
+            .expectExactJson("""{"success": false, "message": "Match not found or error printing"}""")
     }
 
     @Test
@@ -125,5 +144,6 @@ class PrinterModuleIT {
             .uri("/api/v2/printer/printpdf/999999")
             .exchange()
             .expectStatus().isNotFound
+            .expectBody().isEmpty()
     }
 }

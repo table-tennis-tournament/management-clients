@@ -2,6 +2,8 @@ package de.ttt.management
 
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
+import org.skyscreamer.jsonassert.Customization
+import org.skyscreamer.jsonassert.comparator.CustomComparator
 import org.springframework.test.web.servlet.client.RestTestClient
 import tools.jackson.databind.json.JsonMapper
 import java.nio.file.Files
@@ -40,6 +42,18 @@ object ExpectedJson {
     fun assertEquals(expected: String, actual: String) {
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT)
     }
+
+    /**
+     * Like [assertEquals], but the values at the paths [ignored] (e.g. `timestamp`) may differ.
+     * The fields must still be present.
+     */
+    fun assertEqualsIgnoring(expected: String, actual: String, vararg ignored: String) {
+        val comparator = CustomComparator(
+            JSONCompareMode.STRICT,
+            *ignored.map { Customization(it) { _, _ -> true } }.toTypedArray()
+        )
+        JSONAssert.assertEquals(expected, actual, comparator)
+    }
 }
 
 /** Asserts that the response body equals the expected file [name], see [ExpectedJson]. */
@@ -49,6 +63,13 @@ fun RestTestClient.ResponseSpec.expectJson(name: String) =
 /** Asserts that the response body equals [json] exactly, e.g. `{"success": true}`. */
 fun RestTestClient.ResponseSpec.expectExactJson(json: String) =
     ExpectedJson.assertEquals(json, body())
+
+/**
+ * Asserts that the response body equals [json] exactly, except for the values at [ignored], e.g. the
+ * `timestamp` of Spring's default error body.
+ */
+fun RestTestClient.ResponseSpec.expectExactJsonIgnoring(json: String, vararg ignored: String) =
+    ExpectedJson.assertEqualsIgnoring(json, body(), *ignored)
 
 private fun RestTestClient.ResponseSpec.body(): String =
     String(expectBody().returnResult().responseBody ?: ByteArray(0), Charsets.UTF_8)

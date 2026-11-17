@@ -1,5 +1,6 @@
 package de.ttt.management.tournament.domain
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -17,31 +18,56 @@ class TournamentMatchTest {
         team2 = listOf(TournamentPlayer(id = 2L, firstName = "B"))
     )
 
+    private val threeNil = listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3))
+
+    /**
+     * Compares every field of [actual] with a fresh [match] changed by [expected], so a transition
+     * that touches a field it should not breaks the test. `state` and `callNumber` are derived from
+     * these fields.
+     */
+    private fun assertMatch(actual: TournamentMatch, expected: TournamentMatch.() -> Unit) {
+        assertThat(actual).usingRecursiveComparison().isEqualTo(match().apply(expected))
+    }
+
+    /** The fields [TournamentMatch.complete] writes for [threeNil]. */
+    private fun TournamentMatch.completedThreeNil() {
+        sets = threeNil
+        sets1 = 3
+        sets2 = 0
+        balls1 = 33
+        balls2 = 15
+        resultRaw = "11=5,11=7,11=3"
+        result = "3 : 0"
+        isPlayed = true
+        winner = team1.first()
+    }
+
     @Test
     fun `completes a match and records the winner`() {
         val match = match()
-        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+        match.complete(threeNil)
 
         assertEquals(MatchState.Completed, match.state)
-        assertTrue(match.isPlayed)
-        assertFalse(match.isPlaying)
-        assertEquals(1L, match.winner?.id)
-        assertEquals(3, match.sets1)
-        assertEquals(0, match.sets2)
-        assertEquals(33, match.balls1)
-        assertEquals(15, match.balls2)
-        assertEquals("11=5,11=7,11=3", match.resultRaw)
-        assertEquals("3 : 0", match.result)
+        assertMatch(match) { completedThreeNil() }
     }
 
     @Test
     fun `records player two as winner when they reach three sets`() {
+        val sets = listOf(SetResult(5, 11), SetResult(7, 11), SetResult(11, 8), SetResult(9, 11))
         val match = match()
-        match.complete(listOf(SetResult(5, 11), SetResult(7, 11), SetResult(11, 8), SetResult(9, 11)))
+        match.complete(sets)
 
-        assertEquals(2L, match.winner?.id)
-        assertEquals(1, match.sets1)
-        assertEquals(3, match.sets2)
+        assertMatch(match) {
+            this.sets = sets
+            sets1 = 1
+            sets2 = 3
+            balls1 = 32
+            balls2 = 41
+            resultRaw = "5=11,7=11,11=8,9=11"
+            result = "1 : 3"
+            isPlayed = true
+            winner = team2.first()
+        }
     }
 
     @Test
@@ -62,16 +88,21 @@ class TournamentMatchTest {
 
     @Test
     fun `enters an interim result and puts the match into playing mode`() {
+        val sets = listOf(SetResult(11, 5), SetResult(11, 7))
         val match = match()
-        match.enterResult(listOf(SetResult(11, 5), SetResult(11, 7)))
+        match.enterResult(sets)
 
-        assertTrue(match.isPlaying)
-        assertFalse(match.isPlayed)
         assertEquals(MatchState.Started, match.state)
-        assertEquals(2, match.sets1)
-        assertEquals(0, match.sets2)
-        assertEquals(22, match.balls1)
-        assertEquals(12, match.balls2)
+        assertMatch(match) {
+            this.sets = sets
+            sets1 = 2
+            sets2 = 0
+            balls1 = 22
+            balls2 = 12
+            resultRaw = "11=5,11=7"
+            result = "2 : 0"
+            isPlaying = true
+        }
     }
 
     @Test
@@ -80,7 +111,10 @@ class TournamentMatchTest {
         match.start(now = now)
 
         assertEquals(MatchState.Started, match.state)
-        assertTrue(match.isPlaying)
+        assertMatch(match) {
+            isPlaying = true
+            startTime = now
+        }
     }
 
     @Test
@@ -105,11 +139,12 @@ class TournamentMatchTest {
         match.start(now = now)
         match.free()
 
-        assertTrue(match.isPlayed)
-        assertTrue(match.isKampflos)
-        assertFalse(match.isPlaying)
         assertEquals(MatchState.Finished, match.state)
-        assertEquals(null, match.winner)
+        assertMatch(match) {
+            isPlayed = true
+            isKampflos = true
+            startTime = now
+        }
     }
 
     @Test
@@ -118,20 +153,23 @@ class TournamentMatchTest {
         match.free()
         match.takeBack()
 
-        assertFalse(match.isPlayed)
-        assertFalse(match.isKampflos)
         assertEquals(MatchState.Open, match.state)
+        assertMatch(match) {}
     }
 
     @Test
     fun `takes a match back to the open state`() {
         val match = match()
-        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+        match.complete(threeNil)
         match.takeBack()
 
-        assertFalse(match.isPlayed)
-        assertFalse(match.isPlaying)
         assertEquals(MatchState.Open, match.state)
+        // Pins current behaviour: the old result stays on the match (see test-improvement-plan finding 8).
+        assertMatch(match) {
+            completedThreeNil()
+            isPlayed = false
+            winner = null
+        }
     }
 
     @Test
@@ -140,9 +178,11 @@ class TournamentMatchTest {
         match.queue()
 
         assertEquals(MatchState.InQueue, match.state)
+        assertMatch(match) { waitingList = true }
 
         match.dequeue()
         assertEquals(MatchState.Open, match.state)
+        assertMatch(match) {}
     }
 
     @Test
@@ -160,6 +200,10 @@ class TournamentMatchTest {
         match.start(now = now)
 
         assertEquals(MatchState.Started, match.state)
+        assertMatch(match) {
+            isPlaying = true
+            startTime = now
+        }
     }
 
     @Test
@@ -167,7 +211,7 @@ class TournamentMatchTest {
         val match = match()
         match.call()
 
-        assertEquals(CallState.FirstCall, match.callState)
+        assertMatch(match) { callState = CallState.FirstCall }
     }
 
     @Test
@@ -207,6 +251,10 @@ class TournamentMatchTest {
 
         assertTrue(match.isBlocking)
         assertEquals(MatchState.OnTable, match.state)
+        assertMatch(match) {
+            tableId = 7
+            startTime = now
+        }
     }
 
     @Test
@@ -233,8 +281,12 @@ class TournamentMatchTest {
         val match = match()
         match.start(tableId = 4L, now = now)
 
-        assertEquals(4L, match.tableId)
         assertEquals(MatchState.Started, match.state)
+        assertMatch(match) {
+            tableId = 4L
+            isPlaying = true
+            startTime = now
+        }
     }
 
     @Test
@@ -245,19 +297,22 @@ class TournamentMatchTest {
         match.start(now = now)
         match.takeBack()
 
-        assertEquals(null, match.tableId)
-        assertEquals(CallState.None, match.callState)
         assertEquals(MatchState.Open, match.state)
+        // startTime is kept from the start
+        assertMatch(match) { startTime = now }
     }
 
     @Test
     fun `completing a match leaves the table`() {
         val match = match()
         match.assign(tableId = 7, now = now)
-        match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+        match.complete(threeNil)
 
-        assertEquals(null, match.tableId)
         assertFalse(match.isBlocking)
+        assertMatch(match) {
+            completedThreeNil()
+            startTime = now
+        }
     }
 
     @Test
@@ -266,8 +321,12 @@ class TournamentMatchTest {
         match.assign(tableId = 7, now = now)
         match.free()
 
-        assertEquals(null, match.tableId)
         assertEquals(MatchState.Finished, match.state)
+        assertMatch(match) {
+            isPlayed = true
+            isKampflos = true
+            startTime = now
+        }
     }
 
     @Test
