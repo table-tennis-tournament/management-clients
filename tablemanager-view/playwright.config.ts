@@ -23,7 +23,8 @@ export default defineConfig({
     {
       command: 'docker compose -f ../docker-compose.yml up mariadb management-backend',
       url: 'http://localhost:8080/actuator/health',
-      reuseExistingServer: !!process.env['CI'],
+      // reuse a running stack (CI and `docker compose up`), otherwise start one
+      reuseExistingServer: true,
       timeout: 180000,
     },
     {
