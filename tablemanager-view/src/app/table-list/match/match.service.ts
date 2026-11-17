@@ -27,6 +27,6 @@ export class MatchService {
   }
 
   takeBackMatch(matchId: number) {
-    return this.http.post<any>(`/api/v2/match/stop/${matchId}`, null);
+    return this.http.post<any>(`/api/v2/match/takeBack/${matchId}`, null);
   }
 }

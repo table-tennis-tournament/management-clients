@@ -34,6 +34,10 @@ describe('the match service', () => {
     expectRequest(service.callPlayersForMatch(7), 'POST', '/api/v2/playercall/7', null);
   });
 
+  it('takes back a running match', () => {
+    expectRequest(service.takeBackMatch(7), 'POST', '/api/v2/match/takeBack/7', null);
+  });
+
   it('starts a match on a table', () => {
     expectRequest(service.startMatch(3, 7), 'POST', '/api/v2/match/start/7/3', null);
   });

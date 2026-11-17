@@ -109,12 +109,21 @@ class TournamentModuleIT {
     }
 
     @Test
-    fun `should stop a match successfully`() {
-        val tableId = 3L
+    fun `should take back a running match`() {
+        post("/api/v2/match/start/$validMatchId/3")
+
         restTestClient.post()
-            .uri("/api/v2/match/start/$validMatchId/$tableId")
+            .uri("/api/v2/match/takeBack/$validMatchId")
             .exchange()
             .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
+
+        expectMatch(validMatchId, "after-take-back-running")
+    }
+
+    @Test
+    fun `the deprecated stop path still takes back a running match`() {
+        post("/api/v2/match/start/$validMatchId/3")
 
         restTestClient.post()
             .uri("/api/v2/match/stop/$validMatchId")
@@ -122,24 +131,25 @@ class TournamentModuleIT {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        expectMatch(validMatchId, "after-stop")
+        expectMatch(validMatchId, "after-take-back-running")
     }
 
     @Test
-    fun `should fail to stop a match that is not playing`() {
+    fun `should fail to take back a match that is not running`() {
         // an existing, open match
         restTestClient.post()
-            .uri("/api/v2/match/stop/$validMatchId")
+            .uri("/api/v2/match/takeBack/$validMatchId")
             .exchange()
             .expectStatus().isBadRequest
+            .expectExactJson("""{"success": false, "message": "Could not take back the match."}""")
 
         expectMatch(validMatchId, "open")
     }
 
     @Test
-    fun `should fail to stop an unknown match`() {
+    fun `should fail to take back an unknown match`() {
         restTestClient.post()
-            .uri("/api/v2/match/stop/9999")
+            .uri("/api/v2/match/takeBack/9999")
             .exchange()
             .expectStatus().isBadRequest
     }

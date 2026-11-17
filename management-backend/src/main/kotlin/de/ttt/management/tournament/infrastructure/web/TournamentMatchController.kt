@@ -73,16 +73,20 @@ class TournamentMatchController(
         }
     }
 
-    @PostMapping("/match/stop/{id}")
-    @Operation(summary = "Stop match", description = "Marks a currently running match as stopped.")
-    fun stopMatch(
+    @PostMapping("/match/takeBack/{id}", "/match/stop/{id}")
+    @Operation(
+        summary = "Take back a running match",
+        description = "Takes a running match back from its table (the table manager's \"Zurück\"). " +
+            "`/match/stop/{id}` is the deprecated name of this endpoint and will be removed."
+    )
+    fun takeBackRunningMatch(
         @Parameter(description = "ID of the match") @PathVariable id: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.stopMatch(id)
+        val success = matchService.takeBackRunningMatch(id)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
-            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not stop match."))
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not take back the match."))
         }
     }
 

@@ -63,8 +63,8 @@ class MatchService(
      * Publishes [MatchTakenBack] like the administrator's take back.
      */
     @Transactional
-    fun stopMatch(matchId: Long): Boolean =
-        transition(listOf(matchId), { require(it.isPlaying) { "Only a running match can be stopped" }; it.takeBack() }, event = ::takenBackEvent)
+    fun takeBackRunningMatch(matchId: Long): Boolean =
+        transition(listOf(matchId), { require(it.isPlaying) { "Only a running match can be taken back" }; it.takeBack() }, event = ::takenBackEvent)
 
     @Transactional
     fun removeMatchesFromTable(matchIds: List<Long>): Boolean =

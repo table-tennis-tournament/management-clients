@@ -132,7 +132,7 @@ class UpdateTopicsIT {
         matchService.startMatch(matchId, tableId)
         val messages = subscribe()
 
-        assertTrue(matchService.stopMatch(matchId))
+        assertTrue(matchService.takeBackRunningMatch(matchId))
 
         assertNextEvent(messages, "matches", "match-taken-back")
     }
