@@ -86,4 +86,48 @@ class AutoStartHeuristicTest {
         m.queue()
         assertTrue(!m.isBlocking)
     }
+
+    @Test
+    fun `skips an entry whose match is unknown`() {
+        assertNull(AutoStartHeuristic.selectNext(listOf(entry(0, 42)), emptyMap()))
+    }
+
+    @Test
+    fun `starts a grouped entry only when every match of it is playable`() {
+        val matches = mapOf(
+            1L to match(1, 101, 102),
+            2L to match(2, 103, null)
+        )
+        assertNull(AutoStartHeuristic.selectNext(listOf(entry(0, 1, 2)), matches))
+
+        val playable = matches + (2L to match(2, 103, 104))
+        assertEquals(listOf(1L, 2L), AutoStartHeuristic.selectNext(listOf(entry(0, 1, 2)), playable)!!.matchIds)
+    }
+
+    @Test
+    fun `filterFirst compares every player of a doubles side`() {
+        val doubles = TournamentMatch(
+            id = 1,
+            team1 = listOf(TournamentPlayer(id = 101), TournamentPlayer(id = 102)),
+            team2 = listOf(TournamentPlayer(id = 103), TournamentPlayer(id = 104))
+        )
+        val matches = mapOf(
+            1L to doubles,
+            2L to match(2, 104, 201), // shares the second player of side B
+            3L to match(3, 202, 203)
+        )
+        val filtered = AutoStartHeuristic.filterFirst(listOf(entry(0, 1), entry(1, 2), entry(2, 3)), matches)
+        assertEquals(listOf(0, 2), filtered.map { it.position })
+    }
+
+    @Test
+    fun `orders the queue by position before skipping entries that share a player`() {
+        val matches = mapOf(
+            1L to match(1, 101, 102),
+            2L to match(2, 101, 103)
+        )
+        // listed out of order: position 0 must win the shared player
+        val next = AutoStartHeuristic.selectNext(listOf(entry(1, 2), entry(0, 1)), matches)
+        assertEquals(listOf(1L), next!!.matchIds)
+    }
 }

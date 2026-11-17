@@ -106,6 +106,24 @@ class TournamentMatchTest {
     }
 
     @Test
+    fun `an undecided set counts for neither side`() {
+        val sets = listOf(SetResult(11, 5), SetResult(0, 0))
+        val match = match()
+        match.enterResult(sets)
+
+        assertMatch(match) {
+            this.sets = sets
+            sets1 = 1
+            sets2 = 0
+            balls1 = 11
+            balls2 = 5
+            resultRaw = "11=5,0=0"
+            result = "1 : 0"
+            isPlaying = true
+        }
+    }
+
+    @Test
     fun `starts a match`() {
         val match = match()
         match.start(now = now)
@@ -264,6 +282,37 @@ class TournamentMatchTest {
             id = 2L,
             team1 = listOf(TournamentPlayer(id = 1L)),
             team2 = listOf(TournamentPlayer(id = 9L)),
+            tableId = 7L
+        )
+
+        assertFalse(match.isPlayableAgainst(listOf(match, blocking)))
+    }
+
+    @Test
+    fun `isPlayable is true when no blocking match shares a player`() {
+        val match = match()
+        val blockingOthers = TournamentMatch(
+            id = 2L,
+            team1 = listOf(TournamentPlayer(id = 8L)),
+            team2 = listOf(TournamentPlayer(id = 9L)),
+            tableId = 7L
+        )
+        val openWithSamePlayers = TournamentMatch(
+            id = 3L,
+            team1 = listOf(TournamentPlayer(id = 1L)),
+            team2 = listOf(TournamentPlayer(id = 2L))
+        )
+
+        assertTrue(match.isPlayableAgainst(listOf(match, blockingOthers, openWithSamePlayers)))
+    }
+
+    @Test
+    fun `isPlayable is false when a blocking match shares a player of side B`() {
+        val match = match()
+        val blocking = TournamentMatch(
+            id = 2L,
+            team1 = listOf(TournamentPlayer(id = 9L)),
+            team2 = listOf(TournamentPlayer(id = 2L)),
             tableId = 7L
         )
 

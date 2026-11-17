@@ -12,7 +12,7 @@ found on the way, and what to do next.
 | 2 | Expected-JSON files for every REST read endpoint and every WebSocket event | Done for the backend, `694be63f` |
 | 3 | Whole-object equality for domain events, `TournamentMatch` and database rows | Done |
 | 4 | Fix or delete tests that cannot fail | Done |
-| 5 | Mutation testing (PIT) on the `domain` packages | Open |
+| 5 | Mutation testing (PIT) on the `domain` packages | Done |
 | 6 | Frontend: strengthen unit tests, reuse the backend expected files as fixtures | Open |
 
 ## How the backend tests work now
@@ -94,11 +94,28 @@ transition; `JdbcTournamentMatchRepositoryIT` compares whole `matches`, `mgmt_ma
 column `save` writes; `PrinterModuleIT` reads print-on-start back from `/settings/all`; the error bodies of
 `PrinterController` and the player endpoints are compared.
 
-### Step 5: mutation testing
+### Step 5: mutation testing (done)
 
-Add `pitest-maven` with the Kotlin plugin to `management-backend/pom.xml`, scoped to
-`de.ttt.management.*.domain.*` and the unit tests, and look at surviving mutants in `TournamentMatch`,
-`AutoStartHeuristic`, `GroupStandingsCalculator`, `SetResult`.
+Run on demand (not bound to `mvn test`):
+`mvn test-compile org.pitest:pitest-maven:mutationCoverage`, report in `target/pit-reports/index.html`.
+`pitest-maven` 1.30.2 with `pitest-junit5-plugin`, scoped to `de.ttt.management.*.domain.*` and the
+`*.domain.*Test` unit tests. The commercial Arcmutate Kotlin plugin is not used; PIT's built-in Kotlin junk
+filter plus `excludedMethods` (data class members) keep the noise down.
+
+Result: test strength 68% → 78% after strengthening `GroupStandingsCalculatorTest` (whole standings, tie on
+points, matches won before set difference, unplayed matches), `AutoStartHeuristicTest` (unknown match, grouped
+entry, doubles, queue order) and `TournamentMatchTest` (undecided 0:0 set, `isPlayableAgainst`). Remaining
+survivors in `TournamentMatch`, `AutoStartHeuristic`, `GroupStandingsCalculator`, `SetResult` were reviewed:
+
+- `TournamentMatch` getters: `assertMatch` compares fields, not getters. Trivial accessors, left alone.
+- Mutants on lines past the end of a file are Kotlin's inlined `count`/`all`/`any` bodies (the
+  `is Collection && isEmpty()` shortcut, overflow checks): equivalent.
+- `AutoStartHeuristic.selectNext` `imp.position > entry.position`: dead code, `filterFirst` already removed
+  every later entry that shares a player with an earlier one. Could be deleted.
+- `GroupStandingsCalculator` `sets1 > sets2` boundary: only differs for a played 0:0 match, which cannot occur.
+- `SetResult.fromResultRaw` early `return emptyList()`: equivalent.
+- "No coverage" (108): domain data classes of registration, settings and table, only exercised by the Spring
+  ITs, which are not in `targetTests` (too slow per mutant).
 
 ### Step 6: frontend
 
