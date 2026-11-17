@@ -15,7 +15,7 @@ Resolved by architecture review candidate 3: the clients use the backend `MatchS
 
 ## 3. Standalone Dockerfiles and nginx configs
 
-`admin-view/my_server_block.conf` lacks `proxy_http_version 1.1` for `/ttt-websocket`. `tablemanager-view/my_server_block.conf` and `result-view/my_server_block.conf` have no `/api/v2` or `/ttt-websocket` proxy. `result-view/Dockerfile` uses `node:12.8` and `bitnami/nginx:1.16`. Only `Dockerfile-clients` with the root `my_server_block.conf` is correct. Fix or delete the standalone images.
+Resolved: the per-app `Dockerfile`s, their `my_server_block.conf` and `admin-view/docker-compose.yml` were unused and broken, and are deleted. All clients ship in the image built from `Dockerfile-clients` with the root `my_server_block.conf`.
 
 ## 4. result-view
 

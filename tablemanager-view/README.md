@@ -2,12 +2,11 @@
  
 This angular app is for tablemanager which manage the table tennis tables during a tournament.
 
-## Docker build:
+## Docker image
 
-Run `ng build --configuration production --base-href ./ --progress false` to build app.
-Run `docker build . -t holzleube/tablemanager-view:1.x` to build image.
-
-[DockerTags](https://hub.docker.com/r/holzleube/tablemanager-view/tags)
+All three clients ship in one image, built from `Dockerfile-clients` in the repository root (nginx serves
+`/admin-view`, `/result-view` and `/tablemanager-view` and proxies `/api/v2` and `/ttt-websocket` to the backend).
+`docker compose up` builds it; CI publishes it as `holzleube/ttt-clients`.
 
 ## Development server
 
