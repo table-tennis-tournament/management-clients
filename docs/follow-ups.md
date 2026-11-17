@@ -19,12 +19,7 @@ Resolved: the per-app `Dockerfile`s, their `my_server_block.conf` and `admin-vie
 
 ## 4. result-view
 
-result-view has no WebSocket code. Wiring it up is a separate piece of work: copy `src/app/shared/update-events/` from admin-view, declare an `UpdateClientConfig` for `matches` and `settings`, and add `@stomp/stompjs` and a `/ttt-websocket` entry in `backend/proxy.conf.json`. Prerequisites and known defects:
-
-- `result.component.ts` selects `types[0]` on every `types` emission, so an event-driven reload would reset the selected tab. Keep `currentTabId` in the store.
-- `result.component.ts` dispatches a hardcoded `loadMatches({typeId: 8})`.
-- `team-item.component.html` reads `team[0].club.name`, but the backend `TournamentPlayer` has no `club`.
-- No `trackBy` and no `OnPush`; every reload re-renders all group cards and the bracket.
+Resolved: result-view follows the `matches` topic with its own copy of `src/app/shared/update-events/` and the config `src/app/updates/result-updates.ts`; it reloads the displayed discipline when one of its results changes. The selected discipline lives in the store (`selectedTypeId`), so reloads keep the tab, the hardcoded `loadMatches({typeId: 8})` is gone, and `team-item` shows the club the backend now sends. `e2e/live-updates.spec.ts` checks a result entered elsewhere appears without reloading. Still open: no `trackBy` and no `OnPush`, so every reload re-renders all group cards and the bracket.
 
 ## 5. PlantUML diagrams
 

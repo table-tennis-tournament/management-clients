@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { DisciplineTabService } from '../services/discipline-tab.service';
 import { MatchService } from '../services/match.service';
 import { TypeService } from '../services/type.service';
 import * as ResultActions from './result.actions';
+import { getSelectedTypeId } from './result.reducer';
 
 @Injectable()
 export class ResultEffects {
@@ -31,6 +33,17 @@ export class ResultEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  /** Loads the matches of the displayed discipline whenever the selection or the types change. */
+  loadSelectedMatches$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ResultActions.selectType, ResultActions.loadTypesSuccess),
+      withLatestFrom(this.store.select(getSelectedTypeId)),
+      map(([, typeId]) => typeId),
+      filter((typeId): typeId is number => typeId != null),
+      map((typeId) => ResultActions.loadMatches({ typeId }))
+    )
   );
 
   loadMatches$ = createEffect(() =>
@@ -65,6 +78,7 @@ export class ResultEffects {
 
   constructor(
     private actions$: Actions,
+    private store: Store,
     private snackBar: MatSnackBar,
     private matchService: MatchService,
     private tabService: DisciplineTabService,

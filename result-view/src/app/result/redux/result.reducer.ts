@@ -7,10 +7,13 @@ import * as TableActions from './result.actions';
 
 export interface TypesState {
   types: Type[];
+  /** The displayed discipline; kept across reloads of the types. */
+  selectedTypeId: number | null;
 }
 
 export const initialState: TypesState = {
   types: [],
+  selectedTypeId: null,
 };
 
 export interface MatchState {
@@ -35,7 +38,12 @@ const typeReducer = createReducer(
   on(TableActions.loadTypesSuccess, (state, { types }) => ({
     ...state,
     types,
-  }))
+    // keep the selection while it still exists, otherwise show the first discipline
+    selectedTypeId: types.some((type) => type.id === state.selectedTypeId)
+      ? state.selectedTypeId
+      : (types[0]?.id ?? null),
+  })),
+  on(TableActions.selectType, (state, { typeId }) => ({ ...state, selectedTypeId: typeId }))
 );
 
 const matchesReducer = createReducer(
@@ -60,6 +68,7 @@ export const selectFeature = createFeatureSelector<AppState, TypesState>('discip
 export const selectMatchFeature = createFeatureSelector<AppState, MatchState>('matches');
 
 export const getTypes = createSelector(selectFeature, (state: TypesState) => state.types);
+export const getSelectedTypeId = createSelector(selectFeature, (state: TypesState) => state.selectedTypeId);
 
 export const getMatches = createSelector(selectMatchFeature, (state: MatchState) => state.matches);
 

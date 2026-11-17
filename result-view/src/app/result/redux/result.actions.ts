@@ -10,7 +10,10 @@ export const loadTypesSuccess = createAction('[Types] Load Success', props<{ typ
 
 export const loadTypesError = createAction('[Types] Load Error');
 
-export const loadMatches = createAction('[Matches] Load', props<{ typeId }>());
+/** Shows the discipline [typeId]; its matches are loaded. */
+export const selectType = createAction('[Types] Select', props<{ typeId: number }>());
+
+export const loadMatches = createAction('[Matches] Load', props<{ typeId: number }>());
 
 export const loadMatchesSuccess = createAction(
   '[Matches] Load Success',

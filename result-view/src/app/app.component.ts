@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ResultUpdatesService } from './updates/result-updates.service';
 
 @Component({
   standalone: false,
@@ -6,6 +7,14 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  constructor() {}
+export class AppComponent implements OnInit, OnDestroy {
+  constructor(private updates: ResultUpdatesService) {}
+
+  ngOnInit(): void {
+    this.updates.start();
+  }
+
+  ngOnDestroy(): void {
+    this.updates.stop();
+  }
 }

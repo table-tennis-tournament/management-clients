@@ -121,7 +121,6 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 ### Open work (next slices)
 
 - **Grouping (formation/knockout)**: group *formation* and seeding remain offline (mktt); the knockout placement (`writeNextKoMatch` — write the winner into the next KO match) is not migrated.
-- **result-view live updates**: result-view still loads matches on demand; it has no WebSocket subscription yet.
 - **`isMatchPlaying`** is kept (dead for now) — user intends to use it later.
 
 ### Handoff note

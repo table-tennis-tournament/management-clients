@@ -31,7 +31,7 @@ Referees use a specialized application to manage their assigned tables.
 
 ## Result View (Public Display)
 
-A public-facing application intended for display on monitors or projectors in the venue. It has no WebSocket subscription yet (see `docs/follow-ups.md`).
+A public-facing application intended for display on monitors or projectors in the venue. It subscribes to the `matches` topic and reloads the displayed discipline when a result in it changes (`src/app/updates/result-updates.ts`); assignments, starts and calls are ignored. After a reconnect it reloads the disciplines and the displayed matches.
 
 - **Live Results**: Shows currently active matches and their live scores (set-by-set).
 - **Recent Results**: Lists the scores of the most recently finished matches.
