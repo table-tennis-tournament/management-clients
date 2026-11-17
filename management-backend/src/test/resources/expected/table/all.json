@@ -14,14 +14,16 @@
       "firstName" : "Jane",
       "lastName" : "Doe",
       "ttr" : null,
-      "paid" : false
+      "paid" : false,
+      "club" : null
     } ],
     "team2" : [ {
       "id" : 2,
       "firstName" : "John",
       "lastName" : "Roe",
       "ttr" : null,
-      "paid" : false
+      "paid" : false,
+      "club" : null
     } ],
     "side1Id" : 1,
     "side2Id" : 2,
@@ -58,14 +60,16 @@
       "firstName" : "Jane",
       "lastName" : "Doe",
       "ttr" : null,
-      "paid" : false
+      "paid" : false,
+      "club" : null
     },
     "player2" : {
       "id" : 2,
       "firstName" : "John",
       "lastName" : "Roe",
       "ttr" : null,
-      "paid" : false
+      "paid" : false,
+      "club" : null
     },
     "sets" : [ ],
     "state" : "OnTable",

@@ -1,11 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
-import {
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormControl,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -14,46 +7,22 @@ import {
   MatDialogActions,
 } from '@angular/material/dialog';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton } from '@angular/material/button';
 import { PlayerNamePipe } from '../../player-name.pipe';
 
+/** Confirms the next Call of a match; a Call always announces all of its players. Closes with `true`. */
 @Component({
   selector: 'app-player-dialog',
   templateUrl: './player-dialog.component.html',
   styleUrls: ['./player-dialog.component.scss'],
-  imports: [
-    MatDialogTitle,
-    CdkScrollable,
-    MatDialogContent,
-    FormsModule,
-    ReactiveFormsModule,
-    MatCheckbox,
-    MatDialogActions,
-    MatButton,
-    PlayerNamePipe,
-  ],
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, PlayerNamePipe],
 })
-export class PlayerDialogComponent implements OnInit {
+export class PlayerDialogComponent {
   dialogRef = inject<MatDialogRef<PlayerDialogComponent>>(MatDialogRef);
   players = inject(MAT_DIALOG_DATA);
-  private formBuilder = inject(UntypedFormBuilder);
-
-  public playersFormGroup: any;
-
-  ngOnInit() {
-    this.playersFormGroup = this.formBuilder.group({
-      players: this.formBuilder.array([]),
-    });
-    const formArray = this.playersFormGroup.get('players') as UntypedFormArray;
-    this.players.forEach(() => formArray.push(new UntypedFormControl(false)));
-  }
 
   onOk() {
-    const result = this.players
-      .filter((x, i) => !!this.playersFormGroup.value.players[i])
-      .map((player) => player.player_id);
-    this.dialogRef.close(result);
+    this.dialogRef.close(true);
   }
 
   onCancel() {

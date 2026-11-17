@@ -22,10 +22,7 @@ export const startMatchOnTableSuccess = createAction('[Match] Start Match Succes
 
 export const startMatchOnTableError = createAction('[Match] Start Match Error');
 
-export const callPlayerForMatch = createAction(
-  '[Match] Call Player for Match',
-  props<{ playerIds: number[]; matchId: number }>()
-);
+export const callPlayerForMatch = createAction('[Match] Call Player for Match', props<{ matchId: number }>());
 
 export const callPlayerForMatchSuccess = createAction('[Match] Call Player for Match Success');
 

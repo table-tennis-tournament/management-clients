@@ -31,12 +31,9 @@ export class MatchItemComponent {
       data: this.match.players_a.concat(this.match.players_b),
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.callPlayersForMatch.emit({
-          playerIds: result,
-          matchId: this.match.match_id,
-        });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.callPlayersForMatch.emit({ matchId: this.match.match_id });
       }
     });
   }

@@ -81,14 +81,18 @@ class JdbcTournamentMatchRepository(
 
         val allPlayerIds = (playerIds + doubles.values.flatten()).distinct()
         val players: Map<Long, TournamentPlayer> = if (!withNames || allPlayerIds.isEmpty()) emptyMap() else
-            jdbcClient.sql("SELECT play_id, play_firstname, play_lastname, play_ttr FROM player WHERE play_id IN (:ids)")
+            jdbcClient.sql(
+                "SELECT p.play_id, p.play_firstname, p.play_lastname, p.play_ttr, c.club_id, c.club_name " +
+                    "FROM player p LEFT JOIN club c ON c.club_id = p.play_club_id WHERE p.play_id IN (:ids)"
+            )
                 .param("ids", allPlayerIds)
                 .query { rs, _ ->
                     rs.getLong("play_id") to TournamentPlayer(
                         id = rs.getLong("play_id"),
                         firstName = rs.getString("play_firstname"),
                         lastName = rs.getString("play_lastname"),
-                        ttr = rs.getObject("play_ttr")?.let { (it as Number).toInt() }
+                        ttr = rs.getObject("play_ttr")?.let { (it as Number).toInt() },
+                        club = rs.getObject("club_id")?.let { TournamentClub((it as Number).toLong(), rs.getString("club_name")) }
                     )
                 }
                 .list().toMap()

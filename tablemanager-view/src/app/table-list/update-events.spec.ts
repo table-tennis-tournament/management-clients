@@ -2,7 +2,7 @@ import { targetsFor, UpdateEvent } from '../shared/update-events/update-events';
 import { Table } from './tt-table/table.model';
 import { tablemanagerUpdates } from './update-events';
 
-const tables = (...ids: number[]): Table[] => ids.map((id) => ({ table_id: id as any, matches: [] }));
+const tables = (...ids: number[]): Table[] => ids.map((id) => ({ table_id: id, matches: [] }));
 
 /** The reload targets of [event] while [displayed] tables are shown. */
 const reloadsFor = (event: UpdateEvent, displayed: Table[]) =>

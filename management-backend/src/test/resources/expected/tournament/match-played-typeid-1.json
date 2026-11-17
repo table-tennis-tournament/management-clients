@@ -5,14 +5,16 @@
     "firstName" : "First5",
     "lastName" : "Last5",
     "ttr" : 1450,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   } ],
   "team2" : [ {
     "id" : 6,
     "firstName" : "First6",
     "lastName" : "Last6",
     "ttr" : 1460,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   } ],
   "side1Id" : 5,
   "side2Id" : 6,
@@ -55,14 +57,16 @@
     "firstName" : "First5",
     "lastName" : "Last5",
     "ttr" : 1450,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   },
   "player2" : {
     "id" : 6,
     "firstName" : "First6",
     "lastName" : "Last6",
     "ttr" : 1460,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   },
   "sets" : [ {
     "pointsPlayer1" : 11,
@@ -83,6 +87,7 @@
     "firstName" : "First5",
     "lastName" : "Last5",
     "ttr" : 1450,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   } ]
 } ]

@@ -21,7 +21,8 @@ export class MatchService {
     return this.http.post<any>(`/api/v2/match/start/${matchId}/${tableId}`, null);
   }
 
-  callPlayersForMatch(playerIds: number[], matchId: number) {
+  /** Announces the next Call of the match; a Call always names all players of the match. */
+  callPlayersForMatch(matchId: number) {
     return this.http.post<any>(`/api/v2/playercall/${matchId}`, null);
   }
 

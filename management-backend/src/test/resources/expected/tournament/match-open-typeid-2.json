@@ -5,26 +5,36 @@
     "firstName" : "First1",
     "lastName" : "Last1",
     "ttr" : 1410,
-    "paid" : false
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
   }, {
     "id" : 2,
     "firstName" : "First2",
     "lastName" : "Last2",
     "ttr" : 1420,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   } ],
   "team2" : [ {
     "id" : 3,
     "firstName" : "First3",
     "lastName" : "Last3",
     "ttr" : 1430,
-    "paid" : false
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
   }, {
     "id" : 4,
     "firstName" : "First4",
     "lastName" : "Last4",
     "ttr" : 1440,
-    "paid" : false
+    "paid" : false,
+    "club" : null
   } ],
   "side1Id" : 100001,
   "side2Id" : 100002,
@@ -64,14 +74,22 @@
     "firstName" : "First1",
     "lastName" : "Last1",
     "ttr" : 1410,
-    "paid" : false
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
   },
   "player2" : {
     "id" : 3,
     "firstName" : "First3",
     "lastName" : "Last3",
     "ttr" : 1430,
-    "paid" : false
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
   },
   "sets" : [ ],
   "state" : "OnTable",

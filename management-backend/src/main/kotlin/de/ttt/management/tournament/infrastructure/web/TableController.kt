@@ -118,7 +118,7 @@ class TableController(
             player_id = player.id,
             first_name = player.firstName,
             last_name = player.lastName,
-            club = null,
+            club = player.club?.name,
             call_count = callNumber
         )
     }

@@ -13,7 +13,7 @@
       "player_id" : 3,
       "first_name" : "First3",
       "last_name" : "Last3",
-      "club" : null,
+      "club" : "TTV Musterstadt",
       "call_count" : 1
     } ],
     "players_b" : [ {
@@ -43,7 +43,7 @@
       "player_id" : 1,
       "first_name" : "First1",
       "last_name" : "Last1",
-      "club" : null,
+      "club" : "TTV Musterstadt",
       "call_count" : 2
     }, {
       "player_id" : 2,
@@ -56,7 +56,7 @@
       "player_id" : 3,
       "first_name" : "First3",
       "last_name" : "Last3",
-      "club" : null,
+      "club" : "TTV Musterstadt",
       "call_count" : 2
     }, {
       "player_id" : 4,

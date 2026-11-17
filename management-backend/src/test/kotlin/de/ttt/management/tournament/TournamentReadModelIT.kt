@@ -64,7 +64,11 @@ class TournamentReadModelIT {
         db.insertMatchType(1, "Gruppenspiel")
         db.insertMatchType(2, "Finale")
         db.insertGroup(1, "A", disciplineId = 1)
-        (1L..8L).forEach { db.insertPlayer(it, "First$it", "Last$it", ttr = 1400 + it.toInt() * 10) }
+        db.insertClub(1, "TTV Musterstadt")
+        // players 1 and 3 play for club 1, the others for no club
+        (1L..8L).forEach {
+            db.insertPlayer(it, "First$it", "Last$it", ttr = 1400 + it.toInt() * 10, clubId = 1L.takeIf { _ -> it == 1L || it == 3L })
+        }
         db.insertDouble(1, player1Id = 1, player2Id = 2, disciplineId = 2)
         db.insertDouble(2, player1Id = 3, player2Id = 4, disciplineId = 2)
         db.insertTables(1L..4L)
