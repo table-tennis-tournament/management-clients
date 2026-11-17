@@ -49,9 +49,8 @@ class JdbcTournamentMatchRepositoryIT {
     private fun matchRow(): Map<String, Any?> =
         jdbcTemplate.queryForMap("SELECT * FROM matches WHERE matc_id = ?", matchId).mapKeys { it.key.lowercase() }
 
-    /** The `mgmt_matchtable` rows without `timestamp`, which the database sets from its own clock. */
     private fun matchTableRows(): List<Map<String, Any?>> =
-        jdbcTemplate.queryForList("SELECT id, tableId, matchId FROM mgmt_matchtable ORDER BY id")
+        jdbcTemplate.queryForList("SELECT * FROM mgmt_matchtable ORDER BY id")
             .map { row -> row.mapKeys { it.key.lowercase() } }
 
     private fun callStateRows(): List<Map<String, Any?>> =
@@ -71,7 +70,7 @@ class JdbcTournamentMatchRepositoryIT {
             openRow + mapOf<String, Any?>("matc_tabl_id" to 3, "matc_starttime" to Timestamp.valueOf(NOW)),
             matchRow()
         )
-        assertEquals(listOf(mapOf<String, Any?>("id" to uuid(1), "tableid" to 3, "matchid" to 1)), matchTableRows())
+        assertEquals(listOf(mapOf<String, Any?>("id" to uuid(1), "tableid" to 3, "matchid" to 1, "timestamp" to Timestamp.valueOf(NOW))), matchTableRows())
         assertEquals(listOf(mapOf<String, Any?>("matc_id" to 1L, "call_state" to 1)), callStateRows())
     }
 
@@ -87,7 +86,7 @@ class JdbcTournamentMatchRepositoryIT {
             openRow + mapOf<String, Any?>("matc_tabl_id" to 5, "matc_isplaying" to 1, "matc_starttime" to Timestamp.valueOf(NOW)),
             matchRow()
         )
-        assertEquals(listOf(mapOf<String, Any?>("id" to uuid(2), "tableid" to 5, "matchid" to 1)), matchTableRows())
+        assertEquals(listOf(mapOf<String, Any?>("id" to uuid(2), "tableid" to 5, "matchid" to 1, "timestamp" to Timestamp.valueOf(NOW))), matchTableRows())
         assertEquals(emptyList(), callStateRows())
     }
 
@@ -101,8 +100,8 @@ class JdbcTournamentMatchRepositoryIT {
         match.takeBack()
         repository.save(match)
 
-        // the start time of the assignment stays
-        assertEquals(openRow + mapOf<String, Any?>("matc_starttime" to Timestamp.valueOf(NOW)), matchRow())
+        // back to the open row: the start time of the assignment is cleared too
+        assertEquals(openRow, matchRow())
         assertEquals(emptyList(), matchTableRows())
         assertEquals(emptyList(), callStateRows())
     }

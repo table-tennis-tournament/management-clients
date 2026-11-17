@@ -49,13 +49,13 @@ class MatchService(
     @Transactional
     fun assignMatch(matchId: Long, tableId: Long): Boolean =
         transition(listOf(matchId), { it.assign(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
-            MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.previousTableId)
+            MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId))
         }
 
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean =
         transition(listOf(matchId), { it.start(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
-            MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.previousTableId)
+            MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId))
         }
 
     /**
@@ -75,7 +75,7 @@ class MatchService(
         transition(listOf(matchId), { it.complete(sets) }) { (t) ->
             MatchCompleted(
                 matchId = matchId,
-                winnerId = t.match.winner?.id,
+                winnerId = t.match.winnerSideId,
                 sets1 = t.match.sets1 ?: 0,
                 sets2 = t.match.sets2 ?: 0,
                 typeId = t.match.typeId,
@@ -120,7 +120,7 @@ class MatchService(
                 MatchDeleted(
                     matchIds = matches.mapNotNull { it.id },
                     typeIds = listOf(id),
-                    tableIds = matches.mapNotNull { it.tableId }
+                    tableIds = matches.mapNotNull { it.tableId }.distinct()
                 )
             )
         }
@@ -130,7 +130,7 @@ class MatchService(
     @Transactional
     fun freeMatches(matchIds: List<Long>): Boolean =
         transition(matchIds, TournamentMatch::free) { freed ->
-            MatchFreed(freed.mapNotNull { it.match.id }, freed.mapNotNull { it.match.typeId }, freed.mapNotNull { it.previousTableId })
+            MatchFreed(freed.mapNotNull { it.match.id }, freed.mapNotNull { it.match.typeId }.distinct(), freed.mapNotNull { it.previousTableId }.distinct())
         }
 
     @Transactional
@@ -151,7 +151,10 @@ class MatchService(
     }
 
     /** A match after a transition, together with the table it was on before. */
-    private class Transitioned(val match: TournamentMatch, val previousTableId: Long?)
+    private class Transitioned(val match: TournamentMatch, val previousTableId: Long?) {
+        /** The table the match was on before, if it came from another table than [tableId]. */
+        fun movedFrom(tableId: Long): Long? = previousTableId?.takeIf { it != tableId }
+    }
 
     /**
      * Loads each match, lets it decide the transition, saves it and publishes one event built
@@ -195,14 +198,14 @@ class MatchService(
 
     private fun takenBackEvent(matches: List<Transitioned>) = MatchTakenBack(
         matchIds = matches.mapNotNull { it.match.id },
-        typeIds = matches.mapNotNull { it.match.typeId },
-        tableIds = matches.mapNotNull { it.previousTableId }
+        typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
+        tableIds = matches.mapNotNull { it.previousTableId }.distinct()
     )
 
     private fun calledEvent(matches: List<Transitioned>, callState: CallState) = MatchCalled(
         matchIds = matches.mapNotNull { it.match.id },
         callState = callState.name,
-        typeIds = matches.mapNotNull { it.match.typeId },
-        tableIds = matches.mapNotNull { it.previousTableId }
+        typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
+        tableIds = matches.mapNotNull { it.previousTableId }.distinct()
     )
 }

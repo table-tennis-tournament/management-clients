@@ -12,7 +12,6 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
 import tools.jackson.databind.json.JsonMapper
@@ -56,10 +55,22 @@ class PrinterModuleIT {
             .expectExactJson(JsonMapper.builder().build().writeValueAsString(printerService.getAllPrinters()))
     }
 
+    private fun expectSelectedPrinter(name: String) {
+        restTestClient.get()
+            .uri("/api/v2/settings/all")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson(
+                """[
+                    {"key": "printerName", "value": "$name"},
+                    {"key": "alwaysPrint", "value": true},
+                    {"key": "autoStart", "value": false}
+                ]"""
+            )
+    }
+
     @Test
-    // the selected printer is kept in memory and cannot be unset; don't leak it into other tests
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    fun `should set an available printer successfully`() {
+    fun `should set an available printer and unset it again`() {
         val printers = printerService.getAllPrinters()
         Assumptions.assumeTrue(printers.isNotEmpty(), "no system printers available")
 
@@ -68,6 +79,24 @@ class PrinterModuleIT {
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
+        expectSelectedPrinter(printers.first())
+
+        restTestClient.delete()
+            .uri("/api/v2/printer/set")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
+        expectSelectedPrinter("")
+    }
+
+    @Test
+    fun `unsetting the printer without a selection keeps the default`() {
+        restTestClient.delete()
+            .uri("/api/v2/printer/set")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
+        expectSelectedPrinter("")
     }
 
     @Test

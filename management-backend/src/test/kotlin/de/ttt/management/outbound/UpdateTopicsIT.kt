@@ -13,6 +13,7 @@ import de.ttt.management.tournament.domain.SetResult
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
@@ -54,6 +55,9 @@ class UpdateTopicsIT {
     private lateinit var db: DatabaseHelper
 
     @Autowired
+    private lateinit var broker: SimpleBrokerMessageHandler
+
+    @Autowired
     private lateinit var transactionManager: PlatformTransactionManager
 
     private val matchId = 1L
@@ -78,7 +82,7 @@ class UpdateTopicsIT {
     }
 
     private fun subscribe(topics: List<String> = StompTestSupport.ALL_TOPICS) =
-        StompTestSupport.subscribe(StompTestSupport.connect(port), topics)
+        StompTestSupport.subscribe(StompTestSupport.connect(port), broker, topics)
 
     // --- matches -----------------------------------------------------------------
 

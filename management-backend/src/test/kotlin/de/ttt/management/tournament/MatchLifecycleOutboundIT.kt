@@ -9,6 +9,7 @@ import de.ttt.management.tournament.domain.SetResult
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
@@ -29,6 +30,9 @@ class MatchLifecycleOutboundIT {
     @Autowired
     private lateinit var db: DatabaseHelper
 
+    @Autowired
+    private lateinit var broker: SimpleBrokerMessageHandler
+
     private val matchId = 1L
     private val tableId = 1L
 
@@ -41,7 +45,7 @@ class MatchLifecycleOutboundIT {
     @Test
     fun `match lifecycle publishes the full event set over the websocket`() {
         val session = StompTestSupport.connect(port)
-        val messages = StompTestSupport.subscribe(session)
+        val messages = StompTestSupport.subscribe(session, broker)
 
         matchService.assignMatch(matchId, tableId)                                    // MATCH_ASSIGNED
         matchService.callMatches(listOf(matchId))                                     // MATCH_CALLED

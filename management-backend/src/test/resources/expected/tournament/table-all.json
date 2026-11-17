@@ -18,7 +18,9 @@
       "ttr" : 1440,
       "paid" : false
     } ],
-    "winner" : null,
+    "side1Id" : 3,
+    "side2Id" : 4,
+    "winnerSideId" : null,
     "playGroup" : {
       "id" : 1,
       "name" : "A"
@@ -67,7 +69,8 @@
       "paid" : false
     },
     "sets" : [ ],
-    "state" : "OnTable"
+    "state" : "OnTable",
+    "winner" : [ ]
   } ]
 }, {
   "id" : 2,
@@ -101,7 +104,9 @@
       "ttr" : 1440,
       "paid" : false
     } ],
-    "winner" : null,
+    "side1Id" : 100001,
+    "side2Id" : 100002,
+    "winnerSideId" : null,
     "playGroup" : null,
     "matchType" : {
       "id" : 2,
@@ -122,7 +127,7 @@
     "typeId" : 2,
     "type" : {
       "id" : 2,
-      "name" : "Herren",
+      "name" : "Herren-Doppel",
       "kind" : 2,
       "active" : true
     },
@@ -147,7 +152,8 @@
       "paid" : false
     },
     "sets" : [ ],
-    "state" : "OnTable"
+    "state" : "OnTable",
+    "winner" : [ ]
   } ]
 }, {
   "id" : 3,
@@ -169,7 +175,9 @@
       "ttr" : 1460,
       "paid" : false
     } ],
-    "winner" : null,
+    "side1Id" : 5,
+    "side2Id" : 6,
+    "winnerSideId" : null,
     "playGroup" : {
       "id" : 1,
       "name" : "A"
@@ -218,7 +226,8 @@
       "paid" : false
     },
     "sets" : [ ],
-    "state" : "Started"
+    "state" : "Started",
+    "winner" : [ ]
   } ]
 }, {
   "id" : 4,

@@ -5,12 +5,15 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Repository
 import org.springframework.util.IdGenerator
+import java.time.Clock
+import java.time.LocalDateTime
 import java.util.*
 
 @Repository
 class JdbcTournamentMatchRepository(
     private val jdbcClient: JdbcClient,
-    private val idGenerator: IdGenerator
+    private val idGenerator: IdGenerator,
+    private val clock: Clock
 ) : TournamentMatchRepository {
 
     private val rowMapper = RowMapper { rs, _ -> toMatch(rs) }
@@ -27,7 +30,9 @@ class JdbcTournamentMatchRepository(
             id = rs.getLong("matc_id"),
             team1 = p1Id?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
             team2 = p2Id?.let { listOf(TournamentPlayer(id = it)) } ?: emptyList(),
-            winner = wId?.let { TournamentPlayer(id = it) },
+            side1Id = p1Id,
+            side2Id = p2Id,
+            winnerSideId = wId,
             playGroup = pgId?.takeIf { groupName != null }?.let { TournamentPlayGroup(id = it, name = groupName) },
             matchType = mtId?.let { TournamentMatchType(id = it, name = rs.getString("match_type_name")) },
             result = rs.getString("matc_result"),
@@ -44,9 +49,9 @@ class JdbcTournamentMatchRepository(
             tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 },
             typeId = rs.getObject("matc_type_id")?.let { (it as Number).toLong() },
             type = rs.getObject("matc_type_id")?.let { (it as Number).toLong() }?.let { tid ->
-                TournamentDiscipline(
+                TournamentDiscipline.fromStored(
                     id = tid,
-                    name = rs.getString("type_name"),
+                    storedName = rs.getString("type_name"),
                     kind = rs.getInt("type_kind"),
                     active = rs.getInt("type_active") > 0
                 )
@@ -109,18 +114,25 @@ class JdbcTournamentMatchRepository(
         }
     }
 
+    /**
+     * Sets [TournamentMatch.isPlayable] against every blocking match of the tournament, not only the
+     * loaded ones: a player on a table in one discipline blocks their matches in all others.
+     */
     private fun withPlayability(matches: List<TournamentMatch>): List<TournamentMatch> {
-        val blockingIds = matches.asSequence()
-            .filter { it.isBlocking }
-            .flatMap { it.team1 + it.team2 }
-            .mapNotNull { it.id }
-            .toSet()
+        val blockingIds = blockingPlayerIds()
         matches.forEach { m ->
             val ids = (m.team1 + m.team2).mapNotNull { it.id }.toSet()
             m.isPlayable = m.team1.isNotEmpty() && m.team2.isNotEmpty() && ids.none { it in blockingIds }
         }
         return matches
     }
+
+    /** The players of every match that is on a table. */
+    private fun blockingPlayerIds(): Set<Long> =
+        resolvePlayers(
+            jdbcClient.sql(selectMatches("WHERE m.matc_tabl_id > 0")).query(rowMapper).list(),
+            withNames = false
+        ).flatMap { it.team1 + it.team2 }.mapNotNull { it.id }.toSet()
 
     private fun selectMatches(sql: String): String =
         "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate, mt.maty_name AS match_type_name, g.grou_name AS group_name, " +
@@ -136,7 +148,7 @@ class JdbcTournamentMatchRepository(
     }
 
     override fun findById(id: Long): Optional<TournamentMatch> {
-        return resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).list(), withNames = true)
+        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).list(), withNames = true))
             .firstOrNull()
             .let { Optional.ofNullable(it) }
     }
@@ -224,7 +236,7 @@ class JdbcTournamentMatchRepository(
             .param("kampflos", if (match.isKampflos) 1 else 0)
             .param("waiting", if (match.waitingList) 1 else 0)
             .param("startTime", match.startTime)
-            .param("winnerId", match.winner?.id)
+            .param("winnerId", match.winnerSideId)
             .param("result", match.result)
             .param("resultRaw", match.resultRaw)
             .param("sets1", match.sets1 ?: 0)
@@ -267,11 +279,12 @@ class JdbcTournamentMatchRepository(
 
     private fun insertMatchTable(matchId: Long, tableId: Long) {
         jdbcClient.sql(
-            "INSERT INTO mgmt_matchtable (id, tableId, matchId, timestamp) VALUES (:id, :tableId, :matchId, CURRENT_TIMESTAMP)"
+            "INSERT INTO mgmt_matchtable (id, tableId, matchId, timestamp) VALUES (:id, :tableId, :matchId, :timestamp)"
         )
             .param("id", idGenerator.generateId().toString())
             .param("tableId", tableId)
             .param("matchId", matchId)
+            .param("timestamp", LocalDateTime.now(clock))
             .update()
     }
 

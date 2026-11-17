@@ -14,7 +14,9 @@
     "ttr" : 1420,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 1,
+  "side2Id" : 2,
+  "winnerSideId" : null,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -63,7 +65,8 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "Open"
+  "state" : "Open",
+  "winner" : [ ]
 }, {
   "id" : 2,
   "team1" : [ {
@@ -80,7 +83,9 @@
     "ttr" : 1440,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 3,
+  "side2Id" : 4,
+  "winnerSideId" : null,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -129,7 +134,8 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "OnTable"
+  "state" : "OnTable",
+  "winner" : [ ]
 }, {
   "id" : 3,
   "team1" : [ {
@@ -146,13 +152,9 @@
     "ttr" : 1460,
     "paid" : false
   } ],
-  "winner" : {
-    "id" : 5,
-    "firstName" : null,
-    "lastName" : null,
-    "ttr" : null,
-    "paid" : false
-  },
+  "side1Id" : 5,
+  "side2Id" : 6,
+  "winnerSideId" : 5,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -213,7 +215,14 @@
     "pointsPlayer1" : 11,
     "pointsPlayer2" : 9
   } ],
-  "state" : "Completed"
+  "state" : "Completed",
+  "winner" : [ {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : 1450,
+    "paid" : false
+  } ]
 }, {
   "id" : 4,
   "team1" : [ {
@@ -242,7 +251,9 @@
     "ttr" : 1440,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 100001,
+  "side2Id" : 100002,
+  "winnerSideId" : null,
   "playGroup" : null,
   "matchType" : {
     "id" : 2,
@@ -263,7 +274,7 @@
   "typeId" : 2,
   "type" : {
     "id" : 2,
-    "name" : "Herren",
+    "name" : "Herren-Doppel",
     "kind" : 2,
     "active" : true
   },
@@ -288,7 +299,8 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "OnTable"
+  "state" : "OnTable",
+  "winner" : [ ]
 }, {
   "id" : 5,
   "team1" : [ {
@@ -305,7 +317,9 @@
     "ttr" : 1430,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 1,
+  "side2Id" : 3,
+  "winnerSideId" : null,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -354,7 +368,8 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "InQueue"
+  "state" : "InQueue",
+  "winner" : [ ]
 }, {
   "id" : 6,
   "team1" : [ {
@@ -371,7 +386,9 @@
     "ttr" : 1460,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 5,
+  "side2Id" : 6,
+  "winnerSideId" : null,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -420,7 +437,8 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "Started"
+  "state" : "Started",
+  "winner" : [ ]
 }, {
   "id" : 7,
   "team1" : [ {
@@ -437,7 +455,9 @@
     "ttr" : 1480,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 7,
+  "side2Id" : 8,
+  "winnerSideId" : null,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -486,5 +506,6 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "Open"
+  "state" : "Open",
+  "winner" : [ ]
 } ]

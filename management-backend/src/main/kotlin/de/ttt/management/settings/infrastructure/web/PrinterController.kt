@@ -33,6 +33,13 @@ class PrinterController(private val printerService: PrinterService) {
         }
     }
 
+    @DeleteMapping("/set")
+    @Operation(summary = "Unset selected printer", description = "Prints on the default printer again.")
+    fun clearPrinter(): Map<String, Any> {
+        printerService.clearSelectedPrinter()
+        return mapOf("success" to true)
+    }
+
     @PostMapping("/setprintonstart/{active}")
     @Operation(summary = "Set print-on-start state", description = "Enables or disables automatic printing when a match starts.")
     fun setPrintOnStart(

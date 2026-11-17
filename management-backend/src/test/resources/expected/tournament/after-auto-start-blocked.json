@@ -14,7 +14,9 @@
     "ttr" : null,
     "paid" : false
   } ],
-  "winner" : null,
+  "side1Id" : 1,
+  "side2Id" : 3,
+  "winnerSideId" : null,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -63,5 +65,6 @@
     "paid" : false
   },
   "sets" : [ ],
-  "state" : "InQueue"
+  "state" : "InQueue",
+  "winner" : [ ]
 }

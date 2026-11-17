@@ -48,39 +48,35 @@ Pitfalls learned:
   UUID in a test is not always `…0001` (see `TournamentModuleIT`, `TournamentReadModelIT`).
 - `TRUNCATE` commits in H2, so ITs must not be `@Transactional` around `clean()`.
 - In-memory state survives between tests that share a Spring context: the auto-start flag
-  (`MatchListService.setMatchListActive`, reset in `TournamentModuleIT`/`TournamentReadModelIT`) and the selected
-  printer (`PrinterService`, cannot be unset, so the test that sets it uses `@DirtiesContext(AFTER_METHOD)`).
+  (`MatchListService.setMatchListActive`, reset in `TournamentModuleIT`/`TournamentReadModelIT`), print on start
+  and the selected printer (`PrinterModuleIT` resets both).
 - After deleting or renaming test classes run `mvn clean test`; stale classes in `target/` keep running.
 - Random order check: `mvn test '-Djunit.jupiter.testmethod.order.default=org.junit.jupiter.api.MethodOrderer$Random'
   '-Djunit.jupiter.testclass.order.default=org.junit.jupiter.api.ClassOrderer$Random'`.
 
-## Findings (todos)
+## Findings (resolved)
 
-Current behaviour that the expected files now pin. Decide for each whether it is intended; if you change it,
-re-record the affected files.
+Behaviour the expected files pinned, and how it was decided:
 
-1. **`GET /match/{id}` always returns `isPlayable: false`.** `JdbcTournamentMatchRepository.findById` skips
-   `withPlayability`, which every list endpoint applies. Looks like a bug
-   (`expected/tournament/match-4.json`).
-2. **The match `winner` has only an id.** `firstName`, `lastName`, `ttr` are null, while the team players
-   have names (`expected/tournament/match-all.json`, match 3). `resolvePlayers` does not resolve the winner.
-3. **The doubles discipline is named inconsistently.** `/types/all` says "Herren-Doppel" (`withDoubleName`),
-   the table manager `classification` and the caller `discipline.name` say "Herren".
-4. **`MATCH_CALLED` payload repeats discipline ids** (`typeIds: [1, 1, 1]` for three matches); the scope
-   deduplicates them. `MatchService.calledEvent` and `takenBackEvent` map without `distinct()`
-   (`expected/events/matches/match-called-bulk.json`).
-5. **`MATCH_STARTED.previousTableId` equals `tableId`** when a match starts on the table it was assigned to.
-   Clients may read this as "moved" (`expected/events/matches/match-started.json`).
-6. **The selected printer cannot be unset.** `PrinterService.selectedPrinter` is in-memory with no reset; the
-   settings endpoint exposes it. Tests work around it with `@DirtiesContext`.
-7. **`StompTestSupport.subscribe` sleeps 300 ms** because the simple broker sends no receipts. A possible source
-   of flakiness on slow CI machines.
-8. **Taking back a completed match keeps its result.** `TournamentMatch.takeBack()` clears the winner, the
-   table and the call, but `sets`, `sets1/2`, `balls1/2`, `result` and `resultRaw` stay, so an Open match can
-   show "3 : 0" (`TournamentMatchTest` "takes a match back to the open state"). Stop, remove and take back
-   also keep `startTime` (`expected/tournament/after-take-back.json`).
-9. **The `mgmt_matchtable` timestamp ignores the `Clock`.** `JdbcTournamentMatchRepository.insertMatchTable`
-   writes the database's `CURRENT_TIMESTAMP`, so tests cannot pin it and leave the column out.
+1. **`GET /match/{id}` always returned `isPlayable: false`.** Fixed: every query, `findById` included, computes
+   playability against all matches on a table, not only the loaded ones, so a player on a table in one
+   discipline blocks their matches in all others.
+2. **The match `winner` had only an id.** Fixed: `TournamentMatch` keeps the stored side ids (`side1Id`,
+   `side2Id`) and the winning side id (`winnerSideId`, written to `matc_winner_id` as mktt does: the player id,
+   or `100000 + double id` for doubles; it stored the first player of a doubles side before). `winner` is the
+   winning side's players with names.
+3. **The doubles discipline was named inconsistently.** Fixed: `TournamentDiscipline.fromStored` names a doubles
+   discipline "Herren-Doppel" for every endpoint and every match.
+4. **Event scopes repeated discipline and table ids.** Fixed: every multi-match event carries each id once.
+5. **`MATCH_STARTED.previousTableId` equalled `tableId`.** Fixed: `previousTableId` is only set when the match
+   came from another table (assign and start).
+6. **The selected printer could not be unset.** Fixed: `DELETE /api/v2/printer/set` goes back to the default
+   printer.
+7. **`StompTestSupport.subscribe` slept 300 ms.** Fixed: it waits until the simple broker's subscription
+   registry holds the new subscriptions.
+8. **Taking back a completed match kept its result.** Fixed: take back (and stop, remove) clears the result and
+   the start time; the match is played again from the start.
+9. **The `mgmt_matchtable` timestamp ignored the `Clock`.** Fixed: it is written from the injected `Clock`.
 10. **Fixed: admin-view read `successful`, the backend sends `success`.** Every successful assignment from
    admin-view dispatched `AssignMatchToTableError` with an empty error toast. `StatusDto` now declares `success`;
    `table.effects.spec.ts` has the regression test.

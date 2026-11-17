@@ -183,12 +183,12 @@ class TournamentMatchController(
     @get:GetMapping("/types/all")
     @get:Operation(summary = "Get all discipline types", description = "Retrieves all discipline types in the tournament.")
     val allTypes: List<TournamentDiscipline>
-        get() = matchService.getAllTypes().map(::withDoubleName).sortedBy { it.name }
+        get() = matchService.getAllTypes().sortedBy { it.name }
 
     @get:GetMapping("/types/open/all")
     @get:Operation(summary = "Get active discipline types", description = "Retrieves all active discipline types.")
     val activeTypes: List<TournamentDiscipline>
-        get() = matchService.getActiveTypes().map(::withDoubleName).sortedBy { it.name }
+        get() = matchService.getActiveTypes().sortedBy { it.name }
 
     @GetMapping("/match/allmatchtable")
     @Operation(summary = "Get all match table data", description = "Retrieves the current match-to-table assignments.")
@@ -306,9 +306,6 @@ class TournamentMatchController(
         val groupName = match.playGroup?.name
         return if (groupName.isNullOrBlank()) matchTypeName else "$matchTypeName $groupName"
     }
-
-    private fun withDoubleName(discipline: TournamentDiscipline): TournamentDiscipline =
-        if (discipline.kind == 2) discipline.copy(name = discipline.name?.plus("-Doppel")) else discipline
 }
 
 private fun List<List<Int>>.toSetResults(): List<SetResult> =

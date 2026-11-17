@@ -14,13 +14,9 @@
     "ttr" : 1460,
     "paid" : false
   } ],
-  "winner" : {
-    "id" : 5,
-    "firstName" : null,
-    "lastName" : null,
-    "ttr" : null,
-    "paid" : false
-  },
+  "side1Id" : 5,
+  "side2Id" : 6,
+  "winnerSideId" : 5,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -53,7 +49,7 @@
   "startTime" : null,
   "callNumber" : 0,
   "isBlocking" : false,
-  "isPlayable" : true,
+  "isPlayable" : false,
   "player1" : {
     "id" : 5,
     "firstName" : "First5",
@@ -81,5 +77,12 @@
     "pointsPlayer1" : 11,
     "pointsPlayer2" : 9
   } ],
-  "state" : "Completed"
+  "state" : "Completed",
+  "winner" : [ {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : 1450,
+    "paid" : false
+  } ]
 } ]

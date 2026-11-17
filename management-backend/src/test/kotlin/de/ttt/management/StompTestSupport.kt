@@ -2,10 +2,14 @@ package de.ttt.management
 
 import org.springframework.messaging.MessageHeaders
 import org.springframework.messaging.converter.StringMessageConverter
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor
+import org.springframework.messaging.simp.SimpMessageType
+import org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler
 import org.springframework.messaging.simp.stomp.StompFrameHandler
 import org.springframework.messaging.simp.stomp.StompHeaders
 import org.springframework.messaging.simp.stomp.StompSession
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter
+import org.springframework.messaging.support.MessageBuilder
 import org.springframework.web.socket.client.standard.StandardWebSocketClient
 import org.springframework.web.socket.messaging.WebSocketStompClient
 import java.lang.reflect.Type
@@ -38,9 +42,17 @@ object StompTestSupport {
 
     val ALL_TOPICS = listOf("matches", "tables", "queue", "players", "settings")
 
-    /** Subscribes to the given topics (all five by default) and collects every received message. */
-    fun subscribe(session: StompSession, topics: List<String> = ALL_TOPICS): BlockingQueue<Message> {
+    /**
+     * Subscribes to the given topics (all five by default) and collects every received message.
+     * Returns once [broker] has registered every subscription, so no event published afterwards is lost.
+     */
+    fun subscribe(
+        session: StompSession,
+        broker: SimpleBrokerMessageHandler,
+        topics: List<String> = ALL_TOPICS
+    ): BlockingQueue<Message> {
         val messages: BlockingQueue<Message> = LinkedBlockingDeque()
+        val before = topics.associateWith { subscriptionCount(broker, it) }
         topics.forEach { topic ->
             session.subscribe("/topic/$topic", object : StompFrameHandler {
                 override fun getPayloadType(headers: StompHeaders): Type = String::class.java
@@ -49,10 +61,23 @@ object StompTestSupport {
                 }
             })
         }
-        // The simple broker sends no receipts, so give it time to register the subscriptions
-        // before the test publishes events (otherwise the first event can be lost).
-        Thread.sleep(300)
+        // The simple broker sends no receipts, so wait until its registry holds the new subscriptions.
+        val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5)
+        while (topics.any { subscriptionCount(broker, it) <= before.getValue(it) }) {
+            check(System.nanoTime() < deadline) { "the broker did not register the subscriptions to $topics" }
+            Thread.sleep(5)
+        }
         return messages
+    }
+
+    /** How many subscriptions (of all sessions) the broker would deliver a message on /topic/[topic] to. */
+    private fun subscriptionCount(broker: SimpleBrokerMessageHandler, topic: String): Int {
+        val headers = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE).apply {
+            destination = "/topic/$topic"
+            setLeaveMutable(true)
+        }
+        val probe = MessageBuilder.createMessage(ByteArray(0), headers.messageHeaders)
+        return broker.subscriptionRegistry.findSubscriptions(probe).values.sumOf { it.size }
     }
 
     fun poll(messages: BlockingQueue<Message>): Message? =

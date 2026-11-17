@@ -11,9 +11,9 @@ import java.util.*
 class JdbcTournamentDisciplineRepository(private val jdbcClient: JdbcClient) : TournamentDisciplineRepository {
 
     private val rowMapper = RowMapper { rs, _ ->
-        TournamentDiscipline(
+        TournamentDiscipline.fromStored(
             id = rs.getLong("type_id"),
-            name = rs.getString("type_name"),
+            storedName = rs.getString("type_name"),
             kind = rs.getInt("type_kind"),
             active = rs.getInt("type_active") > 0
         )

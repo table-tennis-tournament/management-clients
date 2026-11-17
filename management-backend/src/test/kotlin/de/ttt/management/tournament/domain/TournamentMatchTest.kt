@@ -39,7 +39,7 @@ class TournamentMatchTest {
         resultRaw = "11=5,11=7,11=3"
         result = "3 : 0"
         isPlayed = true
-        winner = team1.first()
+        winnerSideId = 1L
     }
 
     @Test
@@ -49,6 +49,21 @@ class TournamentMatchTest {
 
         assertEquals(MatchState.Completed, match.state)
         assertMatch(match) { completedThreeNil() }
+    }
+
+    @Test
+    fun `a doubles match stores the winning side, not one of its players`() {
+        val match = TournamentMatch(
+            id = 1L,
+            team1 = listOf(TournamentPlayer(id = 1L), TournamentPlayer(id = 2L)),
+            team2 = listOf(TournamentPlayer(id = 3L), TournamentPlayer(id = 4L)),
+            side1Id = 100001L,
+            side2Id = 100002L
+        )
+        match.complete(listOf(SetResult(5, 11), SetResult(5, 11), SetResult(5, 11)))
+
+        assertEquals(100002L, match.winnerSideId)
+        assertEquals(listOf(3L, 4L), match.winner.map { it.id })
     }
 
     @Test
@@ -66,7 +81,7 @@ class TournamentMatchTest {
             resultRaw = "5=11,7=11,11=8,9=11"
             result = "1 : 3"
             isPlayed = true
-            winner = team2.first()
+            winnerSideId = 2L
         }
     }
 
@@ -182,12 +197,8 @@ class TournamentMatchTest {
         match.takeBack()
 
         assertEquals(MatchState.Open, match.state)
-        // Pins current behaviour: the old result stays on the match (see test-improvement-plan finding 8).
-        assertMatch(match) {
-            completedThreeNil()
-            isPlayed = false
-            winner = null
-        }
+        // played again from the start: the old result is gone
+        assertMatch(match) {}
     }
 
     @Test
@@ -347,8 +358,7 @@ class TournamentMatchTest {
         match.takeBack()
 
         assertEquals(MatchState.Open, match.state)
-        // startTime is kept from the start
-        assertMatch(match) { startTime = now }
+        assertMatch(match) {}
     }
 
     @Test

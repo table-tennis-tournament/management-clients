@@ -4,7 +4,11 @@ class TournamentMatch(
     var id: Long? = null,
     var team1: List<TournamentPlayer> = emptyList(),
     var team2: List<TournamentPlayer> = emptyList(),
-    var winner: TournamentPlayer? = null,
+    /** The stored side ids (`matc_play1_id`, `matc_play2_id`): a player id, or `100000 + double id` for doubles. */
+    var side1Id: Long? = null,
+    var side2Id: Long? = null,
+    /** The side id of the winning side, as mktt stores it in `matc_winner_id`. */
+    var winnerSideId: Long? = null,
     var playGroup: TournamentPlayGroup? = null,
     var matchType: TournamentMatchType? = null,
     var result: String? = null,
@@ -37,6 +41,19 @@ class TournamentMatch(
      */
     val player2: TournamentPlayer?
         get() = team2.firstOrNull()
+
+    /** The players of the winning side; empty while the match has no winner. */
+    val winner: List<TournamentPlayer>
+        get() = when (winnerSideId) {
+            null -> emptyList()
+            sideId(1) -> team1
+            sideId(2) -> team2
+            else -> emptyList()
+        }
+
+    /** The stored id of side [side] (1 or 2); a singles side without a stored id is its player. */
+    private fun sideId(side: Int): Long? =
+        if (side == 1) side1Id ?: team1.singleOrNull()?.id else side2Id ?: team2.singleOrNull()?.id
 
     /**
      * The per-set results, parsed from [resultRaw].
@@ -156,19 +173,22 @@ class TournamentMatch(
         isPlayed = true
         isPlaying = false
         isKampflos = true
-        winner = null
+        winnerSideId = null
         leaveTable()
     }
 
     /**
      * Takes a match back from its table to [MatchState.Open] so it can be played again later.
-     * Used for the administrator's take back and the table manager's "Zurück".
+     * Used for the administrator's take back and the table manager's "Zurück". The match is played
+     * again from the start, so its result and start time are cleared.
      */
     fun takeBack() {
         isPlayed = false
         isPlaying = false
         isKampflos = false
-        winner = null
+        winnerSideId = null
+        startTime = null
+        clearResult()
         leaveTable()
     }
 
@@ -197,13 +217,23 @@ class TournamentMatch(
         this.isPlayed = true
         this.isPlaying = false
         this.isKampflos = false
-        this.winner = if (games1 > games2) player1 else player2
+        this.winnerSideId = sideId(if (games1 > games2) 1 else 2)
         leaveTable()
     }
 
     private fun leaveTable() {
         tableId = null
         callState = CallState.None
+    }
+
+    private fun clearResult() {
+        sets = emptyList()
+        sets1 = null
+        sets2 = null
+        balls1 = null
+        balls2 = null
+        resultRaw = null
+        result = null
     }
 
     private fun applySets(sets: List<SetResult>) {

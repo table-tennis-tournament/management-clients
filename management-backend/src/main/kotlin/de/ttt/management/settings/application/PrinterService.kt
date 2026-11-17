@@ -38,6 +38,11 @@ class PrinterService(
         return found
     }
 
+    /** Goes back to the default printer (`management.printer.default-name`). */
+    fun clearSelectedPrinter() {
+        selectedPrinter = null
+    }
+
     fun setPrintOnStart(active: Boolean) {
         this.printOnStart = active
     }

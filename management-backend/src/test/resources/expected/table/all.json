@@ -23,7 +23,9 @@
       "ttr" : null,
       "paid" : false
     } ],
-    "winner" : null,
+    "side1Id" : 1,
+    "side2Id" : 2,
+    "winnerSideId" : null,
     "playGroup" : null,
     "matchType" : null,
     "result" : null,
@@ -66,7 +68,8 @@
       "paid" : false
     },
     "sets" : [ ],
-    "state" : "OnTable"
+    "state" : "OnTable",
+    "winner" : [ ]
   } ]
 }, {
   "id" : 3,
