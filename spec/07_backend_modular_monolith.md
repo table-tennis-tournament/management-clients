@@ -18,10 +18,10 @@ The root package is `de.ttt.management`. Each direct sub-package is a Spring Mod
 | Module | Responsibility |
 |---|---|
 | `registration` | Players, clubs, doubles, disciplines and registration state (paid / active / seed). Register/unregister players. |
-| `grouping` | Group formation, seeding and knockout placement. **Scaffolded only** — implemented in a later iteration. |
+| `grouping` | Group standings when a group is completed. Group formation and seeding stay in mktt; knockout placement is not migrated yet. |
 | `tournament` | Match lifecycle and state machine, the Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations. |
 | `settings` | System settings and printing (referee sheets, certificates). |
-| `outbound` | The single WebSocket publisher; consumes domain events and pushes to `/topic/updates`. |
+| `outbound` | The single WebSocket publisher; consumes domain events and pushes update events to five topics (`/topic/matches`, `tables`, `queue`, `players`, `settings`, ADR 0003). |
 
 ### Boundaries
 

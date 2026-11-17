@@ -7,9 +7,9 @@
 |Area |Decision |Rationale
 
 |Backend framework
-|Scala with Play Framework
+|Kotlin with Spring Boot and Spring Modulith
 
-|Mature web framework with excellent WebSocket support.
+|One deployable whose module boundaries are verified in tests; STOMP over WebSocket from Spring (chapter 9).
 
 |Frontend framework
 |Angular with ngrx

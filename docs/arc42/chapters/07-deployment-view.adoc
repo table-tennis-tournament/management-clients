@@ -13,10 +13,10 @@ The system is deployed as three containers orchestrated by Docker Compose.
 |Serves the three SPA bundles and reverse-proxies `/api` and WebSocket traffic to the backend.
 
 |Backend
-|Scala Play application.
+|Kotlin/Spring Boot application (`management-backend`).
 
-|9000
-|REST API, WebSocket broadcasting and PDF generation.
+|8080
+|REST API under `/api/v2`, STOMP update events on `/ttt-websocket`, PDF generation and printing.
 
 |Database
 |MariaDB.

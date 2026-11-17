@@ -49,7 +49,7 @@ include::../diagrams/backend-components.puml[]
 |Players, clubs, doubles, disciplines and registration state (paid/active/seed). Register/unregister players.
 
 |grouping
-|Group formation, seeding and knockout placement. Currently scaffolded, not yet implemented.
+|Group standings, computed when the last match of a group is completed. Group formation and seeding stay in mktt; knockout placement is not migrated yet.
 
 |tournament
 |Match lifecycle and state machine, Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations.

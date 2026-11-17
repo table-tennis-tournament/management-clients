@@ -23,7 +23,7 @@ Resolved: result-view follows the `matches` topic with its own copy of `src/app/
 
 ## 5. PlantUML diagrams
 
-The PlantUML diagrams (`docs/arc42/diagrams`, e.g. `backend-components.puml`, `container.puml`) still describe the legacy Scala/Play/Pekko/SockJS backend. The text in arc42 chapters 02, 04, 06 and 09 and `spec/06_live_updates.md` now describes STOMP and the five topics.
+Resolved: `container.puml` and `backend-components.puml` show the Kotlin/Spring Boot backend, its Spring Modulith modules, the domain events between them and the STOMP topics; arc42 chapters 1, 2, 5 and 7 no longer describe the Scala/Play backend.
 
 ## 6. Rename "stop" to "take back"
 

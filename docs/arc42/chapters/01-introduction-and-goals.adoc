@@ -1,6 +1,6 @@
 == Introduction and Goals
 
-The Table Tennis Tournament Management System manages the complete flow of a table tennis tournament: it assigns matches to tables, calls matches, collects results and displays live standings. It consists of a Scala backend and three Angular single-page applications, one for each user role.
+The Table Tennis Tournament Management System manages the complete flow of a table tennis tournament: it assigns matches to tables, calls matches, collects results and displays live standings. It consists of a Kotlin/Spring Boot backend and three Angular single-page applications, one for each user role.
 
 === Requirements Overview
 

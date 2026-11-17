@@ -7,7 +7,7 @@
 |Constraint |Description |Impact
 
 |JVM backend
-|The backend runs on the JVM (Scala with Play Framework).
+|The backend runs on the JVM (Kotlin with Spring Boot and Spring Modulith).
 
 |Technology stack is limited to JVM-compatible solutions.
 
@@ -34,6 +34,6 @@
 
 === Organizational Constraints
 
-* The development team is familiar with Scala and Angular.
+* The development team is familiar with Kotlin, Spring and Angular.
 * The existing infrastructure supports Docker deployments.
 * Tournament data is prepared offline by the legacy tool mktt, which imports data from click-TT and populates the database. The system therefore must operate on an externally prepared database.
