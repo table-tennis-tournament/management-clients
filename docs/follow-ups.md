@@ -36,7 +36,7 @@ The domain term is **Take back** (see `GLOSSARY.md`), but the table manager's "Z
 
 ## 7. Other open items
 
-- Playwright browsers cannot be installed in the development sandbox (Ubuntu 26.04), so the new e2e tests (`tablemanager-view/e2e/tablemanager.spec.ts`: "Zurück", take back by another client, reconnect resync) and the admin-view Karma specs were only type-checked locally. Run them in CI.
+- Playwright browsers cannot be installed in the development sandbox (Ubuntu 26.04), so the new e2e tests (`tablemanager-view/e2e/tablemanager.spec.ts`: "Zurück", take back by another client, reconnect resync) were only type-checked locally. Run them in CI. The admin-view Karma specs run now (`CHROME_BIN=<chromium> npx ng test --watch=false`), but CI only runs `format:check` for admin-view.
 - `MATCH_LIST_CHANGED` scope does not name the disciplines of the queued matches, so a future scope-filtering client would not know which discipline view to refresh.
 - Completing, freeing or taking back a match changes `isPlayable` of other matches of the same players; a future scope-filtering client of other disciplines would miss that.
 - admin-view has no e2e test for the reconnect resync or the new topics (`TABLE_LOCKED`, `PLAYER_PAID`, `PLAYER_ACTIVE_CHANGED`, `DISCIPLINE_COLORS_CHANGED`).
