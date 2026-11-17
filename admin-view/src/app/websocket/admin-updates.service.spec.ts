@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { InMemoryUpdateTransport } from '../shared/update-events/in-memory-transport';
 import { DEFAULT_AUDIT_MS, UpdateTopic } from '../shared/update-events/update-events';
@@ -56,6 +56,7 @@ describe('the admin updates service', () => {
   let dispatched: string[];
 
   beforeEach(() => {
+    vi.useFakeTimers();
     dispatched = [];
     transport = new InMemoryUpdateTransport();
     TestBed.configureTestingModule({
@@ -67,7 +68,10 @@ describe('the admin updates service', () => {
     TestBed.inject(AdminUpdatesService).start();
   });
 
-  afterEach(() => TestBed.inject(AdminUpdatesService).stop());
+  afterEach(() => {
+    TestBed.inject(AdminUpdatesService).stop();
+    vi.useRealTimers();
+  });
 
   const publish = (topic: UpdateTopic, type: string, tableIds: number[]) =>
     transport.publish(topic, { type, scope: { matchIds: [1], typeIds: [], tableIds } });
@@ -82,16 +86,16 @@ describe('the admin updates service', () => {
   });
 
   BACKEND_EVENTS.forEach(({ name, topic, event, reloads }) => {
-    it(`reloads ${reloads.join(', ') || 'nothing'} for the backend's ${name} event`, fakeAsync(() => {
+    it(`reloads ${reloads.join(', ') || 'nothing'} for the backend's ${name} event`, () => {
       transport.publish(topic, event);
-      tick(DEFAULT_AUDIT_MS);
+      vi.advanceTimersByTime(DEFAULT_AUDIT_MS);
       expect(dispatched).toEqual(reloads.map((target) => reloadAction(target).type));
-    }));
+    });
   });
 
-  it('reloads every match view when a match on a table changes', fakeAsync(() => {
+  it('reloads every match view when a match on a table changes', () => {
     publish('matches', 'MATCH_TAKEN_BACK', [3]);
-    tick(DEFAULT_AUDIT_MS);
+    vi.advanceTimersByTime(DEFAULT_AUDIT_MS);
     expect(dispatched).toEqual([
       MatchActionTypes.Load,
       TableActionTypes.Load,
@@ -100,26 +104,26 @@ describe('the admin updates service', () => {
       CallerActionTypes.LoadThirdCallMatches,
       ResultActionTypes.Load,
     ]);
-  }));
+  });
 
-  it('leaves the tables and call lists alone for a match that is on no table', fakeAsync(() => {
+  it('leaves the tables and call lists alone for a match that is on no table', () => {
     publish('matches', 'MATCH_FREED', []);
-    tick(DEFAULT_AUDIT_MS);
+    vi.advanceTimersByTime(DEFAULT_AUDIT_MS);
     expect(dispatched).toEqual([MatchActionTypes.Load, ResultActionTypes.Load]);
-  }));
+  });
 
-  it('coalesces a burst into one reload per target', fakeAsync(() => {
+  it('coalesces a burst into one reload per target', () => {
     for (let i = 0; i < 10; i++) {
       publish('tables', 'TABLE_LOCKED', [i + 1]);
     }
-    tick(DEFAULT_AUDIT_MS);
+    vi.advanceTimersByTime(DEFAULT_AUDIT_MS);
     expect(dispatched).toEqual([TableActionTypes.Load]);
-  }));
+  });
 
-  it('resynchronizes after a reconnect', fakeAsync(() => {
+  it('resynchronizes after a reconnect', () => {
     transport.drop();
     transport.reconnect();
-    tick(DEFAULT_AUDIT_MS);
+    vi.advanceTimersByTime(DEFAULT_AUDIT_MS);
     expect(dispatched.length).toEqual(ADMIN_UPDATES.resync.length);
-  }));
+  });
 });

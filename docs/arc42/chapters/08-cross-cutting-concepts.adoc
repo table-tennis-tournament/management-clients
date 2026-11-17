@@ -34,7 +34,5 @@
 * `ApplicationTests` runs `ApplicationModules.verify()` to enforce module boundaries.
 * `@ApplicationModuleTest` module tests (with `PublishedEvents`) verify use-case behaviour and endpoint calls in isolation.
 * `@SpringBootTest` tests with H2 (MySQL mode) and a STOMP client verify persistence and WebSocket outbound events.
-* The Admin View uses Karma/Jasmine unit tests.
-* The Result View uses Vitest unit tests.
-* The Result View and Table Manager View have Playwright end-to-end tests that run against the Docker Compose stack.
+* All three frontends use Vitest for unit tests (type-checked separately with `npm run test:types`) and Playwright for end-to-end tests that run against the Docker Compose stack.
 * Formatting is checked with Prettier in CI for all three frontends.

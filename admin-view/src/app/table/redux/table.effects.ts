@@ -178,7 +178,7 @@ export class TableEffects {
       mergeMap((action: AssignMatchToTable) => {
         return this.matchService.assignMatchToTable(action.payload).pipe(
           map((status) => {
-            if (status.successful === true) {
+            if (status.success === true) {
               return new AssignMatchToTableSuccess(action.payload);
             }
             this.toastService.error(status.message);

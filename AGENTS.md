@@ -32,9 +32,9 @@ sbt docker:publishLocal  # Build Docker image locally
 cd admin-view
 npm start        # Start dev server on port 4201
 npm run build    # Build for production
-npm test         # Run tests
+npm test         # Run unit tests (Vitest)
 npm run lint     # Run linting
-npm run e2e      # Run end-to-end tests
+npm run e2e      # Run Playwright end-to-end tests
 ```
 
 **Result View:**
@@ -66,7 +66,7 @@ docker compose up  # Start MariaDB and the backend; the clients are commented ou
 
 - **Backend**: Scala 2.13, Play Framework 3.0.x, Slick ORM, Pekko Actors, MySQL/MariaDB
 - **Frontend**: Angular 21, ngrx/store, Angular Material, Bootstrap, RxJS, TypeScript 5.9
-- **Testing**: ScalaTest/spec2 (backend), Karma/Jasmine (Admin View), Vitest (Result View), Playwright (Result View and Table Manager View)
+- **Testing**: JUnit 5 (backend), Vitest for unit tests and Playwright for e2e tests (all three clients). Vitest strips types without checking them: run `npm run test:types` after changing a spec.
 - **Real-time**: WebSockets via SockJS and custom WebSocket actors
 - **PDF Generation**: Flying Saucer / PDFBox
 - **Containerization**: Docker with multi-stage builds

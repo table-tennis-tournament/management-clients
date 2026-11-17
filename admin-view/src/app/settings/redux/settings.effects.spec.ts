@@ -1,3 +1,4 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -31,11 +32,11 @@ describe('the settings effects', () => {
   let actions: ReplaySubject<any>;
   let settingsEffects: SettingsEffects;
   let settingsService: SettingsService;
-  let toast: jasmine.SpyObj<ToastrService>;
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         SettingsEffects,
@@ -52,50 +53,50 @@ describe('the settings effects', () => {
 
   describe('loadSettings', () => {
     it('should return a LoadSettingsSuccess', async () => {
-      const load = spyOn(settingsService, 'loadSettings').and.returnValue(of(settingsTestData));
+      const load = vi.spyOn(settingsService, 'loadSettings').mockReturnValue(of(settingsTestData));
 
       const result = await emittedBy(settingsEffects.loadSettings, actions, new LoadSettings());
 
-      expect(result).toEqual([new LoadSettingsSuccess(settingsTestData)]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadSettingsSuccess(settingsTestData)]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadSettingsError and show an error', async () => {
-      spyOn(settingsService, 'loadSettings').and.returnValue(throwError(() => error));
+      vi.spyOn(settingsService, 'loadSettings').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(settingsEffects.loadSettings, actions, new LoadSettings());
 
-      expect(result).toEqual([new LoadSettingsError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Settings']]);
+      expect(result).toStrictEqual([new LoadSettingsError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Settings']]);
     });
   });
 
   describe('loadPrinters', () => {
     it('should return a LoadPrintersSuccess', async () => {
       const printers = ['firstPrinter', 'secondPrinter'];
-      const load = spyOn(settingsService, 'loadPrinters').and.returnValue(of(printers));
+      const load = vi.spyOn(settingsService, 'loadPrinters').mockReturnValue(of(printers));
 
       const result = await emittedBy(settingsEffects.loadPrinters, actions, new LoadPrinters());
 
-      expect(result).toEqual([new LoadPrintersSuccess(printers)]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadPrintersSuccess(printers)]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadPrintersError and show an error', async () => {
-      spyOn(settingsService, 'loadPrinters').and.returnValue(throwError(() => error));
+      vi.spyOn(settingsService, 'loadPrinters').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(settingsEffects.loadPrinters, actions, new LoadPrinters());
 
-      expect(result).toEqual([new LoadPrintersError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Drucker']]);
+      expect(result).toStrictEqual([new LoadPrintersError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Drucker']]);
     });
   });
 
   describe('saveAssignAutomatically', () => {
     it('should return a SaveAssignAutomaticallySuccess', async () => {
-      const save = spyOn(settingsService, 'saveAssignAutomatically').and.returnValue(of(status));
+      const save = vi.spyOn(settingsService, 'saveAssignAutomatically').mockReturnValue(of(status));
 
       const result = await emittedBy(
         settingsEffects.saveAssignAutomatically,
@@ -103,13 +104,13 @@ describe('the settings effects', () => {
         new SaveAssignAutomatically(true)
       );
 
-      expect(result).toEqual([new SaveAssignAutomaticallySuccess(true)]);
-      expect(save.calls.allArgs()).toEqual([[true]]);
+      expect(result).toStrictEqual([new SaveAssignAutomaticallySuccess(true)]);
+      expect(save.mock.calls).toEqual([[true]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a SaveAssignAutomaticallyError and show an error', async () => {
-      spyOn(settingsService, 'saveAssignAutomatically').and.returnValue(throwError(() => error));
+      vi.spyOn(settingsService, 'saveAssignAutomatically').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(
         settingsEffects.saveAssignAutomatically,
@@ -117,50 +118,50 @@ describe('the settings effects', () => {
         new SaveAssignAutomatically(true)
       );
 
-      expect(result).toEqual([new SaveAssignAutomaticallyError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Speichern des automatischen zuweisens']]);
+      expect(result).toStrictEqual([new SaveAssignAutomaticallyError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern des automatischen zuweisens']]);
     });
   });
 
   describe('savePrintOnAssign', () => {
     it('should return a SavePrintOnAssignSuccess', async () => {
-      const save = spyOn(settingsService, 'savePrintOnAssign').and.returnValue(of(status));
+      const save = vi.spyOn(settingsService, 'savePrintOnAssign').mockReturnValue(of(status));
 
       const result = await emittedBy(settingsEffects.savePrintOnAssign, actions, new SavePrintOnAssign(true));
 
-      expect(result).toEqual([new SavePrintOnAssignSuccess(true)]);
-      expect(save.calls.allArgs()).toEqual([[true]]);
+      expect(result).toStrictEqual([new SavePrintOnAssignSuccess(true)]);
+      expect(save.mock.calls).toEqual([[true]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a SavePrintOnAssignError and show an error', async () => {
-      spyOn(settingsService, 'savePrintOnAssign').and.returnValue(throwError(() => error));
+      vi.spyOn(settingsService, 'savePrintOnAssign').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(settingsEffects.savePrintOnAssign, actions, new SavePrintOnAssign(false));
 
-      expect(result).toEqual([new SavePrintOnAssignError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Speichern des druckens bei aufruf']]);
+      expect(result).toStrictEqual([new SavePrintOnAssignError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern des druckens bei aufruf']]);
     });
   });
 
   describe('setPrinter', () => {
     it('should return a SetPrinterSuccess', async () => {
-      const set = spyOn(settingsService, 'setPrinter').and.returnValue(of(status));
+      const set = vi.spyOn(settingsService, 'setPrinter').mockReturnValue(of(status));
 
       const result = await emittedBy(settingsEffects.setPrinter, actions, new SetPrinter('printerName'));
 
-      expect(result).toEqual([new SetPrinterSuccess('printerName')]);
-      expect(set.calls.allArgs()).toEqual([['printerName']]);
+      expect(result).toStrictEqual([new SetPrinterSuccess('printerName')]);
+      expect(set.mock.calls).toEqual([['printerName']]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a SetPrinterError and show an error', async () => {
-      spyOn(settingsService, 'setPrinter').and.returnValue(throwError(() => error));
+      vi.spyOn(settingsService, 'setPrinter').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(settingsEffects.setPrinter, actions, new SetPrinter('printerName'));
 
-      expect(result).toEqual([new SetPrinterError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim setzen des Druckers']]);
+      expect(result).toStrictEqual([new SetPrinterError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim setzen des Druckers']]);
     });
   });
 });

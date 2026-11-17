@@ -1,3 +1,4 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -31,7 +32,7 @@ describe('the table effects', () => {
   let tableEffects: TableEffects;
   let tableService: TableService;
   let matchService: MatchService;
-  let toast: jasmine.SpyObj<ToastrService>;
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   const responseTables = [
     {
@@ -42,8 +43,8 @@ describe('the table effects', () => {
     },
   ];
 
-  // The shape StatusDto declares. The backend sends `success`, not `successful` (test-improvement-plan finding 10).
-  const statusDto: StatusDto = { message: 'success', successful: true };
+  // what the backend answers to a successful command
+  const statusDto: StatusDto = { success: true };
 
   const assign2ndTablePayload = { tableNr: 1, matchIds: [4, 5] };
 
@@ -56,7 +57,7 @@ describe('the table effects', () => {
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         TableEffects,
@@ -76,28 +77,28 @@ describe('the table effects', () => {
 
   describe('loadTables', () => {
     it('should return a LoadTablesSuccess', async () => {
-      const load = spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
+      const load = vi.spyOn(tableService, 'getAllTables').mockReturnValue(of(responseTables));
 
       const result = await emittedBy(tableEffects.loadTables, actions, new LoadTables(null));
 
-      expect(result).toEqual([new LoadTablesSuccess(responseTables)]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadTablesSuccess(responseTables)]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadTablesError and show an error', async () => {
-      spyOn(tableService, 'getAllTables').and.returnValue(throwError(() => error));
+      vi.spyOn(tableService, 'getAllTables').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(tableEffects.loadTables, actions, new LoadTables(null));
 
-      expect(result).toEqual([new LoadTablesError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Tische', '']]);
+      expect(result).toStrictEqual([new LoadTablesError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Tische', '']]);
     });
   });
 
   describe('assign second table', () => {
     it('should return a AssignToSecondTableSuccess', async () => {
-      const assign = spyOn(matchService, 'assignToSecondTable').and.returnValue(of(statusDto));
+      const assign = vi.spyOn(matchService, 'assignToSecondTable').mockReturnValue(of(statusDto));
 
       const result = await emittedBy(
         tableEffects.assignToSecondTable,
@@ -105,13 +106,13 @@ describe('the table effects', () => {
         new AssignToSecondTable(assign2ndTablePayload)
       );
 
-      expect(result).toEqual([new AssignToSecondTableSuccess(assign2ndTablePayload)]);
-      expect(assign.calls.allArgs()).toEqual([[1, [4, 5]]]);
+      expect(result).toStrictEqual([new AssignToSecondTableSuccess(assign2ndTablePayload)]);
+      expect(assign.mock.calls).toEqual([[1, [4, 5]]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a AssignToSecondTableError and show an error', async () => {
-      spyOn(matchService, 'assignToSecondTable').and.returnValue(throwError(() => error));
+      vi.spyOn(matchService, 'assignToSecondTable').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(
         tableEffects.assignToSecondTable,
@@ -119,35 +120,36 @@ describe('the table effects', () => {
         new AssignToSecondTable(assign2ndTablePayload)
       );
 
-      expect(result).toEqual([new AssignToSecondTableError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim zuweisen des zweiten Tisches', '']]);
+      expect(result).toStrictEqual([new AssignToSecondTableError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim zuweisen des zweiten Tisches', '']]);
     });
   });
 
   describe('on result for match', () => {
     it('should return a ResultForMatchSuccess', async () => {
-      const enter = spyOn(matchService, 'resultForMatch').and.returnValue(of(statusDto));
+      const enter = vi.spyOn(matchService, 'resultForMatch').mockReturnValue(of(statusDto));
 
       const result = await emittedBy(tableEffects.resultForMatch, actions, new ResultForMatch(resultForMatchPayload));
 
-      expect(result).toEqual([new ResultForMatchSuccess(resultForMatchPayload)]);
-      expect(enter.calls.allArgs()).toEqual([[resultForMatchPayload]]);
+      expect(result).toStrictEqual([new ResultForMatchSuccess(resultForMatchPayload)]);
+      expect(enter.mock.calls).toEqual([[resultForMatchPayload]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a ResultForMatchError and show an error', async () => {
-      spyOn(matchService, 'resultForMatch').and.returnValue(throwError(() => error));
+      vi.spyOn(matchService, 'resultForMatch').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(tableEffects.resultForMatch, actions, new ResultForMatch(resultForMatchPayload));
 
-      expect(result).toEqual([new ResultForMatchError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler bei der Eingabe des Ergebnisses', '']]);
+      expect(result).toStrictEqual([new ResultForMatchError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler bei der Eingabe des Ergebnisses', '']]);
     });
   });
 
   describe('on assign match to table', () => {
-    it('should return a AssignMatchToTableSuccess', async () => {
-      const assign = spyOn(matchService, 'assignMatchToTable').and.returnValue(of(statusDto));
+    // regression: admin-view read `successful`, so the backend's `{"success": true}` was treated as a failure
+    it('should return a AssignMatchToTableSuccess for the backend answer {"success": true}', async () => {
+      const assign = vi.spyOn(matchService, 'assignMatchToTable').mockReturnValue(of(statusDto));
 
       const result = await emittedBy(
         tableEffects.assignMatchToTable,
@@ -155,13 +157,13 @@ describe('the table effects', () => {
         new AssignMatchToTable(assignMatchToTable)
       );
 
-      expect(result).toEqual([new AssignMatchToTableSuccess(assignMatchToTable)]);
-      expect(assign.calls.allArgs()).toEqual([[assignMatchToTable]]);
+      expect(result).toStrictEqual([new AssignMatchToTableSuccess(assignMatchToTable)]);
+      expect(assign.mock.calls).toEqual([[assignMatchToTable]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a AssignMatchToTableError with the default message when the request fails', async () => {
-      spyOn(matchService, 'assignMatchToTable').and.returnValue(throwError(() => error));
+      vi.spyOn(matchService, 'assignMatchToTable').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(
         tableEffects.assignMatchToTable,
@@ -169,13 +171,13 @@ describe('the table effects', () => {
         new AssignMatchToTable(assignMatchToTable)
       );
 
-      expect(result).toEqual([new AssignMatchToTableError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Zuweisen des Spiels zum Tisch', '']]);
+      expect(result).toStrictEqual([new AssignMatchToTableError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Zuweisen des Spiels zum Tisch', '']]);
     });
 
     it('should show the backend message when the request fails with one', async () => {
       const backendError = { error: { success: false, message: 'Could not assign all matches to table.' } };
-      spyOn(matchService, 'assignMatchToTable').and.returnValue(throwError(() => backendError));
+      vi.spyOn(matchService, 'assignMatchToTable').mockReturnValue(throwError(() => backendError));
 
       const result = await emittedBy(
         tableEffects.assignMatchToTable,
@@ -183,14 +185,14 @@ describe('the table effects', () => {
         new AssignMatchToTable(assignMatchToTable)
       );
 
-      expect(result).toEqual([new AssignMatchToTableError(backendError)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Could not assign all matches to table.', '']]);
+      expect(result).toStrictEqual([new AssignMatchToTableError(backendError)]);
+      expect(toast.error.mock.calls).toEqual([['Could not assign all matches to table.', '']]);
     });
 
     it('should return a AssignMatchToTableError when the status is not successful', async () => {
-      const failedStatus: StatusDto = { successful: false, message: 'Tisch belegt' };
+      const failedStatus: StatusDto = { success: false, message: 'Tisch belegt' };
 
-      spyOn(matchService, 'assignMatchToTable').and.returnValue(of(failedStatus));
+      vi.spyOn(matchService, 'assignMatchToTable').mockReturnValue(of(failedStatus));
 
       const result = await emittedBy(
         tableEffects.assignMatchToTable,
@@ -198,8 +200,8 @@ describe('the table effects', () => {
         new AssignMatchToTable(assignMatchToTable)
       );
 
-      expect(result).toEqual([new AssignMatchToTableError(failedStatus)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Tisch belegt']]);
+      expect(result).toStrictEqual([new AssignMatchToTableError(failedStatus)]);
+      expect(toast.error.mock.calls).toEqual([['Tisch belegt']]);
     });
   });
 });

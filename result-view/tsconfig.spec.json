@@ -2,25 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": [
-      "jasmine",
-      "node"
-    ]
+    "types": ["vitest/globals", "node"],
+    "typeRoots": ["node_modules/@types", "node_modules"]
   },
-  "files": [
-    "src/test-setup.ts",
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts",
-    "vite.config.ts"
-  ],
-  "compilerOptions": {
-    "outDir": "./out-tsc/spec",
-    "types": [
-      "jasmine",
-      "vitest/globals"
-    ]
-  }
+  "files": ["src/test-setup.ts", "src/polyfills.ts"],
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "vite.config.ts"]
 }

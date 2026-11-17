@@ -31,7 +31,10 @@ describe('the table updates service', () => {
       ],
     });
     const store = TestBed.inject(MockStore);
-    vi.spyOn(store, 'dispatch').mockImplementation((action: any) => dispatched.push(action));
+    // dispatch is overloaded; type the fake as the method itself
+    vi.spyOn(store, 'dispatch').mockImplementation(((action: any) => {
+      dispatched.push(action);
+    }) as MockStore['dispatch']);
     TestBed.inject(TableUpdatesService).start();
   });
 

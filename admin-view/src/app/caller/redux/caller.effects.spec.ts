@@ -1,3 +1,4 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -24,11 +25,11 @@ describe('the caller effects', () => {
   let actions: ReplaySubject<any>;
   let callerEffects: CallerEffects;
   let callerService: CallerService;
-  let toast: jasmine.SpyObj<ToastrService>;
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         CallerEffects,
@@ -45,65 +46,65 @@ describe('the caller effects', () => {
 
   describe('load', () => {
     it('should return a LoadCallerMatchesSuccess', async () => {
-      const load = spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(of([]));
+      const load = vi.spyOn(callerService, 'loadMatchAggregateForCaller').mockReturnValue(of([]));
 
       const result = await emittedBy(callerEffects.load, actions, new LoadCallerMatches());
 
-      expect(result).toEqual([new LoadCallerMatchesSuccess([])]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadCallerMatchesSuccess([])]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadCallerMatchesError and show an error', async () => {
-      spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(throwError(() => error));
+      vi.spyOn(callerService, 'loadMatchAggregateForCaller').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(callerEffects.load, actions, new LoadCallerMatches());
 
-      expect(result).toEqual([new LoadCallerMatchesError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Ausrufermatches']]);
+      expect(result).toStrictEqual([new LoadCallerMatchesError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Ausrufermatches']]);
     });
   });
 
   describe('loadReferees', () => {
     it('should return a LoadRefereesListSuccess', async () => {
-      const load = spyOn(callerService, 'loadAvailableReferees').and.returnValue(of([]));
+      const load = vi.spyOn(callerService, 'loadAvailableReferees').mockReturnValue(of([]));
 
       const result = await emittedBy(callerEffects.loadRefereeList, actions, new LoadRefereesList(null));
 
-      expect(result).toEqual([new LoadRefereesListSuccess([])]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadRefereesListSuccess([])]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadRefereesListError and show an error', async () => {
-      spyOn(callerService, 'loadAvailableReferees').and.returnValue(throwError(() => error));
+      vi.spyOn(callerService, 'loadAvailableReferees').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(callerEffects.loadRefereeList, actions, new LoadRefereesList(null));
 
-      expect(result).toEqual([new LoadRefereesListError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Schiedsrichter']]);
+      expect(result).toStrictEqual([new LoadRefereesListError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Schiedsrichter']]);
     });
   });
 
   describe('callMatch', () => {
     it('should return a CallMatchSuccess and reload the caller matches', async () => {
-      const status: StatusDto = { message: 'ok' }; // passed through unchanged
-      const call = spyOn(callerService, 'callMatch').and.returnValue(of(status));
+      const status: StatusDto = { success: true };
+      const call = vi.spyOn(callerService, 'callMatch').mockReturnValue(of(status));
 
       const result = await emittedBy(callerEffects.callMatch, actions, new CallMatch([1]));
 
-      expect(result).toEqual([new CallMatchSuccess(status), new LoadCallerMatches()]);
-      expect(call.calls.allArgs()).toEqual([[[1]]]);
+      expect(result).toStrictEqual([new CallMatchSuccess(status), new LoadCallerMatches()]);
+      expect(call.mock.calls).toEqual([[[1]]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a CallMatchError and show an error', async () => {
-      spyOn(callerService, 'callMatch').and.returnValue(throwError(() => error));
+      vi.spyOn(callerService, 'callMatch').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(callerEffects.callMatch, actions, new CallMatch([1]));
 
-      expect(result).toEqual([new CallMatchError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Ausrufen des Matches']]);
+      expect(result).toStrictEqual([new CallMatchError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Ausrufen des Matches']]);
     });
   });
 });

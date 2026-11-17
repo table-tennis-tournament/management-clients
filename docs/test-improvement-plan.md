@@ -13,7 +13,7 @@ found on the way, and what to do next.
 | 3 | Whole-object equality for domain events, `TournamentMatch` and database rows | Done |
 | 4 | Fix or delete tests that cannot fail | Done |
 | 5 | Mutation testing (PIT) on the `domain` packages | Done |
-| 6 | Frontend: strengthen unit tests, reuse the backend expected files as fixtures | Done for admin-view |
+| 6 | Frontend: strengthen unit tests, reuse the backend expected files as fixtures | Done |
 
 ## How the backend tests work now
 
@@ -81,11 +81,9 @@ re-record the affected files.
    also keep `startTime` (`expected/tournament/after-take-back.json`).
 9. **The `mgmt_matchtable` timestamp ignores the `Clock`.** `JdbcTournamentMatchRepository.insertMatchTable`
    writes the database's `CURRENT_TIMESTAMP`, so tests cannot pin it and leave the column out.
-10. **admin-view reads `successful`, the backend sends `success`.** `StatusDto` declares `successful`, every
-   backend endpoint answers `{"success": ...}`. `TableEffects.assignMatchToTable` checks
-   `status.successful === true`, so every successful assignment from admin-view dispatches
-   `AssignMatchToTableError` and shows an empty error toast. `table.effects.spec.ts` still uses the declared
-   shape; fix the DTO (or the effect) and that fixture together.
+10. **Fixed: admin-view read `successful`, the backend sends `success`.** Every successful assignment from
+   admin-view dispatched `AssignMatchToTableError` with an empty error toast. `StatusDto` now declares `success`;
+   `table.effects.spec.ts` has the regression test.
 
 ## Next steps
 
@@ -122,25 +120,22 @@ survivors in `TournamentMatch`, `AutoStartHeuristic`, `GroupStandingsCalculator`
 - "No coverage" (108): domain data classes of registration, settings and table, only exercised by the Spring
   ITs, which are not in `targetTests` (too slow per mutant).
 
-### Step 6: frontend (done for admin-view)
+### Step 6: frontend (done)
 
-- **admin-view unit tests run again.** The `test` target pointed to a missing `src/test.ts` and the app
-  tsconfig, so no Karma spec ran. It now uses `src/tsconfig.spec.json` and `zone.js/testing`. Run with
-  `CHROME_BIN=<chromium> npx ng test --watch=false --browsers=ChromeHeadlessNoSandbox` (Playwright's Chromium
-  works). CI only runs `format:check` for admin-view; the unit tests are not in CI yet.
-- **Effects:** `emittedBy(effect, actions, action)` (`src/app/testing/effects-testing.ts`) completes the action
-  stream and returns every emitted action, so specs compare the whole output, the service arguments
-  (`spy.calls.allArgs()`) and the toast messages. Jasmine is 2.99 (no `toHaveBeenCalledOnceWith`). This found
-  `callMatch` emitting `CallMatchSuccess` and `LoadCallerMatches`, which the old spec could not see.
-- **Services:** `describeRequests(Service, cases)` (`src/app/testing/http-testing.ts`, excluded from the app
-  build) pins method, URL, body and the mapped response of every HTTP call with `HttpTestingController`.
-  All URLs were checked against the backend mappings.
-- **Backend fixtures:** `admin-updates.service.spec.ts` imports every `expected/events/**` envelope (relative
-  path, `resolveJsonModule`) and checks the exact reloads per event, and that admin-view handles exactly the
-  backend's event types.
-- **Not done, on purpose:** `toStrictEqual` in result-view. Its only Vitest specs are the shared
-  `result-entry` and `match-state` specs, which are identical copies in all three clients and also run under
-  Jasmine in admin-view, where `toStrictEqual` does not exist. The result-view component test ("should
-  create") stays until result-view gets live updates (`docs/follow-ups.md` 4); a real test now would pin the
-  known defects there (`typeId: 8`, tab reset).
+- **One unit test framework: Vitest** in all three clients (Analog's Vite plugin for Angular, `vite.config.ts`,
+  `src/test-setup.ts`, `tsconfig.spec.json`), plus Playwright for e2e. Karma, Jasmine and Protractor are gone.
+  Vitest strips types without checking them, so each client has `npm run test:types`
+  (`tsc -p tsconfig.spec.json --noEmit`). CI runs `test:types` and `test-ci` for every client before its e2e tests.
+- **Effects:** `emittedBy(effect, actions, action)` (`admin-view/src/app/testing/effects-testing.ts`) completes the
+  action stream and returns every emitted action; specs compare it with `toStrictEqual`, plus the service
+  arguments (`mock.calls`) and the toast messages. This found `callMatch` emitting `CallMatchSuccess` and
+  `LoadCallerMatches`, which the old spec could not see.
+- **Services:** `describeRequests(Service, cases)` (`admin-view/src/app/testing/http-testing.ts`, excluded from the
+  app build) pins method, URL, body and the mapped response of every HTTP call with `HttpTestingController`.
+- **Backend fixtures:** `admin-updates.service.spec.ts` imports every `expected/events/**` envelope (relative path,
+  `resolveJsonModule`) and checks the exact reloads per event, and that admin-view handles exactly the backend's
+  event types.
+- The shared `result-entry` and `match-state` specs (identical copies in all clients) keep `toEqual`; switch all
+  three copies together if wanted. The result-view component test ("should create") stays until result-view gets
+  live updates (`docs/follow-ups.md` 4).
 - Leave the Playwright e2e tests on visibility/text checks.

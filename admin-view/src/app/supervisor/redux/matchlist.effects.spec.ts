@@ -1,3 +1,4 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -25,15 +26,15 @@ import { MatchListService } from '../matchlist.service';
 
 describe('the matchlist effects', () => {
   const error = { msg: 'Error' };
-  const status: StatusDto = { message: 'ok' }; // passed through unchanged
+  const status: StatusDto = { success: true };
   let actions: ReplaySubject<any>;
   let matchListEffects: MatchListEffects;
   let matchListService: MatchListService;
-  let toast: jasmine.SpyObj<ToastrService>;
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         MatchListEffects,
@@ -50,22 +51,22 @@ describe('the matchlist effects', () => {
 
   describe('loadMatchlist', () => {
     it('should return a LoadMatchListSuccess', async () => {
-      const load = spyOn(matchListService, 'loadAllMatchListItems').and.returnValue(of(testData));
+      const load = vi.spyOn(matchListService, 'loadAllMatchListItems').mockReturnValue(of(testData));
 
       const result = await emittedBy(matchListEffects.loadMatchList, actions, new LoadMatchList(null));
 
-      expect(result).toEqual([new LoadMatchListSuccess(testData)]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadMatchListSuccess(testData)]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadMatchListError and show an error', async () => {
-      spyOn(matchListService, 'loadAllMatchListItems').and.returnValue(throwError(() => error));
+      vi.spyOn(matchListService, 'loadAllMatchListItems').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(matchListEffects.loadMatchList, actions, new LoadMatchList(null));
 
-      expect(result).toEqual([new LoadMatchListError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der MatchList']]);
+      expect(result).toStrictEqual([new LoadMatchListError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der MatchList']]);
     });
   });
 
@@ -73,45 +74,45 @@ describe('the matchlist effects', () => {
     const request = { matchIds: [1, 2], group: 7, position: 0 };
 
     it('should return a AssignToMatchListSuccess and confirm it', async () => {
-      const assign = spyOn(matchListService, 'assignToMatchList').and.returnValue(of(status));
+      const assign = vi.spyOn(matchListService, 'assignToMatchList').mockReturnValue(of(status));
 
       const result = await emittedBy(matchListEffects.assignToMatchList, actions, new AssignToMatchList(request));
 
-      expect(result).toEqual([new AssignToMatchListSuccess(status)]);
-      expect(assign.calls.allArgs()).toEqual([[request]]);
-      expect(toast.info.calls.allArgs()).toEqual([['In Warteliste eingefügt']]);
+      expect(result).toStrictEqual([new AssignToMatchListSuccess(status)]);
+      expect(assign.mock.calls).toEqual([[request]]);
+      expect(toast.info.mock.calls).toEqual([['In Warteliste eingefügt']]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a AssignToMatchListError and show an error', async () => {
-      spyOn(matchListService, 'assignToMatchList').and.returnValue(throwError(() => error));
+      vi.spyOn(matchListService, 'assignToMatchList').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(matchListEffects.assignToMatchList, actions, new AssignToMatchList(request));
 
-      expect(result).toEqual([new AssignToMatchListError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Hinzufügen des Matchlist-items']]);
+      expect(result).toStrictEqual([new AssignToMatchListError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Hinzufügen des Matchlist-items']]);
       expect(toast.info).not.toHaveBeenCalled();
     });
   });
 
   describe('deleteMatchListItem', () => {
     it('should return a DeleteMatchListItemSuccess', async () => {
-      const remove = spyOn(matchListService, 'deleteMatchListItem').and.returnValue(of(status));
+      const remove = vi.spyOn(matchListService, 'deleteMatchListItem').mockReturnValue(of(status));
 
       const result = await emittedBy(matchListEffects.deleteMatchListItem, actions, new DeleteMatchListItem('myId'));
 
-      expect(result).toEqual([new DeleteMatchListItemSuccess(status)]);
-      expect(remove.calls.allArgs()).toEqual([['myId']]);
+      expect(result).toStrictEqual([new DeleteMatchListItemSuccess(status)]);
+      expect(remove.mock.calls).toEqual([['myId']]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a DeleteMatchListItemError and show an error', async () => {
-      spyOn(matchListService, 'deleteMatchListItem').and.returnValue(throwError(() => error));
+      vi.spyOn(matchListService, 'deleteMatchListItem').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(matchListEffects.deleteMatchListItem, actions, new DeleteMatchListItem('myId'));
 
-      expect(result).toEqual([new DeleteMatchListItemError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Löschen des Matchlist-items']]);
+      expect(result).toStrictEqual([new DeleteMatchListItemError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Löschen des Matchlist-items']]);
     });
   });
 
@@ -119,22 +120,22 @@ describe('the matchlist effects', () => {
     const move = { id: 'myId', position: 3 };
 
     it('should return a MoveMatchListItemSuccess', async () => {
-      const moveItem = spyOn(matchListService, 'moveMatchListItem').and.returnValue(of(status));
+      const moveItem = vi.spyOn(matchListService, 'moveMatchListItem').mockReturnValue(of(status));
 
       const result = await emittedBy(matchListEffects.moveMatchListItem, actions, new MoveMatchListItem(move));
 
-      expect(result).toEqual([new MoveMatchListItemSuccess(status)]);
-      expect(moveItem.calls.allArgs()).toEqual([[move]]);
+      expect(result).toStrictEqual([new MoveMatchListItemSuccess(status)]);
+      expect(moveItem.mock.calls).toEqual([[move]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a MoveMatchListItemError and show an error', async () => {
-      spyOn(matchListService, 'moveMatchListItem').and.returnValue(throwError(() => error));
+      vi.spyOn(matchListService, 'moveMatchListItem').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(matchListEffects.moveMatchListItem, actions, new MoveMatchListItem(move));
 
-      expect(result).toEqual([new MoveMatchListItemError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Verschieben des Matchlist-items']]);
+      expect(result).toStrictEqual([new MoveMatchListItemError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Verschieben des Matchlist-items']]);
     });
   });
 });

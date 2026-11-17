@@ -5,5 +5,5 @@
     "module": "es2015",
     "types": []
   },
-  "exclude": ["**/*.spec.ts", "app/testing/**"]
+  "exclude": ["**/*.spec.ts", "app/testing/**", "test-setup.ts"]
 }

@@ -1,3 +1,4 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -14,11 +15,11 @@ describe('the Discipline effects', () => {
   let actions: ReplaySubject<any>;
   let disciplineEffects: DisciplineEffects;
   let disciplineService: DisciplineService;
-  let toast: jasmine.SpyObj<ToastrService>;
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         DisciplineEffects,
@@ -36,22 +37,22 @@ describe('the Discipline effects', () => {
 
   describe('loadDisciplines', () => {
     it('should return a LoadDisciplineSuccess', async () => {
-      const load = spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(of(DisciplineTestData));
+      const load = vi.spyOn(disciplineService, 'loadAllDisciplines').mockReturnValue(of(DisciplineTestData));
 
       const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
-      expect(result).toEqual([new LoadDisciplineSuccess(DisciplineTestData)]);
-      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(result).toStrictEqual([new LoadDisciplineSuccess(DisciplineTestData)]);
+      expect(load.mock.calls).toEqual([[]]);
       expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadDisciplineError and show an error', async () => {
-      spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(throwError(() => error));
+      vi.spyOn(disciplineService, 'loadAllDisciplines').mockReturnValue(throwError(() => error));
 
       const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
-      expect(result).toEqual([new LoadDisciplineError(error)]);
-      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Konkurrenzen']]);
+      expect(result).toStrictEqual([new LoadDisciplineError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Konkurrenzen']]);
     });
   });
 });
