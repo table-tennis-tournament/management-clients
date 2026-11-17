@@ -1,43 +1,39 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
-
 import { TestBed } from '@angular/core/testing';
-
 import { provideMockActions } from '@ngrx/effects/testing';
-
 import { of, ReplaySubject, throwError } from 'rxjs';
-
 import { ToastrService } from 'ngx-toastr';
-
+import { emittedBy } from '../../testing/effects-testing';
+import { StatusDto } from '../../shared/statusdto.model';
 import { CallerEffects } from './caller.effects';
-
 import { CallerService } from '../caller.service';
-
 import {
-  CallerActionTypes,
   CallMatch,
+  CallMatchError,
   CallMatchSuccess,
   LoadCallerMatches,
-  LoadRefereesList,
-  LoadRefereesListSuccess,
+  LoadCallerMatchesError,
   LoadCallerMatchesSuccess,
+  LoadRefereesList,
+  LoadRefereesListError,
+  LoadRefereesListSuccess,
 } from './caller.actions';
 
-describe('the match effects', () => {
+describe('the caller effects', () => {
+  const error = { msg: 'Error' };
   let actions: ReplaySubject<any>;
   let callerEffects: CallerEffects;
   let callerService: CallerService;
-
-  const toastServiceMock: ToastrService = <ToastrService>{
-    error: () => null,
-  };
+  let toast: jasmine.SpyObj<ToastrService>;
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
+    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
     TestBed.configureTestingModule({
       providers: [
         CallerEffects,
         CallerService,
-        { provide: ToastrService, useValue: toastServiceMock },
+        { provide: ToastrService, useValue: toast },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -48,77 +44,66 @@ describe('the match effects', () => {
   });
 
   describe('load', () => {
-    it('should return a LoadSuccess', (done) => {
-      const expectedResult = new LoadCallerMatchesSuccess([]);
-      spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(of([]));
+    it('should return a LoadCallerMatchesSuccess', async () => {
+      const load = spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(of([]));
 
-      actions.next(new LoadCallerMatches());
+      const result = await emittedBy(callerEffects.load, actions, new LoadCallerMatches());
 
-      callerEffects.load.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new LoadCallerMatchesSuccess([])]);
+      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadError', (done) => {
-      spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadCallerMatchesError and show an error', async () => {
+      spyOn(callerService, 'loadMatchAggregateForCaller').and.returnValue(throwError(() => error));
 
-      actions.next(new LoadCallerMatches());
+      const result = await emittedBy(callerEffects.load, actions, new LoadCallerMatches());
 
-      callerEffects.load.subscribe((result) => {
-        expect(result.type).toEqual(CallerActionTypes.LoadError);
-        done();
-      });
+      expect(result).toEqual([new LoadCallerMatchesError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Ausrufermatches']]);
     });
   });
 
   describe('loadReferees', () => {
-    it('should return a LoadRefereesListSuccess', (done) => {
-      const expectedResult = new LoadRefereesListSuccess([]);
-      spyOn(callerService, 'loadAvailableReferees').and.returnValue(of([]));
+    it('should return a LoadRefereesListSuccess', async () => {
+      const load = spyOn(callerService, 'loadAvailableReferees').and.returnValue(of([]));
 
-      actions.next(new LoadRefereesList(null));
+      const result = await emittedBy(callerEffects.loadRefereeList, actions, new LoadRefereesList(null));
 
-      callerEffects.loadRefereeList.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new LoadRefereesListSuccess([])]);
+      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadRefereesListError', (done) => {
-      spyOn(callerService, 'loadAvailableReferees').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadRefereesListError and show an error', async () => {
+      spyOn(callerService, 'loadAvailableReferees').and.returnValue(throwError(() => error));
 
-      actions.next(new LoadRefereesList(null));
+      const result = await emittedBy(callerEffects.loadRefereeList, actions, new LoadRefereesList(null));
 
-      callerEffects.loadRefereeList.subscribe((result) => {
-        expect(result.type).toEqual(CallerActionTypes.LoadRefereesError);
-        done();
-      });
+      expect(result).toEqual([new LoadRefereesListError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Schiedsrichter']]);
     });
   });
 
   describe('callMatch', () => {
-    it('should return a CallMatchSuccess', (done) => {
-      const expectedResult = new CallMatchSuccess({});
-      spyOn(callerService, 'callMatch').and.returnValue(of({}));
+    it('should return a CallMatchSuccess and reload the caller matches', async () => {
+      const status: StatusDto = { message: 'ok' }; // passed through unchanged
+      const call = spyOn(callerService, 'callMatch').and.returnValue(of(status));
 
-      actions.next(new CallMatch([1]));
+      const result = await emittedBy(callerEffects.callMatch, actions, new CallMatch([1]));
 
-      callerEffects.callMatch.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new CallMatchSuccess(status), new LoadCallerMatches()]);
+      expect(call.calls.allArgs()).toEqual([[[1]]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a CallMatchError', (done) => {
-      spyOn(callerService, 'callMatch').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a CallMatchError and show an error', async () => {
+      spyOn(callerService, 'callMatch').and.returnValue(throwError(() => error));
 
-      actions.next(new CallMatch(null));
+      const result = await emittedBy(callerEffects.callMatch, actions, new CallMatch([1]));
 
-      callerEffects.callMatch.subscribe((result) => {
-        expect(result.type).toEqual(CallerActionTypes.CallMatchError);
-        done();
-      });
+      expect(result).toEqual([new CallMatchError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Ausrufen des Matches']]);
     });
   });
 });

@@ -1,38 +1,29 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
-
 import { TestBed } from '@angular/core/testing';
-
 import { provideMockActions } from '@ngrx/effects/testing';
-
 import { ToastrService } from 'ngx-toastr';
-
 import { of, ReplaySubject, throwError } from 'rxjs';
-
+import { emittedBy } from '../../testing/effects-testing';
 import { DisciplineService } from '../discipline.service';
-
-import { DisciplineActionTypes, LoadDiscipline, LoadDisciplineSuccess } from './discipline.actions';
-
+import { LoadDiscipline, LoadDisciplineError, LoadDisciplineSuccess } from './discipline.actions';
 import { DisciplineEffects } from './discipline.effects';
-
 import { DisciplineTestData } from './test-data';
 
 describe('the Discipline effects', () => {
+  const error = { msg: 'Error' };
   let actions: ReplaySubject<any>;
   let disciplineEffects: DisciplineEffects;
   let disciplineService: DisciplineService;
-  const responseDisciplines = DisciplineTestData;
-
-  const toastServiceMock: ToastrService = <ToastrService>{
-    error: () => null,
-  };
+  let toast: jasmine.SpyObj<ToastrService>;
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
+    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
     TestBed.configureTestingModule({
       providers: [
         DisciplineEffects,
         DisciplineService,
-        { provide: ToastrService, useValue: toastServiceMock },
+        { provide: ToastrService, useValue: toast },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -44,27 +35,23 @@ describe('the Discipline effects', () => {
   });
 
   describe('loadDisciplines', () => {
-    it('should return a LoadDisciplineSuccess', (done) => {
-      const expectedResult = new LoadDisciplineSuccess(responseDisciplines);
-      spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(of(responseDisciplines));
+    it('should return a LoadDisciplineSuccess', async () => {
+      const load = spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(of(DisciplineTestData));
 
-      actions.next(new LoadDiscipline(null));
+      const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
-      disciplineEffects.loadDisciplines.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new LoadDisciplineSuccess(DisciplineTestData)]);
+      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadDisciplineError', (done) => {
-      spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadDisciplineError and show an error', async () => {
+      spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(throwError(() => error));
 
-      actions.next(new LoadDiscipline(null));
+      const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
-      disciplineEffects.loadDisciplines.subscribe((result) => {
-        expect(result.type).toEqual(DisciplineActionTypes.LoadError);
-        done();
-      });
+      expect(result).toEqual([new LoadDisciplineError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Konkurrenzen']]);
     });
   });
 });

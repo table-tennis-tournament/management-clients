@@ -1,49 +1,46 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
-
 import { TestBed } from '@angular/core/testing';
-
 import { provideMockActions } from '@ngrx/effects/testing';
-
-import { of, ReplaySubject, throwError } from 'rxjs';
-
 import { ToastrService } from 'ngx-toastr';
-
+import { of, ReplaySubject, throwError } from 'rxjs';
+import { emittedBy } from '../../testing/effects-testing';
 import { SettingsEffects } from './settings.effects';
-
 import { SettingsService } from '../settings.service';
-
 import {
   LoadPrinters,
+  LoadPrintersError,
   LoadPrintersSuccess,
   LoadSettings,
+  LoadSettingsError,
   LoadSettingsSuccess,
   SaveAssignAutomatically,
+  SaveAssignAutomaticallyError,
   SaveAssignAutomaticallySuccess,
   SavePrintOnAssign,
+  SavePrintOnAssignError,
   SavePrintOnAssignSuccess,
   SetPrinter,
+  SetPrinterError,
   SetPrinterSuccess,
-  SettingsActionTypes,
 } from './settings.actions';
-
 import { settingsTestData } from './test.data';
 
 describe('the settings effects', () => {
+  const error = { msg: 'Error' };
+  const status = { success: true };
   let actions: ReplaySubject<any>;
   let settingsEffects: SettingsEffects;
   let settingsService: SettingsService;
-
-  const toastServiceMock: ToastrService = <ToastrService>{
-    error: () => null,
-  };
+  let toast: jasmine.SpyObj<ToastrService>;
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
+    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
     TestBed.configureTestingModule({
       providers: [
         SettingsEffects,
         SettingsService,
-        { provide: ToastrService, useValue: toastServiceMock },
+        { provide: ToastrService, useValue: toast },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -54,132 +51,116 @@ describe('the settings effects', () => {
   });
 
   describe('loadSettings', () => {
-    it('should return a LoadSettingsSuccess', (done) => {
-      const expectedResult = new LoadSettingsSuccess(settingsTestData);
-      spyOn(settingsService, 'loadSettings').and.returnValue(of(settingsTestData));
+    it('should return a LoadSettingsSuccess', async () => {
+      const load = spyOn(settingsService, 'loadSettings').and.returnValue(of(settingsTestData));
 
-      actions.next(new LoadSettings());
+      const result = await emittedBy(settingsEffects.loadSettings, actions, new LoadSettings());
 
-      settingsEffects.loadSettings.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new LoadSettingsSuccess(settingsTestData)]);
+      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadSettingsError', (done) => {
-      spyOn(settingsService, 'loadSettings').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadSettingsError and show an error', async () => {
+      spyOn(settingsService, 'loadSettings').and.returnValue(throwError(() => error));
 
-      actions.next(new LoadSettings());
+      const result = await emittedBy(settingsEffects.loadSettings, actions, new LoadSettings());
 
-      settingsEffects.loadSettings.subscribe((result) => {
-        expect(result.type).toEqual(SettingsActionTypes.LoadError);
-        done();
-      });
+      expect(result).toEqual([new LoadSettingsError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Settings']]);
     });
   });
 
   describe('loadPrinters', () => {
-    it('should return a LoadPrintersSuccess', (done) => {
+    it('should return a LoadPrintersSuccess', async () => {
       const printers = ['firstPrinter', 'secondPrinter'];
-      const expectedResult = new LoadPrintersSuccess(printers);
-      spyOn(settingsService, 'loadPrinters').and.returnValue(of(printers));
+      const load = spyOn(settingsService, 'loadPrinters').and.returnValue(of(printers));
 
-      actions.next(new LoadPrinters());
+      const result = await emittedBy(settingsEffects.loadPrinters, actions, new LoadPrinters());
 
-      settingsEffects.loadPrinters.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new LoadPrintersSuccess(printers)]);
+      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadPrintersError', (done) => {
-      spyOn(settingsService, 'loadPrinters').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadPrintersError and show an error', async () => {
+      spyOn(settingsService, 'loadPrinters').and.returnValue(throwError(() => error));
 
-      actions.next(new LoadPrinters());
+      const result = await emittedBy(settingsEffects.loadPrinters, actions, new LoadPrinters());
 
-      settingsEffects.loadPrinters.subscribe((result) => {
-        expect(result.type).toEqual(SettingsActionTypes.LoadPrintersError);
-        done();
-      });
+      expect(result).toEqual([new LoadPrintersError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Drucker']]);
     });
   });
 
   describe('saveAssignAutomatically', () => {
-    it('should return a SaveAssignAutomaticallySuccess', (done) => {
-      const expectedState = { successful: true };
-      const expectedResult = new SaveAssignAutomaticallySuccess(true);
-      spyOn(settingsService, 'saveAssignAutomatically').and.returnValue(of(expectedState));
+    it('should return a SaveAssignAutomaticallySuccess', async () => {
+      const save = spyOn(settingsService, 'saveAssignAutomatically').and.returnValue(of(status));
 
-      actions.next(new SaveAssignAutomatically(true));
+      const result = await emittedBy(
+        settingsEffects.saveAssignAutomatically,
+        actions,
+        new SaveAssignAutomatically(true)
+      );
 
-      settingsEffects.saveAssignAutomatically.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new SaveAssignAutomaticallySuccess(true)]);
+      expect(save.calls.allArgs()).toEqual([[true]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a SaveAssignAutomaticallyError', (done) => {
-      spyOn(settingsService, 'saveAssignAutomatically').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a SaveAssignAutomaticallyError and show an error', async () => {
+      spyOn(settingsService, 'saveAssignAutomatically').and.returnValue(throwError(() => error));
 
-      actions.next(new SaveAssignAutomatically(true));
+      const result = await emittedBy(
+        settingsEffects.saveAssignAutomatically,
+        actions,
+        new SaveAssignAutomatically(true)
+      );
 
-      settingsEffects.saveAssignAutomatically.subscribe((result) => {
-        expect(result.type).toEqual(SettingsActionTypes.SaveAssignAutomaticallyError);
-        done();
-      });
+      expect(result).toEqual([new SaveAssignAutomaticallyError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Speichern des automatischen zuweisens']]);
     });
   });
 
   describe('savePrintOnAssign', () => {
-    it('should return a SavePrintOnAssignSuccess', (done) => {
-      const expectedState = { successful: true };
-      const expectedResult = new SavePrintOnAssignSuccess(true);
-      spyOn(settingsService, 'savePrintOnAssign').and.returnValue(of(expectedState));
+    it('should return a SavePrintOnAssignSuccess', async () => {
+      const save = spyOn(settingsService, 'savePrintOnAssign').and.returnValue(of(status));
 
-      actions.next(new SavePrintOnAssign(true));
+      const result = await emittedBy(settingsEffects.savePrintOnAssign, actions, new SavePrintOnAssign(true));
 
-      settingsEffects.savePrintOnAssign.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new SavePrintOnAssignSuccess(true)]);
+      expect(save.calls.allArgs()).toEqual([[true]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a SavePrintOnAssignError', (done) => {
-      spyOn(settingsService, 'savePrintOnAssign').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a SavePrintOnAssignError and show an error', async () => {
+      spyOn(settingsService, 'savePrintOnAssign').and.returnValue(throwError(() => error));
 
-      actions.next(new SavePrintOnAssign(false));
+      const result = await emittedBy(settingsEffects.savePrintOnAssign, actions, new SavePrintOnAssign(false));
 
-      settingsEffects.savePrintOnAssign.subscribe((result) => {
-        expect(result.type).toEqual(SettingsActionTypes.SavePrintOnAssignError);
-        done();
-      });
+      expect(result).toEqual([new SavePrintOnAssignError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Speichern des druckens bei aufruf']]);
     });
   });
 
   describe('setPrinter', () => {
-    it('should return a SetPrinterSuccess', (done) => {
-      const expectedState = { successful: true };
-      const printerName = 'printerName';
-      const expectedResult = new SetPrinterSuccess(printerName);
-      spyOn(settingsService, 'setPrinter').and.returnValue(of(expectedState));
+    it('should return a SetPrinterSuccess', async () => {
+      const set = spyOn(settingsService, 'setPrinter').and.returnValue(of(status));
 
-      actions.next(new SetPrinter(printerName));
+      const result = await emittedBy(settingsEffects.setPrinter, actions, new SetPrinter('printerName'));
 
-      settingsEffects.setPrinter.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new SetPrinterSuccess('printerName')]);
+      expect(set.calls.allArgs()).toEqual([['printerName']]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a SetPrinterError', (done) => {
-      spyOn(settingsService, 'setPrinter').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a SetPrinterError and show an error', async () => {
+      spyOn(settingsService, 'setPrinter').and.returnValue(throwError(() => error));
 
-      actions.next(new SetPrinter('printerName'));
+      const result = await emittedBy(settingsEffects.setPrinter, actions, new SetPrinter('printerName'));
 
-      settingsEffects.setPrinter.subscribe((result) => {
-        expect(result.type).toEqual(SettingsActionTypes.SetPrinterError);
-        done();
-      });
+      expect(result).toEqual([new SetPrinterError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim setzen des Druckers']]);
     });
   });
 });

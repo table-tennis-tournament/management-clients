@@ -1,85 +1,68 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
-
 import { TestBed } from '@angular/core/testing';
-
 import { provideMockActions } from '@ngrx/effects/testing';
-
 import { ToastrService } from 'ngx-toastr';
-
 import { of, ReplaySubject, throwError } from 'rxjs';
-
+import { emittedBy } from '../../testing/effects-testing';
 import { MatchService } from '../../assign/match.service';
-
 import { TableService } from '../table.service';
-
 import {
   AssignMatchToTable,
   AssignMatchToTableError,
   AssignMatchToTableSuccess,
   AssignToSecondTable,
+  AssignToSecondTableError,
   AssignToSecondTableSuccess,
   LoadTables,
+  LoadTablesError,
   LoadTablesSuccess,
   ResultForMatch,
+  ResultForMatchError,
   ResultForMatchSuccess,
-  TableActionTypes,
 } from './table.actions';
-
 import { TableEffects } from './table.effects';
-
 import { TTMatchResult } from '../table-list/result-modal/ttmatch-result.model';
-
 import { MatchToTable } from '../table-list/tt-table/tt-table-content/matchtotable.model';
-
 import { StatusDto } from '../../shared/statusdto.model';
 
 describe('the table effects', () => {
+  const error = { msg: 'Error' };
   let actions: ReplaySubject<any>;
   let tableEffects: TableEffects;
   let tableService: TableService;
   let matchService: MatchService;
+  let toast: jasmine.SpyObj<ToastrService>;
+
   const responseTables = [
     {
       id: 1,
       number: 1,
       isLocked: false,
-      matches: [
-        {
-          id: 1,
-          team1: [{}],
-          team2: [{}],
-        },
-      ],
+      matches: [{ id: 1, team1: [{}], team2: [{}] }],
     },
   ];
 
-  const statusDto = {
-    message: 'success',
-    successful: true,
-  };
+  // The shape StatusDto declares. The backend sends `success`, not `successful` (test-improvement-plan finding 10).
+  const statusDto: StatusDto = { message: 'success', successful: true };
 
-  const assign2ndTablePayload = {
-    tableNr: 1,
-    matchIds: [],
-  };
+  const assign2ndTablePayload = { tableNr: 1, matchIds: [4, 5] };
 
   const resultForMatchPayload: TTMatchResult = {
-    match: {},
+    match: { id: 4 },
     result: [],
   };
 
-  const toastServiceMock: ToastrService = <ToastrService>{
-    error: () => null,
-  };
+  const assignMatchToTable: MatchToTable = { matchIds: [1, 2], tableNr: 1, tableId: 2 };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
+    toast = jasmine.createSpyObj('ToastrService', ['error', 'success', 'info']);
     TestBed.configureTestingModule({
       providers: [
         TableEffects,
         TableService,
         MatchService,
-        { provide: ToastrService, useValue: toastServiceMock },
+        { provide: ToastrService, useValue: toast },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -92,124 +75,131 @@ describe('the table effects', () => {
   });
 
   describe('loadTables', () => {
-    it('should return a LoadTableSuccess', (done) => {
-      const expectedResult = new LoadTablesSuccess(responseTables);
-      spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
+    it('should return a LoadTablesSuccess', async () => {
+      const load = spyOn(tableService, 'getAllTables').and.returnValue(of(responseTables));
 
-      actions.next(new LoadTables(null));
+      const result = await emittedBy(tableEffects.loadTables, actions, new LoadTables(null));
 
-      tableEffects.loadTables.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new LoadTablesSuccess(responseTables)]);
+      expect(load.calls.allArgs()).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadTableError', (done) => {
-      spyOn(tableService, 'getAllTables').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadTablesError and show an error', async () => {
+      spyOn(tableService, 'getAllTables').and.returnValue(throwError(() => error));
 
-      actions.next(new LoadTables(null));
+      const result = await emittedBy(tableEffects.loadTables, actions, new LoadTables(null));
 
-      tableEffects.loadTables.subscribe((result) => {
-        expect(result.type).toEqual(TableActionTypes.LoadError);
-        done();
-      });
-      // expect(toastServiceMock.error).toHaveBeenCalled();
+      expect(result).toEqual([new LoadTablesError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Laden der Tische', '']]);
     });
   });
 
   describe('assign second table', () => {
-    it('should return a AssignToSecondTableSuccess', (done) => {
-      const expectedResult = new AssignToSecondTableSuccess(assign2ndTablePayload);
-      spyOn(matchService, 'assignToSecondTable').and.returnValue(of(statusDto));
+    it('should return a AssignToSecondTableSuccess', async () => {
+      const assign = spyOn(matchService, 'assignToSecondTable').and.returnValue(of(statusDto));
 
-      actions.next(new AssignToSecondTable(assign2ndTablePayload));
+      const result = await emittedBy(
+        tableEffects.assignToSecondTable,
+        actions,
+        new AssignToSecondTable(assign2ndTablePayload)
+      );
 
-      tableEffects.assignToSecondTable.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new AssignToSecondTableSuccess(assign2ndTablePayload)]);
+      expect(assign.calls.allArgs()).toEqual([[1, [4, 5]]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a AssignToSecondTableError', (done) => {
-      spyOn(matchService, 'assignToSecondTable').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a AssignToSecondTableError and show an error', async () => {
+      spyOn(matchService, 'assignToSecondTable').and.returnValue(throwError(() => error));
 
-      actions.next(new AssignToSecondTable(assign2ndTablePayload));
+      const result = await emittedBy(
+        tableEffects.assignToSecondTable,
+        actions,
+        new AssignToSecondTable(assign2ndTablePayload)
+      );
 
-      tableEffects.assignToSecondTable.subscribe((result) => {
-        expect(result.type).toEqual(TableActionTypes.AssignToSecondTableError);
-        done();
-      });
-      // expect(toastServiceMock.error).toHaveBeenCalled();
+      expect(result).toEqual([new AssignToSecondTableError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim zuweisen des zweiten Tisches', '']]);
     });
   });
 
-  describe('on result for table', () => {
-    it('should return a ResultForTableSuccess', (done) => {
-      const expectedResult = new ResultForMatchSuccess(resultForMatchPayload);
-      spyOn(matchService, 'resultForMatch').and.returnValue(of(statusDto));
+  describe('on result for match', () => {
+    it('should return a ResultForMatchSuccess', async () => {
+      const enter = spyOn(matchService, 'resultForMatch').and.returnValue(of(statusDto));
 
-      actions.next(new ResultForMatch(resultForMatchPayload));
+      const result = await emittedBy(tableEffects.resultForMatch, actions, new ResultForMatch(resultForMatchPayload));
 
-      tableEffects.resultForMatch.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new ResultForMatchSuccess(resultForMatchPayload)]);
+      expect(enter.calls.allArgs()).toEqual([[resultForMatchPayload]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a ResultForTableError', (done) => {
-      spyOn(matchService, 'resultForMatch').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a ResultForMatchError and show an error', async () => {
+      spyOn(matchService, 'resultForMatch').and.returnValue(throwError(() => error));
 
-      actions.next(new ResultForMatch(resultForMatchPayload));
+      const result = await emittedBy(tableEffects.resultForMatch, actions, new ResultForMatch(resultForMatchPayload));
 
-      tableEffects.resultForMatch.subscribe((result) => {
-        expect(result.type).toEqual(TableActionTypes.ResultForMatchError);
-        done();
-      });
-      // expect(toastServiceMock.error).toHaveBeenCalled();
+      expect(result).toEqual([new ResultForMatchError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler bei der Eingabe des Ergebnisses', '']]);
     });
   });
 
   describe('on assign match to table', () => {
-    it('should return a AssignMatchToTableSuccess', (done) => {
-      const assignMatchToTable: MatchToTable = {
-        matchIds: [1, 2],
-        tableNr: 1,
-        tableId: 2,
-      };
-      const expectedResult = new AssignMatchToTableSuccess(assignMatchToTable);
-      spyOn(matchService, 'assignMatchToTable').and.returnValue(of(statusDto));
+    it('should return a AssignMatchToTableSuccess', async () => {
+      const assign = spyOn(matchService, 'assignMatchToTable').and.returnValue(of(statusDto));
 
-      actions.next(new AssignMatchToTable(assignMatchToTable));
+      const result = await emittedBy(
+        tableEffects.assignMatchToTable,
+        actions,
+        new AssignMatchToTable(assignMatchToTable)
+      );
 
-      tableEffects.assignMatchToTable.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new AssignMatchToTableSuccess(assignMatchToTable)]);
+      expect(assign.calls.allArgs()).toEqual([[assignMatchToTable]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a AssignMatchToTableError', (done) => {
-      spyOn(matchService, 'assignMatchToTable').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a AssignMatchToTableError with the default message when the request fails', async () => {
+      spyOn(matchService, 'assignMatchToTable').and.returnValue(throwError(() => error));
 
-      actions.next(new AssignMatchToTable({}));
+      const result = await emittedBy(
+        tableEffects.assignMatchToTable,
+        actions,
+        new AssignMatchToTable(assignMatchToTable)
+      );
 
-      tableEffects.assignMatchToTable.subscribe((result) => {
-        expect(result.type).toEqual(TableActionTypes.AssignMatchToTableError);
-        done();
-      });
+      expect(result).toEqual([new AssignMatchToTableError(error)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Fehler beim Zuweisen des Spiels zum Tisch', '']]);
     });
 
-    it('should return a AssignMatchToTableError', (done) => {
-      const failedStatus: StatusDto = { successful: false };
-      const expectedResult = new AssignMatchToTableError(failedStatus);
+    it('should show the backend message when the request fails with one', async () => {
+      const backendError = { error: { success: false, message: 'Could not assign all matches to table.' } };
+      spyOn(matchService, 'assignMatchToTable').and.returnValue(throwError(() => backendError));
+
+      const result = await emittedBy(
+        tableEffects.assignMatchToTable,
+        actions,
+        new AssignMatchToTable(assignMatchToTable)
+      );
+
+      expect(result).toEqual([new AssignMatchToTableError(backendError)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Could not assign all matches to table.', '']]);
+    });
+
+    it('should return a AssignMatchToTableError when the status is not successful', async () => {
+      const failedStatus: StatusDto = { successful: false, message: 'Tisch belegt' };
+
       spyOn(matchService, 'assignMatchToTable').and.returnValue(of(failedStatus));
 
-      actions.next(new AssignMatchToTable({}));
+      const result = await emittedBy(
+        tableEffects.assignMatchToTable,
+        actions,
+        new AssignMatchToTable(assignMatchToTable)
+      );
 
-      tableEffects.assignMatchToTable.subscribe((result) => {
-        console.log(result);
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toEqual([new AssignMatchToTableError(failedStatus)]);
+      expect(toast.error.calls.allArgs()).toEqual([['Tisch belegt']]);
     });
   });
 });
