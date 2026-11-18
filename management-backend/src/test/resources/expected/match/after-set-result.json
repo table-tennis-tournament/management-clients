@@ -39,6 +39,7 @@
   "waitingList" : false,
   "callState" : "None",
   "tableId" : null,
+  "tableNumber" : null,
   "typeId" : 1,
   "type" : {
     "id" : 1,

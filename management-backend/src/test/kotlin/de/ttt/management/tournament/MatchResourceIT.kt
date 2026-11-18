@@ -1,6 +1,7 @@
 package de.ttt.management.tournament
 
 import de.ttt.management.Api
+import de.ttt.management.DatabaseHelper
 import de.ttt.management.ResourceTestConfiguration
 import de.ttt.management.Scenarios
 import de.ttt.management.TestState
@@ -30,6 +31,9 @@ class MatchResourceIT {
 
     @Autowired
     private lateinit var scenarios: Scenarios
+
+    @Autowired
+    private lateinit var db: DatabaseHelper
 
     @BeforeEach
     fun resetState() = testState.reset()
@@ -197,6 +201,20 @@ class MatchResourceIT {
             api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk.expectExactJson(success)
             api.expectMatch(1, "after-assign")
             api.get("/match/allmatchtable").expectStatus().isOk.expectExactJson("""[{"matchId": 1, "tableId": 1}]""")
+        }
+
+        @Test
+        fun `a match names the number of its table, which differs from the id`() {
+            db.insertTable(20, "21")
+            api.post("/match/matchtotable/21", listOf(1)).expectStatus().isOk
+            api.get("/match/1").expectStatus().isOk.expectBody()
+                .jsonPath("$.tableId").isEqualTo(20)
+                .jsonPath("$.tableNumber").isEqualTo(21)
+
+            api.post("/match/remove/20", listOf(1)).expectStatus().isOk
+            api.get("/match/1").expectStatus().isOk.expectBody()
+                .jsonPath("$.tableId").isEmpty()
+                .jsonPath("$.tableNumber").isEmpty()
         }
 
         @Test

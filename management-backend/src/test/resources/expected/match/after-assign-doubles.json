@@ -50,6 +50,7 @@
   "waitingList" : false,
   "callState" : "None",
   "tableId" : 2,
+  "tableNumber" : 2,
   "typeId" : 2,
   "type" : {
     "id" : 2,

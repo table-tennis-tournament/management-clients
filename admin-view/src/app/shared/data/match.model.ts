@@ -18,6 +18,8 @@ export interface Match {
   /** How many Calls have been announced (0-3). */
   callNumber?: number;
   tableId?: number;
+  /** The number of the table the match is at, as players see it; not the same as [tableId]. */
+  tableNumber?: number;
   team1?: Player[];
   team2?: Player[];
   matchType?: StageType;

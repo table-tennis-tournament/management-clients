@@ -70,4 +70,5 @@ Full system: `docker compose up -d --build` starts MariaDB, CUPS, the backend (p
   `@BeforeEach` starts with `testState.reset()`. No base class. After `-DupdateExpected=true` run the tests once more without it: recording never fails.
 - **Unit tests are Vitest, e2e tests are Playwright.** No Karma, Jasmine or Protractor.
 - **Tables have an id and a number.** They differ in real data. `/table/{nr}/lock` and `/match/matchtotable/{nr}`
-  take the number; most other endpoints take the id.
+  take the number; most other endpoints take the id. A match carries both (`tableId`, `tableNumber`); show
+  `tableNumber` to people.

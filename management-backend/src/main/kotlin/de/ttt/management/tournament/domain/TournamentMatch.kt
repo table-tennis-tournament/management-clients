@@ -23,6 +23,11 @@ class TournamentMatch(
     var waitingList: Boolean = false,
     var callState: CallState = CallState.None,
     var tableId: Long? = null,
+    /**
+     * The number of the table [tableId] names, as stored (the venue's table number, not the id). Read only: a
+     * transition that changes the table clears it, the number is known again once the match is reloaded.
+     */
+    var tableNumber: Int? = null,
     var typeId: Long? = null,
     var type: TournamentDiscipline? = null,
     var nr: Int? = null,
@@ -110,6 +115,7 @@ class TournamentMatch(
     fun assign(tableId: Long, now: LocalDateTime) {
         require(!isPlayed) { "A completed match cannot be assigned" }
         require(!isPlaying) { "A match that is already playing cannot be reassigned" }
+        if (tableId != this.tableId) tableNumber = null
         this.tableId = tableId
         startTime = now
         isPlaying = false
@@ -124,6 +130,7 @@ class TournamentMatch(
     fun start(tableId: Long? = this.tableId, now: LocalDateTime) {
         require(!isPlayed) { "A completed match cannot be started" }
         require(!isPlaying) { "A match that is already playing cannot be started again" }
+        if (tableId != this.tableId) tableNumber = null
         this.tableId = tableId
         startTime = now
         isPlaying = true
@@ -223,6 +230,7 @@ class TournamentMatch(
 
     private fun leaveTable() {
         tableId = null
+        tableNumber = null
         callState = CallState.None
     }
 

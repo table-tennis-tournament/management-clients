@@ -47,6 +47,7 @@ class JdbcTournamentMatchRepository(
             waitingList = rs.getBoolean("matc_waitinglist"),
             callState = CallState.fromCode(rs.getInt("matc_callstate")),
             tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 },
+            tableNumber = rs.getString("table_number")?.toIntOrNull(),
             typeId = rs.getObject("matc_type_id")?.let { (it as Number).toLong() },
             type = rs.getObject("matc_type_id")?.let { (it as Number).toLong() }?.let { tid ->
                 TournamentDiscipline.fromStored(
@@ -140,12 +141,13 @@ class JdbcTournamentMatchRepository(
 
     private fun selectMatches(sql: String): String =
         "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate, mt.maty_name AS match_type_name, g.grou_name AS group_name, " +
-            "ty.type_name AS type_name, ty.type_kind AS type_kind, ty.type_active AS type_active " +
+            "ty.type_name AS type_name, ty.type_kind AS type_kind, ty.type_active AS type_active, tb.tabl_name AS table_number " +
             "FROM matches m " +
             "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id " +
             "LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id " +
             "LEFT JOIN playgroups g ON g.grou_id = m.matc_grou_id " +
-            "LEFT JOIN type ty ON ty.type_id = m.matc_type_id $sql"
+            "LEFT JOIN type ty ON ty.type_id = m.matc_type_id " +
+            "LEFT JOIN tables tb ON tb.tabl_id = m.matc_tabl_id $sql"
 
     override fun findAll(): List<TournamentMatch> {
         return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = true))

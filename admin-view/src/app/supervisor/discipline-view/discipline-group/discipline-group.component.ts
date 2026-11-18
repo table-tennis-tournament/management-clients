@@ -92,8 +92,8 @@ export class DisciplineGroupComponent {
   setTables() {
     const numberArray = [];
     this.group.matches.forEach((element) => {
-      if (element.tableId && numberArray.indexOf(element.tableId) < 0) {
-        numberArray.push(element.tableId);
+      if (element.tableNumber && numberArray.indexOf(element.tableNumber) < 0) {
+        numberArray.push(element.tableNumber);
       }
     });
     this.tableNumbers = numberArray;

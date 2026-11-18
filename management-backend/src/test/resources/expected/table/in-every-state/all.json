@@ -46,6 +46,7 @@
     "waitingList" : false,
     "callState" : "FirstCall",
     "tableId" : 1,
+    "tableNumber" : 1,
     "typeId" : 1,
     "type" : {
       "id" : 1,
@@ -144,6 +145,7 @@
     "waitingList" : false,
     "callState" : "SecondCall",
     "tableId" : 2,
+    "tableNumber" : 2,
     "typeId" : 2,
     "type" : {
       "id" : 2,
@@ -228,6 +230,7 @@
     "waitingList" : false,
     "callState" : "ThirdCall",
     "tableId" : 3,
+    "tableNumber" : 3,
     "typeId" : 1,
     "type" : {
       "id" : 1,
