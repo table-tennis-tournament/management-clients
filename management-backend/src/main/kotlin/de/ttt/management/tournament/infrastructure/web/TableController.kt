@@ -78,7 +78,7 @@ class TableController(
                 table_number = table.name?.toLongOrNull(),
                 table_manager_id = tableManager,
                 matches = matches
-                    .filter { it.tableId == table.id }
+                    .filter { it.tableId == table.id || it.secondTableId == table.id }
                     .map { toTableManagerMatch(it, disciplines[it.typeId]?.name) }
             )
         }
@@ -91,7 +91,7 @@ class TableController(
                 id = table.id,
                 number = table.name?.toIntOrNull(),
                 isLocked = table.isLocked,
-                matches = matches.filter { it.tableId == table.id }
+                matches = matches.filter { it.tableId == table.id || it.secondTableId == table.id }
             )
         }
     }

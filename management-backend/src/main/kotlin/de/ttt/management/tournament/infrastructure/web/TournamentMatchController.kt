@@ -165,7 +165,7 @@ class TournamentMatchController(
     }
 
     @PostMapping("/match/free")
-    @Operation(summary = "Free matches", description = "Removes matches from their assigned tables.")
+    @Operation(summary = "Free matches", description = "Ends matches at their tables (\"Frei\"): they leave the table and wait for their result (Finished).")
     fun freeMatches(
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
@@ -212,16 +212,29 @@ class TournamentMatchController(
     fun testSocket(): Map<String, Any> = mapOf("success" to true)
 
     @PostMapping("/match/matchtosecondtable/{tableName}")
-    @Operation(summary = "Assign matches to second table", description = "Assigns matches to an alternative table.")
+    @Operation(summary = "Assign matches to a second table", description = "Puts matches waiting at a table on the table with this number as well, for a group that plays on two tables; each match is started at one of them.")
     fun setMatchToSecondTable(
         @Parameter(description = "Name of the second table") @PathVariable tableName: String,
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        val success = tableService.setMatchToTable(tableName, matchIds)
+        val success = tableService.setMatchToSecondTable(tableName, matchIds)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
-            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not assign all matches to table."))
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not assign all matches to the second table."))
+        }
+    }
+
+    @PostMapping("/match/walkover")
+    @Operation(summary = "Walkover", description = "Ends matches without playing them (bye or walkover): played, no result, mktt's walkover flag set.")
+    fun walkoverMatches(
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.walkoverMatches(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not end all matches as walkovers."))
         }
     }
 
@@ -245,12 +258,12 @@ class TournamentMatchController(
         toMatchAggregates(matchService.getMatchesByCallState(CallState.ThirdCall))
 
     @PostMapping("/match/remove/{tableId}")
-    @Operation(summary = "Remove matches from table", description = "Removes all matches assigned to a specific table ID.")
+    @Operation(summary = "Remove matches from one of their tables", description = "Takes matches that wait at two tables (a group on a second table) off the table with this id (\"Entfernen\"); a match at one table only is rejected.")
     fun removeMatchesFromTable(
         @Parameter(description = "ID of the table") @PathVariable tableId: Long,
         @RequestBody matchIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.removeMatchesFromTable(matchIds)
+        val success = matchService.removeMatchesFromTable(tableId, matchIds)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {

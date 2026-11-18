@@ -36,7 +36,9 @@ data class MatchFreed(
     val typeIds: List<Long> = emptyList(),
     val tableIds: List<Long> = emptyList(),
     /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
-    val affectedTypeIds: List<Long> = emptyList()
+    val affectedTypeIds: List<Long> = emptyList(),
+    /** `true` for a walkover (no result), `false` for a match that waits for its result. */
+    val walkover: Boolean = false
 )
 
 /**

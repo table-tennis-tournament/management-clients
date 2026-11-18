@@ -28,6 +28,13 @@ class TournamentMatch(
      * transition that changes the table clears it, the number is known again once the match is reloaded.
      */
     var tableNumber: Int? = null,
+    /**
+     * The second table of a match whose group plays on two tables. The match waits at both tables and is
+     * started at one of them, which takes it off the other.
+     */
+    var secondTableId: Long? = null,
+    /** The number of [secondTableId], as stored; read only like [tableNumber]. */
+    var secondTableNumber: Int? = null,
     var typeId: Long? = null,
     var type: TournamentDiscipline? = null,
     var nr: Int? = null,
@@ -67,8 +74,9 @@ class TournamentMatch(
 
     val state: MatchState
         get() = when {
-            isPlayed && isKampflos -> MatchState.Finished
-            isPlayed -> MatchState.Completed
+            isPlayed && isKampflos -> MatchState.Walkover
+            isPlayed && winnerSideId != null -> MatchState.Completed
+            isPlayed -> MatchState.Finished
             isPlaying -> MatchState.Started
             tableId != null -> MatchState.OnTable
             waitingList -> MatchState.InQueue
@@ -130,7 +138,17 @@ class TournamentMatch(
     fun start(tableId: Long? = this.tableId, now: LocalDateTime) {
         require(!isPlayed) { "A completed match cannot be started" }
         require(!isPlaying) { "A match that is already playing cannot be started again" }
-        if (tableId != this.tableId) tableNumber = null
+        require(secondTableId == null || tableId == this.tableId || tableId == secondTableId) {
+            "A match waiting at two tables is started at one of them"
+        }
+        if (tableId != null && tableId == secondTableId) {
+            // started at its second table: it leaves the first one
+            this.tableNumber = secondTableNumber
+        } else if (tableId != this.tableId) {
+            tableNumber = null
+        }
+        secondTableId = null
+        secondTableNumber = null
         this.tableId = tableId
         startTime = now
         isPlaying = true
@@ -174,12 +192,54 @@ class TournamentMatch(
     }
 
     /**
-     * Frees the match (walkover), transitioning it to [MatchState.Finished].
+     * Puts a match that waits at a table on a second table as well, for a group that plays on two tables. The
+     * match is started at one of them later.
+     */
+    fun assignSecondTable(tableId: Long) {
+        require(state == MatchState.OnTable) { "Only a match waiting at a table can get a second table" }
+        require(tableId != this.tableId) { "The second table must be another table" }
+        secondTableId = tableId
+        secondTableNumber = null
+    }
+
+    /**
+     * Takes a match that waits at two tables off [tableId]; it keeps waiting at the other one ("Entfernen").
+     */
+    fun leaveOneTable(tableId: Long) {
+        require(secondTableId != null) { "Only a match at two tables can leave one of them" }
+        when (tableId) {
+            secondTableId -> Unit
+            this.tableId -> {
+                this.tableId = secondTableId
+                this.tableNumber = secondTableNumber
+            }
+            else -> throw IllegalArgumentException("The match is not at table $tableId")
+        }
+        secondTableId = null
+        secondTableNumber = null
+    }
+
+    /**
+     * Ends a match without playing it, as a bye or walkover: it is played, has no result and mktt's walkover
+     * flag is set. Transitions it to [MatchState.Walkover].
+     */
+    fun walkover() {
+        isPlayed = true
+        isPlaying = false
+        isKampflos = true
+        winnerSideId = null
+        clearResult()
+        leaveTable()
+    }
+
+    /**
+     * The match is over at its table ("Frei"), its result is entered later: it leaves the table and waits for the
+     * result in [MatchState.Finished]. Entering the result with [complete] makes it Completed.
      */
     fun free() {
         isPlayed = true
         isPlaying = false
-        isKampflos = true
+        isKampflos = false
         winnerSideId = null
         leaveTable()
     }
@@ -231,6 +291,8 @@ class TournamentMatch(
     private fun leaveTable() {
         tableId = null
         tableNumber = null
+        secondTableId = null
+        secondTableNumber = null
         callState = CallState.None
     }
 

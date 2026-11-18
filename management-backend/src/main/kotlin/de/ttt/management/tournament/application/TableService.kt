@@ -68,6 +68,13 @@ class TableService(
         return allSuccess
     }
 
+    /** Puts matches waiting at a table on the table named [tableName] as their second table. */
+    @Transactional
+    fun setMatchToSecondTable(tableName: String, matchIds: List<Long>): Boolean {
+        val table = getTableByName(tableName) ?: return false
+        return matchIds.map { matchService.assignSecondTable(it, table.id!!) }.all { it }
+    }
+
     fun getTablesForManager(managerId: Long): List<TTTable> {
         val tableNumbers = TABLE_MANAGER_TABLES[managerId] ?: return emptyList()
         return ttTableRepository.findAll()

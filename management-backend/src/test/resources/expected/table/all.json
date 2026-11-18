@@ -43,6 +43,8 @@
     "callState" : "None",
     "tableId" : 2,
     "tableNumber" : 2,
+    "secondTableId" : null,
+    "secondTableNumber" : null,
     "typeId" : 1,
     "type" : {
       "id" : 1,

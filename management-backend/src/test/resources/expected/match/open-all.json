@@ -43,6 +43,8 @@
   "callState" : "None",
   "tableId" : null,
   "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
   "typeId" : 1,
   "type" : {
     "id" : 1,
@@ -123,6 +125,8 @@
   "callState" : "FirstCall",
   "tableId" : 1,
   "tableNumber" : 1,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
   "typeId" : 1,
   "type" : {
     "id" : 1,
@@ -217,6 +221,8 @@
   "callState" : "SecondCall",
   "tableId" : 2,
   "tableNumber" : 2,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
   "typeId" : 2,
   "type" : {
     "id" : 2,
@@ -303,6 +309,8 @@
   "callState" : "None",
   "tableId" : null,
   "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
   "typeId" : 1,
   "type" : {
     "id" : 1,
@@ -383,6 +391,8 @@
   "callState" : "ThirdCall",
   "tableId" : 3,
   "tableNumber" : 3,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
   "typeId" : 1,
   "type" : {
     "id" : 1,
@@ -457,6 +467,8 @@
   "callState" : "None",
   "tableId" : null,
   "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
   "typeId" : 1,
   "type" : {
     "id" : 1,

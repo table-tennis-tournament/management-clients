@@ -72,8 +72,41 @@ class MatchService(
         transition(listOf(matchId), { require(it.isPlaying) { "Only a running match can be taken back" }; it.takeBack() }, event = ::takenBackEvent)
 
     @Transactional
-    fun removeMatchesFromTable(matchIds: List<Long>): Boolean =
-        transition(matchIds, TournamentMatch::takeBack, event = ::takenBackEvent)
+    /**
+     * Takes matches that wait at two tables off table [tableId] ("Entfernen"); each keeps waiting at its other
+     * table. A match at only one table is rejected.
+     */
+    fun removeMatchesFromTable(tableId: Long, matchIds: List<Long>): Boolean =
+        matchIds.map { matchId ->
+            transition(listOf(matchId), { it.leaveOneTable(tableId) }) { (t) ->
+                MatchAssigned(
+                    matchId = matchId,
+                    tableId = t.match.tableId!!,
+                    typeId = t.match.typeId,
+                    previousTableId = tableId
+                )
+            }
+        }.all { it }
+
+    /** Puts a match that waits at a table on [tableId] as well, for a group that plays on two tables. */
+    @Transactional
+    fun assignSecondTable(matchId: Long, tableId: Long): Boolean = isUsableTable(tableId) &&
+        transition(listOf(matchId), { it.assignSecondTable(tableId) }) { (t) ->
+            MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = null)
+        }
+
+    /** Ends matches without playing them, as byes or walkovers. */
+    @Transactional
+    fun walkoverMatches(matchIds: List<Long>): Boolean =
+        transition(matchIds, TournamentMatch::walkover) { ended ->
+            MatchFreed(
+                ended.mapNotNull { it.match.id },
+                ended.mapNotNull { it.match.typeId }.distinct(),
+                ended.flatMap { it.previousTableIds }.distinct(),
+                affectedTypeIds(ended.map { it.match }),
+                walkover = true
+            )
+        }
 
     @Transactional
     fun setResult(matchId: Long, sets: List<SetResult>): Boolean =
@@ -110,7 +143,7 @@ class MatchService(
                 MatchDeleted(
                     matchIds = listOf(id),
                     typeIds = listOfNotNull(match?.typeId),
-                    tableIds = listOfNotNull(match?.tableId),
+                    tableIds = listOfNotNull(match?.tableId, match?.secondTableId),
                     affectedTypeIds = affectedTypeIds(listOfNotNull(match))
                 )
             )
@@ -127,7 +160,7 @@ class MatchService(
                 MatchDeleted(
                     matchIds = matches.mapNotNull { it.id },
                     typeIds = listOf(id),
-                    tableIds = matches.mapNotNull { it.tableId }.distinct(),
+                    tableIds = matches.flatMap { listOfNotNull(it.tableId, it.secondTableId) }.distinct(),
                     affectedTypeIds = affectedTypeIds(matches)
                 )
             )
@@ -141,7 +174,7 @@ class MatchService(
             MatchFreed(
                 freed.mapNotNull { it.match.id },
                 freed.mapNotNull { it.match.typeId }.distinct(),
-                freed.mapNotNull { it.previousTableId }.distinct(),
+                freed.flatMap { it.previousTableIds }.distinct(),
                 affectedTypeIds(freed.map { it.match })
             )
         }
@@ -163,10 +196,13 @@ class MatchService(
         return transition(listOf(matchId), TournamentMatch::callAgain) { calledEvent(it, it.first().match.callState) }
     }
 
-    /** A match after a transition, together with the table it was on before. */
-    private class Transitioned(val match: TournamentMatch, val previousTableId: Long?) {
-        /** The table the match was on before, if it came from another table than [tableId]. */
-        fun movedFrom(tableId: Long): Long? = previousTableId?.takeIf { it != tableId }
+    /** A match after a transition, together with the tables it waited at before (two for a group on two tables). */
+    private class Transitioned(val match: TournamentMatch, val previousTableIds: List<Long>) {
+        /** The table the match was on before. */
+        val previousTableId: Long? get() = previousTableIds.firstOrNull()
+
+        /** The table the match left by going to [tableId], if any: the one it was on, or the other of its two tables. */
+        fun movedFrom(tableId: Long): Long? = previousTableIds.firstOrNull { it != tableId }
     }
 
     /**
@@ -189,7 +225,7 @@ class MatchService(
                 allSuccess = false
                 continue
             }
-            val previousTableId = match.tableId
+            val previousTableIds = listOfNotNull(match.tableId, match.secondTableId)
             try {
                 apply(match)
             } catch (e: IllegalArgumentException) {
@@ -200,7 +236,7 @@ class MatchService(
                 allSuccess = false
             } else {
                 onSaved(match)
-                transitioned.add(Transitioned(match, previousTableId))
+                transitioned.add(Transitioned(match, previousTableIds))
             }
         }
         if (transitioned.isNotEmpty()) {
@@ -212,7 +248,7 @@ class MatchService(
     private fun takenBackEvent(matches: List<Transitioned>) = MatchTakenBack(
         matchIds = matches.mapNotNull { it.match.id },
         typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
-        tableIds = matches.mapNotNull { it.previousTableId }.distinct(),
+        tableIds = matches.flatMap { it.previousTableIds }.distinct(),
         affectedTypeIds = affectedTypeIds(matches.map { it.match })
     )
 
@@ -232,6 +268,6 @@ class MatchService(
         matchIds = matches.mapNotNull { it.match.id },
         callState = callState.name,
         typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
-        tableIds = matches.mapNotNull { it.previousTableId }.distinct()
+        tableIds = matches.flatMap { it.previousTableIds }.distinct()
     )
 }

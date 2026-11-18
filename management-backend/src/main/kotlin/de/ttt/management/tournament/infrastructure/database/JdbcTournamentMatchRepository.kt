@@ -48,6 +48,8 @@ class JdbcTournamentMatchRepository(
             callState = CallState.fromCode(rs.getInt("matc_callstate")),
             tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 },
             tableNumber = rs.getString("table_number")?.toIntOrNull(),
+            secondTableId = rs.getObject("second_table_id")?.let { (it as Number).toLong() },
+            secondTableNumber = rs.getString("second_table_number")?.toIntOrNull(),
             typeId = rs.getObject("matc_type_id")?.let { (it as Number).toLong() },
             type = rs.getObject("matc_type_id")?.let { (it as Number).toLong() }?.let { tid ->
                 TournamentDiscipline.fromStored(
@@ -141,13 +143,17 @@ class JdbcTournamentMatchRepository(
 
     private fun selectMatches(sql: String): String =
         "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate, mt.maty_name AS match_type_name, g.grou_name AS group_name, " +
-            "ty.type_name AS type_name, ty.type_kind AS type_kind, ty.type_active AS type_active, tb.tabl_name AS table_number " +
+            "ty.type_name AS type_name, ty.type_kind AS type_kind, ty.type_active AS type_active, tb.tabl_name AS table_number, " +
+            "st.tableId AS second_table_id, tb2.tabl_name AS second_table_number " +
             "FROM matches m " +
             "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id " +
             "LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id " +
             "LEFT JOIN playgroups g ON g.grou_id = m.matc_grou_id " +
             "LEFT JOIN type ty ON ty.type_id = m.matc_type_id " +
-            "LEFT JOIN tables tb ON tb.tabl_id = m.matc_tabl_id $sql"
+            "LEFT JOIN tables tb ON tb.tabl_id = m.matc_tabl_id " +
+            // a match is on at most two tables: the row of the other table is its second table
+            "LEFT JOIN mgmt_matchtable st ON st.matchId = m.matc_id AND st.tableId <> m.matc_tabl_id " +
+            "LEFT JOIN tables tb2 ON tb2.tabl_id = st.tableId $sql"
 
     override fun findAll(): List<TournamentMatch> {
         return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = true))
@@ -198,7 +204,7 @@ class JdbcTournamentMatchRepository(
         if (tableIds.isEmpty()) return emptyList()
         return withPlayability(resolvePlayers(
             jdbcClient.sql(
-                selectMatches("WHERE m.matc_tabl_id IN (:tableIds) ORDER BY m.matc_tabl_id, m.matc_id")
+                selectMatches("WHERE m.matc_tabl_id IN (:tableIds) OR st.tableId IN (:tableIds) ORDER BY m.matc_tabl_id, m.matc_id")
             )
                 .param("tableIds", tableIds)
                 .query(rowMapper)
@@ -227,7 +233,9 @@ class JdbcTournamentMatchRepository(
     }
 
     override fun findTableIdsInUse(): Set<Long> {
-        return jdbcClient.sql("SELECT DISTINCT matc_tabl_id FROM matches WHERE matc_tabl_id > 0")
+        return jdbcClient.sql(
+            "SELECT matc_tabl_id FROM matches WHERE matc_tabl_id > 0 UNION SELECT tableId FROM mgmt_matchtable"
+        )
             .query { rs, _ -> rs.getLong("matc_tabl_id") }
             .set()
             .toSet()
@@ -239,12 +247,6 @@ class JdbcTournamentMatchRepository(
      */
     override fun save(match: TournamentMatch): Int {
         val id = requireNotNull(match.id) { "Only an existing match can be saved" }
-        val persistedTableId = jdbcClient.sql("SELECT matc_tabl_id FROM matches WHERE matc_id = :id")
-            .param("id", id)
-            .query { rs, _ -> rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 } }
-            .list()
-            .firstOrNull()
-
         val updated = jdbcClient.sql(
             """
             UPDATE matches
@@ -273,10 +275,7 @@ class JdbcTournamentMatchRepository(
         if (updated == 0) return 0
 
         saveCallState(id, match.callState)
-        if (persistedTableId != match.tableId) {
-            deleteMatchTableForMatch(id)
-            match.tableId?.let { insertMatchTable(id, it) }
-        }
+        syncMatchTables(id, listOfNotNull(match.tableId, match.secondTableId).toSet())
         return updated
     }
 
@@ -299,6 +298,7 @@ class JdbcTournamentMatchRepository(
     }
 
     override fun deleteById(id: Long): Int {
+        deleteMatchTableForMatch(id)
         return jdbcClient.sql("DELETE FROM matches WHERE matc_id = :id").param("id", id).update()
     }
 
@@ -313,6 +313,21 @@ class JdbcTournamentMatchRepository(
             .update()
     }
 
+    /** Keeps one `mgmt_matchtable` row per table the match is at; unchanged rows stay as they are. */
+    private fun syncMatchTables(matchId: Long, tableIds: Set<Long>) {
+        val stored = jdbcClient.sql("SELECT tableId FROM mgmt_matchtable WHERE matchId = :matchId")
+            .param("matchId", matchId)
+            .query { rs, _ -> rs.getLong("tableId") }
+            .set()
+        (stored - tableIds).forEach { tableId ->
+            jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId = :matchId AND tableId = :tableId")
+                .param("matchId", matchId)
+                .param("tableId", tableId)
+                .update()
+        }
+        (tableIds - stored).forEach { insertMatchTable(matchId, it) }
+    }
+
     private fun deleteMatchTableForMatch(matchId: Long) {
         jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId = :matchId")
             .param("matchId", matchId)
@@ -320,6 +335,9 @@ class JdbcTournamentMatchRepository(
     }
 
     override fun deleteByTypeId(typeId: Long): Int {
+        jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
+            .param("typeId", typeId)
+            .update()
         return jdbcClient.sql("DELETE FROM matches WHERE matc_type_id = :typeId").param("typeId", typeId).update()
     }
 }

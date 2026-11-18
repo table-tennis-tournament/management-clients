@@ -58,6 +58,13 @@ class TablesResourceIT {
         }
 
         @Test
+        fun `a match at two tables is shown at both`() {
+            // match 1 waits at table 2; its group gets table 3 as a second table
+            api.post("/match/matchtosecondtable/3", listOf(1)).expectStatus().isOk
+            api.get("/tables?table_manager=1").expectStatus().isOk.expectJson("tables/manager-1-second-table")
+        }
+
+        @Test
         fun `table manager 1 is the default`() {
             api.get("/tables").expectStatus().isOk.expectJson("tables/manager-1")
         }

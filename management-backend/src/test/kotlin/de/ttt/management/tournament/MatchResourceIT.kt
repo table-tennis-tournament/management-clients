@@ -211,7 +211,7 @@ class MatchResourceIT {
                 .jsonPath("$.tableId").isEqualTo(20)
                 .jsonPath("$.tableNumber").isEqualTo(21)
 
-            api.post("/match/remove/20", listOf(1)).expectStatus().isOk
+            api.post("/match/takeBack", listOf(1)).expectStatus().isOk
             api.get("/match/1").expectStatus().isOk.expectBody()
                 .jsonPath("$.tableId").isEmpty()
                 .jsonPath("$.tableNumber").isEmpty()
@@ -240,17 +240,75 @@ class MatchResourceIT {
             api.expectMatch(1, "after-set-result")
         }
 
+        // --- a group on two tables -----------------------------------------------------------
+
         @Test
-        fun `matchtosecondtable is kept as an alias of matchtotable`() {
-            api.post("/match/matchtosecondtable/2", listOf(1)).expectStatus().isOk.expectExactJson(success)
+        fun `puts waiting matches on a second table`() {
+            api.post("/match/matchtotable/1", listOf(1, 2)).expectStatus().isOk
+            api.post("/match/matchtosecondtable/2", listOf(1, 2)).expectStatus().isOk.expectExactJson(success)
             api.expectMatch(1, "after-assign-second-table")
+            // the second table is in use
+            api.get("/table/free").expectStatus().isOk.expectExactJson(
+                """[{"id": 3, "number": 3, "isLocked": false, "matches": []}]"""
+            )
         }
 
         @Test
-        fun `removes a match from its table`() {
+        fun `rejects a second table for a match that waits at no table`() {
+            api.post("/match/matchtosecondtable/2", listOf(1)).expectStatus().isBadRequest
+                .expectExactJson(failure("Could not assign all matches to the second table."))
+            api.expectMatch(1, "open")
+        }
+
+        @Test
+        fun `rejects an unknown second table`() {
             api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
+            api.post("/match/matchtosecondtable/99", listOf(1)).expectStatus().isBadRequest
+                .expectExactJson(failure("Could not assign all matches to the second table."))
+            api.expectMatch(1, "after-assign")
+        }
+
+        @Test
+        fun `a match at two tables is started at its second table and leaves the first`() {
+            api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
+            api.post("/match/matchtosecondtable/2", listOf(1)).expectStatus().isOk
+
+            api.post("/match/start/1/2").expectStatus().isOk.expectExactJson(success)
+
+            api.expectMatch(1, "after-start-at-second-table")
+            api.get("/table/free").expectStatus().isOk.expectExactJson(
+                """[
+                    {"id": 1, "number": 1, "isLocked": false, "matches": []},
+                    {"id": 3, "number": 3, "isLocked": false, "matches": []}
+                ]"""
+            )
+        }
+
+        @Test
+        fun `rejects starting a match at a table it is not at, while it waits at two`() {
+            api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
+            api.post("/match/matchtosecondtable/2", listOf(1)).expectStatus().isOk
+
+            api.post("/match/start/1/3").expectStatus().isBadRequest.expectExactJson(failure("Could not start match."))
+            api.expectMatch(1, "after-assign-second-table-single")
+        }
+
+        @Test
+        fun `takes a match off one of its two tables`() {
+            api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
+            api.post("/match/matchtosecondtable/2", listOf(1)).expectStatus().isOk
+
             api.post("/match/remove/1", listOf(1)).expectStatus().isOk.expectExactJson(success)
-            api.expectMatch(1, "after-remove")
+
+            api.expectMatch(1, "after-remove-from-one-table")
+        }
+
+        @Test
+        fun `rejects taking a match off its only table`() {
+            api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
+            api.post("/match/remove/1", listOf(1)).expectStatus().isBadRequest
+                .expectExactJson(failure("Could not remove all matches from table."))
+            api.expectMatch(1, "after-assign")
         }
 
         @Test
@@ -259,17 +317,38 @@ class MatchResourceIT {
                 .expectExactJson(failure("Could not remove all matches from table."))
         }
 
-        // --- free ----------------------------------------------------------------------
+        // --- free and walkover ---------------------------------------------------------------
 
         @Test
-        fun `frees a match as a walkover`() {
+        fun `frees a match, which waits for its result`() {
+            api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
             api.post("/match/free", listOf(1)).expectStatus().isOk.expectExactJson(success)
             api.expectMatch(1, "after-free")
         }
 
         @Test
+        fun `the result of a freed match completes it`() {
+            api.post("/match/free", listOf(1)).expectStatus().isOk
+            api.post("/match/setResult/1", threeNil).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(1, "after-set-result")
+        }
+
+        @Test
         fun `rejects freeing an unknown match`() {
             api.post("/match/free", listOf(9999)).expectStatus().isBadRequest.expectExactJson(failure("Could not free all matches."))
+        }
+
+        @Test
+        fun `ends a match as a walkover, played without a result`() {
+            api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
+            api.post("/match/walkover", listOf(1)).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(1, "after-walkover")
+        }
+
+        @Test
+        fun `rejects a walkover of an unknown match`() {
+            api.post("/match/walkover", listOf(9999)).expectStatus().isBadRequest
+                .expectExactJson(failure("Could not end all matches as walkovers."))
         }
 
         // --- results -------------------------------------------------------------------

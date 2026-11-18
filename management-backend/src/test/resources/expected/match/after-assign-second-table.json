@@ -38,8 +38,10 @@
   "isKampflos" : false,
   "waitingList" : false,
   "callState" : "None",
-  "tableId" : 2,
-  "tableNumber" : 2,
+  "tableId" : 1,
+  "tableNumber" : 1,
+  "secondTableId" : 2,
+  "secondTableNumber" : 2,
   "typeId" : 1,
   "type" : {
     "id" : 1,

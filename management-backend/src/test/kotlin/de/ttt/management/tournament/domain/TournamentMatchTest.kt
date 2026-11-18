@@ -167,12 +167,40 @@ class TournamentMatchTest {
     }
 
     @Test
-    fun `frees a match as a walkover`() {
+    fun `a freed match is over and waits for its result`() {
         val match = match()
         match.start(now = now)
         match.free()
 
         assertEquals(MatchState.Finished, match.state)
+        assertMatch(match) {
+            isPlayed = true
+            startTime = now
+        }
+    }
+
+    @Test
+    fun `entering the result of a freed match completes it`() {
+        val match = match()
+        match.start(now = now)
+        match.free()
+        match.complete(threeNil)
+
+        assertEquals(MatchState.Completed, match.state)
+        assertMatch(match) {
+            completedThreeNil()
+            startTime = now
+        }
+    }
+
+    @Test
+    fun `a walkover is played without a result and sets the walkover flag`() {
+        val match = match()
+        match.start(now = now)
+        match.enterResult(listOf(SetResult(11, 5)))
+        match.walkover()
+
+        assertEquals(MatchState.Walkover, match.state)
         assertMatch(match) {
             isPlayed = true
             isKampflos = true
@@ -183,7 +211,7 @@ class TournamentMatchTest {
     @Test
     fun `takes back a walkover to the open state`() {
         val match = match()
-        match.free()
+        match.walkover()
         match.takeBack()
 
         assertEquals(MatchState.Open, match.state)
@@ -383,9 +411,95 @@ class TournamentMatchTest {
         assertEquals(MatchState.Finished, match.state)
         assertMatch(match) {
             isPlayed = true
-            isKampflos = true
             startTime = now
         }
+    }
+
+    // --- a group on two tables ------------------------------------------------------------
+
+    @Test
+    fun `a waiting match gets a second table`() {
+        val match = match()
+        match.assign(tableId = 7, now = now)
+        match.assignSecondTable(8)
+
+        assertEquals(MatchState.OnTable, match.state)
+        assertMatch(match) {
+            tableId = 7
+            secondTableId = 8
+            startTime = now
+        }
+    }
+
+    @Test
+    fun `only a match waiting at another table gets a second table`() {
+        assertFailsWith<IllegalArgumentException> { match().assignSecondTable(8) }
+
+        val started = match().apply { start(tableId = 7, now = now) }
+        assertFailsWith<IllegalArgumentException> { started.assignSecondTable(8) }
+
+        val waiting = match().apply { assign(tableId = 7, now = now) }
+        assertFailsWith<IllegalArgumentException> { waiting.assignSecondTable(7) }
+    }
+
+    @Test
+    fun `starting at the second table takes the match off the first`() {
+        val match = match()
+        match.assign(tableId = 7, now = now)
+        match.assignSecondTable(8)
+        match.start(tableId = 8, now = now)
+
+        assertMatch(match) {
+            tableId = 8
+            isPlaying = true
+            startTime = now
+        }
+    }
+
+    @Test
+    fun `starting at the first table takes the match off the second`() {
+        val match = match()
+        match.assign(tableId = 7, now = now)
+        match.assignSecondTable(8)
+        match.start(now = now)
+
+        assertMatch(match) {
+            tableId = 7
+            isPlaying = true
+            startTime = now
+        }
+    }
+
+    @Test
+    fun `a match at two tables is only started at one of them`() {
+        val match = match().apply { assign(tableId = 7, now = now); assignSecondTable(8) }
+        assertFailsWith<IllegalArgumentException> { match.start(tableId = 9, now = now) }
+    }
+
+    @Test
+    fun `a match at two tables leaves one of them and waits at the other`() {
+        val offFirst = match().apply { assign(tableId = 7, now = now); assignSecondTable(8); leaveOneTable(7) }
+        assertMatch(offFirst) { tableId = 8; startTime = now }
+
+        val offSecond = match().apply { assign(tableId = 7, now = now); assignSecondTable(8); leaveOneTable(8) }
+        assertMatch(offSecond) { tableId = 7; startTime = now }
+    }
+
+    @Test
+    fun `a match at one table cannot leave it this way`() {
+        val match = match().apply { assign(tableId = 7, now = now) }
+        assertFailsWith<IllegalArgumentException> { match.leaveOneTable(7) }
+
+        val atTwo = match().apply { assign(tableId = 7, now = now); assignSecondTable(8) }
+        assertFailsWith<IllegalArgumentException> { atTwo.leaveOneTable(9) }
+    }
+
+    @Test
+    fun `finishing a match at two tables frees both`() {
+        val match = match().apply { assign(tableId = 7, now = now); assignSecondTable(8) }
+        match.takeBack()
+
+        assertMatch(match) {}
     }
 
     @Test

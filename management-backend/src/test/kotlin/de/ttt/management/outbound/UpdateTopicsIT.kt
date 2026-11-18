@@ -139,13 +139,60 @@ class UpdateTopicsIT {
     }
 
     @Test
-    fun `removing matches from a table publishes MATCH_TAKEN_BACK with the table they were on`() {
+    fun `a second table publishes MATCH_ASSIGNED with that table`() {
+        db.insertTable(2)
         matchService.assignMatch(matchId, tableId)
         val messages = subscribe()
 
-        assertTrue(matchService.removeMatchesFromTable(listOf(matchId)))
+        assertTrue(matchService.assignSecondTable(matchId, 2))
 
-        assertNextEvent(messages, "matches", "match-taken-back")
+        assertNextEvent(messages, "matches", "match-assigned-second-table")
+    }
+
+    @Test
+    fun `taking a match off one of its two tables publishes MATCH_ASSIGNED for the table it keeps`() {
+        db.insertTable(2)
+        matchService.assignMatch(matchId, tableId)
+        matchService.assignSecondTable(matchId, 2)
+        val messages = subscribe()
+
+        assertTrue(matchService.removeMatchesFromTable(tableId, listOf(matchId)))
+
+        assertNextEvent(messages, "matches", "match-removed-from-one-table")
+    }
+
+    @Test
+    fun `starting a match at one of its two tables publishes MATCH_STARTED with the table it leaves`() {
+        db.insertTable(2)
+        matchService.assignMatch(matchId, tableId)
+        matchService.assignSecondTable(matchId, 2)
+        val messages = subscribe()
+
+        assertTrue(matchService.startMatch(matchId, tableId))
+
+        assertNextEvent(messages, "matches", "match-started-leaves-second-table")
+    }
+
+    @Test
+    fun `freeing a match at two tables publishes MATCH_FREED with both tables`() {
+        db.insertTable(2)
+        matchService.assignMatch(matchId, tableId)
+        matchService.assignSecondTable(matchId, 2)
+        val messages = subscribe()
+
+        assertTrue(matchService.freeMatches(listOf(matchId)))
+
+        assertNextEvent(messages, "matches", "match-freed-at-two-tables")
+    }
+
+    @Test
+    fun `a walkover publishes MATCH_FREED marked as walkover`() {
+        matchService.assignMatch(matchId, tableId)
+        val messages = subscribe()
+
+        assertTrue(matchService.walkoverMatches(listOf(matchId)))
+
+        assertNextEvent(messages, "matches", "match-walkover")
     }
 
     @Test
