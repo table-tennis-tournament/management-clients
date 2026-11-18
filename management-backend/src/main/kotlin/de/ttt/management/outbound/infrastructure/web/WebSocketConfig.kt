@@ -18,6 +18,9 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
             .setHeartbeatValue(longArrayOf(HEARTBEAT_MS, HEARTBEAT_MS))
             .setTaskScheduler(heartbeatScheduler())
         config.setApplicationDestinationPrefixes("/app")
+        // The outbound channel sends on a thread pool, so two events published right after each other could
+        // reach a client in the wrong order; keep the publication order per session.
+        config.setPreservePublishOrder(true)
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {

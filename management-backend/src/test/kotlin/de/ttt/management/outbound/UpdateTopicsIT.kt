@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -190,6 +191,13 @@ class UpdateTopicsIT {
     }
 
     // --- tables ------------------------------------------------------------------
+
+    @Test
+    fun `the broker sends every client its events in the order they were published`() {
+        // the outbound channel sends on a thread pool; without this, events published right after each other
+        // can overtake each other (seen in CI: MATCH_COMPLETED before MATCH_RESULT_UPDATED)
+        assertTrue(broker.isPreservePublishOrder)
+    }
 
     @Test
     fun `locking and unlocking a table publish on the tables topic`() {
