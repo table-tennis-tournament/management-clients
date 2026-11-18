@@ -1,93 +1,68 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents when working with code in this repository.
+Guidance for AI coding agents working in this repository.
 
-## Architecture Overview
+## What this is
 
-This is a table tennis tournament management system with a microservices architecture:
+A table tennis tournament manager: a Kotlin/Spring Boot backend and three Angular 21 single-page applications.
+The tournament database is prepared offline by **mktt**, a third-party tool; this system runs the tournament on it.
 
-- **Backend**: Scala 2.13.14 on Play Framework 3.0.x (Pekko-based), using MariaDB/MySQL for persistence
-- **Frontend Applications**: Three separate Angular 21 SPAs using ngrx for state management
-  - `admin-view`: Tournament management interface (port 4201)
-  - `result-view`: Results display interface (port 4202)
-  - `tablemanager-view`: Table-specific management interface (port 4200)
+| Path | What | Notes |
+|---|---|---|
+| `management-backend/` | Kotlin 2.4, Spring Boot 4.1, Spring Modulith 2.1, Java 25 | The backend. Module rules: `management-backend/agents.md` |
+| `admin-view/` | Angular SPA for the tournament administrator (dev port 4201) | standalone components, ngrx |
+| `tablemanager-view/` | Angular SPA for a table manager (dev port 4200) | standalone components, ngrx |
+| `result-view/` | Angular SPA, public result display (dev port 4202) | NgModules, ngrx |
+| `backend/` | Legacy Scala/Play backend | Not built, tested or deployed. Read it only as a reference for logic not migrated yet (knockout placement, `writeNextKoMatch`) |
+| `testdata/` | mktt database dumps | `create-saturday.sql`/`create-sunday.sql` seed `docker compose`; `create-tables.sql` seeds the admin-view and tablemanager-view e2e tests |
+| `Dockerfile-clients`, `my_server_block.conf` | The one clients image | nginx serves `/admin-view`, `/result-view`, `/tablemanager-view` and proxies `/api/v2` and `/ttt-websocket` |
+| `docs/arc42/` | Architecture (arc42 with C4-PlantUML diagrams) | `docs/adr/` holds the ADRs |
 
-The system uses WebSockets (SockJS) for real-time communication between components and Redux/ngrx for client-side state management across all Angular apps.
+Read before changing behaviour:
 
-## Development Commands
+- `GLOSSARY.md`: the domain language. Use its terms in code, docs and UI (**Take back**, not "stop"; **Side**, not "team").
+- `docs/adr/`: why the schema, the WebSocket and the update events look the way they do.
+- `docs/follow-ups.md` and `docs/test-improvement-plan.md`: known gaps and how the tests are built.
+- `spec/`: functional specifications per area. Their endpoint lists predate `/api/v2`; the code is authoritative.
 
-### Backend (Scala/Play)
+## Commands
+
+Backend (`cd management-backend`; there is no Maven wrapper, use `mvn`):
+
 ```bash
-cd backend
-sbt run          # Start development server
-sbt test         # Run tests
-sbt dist         # Build distribution package
-sbt docker:publishLocal  # Build Docker image locally
+mvn test                                                   # all tests, H2 in MySQL mode
+mvn test -DupdateExpected=true && git diff src/test/resources/expected   # re-record expected JSON, then review the diff
+mvn test-compile org.pitest:pitest-maven:mutationCoverage  # mutation tests of the domain packages
+mvn spring-boot:run -Dspring-boot.run.profiles=local       # starts management-backend/docker-compose.yml (MariaDB on 3307) and the backend
 ```
 
-### Frontend Applications
+The `local` profile's database has no mktt tables, so most endpoints fail until a dump from `testdata/` is loaded.
+For a seeded system use the root `docker compose` below.
 
-**Admin View:**
-```bash
-cd admin-view
-npm start        # Start dev server on port 4201
-npm run build    # Build for production
-npm test         # Run unit tests (Vitest)
-npm run lint     # Run linting
-npm run e2e      # Run Playwright end-to-end tests
-```
+Clients (`cd admin-view`, `result-view` or `tablemanager-view`): `npm start`, `npm run build`, `npm run lint`,
+`npm run format:check`, `npm test` (Vitest), `npm run test:types`, `npm run e2e` (Playwright).
+Vitest strips types without checking them, and its tests do not compile templates: after changing a spec run
+`npm run test:types`, after changing a template run `npm run build`.
 
-**Result View:**
-```bash
-cd result-view
-npm start        # Start dev server on port 4202
-npm run build    # Build for production
-npm test         # Run unit tests (Vitest)
-npm run test-ci  # Run tests in CI mode
-npm run lint     # Run linting
-npm run e2e      # Run Playwright end-to-end tests
-```
+Full system: `docker compose up -d --build` starts MariaDB, CUPS, the backend (port 8080) and the clients image
+(port 80). The e2e tests need this stack. The admin-view and tablemanager-view e2e setups replace the database with
+`testdata/create-tables.sql`, and their teardown runs `docker compose down -v`, which deletes the database volume.
 
-**Table Manager View:**
-```bash
-cd tablemanager-view
-npm start        # Start dev server on port 4200
-npm run build    # Build for production
-npm run lint     # Run linting
-npm run e2e      # Run Playwright end-to-end tests
-```
+## Rules that are easy to break
 
-### Full System
-```bash
-docker compose up  # Start MariaDB and the backend; the clients are commented out in docker-compose.yml
-```
-
-## Key Technologies
-
-- **Backend**: Scala 2.13, Play Framework 3.0.x, Slick ORM, Pekko Actors, MySQL/MariaDB
-- **Frontend**: Angular 21, ngrx/store, Angular Material, Bootstrap, RxJS, TypeScript 5.9
-- **Testing**: JUnit 5 (backend), Vitest for unit tests and Playwright for e2e tests (all three clients). Vitest strips types without checking them: run `npm run test:types` after changing a spec.
-- **Real-time**: WebSockets via SockJS and custom WebSocket actors
-- **PDF Generation**: Flying Saucer / PDFBox
-- **Containerization**: Docker with multi-stage builds
-
-## Architecture Notes
-
-- Each Angular app has its own Redux store with effects, actions, and reducers
-- WebSocket communication handles real-time updates across all clients
-- The backend uses Pekko actors for concurrent processing and WebSocket management
-- Database migrations are handled via Play Evolutions
-- All frontend apps proxy API calls to the backend during development
-
-## Database
-
-The system uses MariaDB/MySQL with the following key models:
-- Match management and assignment
-- Player and team data
-- Tournament results and stages
-- Table assignments and scheduling
-
-Connection configured via environment variables:
-- `MYSQL_JDBC`: Database connection string
-- `MYSQL_USER`: Database username  
-- `MYSQL_PW`: Database password
+- **mktt owns the schema.** Never alter mktt's tables (`matches`, `player`, `tables`, `type`, …). Backend-only state
+  lives in `mgmt_`-prefixed sidecar tables created by Flyway (`management-backend/src/main/resources/db/migration`,
+  ADR 0001). Tests get mktt's tables from the test-only migration `V50__mktt_schema.sql`.
+- **Every state change publishes an update event.** REST lives under `/api/v2`. The `outbound` module is the only
+  WebSocket publisher: it turns domain events into thin update events on five STOMP topics (`/topic/matches`,
+  `tables`, `queue`, `players`, `settings`) at `/ttt-websocket`. Clients filter by the event's scope and re-fetch
+  over REST (ADR 0002, ADR 0003). A new use case needs its domain event, its outbound mapping and an expected event
+  file.
+- **Shared client modules are identical copies.** `src/app/shared/update-events/`, `result-entry/` and
+  `match-state/` exist in every client that uses them, byte for byte. Change all copies together.
+- **Tests compare whole results.** Backend tests compare complete JSON bodies, events, database rows and objects
+  (`ExpectedJson`, `DatabaseHelper`, fixed `Clock` and ids). Client specs reuse the backend's recorded events from
+  `management-backend/src/test/resources/expected/events/`. A changed expected file is a behaviour change: review it.
+- **Unit tests are Vitest, e2e tests are Playwright.** No Karma, Jasmine or Protractor.
+- **Tables have an id and a number.** They differ in real data. `/table/{nr}/lock` and `/match/matchtotable/{nr}`
+  take the number; most other endpoints take the id.

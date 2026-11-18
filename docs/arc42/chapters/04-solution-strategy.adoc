@@ -17,7 +17,7 @@
 |Component-based architecture and predictable state management.
 
 |Database
-|MariaDB/MySQL with Slick
+|MariaDB/MySQL with `JdbcClient` and plain SQL
 
 |Relational model fits tournament data; proven reliability.
 

@@ -56,7 +56,7 @@
 
 *Rationale*: keeps modules decoupled and gives a single, replaceable place for the WebSocket transport.
 
-*Consequences*: `registration` publishes `PlayerRegistered`/`PlayerUnregistered`; `outbound` consumes them and pushes to `/topic/updates`.
+*Consequences*: for example `registration` publishes `PlayerRegistered`/`PlayerUnregistered`; `outbound` consumes them and pushes `PLAYER_REGISTERED`/`PLAYER_UNREGISTERED` to `/topic/players` (see <<Topic-scoped Update Events>>).
 
 === Plain SQL via JdbcClient
 
@@ -70,7 +70,7 @@
 
 *Decision*: every REST controller is prefixed with `/api/v2` through a global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers stay on the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …).
 
-*Rationale*: the legacy Scala backend keeps serving under `/api` while the new backend runs in parallel under `/api/v2`; a router can switch between them by version. A single prefix keeps the controllers clean and future version bumps localized.
+*Rationale*: during the migration the legacy Scala backend served `/api` while the new backend ran in parallel under `/api/v2`, so a router could switch between them by version. The legacy backend is no longer deployed; the prefix stays, keeps the controllers clean and keeps future version bumps localized.
 
 *Consequences*: clients must call `/api/v2/…`. WebSocket endpoints (`/ttt-websocket`) and actuator endpoints are unaffected, as they are not `@RestController` handlers. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
 

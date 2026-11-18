@@ -13,8 +13,9 @@ RelIndex(1, admin, adminView, "Selects a match and a table")
 RelIndex(2, adminView, nginx, "Sends the assignment", "HTTPS")
 RelIndex(3, nginx, backend, "Proxies the request", "HTTP")
 RelIndex(4, backend, mariadb, "Persists the assignment", "JDBC")
-RelIndex(5, backend, nginx, "Broadcasts the match and table update", "WebSocket")
-RelIndex(6, nginx, adminView, "Pushes the update to all clients")
+RelIndex(5, backend, nginx, "Sends a MATCH_ASSIGNED update event on /topic/matches", "STOMP over WebSocket")
+RelIndex(6, nginx, adminView, "Delivers the event to every subscribed client")
+RelIndex(7, adminView, nginx, "Re-fetches the tables and matches the event concerns", "HTTPS")
 
 SHOW_LEGEND()
 @enduml

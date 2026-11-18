@@ -26,7 +26,7 @@ include::../diagrams/container.puml[]
 |Nginx. Serves the three SPA bundles and proxies API and WebSocket traffic to the backend.
 
 |Backend
-|Kotlin 2.3 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API, WebSocket broadcasting and PDF generation.
+|Kotlin 2.4 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API under `/api/v2`, STOMP update events on `/ttt-websocket`, PDF referee sheets and printing.
 
 |Tournament Database
 |MariaDB/MySQL in production, H2 in tests. Persists players, matches, tables, groups and settings.
@@ -55,13 +55,13 @@ include::../diagrams/backend-components.puml[]
 |Match lifecycle and state machine, Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations.
 
 |settings
-|System settings and printing (referee sheets, certificates).
+|System settings, printer selection and printing of referee sheets (PDF with a QR code).
 
 |outbound
-|The single WebSocket publisher. Consumes domain events and pushes updates to connected clients.
+|The single WebSocket publisher. Consumes domain events after the transaction commits and pushes update events to the five STOMP topics.
 
 |Shared configuration
-|`OpenApiConfig` and other cross-cutting Spring configuration in the root package.
+|Cross-cutting Spring configuration in the root package: `ApiVersionConfig` (the `/api/v2` prefix), `OpenApiConfig` and `ClockAndIdConfig` (the injectable `Clock` and id generator).
 |===
 
 Each module internally layers as follows:
@@ -88,7 +88,7 @@ Each module internally layers as follows:
 
 === Level 3: Frontend Components
 
-All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application.
+All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application. Three modules under `src/app/shared/` are identical copies in every client that uses them: `update-events` (the STOMP connection, scope filtering, coalescing and resynchronization), `result-entry` (the rules of a Set and a Match) and `match-state` (the questions clients ask about a Match's state).
 
 [plantuml, target="frontend-components", format="svg"]
 ----
@@ -110,7 +110,12 @@ include::../diagrams/frontend-components.puml[]
 |ngrx store
 
 |Communication
-|HTTP and WebSocket services
-|HTTP and WebSocket services
-|HTTP and WebSocket services
+|HTTP services; update events on all five topics
+|HTTP services; update events on `matches`
+|HTTP services; update events on `tables` and `matches`
+
+|Components
+|standalone
+|NgModules
+|standalone
 |===

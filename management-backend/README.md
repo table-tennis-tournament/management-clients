@@ -8,7 +8,7 @@ This project follows a **Modular Monolith** architecture using **Spring Modulith
 
 ### Key Technologies
 - **Java 25**
-- **Kotlin 2.3.x**
+- **Kotlin 2.4**
 - **Spring Boot 4.1.x**
 - **Spring Modulith 2.1.x**: Domain-driven design with verified module boundaries.
 - **MariaDB** in production, **H2** (MySQL mode) in tests.
@@ -16,7 +16,7 @@ This project follows a **Modular Monolith** architecture using **Spring Modulith
 
 ### Modules
 - `registration`: players, clubs, doubles, disciplines and registration state (paid/active/seed).
-- `grouping`: group formation and seeding (scaffolded, not yet implemented).
+- `grouping`: group standings when a group's last match is completed (formation and seeding stay in mktt; knockout placement is not migrated yet).
 - `tournament`: match lifecycle, Queue/MatchList, table assignment, results, caller and table-manager operations.
 - `settings`: system settings and printing (referee sheets, certificates).
 - `outbound`: the single WebSocket publisher, consuming domain events.
@@ -37,18 +37,27 @@ Dependencies point inward: `infrastructure → application → domain`.
 - Maven 3.9+
 
 ### Environment Variables
-- `SPRING_DATASOURCE_URL`: JDBC URL (e.g., `jdbc:mariadb://localhost:3306/ttt`)
+- `SPRING_DATASOURCE_URL`: JDBC URL (e.g., `jdbc:mariadb://localhost:3306/saturday_test`)
+- `SPRING_DATASOURCE_DRIVER_CLASS_NAME`: `org.mariadb.jdbc.Driver` for MariaDB
 - `SPRING_DATASOURCE_USERNAME`
 - `SPRING_DATASOURCE_PASSWORD`
+- `DEFAULT_PRINTER`: printer used until one is selected (default `PDF`)
+
+Without them the backend starts on an in-memory H2 database.
 
 ### Running
+There is no Maven wrapper; use `mvn`.
+
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
+
+The `local` profile starts MariaDB from `docker-compose.yml` in this folder (port 3307). That database has no mktt
+tables; load a dump from `../testdata/` or use the root `docker compose up`, which seeds one.
 
 ### Tests
 ```bash
-./mvnw test
+mvn test
 ```
 
 - `OnionArchitectureTests` (ArchUnit) enforces the onion layering per module.
@@ -68,9 +77,12 @@ fields) with the files in `src/test/resources/expected/`. After an intended chan
 event, re-record the files and review the diff before committing:
 
 ```bash
-./mvnw test -DupdateExpected=true
+mvn test -DupdateExpected=true
 git diff src/test/resources/expected
 ```
+
+Mutation testing of the `domain` packages runs on demand:
+`mvn test-compile org.pitest:pitest-maven:mutationCoverage` (report in `target/pit-reports/index.html`).
 
 ## Deployment
 ```bash

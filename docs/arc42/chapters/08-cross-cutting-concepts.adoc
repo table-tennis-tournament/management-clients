@@ -2,23 +2,21 @@
 
 === Security
 
-* Input validation on all endpoints.
+* There is no authentication or authorization: the system runs in the venue's local network, and every client may call every endpoint and subscribe to every topic.
 * SQL injection prevention through JdbcClient parameterized queries (prepared statements).
-* WebSocket connection authentication.
+* The domain validates every transition and result (`TournamentMatch`, `SetResult`); a rejected command answers with a 400 and `{"success": false, "message": ...}`.
 * Environment-based configuration (database credentials and connection strings are supplied via environment variables).
 
 === Error Handling
 
-* Centralized error handling in the backend.
-* User-friendly error messages in the frontends.
-* Structured logging for debugging and monitoring.
-* Graceful degradation and reconnection for WebSocket failures.
+* Controllers translate a rejected command into a 400 with a status body; unexpected errors use Spring's default error response.
+* The frontends show German snackbar or toast messages for failed requests; the Table Manager View retries a failed table load and offers a reload.
+* STOMP heartbeats every 10 s in both directions detect dead connections; clients reconnect after 5 s and then resynchronize.
 
 === Logging and Monitoring
 
-* Structured logging (SLF4J/Logback) in the backend.
-* Logging of database reads and domain-state changes.
-* WebSocket connection monitoring.
+* Logging with SLF4J/Logback in the backend.
+* Spring Boot Actuator health endpoint (`/actuator/health`), used by Docker Compose and the CI to wait for the backend.
 
 === Data Consistency
 
@@ -34,5 +32,8 @@
 * `ApplicationTests` runs `ApplicationModules.verify()` to enforce module boundaries.
 * `@ApplicationModuleTest` module tests (with `PublishedEvents`) verify use-case behaviour and endpoint calls in isolation.
 * `@SpringBootTest` tests with H2 (MySQL mode) and a STOMP client verify persistence and WebSocket outbound events.
+* Tests compare complete results: REST bodies and update events against recorded files in `src/test/resources/expected/` (re-recorded with `-DupdateExpected=true`), database rows, domain events and objects as a whole. Every test builds its own data (`DatabaseHelper`) with a fixed `Clock` and fixed ids.
+* Mutation testing (PIT) of the `domain` packages runs on demand.
+* The client specs reuse the backend's recorded update events as fixtures.
 * All three frontends use Vitest for unit tests (type-checked separately with `npm run test:types`) and Playwright for end-to-end tests that run against the Docker Compose stack.
-* Formatting is checked with Prettier in CI for all three frontends.
+* CI runs the backend tests and, per frontend, the Prettier check, the spec type check, the unit tests and the end-to-end tests.

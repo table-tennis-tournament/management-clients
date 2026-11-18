@@ -3,11 +3,11 @@
 This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) when working with the **management-backend** module.
 
 ## Project Context
-- **Language**: Kotlin 2.3.x (with `kotlin-maven-allopen` and `spring` plugins)
+- **Language**: Kotlin 2.4 (with `kotlin-maven-allopen` and `spring` plugins)
 - **Framework**: Spring Boot 4.x (Next-generation)
 - **Architecture**: Spring Modulith (Modular Monolith)
-- **Database**: MariaDB (Relational)
-- **JVM**: Java 25 (Latest LTS-like release)
+- **Database**: MariaDB in production (mktt's schema plus `mgmt_` sidecar tables owned by Flyway), H2 in MySQL mode in tests
+- **JVM**: Java 25
 
 ## Architecture & Design Patterns
 
@@ -46,7 +46,7 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
     - `infrastructure`: JdbcClient repositories (`database`), REST controllers (`web`), event listeners (`messaging`).
 
 ### 3. Testing & Verification
-- **Always run `mvn clean install`** before completing a task to ensure:
+- **Always run `mvn clean test`** before completing a task (there is no Maven wrapper) to ensure:
     - Domain logic unit tests pass.
     - `ApplicationModuleTest` integration tests (which respect module boundaries) pass.
     - **Spring Modulith** architectural verification succeeds.
@@ -56,7 +56,9 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
 ## Key Files to Watch
 - `management-backend/pom.xml`: Dependency management.
 - `management-backend/src/main/kotlin/de/ttt/management/ManagementBackendApplication.kt`: Application entry point.
-- `management-backend/src/test/kotlin/de/ttt/management/ModularityTests.kt`: Architectural verification.
+- `management-backend/src/test/kotlin/de/ttt/management/ApplicationTests.kt`: Spring Modulith verification.
+- `management-backend/src/test/kotlin/de/ttt/management/OnionArchitectureTests.kt`: onion layering (ArchUnit).
+- `management-backend/src/test/kotlin/de/ttt/management/DatabaseHelper.kt`, `ExpectedJson.kt`: deterministic test data and complete JSON comparison (see `docs/test-improvement-plan.md`).
 
 
 # Spring Modulith Guidelines
@@ -91,7 +93,7 @@ Modules **MUST NOT** depend on another module's internal packages (`domain`, `ap
 ### 2. Event-Based Communication
 Interaction between modules should primarily happen via **Events**.
 *   Use Spring's `ApplicationEventPublisher` to publish events.
-*   Use `@ApplicationModuleListener` to react to events from other modules.
+*   React to events with `@EventListener` (in-transaction, e.g. `grouping`, `settings`) or, for anything that leaves the process like the WebSocket, `@TransactionalEventListener(phase = AFTER_COMMIT)` (`outbound`).
 *   Events are the only "shared" classes, but they should be placed in a package visible to other modules or be simple POJOs.
 
 ### 3. Visibility

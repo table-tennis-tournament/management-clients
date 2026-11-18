@@ -8,20 +8,23 @@ title Component diagram for a frontend SPA (shared structure)
 Container_Boundary(spa, "Angular SPA (Admin View, Result View or Table Manager View)") {
     Component(pages, "Page Components", "Angular", "Feature pages such as assign, caller, discipline, table, result, player and settings")
     Component(ui, "UI Components", "Angular Material", "Reusable widgets, modals and navigation")
-    Component(services, "Services", "Angular, RxJS", "HTTP and WebSocket communication")
+    Component(services, "Services", "Angular, RxJS", "HTTP calls to /api/v2")
+    Component(updates, "Update events", "shared/update-events, @stomp/stompjs", "STOMP connection, scope filtering, coalescing and resynchronization; dispatches reload actions")
+    Component(shared, "Shared domain modules", "shared/result-entry, shared/match-state", "Set and Match rules, Match state questions; identical copies per application")
     Component(store, "Store", "ngrx", "Actions, reducers, effects and selectors")
     Component(models, "Models", "TypeScript", "Interfaces and enums mirroring the backend domain")
-    Component(guards, "Guards and Interceptors", "Angular", "Route protection and HTTP interception")
 }
 
 System_Ext(backend, "Backend", "REST API and WebSocket")
 
 Rel(pages, store, "Dispatches actions")
 Rel(store, services, "Effects call")
-Rel(services, backend, "REST and WebSocket", "HTTPS/WSS")
+Rel(services, backend, "REST", "HTTPS")
+Rel(updates, backend, "Subscribes to update events", "STOMP over WSS")
+Rel(updates, store, "Dispatches reload actions")
 Rel(services, store, "Dispatches results")
 Rel(store, pages, "Selects state")
-Rel(guards, services, "Intercepts")
+Rel(pages, shared, "Uses")
 Rel(pages, ui, "Composes")
 
 SHOW_LEGEND()

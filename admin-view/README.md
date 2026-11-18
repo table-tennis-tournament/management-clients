@@ -12,7 +12,7 @@ Run `npm start` for a dev server on `http://localhost:4201/`. The app will autom
 
 ## Testing
 
-Run `npm test` to execute the Karma/Jasmine unit tests.
+Run `npm test` to execute the Vitest unit tests, `npm run test:types` to type-check them and `npm run e2e` to run the Playwright end-to-end tests.
 
 ## Formatting
 

@@ -8,7 +8,7 @@
 
 |WebSocket connection failures
 |Clients lose real-time updates.
-|Automatic reconnection and fallback.
+|Heartbeats detect dead connections; clients reconnect and resynchronize everything they show over REST.
 
 |High
 
@@ -18,9 +18,9 @@
 
 |Medium
 
-|Single-threaded in-memory state
-|Contention or inconsistency under high load.
-|Careful synchronization; load testing.
+|In-memory settings
+|The auto-start flag, the selected printer and print-on-assign are kept in memory and reset when the backend restarts.
+|Persist them in a sidecar table when they need to survive a restart.
 
 |Medium
 
@@ -33,8 +33,9 @@
 
 === Technical Debt
 
-* Code duplication between the three frontend applications.
+* Code duplication between the three frontend applications. The shared modules (`update-events`, `result-entry`, `match-state`) are identical copies per application by decision; a change must reach every copy.
 * All three frontends are kept on the same major Angular version (currently Angular 21); keeping them in sync requires a coordinated upgrade effort.
-* Limited test coverage in some areas (the Table Manager View currently has no unit tests).
-* Missing documentation for some components.
-* Opportunity to extract a shared component library to reduce duplication.
+* Knockout placement (writing the winner into the next knockout match) is not migrated; the legacy Scala backend in `backend/` is kept only as its reference.
+* There is no authentication (chapter 8).
+* The endpoint lists in `spec/` still name the legacy `/api` paths.
+* Open follow-ups are tracked in `docs/follow-ups.md`.

@@ -1,6 +1,6 @@
 == Deployment View
 
-The system is deployed as three containers orchestrated by Docker Compose.
+The system is deployed as four containers orchestrated by Docker Compose (`docker-compose.yml`).
 
 [cols="1,2,2,1"]
 |===
@@ -19,18 +19,24 @@ The system is deployed as three containers orchestrated by Docker Compose.
 |REST API under `/api/v2`, STOMP update events on `/ttt-websocket`, PDF generation and printing.
 
 |Database
-|MariaDB.
+|MariaDB, seeded with the mktt dumps in `testdata/` on first start.
 
 |3306
 |Data persistence.
+
+|Print server
+|CUPS (`cups/`), optionally forwarding to a real printer (`CUPS_PRINTER_URI`).
+
+|631 (internal)
+|Receives the referee sheets the backend prints with `lpr`.
 |===
 
 === Production Topology
 
-The three SPAs are built together into a single Nginx image (`Dockerfile-clients`). Nginx serves the static bundles under `/admin-view`, `/result-view` and `/tablemanager-view`, and proxies `/api/` (and per-application API paths) plus WebSocket connections to the backend. The backend connects to MariaDB over JDBC.
+The three SPAs are built together into a single Nginx image (`Dockerfile-clients`). Nginx serves the static bundles under `/admin-view`, `/result-view` and `/tablemanager-view`, and proxies `/api/v2/` and the STOMP WebSocket `/ttt-websocket` to the backend. The backend connects to MariaDB over JDBC.
 
 The production database is prepared offline by mktt; the running system only reads from and writes to the tournament data it contains.
 
 === Development Environment
 
-In development, each frontend runs with its own `ng serve` (Admin View on port 4201, Result View on port 4202, Table Manager View on port 4200) and the backend with `sbt run` (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.
+In development, each frontend runs with its own `ng serve` (`npm start`; Admin View on port 4201, Result View on port 4202, Table Manager View on port 4200) and proxies `/api/v2` and `/ttt-websocket` to the backend on port 8080. The backend runs either in the root Docker Compose stack (seeded database) or with `mvn spring-boot:run -Dspring-boot.run.profiles=local`, which starts an empty MariaDB from `management-backend/docker-compose.yml`.
