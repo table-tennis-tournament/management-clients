@@ -23,7 +23,8 @@ Read before changing behaviour:
 - `GLOSSARY.md`: the domain language. Use its terms in code, docs and UI (**Take back**, not "stop"; **Side**, not "team").
 - `docs/adr/`: why the schema, the WebSocket and the update events look the way they do.
 - `docs/follow-ups.md` and `docs/test-improvement-plan.md`: known gaps and how the tests are built.
-- `spec/`: functional specifications per area. Their endpoint lists predate `/api/v2`; the code is authoritative.
+- `spec/`: functional specifications per area, with every `/api/v2` endpoint. The OpenAPI description is at
+  `http://localhost:8080/v3/api-docs` (Swagger UI: `/api-docs-ui`).
 
 ## Commands
 
