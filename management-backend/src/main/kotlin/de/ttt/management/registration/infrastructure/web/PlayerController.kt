@@ -73,9 +73,9 @@ class PlayerController(private val playerService: PlayerService) {
     }
 
     @PostMapping("/{id}/paid")
-    @Operation(summary = "Set player payment status (POST)", description = "Updates the payment status for a player.")
+    @Operation(summary = "Set payment status", description = "Updates the payment status of a player's registration for a discipline.")
     fun setPaid(
-        @Parameter(description = "ID of the player") @PathVariable id: Long,
+        @Parameter(description = "ID of the registration (typeperplayer), not of the player") @PathVariable id: Long,
         @Parameter(description = "Payment status (true for paid)") @RequestParam paid: Boolean
     ): Map<String, Any> {
         val success = playerService.setPaid(id, paid)
