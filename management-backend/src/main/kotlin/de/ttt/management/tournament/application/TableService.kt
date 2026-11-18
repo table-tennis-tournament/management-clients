@@ -38,6 +38,15 @@ class TableService(
         return setLocked(id, false)
     }
 
+    /** Locks the table with the number [number] (its name), as the clients and the legacy backend address it. */
+    @Transactional
+    fun lockTableNumber(number: Long): Boolean = idOfNumber(number)?.let { setLocked(it, true) } ?: false
+
+    @Transactional
+    fun unlockTableNumber(number: Long): Boolean = idOfNumber(number)?.let { setLocked(it, false) } ?: false
+
+    private fun idOfNumber(number: Long): Long? = getTableByName(number.toString())?.id
+
     private fun setLocked(id: Long, locked: Boolean): Boolean {
         val updated = ttTableRepository.setLocked(id, locked) > 0
         if (updated) {

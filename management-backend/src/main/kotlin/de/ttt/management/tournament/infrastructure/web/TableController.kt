@@ -39,9 +39,9 @@ class TableController(
     @PostMapping("/table/{nr}/lock")
     @Operation(summary = "Lock table", description = "Locks a table to prevent it from being assigned to matches.")
     fun lockTable(
-        @Parameter(description = "Number/ID of the table to lock") @PathVariable nr: Long
+        @Parameter(description = "Number of the table to lock (not its id)") @PathVariable nr: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = tableService.lockTable(nr)
+        val success = tableService.lockTableNumber(nr)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -52,9 +52,9 @@ class TableController(
     @PostMapping("/table/{nr}/unlock")
     @Operation(summary = "Unlock table", description = "Unlocks a previously locked table.")
     fun unlockTable(
-        @Parameter(description = "Number/ID of the table to unlock") @PathVariable nr: Long
+        @Parameter(description = "Number of the table to unlock (not its id)") @PathVariable nr: Long
     ): ResponseEntity<Map<String, Any>> {
-        val success = tableService.unlockTable(nr)
+        val success = tableService.unlockTableNumber(nr)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {

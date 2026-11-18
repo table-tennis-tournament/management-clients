@@ -7,6 +7,8 @@ import de.ttt.management.expectJson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
+import kotlin.test.assertEquals
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -22,6 +24,9 @@ import org.springframework.test.web.servlet.client.RestTestClient
 @ActiveProfiles("test")
 @Import(DatabaseHelperConfiguration::class)
 class TableModuleIT {
+
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
@@ -69,6 +74,9 @@ class TableModuleIT {
         get("/table/9999").expectStatus().isNotFound
     }
 
+    private fun lockedTableIds(): List<Long> =
+        jdbcTemplate.queryForList("SELECT tabl_id FROM mgmt_table_lock ORDER BY tabl_id", Long::class.java).filterNotNull()
+
     @Test
     fun `should lock and unlock table`() {
         post("/table/1/lock").expectStatus().isOk.expectExactJson("""{"success": true}""")
@@ -76,6 +84,19 @@ class TableModuleIT {
 
         post("/table/1/unlock").expectStatus().isOk.expectExactJson("""{"success": true}""")
         get("/table/1").expectStatus().isOk.expectJson("table/1")
+    }
+
+    @Test
+    fun `lock and unlock address a table by its number, not its id`() {
+        // ids 20 and 21 carry the swapped numbers 21 and 20
+        db.insertTable(20, "21")
+        db.insertTable(21, "20")
+
+        post("/table/20/lock").expectStatus().isOk.expectExactJson("""{"success": true}""")
+        assertEquals(listOf(21L), lockedTableIds())
+
+        post("/table/20/unlock").expectStatus().isOk.expectExactJson("""{"success": true}""")
+        assertEquals(emptyList(), lockedTableIds())
     }
 
     @Test
