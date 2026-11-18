@@ -59,11 +59,11 @@ Rules (enforced by `OnionArchitectureTests`, an ArchUnit test):
 
 - Modules communicate via Spring application events (`ApplicationEventPublisher` / `@EventListener`).
 - Shared contracts (domain events such as `PlayerRegistered`, `MatchCompleted`) live in the publishing module's base package and are the only types other modules may import.
-- `outbound` is the **only** component that publishes WebSocket messages; it listens for domain events and pushes `{"type": ..., "payload": ...}` to `/topic/updates` over STOMP/SockJS.
+- `outbound` is the **only** component that publishes WebSocket messages; after the transaction commits it turns domain events into update events `{"type", "scope", "payload"}` on five STOMP topics (`/topic/matches`, `tables`, `queue`, `players`, `settings`) at the native WebSocket endpoint `/ttt-websocket` (ADR 0002, ADR 0003).
 
 ## 6. API Versioning
 
-All REST endpoints are prefixed with `/api/v2` by a single global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers keep the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …). This lets the legacy backend serve `/api/…` (v1) and this backend serve `/api/v2/…` (v2) in parallel behind a version-switching router. WebSocket (`/ttt-websocket`) and actuator endpoints are unaffected. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
+All REST endpoints are prefixed with `/api/v2` by a single global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers keep the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …). During the migration this let the legacy backend serve `/api/…` (v1) and this backend serve `/api/v2/…` (v2) in parallel behind a version-switching router; the legacy backend is no longer deployed. WebSocket (`/ttt-websocket`), actuator and library endpoints such as springdoc's `/v3/api-docs` are unaffected. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
 
 ## 7. Tracer Bullet
 
@@ -72,7 +72,7 @@ The first vertical slice implemented end-to-end is the **match completion** flow
 1. Client calls `POST /api/v2/match/setResult/{id}` with a set body of `[points1, points2]` pairs, e.g. `[[11,5],[11,7],[11,3]]`.
 2. `MatchService` loads the `TournamentMatch` aggregate, validates the result, determines the winner and transitions the match state to `Completed`, then persists it.
 3. `MatchService` publishes a `MatchCompleted` domain event.
-4. The `outbound` module's event listener consumes `MatchCompleted` and pushes `{"type": "MATCH_COMPLETED", ...}` to `/topic/updates`.
+4. The `outbound` module's event listener consumes `MatchCompleted` and pushes `{"type": "MATCH_COMPLETED", "scope", "payload"}` to `/topic/matches`.
 
 This slice exercises every layer (`domain` → `application` → `infrastructure.web`/`database`, plus `outbound.messaging`) and every test kind below.
 
@@ -89,7 +89,7 @@ This slice exercises every layer (`domain` → `application` → `infrastructure
 | ArchUnit | `OnionArchitectureTests` | Onion layering and repository port/adapter placement for every module. |
 | Modulith verify | `ApplicationTests` | `ApplicationModules.verify()` — no illegal module dependencies. |
 | Module integration | `*ModuleTest` (`@ApplicationModuleTest`) | Boots a single module; calls a REST endpoint and asserts the published domain event via `PublishedEvents`. |
-| Full context + WebSocket | `*OutboundIT` (`@SpringBootTest` + STOMP client) | A write operation produces the correct WebSocket message on `/topic/updates`. |
+| Full context + WebSocket | `UpdateTopicsIT`, `*OutboundIT` (`@SpringBootTest` + STOMP client) | A write operation produces the complete update event on its topic (compared with `expected/events/**`). |
 | Scenario | `MatchLifecycleScenarioIT` | Full walkthrough against the running app: assign a match to a table, call it, enter set results, finish the game. |
 | Domain unit | `TournamentMatchTest` | Pure unit tests of aggregate behaviour against real objects (no mocks). |
 
@@ -98,6 +98,10 @@ Every REST endpoint gets a module-level integration test with H2. Complex domain
 ## 9. Current status & open work
 
 ### Done (slices shipped)
+
+This list records each slice as it was shipped; later slices changed some details. Current state: update events on
+five topics instead of `/topic/updates` (ADR 0003), the backend's own tables in the Flyway migrations
+`V1`–`V7` under `src/main/resources/db/migration`, and the test counts in `docs/test-improvement-plan.md`.
 
 - Onion modules (`registration`, `grouping`, `tournament`, `settings`, `outbound`) + ArchUnit/Modulith verification.
 - Tracer: match `setResult`/`updateResult` end-to-end — `SetResult` scoring rules, `TournamentMatch` state machine (`start`/`free`/`takeBack`/`enterResult`/`complete`), `MatchCompleted`/`MatchStarted`/`MatchFreed`/`MatchTakenBack`/`MatchResultUpdated` events → `outbound` WebSocket.

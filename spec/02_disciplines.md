@@ -4,7 +4,7 @@ This document specifies the functionality for managing tournament disciplines.
 
 ## Discipline Attributes
 Each discipline (e.g., Men's Single, Women's Double) has several attributes:
-- **Name**: Human-readable name (e.g., "Herren A").
+- **Name**: Human-readable name (e.g., "Herren A"). mktt names a singles discipline and its doubles discipline alike; the backend shows the doubles one as "Herren A-Doppel".
 - **Kind**: Type of discipline (1 = Single, 2 = Double).
 - **Active State**: Only active disciplines are shown in the match planning and results views.
 - **System**: The tournament system used (e.g., "Groups then KO", "Direct KO").
@@ -17,12 +17,29 @@ Each discipline (e.g., Men's Single, Women's Double) has several attributes:
 - **KO Size**: The size of the KO bracket (e.g., 16, 32, 64).
 
 ## Discipline Management
-- **Creation**: Administrators can create new disciplines with specific rules.
-- **Registration**: Players or doubles are registered for specific disciplines.
-- **Grouping**: The system automatically or manually assigns players to groups.
-- **Seeding**: Players are seeded in groups or the KO bracket based on their TTR.
+- **Creation**: Disciplines and their rules are created in mktt.
+- **Registration**: Players or doubles are registered for specific disciplines (in mktt; late entries in the admin view).
+- **Grouping**: mktt assigns players to groups and creates the group and KO matches.
+- **Seeding**: Players are seeded in groups or the KO bracket based on their TTR, in mktt.
+- **Standings**: When the last match of a group is completed, the backend computes the group standings (matches won, then set difference, then points won).
+- **Colors**: Each discipline can get a background and a text color, used by the admin view to mark its matches.
+- **KO placement**: Writing the winner of a KO match into the next KO match is not migrated from the legacy backend yet.
 
-## API Endpoints (from Backend)
-- `GET /api/type/all`: Retrieve all disciplines.
-- `GET /api/type/active`: Retrieve only active disciplines.
-- `DELETE /api/type/:id`: Delete a discipline by ID.
+## API Endpoints
+
+All paths are relative to the backend's `/api/v2` prefix (for example `GET /api/v2/players/all`). Commands answer
+`{"success": true}`, or a 400 with `{"success": false, "message": ...}` when they are rejected. The OpenAPI description
+is served by the backend itself (port 8080, not through nginx) at `/v3/api-docs`, with a Swagger UI at `/api-docs-ui`.
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/types/all` | All disciplines of the tournament module, doubles named "…-Doppel". |
+| `GET` | `/types/open/all` | The active disciplines (used by the result view). |
+| `GET` | `/disciplines` | All disciplines of the registration module. |
+| `GET` | `/disciplines/active` | The active disciplines of the registration module. |
+| `DELETE` | `/match/type/{id}` | Delete all matches of a discipline. |
+| `GET` | `/disciplines/colors` | The colors of all disciplines: `{"<typeId>": {"bgColor", "textColor"}}`. |
+| `POST` | `/disciplines/{id}/color` | Set the colors of one discipline. Body: `{"bgColor", "textColor"}`, each a CSS color of at most 7 characters. |
+| `PUT` | `/disciplines/colors` | Set the colors of several disciplines. Body: the map of `GET /disciplines/colors`. |
+
+Color changes are published on the `settings` topic as `DISCIPLINE_COLORS_CHANGED`.

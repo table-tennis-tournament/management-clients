@@ -33,13 +33,15 @@ Referees use a specialized application to manage their assigned tables.
 
 A public-facing application intended for display on monitors or projectors in the venue. It subscribes to the `matches` topic and reloads the displayed discipline when a result in it changes (`src/app/updates/result-updates.ts`); assignments, starts and calls are ignored. After a reconnect it reloads the disciplines and the displayed matches.
 
-- **Live Results**: Shows currently active matches and their live scores (set-by-set).
-- **Recent Results**: Lists the scores of the most recently finished matches.
-- **Upcoming Matches**: Displays the next matches in the queue and their table assignments.
-- **Discipline Overview**: Shows progress and standings for active disciplines.
+- **Discipline Overview**: One tab per active discipline with its groups (matches and results, a mark when a group is complete) and its knockout bracket.
+- **Live Results**: The displayed discipline updates as results are entered.
+- Not implemented: lists of the matches being played with live scores, of recently finished matches and of the next matches in the queue.
 
-## API Endpoints (from Backend)
+## API Endpoints
+
+Paths include the backend's `/api/v2` prefix; the full lists are in the other specifications.
 
 - `GET /api/v2/tables?table_manager={id}`: tables and matches of one table manager, used for resynchronization.
 - `GET /api/v2/match/typeid/{typeId}`: matches of a discipline, used by the result view.
 - `GET /api/v2/match/played/all`: recently finished matches.
+- `GET /api/v2/testsocket`: kept for the legacy clients; answers `{"success": true}` and sends nothing.
