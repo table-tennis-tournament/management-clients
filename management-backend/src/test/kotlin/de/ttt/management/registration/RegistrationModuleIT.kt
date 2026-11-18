@@ -203,6 +203,25 @@ class RegistrationModuleIT {
     }
 
     @Test
+    fun `should save hex colors`() {
+        restTestClient.post()
+            .uri("/api/v2/disciplines/1/color")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(mapOf("bgColor" to "#ffffff", "textColor" to "#000000"))
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
+
+        restTestClient.get()
+            .uri("/api/v2/disciplines/colors")
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson(
+                """{"1": {"bgColor": "#ffffff", "textColor": "#000000"}, "2": {"bgColor": "#ff0000", "textColor": "#fff"}}"""
+            )
+    }
+
+    @Test
     fun `should fail to save color for non-existent type`() {
         val colorData = mapOf("bgColor" to "red", "textColor" to "white")
         restTestClient.post()
