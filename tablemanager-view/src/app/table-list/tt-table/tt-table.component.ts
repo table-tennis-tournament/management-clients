@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   matchWinner,
@@ -34,6 +34,7 @@ interface Scoreboard {
 
 @Component({
   selector: 'app-tt-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tt-table.component.html',
   styleUrls: ['./tt-table.component.scss'],
   imports: [
@@ -56,12 +57,21 @@ export class TtTableComponent {
   dialog = inject(MatDialog);
   private _table: Table;
 
-  /** The scoreboard of the started match, computed whenever the table changes. */
+  // Computed once whenever the table changes, so the template reads fields instead of scanning the matches.
+  /** The match being played on the table. */
+  startedMatch: Match | null = null;
+  /** The scoreboard of [startedMatch]. */
   scoreboard: Scoreboard | null = null;
+  /** Whether a match waiting at the table has had its second or third call. */
+  secondCall = false;
+  thirdCall = false;
 
   @Input()
   set table(table: Table) {
     this._table = table;
+    this.startedMatch = table.matches.find(isBeingPlayed) ?? null;
+    this.secondCall = table.matches.some((match) => isAtTable(match) && callNumber(match) === 2);
+    this.thirdCall = table.matches.some((match) => isAtTable(match) && callNumber(match) === 3);
     this.scoreboard = this.buildScoreboard();
   }
 
@@ -86,24 +96,8 @@ export class TtTableComponent {
 
   maxGames = [0, 1, 2, 3, 4];
 
-  currentMatch(): Match {
-    return this.table.matches.find(isBeingPlayed);
-  }
-
-  isSecondCall() {
-    return this.table.matches.find((match) => isAtTable(match) && callNumber(match) === 2);
-  }
-
-  isThirdCall() {
-    return this.table.matches.find((match) => isAtTable(match) && callNumber(match) === 3);
-  }
-
-  tableHasStartedMatch(): boolean {
-    return this.currentMatch() !== undefined;
-  }
-
   private buildScoreboard(): Scoreboard | null {
-    const match = this.table ? this.currentMatch() : undefined;
+    const match = this.startedMatch;
     if (!match) {
       return null;
     }
@@ -120,7 +114,7 @@ export class TtTableComponent {
   }
 
   openResultDialog() {
-    const match = this.currentMatch();
+    const match = this.startedMatch;
     const dialogRef = this.dialog.open(ResultDialogComponent, {
       width: '400px',
       data: match,
@@ -149,9 +143,9 @@ export class TtTableComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         const newGame = toGames([setWonBy(result.isPlayerA ? 1 : 2, Number(result.result))]);
-        const newGames = this.currentMatch().result.games.concat(newGame);
+        const newGames = this.startedMatch.result.games.concat(newGame);
         this.updateMatchResult.emit({
-          matchId: this.currentMatch().match_id,
+          matchId: this.startedMatch.match_id,
           result: {
             games: newGames,
           },
@@ -168,16 +162,16 @@ export class TtTableComponent {
   }
 
   endMatch() {
-    this.finishMatch.emit(this.currentMatch());
+    this.finishMatch.emit(this.startedMatch);
   }
 
   /** The index of the first Set without a winner, or 0. */
   private getGameNumber() {
-    const index = toSets(this.currentMatch().result.games).findIndex((set) => setWinner(set) === null);
+    const index = toSets(this.startedMatch.result.games).findIndex((set) => setWinner(set) === null);
     return index >= 0 ? index : 0;
   }
 
   takeBack() {
-    this.takeBackMatch.emit({ matchId: this.currentMatch().match_id });
+    this.takeBackMatch.emit({ matchId: this.startedMatch.match_id });
   }
 }

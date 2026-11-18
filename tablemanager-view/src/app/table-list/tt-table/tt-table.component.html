@@ -6,38 +6,38 @@
           <span matBadge="{{ table.table_number }}" matBadgeOverlap="false">Tisch</span>
         </div>
         <div>
-          @if (isSecondCall()) {
+          @if (secondCall) {
             <span class="call-color">2. Aufruf!</span>
           }
-          @if (isThirdCall()) {
+          @if (thirdCall) {
             <span class="call-color">3. Aufruf!</span>
           }
         </div>
-        @if (tableHasStartedMatch()) {
+        @if (startedMatch) {
           <div>
             <mat-chip-set>
-              <mat-chip class="m-0" selected color="primary">{{ currentMatch().classification }}</mat-chip>
+              <mat-chip class="m-0" selected color="primary">{{ startedMatch.classification }}</mat-chip>
             </mat-chip-set>
           </div>
         }
-        @if (tableHasStartedMatch()) {
+        @if (startedMatch) {
           <div>
             <mat-chip-set>
-              <mat-chip class="m-0" selected color="primary">{{ currentMatch().stage }}</mat-chip>
+              <mat-chip class="m-0" selected color="primary">{{ startedMatch.stage }}</mat-chip>
             </mat-chip-set>
           </div>
         }
       </div>
     </mat-card-title>
   </mat-card-header>
-  @if (!tableHasStartedMatch()) {
+  @if (!startedMatch) {
     <mat-card-content>
       <div class="row">
         <div class="col">
           <p>Kein Spiel aktiv</p>
         </div>
       </div>
-      @for (match of table.matches; track match) {
+      @for (match of table.matches; track match.match_id) {
         <app-match-item
           [match]="match"
           (callPlayersForMatch)="callPlayersForMatch.emit($event)"
@@ -60,17 +60,17 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_a, true)">
+        <div class="col-5 text-truncate-custom" (click)="openGameDialog(startedMatch.players_a, true)">
           <div [ngClass]="{ 'match-won': scoreboard.winner === 1 }" class="mat-body-strong mb-0 text-truncate-custom">
-            {{ currentMatch().players_a[0] | singlePlayer }}
+            {{ startedMatch.players_a[0] | singlePlayer }}
           </div>
-          @if (currentMatch().players_a.length > 1) {
+          @if (startedMatch.players_a.length > 1) {
             <div [ngClass]="{ 'match-won': scoreboard.winner === 1 }" class="mat-body-strong mb-0 text-truncate-custom">
-              {{ currentMatch().players_a[1] | singlePlayer }}
+              {{ startedMatch.players_a[1] | singlePlayer }}
             </div>
           }
-          @if (currentMatch().players_a.length === 1) {
-            <div class="text-truncate-custom">{{ currentMatch().players_a | clubName }}</div>
+          @if (startedMatch.players_a.length === 1) {
+            <div class="text-truncate-custom">{{ startedMatch.players_a | clubName }}</div>
           }
         </div>
         @for (set of scoreboard.sets; track $index) {
@@ -85,17 +85,17 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-5 text-truncate-custom" (click)="openGameDialog(currentMatch().players_b, false)">
+        <div class="col-5 text-truncate-custom" (click)="openGameDialog(startedMatch.players_b, false)">
           <div [ngClass]="{ 'match-won': scoreboard.winner === 2 }" class="mat-body-strong mb-0 text-truncate-custom">
-            {{ currentMatch().players_b[0] | singlePlayer }}
+            {{ startedMatch.players_b[0] | singlePlayer }}
           </div>
-          @if (currentMatch().players_b.length > 1) {
+          @if (startedMatch.players_b.length > 1) {
             <div [ngClass]="{ 'match-won': scoreboard.winner === 2 }" class="mat-body-strong mb-0 text-truncate-custom">
-              {{ currentMatch().players_b[1] | singlePlayer }}
+              {{ startedMatch.players_b[1] | singlePlayer }}
             </div>
           }
-          @if (currentMatch().players_b.length === 1) {
-            <div class="text-truncate-custom">{{ currentMatch().players_b | clubName }}</div>
+          @if (startedMatch.players_b.length === 1) {
+            <div class="text-truncate-custom">{{ startedMatch.players_b | clubName }}</div>
           }
         </div>
         @for (set of scoreboard.sets; track $index) {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Match } from '../../match/match.model';
 import { PlayerDialogComponent } from '../player-dialog/player-dialog.component';
@@ -9,6 +9,7 @@ import { PlayerNamePipe } from '../../player-name.pipe';
 
 @Component({
   selector: 'app-match-item',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './match-item.component.html',
   styleUrls: ['./match-item.component.scss'],
   imports: [MatBadge, MatMiniFabButton, MatIcon, PlayerNamePipe],

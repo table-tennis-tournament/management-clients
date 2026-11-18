@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
@@ -12,6 +12,7 @@ import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-table-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './table-list.component.html',
   styleUrls: ['./table-list.component.scss'],
   imports: [TtTableComponent, AsyncPipe],
