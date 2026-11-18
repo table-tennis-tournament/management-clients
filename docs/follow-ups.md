@@ -31,11 +31,12 @@ Resolved: the table manager's "Zurück" calls `POST /api/v2/match/takeBack/{id}`
 
 ## 7. Other open items
 
-- Playwright before 1.62 cannot install browsers on Ubuntu 26.04 (the sandbox, and now GitHub's `ubuntu-latest`); the clients use 1.65.1. Until then the new e2e tests (`tablemanager-view/e2e/tablemanager.spec.ts`: "Zurück", take back by another client, reconnect resync) were only type-checked locally. Run them in CI.
-- `MATCH_LIST_CHANGED` scope does not name the disciplines of the queued matches, so a future scope-filtering client would not know which discipline view to refresh.
-- Completing, freeing or taking back a match changes `isPlayable` of other matches of the same players; a future scope-filtering client of other disciplines would miss that.
-- admin-view has no e2e test for the reconnect resync or the new topics (`TABLE_LOCKED`, `PLAYER_PAID`, `PLAYER_ACTIVE_CHANGED`, `DISCIPLINE_COLORS_CHANGED`).
+All resolved:
 
-- Tablemanager `loadTablesError` only opens a snackbar; there is no retry.
-- Components are not `OnPush` and templates call array-scanning methods; reloads replace every table object.
-- No server heartbeats: `enableSimpleBroker` has no task scheduler (inference), so idle connections are detected only by the proxy.
+- Playwright 1.65.1 installs its browsers on Ubuntu 26.04 (the sandbox and GitHub's `ubuntu-latest`); the e2e suites of all three clients pass locally and run in CI.
+- `MATCH_LIST_CHANGED` names the queued matches, those just added to or removed from the queue, and their disciplines.
+- Assigning, starting, completing, freeing, taking back and deleting a match carry `affectedTypeIds`: the other disciplines whose open matches of the same players change `isPlayable`. The outbound scopes include them.
+- admin-view has e2e tests for the reconnect resync and for `TABLE_LOCKED`/`TABLE_UNLOCKED`, `PLAYER_PAID`, `PLAYER_ACTIVE_CHANGED` and `DISCIPLINE_COLORS_CHANGED` (`e2e/live-updates.spec.ts`). Writing them found two backend bugs, both fixed: `/table/{nr}/lock` treated the table number as the id, and a hex text color did not fit `mgmt_typecolors` (V7).
+- The table manager retries a failed load twice and its error snackbar offers "Erneut laden".
+- The table manager's table, table list and match item components use `OnPush`, compute the started match and the calls once per table change, and track tables and matches by id.
+- The simple broker sends and expects STOMP heartbeats every 10 s (`WebSocketHeartbeatIT`).
