@@ -20,6 +20,10 @@ export interface Match {
   tableId?: number;
   /** The number of the table the match is at, as players see it; not the same as [tableId]. */
   tableNumber?: number;
+  /** The other table a group match waits at, if it has two; it is started at one and leaves the other. */
+  secondTableId?: number;
+  /** The number of [secondTableId], as players see it. */
+  secondTableNumber?: number;
   team1?: Player[];
   team2?: Player[];
   matchType?: StageType;

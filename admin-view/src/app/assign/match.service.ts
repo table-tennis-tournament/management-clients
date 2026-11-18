@@ -16,9 +16,15 @@ export class MatchService {
 
   private freeMatchUrl = '/api/v2/match/free';
   private takeBackMatchUrl = '/api/v2/match/takeBack';
+  private walkoverMatchUrl = '/api/v2/match/walkover';
 
   freeMatches(matchIds: number[]): Observable<StatusDto> {
     return this.http.post<StatusDto>(this.freeMatchUrl, matchIds);
+  }
+
+  /** Ends the matches unplayed, without a result ("kampflos"). */
+  walkoverMatches(matchIds: number[]): Observable<StatusDto> {
+    return this.http.post<StatusDto>(this.walkoverMatchUrl, matchIds);
   }
 
   takeBackMatches(matchIds: number[]): Observable<StatusDto> {

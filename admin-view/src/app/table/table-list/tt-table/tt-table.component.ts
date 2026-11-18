@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableDto } from '../../tabledto.model';
 import { MatchToTable } from './tt-table-content/matchtotable.model';
 import { TypeColorMap } from '../../../settings/settings.model';
+import { canUseSecondTable, matchesOnTwoTables } from '../../table-actions';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { TypeColorDirective } from '../../../shared/directives/type-color.directive';
 import { TtTableContentComponent } from './tt-table-content/tt-table-content.component';
@@ -77,9 +78,21 @@ export class TtTableComponent {
   removeFromTable = new EventEmitter<TableDto>();
 
   @Output()
+  walkover = new EventEmitter<TableDto>();
+
+  @Output()
   refreshTables = new EventEmitter<any>();
 
   public isGameAvailable() {
     return this.table !== null && this.table.matches !== null && this.table.matches.length > 0;
+  }
+
+  /** "Entfernen" only takes a match off this table when it also waits at another one. */
+  public hasMatchOnTwoTables() {
+    return matchesOnTwoTables(this.table).length > 0;
+  }
+
+  public canUseSecondTable() {
+    return canUseSecondTable(this.table);
   }
 }

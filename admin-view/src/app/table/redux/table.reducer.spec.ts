@@ -5,6 +5,7 @@ import {
   LockTable,
   LockTableError,
   LockTableSuccess,
+  WalkoverMatchesSuccess,
 } from './table.actions';
 import { reduceTableState, TableState } from './table.reducer';
 import { TableTestData } from './test-data';
@@ -79,5 +80,23 @@ describe('the table reducer', () => {
 
     const newState = reduceTableState(initialState, new LockTableError(null));
     expect(newState).toEqual(expectedState);
+  });
+
+  it('takes the walkover matches off every table', () => {
+    const state: TableState = {
+      tables: [
+        { id: 11, number: 1, matches: [{ id: 3 }, { id: 4 }] },
+        // match 3 waits at a second table as well
+        { id: 12, number: 2, matches: [{ id: 3 }] },
+      ],
+      tablesLoading: false,
+    };
+
+    const newState = reduceTableState(state, new WalkoverMatchesSuccess({ matchIds: [3], tableId: 11 }));
+
+    expect(newState.tables).toEqual([
+      { id: 11, number: 1, matches: [{ id: 4 }] },
+      { id: 12, number: 2, matches: [] },
+    ]);
   });
 });

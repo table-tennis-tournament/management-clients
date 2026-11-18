@@ -8,11 +8,12 @@
  * [MATCH_STATES]) together with `callNumber` (0 = not called yet, 1 = Called, 2 = Second call,
  * 3 = Third call). Components ask these questions instead of comparing state names.
  *
- * Lifecycle (see GLOSSARY.md): Open → (InQueue) → OnTable (At Table) → Started → Completed,
- * or Finished when the Match ended without a played result (bye / walkover).
+ * Lifecycle (see GLOSSARY.md): Open → (InQueue) → OnTable (At Table) → Started → Completed.
+ * A Match freed at its table ("Frei") is Finished until its result is entered, then Completed;
+ * a Match that is not played at all (bye / walkover) is a Walkover.
  */
 
-export const MATCH_STATES = ['Open', 'InQueue', 'OnTable', 'Started', 'Completed', 'Finished'] as const;
+export const MATCH_STATES = ['Open', 'InQueue', 'OnTable', 'Started', 'Completed', 'Finished', 'Walkover'] as const;
 
 export type MatchStateName = (typeof MATCH_STATES)[number];
 
@@ -52,14 +53,19 @@ export function isCompleted(match: HasMatchState): boolean {
   return match.state === 'Completed';
 }
 
-/** Ended without a played result (bye / walkover, "free match"). */
+/** Played and freed at its table ("Frei"); its result is entered later. */
 export function isFinished(match: HasMatchState): boolean {
   return match.state === 'Finished';
 }
 
-/** Ended, with or without a played result. Both are terminal. */
+/** Not played at all: a bye or a walkover ("kampflos"). */
+export function isWalkover(match: HasMatchState): boolean {
+  return match.state === 'Walkover';
+}
+
+/** Over: completed, waiting for its result or a walkover. */
 export function isOver(match: HasMatchState): boolean {
-  return isCompleted(match) || isFinished(match);
+  return isCompleted(match) || isFinished(match) || isWalkover(match);
 }
 
 /** Queued, at a table or being played: no longer free to plan, not over yet. */

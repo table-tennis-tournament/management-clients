@@ -5,6 +5,7 @@ import {
   isAtTable,
   isCompleted,
   isFinished,
+  isWalkover,
   isQueued,
   isWaiting,
 } from '../../../../shared/match-state/match-state';
@@ -34,8 +35,14 @@ export class DisciplineStageItemComponent {
     return isAtTable(this.match) && callNumber(this.match) === 0;
   }
 
+  /** Freed at its table, its result is still to be entered ("F" badge). */
   isMatchFinished() {
     return isFinished(this.match);
+  }
+
+  /** Not played: a bye or a walkover ("K" badge). */
+  isMatchWalkover() {
+    return isWalkover(this.match);
   }
 
   isMatchBlocked() {

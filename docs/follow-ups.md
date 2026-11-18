@@ -4,7 +4,7 @@ These issues are not caused by the WebSocket (STOMP) migration. They were found 
 
 ## 1. Match state mismatch in admin-view
 
-Resolved by architecture review candidate 3: the clients use the backend `MatchState` names plus `callNumber` through `shared/match-state`, and `TableController.legacyState` is gone. The admin result list still lists *Finished* matches, which is how freed ("freigeben") matches wait for their result.
+Resolved by architecture review candidate 3: the clients use the backend `MatchState` names plus `callNumber` through `shared/match-state`, and `TableController.legacyState` is gone. The admin result list lists *Finished* matches, which is how freed ("Frei") matches wait for their result; unplayed matches are *Walkover* and are not listed.
 
 ## 2. Tablemanager DTO mismatches
 

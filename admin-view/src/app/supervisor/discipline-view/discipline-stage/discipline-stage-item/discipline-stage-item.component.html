@@ -30,6 +30,9 @@
     @if (isMatchFinished()) {
       <span class="circle right">F</span>
     }
+    @if (isMatchWalkover()) {
+      <span class="circle right">K</span>
+    }
     @if (isMatchComplete()) {
       <i class="material-icons right">done</i>
     }

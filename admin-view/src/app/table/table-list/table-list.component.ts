@@ -47,4 +47,7 @@ export class TableListComponent {
 
   @Output()
   removeFromTable = new EventEmitter<TableDto>();
+
+  @Output()
+  walkover = new EventEmitter<TableDto>();
 }

@@ -11,6 +11,7 @@ import {
   isOver,
   isQueued,
   isWaiting,
+  isWalkover,
   MATCH_STATES,
   MatchStateName,
 } from './match-state';
@@ -45,13 +46,14 @@ describe('match state', () => {
     expect(statesWhere(isBeingPlayed)).toEqual(['Started']);
   });
 
-  it('isCompleted and isFinished tell a played result from a walkover', () => {
+  it('isCompleted, isFinished and isWalkover tell a result, a pending result and a walkover apart', () => {
     expect(statesWhere(isCompleted)).toEqual(['Completed']);
     expect(statesWhere(isFinished)).toEqual(['Finished']);
+    expect(statesWhere(isWalkover)).toEqual(['Walkover']);
   });
 
-  it('isOver for both terminal states', () => {
-    expect(statesWhere(isOver)).toEqual(['Completed', 'Finished']);
+  it('isOver once the match has left the table for good', () => {
+    expect(statesWhere(isOver)).toEqual(['Completed', 'Finished', 'Walkover']);
   });
 
   it('isInProgress between waiting and over', () => {

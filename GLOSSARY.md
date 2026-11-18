@@ -72,9 +72,13 @@ The lifecycle of a Match is expressed through its state:
 
 **Completed** — the result has been entered and the match is finished.
 
-**Finished** — the match has ended without a played result, for example a bye or a walkover ("free match"). Like Completed, it is a terminal state.
+**Finished** — the match has been played and freed at its table ("Frei"), but its result is entered later, in the administrator's result list. Entering the result completes it.
 
-The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InQueue`, `OnTable` (At Table), `Started`, `Completed` and `Finished`. The calls are not states: every Match DTO carries `callNumber` next to `state` (0 = not called yet, 1 = Called, 2 = Second call, 3 = Third call). Clients ask the questions in `src/app/shared/match-state/match-state.ts` (`isWaiting`, `isAtTable`, `isBeingPlayed`, `isOver`, `callNumber`, …) instead of comparing state names. The legacy names `InWaitingList`, `Callable`, `SecondCall` and `ThirdCall` are gone.
+**Walkover** — the match is not played at all, for example a bye or a player who did not appear ("kampflos"). It has no result. Like Completed, it is a terminal state.
+
+**Second table** — a group of at least four players may play its matches on two tables ("2.Tisch"). Its upcoming matches then wait at both tables; a match is started at one of them and leaves the other. The table manager starts each match at the right table. **Remove** ("Entfernen") takes a match that waits at two tables off one of them; it keeps waiting at the other.
+
+The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InQueue`, `OnTable` (At Table), `Started`, `Completed`, `Finished` and `Walkover`. The calls are not states: every Match DTO carries `callNumber` next to `state` (0 = not called yet, 1 = Called, 2 = Second call, 3 = Third call). Clients ask the questions in `src/app/shared/match-state/match-state.ts` (`isWaiting`, `isAtTable`, `isBeingPlayed`, `isFinished`, `isWalkover`, `isOver`, `callNumber`, …) instead of comparing state names. The legacy names `InWaitingList`, `Callable`, `SecondCall` and `ThirdCall` are gone.
 
 **Live updates**
 

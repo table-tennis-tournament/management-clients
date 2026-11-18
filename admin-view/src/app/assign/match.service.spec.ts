@@ -5,6 +5,7 @@ const matches = [{ id: 1 }];
 
 describeRequests(MatchService, [
   { call: (s) => s.freeMatches([1, 2]), method: 'POST', url: '/api/v2/match/free', body: [1, 2] },
+  { call: (s) => s.walkoverMatches([1, 2]), method: 'POST', url: '/api/v2/match/walkover', body: [1, 2] },
   { call: (s) => s.takeBackMatches([3]), method: 'POST', url: '/api/v2/match/takeBack', body: [3] },
   {
     call: (s) => s.assignToSecondTable(4, [5, 6]),

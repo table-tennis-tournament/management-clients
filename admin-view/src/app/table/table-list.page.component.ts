@@ -18,7 +18,12 @@ import {
   ResultForMatch,
   TakeBackTable,
   UnLockTable,
+  WalkoverMatches,
 } from './redux/table.actions';
+
+import { canUseSecondTable, matchesOnTwoTables } from './table-actions';
+
+import { Match } from '../shared/data/match.model';
 
 import { TableDto } from './tabledto.model';
 
@@ -76,56 +81,28 @@ export class TableListPageComponent implements OnInit {
   }
 
   onFreeTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      const freeTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
-      this.store.dispatch(new FreeTable(freeTableEvent));
-      return;
-    }
-    this.selectMatchAndCallFunction(table, (match) =>
-      this.store.dispatch(
-        new FreeTable(
-          new TableMatchEvent(
-            match.map((nextMatch) => nextMatch.id),
-            table.number
-          )
-        )
-      )
+    this.chooseMatches(table.matches, (matchIds) =>
+      this.store.dispatch(new FreeTable(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
   onTakeBackTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
-      this.store.dispatch(new TakeBackTable(takeBackTableEvent));
-      return;
-    }
-    this.selectMatchAndCallFunction(table, (match) =>
-      this.store.dispatch(
-        new TakeBackTable(
-          new TableMatchEvent(
-            match.map((nextMatch) => nextMatch.id),
-            table.number
-          )
-        )
-      )
+    this.chooseMatches(table.matches, (matchIds) =>
+      this.store.dispatch(new TakeBackTable(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
+  /** "Kampflos": the chosen matches end unplayed, without a result. */
+  onWalkover(table: TableDto) {
+    this.chooseMatches(table.matches, (matchIds) =>
+      this.store.dispatch(new WalkoverMatches(new TableMatchEvent(matchIds, table.id)))
+    );
+  }
+
+  /** "Entfernen": a match that waits at two tables leaves this one and stays at the other. */
   onRemoveFromTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
-      this.store.dispatch(new TakeBackTable(takeBackTableEvent));
-      return;
-    }
-    this.selectMatchAndCallFunction(table, (match) =>
-      this.store.dispatch(
-        new RemoveMatchFromTable(
-          new TableMatchEvent(
-            match.map((nextMatch) => nextMatch.id),
-            table.number
-          )
-        )
-      )
+    this.chooseMatches(matchesOnTwoTables(table), (matchIds) =>
+      this.store.dispatch(new RemoveMatchFromTable(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
@@ -139,35 +116,30 @@ export class TableListPageComponent implements OnInit {
     }
   }
 
+  /** "2.Tisch": the group's matches wait at a second, free table as well. */
   onAssignSecondTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      this.toastService.error('Ein Spiel kann nich auf zwei Tische gelegt werden.');
+    if (!canUseSecondTable(table)) {
+      this.toastService.error('Nur eine Gruppe mit mindestens vier Spielern kann an zwei Tischen spielen.');
       return;
     }
     const selectedMatchIds = table.matches.map((match) => match.id);
-    this.tableService.getFreeTables().subscribe(this.onFreeTablesLoaded.bind(this, selectedMatchIds));
+    this.tableService.getFreeTables().subscribe((tables) => this.onFreeTablesLoaded(selectedMatchIds, tables));
   }
 
-  onFreeTablesLoaded(selectedMatchIds, tables: TableDto[]) {
-    if (this.freeTablesAvailable(tables)) {
-      const dialogRef = this.dialog.open(SelectTableModalComponent, {
-        width: '250px',
-        data: tables,
-      });
-
-      dialogRef.afterClosed().subscribe((tableNumber) => {
-        console.log('The dialog was closed');
-        console.log(tableNumber);
-        this.store.dispatch(
-          new AssignToSecondTable({
-            tableNr: tableNumber,
-            matchIds: selectedMatchIds,
-          })
-        );
-      });
+  onFreeTablesLoaded(selectedMatchIds: number[], tables: TableDto[]) {
+    if (!this.freeTablesAvailable(tables)) {
+      this.toastService.error('Es sind keine freien Tische verfügbar.');
       return;
     }
-    this.toastService.error('Es sind keine freien Tische verfügbar.');
+    const dialogRef = this.dialog.open(SelectTableModalComponent, {
+      width: '250px',
+      data: tables,
+    });
+    dialogRef.afterClosed().subscribe((tableNumber) => {
+      if (tableNumber != null) {
+        this.store.dispatch(new AssignToSecondTable({ tableNr: tableNumber, matchIds: selectedMatchIds }));
+      }
+    });
   }
 
   onResultForTable(table: TableDto) {
@@ -199,11 +171,20 @@ export class TableListPageComponent implements OnInit {
     this.store.dispatch(new AssignMatchToTable(event));
   }
 
-  private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
+  /** Runs [onChosen] with the one match, or with the matches chosen in a dialog when there are several. */
+  private chooseMatches(matches: Match[], onChosen: (matchIds: number[]) => void) {
+    if (matches.length === 1) {
+      onChosen([matches[0].id]);
+      return;
+    }
     const dialogRef = this.dialog.open(SelectMatchModalComponent, {
       width: '400px',
-      data: table.matches,
+      data: matches,
     });
-    dialogRef.afterClosed().subscribe(onMatchSelectedAction);
+    dialogRef.afterClosed().subscribe((chosen: Match[] | undefined) => {
+      if (chosen?.length) {
+        onChosen(chosen.map((match) => match.id));
+      }
+    });
   }
 }

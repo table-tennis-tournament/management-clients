@@ -9,7 +9,8 @@ A match progresses through several states (the backend `MatchState`, sent as `st
 - **OnTable** (At Table): The match has been assigned to a table but has not started; its players are being called.
 - **Started**: The match is being played.
 - **Completed**: The match is over, and the final result has been recorded.
-- **Finished**: The match is over without a played result (bye / walkover).
+- **Finished**: The match has been played and has left its table ("Frei"); its result is entered later.
+- **Walkover**: The match is not played (bye / walkover, "kampflos") and has no result.
 
 ## Player Calling
 Matches that are assigned to a table but have not yet started (OnTable) are called. The calls are not states: every Match DTO carries `callNumber` (0 = not called yet, 1-3 = first to third call).
@@ -22,11 +23,16 @@ Matches that are assigned to a table but have not yet started (OnTable) are call
 Administrators use a "Match List" or "Supervisor View" to plan matches:
 - **Playability**: A match is *playable* when both Sides are present and none of its players is in a match on a table, in any discipline (`isPlayable` on every Match DTO).
 - **Queue**: Matches (or a group of matches) are added to the Queue at a position and can be moved or removed.
+- **Second table**: A group of at least four players may play on two tables ("2.Tisch"). Its matches at a table then
+  wait at a second, free table as well (`secondTableId`, `secondTableNumber` on the Match DTO). A match is started at
+  one of its two tables and leaves the other; it cannot be started at a third.
 - **Auto-start**: When the Queue is active, the system starts the first playable entry on a free table; an entry that shares a player with an earlier, unplayable entry waits.
 
 ## Take Back and Free
 - **Take back**: A match on a table (assigned or being played) is taken back to Open; its call and its result are cleared, so it is played again from the start. The table manager's "Zurück" takes back a running match.
-- **Free**: A match is finished without a played result (walkover); it becomes Finished and leaves its table.
+- **Free** ("Frei"): A played match leaves its table before its result is entered; it becomes Finished and waits in the
+  administrator's result list. Entering the result completes it.
+- **Walkover** ("Kampflos"): A match is ended unplayed, without a result; it becomes Walkover and leaves its table.
 
 ## Result Entry
 A Set is won with 11 points and a lead of two; a Match is won by the first Side to win three Sets (best of five).
@@ -53,7 +59,8 @@ Sets are sent as `[[pointsSide1, pointsSide2], ...]`, for example `[[11,5],[11,7
 | `POST` | `/match/start/{id}/{tableId}` | Start a match on the table with the **id** `{tableId}`. |
 | `POST` | `/match/takeBack/{id}` | Take back a running match (the table manager's "Zurück"). `/match/stop/{id}` is its deprecated alias. |
 | `POST` | `/match/takeBack` | Take back matches. Body: `[matchId, ...]`. |
-| `POST` | `/match/free` | Free matches (walkover). Body: `[matchId, ...]`. |
+| `POST` | `/match/free` | Free matches: they leave their table and wait for their result (Finished). Body: `[matchId, ...]`. |
+| `POST` | `/match/walkover` | End matches unplayed, without a result (Walkover). Body: `[matchId, ...]`. |
 | `POST` | `/match/updateResult/{id}` | Enter an interim result; the match keeps running. Body: sets. |
 | `POST` | `/match/setResult/{id}` | Enter the final result and complete the match. Body: sets. |
 | `POST` | `/match/call` | First call of matches. Body: `[matchId, ...]`. |

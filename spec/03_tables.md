@@ -37,8 +37,8 @@ is served by the backend itself (port 8080, not through nginx) at `/v3/api-docs`
 | `POST` | `/table/{nr}/unlock` | Unlock the table with the **number** `{nr}`. |
 | `GET` | `/tables?table_manager={id}` | The tables and matches of one table manager (Table Manager View). |
 | `POST` | `/match/matchtotable/{nr}` | Assign matches to the table with the **number** `{nr}`. Body: `[matchId, ...]`. |
-| `POST` | `/match/matchtosecondtable/{nr}` | Same as `matchtotable`, kept for the legacy clients. |
-| `POST` | `/match/remove/{tableId}` | Take the matches back from the table with the **id** `{tableId}`. Body: `[matchId, ...]`. |
+| `POST` | `/match/matchtosecondtable/{nr}` | Let matches at a table wait at the table with the **number** `{nr}` as well (a group on two tables). Body: `[matchId, ...]`. |
+| `POST` | `/match/remove/{tableId}` | Take matches that wait at two tables off the table with the **id** `{tableId}`; they keep waiting at the other. A match at one table only is rejected. Body: `[matchId, ...]`. |
 | `GET` | `/match/allmatchtable` | Which match is on which table: `[{"matchId", "tableId"}]`. |
 
 Locks are published on the `tables` topic (`TABLE_LOCKED`, `TABLE_UNLOCKED`); assignments on the `matches` topic.

@@ -1,9 +1,11 @@
-import { expect, Page, test } from '@playwright/test';
+import { APIRequestContext, expect, Page, test } from '@playwright/test';
 import { resetDatabase } from './db-helper';
 import { dragAndDrop, errorToast, getMatch, resetTournament, tableCard } from './helpers';
 
 // Herren A, group A: match 1 Nicolas Kowalska vs Babajide Santos, 2 Nicolas Kowalska vs Priyanka Sow,
 // 3 Priyanka Sow vs Babajide Santos; group B: match 4 Ji-hoon Mensah vs Mei Castro. Tables 1 to 9 are free.
+// Matches 244 to 249 are a group of four players, which may play on two tables.
+const groupOfFour = [244, 245, 246, 247, 248, 249];
 
 async function chooseDiscipline(page: Page, name: string): Promise<void> {
   await page.locator('toma-discipline-match-list mat-select').click();
@@ -153,7 +155,7 @@ test.describe('Zuweiser View', () => {
       expect((await request.post('/api/v2/match/matchtotable/1', { data: [3] })).ok()).toBeTruthy();
     });
 
-    test('"Frei" finishes the match as a walkover and frees the table', async ({ page, request }) => {
+    test('"Frei" frees the table and the match waits for its result', async ({ page, request }) => {
       await page.goto('/admin-view/assignView');
       await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
 
@@ -204,14 +206,87 @@ test.describe('Zuweiser View', () => {
       expect((await getMatch(request, 3)).state).toBe('Open');
     });
 
-    test('"2.Tisch" refuses a single match', async ({ page }) => {
+    test('"Kampflos" ends the match unplayed and frees the table', async ({ page, request }) => {
       await page.goto('/admin-view/assignView');
       await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
 
       await openTableActions(page, 1);
-      await tableCard(page, 1).getByRole('button', { name: '2.Tisch' }).click();
+      await tableCard(page, 1).getByRole('button', { name: 'Kampflos' }).click();
 
-      await expect(errorToast(page, 'Ein Spiel kann nich auf zwei Tische gelegt werden.')).toBeVisible();
+      await expect(tableCard(page, 1).locator('span.card-title')).toContainText('Frei', { timeout: 15000 });
+      const match = await getMatch(request, 3);
+      expect(match.state).toBe('Walkover');
+      expect(match.isKampflos).toBe(true);
+      expect(match.resultRaw).toBeFalsy();
+    });
+
+    test('a single match is offered neither "2.Tisch" nor "Entfernen"', async ({ page }) => {
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
+
+      await openTableActions(page, 1);
+      await expect(tableCard(page, 1).getByRole('button', { name: 'Zurück' })).toBeVisible();
+      await expect(tableCard(page, 1).getByRole('button', { name: '2.Tisch' })).toHaveCount(0);
+      await expect(tableCard(page, 1).getByRole('button', { name: 'Entfernen' })).toHaveCount(0);
+    });
+  });
+
+  test.describe('a group of four players on two tables', () => {
+    test.beforeEach(async ({ request }) => {
+      expect((await request.post('/api/v2/match/matchtotable/1', { data: groupOfFour })).ok()).toBeTruthy();
+    });
+
+    const onTwoTables = async (request: APIRequestContext) => {
+      const matches = await Promise.all(groupOfFour.map((id) => getMatch(request, id)));
+      return matches.filter((match) => match.secondTableNumber != null).map((match) => match.id);
+    };
+
+    test('"2.Tisch" lets the matches wait at a chosen free table as well', async ({ page, request }) => {
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+      await expect(tableCard(page, 1).getByRole('button', { name: 'Entfernen' })).toHaveCount(0);
+
+      await openTableActions(page, 1);
+      await tableCard(page, 1).getByRole('button', { name: '2.Tisch' }).click();
+      await dialog(page).locator('mat-select').click();
+      await page.getByRole('option', { name: 'Tisch Nr. 2', exact: true }).click();
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 6');
+      expect(await onTwoTables(request)).toEqual(groupOfFour);
+      // the group already plays on two tables
+      await expect(tableCard(page, 1).getByRole('button', { name: '2.Tisch' })).toHaveCount(0);
+    });
+
+    test('"Entfernen" takes a match off one of its two tables', async ({ page, request }) => {
+      expect((await request.post('/api/v2/match/matchtosecondtable/2', { data: groupOfFour })).ok()).toBeTruthy();
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+
+      await openTableActions(page, 2);
+      await tableCard(page, 2).getByRole('button', { name: 'Entfernen' }).click();
+      await dialog(page).locator('label').first().click();
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 5', { timeout: 15000 });
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 6');
+      expect(await onTwoTables(request)).toHaveLength(5);
+    });
+
+    test('a match started at one of its two tables leaves the other', async ({ page, request }) => {
+      expect((await request.post('/api/v2/match/matchtosecondtable/2', { data: groupOfFour })).ok()).toBeTruthy();
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+
+      // the table manager of table 2 starts match 244 there
+      const tables: Array<{ id: number; number: number }> = await (await request.get('/api/v2/table/all')).json();
+      const table2 = tables.find((table) => table.number === 2)!;
+      expect((await request.post(`/api/v2/match/start/244/${table2.id}`)).ok()).toBeTruthy();
+
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 5', { timeout: 15000 });
+      const started = await getMatch(request, 244);
+      expect([started.state, started.tableNumber, started.secondTableNumber]).toEqual(['Started', 2, null]);
     });
   });
 
