@@ -2,7 +2,7 @@
   "type" : "MATCH_LIST_CHANGED",
   "scope" : {
     "matchIds" : [ 2, 3, 1 ],
-    "typeIds" : [ ],
+    "typeIds" : [ 1 ],
     "tableIds" : [ ]
   },
   "payload" : {
@@ -16,6 +16,8 @@
       "matchIds" : [ 1 ],
       "asGroup" : null,
       "position" : 1
-    } ]
+    } ],
+    "matchIds" : [ 2, 3, 1 ],
+    "typeIds" : [ 1 ]
   }
 }

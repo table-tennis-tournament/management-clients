@@ -11,5 +11,7 @@ data class MatchCompleted(
     val sets1: Int,
     val sets2: Int,
     val typeId: Long? = null,
-    val tableId: Long? = null
+    val tableId: Long? = null,
+    /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
+    val affectedTypeIds: List<Long> = emptyList()
 )

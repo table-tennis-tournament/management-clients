@@ -11,6 +11,7 @@
     "sets1" : 3,
     "sets2" : 0,
     "typeId" : 1,
-    "tableId" : 1
+    "tableId" : 1,
+    "affectedTypeIds" : [ ]
   }
 }

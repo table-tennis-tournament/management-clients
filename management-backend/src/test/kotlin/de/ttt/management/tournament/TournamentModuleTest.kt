@@ -3,6 +3,7 @@ package de.ttt.management.tournament
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.expectExactJson
+import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
 import de.ttt.management.tournament.domain.CallState
 import de.ttt.management.tournament.domain.MatchState
@@ -33,6 +34,9 @@ class TournamentModuleTest {
 
     @Autowired
     private lateinit var db: DatabaseHelper
+
+    @Autowired
+    private lateinit var matchListService: MatchListService
 
     @BeforeEach
     fun setup() {
@@ -114,11 +118,43 @@ class TournamentModuleTest {
                         asGroup = null,
                         position = 0
                     )
-                )
+                ),
+                matchIds = listOf(matchId),
+                typeIds = listOf(1L)
             )
         )
 
         assertThat(matchService.getMatch(matchId)!!.state).isEqualTo(MatchState.InQueue)
+    }
+
+    @Test
+    fun `removing a queue entry names the removed match and its discipline`(events: PublishedEvents) {
+        val matchId = 1L
+        val uuid = matchListService.addMatchToList(listOf(matchId), asGroup = null, position = 0).uuid
+
+        restTestClient.delete()
+            .uri("/api/v2/matchlist/$uuid")
+            .exchange()
+            .expectStatus().isOk
+
+        assertThat(events.ofType(MatchListChanged::class.java).last())
+            .isEqualTo(MatchListChanged(entries = emptyList(), matchIds = listOf(matchId), typeIds = listOf(1L)))
+    }
+
+    @Test
+    fun `assigning a match names the other disciplines whose matches of the same players it blocks`(events: PublishedEvents) {
+        // player 1 also plays an open doubles match (double 1 = players 1, 3) in discipline 2
+        db.insertDiscipline(2, "Herren", kind = 2)
+        (3L..5L).forEach { db.insertPlayer(it, "First$it", "Last$it") }
+        db.insertDouble(1, player1Id = 1, player2Id = 3, disciplineId = 2)
+        db.insertDouble(2, player1Id = 4, player2Id = 5, disciplineId = 2)
+        db.insertMatch(2, 100001, 100002, disciplineId = 2)
+
+        matchService.assignMatch(1L, 1L)
+
+        assertThat(events.ofType(MatchAssigned::class.java)).containsExactly(
+            MatchAssigned(matchId = 1L, tableId = 1L, typeId = 1L, previousTableId = null, affectedTypeIds = listOf(2L))
+        )
     }
 
     @Test

@@ -8,7 +8,9 @@ data class MatchAssigned(
     val matchId: Long,
     val tableId: Long,
     val typeId: Long? = null,
-    val previousTableId: Long? = null
+    val previousTableId: Long? = null,
+    /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
+    val affectedTypeIds: List<Long> = emptyList()
 )
 
 /**
@@ -19,7 +21,9 @@ data class MatchStarted(
     val matchId: Long,
     val tableId: Long,
     val typeId: Long? = null,
-    val previousTableId: Long? = null
+    val previousTableId: Long? = null,
+    /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
+    val affectedTypeIds: List<Long> = emptyList()
 )
 
 /**
@@ -30,7 +34,9 @@ data class MatchStarted(
 data class MatchFreed(
     val matchIds: List<Long>,
     val typeIds: List<Long> = emptyList(),
-    val tableIds: List<Long> = emptyList()
+    val tableIds: List<Long> = emptyList(),
+    /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
+    val affectedTypeIds: List<Long> = emptyList()
 )
 
 /**
@@ -41,7 +47,9 @@ data class MatchFreed(
 data class MatchTakenBack(
     val matchIds: List<Long>,
     val typeIds: List<Long> = emptyList(),
-    val tableIds: List<Long> = emptyList()
+    val tableIds: List<Long> = emptyList(),
+    /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
+    val affectedTypeIds: List<Long> = emptyList()
 )
 
 /**
@@ -50,5 +58,7 @@ data class MatchTakenBack(
 data class MatchDeleted(
     val matchIds: List<Long> = emptyList(),
     val typeIds: List<Long> = emptyList(),
-    val tableIds: List<Long> = emptyList()
+    val tableIds: List<Long> = emptyList(),
+    /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
+    val affectedTypeIds: List<Long> = emptyList()
 )

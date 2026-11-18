@@ -49,13 +49,13 @@ class MatchService(
     @Transactional
     fun assignMatch(matchId: Long, tableId: Long): Boolean =
         transition(listOf(matchId), { it.assign(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
-            MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId))
+            MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId), affectedTypeIds = affectedTypeIds(listOf(t.match)))
         }
 
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean =
         transition(listOf(matchId), { it.start(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
-            MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId))
+            MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId), affectedTypeIds = affectedTypeIds(listOf(t.match)))
         }
 
     /**
@@ -79,7 +79,8 @@ class MatchService(
                 sets1 = t.match.sets1 ?: 0,
                 sets2 = t.match.sets2 ?: 0,
                 typeId = t.match.typeId,
-                tableId = t.previousTableId
+                tableId = t.previousTableId,
+                affectedTypeIds = affectedTypeIds(listOf(t.match))
             )
         }
 
@@ -104,7 +105,8 @@ class MatchService(
                 MatchDeleted(
                     matchIds = listOf(id),
                     typeIds = listOfNotNull(match?.typeId),
-                    tableIds = listOfNotNull(match?.tableId)
+                    tableIds = listOfNotNull(match?.tableId),
+                    affectedTypeIds = affectedTypeIds(listOfNotNull(match))
                 )
             )
         }
@@ -120,7 +122,8 @@ class MatchService(
                 MatchDeleted(
                     matchIds = matches.mapNotNull { it.id },
                     typeIds = listOf(id),
-                    tableIds = matches.mapNotNull { it.tableId }.distinct()
+                    tableIds = matches.mapNotNull { it.tableId }.distinct(),
+                    affectedTypeIds = affectedTypeIds(matches)
                 )
             )
         }
@@ -130,7 +133,12 @@ class MatchService(
     @Transactional
     fun freeMatches(matchIds: List<Long>): Boolean =
         transition(matchIds, TournamentMatch::free) { freed ->
-            MatchFreed(freed.mapNotNull { it.match.id }, freed.mapNotNull { it.match.typeId }.distinct(), freed.mapNotNull { it.previousTableId }.distinct())
+            MatchFreed(
+                freed.mapNotNull { it.match.id },
+                freed.mapNotNull { it.match.typeId }.distinct(),
+                freed.mapNotNull { it.previousTableId }.distinct(),
+                affectedTypeIds(freed.map { it.match })
+            )
         }
 
     @Transactional
@@ -199,8 +207,21 @@ class MatchService(
     private fun takenBackEvent(matches: List<Transitioned>) = MatchTakenBack(
         matchIds = matches.mapNotNull { it.match.id },
         typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
-        tableIds = matches.mapNotNull { it.previousTableId }.distinct()
+        tableIds = matches.mapNotNull { it.previousTableId }.distinct(),
+        affectedTypeIds = affectedTypeIds(matches.map { it.match })
     )
+
+    /**
+     * The other disciplines whose matches change `isPlayable` when [matches] start or stop blocking
+     * their players: open matches of the same players elsewhere.
+     */
+    private fun affectedTypeIds(matches: List<TournamentMatch>): List<Long> {
+        val playerIds = matches.flatMap { it.team1 + it.team2 }.mapNotNull { it.id }.toSet()
+        val ownTypeIds = matches.mapNotNull { it.typeId }.toSet()
+        return matchRepository.findOpenTypeIdsOfPlayers(playerIds, matches.mapNotNull { it.id })
+            .filter { it !in ownTypeIds }
+            .sorted()
+    }
 
     private fun calledEvent(matches: List<Transitioned>, callState: CallState) = MatchCalled(
         matchIds = matches.mapNotNull { it.match.id },

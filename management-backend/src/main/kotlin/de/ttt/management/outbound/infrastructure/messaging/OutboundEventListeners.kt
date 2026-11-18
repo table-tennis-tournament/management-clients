@@ -36,12 +36,12 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchAssigned) {
-        push(Topic.MATCHES, "MATCH_ASSIGNED", scope(listOf(event.matchId), listOfNotNull(event.typeId), listOfNotNull(event.tableId, event.previousTableId)), event)
+        push(Topic.MATCHES, "MATCH_ASSIGNED", scope(listOf(event.matchId), listOfNotNull(event.typeId) + event.affectedTypeIds, listOfNotNull(event.tableId, event.previousTableId)), event)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchStarted) {
-        push(Topic.MATCHES, "MATCH_STARTED", scope(listOf(event.matchId), listOfNotNull(event.typeId), listOfNotNull(event.tableId, event.previousTableId)), event)
+        push(Topic.MATCHES, "MATCH_STARTED", scope(listOf(event.matchId), listOfNotNull(event.typeId) + event.affectedTypeIds, listOfNotNull(event.tableId, event.previousTableId)), event)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
@@ -56,18 +56,18 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     fun on(event: MatchCompleted) {
         push(
             Topic.MATCHES, "MATCH_COMPLETED",
-            scope(listOf(event.matchId), listOfNotNull(event.typeId), listOfNotNull(event.tableId)), event
+            scope(listOf(event.matchId), listOfNotNull(event.typeId) + event.affectedTypeIds, listOfNotNull(event.tableId)), event
         )
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchFreed) {
-        push(Topic.MATCHES, "MATCH_FREED", scope(event.matchIds, event.typeIds, event.tableIds), event)
+        push(Topic.MATCHES, "MATCH_FREED", scope(event.matchIds, event.typeIds + event.affectedTypeIds, event.tableIds), event)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchTakenBack) {
-        push(Topic.MATCHES, "MATCH_TAKEN_BACK", scope(event.matchIds, event.typeIds, event.tableIds), event)
+        push(Topic.MATCHES, "MATCH_TAKEN_BACK", scope(event.matchIds, event.typeIds + event.affectedTypeIds, event.tableIds), event)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
@@ -77,7 +77,7 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchDeleted) {
-        push(Topic.MATCHES, "MATCH_DELETED", scope(event.matchIds, event.typeIds, event.tableIds), event)
+        push(Topic.MATCHES, "MATCH_DELETED", scope(event.matchIds, event.typeIds + event.affectedTypeIds, event.tableIds), event)
     }
 
     // --- tables ------------------------------------------------------------
@@ -92,7 +92,7 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchListChanged) {
-        push(Topic.QUEUE, "MATCH_LIST_CHANGED", scope(event.entries.flatMap { it.matchIds }, emptyList(), emptyList()), event)
+        push(Topic.QUEUE, "MATCH_LIST_CHANGED", scope(event.matchIds, event.typeIds, emptyList()), event)
     }
 
     // --- players -----------------------------------------------------------

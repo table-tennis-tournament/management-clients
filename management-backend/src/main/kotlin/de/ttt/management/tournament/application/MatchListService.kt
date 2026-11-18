@@ -40,7 +40,7 @@ class MatchListService(
         matchListRepository.save(newEntry)
 
         newIds.forEach { id -> updateMatch(id) { it.queue() } }
-        publishChange()
+        publishChange(changed = newIds)
         return newEntry
     }
 
@@ -49,7 +49,7 @@ class MatchListService(
         val entry = matchListRepository.findById(uuid).orElse(null) ?: return false
         matchListRepository.deleteById(uuid)
         entry.matchIds.forEach { id -> updateMatch(id) { it.dequeue() } }
-        publishChange()
+        publishChange(changed = entry.matchIds)
         return true
     }
 
@@ -98,7 +98,7 @@ class MatchListService(
             }
         }
         if (entries.isNotEmpty()) {
-            publishChange()
+            publishChange(changed = listOf(matchId))
         }
     }
 
@@ -108,13 +108,13 @@ class MatchListService(
         matchRepository.save(match)
     }
 
-    private fun publishChange() {
-        eventPublisher.publishEvent(
-            MatchListChanged(
-                matchListRepository.findAll().map {
-                    MatchListChanged.Entry(it.uuid, it.matchIds, it.asGroup, it.position)
-                }
-            )
-        )
+    /** Publishes the whole queue; [changed] names matches that just left or joined it. */
+    private fun publishChange(changed: List<Long> = emptyList()) {
+        val entries = matchListRepository.findAll().map {
+            MatchListChanged.Entry(it.uuid, it.matchIds, it.asGroup, it.position)
+        }
+        val matchIds = (entries.flatMap { it.matchIds } + changed).distinct()
+        val typeIds = matchIds.mapNotNull { id -> matchRepository.findById(id).orElse(null)?.typeId }.distinct()
+        eventPublisher.publishEvent(MatchListChanged(entries, matchIds, typeIds))
     }
 }

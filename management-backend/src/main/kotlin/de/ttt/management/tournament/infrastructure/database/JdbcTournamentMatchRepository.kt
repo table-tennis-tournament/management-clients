@@ -205,6 +205,25 @@ class JdbcTournamentMatchRepository(
         ))
     }
 
+    override fun findOpenTypeIdsOfPlayers(playerIds: Collection<Long>, excludedMatchIds: Collection<Long>): Set<Long> {
+        if (playerIds.isEmpty()) return emptySet()
+        val doubleSides = jdbcClient.sql("SELECT doub_id FROM doubles WHERE doub_play1_id IN (:ids) OR doub_play2_id IN (:ids)")
+            .param("ids", playerIds)
+            .query { rs, _ -> 100000 + rs.getLong("doub_id") }
+            .list()
+        return jdbcClient.sql(
+            """
+            SELECT DISTINCT matc_type_id FROM matches
+            WHERE matc_played = 0 AND matc_type_id IS NOT NULL AND matc_id NOT IN (:excluded)
+              AND (matc_play1_id IN (:sides) OR matc_play2_id IN (:sides))
+            """.trimIndent()
+        )
+            .param("excluded", excludedMatchIds.ifEmpty { listOf(-1L) })
+            .param("sides", playerIds + doubleSides)
+            .query { rs, _ -> rs.getLong("matc_type_id") }
+            .set()
+    }
+
     override fun findTableIdsInUse(): Set<Long> {
         return jdbcClient.sql("SELECT DISTINCT matc_tabl_id FROM matches WHERE matc_tabl_id > 0")
             .query { rs, _ -> rs.getLong("matc_tabl_id") }

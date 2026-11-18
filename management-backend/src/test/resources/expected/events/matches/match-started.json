@@ -9,6 +9,7 @@
     "matchId" : 1,
     "tableId" : 1,
     "typeId" : 1,
-    "previousTableId" : null
+    "previousTableId" : null,
+    "affectedTypeIds" : [ ]
   }
 }

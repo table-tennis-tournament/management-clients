@@ -11,6 +11,12 @@ interface TournamentMatchRepository {
     fun findByCallState(callState: CallState): List<TournamentMatch>
     fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch>
     fun findTableIdsInUse(): Set<Long>
+
+    /**
+     * The disciplines of the open matches, other than [excludedMatchIds], in which one of [playerIds]
+     * plays, alone or in a double.
+     */
+    fun findOpenTypeIdsOfPlayers(playerIds: Collection<Long>, excludedMatchIds: Collection<Long>): Set<Long>
     /**
      * Persists the lifecycle state the match holds (table, playing/played flags, walkover,
      * queue flag, start time, winner, result and call state). Returns the number of updated
