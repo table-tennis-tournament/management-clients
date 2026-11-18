@@ -1,15 +1,43 @@
 package de.ttt.management.tournament
 
-import de.ttt.management.ResourceIT
+import de.ttt.management.Api
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.ResourceTestConfiguration
+import de.ttt.management.Scenarios
+import de.ttt.management.TestState
 import de.ttt.management.expectExactJson
 import de.ttt.management.expectJson
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 
 /** `/api/v2/table`: tables, their matches and locks. */
-class TableResourceIT : ResourceIT() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
+@ActiveProfiles("test")
+@Import(ResourceTestConfiguration::class)
+class TableResourceIT {
+
+    @Autowired
+    private lateinit var api: Api
+
+    @Autowired
+    private lateinit var testState: TestState
+
+    @Autowired
+    private lateinit var scenarios: Scenarios
+
+    @Autowired
+    private lateinit var db: DatabaseHelper
+
+    @BeforeEach
+    fun resetState() = testState.reset()
 
     private val success = """{"success": true}"""
     private val tableNotFound = """{"success": false, "message": "Table not found"}"""
@@ -21,21 +49,21 @@ class TableResourceIT : ResourceIT() {
     inner class `tables with matches in every state` {
 
         @BeforeEach
-        fun setup() = givenMatchesInEveryState()
+        fun setup() = scenarios.givenMatchesInEveryState()
 
         @Test
         fun `all tables with their matches`() {
-            get("/table/all").expectStatus().isOk.expectJson("table/in-every-state/all")
+            api.get("/table/all").expectStatus().isOk.expectJson("table/in-every-state/all")
         }
 
         @Test
         fun `only the table without a match is free`() {
-            get("/table/free").expectStatus().isOk.expectJson("table/in-every-state/free")
+            api.get("/table/free").expectStatus().isOk.expectJson("table/in-every-state/free")
         }
 
         @Test
         fun `a table with a doubles match in the second call`() {
-            get("/table/2").expectStatus().isOk.expectJson("table/in-every-state/2")
+            api.get("/table/2").expectStatus().isOk.expectJson("table/in-every-state/2")
         }
     }
 
@@ -43,45 +71,45 @@ class TableResourceIT : ResourceIT() {
     inner class `twelve tables` {
 
         @BeforeEach
-        fun setup() = givenTwelveTables()
+        fun setup() = scenarios.givenTwelveTables()
 
         @Test
         fun `all tables`() {
-            get("/table/all").expectStatus().isOk.expectJson("table/all")
+            api.get("/table/all").expectStatus().isOk.expectJson("table/all")
         }
 
         @Test
         fun `the free tables`() {
-            get("/table/free").expectStatus().isOk.expectJson("table/free")
+            api.get("/table/free").expectStatus().isOk.expectJson("table/free")
         }
 
         @Test
         fun `a table by id`() {
-            get("/table/1").expectStatus().isOk.expectJson("table/1")
+            api.get("/table/1").expectStatus().isOk.expectJson("table/1")
         }
 
         @Test
         fun `an unknown table is not found`() {
-            get("/table/9999").expectStatus().isNotFound.expectBody().isEmpty()
+            api.get("/table/9999").expectStatus().isNotFound.expectBody().isEmpty()
         }
 
         @Test
         fun `locks and unlocks a table`() {
-            post("/table/1/lock").expectStatus().isOk.expectExactJson(success)
-            get("/table/1").expectStatus().isOk.expectJson("table/1-locked")
+            api.post("/table/1/lock").expectStatus().isOk.expectExactJson(success)
+            api.get("/table/1").expectStatus().isOk.expectJson("table/1-locked")
 
-            post("/table/1/unlock").expectStatus().isOk.expectExactJson(success)
-            get("/table/1").expectStatus().isOk.expectJson("table/1")
+            api.post("/table/1/unlock").expectStatus().isOk.expectExactJson(success)
+            api.get("/table/1").expectStatus().isOk.expectJson("table/1")
         }
 
         @Test
         fun `locking a locked table and unlocking an unlocked one change nothing`() {
-            post("/table/1/lock").expectStatus().isOk
-            post("/table/1/lock").expectStatus().isOk.expectExactJson(success)
+            api.post("/table/1/lock").expectStatus().isOk
+            api.post("/table/1/lock").expectStatus().isOk.expectExactJson(success)
             assertEquals(listOf(1L), lockedTableIds())
 
-            post("/table/1/unlock").expectStatus().isOk
-            post("/table/1/unlock").expectStatus().isOk.expectExactJson(success)
+            api.post("/table/1/unlock").expectStatus().isOk
+            api.post("/table/1/unlock").expectStatus().isOk.expectExactJson(success)
             assertEquals(emptyList(), lockedTableIds())
         }
 
@@ -91,27 +119,27 @@ class TableResourceIT : ResourceIT() {
             db.insertTable(20, "21")
             db.insertTable(21, "20")
 
-            post("/table/20/lock").expectStatus().isOk.expectExactJson(success)
+            api.post("/table/20/lock").expectStatus().isOk.expectExactJson(success)
             assertEquals(listOf(21L), lockedTableIds())
 
-            post("/table/20/unlock").expectStatus().isOk.expectExactJson(success)
+            api.post("/table/20/unlock").expectStatus().isOk.expectExactJson(success)
             assertEquals(emptyList(), lockedTableIds())
         }
 
         @Test
         fun `a locked table is not free`() {
-            post("/table/1/lock").expectStatus().isOk
-            get("/table/free").expectStatus().isOk.expectJson("table/free-table-1-locked")
+            api.post("/table/1/lock").expectStatus().isOk
+            api.get("/table/free").expectStatus().isOk.expectJson("table/free-table-1-locked")
         }
 
         @Test
         fun `rejects locking an unknown table`() {
-            post("/table/9999/lock").expectStatus().isBadRequest.expectExactJson(tableNotFound)
+            api.post("/table/9999/lock").expectStatus().isBadRequest.expectExactJson(tableNotFound)
         }
 
         @Test
         fun `rejects unlocking an unknown table`() {
-            post("/table/9999/unlock").expectStatus().isBadRequest.expectExactJson(tableNotFound)
+            api.post("/table/9999/unlock").expectStatus().isBadRequest.expectExactJson(tableNotFound)
         }
     }
 }

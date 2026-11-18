@@ -1,14 +1,35 @@
 package de.ttt.management.registration
 
-import de.ttt.management.ResourceIT
+import de.ttt.management.Api
+import de.ttt.management.DatabaseHelper
+import de.ttt.management.ResourceTestConfiguration
+import de.ttt.management.TestState
 import de.ttt.management.expectExactJson
 import de.ttt.management.expectExactJsonIgnoring
 import de.ttt.management.expectJson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 
 /** `/api/v2/players`: players, their registrations, payment and activity. */
-class PlayersResourceIT : ResourceIT() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
+@ActiveProfiles("test")
+@Import(ResourceTestConfiguration::class)
+class PlayersResourceIT {
+
+    @Autowired
+    private lateinit var api: Api
+
+    @Autowired
+    private lateinit var testState: TestState
+
+    @Autowired
+    private lateinit var db: DatabaseHelper
 
     private val success = """{"success": true}"""
 
@@ -18,6 +39,7 @@ class PlayersResourceIT : ResourceIT() {
      */
     @BeforeEach
     fun setup() {
+        testState.reset()
         db.insertClub(1, "TTC Musterstadt")
         db.insertDiscipline(1, "Herren")
         db.insertDiscipline(2, "Damen")
@@ -31,90 +53,90 @@ class PlayersResourceIT : ResourceIT() {
 
     @Test
     fun `all players`() {
-        get("/players").expectStatus().isOk.expectJson("players/players")
+        api.get("/players").expectStatus().isOk.expectJson("players/players")
     }
 
     @Test
     fun `the legacy all players path returns the same players`() {
-        get("/players/all").expectStatus().isOk.expectJson("players/players")
+        api.get("/players/all").expectStatus().isOk.expectJson("players/players")
     }
 
     @Test
     fun `a player by id`() {
-        get("/players/1").expectStatus().isOk.expectJson("players/player-1")
+        api.get("/players/1").expectStatus().isOk.expectJson("players/player-1")
     }
 
     @Test
     fun `an unknown player is not found`() {
-        get("/players/9999").expectStatus().isNotFound.expectBody().isEmpty()
+        api.get("/players/9999").expectStatus().isNotFound.expectBody().isEmpty()
     }
 
     @Test
     fun `the players of a discipline`() {
-        get("/players/type/1").expectStatus().isOk.expectJson("players/players-type-1")
+        api.get("/players/type/1").expectStatus().isOk.expectJson("players/players-type-1")
     }
 
     @Test
     fun `an unknown discipline has no players`() {
-        get("/players/type/9999").expectStatus().isOk.expectExactJson("[]")
+        api.get("/players/type/9999").expectStatus().isOk.expectExactJson("[]")
     }
 
     @Test
     fun `the registrations of disciplines without matches`() {
-        get("/players/allTypePerPlayer").expectStatus().isOk.expectJson("players/all-type-per-player")
+        api.get("/players/allTypePerPlayer").expectStatus().isOk.expectJson("players/all-type-per-player")
     }
 
     @Test
     fun `a discipline with matches shows no registrations`() {
         db.insertMatch(1, 1, 2, disciplineId = 1)
-        get("/players/allTypePerPlayer").expectStatus().isOk.expectExactJson("[]")
+        api.get("/players/allTypePerPlayer").expectStatus().isOk.expectExactJson("[]")
     }
 
     @Test
     fun `the load path is kept for the legacy clients`() {
-        get("/players/load").expectStatus().isOk.expectExactJson(success)
+        api.get("/players/load").expectStatus().isOk.expectExactJson(success)
     }
 
     @Test
     fun `registers a player`() {
-        post("/players", mapOf("firstName" to "Erika", "lastName" to "Musterfrau", "ttr" to 1450, "sex" to "w", "clubId" to 1))
+        api.post("/players", mapOf("firstName" to "Erika", "lastName" to "Musterfrau", "ttr" to 1450, "sex" to "w", "clubId" to 1))
             .expectStatus().isOk.expectJson("players/registered")
-        get("/players/4").expectStatus().isOk.expectJson("players/registered")
+        api.get("/players/4").expectStatus().isOk.expectJson("players/registered")
     }
 
     @Test
     fun `rejects registering a player without a name`() {
-        post("/players", mapOf("lastName" to "Musterfrau")).expectStatus().isBadRequest
+        api.post("/players", mapOf("lastName" to "Musterfrau")).expectStatus().isBadRequest
     }
 
     @Test
     fun `unregisters a player`() {
-        post("/players/3/unregister").expectStatus().isOk.expectExactJson(success)
-        get("/players/3").expectStatus().isNotFound
+        api.post("/players/3/unregister").expectStatus().isOk.expectExactJson(success)
+        api.get("/players/3").expectStatus().isNotFound
     }
 
     @Test
     fun `unregistering an unknown player fails`() {
-        post("/players/9999/unregister").expectStatus().isOk.expectExactJson("""{"success": false}""")
+        api.post("/players/9999/unregister").expectStatus().isOk.expectExactJson("""{"success": false}""")
     }
 
     @Test
     fun `records a payment for a registration`() {
-        post("/players/1/paid?paid=true").expectStatus().isOk.expectExactJson(success)
-        get("/players/allTypePerPlayer").expectStatus().isOk.expectJson("players/all-type-per-player-1-paid")
+        api.post("/players/1/paid?paid=true").expectStatus().isOk.expectExactJson(success)
+        api.get("/players/allTypePerPlayer").expectStatus().isOk.expectJson("players/all-type-per-player-1-paid")
 
-        post("/players/1/paid?paid=false").expectStatus().isOk.expectExactJson(success)
-        get("/players/allTypePerPlayer").expectStatus().isOk.expectJson("players/all-type-per-player")
+        api.post("/players/1/paid?paid=false").expectStatus().isOk.expectExactJson(success)
+        api.get("/players/allTypePerPlayer").expectStatus().isOk.expectJson("players/all-type-per-player")
     }
 
     @Test
     fun `a payment for an unknown registration fails`() {
-        post("/players/9999/paid?paid=true").expectStatus().isOk.expectExactJson("""{"success": false}""")
+        api.post("/players/9999/paid?paid=true").expectStatus().isOk.expectExactJson("""{"success": false}""")
     }
 
     @Test
     fun `rejects a registration id that is no number`() {
-        post("/players/abc/paid?paid=true").expectStatus().isBadRequest
+        api.post("/players/abc/paid?paid=true").expectStatus().isBadRequest
             // Spring's default error body
             .expectExactJsonIgnoring(
                 """{"timestamp": "ignored", "status": 400, "error": "Bad Request", "path": "/api/v2/players/abc/paid"}""",
@@ -124,16 +146,16 @@ class PlayersResourceIT : ResourceIT() {
 
     @Test
     fun `deactivates and activates a player`() {
-        post("/players/1/active/false").expectStatus().isOk.expectExactJson(success)
-        get("/players/1").expectStatus().isOk.expectJson("players/player-1-inactive")
+        api.post("/players/1/active/false").expectStatus().isOk.expectExactJson(success)
+        api.get("/players/1").expectStatus().isOk.expectJson("players/player-1-inactive")
 
-        post("/players/1/active/true").expectStatus().isOk.expectExactJson(success)
-        get("/players/1").expectStatus().isOk.expectJson("players/player-1")
+        api.post("/players/1/active/true").expectStatus().isOk.expectExactJson(success)
+        api.get("/players/1").expectStatus().isOk.expectJson("players/player-1")
     }
 
     @Test
     fun `rejects changing the activity of an unknown player`() {
-        post("/players/9999/active/true").expectStatus().isBadRequest
+        api.post("/players/9999/active/true").expectStatus().isBadRequest
             .expectExactJson("""{"success": false, "message": "Player not found"}""")
     }
 }

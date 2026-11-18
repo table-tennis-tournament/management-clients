@@ -42,9 +42,11 @@ All in `management-backend/src/test/kotlin/de/ttt/management/`:
 - **One REST test class per root resource:** `MatchResourceIT` for `/api/v2/match`, `MatchListResourceIT`,
   `MatchAggregatesResourceIT`, `PlayerCallResourceIT`, `TypesResourceIT`, `TableResourceIT`, `TablesResourceIT`,
   `TestSocketResourceIT` (tournament), `PlayersResourceIT`, `DisciplinesResourceIT` (registration),
-  `SettingsResourceIT`, `PrinterResourceIT` (settings). They extend `ResourceIT`, which resets the database and the
-  in-memory settings before every test and offers the scenarios `givenOpenMatches()`, `givenMatchesInEveryState()`
-  and `givenTwelveTables()`; a class that needs two scenarios has one `@Nested` class per scenario. Their expected
+  `SettingsResourceIT`, `PrinterResourceIT` (settings). They have no base class: each imports `ResourceTestConfiguration`, which
+  provides the injected helpers `Api` (the `/api/v2` calls and `expectMatch`), `TestState` (`reset()` empties the
+  database and restores the in-memory settings; every class calls it first in its `@BeforeEach`) and `Scenarios`
+  (`givenOpenMatches()`, `givenMatchesInEveryState()`, `givenTwelveTables()`). A class that needs two scenarios
+  has one `@Nested` class per scenario. Their expected
   files live in `expected/<resource>/`. All of them share one Spring context.
 - **No real printing:** `RecordingPrinterGateway` replaces the `lpr` gateway in every integration test (it knows
   the printers "PDF" and "Office") and records the jobs, so `PrinterResourceIT` checks what was printed where.
@@ -58,7 +60,7 @@ Pitfalls learned:
   UUID in a test is not always `…0001` (see `MatchListResourceIT`).
 - `TRUNCATE` commits in H2, so ITs must not be `@Transactional` around `clean()`.
 - In-memory state survives between tests that share a Spring context: the auto-start flag, print on assign and
-  the selected printer. `ResourceIT` resets all three before every test.
+  the selected printer. `TestState.reset()` restores all three.
 - Recording (`-DupdateExpected=true`) never fails: a test that compares two responses with the same file only
   overwrites it. Run the tests once more without the flag after recording.
 - After deleting or renaming test classes run `mvn clean test`; stale classes in `target/` keep running.

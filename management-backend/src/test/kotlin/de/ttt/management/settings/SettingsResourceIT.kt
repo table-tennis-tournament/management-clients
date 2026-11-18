@@ -1,15 +1,36 @@
 package de.ttt.management.settings
 
-import de.ttt.management.ResourceIT
+import de.ttt.management.Api
+import de.ttt.management.ResourceTestConfiguration
+import de.ttt.management.TestState
 import de.ttt.management.expectExactJson
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 
 /** `/api/v2/settings`: the runtime settings the admin view shows. */
-class SettingsResourceIT : ResourceIT() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
+@ActiveProfiles("test")
+@Import(ResourceTestConfiguration::class)
+class SettingsResourceIT {
+
+    @Autowired
+    private lateinit var api: Api
+
+    @Autowired
+    private lateinit var testState: TestState
+
+    @BeforeEach
+    fun resetState() = testState.reset()
 
     @Test
     fun `the default settings`() {
-        get("/settings/all").expectStatus().isOk.expectExactJson(
+        api.get("/settings/all").expectStatus().isOk.expectExactJson(
             """[
                 {"key": "printerName", "value": ""},
                 {"key": "alwaysPrint", "value": true},
@@ -20,11 +41,11 @@ class SettingsResourceIT : ResourceIT() {
 
     @Test
     fun `the settings after changing all of them`() {
-        post("/printer/set/Office").expectStatus().isOk
-        post("/printer/setprintonstart/false").expectStatus().isOk
-        post("/matchlist/active/true").expectStatus().isOk
+        api.post("/printer/set/Office").expectStatus().isOk
+        api.post("/printer/setprintonstart/false").expectStatus().isOk
+        api.post("/matchlist/active/true").expectStatus().isOk
 
-        get("/settings/all").expectStatus().isOk.expectExactJson(
+        api.get("/settings/all").expectStatus().isOk.expectExactJson(
             """[
                 {"key": "printerName", "value": "Office"},
                 {"key": "alwaysPrint", "value": false},

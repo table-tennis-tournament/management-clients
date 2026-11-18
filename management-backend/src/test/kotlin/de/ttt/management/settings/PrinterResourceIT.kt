@@ -1,25 +1,50 @@
 package de.ttt.management.settings
 
+import de.ttt.management.Api
+import de.ttt.management.DatabaseHelper
 import de.ttt.management.RecordingPrinterGateway
-import de.ttt.management.ResourceIT
+import de.ttt.management.ResourceTestConfiguration
+import de.ttt.management.TestState
 import de.ttt.management.expectExactJson
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.springframework.http.MediaType
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
+import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 
 /**
  * `/api/v2/printer`: printers, referee sheets and QR codes. The tests print on the
  * [RecordingPrinterGateway], which knows the printers "PDF" (the default) and "Office".
  */
-class PrinterResourceIT : ResourceIT() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
+@ActiveProfiles("test")
+@Import(ResourceTestConfiguration::class)
+class PrinterResourceIT {
+
+    @Autowired
+    private lateinit var api: Api
+
+    @Autowired
+    private lateinit var testState: TestState
+
+    @Autowired
+    private lateinit var db: DatabaseHelper
+
+    @Autowired
+    private lateinit var printer: RecordingPrinterGateway
 
     private val success = """{"success": true}"""
 
     /** Match 1 (players 1 vs 2) of discipline 1, group A, on table 1; match 2 (players 1 vs 2) is open. */
     @BeforeEach
     fun setup() {
+        testState.reset()
         db.insertDiscipline(1, "Herren")
         db.insertGroup(1, "A", disciplineId = 1)
         db.insertMatchType(1, "Gruppenspiel")
@@ -38,7 +63,7 @@ class PrinterResourceIT : ResourceIT() {
     }
 
     private fun expectSelectedPrinter(name: String) {
-        get("/settings/all").expectStatus().isOk.expectExactJson(
+        api.get("/settings/all").expectStatus().isOk.expectExactJson(
             """[
                 {"key": "printerName", "value": "$name"},
                 {"key": "alwaysPrint", "value": true},
@@ -51,27 +76,27 @@ class PrinterResourceIT : ResourceIT() {
 
     @Test
     fun `the printers`() {
-        get("/printer/all").expectStatus().isOk.expectExactJson("""["PDF", "Office"]""")
+        api.get("/printer/all").expectStatus().isOk.expectExactJson("""["PDF", "Office"]""")
     }
 
     @Test
     fun `selects a printer and unsets it again`() {
-        post("/printer/set/Office").expectStatus().isOk.expectExactJson(success)
+        api.post("/printer/set/Office").expectStatus().isOk.expectExactJson(success)
         expectSelectedPrinter("Office")
 
-        delete("/printer/set").expectStatus().isOk.expectExactJson(success)
+        api.delete("/printer/set").expectStatus().isOk.expectExactJson(success)
         expectSelectedPrinter("")
     }
 
     @Test
     fun `unsetting without a selection keeps the default`() {
-        delete("/printer/set").expectStatus().isOk.expectExactJson(success)
+        api.delete("/printer/set").expectStatus().isOk.expectExactJson(success)
         expectSelectedPrinter("")
     }
 
     @Test
     fun `rejects an unknown printer`() {
-        post("/printer/set/DefinitelyNotARealPrinter12345").expectStatus().isBadRequest
+        api.post("/printer/set/DefinitelyNotARealPrinter12345").expectStatus().isBadRequest
             .expectExactJson("""{"success": false, "message": "Printer not found"}""")
         expectSelectedPrinter("")
     }
@@ -80,33 +105,33 @@ class PrinterResourceIT : ResourceIT() {
 
     @Test
     fun `prints a referee sheet on the default printer`() {
-        post("/printer/print/1").expectStatus().isOk.expectExactJson(success)
+        api.post("/printer/print/1").expectStatus().isOk.expectExactJson(success)
         expectPrinted("PDF")
     }
 
     @Test
     fun `prints on the selected printer`() {
-        post("/printer/set/Office").expectStatus().isOk
-        post("/printer/print/1").expectStatus().isOk.expectExactJson(success)
+        api.post("/printer/set/Office").expectStatus().isOk
+        api.post("/printer/print/1").expectStatus().isOk.expectExactJson(success)
         expectPrinted("Office")
     }
 
     @Test
     fun `rejects printing an unknown match`() {
-        post("/printer/print/999999").expectStatus().isBadRequest
+        api.post("/printer/print/999999").expectStatus().isBadRequest
             .expectExactJson("""{"success": false, "message": "Match not found or error printing"}""")
         expectPrinted()
     }
 
     @Test
     fun `prints several referee sheets`() {
-        post("/printer/printAll", listOf(1, 2)).expectStatus().isOk.expectExactJson(success)
+        api.post("/printer/printAll", listOf(1, 2)).expectStatus().isOk.expectExactJson(success)
         expectPrinted("PDF", "PDF")
     }
 
     @Test
     fun `printing several sheets with an unknown match prints the others`() {
-        post("/printer/printAll", listOf(1, 999999)).expectStatus().isOk.expectExactJson("""{"success": false}""")
+        api.post("/printer/printAll", listOf(1, 999999)).expectStatus().isOk.expectExactJson("""{"success": false}""")
         expectPrinted("PDF")
     }
 
@@ -114,14 +139,14 @@ class PrinterResourceIT : ResourceIT() {
 
     @Test
     fun `assigning a match prints its referee sheet`() {
-        post("/match/matchtotable/2", listOf(2)).expectStatus().isOk
+        api.post("/match/matchtotable/2", listOf(2)).expectStatus().isOk
         expectPrinted("PDF")
     }
 
     @Test
     fun `with print on assign switched off, assigning prints nothing`() {
-        post("/printer/setprintonstart/false").expectStatus().isOk.expectExactJson(success)
-        get("/settings/all").expectStatus().isOk.expectExactJson(
+        api.post("/printer/setprintonstart/false").expectStatus().isOk.expectExactJson(success)
+        api.get("/settings/all").expectStatus().isOk.expectExactJson(
             """[
                 {"key": "printerName", "value": ""},
                 {"key": "alwaysPrint", "value": false},
@@ -129,7 +154,7 @@ class PrinterResourceIT : ResourceIT() {
             ]"""
         )
 
-        post("/match/matchtotable/2", listOf(2)).expectStatus().isOk
+        api.post("/match/matchtotable/2", listOf(2)).expectStatus().isOk
         expectPrinted()
     }
 
@@ -137,19 +162,19 @@ class PrinterResourceIT : ResourceIT() {
 
     @Test
     fun `the referee sheet as PDF`() {
-        get("/printer/printpdf/1").expectStatus().isOk
+        api.get("/printer/printpdf/1").expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_PDF)
             .expectBody().consumeWith { assertTrue(isPdf(it.responseBody ?: ByteArray(0))) }
     }
 
     @Test
     fun `no PDF for an unknown match`() {
-        get("/printer/printpdf/999999").expectStatus().isNotFound.expectBody().isEmpty()
+        api.get("/printer/printpdf/999999").expectStatus().isNotFound.expectBody().isEmpty()
     }
 
     @Test
     fun `a QR code`() {
-        get("/printer/getQrCode/some-content").expectStatus().isOk
+        api.get("/printer/getQrCode/some-content").expectStatus().isOk
             .expectHeader().contentType(MediaType.IMAGE_PNG)
             .expectBody().consumeWith {
                 val png = it.responseBody ?: ByteArray(0)

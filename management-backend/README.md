@@ -64,8 +64,8 @@ mvn test
 - `ApplicationTests` runs `ApplicationModules.verify()` to enforce Modulith module boundaries.
 - `RegistrationModuleTest` and `TournamentModuleTest` are `@ApplicationModuleTest` module integration tests.
 - `*IT` classes are `@SpringBootTest`s against an in-memory H2 database. The REST tests have one class per root
-  resource under `/api/v2` (`MatchResourceIT` for `/match`, `TableResourceIT` for `/table`, …), all extending
-  `ResourceIT`; their expected responses are in `src/test/resources/expected/<resource>/`.
+  resource under `/api/v2` (`MatchResourceIT` for `/match`, `TableResourceIT` for `/table`, …). They import
+  `ResourceTestConfiguration` and get the helpers `Api`, `TestState` and `Scenarios` injected; their expected responses are in `src/test/resources/expected/<resource>/`.
 - No integration test prints: `RecordingPrinterGateway` replaces the `lpr` gateway and records the jobs.
 
 Integration tests are deterministic:

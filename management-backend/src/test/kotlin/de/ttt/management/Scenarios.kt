@@ -1,77 +1,19 @@
 package de.ttt.management
 
 import de.ttt.management.DatabaseHelper.MatchResult
-import de.ttt.management.settings.application.PrinterService
 import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
-import org.junit.jupiter.api.BeforeEach
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import org.springframework.http.MediaType
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.client.RestTestClient
 
 /**
- * Base of the REST integration tests, one subclass per root resource under `/api/v2` (`MatchResourceIT` for
- * `/api/v2/match`, `TableResourceIT` for `/api/v2/table`, …). Every test starts from an empty database and the
- * default in-memory settings; the `given…` methods build the shared scenarios.
- *
- * All subclasses share one Spring context. Responses are compared completely, inline with `expectExactJson` or
- * with `expected/<resource>/<name>.json` via `expectJson` (see [ExpectedJson]).
+ * The tournament scenarios several REST tests start from (registered by [ResourceTestConfiguration]). Each
+ * expects an empty database, see [TestState.reset].
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureRestTestClient
-@ActiveProfiles("test")
-@Import(DatabaseHelperConfiguration::class)
-abstract class ResourceIT {
-
-    @Autowired
-    protected lateinit var restTestClient: RestTestClient
-
-    @Autowired
-    protected lateinit var db: DatabaseHelper
-
-    @Autowired
-    protected lateinit var matchService: MatchService
-
-    @Autowired
-    protected lateinit var matchListService: MatchListService
-
-    @Autowired
-    protected lateinit var printerService: PrinterService
-
-    @Autowired
-    protected lateinit var printer: RecordingPrinterGateway
-
-    @BeforeEach
-    fun resetDatabaseAndSettings() {
-        db.clean()
-        // in-memory state survives between tests that share the context
-        matchListService.setMatchListActive(false)
-        printerService.clearSelectedPrinter()
-        printerService.setPrintOnStart(true)
-        printer.reset()
-    }
-
-    protected fun get(path: String) = restTestClient.get().uri("/api/v2$path").exchange()
-
-    protected fun delete(path: String) = restTestClient.delete().uri("/api/v2$path").exchange()
-
-    protected fun post(path: String, body: Any? = null): RestTestClient.ResponseSpec {
-        val request = restTestClient.post().uri("/api/v2$path")
-        if (body != null) request.contentType(MediaType.APPLICATION_JSON).body(body)
-        return request.exchange()
-    }
-
-    protected fun put(path: String, body: Any) =
-        restTestClient.put().uri("/api/v2$path").contentType(MediaType.APPLICATION_JSON).body(body).exchange()
-
-    /** Compares the whole `GET /match/{id}` body with `expected/match/<name>.json`. */
-    protected fun expectMatch(id: Long, name: String) {
-        get("/match/$id").expectStatus().isOk.expectJson("match/$name")
-    }
+class Scenarios(
+    private val db: DatabaseHelper,
+    private val matchService: MatchService,
+    private val matchListService: MatchListService,
+    private val printer: RecordingPrinterGateway
+) {
 
     /**
      * Open matches for commands:
@@ -79,7 +21,7 @@ abstract class ResourceIT {
      * 2 (players 1 vs 3, shares player 1 with match 1); doubles discipline 2 with the open match 3 (double 1 =
      * players 1, 2 vs double 2 = players 3, 4); tables 1 to 3, all free.
      */
-    protected fun givenOpenMatches() {
+    fun givenOpenMatches() {
         db.insertDiscipline(1, "Herren")
         db.insertDiscipline(2, "Herren", kind = 2)
         db.insertMatchType(1, "Gruppenspiel")
@@ -109,7 +51,7 @@ abstract class ResourceIT {
      * Matches 1-3 and 5-7 are "Gruppenspiel" of group A, match 4 is a "Finale". Discipline 3 ("Senioren") is
      * inactive and has no matches. Players 1 and 3 play for club 1. Tables 1 to 4 exist; table 4 is free.
      */
-    protected fun givenMatchesInEveryState() {
+    fun givenMatchesInEveryState() {
         db.insertDiscipline(1, "Herren")
         db.insertDiscipline(2, "Herren", kind = 2)
         db.insertDiscipline(3, "Senioren", active = false)
@@ -157,7 +99,7 @@ abstract class ResourceIT {
      * Tables 1 to 12 (table manager 1 has 1-5, manager 2 has 6, 7, 8, 11, 12); table 2 holds match 1 (players 1
      * vs 2 of discipline 1), so the free tables are 1 and 3 to 12.
      */
-    protected fun givenTwelveTables() {
+    fun givenTwelveTables() {
         db.insertTables(1L..12L)
         db.insertDiscipline(1, "Herren")
         db.insertPlayer(1, "Jane", "Doe")

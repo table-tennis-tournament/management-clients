@@ -65,8 +65,9 @@ Full system: `docker compose up -d --build` starts MariaDB, CUPS, the backend (p
   (`ExpectedJson`, `DatabaseHelper`, fixed `Clock` and ids). Client specs reuse the backend's recorded events from
   `management-backend/src/test/resources/expected/events/`. A changed expected file is a behaviour change: review it.
 - **One REST test class per root resource.** A new endpoint under `/api/v2/<resource>` gets its tests in
-  `<Resource>ResourceIT` (extends `ResourceIT`), its expected files in `expected/<resource>/`, success and failure
-  cases alike. After `-DupdateExpected=true` run the tests once more without it: recording never fails.
+  `<Resource>ResourceIT`, its expected files in `expected/<resource>/`, success and failure cases alike. The class
+  imports `ResourceTestConfiguration` and gets its helpers injected (`Api`, `TestState`, `Scenarios`); its
+  `@BeforeEach` starts with `testState.reset()`. No base class. After `-DupdateExpected=true` run the tests once more without it: recording never fails.
 - **Unit tests are Vitest, e2e tests are Playwright.** No Karma, Jasmine or Protractor.
 - **Tables have an id and a number.** They differ in real data. `/table/{nr}/lock` and `/match/matchtotable/{nr}`
   take the number; most other endpoints take the id.

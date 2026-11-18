@@ -1,14 +1,38 @@
 package de.ttt.management.tournament
 
-import de.ttt.management.ResourceIT
+import de.ttt.management.Api
+import de.ttt.management.ResourceTestConfiguration
+import de.ttt.management.Scenarios
+import de.ttt.management.TestState
 import de.ttt.management.expectExactJson
 import de.ttt.management.expectJson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 
 /** `/api/v2/matchlist`: the Queue and auto-start. */
-class MatchListResourceIT : ResourceIT() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
+@ActiveProfiles("test")
+@Import(ResourceTestConfiguration::class)
+class MatchListResourceIT {
+
+    @Autowired
+    private lateinit var api: Api
+
+    @Autowired
+    private lateinit var testState: TestState
+
+    @Autowired
+    private lateinit var scenarios: Scenarios
+
+    @BeforeEach
+    fun resetState() = testState.reset()
 
     private val success = """{"success": true}"""
     private val entryNotFound = """{"success": false, "message": "MatchList entry not found"}"""
@@ -17,28 +41,28 @@ class MatchListResourceIT : ResourceIT() {
     private fun uuid(n: Int) = "00000000-0000-0000-0000-%012d".format(n)
 
     private fun add(matchIds: List<Long>, position: Int, asGroup: Long? = null) =
-        post("/matchlist/add", mapOf("matchIds" to matchIds, "asGroup" to asGroup, "position" to position))
+        api.post("/matchlist/add", mapOf("matchIds" to matchIds, "asGroup" to asGroup, "position" to position))
 
     @Nested
     inner class `reading the queue of matches in every state` {
 
         @BeforeEach
-        fun setup() = givenMatchesInEveryState()
+        fun setup() = scenarios.givenMatchesInEveryState()
 
         @Test
         fun `the queue`() {
-            get("/matchlist/all").expectStatus().isOk.expectJson("matchlist/all")
+            api.get("/matchlist/all").expectStatus().isOk.expectJson("matchlist/all")
         }
 
         @Test
         fun `the next entry once auto-start is active`() {
-            post("/matchlist/active/true").expectStatus().isOk.expectExactJson(success)
-            get("/matchlist/next").expectStatus().isOk.expectJson("matchlist/next")
+            api.post("/matchlist/active/true").expectStatus().isOk.expectExactJson(success)
+            api.get("/matchlist/next").expectStatus().isOk.expectJson("matchlist/next")
         }
 
         @Test
         fun `no next entry while auto-start is off`() {
-            get("/matchlist/next").expectStatus().isNoContent
+            api.get("/matchlist/next").expectStatus().isNoContent
         }
     }
 
@@ -46,15 +70,15 @@ class MatchListResourceIT : ResourceIT() {
     inner class `managing the queue of open matches` {
 
         @BeforeEach
-        fun setup() = givenOpenMatches()
+        fun setup() = scenarios.givenOpenMatches()
 
         @Test
         fun `adds a match, which goes into the queue`() {
             add(listOf(1), position = 1).expectStatus().isOk
                 .expectExactJson("""{"uuid": "${uuid(1)}", "matchIds": [1], "asGroup": null, "position": 1}""")
-            get("/matchlist/all").expectStatus().isOk
+            api.get("/matchlist/all").expectStatus().isOk
                 .expectExactJson("""[{"uuid": "${uuid(1)}", "matchIds": [1], "asGroup": null, "position": 1}]""")
-            expectMatch(1, "after-queue")
+            api.expectMatch(1, "after-queue")
         }
 
         @Test
@@ -62,7 +86,7 @@ class MatchListResourceIT : ResourceIT() {
             add(listOf(1), position = 0).expectStatus().isOk
             add(listOf(3), position = 0, asGroup = 7).expectStatus().isOk
             // the queue is ordered by position
-            get("/matchlist/all").expectStatus().isOk.expectExactJson(
+            api.get("/matchlist/all").expectStatus().isOk.expectExactJson(
                 """[
                     {"uuid": "${uuid(2)}", "matchIds": [3], "asGroup": 7, "position": 0},
                     {"uuid": "${uuid(1)}", "matchIds": [1], "asGroup": null, "position": 1}
@@ -79,23 +103,23 @@ class MatchListResourceIT : ResourceIT() {
 
         @Test
         fun `only open matches are queued`() {
-            post("/match/setResult/1", listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3))).expectStatus().isOk
+            api.post("/match/setResult/1", listOf(listOf(11, 5), listOf(11, 7), listOf(11, 3))).expectStatus().isOk
             add(listOf(1), position = 0).expectStatus().isBadRequest
                 .expectExactJson("""{"success": false, "message": "No open match to queue"}""")
-            get("/matchlist/all").expectStatus().isOk.expectExactJson("[]")
+            api.get("/matchlist/all").expectStatus().isOk.expectExactJson("[]")
         }
 
         @Test
         fun `removes an entry and its matches become open again`() {
             add(listOf(1), position = 0).expectStatus().isOk
-            delete("/matchlist/${uuid(1)}").expectStatus().isOk.expectExactJson(success)
-            get("/matchlist/all").expectStatus().isOk.expectExactJson("[]")
-            expectMatch(1, "open")
+            api.delete("/matchlist/${uuid(1)}").expectStatus().isOk.expectExactJson(success)
+            api.get("/matchlist/all").expectStatus().isOk.expectExactJson("[]")
+            api.expectMatch(1, "open")
         }
 
         @Test
         fun `rejects removing an unknown entry`() {
-            delete("/matchlist/unknown").expectStatus().isBadRequest.expectExactJson(entryNotFound)
+            api.delete("/matchlist/unknown").expectStatus().isBadRequest.expectExactJson(entryNotFound)
         }
 
         @Test
@@ -103,9 +127,9 @@ class MatchListResourceIT : ResourceIT() {
             add(listOf(1), position = 0).expectStatus().isOk
             add(listOf(3), position = 1).expectStatus().isOk
 
-            post("/matchlist/move/${uuid(2)}/0").expectStatus().isOk.expectExactJson(success)
+            api.post("/matchlist/move/${uuid(2)}/0").expectStatus().isOk.expectExactJson(success)
 
-            get("/matchlist/all").expectStatus().isOk.expectExactJson(
+            api.get("/matchlist/all").expectStatus().isOk.expectExactJson(
                 """[
                     {"uuid": "${uuid(2)}", "matchIds": [3], "asGroup": null, "position": 0},
                     {"uuid": "${uuid(1)}", "matchIds": [1], "asGroup": null, "position": 1}
@@ -115,33 +139,33 @@ class MatchListResourceIT : ResourceIT() {
 
         @Test
         fun `rejects moving an unknown entry`() {
-            post("/matchlist/move/unknown/0").expectStatus().isBadRequest.expectExactJson(entryNotFound)
+            api.post("/matchlist/move/unknown/0").expectStatus().isBadRequest.expectExactJson(entryNotFound)
         }
 
         @Test
         fun `auto-start starts the next match from the queue`() {
             add(listOf(1), position = 0).expectStatus().isOk
-            post("/matchlist/active/true").expectStatus().isOk
+            api.post("/matchlist/active/true").expectStatus().isOk
 
-            post("/matchlist/auto-start").expectStatus().isOk.expectExactJson(success)
+            api.post("/matchlist/auto-start").expectStatus().isOk.expectExactJson(success)
 
-            expectMatch(1, "after-auto-start")
-            get("/matchlist/all").expectStatus().isOk.expectExactJson("[]")
+            api.expectMatch(1, "after-auto-start")
+            api.get("/matchlist/all").expectStatus().isOk.expectExactJson("[]")
         }
 
         @Test
         fun `auto-start does not start a match whose player is already on a table`() {
             // match 2 shares player 1 with match 1, which is started on table 1
-            post("/match/start/1/1").expectStatus().isOk
+            api.post("/match/start/1/1").expectStatus().isOk
             add(listOf(2), position = 0).expectStatus().isOk
-            post("/matchlist/active/true").expectStatus().isOk
+            api.post("/matchlist/active/true").expectStatus().isOk
 
             // success means that no start failed; a blocked entry simply waits
-            post("/matchlist/auto-start").expectStatus().isOk.expectExactJson(success)
+            api.post("/matchlist/auto-start").expectStatus().isOk.expectExactJson(success)
 
-            expectMatch(2, "after-auto-start-blocked")
+            api.expectMatch(2, "after-auto-start-blocked")
             // UUID 1 went to the table history row written when match 1 was started
-            get("/matchlist/all").expectStatus().isOk
+            api.get("/matchlist/all").expectStatus().isOk
                 .expectExactJson("""[{"uuid": "${uuid(2)}", "matchIds": [2], "asGroup": null, "position": 0}]""")
         }
 
@@ -149,18 +173,18 @@ class MatchListResourceIT : ResourceIT() {
         fun `auto-start does nothing while it is switched off`() {
             add(listOf(1), position = 0).expectStatus().isOk
 
-            post("/matchlist/auto-start").expectStatus().isOk.expectExactJson(success)
+            api.post("/matchlist/auto-start").expectStatus().isOk.expectExactJson(success)
 
-            expectMatch(1, "after-queue")
+            api.expectMatch(1, "after-queue")
         }
 
         @Test
         fun `switching auto-start on and off shows in the settings`() {
-            post("/matchlist/active/true").expectStatus().isOk.expectExactJson(success)
-            get("/settings/all").expectStatus().isOk.expectJson("matchlist/settings-auto-start-on")
+            api.post("/matchlist/active/true").expectStatus().isOk.expectExactJson(success)
+            api.get("/settings/all").expectStatus().isOk.expectJson("matchlist/settings-auto-start-on")
 
-            post("/matchlist/active/false").expectStatus().isOk.expectExactJson(success)
-            get("/settings/all").expectStatus().isOk.expectJson("matchlist/settings-auto-start-off")
+            api.post("/matchlist/active/false").expectStatus().isOk.expectExactJson(success)
+            api.get("/settings/all").expectStatus().isOk.expectJson("matchlist/settings-auto-start-off")
         }
     }
 }
