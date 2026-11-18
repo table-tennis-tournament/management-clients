@@ -35,7 +35,8 @@ class PlayerService(
             sex = sex,
             club = clubId?.let { Club(id = it) }
         )
-        val saved = playerRepository.save(player)
+        // read the player back, so the answer carries the club's name and the defaults the database set
+        val saved = playerRepository.save(player).let { playerRepository.findById(it.id!!).orElseThrow() }
         eventPublisher.publishEvent(
             PlayerRegistered(
                 playerId = saved.id!!,

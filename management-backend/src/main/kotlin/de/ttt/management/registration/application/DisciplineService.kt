@@ -33,6 +33,7 @@ class DisciplineService(
     }
 
     private fun persistTypeColor(disciplineId: Long, bgColor: String, textColor: String): Boolean {
+        if (!isStorableColor(bgColor) || !isStorableColor(textColor)) return false
         val discipline = disciplineRepository.findById(disciplineId).orElse(null) ?: return false
         val existingColor = disciplineColorRepository.findByDisciplineId(disciplineId).orElse(null)
         
@@ -54,6 +55,9 @@ class DisciplineService(
         return true
     }
 }
+
+/** A CSS color the `mgmt_typecolors` columns can hold: a name like "white" or a hex color like "#ffffff". */
+private fun isStorableColor(color: String) = color.isNotBlank() && color.length <= 7
 
 data class DisciplineColorData(
     val bgColor: String,

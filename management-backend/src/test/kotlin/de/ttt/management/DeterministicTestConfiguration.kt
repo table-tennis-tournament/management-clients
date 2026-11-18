@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Replaces the application's [Clock] and [IdGenerator] so that timestamps and UUIDs in
- * responses and events are known in advance and can be compared exactly.
+ * responses and events are known in advance and can be compared exactly, and the printer gateway
+ * so that no test prints on a real printer.
  */
 @TestConfiguration(proxyBeanMethods = false)
 class DeterministicTestConfiguration {
@@ -25,6 +26,11 @@ class DeterministicTestConfiguration {
     @Bean
     @Primary
     fun sequentialIdGenerator() = SequentialIdGenerator()
+
+    /** No test prints on a real printer; see [RecordingPrinterGateway]. */
+    @Bean
+    @Primary
+    fun recordingPrinterGateway() = RecordingPrinterGateway()
 
     companion object {
         /** The test time zone, independent of the machine the tests run on. */

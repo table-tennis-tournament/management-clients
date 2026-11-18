@@ -34,12 +34,12 @@ class MatchListController(
     @Operation(summary = "Add match to list", description = "Adds one or more matches to the match list queue.")
     fun addMatch(
         @RequestBody request: AddMatchListRequest
-    ): ResponseEntity<MatchList> {
+    ): ResponseEntity<Any> {
         val newList = matchListService.addMatchToList(
             matchIds = request.matchIds,
             asGroup = request.asGroup,
             position = request.position
-        )
+        ) ?: return ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "No open match to queue"))
         return ResponseEntity.ok(newList)
     }
 

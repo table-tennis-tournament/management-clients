@@ -39,17 +39,28 @@ All in `management-backend/src/test/kotlin/de/ttt/management/`:
   turns `1` into a `Long` when the same map holds a `1L`, and the maps are not equal.
 - **`StompTestSupport.assertNextEvent(messages, topic, name)`**: compares the raw envelope of the next
   WebSocket message with `expected/events/<topic>/<name>.json`.
-- **Coverage:** `TournamentReadModelIT` (every tournament read endpoint, one match in every state),
-  `TableModuleIT`, `RegistrationModuleIT`, `SettingsModuleIT`, `UpdateTopicsIT` (all 16 event types).
+- **One REST test class per root resource:** `MatchResourceIT` for `/api/v2/match`, `MatchListResourceIT`,
+  `MatchAggregatesResourceIT`, `PlayerCallResourceIT`, `TypesResourceIT`, `TableResourceIT`, `TablesResourceIT`,
+  `TestSocketResourceIT` (tournament), `PlayersResourceIT`, `DisciplinesResourceIT` (registration),
+  `SettingsResourceIT`, `PrinterResourceIT` (settings). They extend `ResourceIT`, which resets the database and the
+  in-memory settings before every test and offers the scenarios `givenOpenMatches()`, `givenMatchesInEveryState()`
+  and `givenTwelveTables()`; a class that needs two scenarios has one `@Nested` class per scenario. Their expected
+  files live in `expected/<resource>/`. All of them share one Spring context.
+- **No real printing:** `RecordingPrinterGateway` replaces the `lpr` gateway in every integration test (it knows
+  the printers "PDF" and "Office") and records the jobs, so `PrinterResourceIT` checks what was printed where.
+- **Other integration tests:** `UpdateTopicsIT` (all 16 event types), `MatchLifecycleScenarioIT`,
+  `MatchLifecycleOutboundIT`, `TournamentOutboundIT`, `WebSocketHeartbeatIT`, `OpenApiIT`,
+  `JdbcTournamentMatchRepositoryIT`, `GroupingModuleIT`.
 
 Pitfalls learned:
 
 - `mgmt_matchtable` rows also take UUIDs: every assign or start onto a new table consumes one, so the queue
-  UUID in a test is not always `…0001` (see `TournamentModuleIT`, `TournamentReadModelIT`).
+  UUID in a test is not always `…0001` (see `MatchListResourceIT`).
 - `TRUNCATE` commits in H2, so ITs must not be `@Transactional` around `clean()`.
-- In-memory state survives between tests that share a Spring context: the auto-start flag
-  (`MatchListService.setMatchListActive`, reset in `TournamentModuleIT`/`TournamentReadModelIT`), print on start
-  and the selected printer (`PrinterModuleIT` resets both).
+- In-memory state survives between tests that share a Spring context: the auto-start flag, print on assign and
+  the selected printer. `ResourceIT` resets all three before every test.
+- Recording (`-DupdateExpected=true`) never fails: a test that compares two responses with the same file only
+  overwrites it. Run the tests once more without the flag after recording.
 - After deleting or renaming test classes run `mvn clean test`; stale classes in `target/` keep running.
 - Random order check: `mvn test '-Djunit.jupiter.testmethod.order.default=org.junit.jupiter.api.MethodOrderer$Random'
   '-Djunit.jupiter.testclass.order.default=org.junit.jupiter.api.ClassOrderer$Random'`.
@@ -87,10 +98,10 @@ Behaviour the expected files pinned, and how it was decided:
 
 `TournamentModuleTest` compares whole events; `TournamentMatchTest` compares the whole match after every
 transition; `JdbcTournamentMatchRepositoryIT` compares whole `matches`, `mgmt_matchtable` and
-`mgmt_match_call_state` rows; `TournamentModuleIT` compares `GET /match/{id}` with
-`expected/tournament/after-*.json` after every state change (take back now starts and calls the match first,
+`mgmt_match_call_state` rows; `MatchResourceIT` and its neighbours compare `GET /match/{id}` with
+`expected/match/after-*.json` after every state change (take back now starts and calls the match first,
 "stop a match that is not playing" uses an open match); `GroupingModuleIT` compares every `playerpergroup`
-column `save` writes; `PrinterModuleIT` reads print-on-start back from `/settings/all`; the error bodies of
+column `save` writes; `PrinterResourceIT` reads print-on-assign back from `/settings/all`; the error bodies of
 `PrinterController` and the player endpoints are compared.
 
 ### Step 5: mutation testing (done)

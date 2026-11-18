@@ -18,6 +18,7 @@ import java.time.LocalDateTime
 @Service("tournamentMatchService")
 class MatchService(
     private val matchRepository: TournamentMatchRepository,
+    private val tableRepository: TTTableRepository,
     private val disciplineRepository: TournamentDisciplineRepository,
     private val matchListService: MatchListService,
     private val eventPublisher: ApplicationEventPublisher,
@@ -46,14 +47,18 @@ class MatchService(
 
     fun getActiveTypes(): List<TournamentDiscipline> = disciplineRepository.findAll().filter { it.active }
 
+    /** A match can only go to a table that exists and is not locked. */
+    private fun isUsableTable(tableId: Long): Boolean =
+        tableRepository.findById(tableId).map { !it.isLocked }.orElse(false)
+
     @Transactional
-    fun assignMatch(matchId: Long, tableId: Long): Boolean =
+    fun assignMatch(matchId: Long, tableId: Long): Boolean = isUsableTable(tableId) &&
         transition(listOf(matchId), { it.assign(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
             MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId), affectedTypeIds = affectedTypeIds(listOf(t.match)))
         }
 
     @Transactional
-    fun startMatch(matchId: Long, tableId: Long): Boolean =
+    fun startMatch(matchId: Long, tableId: Long): Boolean = isUsableTable(tableId) &&
         transition(listOf(matchId), { it.start(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
             MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId), affectedTypeIds = affectedTypeIds(listOf(t.match)))
         }

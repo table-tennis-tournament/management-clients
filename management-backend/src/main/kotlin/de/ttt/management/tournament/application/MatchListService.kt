@@ -25,12 +25,14 @@ class MatchListService(
 
     fun getAllMatchList(): List<MatchList> = matchListRepository.findAll()
 
+    /** Queues the Open matches of [matchIds] as one entry at [position]; `null` when none of them can be queued. */
     @Transactional
-    fun addMatchToList(matchIds: List<Long>, asGroup: Long?, position: Int): MatchList {
+    fun addMatchToList(matchIds: List<Long>, asGroup: Long?, position: Int): MatchList? {
         val existingIds = matchListRepository.findAll().flatMap { it.matchIds }.toSet()
         val newIds = matchIds
             .filter { it !in existingIds }
             .filter { id -> matchRepository.findById(id).map { it.state == MatchState.Open }.orElse(false) }
+        if (newIds.isEmpty()) return null
 
         val entries = matchListRepository.findAll().toMutableList()
         entries.filter { it.position >= position }.forEach { it.position += 1 }

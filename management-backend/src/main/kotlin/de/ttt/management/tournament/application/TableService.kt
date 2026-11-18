@@ -47,12 +47,13 @@ class TableService(
 
     private fun idOfNumber(number: Long): Long? = getTableByName(number.toString())?.id
 
+    /** Locks or unlocks table [id]; a table already in that state stays as it is and publishes nothing. */
     private fun setLocked(id: Long, locked: Boolean): Boolean {
-        val updated = ttTableRepository.setLocked(id, locked) > 0
-        if (updated) {
-            eventPublisher.publishEvent(TableLockChanged(tableId = id, locked = locked))
-        }
-        return updated
+        val table = ttTableRepository.findById(id).orElse(null) ?: return false
+        if (table.isLocked == locked) return true
+        ttTableRepository.setLocked(id, locked)
+        eventPublisher.publishEvent(TableLockChanged(tableId = id, locked = locked))
+        return true
     }
 
     @Transactional

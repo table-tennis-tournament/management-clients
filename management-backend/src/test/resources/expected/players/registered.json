@@ -1,0 +1,18 @@
+{
+  "id" : 4,
+  "firstName" : "Erika",
+  "lastName" : "Musterfrau",
+  "email" : null,
+  "telNr" : null,
+  "location" : null,
+  "street" : null,
+  "plz" : null,
+  "sex" : "w",
+  "ttr" : 1450,
+  "club" : {
+    "id" : 1,
+    "name" : "TTC Musterstadt"
+  },
+  "paid" : false,
+  "active" : true
+}

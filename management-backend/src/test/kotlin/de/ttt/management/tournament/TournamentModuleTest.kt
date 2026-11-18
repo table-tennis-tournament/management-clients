@@ -130,7 +130,7 @@ class TournamentModuleTest {
     @Test
     fun `removing a queue entry names the removed match and its discipline`(events: PublishedEvents) {
         val matchId = 1L
-        val uuid = matchListService.addMatchToList(listOf(matchId), asGroup = null, position = 0).uuid
+        val uuid = matchListService.addMatchToList(listOf(matchId), asGroup = null, position = 0)!!.uuid
 
         restTestClient.delete()
             .uri("/api/v2/matchlist/$uuid")

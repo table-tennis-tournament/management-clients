@@ -96,7 +96,10 @@ class TournamentMatchController(
         @Parameter(description = "ID of the match") @PathVariable id: Long,
         @RequestBody sets: List<List<Int>>
     ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.setResult(id, sets.toSetResults())
+        // an invalid set (e.g. 11:10) is a rejected command, not a server error
+        val setResults = runCatching { sets.toSetResults() }.getOrNull()
+            ?: return ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not set result."))
+        val success = matchService.setResult(id, setResults)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -110,7 +113,10 @@ class TournamentMatchController(
         @Parameter(description = "ID of the match") @PathVariable id: Long,
         @RequestBody sets: List<List<Int>>
     ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.updateResult(id, sets.toSetResults())
+        // an invalid set (e.g. 11:10) is a rejected command, not a server error
+        val setResults = runCatching { sets.toSetResults() }.getOrNull()
+            ?: return ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not update result."))
+        val success = matchService.updateResult(id, setResults)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {

@@ -26,7 +26,11 @@ class DatabaseHelperConfiguration {
  * All ITs share one in-memory H2 database, so each test calls [clean] in its `@BeforeEach`
  * and must not rely on rows written by another test.
  */
-class DatabaseHelper(private val jdbc: JdbcTemplate, private val idGenerator: SequentialIdGenerator) {
+class DatabaseHelper(
+    /** For tests that check rows the API does not show. */
+    val jdbc: JdbcTemplate,
+    private val idGenerator: SequentialIdGenerator
+) {
 
     /**
      * Deletes every row of every table except Flyway's history and restarts the id sequences,
