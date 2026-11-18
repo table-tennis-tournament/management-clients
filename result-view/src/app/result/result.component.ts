@@ -60,6 +60,15 @@ export class ResultComponent implements OnInit {
 
   private startTimer() {}
 
+  trackByTypeId(_index: number, type: Type): number {
+    return type.id;
+  }
+
+  /** Keeps the rendered group cards across reloads. */
+  trackByGroupName(_index: number, group: DisciplineGroup): string {
+    return group.name;
+  }
+
   getColor(currentType: Type, selectedTypeId: number | null) {
     return currentType.id === selectedTypeId ? 'warn' : 'accent';
   }

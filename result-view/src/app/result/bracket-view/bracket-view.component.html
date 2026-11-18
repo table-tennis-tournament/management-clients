@@ -2,7 +2,7 @@
   <div *ngFor="let round of rounds; let r = index" class="round" [style.left.px]="r * roundWidth">
     <div class="stage-title">{{ names[r] }}</div>
     <div class="round-matches" [style.height.px]="matchAreaHeight">
-      <div *ngFor="let entry of round" class="match" [style.top.px]="entry.top">
+      <div *ngFor="let entry of round; trackBy: trackByMatch" class="match" [style.top.px]="entry.top">
         <div class="match-content">
           <div class="team">
             <span>{{ teamLabel(entry.match.team1) }}</span>

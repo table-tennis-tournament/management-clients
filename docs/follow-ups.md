@@ -19,7 +19,7 @@ Resolved: the per-app `Dockerfile`s, their `my_server_block.conf` and `admin-vie
 
 ## 4. result-view
 
-Resolved: result-view follows the `matches` topic with its own copy of `src/app/shared/update-events/` and the config `src/app/updates/result-updates.ts`; it reloads the displayed discipline when one of its results changes. The selected discipline lives in the store (`selectedTypeId`), so reloads keep the tab, the hardcoded `loadMatches({typeId: 8})` is gone, and `team-item` shows the club the backend now sends. `e2e/live-updates.spec.ts` checks a result entered elsewhere appears without reloading. Still open: no `trackBy` and no `OnPush`, so every reload re-renders all group cards and the bracket.
+Resolved: result-view follows the `matches` topic with its own copy of `src/app/shared/update-events/` and the config `src/app/updates/result-updates.ts`; it reloads the displayed discipline when one of its results changes. The selected discipline lives in the store (`selectedTypeId`), so reloads keep the tab, the hardcoded `loadMatches({typeId: 8})` is gone, and `team-item` shows the club the backend now sends. `e2e/live-updates.spec.ts` checks a result entered elsewhere appears without reloading. The result components use `OnPush` and track groups and matches, so a reload keeps the rendered cards.
 
 ## 5. PlantUML diagrams
 
