@@ -1,5 +1,6 @@
 package de.ttt.management.tournament.application
 
+import de.ttt.management.tournament.KnockoutMatchFilled
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchDeleted
@@ -9,6 +10,7 @@ import de.ttt.management.tournament.MatchResultUpdated
 import de.ttt.management.tournament.MatchStarted
 import de.ttt.management.tournament.MatchTakenBack
 import de.ttt.management.tournament.domain.*
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -108,9 +110,13 @@ class MatchService(
             )
         }
 
+    /**
+     * Completes the match with its final result. In the knockout stage its winner then moves on into the next
+     * match of the bracket, in the same transaction.
+     */
     @Transactional
-    fun setResult(matchId: Long, sets: List<SetResult>): Boolean =
-        transition(listOf(matchId), { it.complete(sets) }) { (t) ->
+    fun setResult(matchId: Long, sets: List<SetResult>): Boolean {
+        val completed = transition(listOf(matchId), { it.complete(sets) }) { (t) ->
             MatchCompleted(
                 matchId = matchId,
                 winnerId = t.match.winnerSideId,
@@ -121,6 +127,35 @@ class MatchService(
                 affectedTypeIds = affectedTypeIds(listOf(t.match))
             )
         }
+        if (completed) moveKnockoutWinnerOn(matchId)
+        return completed
+    }
+
+    /**
+     * The legacy backend's `writeNextKoMatch`: puts the winner of the knockout match [matchId] into its Side of
+     * the next match. Nothing moves on from a group match or the final; a missing next match is logged.
+     */
+    private fun moveKnockoutWinnerOn(matchId: Long) {
+        val match = matchRepository.findById(matchId).orElse(null) ?: return
+        val nextNr = match.nextKnockoutMatchNr ?: return
+        val typeId = match.typeId ?: return
+        val next = matchRepository.findByTypeIdAndNr(typeId, nextNr)
+        if (next == null) {
+            log.warn("The winner of match {} (nr {}) cannot move on: discipline {} has no match nr {}", matchId, match.nr, typeId, nextNr)
+            return
+        }
+        next.takeWinnerOf(match)
+        if (matchRepository.saveSides(next) > 0) {
+            eventPublisher.publishEvent(
+                KnockoutMatchFilled(
+                    matchId = requireNotNull(next.id),
+                    fromMatchId = matchId,
+                    typeId = next.typeId,
+                    tableIds = listOfNotNull(next.tableId, next.secondTableId)
+                )
+            )
+        }
+    }
 
     @Transactional
     fun updateResult(matchId: Long, sets: List<SetResult>): Boolean =
@@ -270,4 +305,8 @@ class MatchService(
         typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
         tableIds = matches.flatMap { it.previousTableIds }.distinct()
     )
+
+    private companion object {
+        val log = LoggerFactory.getLogger(MatchService::class.java)
+    }
 }

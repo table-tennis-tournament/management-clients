@@ -37,6 +37,8 @@ class TournamentMatch(
     var secondTableNumber: Int? = null,
     var typeId: Long? = null,
     var type: TournamentDiscipline? = null,
+    /** The stored group id (`matc_grou_id`); [KNOCKOUT_GROUP_ID] marks the knockout stage. */
+    var groupId: Long? = null,
     var nr: Int? = null,
     var roundNumber: Int? = null,
     var startTime: LocalDateTime? = null
@@ -192,6 +194,37 @@ class TournamentMatch(
     }
 
     /**
+     * The number of the knockout match this match's winner moves on to, or `null` for a group match and for
+     * the final. mktt numbers a knockout match `round * 1000 + position`; the winners of positions `2n - 1` and
+     * `2n` meet at position `n` of the round before (the legacy backend's `writeNextKoMatch`).
+     */
+    val nextKnockoutMatchNr: Int?
+        get() {
+            val nr = nr ?: return null
+            if (groupId != KNOCKOUT_GROUP_ID || matchType?.id?.let { it in MOVES_WINNER_ON } != true) return null
+            return ((nr / 1000) - 1) * 1000 + ((nr % 1000) + 1) / 2
+        }
+
+    /**
+     * Puts the winner of the knockout match [previous] into its Side of this match: Side 1 for an odd
+     * [previous] number, Side 2 for an even one. A Side that is already set is overwritten, as in the legacy
+     * backend, so a corrected result moves the corrected winner on.
+     */
+    fun takeWinnerOf(previous: TournamentMatch) {
+        require(previous.nextKnockoutMatchNr != null && previous.nextKnockoutMatchNr == nr) {
+            "Only the winner of a knockout match that leads to this match moves on into it"
+        }
+        val winnerSideId = requireNotNull(previous.winnerSideId) { "Only a match with a winner moves its winner on" }
+        if (requireNotNull(previous.nr) % 1000 % 2 == 1) {
+            side1Id = winnerSideId
+            team1 = previous.winner
+        } else {
+            side2Id = winnerSideId
+            team2 = previous.winner
+        }
+    }
+
+    /**
      * Puts a match that waits at a table on a second table as well, for a group that plays on two tables. The
      * match is started at one of them later.
      */
@@ -316,3 +349,9 @@ class TournamentMatch(
         this.result = "$sets1 : $sets2"
     }
 }
+
+/** The group id mktt gives every knockout match. */
+const val KNOCKOUT_GROUP_ID = 999L
+
+/** The knockout match types whose winner moves on: Halbfinale (2) to Runde 0 (8); the final (1) ends the bracket. */
+private val MOVES_WINNER_ON = 2L..8L

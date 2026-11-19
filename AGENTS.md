@@ -13,7 +13,7 @@ The tournament database is prepared offline by **mktt**, a third-party tool; thi
 | `admin-view/` | Angular SPA for the tournament administrator (dev port 4201) | standalone components, ngrx |
 | `tablemanager-view/` | Angular SPA for a table manager (dev port 4200) | standalone components, ngrx |
 | `result-view/` | Angular SPA, public result display (dev port 4202) | NgModules, ngrx |
-| `backend/` | Legacy Scala/Play backend | Not built, tested or deployed. Read it only as a reference for logic not migrated yet (knockout placement, `writeNextKoMatch`) |
+| `backend/` | Legacy Scala/Play backend | Not built, tested or deployed. Read it only as a reference for the behaviour it had |
 | `testdata/` | mktt database dumps | `create-saturday.sql`/`create-sunday.sql` seed `docker compose`; `create-tables.sql` seeds the admin-view and tablemanager-view e2e tests |
 | `Dockerfile-clients`, `my_server_block.conf` | The one clients image | nginx serves `/admin-view`, `/result-view`, `/tablemanager-view` and proxies `/api/v2` and `/ttt-websocket` |
 | `docs/arc42/` | Architecture (arc42 with C4-PlantUML diagrams) | `docs/adr/` holds the ADRs |

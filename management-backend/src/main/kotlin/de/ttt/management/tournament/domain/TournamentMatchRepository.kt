@@ -12,6 +12,9 @@ interface TournamentMatchRepository {
     fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch>
     fun findTableIdsInUse(): Set<Long>
 
+    /** The match numbered [nr] in discipline [typeId] (the first by id if mktt numbered several alike). */
+    fun findByTypeIdAndNr(typeId: Long, nr: Int): TournamentMatch?
+
     /**
      * The disciplines of the open matches, other than [excludedMatchIds], in which one of [playerIds]
      * plays, alone or in a double.
@@ -23,6 +26,11 @@ interface TournamentMatchRepository {
      * match rows, `0` if the match does not exist.
      */
     fun save(match: TournamentMatch): Int
+    /**
+     * Writes the two Sides (`matc_play1_id`, `matc_play2_id`) of a knockout match a winner moved on into.
+     * Returns the number of updated rows, `0` if the match does not exist.
+     */
+    fun saveSides(match: TournamentMatch): Int
     fun deleteById(id: Long): Int
     fun deleteByTypeId(typeId: Long): Int
 }

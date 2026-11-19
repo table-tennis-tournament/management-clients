@@ -196,6 +196,21 @@ class UpdateTopicsIT {
     }
 
     @Test
+    fun `a knockout winner moving on publishes MATCH_COMPLETED, then MATCH_SIDES_SET for the next match`() {
+        db.insertMatchType(3, "Viertelfinale")
+        db.insertMatchType(2, "Halbfinale")
+        db.insertMatch(11, 1, 2, disciplineId = disciplineId, groupId = 999, matchTypeId = 3, nr = 3001)
+        db.insertMatch(12, null, null, disciplineId = disciplineId, groupId = 999, matchTypeId = 2, nr = 2001)
+        matchService.assignMatch(12, tableId)
+        val messages = subscribe()
+
+        assertTrue(matchService.setResult(11, listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3))))
+
+        assertNextEvent(messages, "matches", "match-completed-knockout")
+        assertNextEvent(messages, "matches", "match-sides-set")
+    }
+
+    @Test
     fun `freeing a match on a table publishes MATCH_FREED with that table`() {
         matchService.assignMatch(matchId, tableId)
         val messages = subscribe()

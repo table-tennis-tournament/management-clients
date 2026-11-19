@@ -13,10 +13,11 @@ import matchCompleted from '../../../../management-backend/src/test/resources/ex
 import matchDeleted from '../../../../management-backend/src/test/resources/expected/events/matches/match-deleted.json';
 import matchFreed from '../../../../management-backend/src/test/resources/expected/events/matches/match-freed.json';
 import matchResultUpdated from '../../../../management-backend/src/test/resources/expected/events/matches/match-result-updated.json';
+import matchSidesSet from '../../../../management-backend/src/test/resources/expected/events/matches/match-sides-set.json';
 import matchStarted from '../../../../management-backend/src/test/resources/expected/events/matches/match-started.json';
 import matchTakenBack from '../../../../management-backend/src/test/resources/expected/events/matches/match-taken-back.json';
 
-const RESULT_CHANGES = { matchCompleted, matchDeleted, matchFreed, matchResultUpdated, matchTakenBack };
+const RESULT_CHANGES = { matchCompleted, matchDeleted, matchFreed, matchResultUpdated, matchSidesSet, matchTakenBack };
 const NO_RESULT_CHANGES = { matchAssigned, matchCalled, matchStarted };
 
 describe('the result updates service', () => {

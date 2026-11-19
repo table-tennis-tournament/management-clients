@@ -51,6 +51,7 @@ class JdbcTournamentMatchRepository(
             secondTableId = rs.getObject("second_table_id")?.let { (it as Number).toLong() },
             secondTableNumber = rs.getString("second_table_number")?.toIntOrNull(),
             typeId = rs.getObject("matc_type_id")?.let { (it as Number).toLong() },
+            groupId = pgId,
             type = rs.getObject("matc_type_id")?.let { (it as Number).toLong() }?.let { tid ->
                 TournamentDiscipline.fromStored(
                     id = tid,
@@ -232,6 +233,16 @@ class JdbcTournamentMatchRepository(
             .set()
     }
 
+    override fun findByTypeIdAndNr(typeId: Long, nr: Int): TournamentMatch? =
+        withPlayability(resolvePlayers(
+            jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_nr = :nr ORDER BY m.matc_id"))
+                .param("typeId", typeId)
+                .param("nr", nr)
+                .query(rowMapper)
+                .list(),
+            withNames = true
+        )).firstOrNull()
+
     override fun findTableIdsInUse(): Set<Long> {
         return jdbcClient.sql(
             "SELECT matc_tabl_id FROM matches WHERE matc_tabl_id > 0 UNION SELECT tableId FROM mgmt_matchtable"
@@ -295,6 +306,16 @@ class JdbcTournamentMatchRepository(
                 .param("id", matchId)
                 .update()
         }
+    }
+
+    /** The Sides belong to mktt; only a winner moving on in the knockout stage writes them, as the legacy backend did. */
+    override fun saveSides(match: TournamentMatch): Int {
+        val id = requireNotNull(match.id) { "Only an existing match can be saved" }
+        return jdbcClient.sql("UPDATE matches SET matc_play1_id = :side1, matc_play2_id = :side2 WHERE matc_id = :id")
+            .param("side1", match.side1Id ?: 0)
+            .param("side2", match.side2Id ?: 0)
+            .param("id", id)
+            .update()
     }
 
     override fun deleteById(id: Long): Int {

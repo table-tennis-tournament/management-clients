@@ -18,7 +18,7 @@ The root package is `de.ttt.management`. Each direct sub-package is a Spring Mod
 | Module | Responsibility |
 |---|---|
 | `registration` | Players, clubs, doubles, disciplines and registration state (paid / active / seed). Register/unregister players. |
-| `grouping` | Group standings when a group is completed. Group formation and seeding stay in mktt; knockout placement is not migrated yet. |
+| `grouping` | Group standings when a group is completed. Group formation and seeding stay in mktt. A knockout winner moves on into the next match in `tournament`. |
 | `tournament` | Match lifecycle and state machine, the Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations. |
 | `settings` | System settings and printing (referee sheets, certificates). |
 | `outbound` | The single WebSocket publisher; consumes domain events and pushes update events to five topics (`/topic/matches`, `tables`, `queue`, `players`, `settings`, ADR 0003). |
@@ -125,7 +125,7 @@ five topics instead of `/topic/updates` (ADR 0003), the backend's own tables in 
 
 ### Open work (next slices)
 
-- **Grouping (formation/knockout)**: group *formation* and seeding remain offline (mktt); the knockout placement (`writeNextKoMatch` — write the winner into the next KO match) is not migrated.
+- **Grouping (formation)**: group *formation* and seeding remain offline (mktt). The knockout placement (`writeNextKoMatch`) is migrated to `tournament` (`MatchService.setResult`).
 - **`isMatchPlaying`** is kept (dead for now) — user intends to use it later.
 
 ### Handoff note

@@ -16,7 +16,7 @@ This project follows a **Modular Monolith** architecture using **Spring Modulith
 
 ### Modules
 - `registration`: players, clubs, doubles, disciplines and registration state (paid/active/seed).
-- `grouping`: group standings when a group's last match is completed (formation and seeding stay in mktt; knockout placement is not migrated yet).
+- `grouping`: group standings when a group's last match is completed (formation and seeding stay in mktt; `tournament` moves a knockout winner on into the next match).
 - `tournament`: match lifecycle, Queue/MatchList, table assignment, results, caller and table-manager operations.
 - `settings`: system settings and printing (referee sheets, certificates).
 - `outbound`: the single WebSocket publisher, consuming domain events.

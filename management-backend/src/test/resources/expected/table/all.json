@@ -52,12 +52,14 @@
       "kind" : 1,
       "active" : true
     },
+    "groupId" : null,
     "nr" : 1,
     "roundNumber" : 1,
     "startTime" : null,
     "callNumber" : 0,
     "isBlocking" : true,
     "isPlayable" : false,
+    "nextKnockoutMatchNr" : null,
     "player1" : {
       "id" : 1,
       "firstName" : "Jane",

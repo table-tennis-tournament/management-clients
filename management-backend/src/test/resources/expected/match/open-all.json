@@ -52,12 +52,14 @@
     "kind" : 1,
     "active" : true
   },
+  "groupId" : 1,
   "nr" : 1,
   "roundNumber" : 1,
   "startTime" : null,
   "callNumber" : 0,
   "isBlocking" : false,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 1,
     "firstName" : "First1",
@@ -134,12 +136,14 @@
     "kind" : 1,
     "active" : true
   },
+  "groupId" : 1,
   "nr" : 2,
   "roundNumber" : 1,
   "startTime" : "2026-11-16T10:00:00",
   "callNumber" : 1,
   "isBlocking" : true,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 3,
     "firstName" : "First3",
@@ -230,12 +234,14 @@
     "kind" : 2,
     "active" : true
   },
+  "groupId" : null,
   "nr" : 4,
   "roundNumber" : 3,
   "startTime" : "2026-11-16T10:00:00",
   "callNumber" : 2,
   "isBlocking" : true,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 1,
     "firstName" : "First1",
@@ -318,12 +324,14 @@
     "kind" : 1,
     "active" : true
   },
+  "groupId" : 1,
   "nr" : 5,
   "roundNumber" : 1,
   "startTime" : null,
   "callNumber" : 0,
   "isBlocking" : false,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 1,
     "firstName" : "First1",
@@ -400,12 +408,14 @@
     "kind" : 1,
     "active" : true
   },
+  "groupId" : 1,
   "nr" : 6,
   "roundNumber" : 1,
   "startTime" : "2026-11-16T10:00:00",
   "callNumber" : 3,
   "isBlocking" : true,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 5,
     "firstName" : "First5",
@@ -476,12 +486,14 @@
     "kind" : 1,
     "active" : true
   },
+  "groupId" : 1,
   "nr" : 7,
   "roundNumber" : 1,
   "startTime" : null,
   "callNumber" : 0,
   "isBlocking" : false,
   "isPlayable" : true,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 7,
     "firstName" : "First7",

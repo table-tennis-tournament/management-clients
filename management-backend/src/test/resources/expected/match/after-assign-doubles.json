@@ -60,12 +60,14 @@
     "kind" : 2,
     "active" : true
   },
+  "groupId" : null,
   "nr" : 3,
   "roundNumber" : 1,
   "startTime" : "2026-11-16T10:00:00",
   "callNumber" : 0,
   "isBlocking" : true,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 1,
     "firstName" : "First1",

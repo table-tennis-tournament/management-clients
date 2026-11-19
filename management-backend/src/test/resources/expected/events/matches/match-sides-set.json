@@ -1,0 +1,14 @@
+{
+  "type" : "MATCH_SIDES_SET",
+  "scope" : {
+    "matchIds" : [ 12 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ 1 ]
+  },
+  "payload" : {
+    "matchId" : 12,
+    "fromMatchId" : 11,
+    "typeId" : 1,
+    "tableIds" : [ 1 ]
+  }
+}

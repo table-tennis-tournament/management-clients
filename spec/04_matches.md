@@ -34,6 +34,15 @@ Administrators use a "Match List" or "Supervisor View" to plan matches:
   administrator's result list. Entering the result completes it.
 - **Walkover** ("Kampflos"): A match is ended unplayed, without a result; it becomes Walkover and leaves its table.
 
+## Knockout Stage
+A knockout match (group `999`) of the types Halbfinale (2) to Runde 0 (8) moves its winner on when its final result
+is set, in the same transaction, as the legacy backend's `writeNextKoMatch` did. mktt numbers a knockout match
+`round * 1000 + position`; the winner of match `nr` goes to match `((nr / 1000) - 1) * 1000 + ((nr % 1000) + 1) / 2`
+of the same discipline, as its Side 1 when `nr` is odd and as its Side 2 when it is even. A doubles winner moves on
+as its double. The Side is overwritten whenever a final result is set again, even when the next match is already
+being played; taking a match back leaves the next match alone. Nothing moves on from the final (type 1), and a
+missing next match is only logged. The next match is announced with `MATCH_SIDES_SET`.
+
 ## Result Entry
 A Set is won with 11 points and a lead of two; a Match is won by the first Side to win three Sets (best of five).
 An interim result keeps the match running; a final result completes it. Results can be entered via:
@@ -77,5 +86,5 @@ Sets are sent as `[[pointsSide1, pointsSide2], ...]`, for example `[[11,5],[11,7
 | `POST` | `/matchlist/auto-start` | Start the next playable Queue entry now. |
 
 Every change is published on the `matches` topic (`MATCH_ASSIGNED`, `MATCH_STARTED`, `MATCH_RESULT_UPDATED`,
-`MATCH_COMPLETED`, `MATCH_FREED`, `MATCH_TAKEN_BACK`, `MATCH_CALLED`, `MATCH_DELETED`) or, for the Queue, as
+`MATCH_COMPLETED`, `MATCH_FREED`, `MATCH_TAKEN_BACK`, `MATCH_CALLED`, `MATCH_SIDES_SET`, `MATCH_DELETED`) or, for the Queue, as
 `MATCH_LIST_CHANGED` on the `queue` topic (see [Real-time Updates](06_live_updates.md)).

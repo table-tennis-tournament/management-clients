@@ -8,6 +8,7 @@ import de.ttt.management.registration.PlayerActiveChanged
 import de.ttt.management.registration.PlayerPaid
 import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
+import de.ttt.management.tournament.KnockoutMatchFilled
 import de.ttt.management.tournament.MatchAssigned
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
@@ -78,6 +79,11 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchDeleted) {
         push(Topic.MATCHES, "MATCH_DELETED", scope(event.matchIds, event.typeIds + event.affectedTypeIds, event.tableIds), event)
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun on(event: KnockoutMatchFilled) {
+        push(Topic.MATCHES, "MATCH_SIDES_SET", scope(listOf(event.matchId), listOfNotNull(event.typeId), event.tableIds), event)
     }
 
     // --- tables ------------------------------------------------------------

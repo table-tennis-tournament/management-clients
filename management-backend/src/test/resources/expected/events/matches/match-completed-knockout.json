@@ -1,0 +1,17 @@
+{
+  "type" : "MATCH_COMPLETED",
+  "scope" : {
+    "matchIds" : [ 11 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "matchId" : 11,
+    "winnerId" : 1,
+    "sets1" : 3,
+    "sets2" : 0,
+    "typeId" : 1,
+    "tableId" : null,
+    "affectedTypeIds" : [ ]
+  }
+}

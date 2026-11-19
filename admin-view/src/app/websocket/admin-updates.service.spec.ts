@@ -15,6 +15,7 @@ import matchCalled from '../../../../management-backend/src/test/resources/expec
 import matchCompleted from '../../../../management-backend/src/test/resources/expected/events/matches/match-completed.json';
 import matchDeleted from '../../../../management-backend/src/test/resources/expected/events/matches/match-deleted.json';
 import matchFreed from '../../../../management-backend/src/test/resources/expected/events/matches/match-freed.json';
+import matchSidesSet from '../../../../management-backend/src/test/resources/expected/events/matches/match-sides-set.json';
 import matchResultUpdated from '../../../../management-backend/src/test/resources/expected/events/matches/match-result-updated.json';
 import matchStarted from '../../../../management-backend/src/test/resources/expected/events/matches/match-started.json';
 import matchTakenBack from '../../../../management-backend/src/test/resources/expected/events/matches/match-taken-back.json';
@@ -39,6 +40,7 @@ const BACKEND_EVENTS: { name: string; topic: UpdateTopic; event: any; reloads: A
   { name: 'match-deleted', topic: 'matches', event: matchDeleted, reloads: MATCH_CHANGED },
   { name: 'match-freed', topic: 'matches', event: matchFreed, reloads: MATCH_CHANGED },
   { name: 'match-result-updated', topic: 'matches', event: matchResultUpdated, reloads: MATCH_CHANGED },
+  { name: 'match-sides-set', topic: 'matches', event: matchSidesSet, reloads: MATCH_CHANGED },
   { name: 'match-started', topic: 'matches', event: matchStarted, reloads: MATCH_CHANGED },
   { name: 'match-taken-back', topic: 'matches', event: matchTakenBack, reloads: MATCH_CHANGED },
   { name: 'player-active-changed', topic: 'players', event: playerActiveChanged, reloads: ['players', 'discipline'] },

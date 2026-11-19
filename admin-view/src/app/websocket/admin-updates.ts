@@ -40,6 +40,7 @@ export const ADMIN_UPDATES: UpdateClientConfig<AdminReloadTarget> = {
     MATCH_TAKEN_BACK: MATCH_CHANGED,
     MATCH_DELETED: MATCH_CHANGED,
     MATCH_CALLED: ['caller', 'secondCall', 'thirdCall'],
+    MATCH_SIDES_SET: MATCH_CHANGED,
     TABLE_LOCKED: ['tables'],
     TABLE_UNLOCKED: ['tables'],
     MATCH_LIST_CHANGED: ['matchList', 'matches'],

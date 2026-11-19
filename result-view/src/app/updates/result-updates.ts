@@ -17,6 +17,8 @@ export function resultUpdates(displayedTypeId: () => number | null): UpdateClien
       MATCH_FREED: ['matches'],
       MATCH_TAKEN_BACK: ['matches'],
       MATCH_DELETED: ['matches'],
+      // a knockout winner moved on: the bracket shows the next match's Sides
+      MATCH_SIDES_SET: ['matches'],
     },
     ignored: ['MATCH_ASSIGNED', 'MATCH_STARTED', 'MATCH_CALLED'],
     // reloading the types also reloads the matches of the displayed discipline

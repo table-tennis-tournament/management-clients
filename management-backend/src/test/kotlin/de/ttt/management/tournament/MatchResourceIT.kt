@@ -432,4 +432,67 @@ class MatchResourceIT {
                 .expectExactJson(failure("Type not found or matches not found for type"))
         }
     }
+
+    @Nested
+    inner class `the knockout winner moves on` {
+
+        @BeforeEach
+        fun setup() = scenarios.givenKnockoutBracket()
+
+        private val nilThree = listOf(listOf(5, 11), listOf(7, 11), listOf(3, 11))
+
+        @Test
+        fun `the winner of an odd numbered match becomes Side 1 of the next match`() {
+            api.post("/match/setResult/11", threeNil).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(13, "knockout-semifinal-side1-set")
+        }
+
+        @Test
+        fun `the winner of an even numbered match becomes Side 2 of the next match`() {
+            api.post("/match/setResult/11", threeNil).expectStatus().isOk
+            api.post("/match/setResult/12", nilThree).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(13, "knockout-semifinal-both-sides-set")
+        }
+
+        @Test
+        fun `a corrected result moves the corrected winner on, over the earlier one`() {
+            api.post("/match/setResult/11", threeNil).expectStatus().isOk
+            api.post("/match/setResult/11", nilThree).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(13, "knockout-semifinal-side1-corrected")
+        }
+
+        @Test
+        fun `a winner moves on into a match that is already being played`() {
+            api.post("/match/setResult/11", threeNil).expectStatus().isOk
+            api.post("/match/setResult/12", nilThree).expectStatus().isOk
+            api.post("/match/start/13/1").expectStatus().isOk
+            api.post("/match/setResult/11", nilThree).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(13, "knockout-semifinal-started-side1-corrected")
+        }
+
+        @Test
+        fun `a doubles winner moves on as its double`() {
+            api.post("/match/setResult/21", nilThree).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(22, "knockout-doubles-final-side2-set")
+        }
+
+        @Test
+        fun `an interim result moves nobody on`() {
+            api.post("/match/updateResult/11", listOf(listOf(11, 5), listOf(11, 7))).expectStatus().isOk
+            api.expectMatch(13, "knockout-semifinal-empty")
+        }
+
+        @Test
+        fun `nothing moves on from the final`() {
+            api.post("/match/setResult/14", threeNil).expectStatus().isOk.expectExactJson(success)
+            api.get("/match/typeid/1").expectStatus().isOk.expectJson("match/knockout-after-final")
+        }
+
+        @Test
+        fun `a missing next match leaves the result in place`() {
+            api.delete("/match/13").expectStatus().isOk
+            api.post("/match/setResult/11", threeNil).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(11, "knockout-quarterfinal-completed")
+        }
+    }
 }

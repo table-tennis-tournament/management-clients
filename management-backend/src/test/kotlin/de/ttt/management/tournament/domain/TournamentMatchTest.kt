@@ -515,4 +515,106 @@ class TournamentMatchTest {
         match.callAgain()
         assertEquals(3, match.callNumber)
     }
+
+    // --- knockout: the winner moves on (legacy writeNextKoMatch) ---------------------------
+
+    private fun knockoutMatch(nr: Int, matchTypeId: Long = 3L, groupId: Long? = KNOCKOUT_GROUP_ID) = TournamentMatch(
+        id = nr.toLong(),
+        team1 = listOf(TournamentPlayer(id = 1L)),
+        team2 = listOf(TournamentPlayer(id = 2L)),
+        side1Id = 1L,
+        side2Id = 2L,
+        matchType = TournamentMatchType(id = matchTypeId),
+        groupId = groupId,
+        nr = nr
+    )
+
+    @Test
+    fun `the winners of two neighbouring knockout matches meet in the round before`() {
+        assertEquals(2001, knockoutMatch(3001).nextKnockoutMatchNr)
+        assertEquals(2001, knockoutMatch(3002).nextKnockoutMatchNr)
+        assertEquals(2002, knockoutMatch(3003).nextKnockoutMatchNr)
+        assertEquals(2002, knockoutMatch(3004).nextKnockoutMatchNr)
+        assertEquals(4008, knockoutMatch(5016, matchTypeId = 5L).nextKnockoutMatchNr)
+        assertEquals(1001, knockoutMatch(2002, matchTypeId = 2L).nextKnockoutMatchNr)
+    }
+
+    @Test
+    fun `every knockout match type from Halbfinale to Runde 0 moves its winner on`() {
+        (2L..8L).forEach { assertEquals(1001, knockoutMatch(2001, matchTypeId = it).nextKnockoutMatchNr, "match type $it") }
+    }
+
+    @Test
+    fun `nothing moves on from the final, a group match or another match type`() {
+        assertEquals(null, knockoutMatch(1001, matchTypeId = 1L).nextKnockoutMatchNr)
+        assertEquals(null, knockoutMatch(9, matchTypeId = 9L).nextKnockoutMatchNr)
+        assertEquals(null, knockoutMatch(3001, matchTypeId = 10L).nextKnockoutMatchNr)
+        assertEquals(null, knockoutMatch(3001, groupId = 1L).nextKnockoutMatchNr)
+        assertEquals(null, knockoutMatch(3001, groupId = null).nextKnockoutMatchNr)
+        assertEquals(null, knockoutMatch(3001).apply { matchType = null }.nextKnockoutMatchNr)
+        assertEquals(null, knockoutMatch(3001).apply { nr = null }.nextKnockoutMatchNr)
+    }
+
+    @Test
+    fun `the winner of an odd numbered match becomes Side 1 of the next match`() {
+        val previous = knockoutMatch(3001).apply { complete(threeNil) }
+        val next = TournamentMatch(id = 10L, matchType = TournamentMatchType(id = 2L), groupId = KNOCKOUT_GROUP_ID, nr = 2001, side2Id = 7L, team2 = listOf(TournamentPlayer(id = 7L)))
+
+        next.takeWinnerOf(previous)
+
+        assertEquals(1L, next.side1Id)
+        assertEquals(listOf(TournamentPlayer(id = 1L)), next.team1)
+        assertEquals(7L, next.side2Id)
+        assertEquals(listOf(TournamentPlayer(id = 7L)), next.team2)
+    }
+
+    @Test
+    fun `the winner of an even numbered match becomes Side 2 of the next match`() {
+        val previous = knockoutMatch(3004).apply { complete(listOf(SetResult(5, 11), SetResult(7, 11), SetResult(3, 11))) }
+        val next = TournamentMatch(id = 10L, nr = 2002, side1Id = 7L, team1 = listOf(TournamentPlayer(id = 7L)))
+
+        next.takeWinnerOf(previous)
+
+        assertEquals(7L, next.side1Id)
+        assertEquals(2L, next.side2Id)
+        assertEquals(listOf(TournamentPlayer(id = 2L)), next.team2)
+    }
+
+    @Test
+    fun `a doubles winner moves on as its double, with both players`() {
+        val double = listOf(TournamentPlayer(id = 1L), TournamentPlayer(id = 2L))
+        val previous = knockoutMatch(3001).apply {
+            team1 = double
+            team2 = listOf(TournamentPlayer(id = 3L), TournamentPlayer(id = 4L))
+            side1Id = 100001L
+            side2Id = 100002L
+            complete(threeNil)
+        }
+        val next = TournamentMatch(id = 10L, nr = 2001)
+
+        next.takeWinnerOf(previous)
+
+        assertEquals(100001L, next.side1Id)
+        assertEquals(double, next.team1)
+        assertEquals(null, next.side2Id)
+    }
+
+    @Test
+    fun `a winner overwrites the Side it moves into`() {
+        val previous = knockoutMatch(3001).apply { complete(threeNil) }
+        val next = TournamentMatch(id = 10L, nr = 2001, side1Id = 9L, team1 = listOf(TournamentPlayer(id = 9L)))
+
+        next.takeWinnerOf(previous)
+
+        assertEquals(1L, next.side1Id)
+    }
+
+    @Test
+    fun `only the winner of a match leading to this one moves on into it`() {
+        val previous = knockoutMatch(3001).apply { complete(threeNil) }
+        assertFailsWith<IllegalArgumentException> { TournamentMatch(id = 10L, nr = 2002).takeWinnerOf(previous) }
+        assertFailsWith<IllegalArgumentException> { TournamentMatch(id = 10L, nr = 2001).takeWinnerOf(knockoutMatch(3001)) }
+        val final = knockoutMatch(1001, matchTypeId = 1L).apply { complete(threeNil) }
+        assertFailsWith<IllegalArgumentException> { TournamentMatch(id = 10L, nr = 1).takeWinnerOf(final) }
+    }
 }

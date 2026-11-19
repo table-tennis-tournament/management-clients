@@ -49,12 +49,14 @@
     "kind" : 1,
     "active" : true
   },
+  "groupId" : 1,
   "nr" : 3,
   "roundNumber" : 1,
   "startTime" : null,
   "callNumber" : 0,
   "isBlocking" : false,
   "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
   "player1" : {
     "id" : 5,
     "firstName" : "First5",
