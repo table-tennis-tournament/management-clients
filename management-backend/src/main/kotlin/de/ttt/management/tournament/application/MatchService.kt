@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @Service("tournamentMatchService")
 class MatchService(
@@ -214,7 +215,7 @@ class MatchService(
     /** The caller announces the first Call of the matches. */
     @Transactional
     fun callMatches(matchIds: List<Long>): Boolean =
-        transition(matchIds, { it.call(LocalDateTime.now(clock)) }) { called ->
+        transition(matchIds, { it.call(OffsetDateTime.now(clock)) }) { called ->
             calledEvent(called, callNumber = 1, playerIds = called.flatMap { it.match.playerCalls.map(PlayerCall::playerId) })
         }
 

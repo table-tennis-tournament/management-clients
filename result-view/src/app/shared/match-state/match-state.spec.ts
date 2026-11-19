@@ -80,12 +80,13 @@ describe('match state', () => {
   });
 
   it('minutesSinceFirstCall counts whole minutes since the first Call, none before it', () => {
-    const firstCallTime = '2026-11-16T10:00:00';
+    const firstCallTime = '2026-11-16T10:00:00+01:00';
     const at = (time: string) => new Date(time).getTime();
-    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T10:00:59'))).toBe(0);
-    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T10:07:30'))).toBe(7);
+    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T09:00:59Z'))).toBe(0);
+    // the offset counts, whatever time zone the browser runs in
+    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T09:07:30Z'))).toBe(7);
     // a clock running slightly behind the backend shows no negative time
-    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T09:59:00'))).toBe(0);
+    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T08:59:00Z'))).toBe(0);
     expect(minutesSinceFirstCall({ firstCallTime: null }, at(firstCallTime))).toBeNull();
     expect(minutesSinceFirstCall({}, at(firstCallTime))).toBeNull();
   });

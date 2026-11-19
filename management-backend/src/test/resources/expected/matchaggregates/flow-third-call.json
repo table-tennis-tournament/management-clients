@@ -2,7 +2,7 @@
   "name" : "Gruppenspiel A",
   "startTime" : "2026-11-16T10:00:00",
   "callNumber" : 3,
-  "firstCallTime" : "2026-11-16T10:00:00",
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
   "tableNumbers" : [ 1 ],
   "discipline" : {
     "id" : 1,

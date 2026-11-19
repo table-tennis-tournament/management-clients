@@ -45,7 +45,8 @@ class JdbcTournamentMatchRepository(
             isPlaying = rs.getBoolean("matc_isplaying"),
             isKampflos = rs.getInt("matc_kampflos") > 0,
             waitingList = rs.getBoolean("matc_waitinglist"),
-            firstCallTime = rs.getTimestamp("first_call_time")?.toLocalDateTime(),
+            // stored as the local time of the clock's zone, like every time in the database
+            firstCallTime = rs.getTimestamp("first_call_time")?.toLocalDateTime()?.atZone(clock.zone)?.toOffsetDateTime(),
             tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 },
             tableNumber = rs.getString("table_number")?.toIntOrNull(),
             secondTableId = rs.getObject("second_table_id")?.let { (it as Number).toLong() },
@@ -318,7 +319,7 @@ class JdbcTournamentMatchRepository(
         match.firstCallTime?.let { time ->
             jdbcClient.sql("INSERT INTO mgmt_match_call (matc_id, first_call_time) VALUES (:id, :time)")
                 .param("id", matchId)
-                .param("time", time)
+                .param("time", time.atZoneSameInstant(clock.zone).toLocalDateTime())
                 .update()
         }
         match.playerCalls.forEach { call ->

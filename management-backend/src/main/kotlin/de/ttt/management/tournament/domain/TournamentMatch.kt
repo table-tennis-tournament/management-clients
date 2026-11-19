@@ -1,5 +1,6 @@
 package de.ttt.management.tournament.domain
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 class TournamentMatch(
     var id: Long? = null,
     var team1: List<TournamentPlayer> = emptyList(),
@@ -23,8 +24,11 @@ class TournamentMatch(
     var waitingList: Boolean = false,
     /** The Calls of the match's players; empty until the first Call is announced. */
     var playerCalls: List<PlayerCall> = emptyList(),
-    /** When the first Call was announced: the players have been waited for since then. */
-    var firstCallTime: LocalDateTime? = null,
+    /**
+     * When the first Call was announced: the players have been waited for since then. With its offset, so a
+     * client in any time zone counts the minutes since.
+     */
+    var firstCallTime: OffsetDateTime? = null,
     var tableId: Long? = null,
     /**
      * The number of the table [tableId] names, as stored (the venue's table number, not the id). Read only: a
@@ -190,7 +194,7 @@ class TournamentMatch(
      * Announces the first Call of the match: every player is called once and the players are waited for from
      * [now] on. Calling a match again starts its calls over.
      */
-    fun call(now: LocalDateTime) {
+    fun call(now: OffsetDateTime) {
         require(!isPlayed) { "A completed match cannot be called" }
         playerCalls = playerIds.map { PlayerCall(it, 1) }
         firstCallTime = now

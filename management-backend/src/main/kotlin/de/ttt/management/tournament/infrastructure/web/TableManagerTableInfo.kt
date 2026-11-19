@@ -1,6 +1,6 @@
 package de.ttt.management.tournament.infrastructure.web
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 data class TableManagerTableInfo(
     val table_id: Long?,
@@ -23,7 +23,7 @@ data class TableManagerMatch(
     /** See [de.ttt.management.tournament.domain.TournamentMatch.requestedCallNumber]. */
     val requestedCallNumber: Int?,
     /** When the first Call was announced; the table manager shows the minutes since. */
-    val firstCallTime: LocalDateTime?
+    val firstCallTime: OffsetDateTime?
 )
 
 data class TableManagerResult(

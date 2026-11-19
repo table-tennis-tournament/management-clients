@@ -2,6 +2,7 @@ package de.ttt.management.tournament.infrastructure.database
 
 import de.ttt.management.DatabaseHelper
 import de.ttt.management.DatabaseHelperConfiguration
+import de.ttt.management.DeterministicTestConfiguration
 import de.ttt.management.DeterministicTestConfiguration.Companion.NOW
 import de.ttt.management.tournament.domain.SetResult
 import de.ttt.management.tournament.domain.TournamentMatch
@@ -65,7 +66,7 @@ class JdbcTournamentMatchRepositoryIT {
     fun `persists an assignment, a call and the table history`() {
         val match = load()
         match.assign(3L, now = NOW)
-        match.call(NOW)
+        match.call(NOW.atZone(DeterministicTestConfiguration.ZONE).toOffsetDateTime())
         match.requestCall(listOf(2L))
         assertEquals(1, repository.save(match))
 
@@ -83,7 +84,7 @@ class JdbcTournamentMatchRepositoryIT {
             callStateRows()
         )
         assertEquals(load().playerCalls, match.playerCalls)
-        assertEquals(NOW, load().firstCallTime)
+        assertEquals(NOW.atZone(DeterministicTestConfiguration.ZONE).toOffsetDateTime(), load().firstCallTime)
     }
 
     @Test
@@ -106,7 +107,7 @@ class JdbcTournamentMatchRepositoryIT {
     fun `taking a match back clears the table, the call state and the table history`() {
         val match = load()
         match.assign(3L, now = NOW)
-        match.call(NOW)
+        match.call(NOW.atZone(DeterministicTestConfiguration.ZONE).toOffsetDateTime())
         repository.save(match)
 
         match.takeBack()

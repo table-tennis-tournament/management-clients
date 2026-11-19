@@ -18,7 +18,7 @@ function matchItem(page: Page, player1: string, player2: string) {
 
 /** Types like a user: the result dialog checks the input on every key. */
 async function typeResult(page: Page, text: string): Promise<void> {
-  const input = page.locator('mat-dialog-container input');
+  const input = page.locator('mat-dialog-container input[matinput]');
   await input.clear();
   await input.pressSequentially(text);
 }

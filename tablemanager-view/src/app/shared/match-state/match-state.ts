@@ -22,7 +22,7 @@ export type MatchStateName = (typeof MATCH_STATES)[number];
 export interface HasMatchState {
   state?: string | null;
   callNumber?: number | null;
-  /** When the first Call was announced, as the backend sends it (`2026-11-16T10:00:00`, local time). */
+  /** When the first Call was announced, with its offset as the backend sends it (`2026-11-16T10:00:00+01:00`). */
   firstCallTime?: string | null;
 }
 

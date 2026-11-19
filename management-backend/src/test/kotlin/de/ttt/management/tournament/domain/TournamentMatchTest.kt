@@ -7,6 +7,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class TournamentMatchTest {
 
@@ -282,22 +283,24 @@ class TournamentMatchTest {
 
     // --- calls ----------------------------------------------------------------------
 
-    private val later = now.plusMinutes(4)
+    /** [now] with its offset, as the first Call is stamped. */
+    private val callTime = now.atOffset(ZoneOffset.ofHours(1))
+    private val later = callTime.plusMinutes(4)
 
     /** The match at table 7, its first Call announced at [now]. */
     private fun calledMatch() = match().apply {
         assign(tableId = 7, now = now)
-        call(now)
+        call(callTime)
     }
 
     @Test
     fun `the first call calls every player once and starts the waiting time`() {
         val match = match()
-        match.call(now)
+        match.call(callTime)
 
         assertMatch(match) {
             playerCalls = listOf(PlayerCall(1L, 1), PlayerCall(2L, 1))
-            firstCallTime = now
+            firstCallTime = callTime
         }
         assertEquals(1, match.callNumber)
         assertEquals(null, match.requestedCallNumber)
@@ -310,7 +313,7 @@ class TournamentMatchTest {
             team1 = listOf(TournamentPlayer(id = 1L), TournamentPlayer(id = 2L)),
             team2 = listOf(TournamentPlayer(id = 3L), TournamentPlayer(id = 4L))
         )
-        match.call(now)
+        match.call(callTime)
 
         assertEquals(listOf(1L, 2L, 3L, 4L).map { PlayerCall(it, 1) }, match.playerCalls)
     }
@@ -328,7 +331,7 @@ class TournamentMatchTest {
         assertEquals(listOf(PlayerCall(1L, 1), PlayerCall(2L, 2)), match.playerCalls)
         assertEquals(null, match.requestedCallNumber)
         assertEquals(2, match.callNumber)
-        assertEquals(now, match.firstCallTime)
+        assertEquals(callTime, match.firstCallTime)
     }
 
     @Test
@@ -387,7 +390,7 @@ class TournamentMatchTest {
 
     @Test
     fun `rejects a request for a match at no table or a completed one`() {
-        assertFailsWith<IllegalArgumentException> { match().apply { call(now) }.requestCall(listOf(1L)) }
+        assertFailsWith<IllegalArgumentException> { match().apply { call(callTime) }.requestCall(listOf(1L)) }
         val completed = calledMatch()
         completed.complete(threeNil)
         assertFailsWith<IllegalArgumentException> { completed.requestCall(listOf(1L)) }
@@ -396,7 +399,7 @@ class TournamentMatchTest {
     @Test
     fun `players of a started match are still called, as after an auto-start`() {
         val match = calledMatch()
-        match.start(now = later)
+        match.start(now = later.toLocalDateTime())
         match.requestCall(listOf(1L))
         match.announceRequestedCall()
 
@@ -423,7 +426,7 @@ class TournamentMatchTest {
     fun `reassigning a match clears its calls`() {
         val match = calledMatch()
         match.requestCall(listOf(1L))
-        match.assign(tableId = 8, now = later)
+        match.assign(tableId = 8, now = later.toLocalDateTime())
 
         assertEquals(emptyList(), match.playerCalls)
         assertEquals(null, match.firstCallTime)
@@ -434,7 +437,7 @@ class TournamentMatchTest {
         val match = match()
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
-        assertFailsWith<IllegalArgumentException> { match.call(now) }
+        assertFailsWith<IllegalArgumentException> { match.call(callTime) }
     }
 
     @Test
@@ -517,7 +520,7 @@ class TournamentMatchTest {
     fun `taking a match back leaves the table and clears the call`() {
         val match = match()
         match.assign(tableId = 7, now = now)
-        match.call(now)
+        match.call(callTime)
         match.requestCall(listOf(1L))
         match.start(now = now)
         match.takeBack()

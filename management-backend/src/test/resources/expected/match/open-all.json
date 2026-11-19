@@ -135,7 +135,7 @@
     "callNumber" : 1,
     "requested" : false
   } ],
-  "firstCallTime" : "2026-11-16T10:00:00",
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
   "tableId" : 1,
   "tableNumber" : 1,
   "secondTableId" : null,
@@ -251,7 +251,7 @@
     "callNumber" : 2,
     "requested" : false
   } ],
-  "firstCallTime" : "2026-11-16T10:00:00",
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
   "tableId" : 2,
   "tableNumber" : 2,
   "secondTableId" : null,
@@ -437,7 +437,7 @@
     "callNumber" : 3,
     "requested" : false
   } ],
-  "firstCallTime" : "2026-11-16T10:00:00",
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
   "tableId" : 3,
   "tableNumber" : 3,
   "secondTableId" : null,

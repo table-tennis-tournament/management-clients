@@ -30,7 +30,7 @@
     "state" : "OnTable",
     "callNumber" : 1,
     "requestedCallNumber" : null,
-    "firstCallTime" : "2026-11-16T10:00:00"
+    "firstCallTime" : "2026-11-16T10:00:00+01:00"
   } ]
 }, {
   "table_id" : 2,
@@ -78,7 +78,7 @@
     "state" : "OnTable",
     "callNumber" : 2,
     "requestedCallNumber" : null,
-    "firstCallTime" : "2026-11-16T10:00:00"
+    "firstCallTime" : "2026-11-16T10:00:00+01:00"
   } ]
 }, {
   "table_id" : 3,
@@ -112,7 +112,7 @@
     "state" : "Started",
     "callNumber" : 3,
     "requestedCallNumber" : null,
-    "firstCallTime" : "2026-11-16T10:00:00"
+    "firstCallTime" : "2026-11-16T10:00:00+01:00"
   } ]
 }, {
   "table_id" : 4,
