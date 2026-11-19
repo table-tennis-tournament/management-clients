@@ -502,14 +502,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_three_separate_frontend_applications">9.1. Three Separate Frontend Applications</a></li>
 <li><a href="#_websocket_based_real_time_communication">9.2. WebSocket-based Real-time Communication</a></li>
-<li><a href="#_scala_play_backend_with_pekko_actors">9.3. Scala Play Backend with Pekko Actors</a></li>
-<li><a href="#_spring_boot_modular_monolith">9.4. Spring Boot Modular Monolith</a></li>
-<li><a href="#_onion_architecture_per_module">9.5. Onion Architecture per Module</a></li>
-<li><a href="#_event_driven_module_integration">9.6. Event-driven Module Integration</a></li>
-<li><a href="#_plain_sql_via_jdbcclient">9.7. Plain SQL via JdbcClient</a></li>
-<li><a href="#_api_versioning_via_apiv2_path_prefix">9.8. API versioning via <code>/api/v2</code> path prefix</a></li>
-<li><a href="#_single_data_access_component">9.9. Single Data-Access Component</a></li>
-<li><a href="#_offline_data_preparation_by_mktt">9.10. Offline Data Preparation by mktt</a></li>
+<li><a href="#_topic_scoped_update_events">9.3. Topic-scoped Update Events</a></li>
+<li><a href="#_scala_play_backend_with_pekko_actors">9.4. Scala Play Backend with Pekko Actors</a></li>
+<li><a href="#_spring_boot_modular_monolith">9.5. Spring Boot Modular Monolith</a></li>
+<li><a href="#_onion_architecture_per_module">9.6. Onion Architecture per Module</a></li>
+<li><a href="#_event_driven_module_integration">9.7. Event-driven Module Integration</a></li>
+<li><a href="#_plain_sql_via_jdbcclient">9.8. Plain SQL via JdbcClient</a></li>
+<li><a href="#_api_versioning_via_apiv2_path_prefix">9.9. API versioning via <code>/api/v2</code> path prefix</a></li>
+<li><a href="#_single_data_access_component">9.10. Single Data-Access Component</a></li>
+<li><a href="#_offline_data_preparation_by_mktt">9.11. Offline Data Preparation by mktt</a></li>
 </ul>
 </li>
 <li><a href="#_quality_requirements">10. Quality Requirements</a>
@@ -533,7 +534,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_introduction_and_goals"><a class="anchor" href="#_introduction_and_goals"></a>1. Introduction and Goals</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Table Tennis Tournament Management System manages the complete flow of a table tennis tournament: it assigns matches to tables, calls matches, collects results and displays live standings. It consists of a Scala backend and three Angular single-page applications, one for each user role.</p>
+<p>The Table Tennis Tournament Management System manages the complete flow of a table tennis tournament: it assigns matches to tables, calls matches, collects results and displays live standings. It consists of a Kotlin/Spring Boot backend and three Angular single-page applications, one for each user role.</p>
 </div>
 <div class="sect2">
 <h3 id="_requirements_overview"><a class="anchor" href="#_requirements_overview"></a>1.1. Requirements Overview</h3>
@@ -673,7 +674,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">JVM backend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The backend runs on the JVM (Scala with Play Framework).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The backend runs on the JVM (Kotlin with Spring Boot and Spring Modulith).</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Technology stack is limited to JVM-compatible solutions.</p></td>
 </tr>
 <tr>
@@ -684,12 +685,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Relational database</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tournament data is persisted in a relational database.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL with the Slick database library.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL accessed with Spring&#8217;s <code>JdbcClient</code> and plain SQL; the backend&#8217;s own tables are migrated with Flyway.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Real-time communication</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Clients require live updates without manual refresh.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSockets (with a SockJS fallback) and Pekko actors are used.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STOMP over a native WebSocket (<code>/ttt-websocket</code>) is used; no SockJS fallback.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Containerized deployment</p></td>
@@ -704,7 +705,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>The development team is familiar with Scala and Angular.</p>
+<p>The development team is familiar with Kotlin, Spring and Angular.</p>
 </li>
 <li>
 <p>The existing infrastructure supports Docker deployments.</p>
@@ -789,8 +790,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Backend framework</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala with Play Framework</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Mature web framework with excellent WebSocket support.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kotlin with Spring Boot and Spring Modulith</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One deployable whose module boundaries are verified in tests; STOMP over WebSocket from Spring (chapter 9).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Frontend framework</p></td>
@@ -799,13 +800,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL with Slick</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB/MySQL with <code>JdbcClient</code> and plain SQL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Relational model fits tournament data; proven reliability.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Real-time communication</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WebSockets with SockJS fallback and Pekko actors</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bi-directional communication and a fallback for older browsers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STOMP over a native WebSocket, no SockJS fallback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bi-directional communication; all clients are modern browsers, so no fallback is needed.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">State management</p></td>
@@ -833,7 +834,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Separate frontends per role</strong>: three independent Angular applications share one backend.</p>
 </li>
 <li>
-<p><strong>Event-driven real-time communication</strong>: Pekko actors publish domain events that are broadcast over WebSockets.</p>
+<p><strong>Event-driven real-time communication</strong>: Spring application events are published after commit on five topics and broadcast over STOMP/WebSocket; clients re-fetch the affected state over REST.</p>
 </li>
 <li>
 <p><strong>Layered backend</strong>: controllers, a single data-access component and domain models.</p>
@@ -859,7 +860,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_level_2_containers"><a class="anchor" href="#_level_2_containers"></a>5.1. Level 2: Containers</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/container.svg" alt="container" width="957" height="1296">
+<img src="img/container.svg" alt="container" width="957" height="1310">
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -892,7 +893,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Kotlin 2.3 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API, WebSocket broadcasting and PDF generation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kotlin 2.4 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API under <code>/api/v2</code>, STOMP update events on <code>/ttt-websocket</code>, PDF referee sheets and printing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tournament Database</p></td>
@@ -908,7 +909,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="img/backend-components.svg" alt="backend components" width="2079" height="1090">
+<img src="img/backend-components.svg" alt="backend components" width="1212" height="904">
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -929,7 +930,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">grouping</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Group formation, seeding and knockout placement. Currently scaffolded, not yet implemented.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Group standings, computed when the last match of a group is completed. Group formation and seeding stay in mktt. A knockout winner moves on into the next match in <code>tournament</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">tournament</p></td>
@@ -937,15 +938,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">settings</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">System settings and printing (referee sheets, certificates).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System settings, printer selection and printing of referee sheets (PDF with a QR code).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">outbound</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The single WebSocket publisher. Consumes domain events and pushes updates to connected clients.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The single WebSocket publisher. Consumes domain events after the transaction commits and pushes update events to the five STOMP topics.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Shared configuration</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OpenApiConfig</code> and other cross-cutting Spring configuration in the root package.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cross-cutting Spring configuration in the root package: <code>ApiVersionConfig</code> (the <code>/api/v2</code> prefix), <code>OpenApiConfig</code> and <code>ClockAndIdConfig</code> (the injectable <code>Clock</code> and id generator).</p></td>
 </tr>
 </tbody>
 </table>
@@ -990,11 +991,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_level_3_frontend_components"><a class="anchor" href="#_level_3_frontend_components"></a>5.3. Level 3: Frontend Components</h3>
 <div class="paragraph">
-<p>All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application.</p>
+<p>All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application. Three modules under <code>src/app/shared/</code> are identical copies in every client that uses them: <code>update-events</code> (the STOMP connection, scope filtering, coalescing and resynchronization), <code>result-entry</code> (the rules of a Set and a Match) and <code>match-state</code> (the questions clients ask about a Match&#8217;s state).</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="img/frontend-components.svg" alt="frontend components" width="726" height="879">
+<img src="img/frontend-components.svg" alt="frontend components" width="886" height="949">
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1027,9 +1028,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Communication</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP and WebSocket services</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP and WebSocket services</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP and WebSocket services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP services; update events on all five topics</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP services; update events on <code>matches</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP services; update events on <code>tables</code> and <code>matches</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Components</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">standalone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NgModules</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">standalone</p></td>
 </tr>
 </tbody>
 </table>
@@ -1046,28 +1053,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_assign_a_match_to_a_table"><a class="anchor" href="#_assign_a_match_to_a_table"></a>6.1. Assign a Match to a Table</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/dynamic-assign.svg" alt="dynamic assign" width="376" height="914">
+<img src="img/dynamic-assign.svg" alt="dynamic assign" width="445" height="956">
 </div>
 </div>
 <div class="paragraph">
-<p>The Tournament Administrator selects a match and a table. The <code>tournament</code> module&#8217;s controller delegates to its application service, which validates the transition, persists it via a JdbcClient repository and publishes a domain event. The <code>outbound</code> module consumes that event and broadcasts the change to all connected clients over STOMP/SockJS, so the Table Manager View and Result View update immediately.</p>
+<p>The Tournament Administrator selects a match and a table. The <code>tournament</code> module&#8217;s controller delegates to its application service; the <code>TournamentMatch</code> aggregate validates the transition, a JdbcClient repository persists it and the service publishes <code>MatchAssigned</code>. After the commit the <code>outbound</code> module sends a <code>MATCH_ASSIGNED</code> update event on <code>/topic/matches</code>, naming the match, its discipline and the table. Every client whose view the event concerns re-fetches that state over REST, so the Table Manager View of that table shows the match immediately.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_enter_a_match_result"><a class="anchor" href="#_enter_a_match_result"></a>6.2. Enter a Match Result</h3>
 <div class="imageblock">
 <div class="content">
-<img src="img/dynamic-result.svg" alt="dynamic result" width="469" height="895">
+<img src="img/dynamic-result.svg" alt="dynamic result" width="661" height="951">
 </div>
 </div>
 <div class="paragraph">
-<p>The Table Manager enters the set and match results. The <code>tournament</code> module validates the result against the match aggregate (winner, sets), persists it, transitions the match to <code>Completed</code>, and — for knockout matches — writes the next knockout match. It publishes a <code>MatchCompleted</code> domain event; the <code>outbound</code> module pushes the updated match and standings to all clients.</p>
+<p>The Table Manager enters the set and match results. The <code>TournamentMatch</code> aggregate validates them (a Side wins three Sets), the match becomes <code>Completed</code> and leaves its table, and the service publishes <code>MatchCompleted</code>. The <code>grouping</code> module recomputes the group standings when the group&#8217;s last match is completed. After the commit <code>outbound</code> sends a <code>MATCH_COMPLETED</code> update event; the Result View reloads the displayed discipline if the event names it, the Admin View and the Table Manager View reload their tables. Writing the winner into the next knockout match is not migrated from the legacy backend yet.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_real_time_communication"><a class="anchor" href="#_real_time_communication"></a>6.3. Real-time Communication</h3>
 <div class="paragraph">
-<p>Real-time updates flow through the <code>outbound</code> module, the only component with a WebSocket dependency. Application services in other modules publish Spring application events; <code>outbound</code> listens (<code>@EventListener</code>/<code>@ApplicationModuleListener</code>) and pushes a JSON message to <code>/topic/updates</code> via <code>SimpMessagingTemplate</code>. Each SPA receives the events over its STOMP/SockJS connection and updates its ngrx store.</p>
+<p>Real-time updates flow through the <code>outbound</code> module, the only component with a WebSocket dependency. Application services in other modules publish Spring application events; after the transaction commits, <code>outbound</code> listens (<code>@TransactionalEventListener</code>) and pushes a thin JSON event to the matching topic (<code>/topic/matches</code>, <code>/topic/tables</code>, <code>/topic/queue</code>, <code>/topic/players</code> or <code>/topic/settings</code>) via <code>SimpMessagingTemplate</code>. Each SPA receives the events over its STOMP connection, ignores events whose scope does not concern its view, and re-fetches the affected state over REST into its ngrx store. After every (re)connect the SPA reloads the state it displays.</p>
 </div>
 </div>
 </div>
@@ -1076,7 +1083,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_deployment_view"><a class="anchor" href="#_deployment_view"></a>7. Deployment View</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The system is deployed as three containers orchestrated by Docker Compose.</p>
+<p>The system is deployed as four containers orchestrated by Docker Compose (<code>docker-compose.yml</code>).</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1102,22 +1109,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scala Play application.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">9000</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">REST API, WebSocket broadcasting and PDF generation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kotlin/Spring Boot application (<code>management-backend</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8080</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST API under <code>/api/v2</code>, STOMP update events on <code>/ttt-websocket</code>, PDF generation and printing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MariaDB, seeded with the mktt dumps in <code>testdata/</code> on first start.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3306</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Data persistence.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Print server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CUPS (<code>cups/</code>), optionally forwarding to a real printer (<code>CUPS_PRINTER_URI</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">631 (internal)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Receives the referee sheets the backend prints with <code>lpr</code>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="sect2">
 <h3 id="_production_topology"><a class="anchor" href="#_production_topology"></a>7.1. Production Topology</h3>
 <div class="paragraph">
-<p>The three SPAs are built together into a single Nginx image (<code>Dockerfile-clients</code>). Nginx serves the static bundles under <code>/admin-view</code>, <code>/result-view</code> and <code>/tablemanager-view</code>, and proxies <code>/api/</code> (and per-application API paths) plus WebSocket connections to the backend. The backend connects to MariaDB over JDBC.</p>
+<p>The three SPAs are built together into a single Nginx image (<code>Dockerfile-clients</code>). Nginx serves the static bundles under <code>/admin-view</code>, <code>/result-view</code> and <code>/tablemanager-view</code>, and proxies <code>/api/v2/</code> and the STOMP WebSocket <code>/ttt-websocket</code> to the backend. The backend connects to MariaDB over JDBC.</p>
 </div>
 <div class="paragraph">
 <p>The production database is prepared offline by mktt; the running system only reads from and writes to the tournament data it contains.</p>
@@ -1126,7 +1139,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_development_environment"><a class="anchor" href="#_development_environment"></a>7.2. Development Environment</h3>
 <div class="paragraph">
-<p>In development, each frontend runs with its own <code>ng serve</code> (Admin View on port 4201, Result View on port 4202, Table Manager View on port 4200) and the backend with <code>sbt run</code> (port 9000). Docker Compose provides MariaDB. The frontends proxy API calls to the backend during development.</p>
+<p>In development, each frontend runs with its own <code>ng serve</code> (<code>npm start</code>; Admin View on port 4201, Result View on port 4202, Table Manager View on port 4200) and proxies <code>/api/v2</code> and <code>/ttt-websocket</code> to the backend on port 8080. The backend runs either in the root Docker Compose stack (seeded database) or with <code>mvn spring-boot:run -Dspring-boot.run.profiles=local</code>, which starts an empty MariaDB from <code>management-backend/docker-compose.yml</code>.</p>
 </div>
 </div>
 </div>
@@ -1139,13 +1152,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Input validation on all endpoints.</p>
+<p>There is no authentication or authorization: the system runs in the venue&#8217;s local network, and every client may call every endpoint and subscribe to every topic.</p>
 </li>
 <li>
 <p>SQL injection prevention through JdbcClient parameterized queries (prepared statements).</p>
 </li>
 <li>
-<p>WebSocket connection authentication.</p>
+<p>The domain validates every transition and result (<code>TournamentMatch</code>, <code>SetResult</code>); a rejected command answers with a 400 and <code>{"success": false, "message": &#8230;&#8203;}</code>.</p>
 </li>
 <li>
 <p>Environment-based configuration (database credentials and connection strings are supplied via environment variables).</p>
@@ -1158,16 +1171,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Centralized error handling in the backend.</p>
+<p>Controllers translate a rejected command into a 400 with a status body; unexpected errors use Spring&#8217;s default error response.</p>
 </li>
 <li>
-<p>User-friendly error messages in the frontends.</p>
+<p>The frontends show German snackbar or toast messages for failed requests; the Table Manager View retries a failed table load and offers a reload.</p>
 </li>
 <li>
-<p>Structured logging for debugging and monitoring.</p>
-</li>
-<li>
-<p>Graceful degradation and reconnection for WebSocket failures.</p>
+<p>STOMP heartbeats every 10 s in both directions detect dead connections; clients reconnect after 5 s and then resynchronize.</p>
 </li>
 </ul>
 </div>
@@ -1177,13 +1187,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Structured logging (SLF4J/Logback) in the backend.</p>
+<p>Logging with SLF4J/Logback in the backend.</p>
 </li>
 <li>
-<p>Logging of database reads and domain-state changes.</p>
-</li>
-<li>
-<p>WebSocket connection monitoring.</p>
+<p>Spring Boot Actuator health endpoint (<code>/actuator/health</code>), used by Docker Compose and the CI to wait for the backend.</p>
 </li>
 </ul>
 </div>
@@ -1227,16 +1234,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><code>@SpringBootTest</code> tests with H2 (MySQL mode) and a STOMP client verify persistence and WebSocket outbound events.</p>
 </li>
 <li>
-<p>The Admin View uses Karma/Jasmine unit tests.</p>
+<p>Tests compare complete results: REST bodies and update events against recorded files in <code>src/test/resources/expected/</code> (re-recorded with <code>-DupdateExpected=true</code>), database rows, domain events and objects as a whole. Every test builds its own data (<code>DatabaseHelper</code>) with a fixed <code>Clock</code> and fixed ids.</p>
 </li>
 <li>
-<p>The Result View uses Vitest unit tests.</p>
+<p>Mutation testing (PIT) of the <code>domain</code> packages runs on demand.</p>
 </li>
 <li>
-<p>The Result View and Table Manager View have Playwright end-to-end tests that run against the Docker Compose stack.</p>
+<p>The client specs reuse the backend&#8217;s recorded update events as fixtures.</p>
 </li>
 <li>
-<p>Formatting is checked with Prettier in CI for all three frontends.</p>
+<p>All three frontends use Vitest for unit tests (type-checked separately with <code>npm run test:types</code>) and Playwright for end-to-end tests that run against the Docker Compose stack.</p>
+</li>
+<li>
+<p>CI runs the backend tests and, per frontend, the Prettier check, the spec type check, the unit tests and the end-to-end tests.</p>
 </li>
 </ul>
 </div>
@@ -1261,17 +1271,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_websocket_based_real_time_communication"><a class="anchor" href="#_websocket_based_real_time_communication"></a>9.2. WebSocket-based Real-time Communication</h3>
 <div class="paragraph">
-<p><strong>Decision</strong>: push live updates over WebSockets (with a SockJS fallback) instead of client polling.</p>
+<p><strong>Decision</strong>: push live updates over STOMP on a native WebSocket (<code>/ttt-websocket</code>, no SockJS fallback) instead of client polling. The messages are thin update events; clients re-fetch the affected state over REST (ADR 0002).</p>
 </div>
 <div class="paragraph">
-<p><strong>Rationale</strong>: tournament management requires immediate updates; polling would add server load and latency.</p>
+<p><strong>Rationale</strong>: tournament management requires immediate updates; polling would add server load and latency. All clients are modern browsers, so a SockJS fallback adds no value.</p>
 </div>
 <div class="paragraph">
 <p><strong>Consequences</strong>: added complexity in connection management, reconnection handling, and state synchronization across clients.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_scala_play_backend_with_pekko_actors"><a class="anchor" href="#_scala_play_backend_with_pekko_actors"></a>9.3. Scala Play Backend with Pekko Actors</h3>
+<h3 id="_topic_scoped_update_events"><a class="anchor" href="#_topic_scoped_update_events"></a>9.3. Topic-scoped Update Events</h3>
+<div class="paragraph">
+<p><strong>Decision</strong>: the <code>outbound</code> module publishes update events on five topics instead of one: <code>/topic/matches</code> (match lifecycle and results), <code>/topic/tables</code> (assignment, locking, table manager), <code>/topic/queue</code> (match list), <code>/topic/players</code> (registration, payment) and <code>/topic/settings</code> (discipline colors, automation switches). Each event carries a scope (discipline, table, match) in the message body. Events are published after the originating transaction commits (ADR 0003).</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: a client reloads only for events its views render. The topics follow the existing modules and use cases, so each application subscribes to a small, stable set: admin-view to all five, tablemanager-view to <code>tables</code> and <code>matches</code>, result-view to <code>matches</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consequences</strong>: clients filter by scope on their side; there are no per-scope topics. There is no event replay: after a (re)connect every client resynchronizes the state it displays through REST. Every state-changing use case must publish an event on its topic.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scala_play_backend_with_pekko_actors"><a class="anchor" href="#_scala_play_backend_with_pekko_actors"></a>9.4. Scala Play Backend with Pekko Actors</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: superseded by <a href="#_spring_boot_modular_monolith">Spring Boot Modular Monolith</a>.</p>
 </div>
@@ -1286,7 +1308,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_spring_boot_modular_monolith"><a class="anchor" href="#_spring_boot_modular_monolith"></a>9.4. Spring Boot Modular Monolith</h3>
+<h3 id="_spring_boot_modular_monolith"><a class="anchor" href="#_spring_boot_modular_monolith"></a>9.5. Spring Boot Modular Monolith</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: migrate the backend to Kotlin on Spring Boot 4.1, structured as a modular monolith with Spring Modulith 2.1.</p>
 </div>
@@ -1298,7 +1320,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_onion_architecture_per_module"><a class="anchor" href="#_onion_architecture_per_module"></a>9.5. Onion Architecture per Module</h3>
+<h3 id="_onion_architecture_per_module"><a class="anchor" href="#_onion_architecture_per_module"></a>9.6. Onion Architecture per Module</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: every module uses the layers <code>domain</code> (aggregates, value objects and repository ports), <code>application</code> (use-case orchestration) and <code>infrastructure</code> (<code>database</code>, <code>web</code>, <code>messaging</code>), with dependencies pointing inward (<code>infrastructure → application → domain</code>).</p>
 </div>
@@ -1310,7 +1332,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_event_driven_module_integration"><a class="anchor" href="#_event_driven_module_integration"></a>9.6. Event-driven Module Integration</h3>
+<h3 id="_event_driven_module_integration"><a class="anchor" href="#_event_driven_module_integration"></a>9.7. Event-driven Module Integration</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: modules communicate through Spring application events (<code>ApplicationEventPublisher</code> / <code>@EventListener</code>); the <code>outbound</code> module is the only component that publishes WebSocket messages.</p>
 </div>
@@ -1318,11 +1340,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Rationale</strong>: keeps modules decoupled and gives a single, replaceable place for the WebSocket transport.</p>
 </div>
 <div class="paragraph">
-<p><strong>Consequences</strong>: <code>registration</code> publishes <code>PlayerRegistered</code>/<code>PlayerUnregistered</code>; <code>outbound</code> consumes them and pushes to <code>/topic/updates</code>.</p>
+<p><strong>Consequences</strong>: for example <code>registration</code> publishes <code>PlayerRegistered</code>/<code>PlayerUnregistered</code>; <code>outbound</code> consumes them and pushes <code>PLAYER_REGISTERED</code>/<code>PLAYER_UNREGISTERED</code> to <code>/topic/players</code> (see <a href="#_topic_scoped_update_events">Topic-scoped Update Events</a>).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_plain_sql_via_jdbcclient"><a class="anchor" href="#_plain_sql_via_jdbcclient"></a>9.7. Plain SQL via JdbcClient</h3>
+<h3 id="_plain_sql_via_jdbcclient"><a class="anchor" href="#_plain_sql_via_jdbcclient"></a>9.8. Plain SQL via JdbcClient</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: persist with <code>JdbcClient</code> and hand-written SQL only; no JPA or Hibernate.</p>
 </div>
@@ -1334,19 +1356,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_api_versioning_via_apiv2_path_prefix"><a class="anchor" href="#_api_versioning_via_apiv2_path_prefix"></a>9.8. API versioning via <code>/api/v2</code> path prefix</h3>
+<h3 id="_api_versioning_via_apiv2_path_prefix"><a class="anchor" href="#_api_versioning_via_apiv2_path_prefix"></a>9.9. API versioning via <code>/api/v2</code> path prefix</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: every REST controller is prefixed with <code>/api/v2</code> through a global <code>PathMatchConfigurer.addPathPrefix("/api/v2", …)</code> (see <code>ApiVersionConfig</code>), so controllers stay on the legacy path shape (<code>/match</code>, <code>/matchlist</code>, <code>/table</code>, <code>/players</code>, …).</p>
 </div>
 <div class="paragraph">
-<p><strong>Rationale</strong>: the legacy Scala backend keeps serving under <code>/api</code> while the new backend runs in parallel under <code>/api/v2</code>; a router can switch between them by version. A single prefix keeps the controllers clean and future version bumps localized.</p>
+<p><strong>Rationale</strong>: during the migration the legacy Scala backend served <code>/api</code> while the new backend ran in parallel under <code>/api/v2</code>, so a router could switch between them by version. The legacy backend is no longer deployed; the prefix stays, keeps the controllers clean and keeps future version bumps localized.</p>
 </div>
 <div class="paragraph">
 <p><strong>Consequences</strong>: clients must call <code>/api/v2/…</code>. WebSocket endpoints (<code>/ttt-websocket</code>) and actuator endpoints are unaffected, as they are not <code>@RestController</code> handlers. Spring Boot 4&#8217;s <code>spring.mvc.apiversion</code> remains available for version-specific controller mappings later.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_single_data_access_component"><a class="anchor" href="#_single_data_access_component"></a>9.9. Single Data-Access Component</h3>
+<h3 id="_single_data_access_component"><a class="anchor" href="#_single_data_access_component"></a>9.10. Single Data-Access Component</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: superseded by <a href="#_onion_architecture_per_module">Onion Architecture per Module</a>.</p>
 </div>
@@ -1361,7 +1383,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_offline_data_preparation_by_mktt"><a class="anchor" href="#_offline_data_preparation_by_mktt"></a>9.10. Offline Data Preparation by mktt</h3>
+<h3 id="_offline_data_preparation_by_mktt"><a class="anchor" href="#_offline_data_preparation_by_mktt"></a>9.11. Offline Data Preparation by mktt</h3>
 <div class="paragraph">
 <p><strong>Decision</strong>: rely on the legacy tool mktt to prepare the tournament database from click-TT data, rather than importing registrations at runtime.</p>
 </div>
@@ -1483,7 +1505,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket connection failures</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Clients lose real-time updates.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Automatic reconnection and fallback.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeats detect dead connections; clients reconnect and resynchronize everything they show over REST.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
 </tr>
 <tr>
@@ -1493,9 +1515,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Single-threaded in-memory state</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Contention or inconsistency under high load.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Careful synchronization; load testing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In-memory settings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The auto-start flag, the selected printer and print-on-assign are kept in memory and reset when the backend restarts.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persist them in a sidecar table when they need to survive a restart.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 <tr>
@@ -1512,19 +1534,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Code duplication between the three frontend applications.</p>
+<p>Code duplication between the three frontend applications. The shared modules (<code>update-events</code>, <code>result-entry</code>, <code>match-state</code>) are identical copies per application by decision; a change must reach every copy.</p>
 </li>
 <li>
 <p>All three frontends are kept on the same major Angular version (currently Angular 21); keeping them in sync requires a coordinated upgrade effort.</p>
 </li>
 <li>
-<p>Limited test coverage in some areas (the Table Manager View currently has no unit tests).</p>
+<p>There is no authentication (chapter 8).</p>
 </li>
 <li>
-<p>Missing documentation for some components.</p>
-</li>
-<li>
-<p>Opportunity to extract a shared component library to reduce duplication.</p>
+<p>Open follow-ups are tracked in <code>docs/follow-ups.md</code>.</p>
 </li>
 </ul>
 </div>
@@ -1595,7 +1614,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Group</strong> — a round-robin group of players within a discipline. A group stage is played first; its results determine the knockout placement.</p>
 </div>
 <div class="paragraph">
-<p><strong>Knockout stage</strong> — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier <code>999</code>.</p>
+<p><strong>Knockout stage</strong> — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier <code>999</code>. The winner of a knockout match, played or Walkover, moves on into its Side of the next match of the bracket.</p>
 </div>
 <div class="paragraph">
 <p><strong>Stage</strong> — where a match sits within its discipline: either the Group stage (Gruppenspiel) or a specific Knockout stage (Final, Semi-final, Quarter-final, Round of 16, Rounds 0–3, Third-place match, Placement matches, Top48/ER rounds). Stored in the <code>matchtype</code> table. In the knockout stage, the round number identifies the round within the bracket.</p>
@@ -1604,7 +1623,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Queue</strong> — the ordered waiting list of matches used to let the tournament run without manual interaction. Matches in the queue are started automatically as tables become free. <strong>Deprecated code name: "MatchList".</strong></p>
 </div>
 <div class="paragraph">
-<p><strong>Call</strong> — the announcement of a match and its players. <strong>Second call</strong> and <strong>Third call</strong> are repeat announcements issued when a player has not appeared.</p>
+<p><strong>Call</strong> — the announcement of a match and its players at the caller desk. A match at a table is due for its first call; announcing it makes the match Called. <strong>Second call</strong> and <strong>Third call</strong> are repeat announcements for single players who have not appeared: the table manager requests one for the missing players, the caller announces it. Each player of a match has their own call count; the match&#8217;s call is the highest of them. The time since the first call shows how long the players have been waited for.</p>
 </div>
 <div class="paragraph">
 <p><strong>Infrastructure</strong></p>
@@ -1637,7 +1656,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Called</strong> — the first call for the match has been announced.</p>
 </div>
 <div class="paragraph">
-<p><strong>Second call</strong> / <strong>Third call</strong> — a repeat call has been announced because a player has not appeared.</p>
+<p><strong>Second call</strong> / <strong>Third call</strong> — a repeat call has been announced for a player who has not appeared. Usually the administrator ends the match as a Walkover after the Third call, but may do so at any time.</p>
+</div>
+<div class="paragraph">
+<p><strong>Take back</strong> — returning a match from its Table to Open, either by the administrator or by the table manager ("Zurück"). <strong>Deprecated: "stop".</strong></p>
 </div>
 <div class="paragraph">
 <p><strong>Started</strong> — the match is being played.</p>
@@ -1646,10 +1668,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Completed</strong> — the result has been entered and the match is finished.</p>
 </div>
 <div class="paragraph">
-<p><strong>Finished</strong> — the match has ended without a played result, for example a bye or a walkover ("free match"). Like Completed, it is a terminal state.</p>
+<p><strong>Finished</strong> — the match has been played and freed at its table ("Frei"), but its result is entered later, in the administrator&#8217;s result list. Entering the result completes it.</p>
 </div>
 <div class="paragraph">
-<p>The lifecycle state is represented in code by <code>MatchState</code>, whose values are <code>Open</code>, <code>InWaitingList</code>, <code>Callable</code>, <code>OnTable</code>, <code>SecondCall</code>, <code>ThirdCall</code>, <code>Started</code>, <code>Finished</code> and <code>Completed</code>. Two code names are counter-intuitive: assigning a match to a table sets the state <code>Callable</code>, while announcing the call sets the state <code>OnTable</code>.</p>
+<p><strong>Walkover</strong> — the match is not played at all ("kampflos") because a Side did not appear after its calls; the Side that was there wins it without playing, counted as 3:0 Sets and 33:0 Points. When neither Side appears, the administrator still names a winner. Like Completed, it is a terminal state.</p>
+</div>
+<div class="paragraph">
+<p><strong>Second table</strong> — a group of at least four players may play its matches on two tables ("2.Tisch"). Its upcoming matches then wait at both tables; a match is started at one of them and leaves the other. The table manager starts each match at the right table. <strong>Remove</strong> ("Entfernen") takes a match that waits at two tables off one of them; it keeps waiting at the other.</p>
+</div>
+<div class="paragraph">
+<p>The lifecycle state is represented in code by <code>MatchState</code>, whose values are <code>Open</code>, <code>InQueue</code>, <code>OnTable</code> (At Table), <code>Started</code>, <code>Completed</code>, <code>Finished</code> and <code>Walkover</code>. The calls are not states: every Match DTO carries <code>callNumber</code> next to <code>state</code> (0 = not called yet, 1 = Called, 2 = Second call, 3 = Third call; the highest call of its players). Clients ask the questions in <code>src/app/shared/match-state/match-state.ts</code> (<code>isWaiting</code>, <code>isAtTable</code>, <code>isBeingPlayed</code>, <code>isFinished</code>, <code>isWalkover</code>, <code>isOver</code>, <code>callNumber</code>, …) instead of comparing state names. The legacy names <code>InWaitingList</code>, <code>Callable</code>, <code>SecondCall</code> and <code>ThirdCall</code> are gone.</p>
+</div>
+<div class="paragraph">
+<p><strong>Live updates</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Update event</strong> — a short notification that something in the tournament changed, for example that a match was completed. It does not carry the full data; each client fetches the current state it needs itself. <strong>Deprecated: "snapshot" (full state pushed to clients).</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Topic</strong> — a named channel for update events about one functional area. The topics are Matches (match lifecycle and results), Tables (table assignment and locking), Queue (the ordered waiting list), Players (registration and payment) and Settings (discipline colors and automation switches). A client listens only to the topics its view needs.</p>
+</div>
+<div class="paragraph">
+<p><strong>Scope</strong> — the part of the tournament an update event refers to, such as a discipline, a table or a single match. A client uses the scope to ignore events that do not concern what it currently displays.</p>
+</div>
+<div class="paragraph">
+<p><strong>Resynchronization</strong> — a client reloading the complete state it displays after it may have missed update events, for example after its connection dropped and was re-established.</p>
 </div>
 <div class="paragraph">
 <p><strong>External systems</strong></p>
