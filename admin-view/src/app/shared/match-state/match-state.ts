@@ -10,7 +10,7 @@
  *
  * Lifecycle (see GLOSSARY.md): Open → (InQueue) → OnTable (At Table) → Started → Completed.
  * A Match freed at its table ("Frei") is Finished until its result is entered, then Completed;
- * a Match that is not played at all (bye / walkover) is a Walkover.
+ * a Match that is not played at all because a Side did not appear ("kampflos") is a Walkover.
  */
 
 export const MATCH_STATES = ['Open', 'InQueue', 'OnTable', 'Started', 'Completed', 'Finished', 'Walkover'] as const;
@@ -58,7 +58,7 @@ export function isFinished(match: HasMatchState): boolean {
   return match.state === 'Finished';
 }
 
-/** Not played at all: a bye or a walkover ("kampflos"). */
+/** Not played at all: a Side did not appear, the other won without playing ("kampflos"). */
 export function isWalkover(match: HasMatchState): boolean {
   return match.state === 'Walkover';
 }

@@ -18,7 +18,7 @@
   } ],
   "side1Id" : 1,
   "side2Id" : 2,
-  "winnerSideId" : null,
+  "winnerSideId" : 2,
   "playGroup" : {
     "id" : 1,
     "name" : "A"
@@ -27,12 +27,12 @@
     "id" : 1,
     "name" : "Gruppenspiel"
   },
-  "result" : null,
-  "resultRaw" : null,
+  "result" : "0 : 3",
+  "resultRaw" : "0=11,0=11,0=11",
   "sets1" : 0,
-  "sets2" : 0,
+  "sets2" : 3,
   "balls1" : 0,
-  "balls2" : 0,
+  "balls2" : 33,
   "isPlayed" : true,
   "isPlaying" : false,
   "isKampflos" : true,
@@ -73,7 +73,23 @@
     "paid" : false,
     "club" : null
   },
-  "sets" : [ ],
+  "sets" : [ {
+    "pointsPlayer1" : 0,
+    "pointsPlayer2" : 11
+  }, {
+    "pointsPlayer1" : 0,
+    "pointsPlayer2" : 11
+  }, {
+    "pointsPlayer1" : 0,
+    "pointsPlayer2" : 11
+  } ],
   "state" : "Walkover",
-  "winner" : [ ]
+  "winner" : [ {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  } ]
 }

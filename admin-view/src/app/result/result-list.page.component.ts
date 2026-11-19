@@ -52,7 +52,7 @@ export class ResultListPageComponent implements OnInit {
   onResultForMatch(match: Match) {
     const dialogRef = this.dialog.open(ResultModalComponent, {
       width: '500px',
-      data: match,
+      data: { match },
     });
 
     dialogRef.afterClosed().subscribe((matchResult) => {

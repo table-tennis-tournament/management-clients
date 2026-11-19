@@ -87,7 +87,7 @@ export class SupervisorPageComponent implements OnInit {
   onResultForMatch(match: Match) {
     const dialogRef = this.dialog.open(ResultModalComponent, {
       width: '250px',
-      data: match,
+      data: { match },
     });
 
     dialogRef.afterClosed().subscribe((matchResult) => {

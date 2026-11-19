@@ -35,9 +35,6 @@ import {
   UnLockTable,
   UnLockTableError,
   UnLockTableSuccess,
-  WalkoverMatches,
-  WalkoverMatchesError,
-  WalkoverMatchesSuccess,
 } from './table.actions';
 import { LoadMatches } from '../../assign/redux/match.actions';
 import { TableService } from '../table.service';
@@ -109,24 +106,6 @@ export class TableEffects {
           catchError((err) => {
             this.toastService.error('Fehler beim Freigeben des Tisches', '');
             return of(new FreeTableError(err));
-          })
-        );
-      })
-    )
-  );
-
-  walkoverMatches = createEffect(() =>
-    this.actions$.pipe(
-      ofType(TableActionTypes.Walkover),
-      mergeMap((action: WalkoverMatches) => {
-        return this.matchService.walkoverMatches(action.payload.matchIds).pipe(
-          map(() => {
-            this.toastService.success(`SpielNr. ${action.payload.matchIds} kampflos beendet`);
-            return new WalkoverMatchesSuccess(action.payload);
-          }),
-          catchError((err) => {
-            this.toastService.error('Fehler beim kampflosen Beenden der Spiele', '');
-            return of(new WalkoverMatchesError(err));
           })
         );
       })

@@ -252,18 +252,6 @@ class TournamentMatch(
         secondTableNumber = null
     }
 
-    /**
-     * Ends a match without playing it, as a bye or walkover: it is played, has no result and mktt's walkover
-     * flag is set. Transitions it to [MatchState.Walkover].
-     */
-    fun walkover() {
-        isPlayed = true
-        isPlaying = false
-        isKampflos = true
-        winnerSideId = null
-        clearResult()
-        leaveTable()
-    }
 
     /**
      * The match is over at its table ("Frei"), its result is entered later: it leaves the table and waits for the
@@ -304,10 +292,11 @@ class TournamentMatch(
     }
 
     /**
-     * Records the final result of the match and transitions it to [MatchState.Completed].
-     * A match is won by the first side to reach three sets (best of five).
+     * Records the final result of the match and transitions it to [MatchState.Completed], or to
+     * [MatchState.Walkover] when it was [kampflos]: a Side did not appear and the other wins with the entered
+     * result. A match is won by the first side to reach three sets (best of five).
      */
-    fun complete(sets: List<SetResult>) {
+    fun complete(sets: List<SetResult>, kampflos: Boolean = false) {
         val games1 = sets.count { it.pointsPlayer1 > it.pointsPlayer2 }
         val games2 = sets.count { it.pointsPlayer2 > it.pointsPlayer1 }
         require(games1 == 3 || games2 == 3) { "A match is won by the first side to reach three sets" }
@@ -316,7 +305,7 @@ class TournamentMatch(
         applySets(sets)
         this.isPlayed = true
         this.isPlaying = false
-        this.isKampflos = false
+        this.isKampflos = kampflos
         this.winnerSideId = sideId(if (games1 > games2) 1 else 2)
         leaveTable()
     }

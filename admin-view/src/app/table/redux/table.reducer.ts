@@ -70,8 +70,7 @@ export function reduceTableState(state: TableState = initialState, action: Table
         }),
       };
     }
-    case TableActionTypes.FreeSuccess:
-    case TableActionTypes.WalkoverSuccess: {
+    case TableActionTypes.FreeSuccess: {
       const matchIds: number[] = action.payload.matchIds;
       return {
         ...state,

@@ -100,4 +100,21 @@ class GroupingModuleIT {
 
         assertEquals(completedGroup, standings())
     }
+
+    @Test
+    fun `a walkover counts as won 3 to 0 in sets and 33 to 0 in points`() {
+        insertGroupMatches(match12 = null)
+
+        // player 3 did not appear: player 2 wins kampflos, entered as 0 0 0
+        matchService.setResult(12, listOf(SetResult(11, 0), SetResult(11, 0), SetResult(11, 0)), kampflos = true)
+
+        assertEquals(
+            listOf(
+                listOf(1, 1, 2, 0, 6, 0, 66, 30, "2 : 0", "6 : 0", "66 : 30", 1, 6),
+                listOf(2, 2, 1, 1, 3, 3, 48, 33, "1 : 1", "3 : 3", "48 : 33", 1, 0),
+                listOf(3, 3, 0, 2, 0, 6, 15, 66, "0 : 2", "0 : 6", "15 : 66", 1, -6)
+            ),
+            standings()
+        )
+    }
 }

@@ -40,7 +40,7 @@ export class DisciplineStageItemComponent {
     return isFinished(this.match);
   }
 
-  /** Not played: a bye or a walkover ("K" badge). */
+  /** Not played: a walkover ("K" badge). */
   isMatchWalkover() {
     return isWalkover(this.match);
   }

@@ -78,9 +78,6 @@ export class TtTableComponent {
   removeFromTable = new EventEmitter<TableDto>();
 
   @Output()
-  walkover = new EventEmitter<TableDto>();
-
-  @Output()
   refreshTables = new EventEmitter<any>();
 
   public isGameAvailable() {

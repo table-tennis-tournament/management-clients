@@ -10,7 +10,7 @@ A match progresses through several states (the backend `MatchState`, sent as `st
 - **Started**: The match is being played.
 - **Completed**: The match is over, and the final result has been recorded.
 - **Finished**: The match has been played and has left its table ("Frei"); its result is entered later.
-- **Walkover**: The match is not played (bye / walkover, "kampflos") and has no result.
+- **Walkover**: The match is not played ("kampflos"): a Side did not appear, and the other wins it with 3:0 sets and 33:0 points.
 
 ## Player Calling
 Matches that are assigned to a table but have not yet started (OnTable) are called. The calls are not states: every Match DTO carries `callNumber` (0 = not called yet, 1-3 = first to third call).
@@ -32,7 +32,7 @@ Administrators use a "Match List" or "Supervisor View" to plan matches:
 - **Take back**: A match on a table (assigned or being played) is taken back to Open; its call and its result are cleared, so it is played again from the start. The table manager's "Zurück" takes back a running match.
 - **Free** ("Frei"): A played match leaves its table before its result is entered; it becomes Finished and waits in the
   administrator's result list. Entering the result completes it.
-- **Walkover** ("Kampflos"): A match is ended unplayed, without a result; it becomes Walkover and leaves its table.
+- **Walkover** ("Kampflos"): In the Assign view the administrator enters the result of the Side that was there, usually `0 0 0` (or `-0 -0 -0`), and ticks "Kampflos". The match becomes Walkover with that winner and result, leaves its table, counts in the group standings and moves its winner on in the knockout stage. When neither Side appeared, the administrator still names a winner; if that player misses the next knockout match too, it is entered kampflos in the same way. Result displays show "kampflos" for the winner instead of the Sets.
 
 ## Knockout Stage
 A knockout match (group `999`) of the types Halbfinale (2) to Runde 0 (8) moves its winner on when its final result
@@ -69,9 +69,8 @@ Sets are sent as `[[pointsSide1, pointsSide2], ...]`, for example `[[11,5],[11,7
 | `POST` | `/match/takeBack/{id}` | Take back a running match (the table manager's "Zurück"). `/match/stop/{id}` is its deprecated alias. |
 | `POST` | `/match/takeBack` | Take back matches. Body: `[matchId, ...]`. |
 | `POST` | `/match/free` | Free matches: they leave their table and wait for their result (Finished). Body: `[matchId, ...]`. |
-| `POST` | `/match/walkover` | End matches unplayed, without a result (Walkover). Body: `[matchId, ...]`. |
 | `POST` | `/match/updateResult/{id}` | Enter an interim result; the match keeps running. Body: sets. |
-| `POST` | `/match/setResult/{id}` | Enter the final result and complete the match. Body: sets. |
+| `POST` | `/match/setResult/{id}` | Enter the final result and complete the match; `?kampflos=true` makes it a Walkover won with that result. Body: sets. |
 | `POST` | `/match/call` | First call of matches. Body: `[matchId, ...]`. |
 | `POST` | `/playercall/{matchId}` | Next call (second, then third) of a match. |
 | `GET` | `/matchaggregates/caller`, `/secondCall`, `/thirdCall` | The matches at a table per call, for the caller view. |

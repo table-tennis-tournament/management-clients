@@ -5,7 +5,6 @@ const matches = [{ id: 1 }];
 
 describeRequests(MatchService, [
   { call: (s) => s.freeMatches([1, 2]), method: 'POST', url: '/api/v2/match/free', body: [1, 2] },
-  { call: (s) => s.walkoverMatches([1, 2]), method: 'POST', url: '/api/v2/match/walkover', body: [1, 2] },
   { call: (s) => s.takeBackMatches([3]), method: 'POST', url: '/api/v2/match/takeBack', body: [3] },
   {
     call: (s) => s.assignToSecondTable(4, [5, 6]),
@@ -27,6 +26,25 @@ describeRequests(MatchService, [
     body: [
       [11, 5],
       [9, 11],
+    ],
+  },
+  {
+    call: (s) =>
+      s.resultForMatch({
+        match: { id: 7 },
+        result: [
+          { pointsPlayer1: 0, pointsPlayer2: 11 },
+          { pointsPlayer1: 0, pointsPlayer2: 11 },
+          { pointsPlayer1: 0, pointsPlayer2: 11 },
+        ],
+        kampflos: true,
+      }),
+    method: 'POST',
+    url: '/api/v2/match/setResult/7?kampflos=true',
+    body: [
+      [0, 11],
+      [0, 11],
+      [0, 11],
     ],
   },
   { call: (s) => s.loadAllMatches(), method: 'GET', url: '/api/v2/match/all', body: null, response: matches },

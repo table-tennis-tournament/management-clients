@@ -9,7 +9,6 @@
     "matchIds" : [ 1 ],
     "typeIds" : [ 1 ],
     "tableIds" : [ 1 ],
-    "affectedTypeIds" : [ ],
-    "walkover" : false
+    "affectedTypeIds" : [ ]
   }
 }

@@ -339,16 +339,18 @@ class MatchResourceIT {
         }
 
         @Test
-        fun `ends a match as a walkover, played without a result`() {
+        fun `a result entered kampflos ends the match as a walkover won by the Side that was there`() {
             api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
-            api.post("/match/walkover", listOf(1)).expectStatus().isOk.expectExactJson(success)
-            api.expectMatch(1, "after-walkover")
+            api.post("/match/setResult/1?kampflos=true", listOf(listOf(0, 11), listOf(0, 11), listOf(0, 11))).expectStatus().isOk
+                .expectExactJson(success)
+            api.expectMatch(1, "after-kampflos")
         }
 
         @Test
-        fun `rejects a walkover of an unknown match`() {
-            api.post("/match/walkover", listOf(9999)).expectStatus().isBadRequest
-                .expectExactJson(failure("Could not end all matches as walkovers."))
+        fun `rejects a kampflos result without a winner of three sets`() {
+            api.post("/match/setResult/1?kampflos=true", listOf(listOf(11, 0))).expectStatus().isBadRequest
+                .expectExactJson(failure("Could not set result."))
+            api.expectMatch(1, "open")
         }
 
         // --- results -------------------------------------------------------------------
@@ -480,6 +482,12 @@ class MatchResourceIT {
         fun `an interim result moves nobody on`() {
             api.post("/match/updateResult/11", listOf(listOf(11, 5), listOf(11, 7))).expectStatus().isOk
             api.expectMatch(13, "knockout-semifinal-empty")
+        }
+
+        @Test
+        fun `a walkover winner moves on`() {
+            api.post("/match/setResult/12?kampflos=true", nilThree).expectStatus().isOk.expectExactJson(success)
+            api.expectMatch(13, "knockout-semifinal-side2-walkover-winner")
         }
 
         @Test

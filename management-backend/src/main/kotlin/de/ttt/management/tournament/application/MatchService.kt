@@ -97,29 +97,17 @@ class MatchService(
             MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = null)
         }
 
-    /** Ends matches without playing them, as byes or walkovers. */
-    @Transactional
-    fun walkoverMatches(matchIds: List<Long>): Boolean =
-        transition(matchIds, TournamentMatch::walkover) { ended ->
-            MatchFreed(
-                ended.mapNotNull { it.match.id },
-                ended.mapNotNull { it.match.typeId }.distinct(),
-                ended.flatMap { it.previousTableIds }.distinct(),
-                affectedTypeIds(ended.map { it.match }),
-                walkover = true
-            )
-        }
-
     /**
-     * Completes the match with its final result. In the knockout stage its winner then moves on into the next
-     * match of the bracket, in the same transaction.
+     * Completes the match with its final result, as a Walkover when it was [kampflos]. In the knockout stage its
+     * winner then moves on into the next match of the bracket, in the same transaction.
      */
     @Transactional
-    fun setResult(matchId: Long, sets: List<SetResult>): Boolean {
-        val completed = transition(listOf(matchId), { it.complete(sets) }) { (t) ->
+    fun setResult(matchId: Long, sets: List<SetResult>, kampflos: Boolean = false): Boolean {
+        val completed = transition(listOf(matchId), { it.complete(sets, kampflos) }) { (t) ->
             MatchCompleted(
                 matchId = matchId,
                 winnerId = t.match.winnerSideId,
+                walkover = t.match.isKampflos,
                 sets1 = t.match.sets1 ?: 0,
                 sets2 = t.match.sets2 ?: 0,
                 typeId = t.match.typeId,

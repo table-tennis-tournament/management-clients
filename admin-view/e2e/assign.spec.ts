@@ -206,18 +206,33 @@ test.describe('Zuweiser View', () => {
       expect((await getMatch(request, 3)).state).toBe('Open');
     });
 
-    test('"Kampflos" ends the match unplayed and frees the table', async ({ page, request }) => {
+    test('a result entered "Kampflos" ends the match as a walkover won by the Side that was there', async ({
+      page,
+      request,
+    }) => {
       await page.goto('/admin-view/assignView');
-      await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
+      await tableCard(page, 1).getByRole('button', { name: 'Eingeben', exact: true }).click({ timeout: 15000 });
 
-      await openTableActions(page, 1);
-      await tableCard(page, 1).getByRole('button', { name: 'Kampflos' }).click();
+      await typeResult(page, '0 0 0');
+      await dialog(page)
+        .getByRole('checkbox', { name: /Kampflos/ })
+        .check();
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
 
       await expect(tableCard(page, 1).locator('span.card-title')).toContainText('Frei', { timeout: 15000 });
       const match = await getMatch(request, 3);
       expect(match.state).toBe('Walkover');
       expect(match.isKampflos).toBe(true);
-      expect(match.resultRaw).toBeFalsy();
+      expect(match.resultRaw).toBe('11=0,11=0,11=0');
+      expect(match.winnerSideId).toBe(match.side1Id);
+    });
+
+    test('the Table view offers no "Kampflos" when entering a result', async ({ page }) => {
+      await page.goto('/admin-view/tableView');
+      await tableCard(page, 1).getByRole('button', { name: 'Eingeben', exact: true }).click({ timeout: 15000 });
+
+      await expect(dialog(page).getByRole('button', { name: 'Ok' })).toBeVisible();
+      await expect(dialog(page).getByRole('checkbox')).toHaveCount(0);
     });
 
     test('a single match is offered neither "2.Tisch" nor "Entfernen"', async ({ page }) => {

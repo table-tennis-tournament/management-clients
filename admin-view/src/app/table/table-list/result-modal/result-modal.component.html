@@ -17,6 +17,11 @@
       <input matInput placeholder="" [(ngModel)]="currentInput" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnter()" />
     </mat-form-field>
   </form>
+  @if (kampflosAllowed) {
+    <div class="d-flex justify-content-center">
+      <mat-checkbox [(ngModel)]="kampflos" name="kampflos">Kampflos (bsp. 0 0 0)</mat-checkbox>
+    </div>
+  }
 </div>
 <div mat-dialog-actions class="d-flex justify-content-end">
   <button mat-button (click)="onCancel()">Abbrechen</button>

@@ -40,7 +40,6 @@
           @if (isGameAvailable()) {
             <span>
               <button mat-button (click)="takeBackTable.emit(table)">Zurück</button>
-              <button mat-button (click)="walkover.emit(table)">Kampflos</button>
               @if (hasMatchOnTwoTables()) {
                 <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
               }

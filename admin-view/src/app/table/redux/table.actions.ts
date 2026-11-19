@@ -1,6 +1,5 @@
 import { Action } from '@ngrx/store';
 import { TableDto } from '../tabledto.model';
-import { TableMatchEvent } from './table.match.event';
 
 export enum TableActionTypes {
   Load = '[Table] Load',
@@ -30,9 +29,6 @@ export enum TableActionTypes {
   AssignMatchToTable = '[Table] Assign match to table',
   AssignMatchToTableError = '[Table] Assign match to table Error',
   AssignMatchToTableSuccess = '[Table] Assign match to table Success',
-  Walkover = '[Table] Walkover',
-  WalkoverSuccess = '[Table] Walkover Success',
-  WalkoverError = '[Table] Walkover Error',
   Remove = '[Table] Remove',
   RemoveSuccess = '[Table] Remove Success',
   RemoveError = '[Table] Remove Error',
@@ -200,24 +196,6 @@ export class AssignMatchToTableError implements Action {
   constructor(public payload: any) {}
 }
 
-export class WalkoverMatches implements Action {
-  readonly type = TableActionTypes.Walkover;
-
-  constructor(public payload: TableMatchEvent) {}
-}
-
-export class WalkoverMatchesSuccess implements Action {
-  readonly type = TableActionTypes.WalkoverSuccess;
-
-  constructor(public payload: TableMatchEvent) {}
-}
-
-export class WalkoverMatchesError implements Action {
-  readonly type = TableActionTypes.WalkoverError;
-
-  constructor(public payload: any) {}
-}
-
 export class RemoveMatchFromTable implements Action {
   readonly type = TableActionTypes.Remove;
 
@@ -264,9 +242,6 @@ export type TableActionsUnion =
   | AssignMatchToTable
   | AssignMatchToTableSuccess
   | AssignMatchToTableError
-  | WalkoverMatches
-  | WalkoverMatchesSuccess
-  | WalkoverMatchesError
   | RemoveMatchFromTable
   | RemoveMatchFromTableSuccess
   | RemoveMatchFromTableError;

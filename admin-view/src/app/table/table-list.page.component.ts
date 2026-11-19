@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
@@ -18,7 +18,6 @@ import {
   ResultForMatch,
   TakeBackTable,
   UnLockTable,
-  WalkoverMatches,
 } from './redux/table.actions';
 
 import { canUseSecondTable, matchesOnTwoTables } from './table-actions';
@@ -62,6 +61,10 @@ export class TableListPageComponent implements OnInit {
   private toastService = inject(ToastrService);
   dialog = inject(MatDialog);
 
+  /** Offers entering a result kampflos; the Assign view does, the Table view does not. */
+  @Input()
+  kampflosEntry = false;
+
   tables: Observable<TableDto[]>;
   tablesLoading: Observable<boolean>;
   typeColors: Observable<TypeColorMap>;
@@ -89,13 +92,6 @@ export class TableListPageComponent implements OnInit {
   onTakeBackTable(table: TableDto) {
     this.chooseMatches(table.matches, (matchIds) =>
       this.store.dispatch(new TakeBackTable(new TableMatchEvent(matchIds, table.id)))
-    );
-  }
-
-  /** "Kampflos": the chosen matches end unplayed, without a result. */
-  onWalkover(table: TableDto) {
-    this.chooseMatches(table.matches, (matchIds) =>
-      this.store.dispatch(new WalkoverMatches(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
@@ -146,7 +142,7 @@ export class TableListPageComponent implements OnInit {
     if (this.isSingleMatchOnTable(table)) {
       const dialogRef = this.dialog.open(ResultModalComponent, {
         width: '500px',
-        data: table.matches[0],
+        data: { match: table.matches[0], kampflosAllowed: this.kampflosEntry },
       });
 
       dialogRef.afterClosed().subscribe((matchResult) => {

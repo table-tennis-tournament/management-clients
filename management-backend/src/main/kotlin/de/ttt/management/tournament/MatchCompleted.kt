@@ -8,6 +8,8 @@ package de.ttt.management.tournament
 data class MatchCompleted(
     val matchId: Long,
     val winnerId: Long?,
+    /** `true` for a Walkover: the winner's Side won without playing ("kampflos"). */
+    val walkover: Boolean = false,
     val sets1: Int,
     val sets2: Int,
     val typeId: Long? = null,

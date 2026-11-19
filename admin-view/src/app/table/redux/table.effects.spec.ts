@@ -20,9 +20,6 @@ import {
   ResultForMatch,
   ResultForMatchError,
   ResultForMatchSuccess,
-  WalkoverMatches,
-  WalkoverMatchesError,
-  WalkoverMatchesSuccess,
 } from './table.actions';
 import { TableEffects } from './table.effects';
 import { TTMatchResult } from '../table-list/result-modal/ttmatch-result.model';
@@ -125,29 +122,6 @@ describe('the table effects', () => {
 
       expect(result).toStrictEqual([new AssignToSecondTableError(error)]);
       expect(toast.error.mock.calls).toEqual([['Fehler beim zuweisen des zweiten Tisches', '']]);
-    });
-  });
-
-  describe('walkover', () => {
-    const payload = { matchIds: [3], tableId: 11 };
-
-    it('ends the matches as walkovers', async () => {
-      const walkover = vi.spyOn(matchService, 'walkoverMatches').mockReturnValue(of(statusDto));
-
-      const result = await emittedBy(tableEffects.walkoverMatches, actions, new WalkoverMatches(payload));
-
-      expect(result).toStrictEqual([new WalkoverMatchesSuccess(payload)]);
-      expect(walkover.mock.calls).toEqual([[[3]]]);
-      expect(toast.success.mock.calls).toEqual([['SpielNr. 3 kampflos beendet']]);
-    });
-
-    it('shows an error when the request fails', async () => {
-      vi.spyOn(matchService, 'walkoverMatches').mockReturnValue(throwError(() => error));
-
-      const result = await emittedBy(tableEffects.walkoverMatches, actions, new WalkoverMatches(payload));
-
-      expect(result).toStrictEqual([new WalkoverMatchesError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim kampflosen Beenden der Spiele', '']]);
     });
   });
 

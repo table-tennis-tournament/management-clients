@@ -16,16 +16,21 @@ import {
   SetScore,
   Side,
 } from '../../../shared/result-entry/result-entry';
-import { TTMatchResult } from './ttmatch-result.model';
+import { ResultModalData, TTMatchResult } from './ttmatch-result.model';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { FormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { TtPlayerNameReducerPipe } from '../../../shared/pipes/tt-player-name-reducer.pipe';
 import { TtMatchDisciplinePipe } from '../../../shared/pipes/tt-match-discipline.pipe';
 
-/** Enters the final result of a match. Closes with a [TTMatchResult], or with nothing on cancel. */
+/**
+ * Enters the final result of a match. Closes with a [TTMatchResult], or with nothing on cancel. Where
+ * [ResultModalData.kampflosAllowed], the result can be marked kampflos: the match becomes a Walkover won by the
+ * Side that was there, entered as `0 0 0` (or `-0 -0 -0`).
+ */
 @Component({
   selector: 'toma-result-modal',
   templateUrl: './result-modal.component.html',
@@ -40,6 +45,7 @@ import { TtMatchDisciplinePipe } from '../../../shared/pipes/tt-match-discipline
     MatInput,
     MatDialogActions,
     MatButton,
+    MatCheckbox,
     MatDialogClose,
     TtPlayerNameReducerPipe,
     TtMatchDisciplinePipe,
@@ -47,9 +53,12 @@ import { TtMatchDisciplinePipe } from '../../../shared/pipes/tt-match-discipline
 })
 export class ResultModalComponent {
   dialogRef = inject<MatDialogRef<ResultModalComponent>>(MatDialogRef);
-  currentMatch = inject<Match>(MAT_DIALOG_DATA);
+  private data = inject<ResultModalData>(MAT_DIALOG_DATA);
+  currentMatch: Match = this.data.match;
+  kampflosAllowed = this.data.kampflosAllowed ?? false;
 
   currentInput: string;
+  kampflos = false;
   sets: SetScore[] | null = [];
   winner: Side | null = null;
 
@@ -73,7 +82,7 @@ export class ResultModalComponent {
     if (this.resultNotValid()) {
       return undefined;
     }
-    return { result: this.sets, match: this.currentMatch };
+    return { result: this.sets, match: this.currentMatch, kampflos: this.kampflos };
   }
 
   resultNotValid(): boolean {

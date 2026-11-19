@@ -186,13 +186,13 @@ class UpdateTopicsIT {
     }
 
     @Test
-    fun `a walkover publishes MATCH_FREED marked as walkover`() {
+    fun `a result entered kampflos publishes MATCH_COMPLETED marked as walkover`() {
         matchService.assignMatch(matchId, tableId)
         val messages = subscribe()
 
-        assertTrue(matchService.walkoverMatches(listOf(matchId)))
+        assertTrue(matchService.setResult(matchId, listOf(SetResult(11, 0), SetResult(11, 0), SetResult(11, 0)), kampflos = true))
 
-        assertNextEvent(messages, "matches", "match-walkover")
+        assertNextEvent(messages, "matches", "match-completed-walkover")
     }
 
     @Test

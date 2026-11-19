@@ -91,15 +91,19 @@ class TournamentMatchController(
     }
 
     @PostMapping("/match/setResult/{id}")
-    @Operation(summary = "Set match result", description = "Records the final sets and completes the match.")
+    @Operation(
+        summary = "Set match result",
+        description = "Records the final sets and completes the match. With kampflos=true the match is a Walkover: a Side did not appear and the other wins with the entered result (usually 0 0 0, i.e. 3:0 sets and 33:0 points)."
+    )
     fun setResult(
         @Parameter(description = "ID of the match") @PathVariable id: Long,
+        @Parameter(description = "The match was not played: a Side did not appear (\"kampflos\")") @RequestParam(defaultValue = "false") kampflos: Boolean,
         @RequestBody sets: List<List<Int>>
     ): ResponseEntity<Map<String, Any>> {
         // an invalid set (e.g. 11:10) is a rejected command, not a server error
         val setResults = runCatching { sets.toSetResults() }.getOrNull()
             ?: return ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not set result."))
-        val success = matchService.setResult(id, setResults)
+        val success = matchService.setResult(id, setResults, kampflos)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
@@ -222,19 +226,6 @@ class TournamentMatchController(
             ResponseEntity.ok(mapOf("success" to true))
         } else {
             ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not assign all matches to the second table."))
-        }
-    }
-
-    @PostMapping("/match/walkover")
-    @Operation(summary = "Walkover", description = "Ends matches without playing them (bye or walkover): played, no result, mktt's walkover flag set.")
-    fun walkoverMatches(
-        @RequestBody matchIds: List<Long>
-    ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.walkoverMatches(matchIds)
-        return if (success) {
-            ResponseEntity.ok(mapOf("success" to true))
-        } else {
-            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not end all matches as walkovers."))
         }
     }
 

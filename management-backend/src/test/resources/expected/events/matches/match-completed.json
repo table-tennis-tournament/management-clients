@@ -8,6 +8,7 @@
   "payload" : {
     "matchId" : 1,
     "winnerId" : 1,
+    "walkover" : false,
     "sets1" : 3,
     "sets2" : 0,
     "typeId" : 1,

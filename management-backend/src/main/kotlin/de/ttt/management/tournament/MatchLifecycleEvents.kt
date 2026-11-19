@@ -27,18 +27,16 @@ data class MatchStarted(
 )
 
 /**
- * Published once per bulk operation when matches are freed (walkover / finished without a
- * played result). [typeIds] and [tableIds] are the disciplines and the tables the matches
- * were on before the operation.
+ * Published once per bulk operation when played matches are freed from their tables ("Frei") and wait for
+ * their result. [typeIds] and [tableIds] are the disciplines and the tables the matches were on before the
+ * operation.
  */
 data class MatchFreed(
     val matchIds: List<Long>,
     val typeIds: List<Long> = emptyList(),
     val tableIds: List<Long> = emptyList(),
     /** Disciplines of other open matches of the same players, whose `isPlayable` this event changes. */
-    val affectedTypeIds: List<Long> = emptyList(),
-    /** `true` for a walkover (no result), `false` for a match that waits for its result. */
-    val walkover: Boolean = false
+    val affectedTypeIds: List<Long> = emptyList()
 )
 
 /**

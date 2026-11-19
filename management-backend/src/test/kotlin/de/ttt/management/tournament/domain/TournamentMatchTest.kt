@@ -194,24 +194,41 @@ class TournamentMatchTest {
     }
 
     @Test
-    fun `a walkover is played without a result and sets the walkover flag`() {
+    fun `a match entered kampflos is a walkover won by the Side that was there`() {
         val match = match()
         match.start(now = now)
-        match.enterResult(listOf(SetResult(11, 5)))
-        match.walkover()
+        match.complete(listOf(SetResult(0, 11), SetResult(0, 11), SetResult(0, 11)), kampflos = true)
 
         assertEquals(MatchState.Walkover, match.state)
         assertMatch(match) {
+            sets = listOf(SetResult(0, 11), SetResult(0, 11), SetResult(0, 11))
+            sets1 = 0
+            sets2 = 3
+            balls1 = 0
+            balls2 = 33
+            resultRaw = "0=11,0=11,0=11"
+            result = "0 : 3"
             isPlayed = true
             isKampflos = true
+            winnerSideId = 2L
             startTime = now
         }
     }
 
     @Test
+    fun `a walkover entered again with a played result is completed`() {
+        val match = match()
+        match.complete(threeNil, kampflos = true)
+        match.complete(threeNil)
+
+        assertEquals(MatchState.Completed, match.state)
+        assertMatch(match) { completedThreeNil() }
+    }
+
+    @Test
     fun `takes back a walkover to the open state`() {
         val match = match()
-        match.walkover()
+        match.complete(threeNil, kampflos = true)
         match.takeBack()
 
         assertEquals(MatchState.Open, match.state)
