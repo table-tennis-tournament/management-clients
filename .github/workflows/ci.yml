@@ -114,7 +114,14 @@ jobs:
         working-directory: tablemanager-view
         run: npx playwright install --with-deps chromium
       - name: Start services with Docker Compose
-        run: docker compose up -d --build
+        # retried: Maven Central or npm occasionally fail a lookup from the runner, which fails the image build
+        run: |
+          for i in 1 2 3; do
+            docker compose up -d --build && exit 0
+            echo "docker compose up failed (attempt $i), retrying in 20s"
+            sleep 20
+          done
+          exit 1
       - name: Wait for backend to be ready
         run: |
           for i in {1..30}; do
@@ -169,7 +176,14 @@ jobs:
         working-directory: result-view
         run: npx playwright install --with-deps chromium
       - name: Start services with Docker Compose
-        run: docker compose up -d --build
+        # retried: Maven Central or npm occasionally fail a lookup from the runner, which fails the image build
+        run: |
+          for i in 1 2 3; do
+            docker compose up -d --build && exit 0
+            echo "docker compose up failed (attempt $i), retrying in 20s"
+            sleep 20
+          done
+          exit 1
       - name: Wait for backend to be ready
         run: |
           for i in {1..30}; do
@@ -224,7 +238,14 @@ jobs:
         working-directory: admin-view
         run: npx playwright install --with-deps chromium
       - name: Start services with Docker Compose
-        run: docker compose up -d --build
+        # retried: Maven Central or npm occasionally fail a lookup from the runner, which fails the image build
+        run: |
+          for i in 1 2 3; do
+            docker compose up -d --build && exit 0
+            echo "docker compose up failed (attempt $i), retrying in 20s"
+            sleep 20
+          done
+          exit 1
       - name: Wait for backend to be ready
         run: |
           for i in {1..30}; do
