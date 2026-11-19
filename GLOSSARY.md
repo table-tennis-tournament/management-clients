@@ -36,13 +36,13 @@ This glossary defines the canonical domain language of the Table Tennis Tourname
 
 **Group** — a round-robin group of players within a discipline. A group stage is played first; its results determine the knockout placement.
 
-**Knockout stage** — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier `999`.
+**Knockout stage** — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier `999`. The winner of a knockout match, played or Walkover, moves on into its Side of the next match of the bracket.
 
 **Stage** — where a match sits within its discipline: either the Group stage (Gruppenspiel) or a specific Knockout stage (Final, Semi-final, Quarter-final, Round of 16, Rounds 0–3, Third-place match, Placement matches, Top48/ER rounds). Stored in the `matchtype` table. In the knockout stage, the round number identifies the round within the bracket.
 
 **Queue** — the ordered waiting list of matches used to let the tournament run without manual interaction. Matches in the queue are started automatically as tables become free. *Deprecated code name: "MatchList".*
 
-**Call** — the announcement of a match and its players. **Second call** and **Third call** are repeat announcements issued when a player has not appeared.
+**Call** — the announcement of a match and its players at the caller desk. A match at a table is due for its first call; announcing it makes the match Called. **Second call** and **Third call** are repeat announcements for single players who have not appeared: the table manager requests one for the missing players, the caller announces it. Each player of a match has their own call count; the match's call is the highest of them. The time since the first call shows how long the players have been waited for.
 
 **Infrastructure**
 
@@ -64,7 +64,7 @@ The lifecycle of a Match is expressed through its state:
 
 **Called** — the first call for the match has been announced.
 
-**Second call** / **Third call** — a repeat call has been announced because a player has not appeared.
+**Second call** / **Third call** — a repeat call has been announced for a player who has not appeared. Usually the administrator ends the match as a Walkover after the Third call, but may do so at any time.
 
 **Take back** — returning a match from its Table to Open, either by the administrator or by the table manager ("Zurück"). *Deprecated: "stop".*
 
@@ -74,7 +74,7 @@ The lifecycle of a Match is expressed through its state:
 
 **Finished** — the match has been played and freed at its table ("Frei"), but its result is entered later, in the administrator's result list. Entering the result completes it.
 
-**Walkover** — the match is not played at all, for example a bye or a player who did not appear ("kampflos"). It has no result. Like Completed, it is a terminal state.
+**Walkover** — the match is not played at all ("kampflos") because a Side did not appear after its calls; the Side that was there wins it without playing, counted as 3:0 Sets and 33:0 Points. When neither Side appears, the administrator still names a winner. Like Completed, it is a terminal state.
 
 **Second table** — a group of at least four players may play its matches on two tables ("2.Tisch"). Its upcoming matches then wait at both tables; a match is started at one of them and leaves the other. The table manager starts each match at the right table. **Remove** ("Entfernen") takes a match that waits at two tables off one of them; it keeps waiting at the other.
 
