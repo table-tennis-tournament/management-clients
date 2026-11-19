@@ -7,7 +7,8 @@
   },
   "payload" : {
     "matchIds" : [ 1, 2, 3 ],
-    "callState" : "FirstCall",
+    "callNumber" : 1,
+    "playerIds" : [ 1, 2, 3, 4, 5, 6 ],
     "typeIds" : [ 1 ],
     "tableIds" : [ ]
   }

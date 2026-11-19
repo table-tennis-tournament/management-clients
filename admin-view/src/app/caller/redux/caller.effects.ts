@@ -18,6 +18,11 @@ import {
   LoadSecondCallMatchesError,
   LoadThirdCallMatchesSuccess,
   LoadThirdCallMatchesError,
+  LoadSecondCallMatches,
+  LoadThirdCallMatches,
+  SecondCallMatch,
+  SecondCallMatchError,
+  SecondCallMatchSuccess,
 } from './caller.actions';
 
 @Injectable()
@@ -80,6 +85,26 @@ export class CallerEffects {
           catchError((err) => {
             this.toastService.error('Fehler beim Laden der 3. Aufruf Spiele');
             return of(new LoadThirdCallMatchesError(err));
+          })
+        );
+      })
+    )
+  );
+
+  /** The caller announced a requested Second or Third call: both lists change, the card shows the next one. */
+  announceRequestedCall = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CallerActionTypes.SecondCallMatch),
+      switchMap((action: SecondCallMatch) => {
+        return this.callerService.announceRequestedCalls(action.payload).pipe(
+          switchMap((state) => [
+            new SecondCallMatchSuccess(state),
+            new LoadSecondCallMatches(),
+            new LoadThirdCallMatches(),
+          ]),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Ausrufen der Spieler');
+            return of(new SecondCallMatchError(err));
           })
         );
       })

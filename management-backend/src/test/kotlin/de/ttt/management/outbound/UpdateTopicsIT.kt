@@ -231,6 +231,20 @@ class UpdateTopicsIT {
     }
 
     @Test
+    fun `requesting a call publishes MATCH_CALL_REQUESTED, announcing it MATCH_CALLED`() {
+        matchService.assignMatch(matchId, tableId)
+        matchService.callMatches(listOf(matchId))
+        val messages = subscribe()
+
+        assertTrue(matchService.requestCall(matchId, listOf(2L)))
+        assertTrue(matchService.announceRequestedCalls(listOf(matchId)))
+
+        assertNextEvent(messages, "matches", "match-call-requested")
+        assertNextEvent(messages, "matches", "match-called-second-call")
+        assertNull(StompTestSupport.pollNone(messages))
+    }
+
+    @Test
     fun `a bulk operation publishes a single event with all match ids`() {
         val messages = subscribe()
 

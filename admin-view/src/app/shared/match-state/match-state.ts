@@ -6,7 +6,8 @@
  *
  * The backend derives the state once and sends it on every Match DTO as `state` (one of
  * [MATCH_STATES]) together with `callNumber` (0 = not called yet, 1 = Called, 2 = Second call,
- * 3 = Third call). Components ask these questions instead of comparing state names.
+ * 3 = Third call; the highest call of the match's players) and `firstCallTime`. Components ask these
+ * questions instead of comparing state names.
  *
  * Lifecycle (see GLOSSARY.md): Open → (InQueue) → OnTable (At Table) → Started → Completed.
  * A Match freed at its table ("Frei") is Finished until its result is entered, then Completed;
@@ -21,6 +22,8 @@ export type MatchStateName = (typeof MATCH_STATES)[number];
 export interface HasMatchState {
   state?: string | null;
   callNumber?: number | null;
+  /** When the first Call was announced, as the backend sends it (`2026-11-16T10:00:00`, local time). */
+  firstCallTime?: string | null;
 }
 
 /** Neither queued nor at a table nor played. */
@@ -76,4 +79,12 @@ export function isInProgress(match: HasMatchState): boolean {
 /** How many Calls have been announced: 0 to 3. */
 export function callNumber(match: HasMatchState): number {
   return match.callNumber ?? 0;
+}
+
+/** Whole minutes the players have been waited for since the first Call, at [now] (ms); `null` before it. */
+export function minutesSinceFirstCall(match: HasMatchState, now: number): number | null {
+  if (!match.firstCallTime) {
+    return null;
+  }
+  return Math.max(0, Math.floor((now - new Date(match.firstCallTime).getTime()) / 60000));
 }

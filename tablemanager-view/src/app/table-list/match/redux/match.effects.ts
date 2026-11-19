@@ -88,8 +88,8 @@ export class MatchEffects {
   callPlayerForMatch = createEffect(() =>
     this.actions$.pipe(
       ofType(MatchActions.callPlayerForMatch),
-      switchMap(({ matchId }) =>
-        this.matchService.callPlayersForMatch(matchId).pipe(
+      switchMap(({ matchId, playerIds }) =>
+        this.matchService.callPlayersForMatch(matchId, playerIds).pipe(
           map(() => MatchActions.callPlayerForMatchSuccess()),
           catchError(() => of(MatchActions.callPlayerForMatchError()))
         )

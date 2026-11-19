@@ -18,6 +18,11 @@ import {
   LoadRefereesList,
   LoadRefereesListError,
   LoadRefereesListSuccess,
+  LoadSecondCallMatches,
+  LoadThirdCallMatches,
+  SecondCallMatch,
+  SecondCallMatchError,
+  SecondCallMatchSuccess,
 } from './caller.actions';
 
 describe('the caller effects', () => {
@@ -105,6 +110,31 @@ describe('the caller effects', () => {
 
       expect(result).toStrictEqual([new CallMatchError(error)]);
       expect(toast.error.mock.calls).toEqual([['Fehler beim Ausrufen des Matches']]);
+    });
+  });
+
+  describe('announceRequestedCall', () => {
+    it('announces the calls and reloads both lists of repeat calls', async () => {
+      const status: StatusDto = { success: true };
+      const announce = vi.spyOn(callerService, 'announceRequestedCalls').mockReturnValue(of(status));
+
+      const result = await emittedBy(callerEffects.announceRequestedCall, actions, new SecondCallMatch([3]));
+
+      expect(result).toStrictEqual([
+        new SecondCallMatchSuccess(status),
+        new LoadSecondCallMatches(),
+        new LoadThirdCallMatches(),
+      ]);
+      expect(announce.mock.calls).toEqual([[[3]]]);
+    });
+
+    it('shows an error when the announcement fails', async () => {
+      vi.spyOn(callerService, 'announceRequestedCalls').mockReturnValue(throwError(() => error));
+
+      const result = await emittedBy(callerEffects.announceRequestedCall, actions, new SecondCallMatch([3]));
+
+      expect(result).toStrictEqual([new SecondCallMatchError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Ausrufen der Spieler']]);
     });
   });
 });

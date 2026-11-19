@@ -14,6 +14,7 @@ import {
   isWalkover,
   MATCH_STATES,
   MatchStateName,
+  minutesSinceFirstCall,
 } from './match-state';
 
 const inState = (state: MatchStateName, calls = 0): HasMatchState => ({
@@ -76,5 +77,16 @@ describe('match state', () => {
   it('callNumber reads the call count, 0 when absent', () => {
     expect(callNumber(inState('OnTable', 2))).toBe(2);
     expect(callNumber({ state: 'OnTable' })).toBe(0);
+  });
+
+  it('minutesSinceFirstCall counts whole minutes since the first Call, none before it', () => {
+    const firstCallTime = '2026-11-16T10:00:00';
+    const at = (time: string) => new Date(time).getTime();
+    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T10:00:59'))).toBe(0);
+    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T10:07:30'))).toBe(7);
+    // a clock running slightly behind the backend shows no negative time
+    expect(minutesSinceFirstCall({ firstCallTime }, at('2026-11-16T09:59:00'))).toBe(0);
+    expect(minutesSinceFirstCall({ firstCallTime: null }, at(firstCallTime))).toBeNull();
+    expect(minutesSinceFirstCall({}, at(firstCallTime))).toBeNull();
   });
 });

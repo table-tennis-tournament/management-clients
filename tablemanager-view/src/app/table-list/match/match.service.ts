@@ -22,8 +22,9 @@ export class MatchService {
   }
 
   /** Announces the next Call of the match; a Call always names all players of the match. */
-  callPlayersForMatch(matchId: number) {
-    return this.http.post<any>(`/api/v2/playercall/${matchId}`, null);
+  /** Requests the next call of the players [playerIds] of the match, who have not appeared. */
+  callPlayersForMatch(matchId: number, playerIds: number[]) {
+    return this.http.post<any>(`/api/v2/playercall/${matchId}`, playerIds);
   }
 
   takeBackMatch(matchId: number) {

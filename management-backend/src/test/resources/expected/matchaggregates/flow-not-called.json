@@ -1,6 +1,8 @@
 [ {
   "name" : "Gruppenspiel A",
   "startTime" : "2026-11-16T10:00:00",
+  "callNumber" : 1,
+  "firstCallTime" : null,
   "tableNumbers" : [ 1 ],
   "discipline" : {
     "id" : 1,

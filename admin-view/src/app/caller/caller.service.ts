@@ -30,4 +30,9 @@ export class CallerService {
   callMatch(matchIds: number[]): Observable<StatusDto> {
     return this.http.post<StatusDto>('/api/v2/match/call', matchIds);
   }
+
+  /** Announces the Second or Third calls the table managers requested for these matches. */
+  announceRequestedCalls(matchIds: number[]): Observable<StatusDto> {
+    return this.http.post<StatusDto>('/api/v2/playercall/announce', matchIds);
+  }
 }

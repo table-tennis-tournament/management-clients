@@ -37,7 +37,16 @@
   "isPlaying" : false,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "ThirdCall",
+  "playerCalls" : [ {
+    "playerId" : 1,
+    "callNumber" : 2,
+    "requested" : false
+  }, {
+    "playerId" : 2,
+    "callNumber" : 3,
+    "requested" : false
+  } ],
+  "firstCallTime" : "2026-11-16T10:00:00",
   "tableId" : 1,
   "tableNumber" : 1,
   "secondTableId" : null,
@@ -73,6 +82,7 @@
     "paid" : false,
     "club" : null
   },
+  "requestedCallNumber" : null,
   "sets" : [ ],
   "state" : "OnTable",
   "winner" : [ ]

@@ -10,6 +10,7 @@ import de.ttt.management.registration.PlayerRegistered
 import de.ttt.management.registration.PlayerUnregistered
 import de.ttt.management.tournament.KnockoutMatchFilled
 import de.ttt.management.tournament.MatchAssigned
+import de.ttt.management.tournament.MatchCallRequested
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchDeleted
@@ -74,6 +75,11 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: MatchCalled) {
         push(Topic.MATCHES, "MATCH_CALLED", scope(event.matchIds, event.typeIds, event.tableIds), event)
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun on(event: MatchCallRequested) {
+        push(Topic.MATCHES, "MATCH_CALL_REQUESTED", scope(listOf(event.matchId), listOfNotNull(event.typeId), event.tableIds), event)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)

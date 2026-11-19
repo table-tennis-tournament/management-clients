@@ -1,5 +1,7 @@
 package de.ttt.management.tournament.infrastructure.web
 
+import java.time.LocalDateTime
+
 data class TableManagerTableInfo(
     val table_id: Long?,
     val table_number: Long?,
@@ -17,7 +19,11 @@ data class TableManagerMatch(
     /** The [de.ttt.management.tournament.domain.MatchState] name, as on every other Match DTO. */
     val state: String,
     /** See [de.ttt.management.tournament.domain.TournamentMatch.callNumber]. */
-    val callNumber: Int
+    val callNumber: Int,
+    /** See [de.ttt.management.tournament.domain.TournamentMatch.requestedCallNumber]. */
+    val requestedCallNumber: Int?,
+    /** When the first Call was announced; the table manager shows the minutes since. */
+    val firstCallTime: LocalDateTime?
 )
 
 data class TableManagerResult(
@@ -36,5 +42,8 @@ data class TableManagerPlayer(
     val first_name: String?,
     val last_name: String?,
     val club: String?,
-    val call_count: Int
+    /** How often this player has been called: 0 before the first Call, then 1 to 3. */
+    val call_count: Int,
+    /** The player's next call is requested and waits for the caller. */
+    val call_requested: Boolean
 )

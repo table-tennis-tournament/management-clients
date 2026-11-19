@@ -234,19 +234,23 @@ class TournamentMatchController(
     fun loadNewMatches(): Map<String, Any> = mapOf("success" to true)
 
     @GetMapping("/matchaggregates/caller")
-    @Operation(summary = "Get match aggregates for caller", description = "Retrieves summarized match data for the caller view.")
+    @Operation(summary = "Get match aggregates for caller", description = "The matches at a table whose first Call the caller announces next, per table, with all their players.")
     fun getMatchAggregateForCaller(): List<MatchAggregate> =
-        toMatchAggregates(matchService.getMatchesByCallState(CallState.None))
+        toMatchAggregates(matchService.getMatchesWaitingForFirstCall(), callNumber = 1) { it.team1 + it.team2 }
 
     @GetMapping("/matchaggregates/secondCall")
-    @Operation(summary = "Get match aggregates for second call", description = "Retrieves summarized match data for the second call view.")
-    fun getMatchAggregateForSecondCall(): List<MatchAggregate> =
-        toMatchAggregates(matchService.getMatchesByCallState(CallState.SecondCall))
+    @Operation(summary = "Get match aggregates for second call", description = "The requested Second calls the caller announces next, per table, with only the players to call.")
+    fun getMatchAggregateForSecondCall(): List<MatchAggregate> = requestedCalls(2)
 
     @GetMapping("/matchaggregates/thirdCall")
-    @Operation(summary = "Get match aggregates for third call", description = "Retrieves summarized match data for the third call view.")
-    fun getMatchAggregateForThirdCall(): List<MatchAggregate> =
-        toMatchAggregates(matchService.getMatchesByCallState(CallState.ThirdCall))
+    @Operation(summary = "Get match aggregates for third call", description = "The requested Third calls the caller announces next, per table, with only the players to call.")
+    fun getMatchAggregateForThirdCall(): List<MatchAggregate> = requestedCalls(3)
+
+    private fun requestedCalls(callNumber: Int): List<MatchAggregate> =
+        toMatchAggregates(matchService.getMatchesWithRequestedCall().filter { it.requestedCallNumber == callNumber }, callNumber) { match ->
+            val requested = match.playerCalls.filter { it.requested }.map { it.playerId }.toSet()
+            (match.team1 + match.team2).filter { it.id in requested }
+        }
 
     @PostMapping("/match/remove/{tableId}")
     @Operation(summary = "Remove matches from one of their tables", description = "Takes matches that wait at two tables (a group on a second table) off the table with this id (\"Entfernen\"); a match at one table only is rejected.")
@@ -276,29 +280,53 @@ class TournamentMatchController(
     }
 
     @PostMapping("/playercall/{matchId}")
-    @Operation(summary = "Call players for match", description = "Triggers a player call for a specific match.")
-    fun callPlayers(
-        @Parameter(description = "ID of the match") @PathVariable matchId: Long
+    @Operation(
+        summary = "Request a call of players",
+        description = "The table manager requests the next call (Second or Third) of the players who have not appeared. The caller announces it with /playercall/announce. Rejected before the first Call, while another request waits, for a player after the Third call or for a player of another match."
+    )
+    fun requestCall(
+        @Parameter(description = "ID of the match") @PathVariable matchId: Long,
+        @RequestBody playerIds: List<Long>
     ): ResponseEntity<Map<String, Any>> {
-        val success = matchService.callPlayers(matchId)
+        val success = matchService.requestCall(matchId, playerIds)
         return if (success) {
             ResponseEntity.ok(mapOf("success" to true))
         } else {
-            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Match not found"))
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not request the call."))
         }
     }
 
-    private fun toMatchAggregates(matches: List<TournamentMatch>): List<MatchAggregate> {
+    @PostMapping("/playercall/announce")
+    @Operation(summary = "Announce requested calls", description = "The caller announces the requested calls of matches: each requested player's call goes up by one. Body: [matchId, ...].")
+    fun announceRequestedCalls(
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.announceRequestedCalls(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not announce all calls."))
+        }
+    }
+
+    /** The matches per table, with the call the caller announces next and the [toCall] players it names. */
+    private fun toMatchAggregates(
+        matches: List<TournamentMatch>,
+        callNumber: Int,
+        toCall: (TournamentMatch) -> List<TournamentPlayer>
+    ): List<MatchAggregate> {
         val disciplines = matchService.getAllTypes().associateBy { it.id }
         return matches
             .groupBy { it.tableId }
             .map { (tableId, ms) ->
                 val head = ms.first()
                 val discipline = head.typeId?.let { disciplines[it] }
-                val players = ms.flatMap { it.team1 + it.team2 }.distinctBy { it.id }
+                val players = ms.flatMap(toCall).distinctBy { it.id }
                 MatchAggregate(
                     name = aggregateName(head),
                     startTime = head.startTime,
+                    callNumber = callNumber,
+                    firstCallTime = head.firstCallTime,
                     tableNumbers = listOfNotNull(tableId),
                     discipline = discipline?.let { DisciplineDto(it.id, it.name, it.kind, it.active) },
                     players = players.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },

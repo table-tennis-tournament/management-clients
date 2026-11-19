@@ -19,6 +19,14 @@
     <div class="d-flex align-items-center text-truncate-custom">
       {{ matches[0].team2 | ttPlayerNameReducer }}
     </div>
+    @if (calls(matches[0]) > 0) {
+      <div class="d-flex align-items-center call-info" [class.last-call]="calls(matches[0]) >= 3">
+        {{ calls(matches[0]) }}. Aufruf · seit {{ waitingMinutes(matches[0]) }} min
+        @if (matches[0].requestedCallNumber) {
+          · {{ matches[0].requestedCallNumber }}. angefordert
+        }
+      </div>
+    }
   </span>
 }
 @if (matches?.length > 1) {

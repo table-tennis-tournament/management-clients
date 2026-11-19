@@ -30,8 +30,8 @@ describe('the match service', () => {
     expect(emitted).toStrictEqual([{ success: true }]);
   };
 
-  it('calls the players of a match by its id only', () => {
-    expectRequest(service.callPlayersForMatch(7), 'POST', '/api/v2/playercall/7', null);
+  it('requests a call of the missing players of a match', () => {
+    expectRequest(service.callPlayersForMatch(7, [3, 4]), 'POST', '/api/v2/playercall/7', [3, 4]);
   });
 
   it('takes back a running match', () => {

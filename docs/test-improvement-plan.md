@@ -100,7 +100,7 @@ Behaviour the expected files pinned, and how it was decided:
 
 `TournamentModuleTest` compares whole events; `TournamentMatchTest` compares the whole match after every
 transition; `JdbcTournamentMatchRepositoryIT` compares whole `matches`, `mgmt_matchtable` and
-`mgmt_match_call_state` rows; `MatchResourceIT` and its neighbours compare `GET /match/{id}` with
+`mgmt_match_call` and `mgmt_player_call` rows; `MatchResourceIT` and its neighbours compare `GET /match/{id}` with
 `expected/match/after-*.json` after every state change (take back now starts and calls the match first,
 "stop a match that is not playing" uses an open match); `GroupingModuleIT` compares every `playerpergroup`
 column `save` writes; `PrinterResourceIT` reads print-on-assign back from `/settings/all`; the error bodies of

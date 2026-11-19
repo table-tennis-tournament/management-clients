@@ -1,9 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { TypeColorMap } from '../../settings/settings.model';
 import { MatList, MatListItem } from '@angular/material/list';
 import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { MinuteClock } from '../../shared/clock/minute-clock.service';
+import { minutesSinceFirstCall } from '../../shared/match-state/match-state';
 
+/** The requested Second and Third calls waiting for the caller, with the minutes since their first Call. */
 @Component({
   selector: 'toma-player-calls',
   templateUrl: './player-calls.component.html',
@@ -11,6 +14,8 @@ import { TypeColorDirective } from '../../shared/directives/type-color.directive
   imports: [MatList, MatListItem, TypeColorDirective],
 })
 export class PlayerCallsComponent {
+  private clock = inject(MinuteClock);
+
   @Input()
   secondCalls: MatchAggregate[];
 
@@ -23,11 +28,7 @@ export class PlayerCallsComponent {
   @Output()
   matchesSelected: EventEmitter<MatchAggregate> = new EventEmitter<MatchAggregate>();
 
-  constructor() {}
-
-  getStartTime(currentMatch: MatchAggregate) {
-    const date = new Date(currentMatch.startTime);
-    const now = new Date();
-    return Math.floor((now.getTime() - date.getTime()) / 60000);
+  waitingMinutes(aggregate: MatchAggregate): number {
+    return minutesSinceFirstCall(aggregate, this.clock.now()) ?? 0;
   }
 }

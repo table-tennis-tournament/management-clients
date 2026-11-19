@@ -1,10 +1,17 @@
-<h1 mat-dialog-title>Rufe Spieler aus</h1>
+<h1 mat-dialog-title>Wer fehlt?</h1>
 <div mat-dialog-content>
-  @for (player of players; track player) {
-    <div>{{ [player] | playerName }}</div>
+  @for (player of players; track player.player_id) {
+    <div>
+      <mat-checkbox [disabled]="!canBeCalledAgain(player)" (change)="toggle(player, $event.checked)">
+        {{ [player] | playerName }}
+        @if (player.call_count > 1) {
+          ({{ player.call_count }}. Aufruf)
+        }
+      </mat-checkbox>
+    </div>
   }
 </div>
 <div mat-dialog-actions>
   <button mat-flat-button (click)="onCancel()">Abbrechen</button>
-  <button mat-raised-button color="primary" (click)="onOk()" cdkFocusInitial>Ausrufen</button>
+  <button mat-raised-button color="primary" [disabled]="missing.size === 0" (click)="onOk()" cdkFocusInitial>Ausrufen</button>
 </div>

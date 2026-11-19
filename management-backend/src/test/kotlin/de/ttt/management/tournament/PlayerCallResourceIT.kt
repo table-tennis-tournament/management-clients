@@ -31,40 +31,87 @@ class PlayerCallResourceIT {
 
     private val success = """{"success": true}"""
 
-    /** Match 1 is at table 1 and has had its first call. */
+    private fun failure(message: String) = """{"success": false, "message": "$message"}"""
+
+    /** Match 1 (players 1 vs 2) is at table 1 and has had its first call; match 3 (doubles) waits at table 2, not called. */
     @BeforeEach
     fun setup() {
         testState.reset()
         scenarios.givenOpenMatches()
         api.post("/match/matchtotable/1", listOf(1)).expectStatus().isOk
         api.post("/match/call", listOf(1)).expectStatus().isOk
+        api.post("/match/matchtotable/2", listOf(3)).expectStatus().isOk
     }
 
     @Test
-    fun `the second and then the third call`() {
-        api.post("/playercall/1").expectStatus().isOk.expectExactJson(success)
-        api.expectMatch(1, "after-second-call")
+    fun `the table manager requests a second call of the missing player`() {
+        api.post("/playercall/1", listOf(2)).expectStatus().isOk.expectExactJson(success)
+        api.expectMatch(1, "after-second-call-requested")
+    }
 
-        api.post("/playercall/1").expectStatus().isOk.expectExactJson(success)
+    @Test
+    fun `the caller announces the requested call`() {
+        api.post("/playercall/1", listOf(2)).expectStatus().isOk
+        api.post("/playercall/announce", listOf(1)).expectStatus().isOk.expectExactJson(success)
+        api.expectMatch(1, "after-second-call")
+    }
+
+    @Test
+    fun `a third call for one player and a second for the other`() {
+        api.post("/playercall/1", listOf(2)).expectStatus().isOk
+        api.post("/playercall/announce", listOf(1)).expectStatus().isOk
+        api.post("/playercall/1", listOf(1, 2)).expectStatus().isOk
+        api.post("/playercall/announce", listOf(1)).expectStatus().isOk.expectExactJson(success)
         api.expectMatch(1, "after-third-call")
     }
 
     @Test
     fun `there is no call after the third`() {
-        repeat(3) { api.post("/playercall/1").expectStatus().isOk.expectExactJson(success) }
-        api.expectMatch(1, "after-third-call")
+        repeat(2) {
+            api.post("/playercall/1", listOf(2)).expectStatus().isOk
+            api.post("/playercall/announce", listOf(1)).expectStatus().isOk
+        }
+        api.post("/playercall/1", listOf(2)).expectStatus().isBadRequest.expectExactJson(failure("Could not request the call."))
     }
 
     @Test
-    fun `a repeat call of a match that was never called changes nothing`() {
-        api.post("/match/matchtotable/2", listOf(3)).expectStatus().isOk
-        api.post("/playercall/3").expectStatus().isOk.expectExactJson(success)
+    fun `rejects a request while another waits`() {
+        api.post("/playercall/1", listOf(2)).expectStatus().isOk
+        api.post("/playercall/1", listOf(1)).expectStatus().isBadRequest.expectExactJson(failure("Could not request the call."))
+        api.expectMatch(1, "after-second-call-requested")
+    }
+
+    @Test
+    fun `rejects a request before the first call`() {
+        api.post("/playercall/3", listOf(1)).expectStatus().isBadRequest.expectExactJson(failure("Could not request the call."))
         api.expectMatch(3, "after-assign-doubles")
     }
 
     @Test
+    fun `rejects a request for a player of another match, or for nobody`() {
+        api.post("/playercall/1", listOf(3)).expectStatus().isBadRequest.expectExactJson(failure("Could not request the call."))
+        api.post("/playercall/1", emptyList<Long>()).expectStatus().isBadRequest.expectExactJson(failure("Could not request the call."))
+        api.expectMatch(1, "after-call")
+    }
+
+    @Test
+    fun `rejects announcing without a requested call`() {
+        api.post("/playercall/announce", listOf(1)).expectStatus().isBadRequest
+            .expectExactJson(failure("Could not announce all calls."))
+        api.expectMatch(1, "after-call")
+    }
+
+    @Test
     fun `rejects an unknown match`() {
-        api.post("/playercall/9999").expectStatus().isBadRequest
-            .expectExactJson("""{"success": false, "message": "Match not found"}""")
+        api.post("/playercall/9999", listOf(1)).expectStatus().isBadRequest.expectExactJson(failure("Could not request the call."))
+        api.post("/playercall/announce", listOf(9999)).expectStatus().isBadRequest
+            .expectExactJson(failure("Could not announce all calls."))
+    }
+
+    @Test
+    fun `taking the match back clears its calls`() {
+        api.post("/playercall/1", listOf(2)).expectStatus().isOk
+        api.post("/match/takeBack", listOf(1)).expectStatus().isOk
+        api.expectMatch(1, "after-take-back-called")
     }
 }

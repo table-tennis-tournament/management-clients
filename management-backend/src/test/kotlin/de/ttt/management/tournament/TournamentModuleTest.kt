@@ -5,7 +5,7 @@ import de.ttt.management.DatabaseHelperConfiguration
 import de.ttt.management.expectExactJson
 import de.ttt.management.tournament.application.MatchListService
 import de.ttt.management.tournament.application.MatchService
-import de.ttt.management.tournament.domain.CallState
+import de.ttt.management.tournament.domain.PlayerCall
 import de.ttt.management.tournament.domain.MatchState
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -158,7 +158,7 @@ class TournamentModuleTest {
     }
 
     @Test
-    fun `call endpoint announces the first call and publishes MatchCalled`(events: PublishedEvents) {
+    fun `call endpoint announces the first call of every player and publishes MatchCalled`(events: PublishedEvents) {
         val matchId = 1L
 
         restTestClient.post()
@@ -170,25 +170,39 @@ class TournamentModuleTest {
             .expectExactJson("""{"success": true}""")
 
         assertThat(events.ofType(MatchCalled::class.java)).containsExactly(
-            MatchCalled(matchIds = listOf(matchId), callState = "FirstCall", typeIds = listOf(1L), tableIds = emptyList())
+            MatchCalled(matchIds = listOf(matchId), callNumber = 1, playerIds = listOf(1L, 2L), typeIds = listOf(1L), tableIds = emptyList())
         )
-        assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.FirstCall)
+        assertThat(matchService.getMatch(matchId)!!.playerCalls).containsExactly(PlayerCall(1L, 1), PlayerCall(2L, 1))
     }
 
     @Test
-    fun `playercall endpoint advances to the second call and publishes MatchCalled`(events: PublishedEvents) {
+    fun `a requested call publishes MatchCallRequested, its announcement MatchCalled`(events: PublishedEvents) {
         val matchId = 1L
-        db.insertCallState(matchId, callState = 1)
+        matchService.assignMatch(matchId, 1L)
+        matchService.callMatches(listOf(matchId))
 
         restTestClient.post()
             .uri("/api/v2/playercall/$matchId")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(2L))
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
+        restTestClient.post()
+            .uri("/api/v2/playercall/announce")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(matchId))
             .exchange()
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        assertThat(events.ofType(MatchCalled::class.java)).containsExactly(
-            MatchCalled(matchIds = listOf(matchId), callState = "SecondCall", typeIds = listOf(1L), tableIds = emptyList())
+        assertThat(events.ofType(MatchCallRequested::class.java)).containsExactly(
+            MatchCallRequested(matchId = matchId, callNumber = 2, playerIds = listOf(2L), typeId = 1L, tableIds = listOf(1L))
         )
-        assertThat(matchService.getMatch(matchId)!!.callState).isEqualTo(CallState.SecondCall)
+        assertThat(events.ofType(MatchCalled::class.java)).containsExactly(
+            MatchCalled(matchIds = listOf(matchId), callNumber = 1, playerIds = listOf(1L, 2L), typeIds = listOf(1L), tableIds = listOf(1L)),
+            MatchCalled(matchIds = listOf(matchId), callNumber = 2, playerIds = listOf(2L), typeIds = listOf(1L), tableIds = listOf(1L))
+        )
+        assertThat(matchService.getMatch(matchId)!!.playerCalls).containsExactly(PlayerCall(1L, 1), PlayerCall(2L, 2))
     }
 }

@@ -49,11 +49,26 @@ class MatchLifecycleScenarioIT {
             .expectStatus().isOk
             .expectExactJson("""{"success": true}""")
 
-        // 2. Call the players
+        // 2. Call the players: the first Call, then a Second call of player 2, who has not appeared
         restTestClient.post()
-            .uri("/api/v2/playercall/$matchId")
+            .uri("/api/v2/match/call")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(matchId))
             .exchange()
             .expectStatus().isOk
+        restTestClient.post()
+            .uri("/api/v2/playercall/$matchId")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(2L))
+            .exchange()
+            .expectStatus().isOk
+        restTestClient.post()
+            .uri("/api/v2/playercall/announce")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(listOf(matchId))
+            .exchange()
+            .expectStatus().isOk
+            .expectExactJson("""{"success": true}""")
 
         // 3. Enter the set results while the game is being played (interim)
         restTestClient.post()

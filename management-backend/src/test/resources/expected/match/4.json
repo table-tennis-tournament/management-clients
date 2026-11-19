@@ -54,7 +54,24 @@
   "isPlaying" : false,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "SecondCall",
+  "playerCalls" : [ {
+    "playerId" : 1,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 2,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 3,
+    "callNumber" : 2,
+    "requested" : false
+  }, {
+    "playerId" : 4,
+    "callNumber" : 2,
+    "requested" : false
+  } ],
+  "firstCallTime" : "2026-11-16T10:00:00",
   "tableId" : 2,
   "tableNumber" : 2,
   "secondTableId" : null,
@@ -96,6 +113,7 @@
       "name" : "TTV Musterstadt"
     }
   },
+  "requestedCallNumber" : null,
   "sets" : [ ],
   "state" : "OnTable",
   "winner" : [ ]

@@ -280,34 +280,153 @@ class TournamentMatchTest {
         }
     }
 
-    @Test
-    fun `announces the first call`() {
-        val match = match()
-        match.call()
+    // --- calls ----------------------------------------------------------------------
 
-        assertMatch(match) { callState = CallState.FirstCall }
+    private val later = now.plusMinutes(4)
+
+    /** The match at table 7, its first Call announced at [now]. */
+    private fun calledMatch() = match().apply {
+        assign(tableId = 7, now = now)
+        call(now)
     }
 
     @Test
-    fun `advances the call from first to second to third`() {
+    fun `the first call calls every player once and starts the waiting time`() {
         val match = match()
-        match.call()
-        match.callAgain()
-        assertEquals(CallState.SecondCall, match.callState)
+        match.call(now)
 
-        match.callAgain()
-        assertEquals(CallState.ThirdCall, match.callState)
+        assertMatch(match) {
+            playerCalls = listOf(PlayerCall(1L, 1), PlayerCall(2L, 1))
+            firstCallTime = now
+        }
+        assertEquals(1, match.callNumber)
+        assertEquals(null, match.requestedCallNumber)
     }
 
     @Test
-    fun `does not advance the call beyond the third call`() {
-        val match = match()
-        match.call()
-        match.callAgain()
-        match.callAgain()
-        match.callAgain()
+    fun `the first call of a doubles match calls all four players`() {
+        val match = TournamentMatch(
+            id = 1L,
+            team1 = listOf(TournamentPlayer(id = 1L), TournamentPlayer(id = 2L)),
+            team2 = listOf(TournamentPlayer(id = 3L), TournamentPlayer(id = 4L))
+        )
+        match.call(now)
 
-        assertEquals(CallState.ThirdCall, match.callState)
+        assertEquals(listOf(1L, 2L, 3L, 4L).map { PlayerCall(it, 1) }, match.playerCalls)
+    }
+
+    @Test
+    fun `a requested call waits for the caller and is announced for the missing players only`() {
+        val match = calledMatch()
+
+        match.requestCall(listOf(2L))
+        assertEquals(listOf(PlayerCall(1L, 1), PlayerCall(2L, 1, requested = true)), match.playerCalls)
+        assertEquals(2, match.requestedCallNumber)
+        assertEquals(1, match.callNumber)
+
+        match.announceRequestedCall()
+        assertEquals(listOf(PlayerCall(1L, 1), PlayerCall(2L, 2)), match.playerCalls)
+        assertEquals(null, match.requestedCallNumber)
+        assertEquals(2, match.callNumber)
+        assertEquals(now, match.firstCallTime)
+    }
+
+    @Test
+    fun `a player gets a third call, and the match's call is the highest of its players`() {
+        val match = calledMatch()
+        match.requestCall(listOf(2L))
+        match.announceRequestedCall()
+
+        // player 1 is still missing too: their second call and player 2's third
+        match.requestCall(listOf(1L, 2L))
+        assertEquals(3, match.requestedCallNumber)
+        match.announceRequestedCall()
+
+        assertEquals(listOf(PlayerCall(1L, 2), PlayerCall(2L, 3)), match.playerCalls)
+        assertEquals(3, match.callNumber)
+    }
+
+    @Test
+    fun `the third call is a player's last`() {
+        val match = calledMatch()
+        repeat(2) {
+            match.requestCall(listOf(2L))
+            match.announceRequestedCall()
+        }
+
+        assertFailsWith<IllegalArgumentException> { match.requestCall(listOf(2L)) }
+        assertFailsWith<IllegalArgumentException> { match.requestCall(listOf(1L, 2L)) }
+        match.requestCall(listOf(1L))
+        assertEquals(2, match.requestedCallNumber)
+    }
+
+    @Test
+    fun `rejects a request before the first call`() {
+        val match = match()
+        match.assign(tableId = 7, now = now)
+
+        assertFailsWith<IllegalArgumentException> { match.requestCall(listOf(1L)) }
+    }
+
+    @Test
+    fun `rejects a second request while one waits`() {
+        val match = calledMatch()
+        match.requestCall(listOf(1L))
+
+        assertFailsWith<IllegalArgumentException> { match.requestCall(listOf(2L)) }
+    }
+
+    @Test
+    fun `rejects a request without players or for another match's player`() {
+        val match = calledMatch()
+
+        assertFailsWith<IllegalArgumentException> { match.requestCall(emptyList()) }
+        assertFailsWith<IllegalArgumentException> { match.requestCall(listOf(9L)) }
+        assertEquals(null, match.requestedCallNumber)
+    }
+
+    @Test
+    fun `rejects a request for a match at no table or a completed one`() {
+        assertFailsWith<IllegalArgumentException> { match().apply { call(now) }.requestCall(listOf(1L)) }
+        val completed = calledMatch()
+        completed.complete(threeNil)
+        assertFailsWith<IllegalArgumentException> { completed.requestCall(listOf(1L)) }
+    }
+
+    @Test
+    fun `players of a started match are still called, as after an auto-start`() {
+        val match = calledMatch()
+        match.start(now = later)
+        match.requestCall(listOf(1L))
+        match.announceRequestedCall()
+
+        assertEquals(listOf(PlayerCall(1L, 2), PlayerCall(2L, 1)), match.playerCalls)
+    }
+
+    @Test
+    fun `rejects announcing without a requested call`() {
+        assertFailsWith<IllegalArgumentException> { calledMatch().announceRequestedCall() }
+    }
+
+    @Test
+    fun `calling a match again starts its calls over`() {
+        val match = calledMatch()
+        match.requestCall(listOf(1L))
+        match.announceRequestedCall()
+        match.call(later)
+
+        assertEquals(listOf(PlayerCall(1L, 1), PlayerCall(2L, 1)), match.playerCalls)
+        assertEquals(later, match.firstCallTime)
+    }
+
+    @Test
+    fun `reassigning a match clears its calls`() {
+        val match = calledMatch()
+        match.requestCall(listOf(1L))
+        match.assign(tableId = 8, now = later)
+
+        assertEquals(emptyList(), match.playerCalls)
+        assertEquals(null, match.firstCallTime)
     }
 
     @Test
@@ -315,7 +434,7 @@ class TournamentMatchTest {
         val match = match()
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
 
-        assertFailsWith<IllegalArgumentException> { match.call() }
+        assertFailsWith<IllegalArgumentException> { match.call(now) }
     }
 
     @Test
@@ -398,7 +517,8 @@ class TournamentMatchTest {
     fun `taking a match back leaves the table and clears the call`() {
         val match = match()
         match.assign(tableId = 7, now = now)
-        match.call()
+        match.call(now)
+        match.requestCall(listOf(1L))
         match.start(now = now)
         match.takeBack()
 
@@ -517,20 +637,6 @@ class TournamentMatchTest {
         match.takeBack()
 
         assertMatch(match) {}
-    }
-
-    @Test
-    fun `the call number counts the announced calls`() {
-        val match = match()
-        match.assign(tableId = 7, now = now)
-        assertEquals(0, match.callNumber)
-
-        match.call()
-        assertEquals(1, match.callNumber)
-
-        match.callAgain()
-        match.callAgain()
-        assertEquals(3, match.callNumber)
     }
 
     // --- knockout: the winner moves on (legacy writeNextKoMatch) ---------------------------

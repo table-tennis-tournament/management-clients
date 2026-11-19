@@ -1,6 +1,7 @@
 package de.ttt.management.tournament.application
 
 import de.ttt.management.tournament.KnockoutMatchFilled
+import de.ttt.management.tournament.MatchCallRequested
 import de.ttt.management.tournament.MatchCalled
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchDeleted
@@ -41,7 +42,11 @@ class MatchService(
 
     fun getPlayedMatchesByTypeId(typeId: Long): List<TournamentMatch> = matchRepository.findPlayedByTypeId(typeId)
 
-    fun getMatchesByCallState(callState: CallState): List<TournamentMatch> = matchRepository.findByCallState(callState)
+    /** The matches at a table whose first Call is not announced yet. */
+    fun getMatchesWaitingForFirstCall(): List<TournamentMatch> = matchRepository.findWaitingForFirstCall()
+
+    /** The matches at a table with a requested call ([TournamentMatch.requestedCallNumber]) waiting for the caller. */
+    fun getMatchesWithRequestedCall(): List<TournamentMatch> = matchRepository.findWithRequestedCall()
 
     fun getMatchesOnTables(tableIds: Collection<Long>): List<TournamentMatch> = matchRepository.findByTableIds(tableIds)
 
@@ -206,17 +211,37 @@ class MatchService(
     fun takeBackMatches(matchIds: List<Long>): Boolean =
         transition(matchIds, TournamentMatch::takeBack, event = ::takenBackEvent)
 
+    /** The caller announces the first Call of the matches. */
     @Transactional
     fun callMatches(matchIds: List<Long>): Boolean =
-        transition(matchIds, TournamentMatch::call) { calledEvent(it, CallState.FirstCall) }
-
-    @Transactional
-    fun callPlayers(matchId: Long): Boolean {
-        val match = matchRepository.findById(matchId).orElse(null) ?: return false
-        if (match.callState == CallState.None || match.callState == CallState.ThirdCall) {
-            return true // nothing to advance
+        transition(matchIds, { it.call(LocalDateTime.now(clock)) }) { called ->
+            calledEvent(called, callNumber = 1, playerIds = called.flatMap { it.match.playerCalls.map(PlayerCall::playerId) })
         }
-        return transition(listOf(matchId), TournamentMatch::callAgain) { calledEvent(it, it.first().match.callState) }
+
+    /** The table manager requests the next call of the players [playerIds] of match [matchId], who have not appeared. */
+    @Transactional
+    fun requestCall(matchId: Long, playerIds: List<Long>): Boolean =
+        transition(listOf(matchId), { it.requestCall(playerIds) }) { (t) ->
+            MatchCallRequested(
+                matchId = matchId,
+                callNumber = requireNotNull(t.match.requestedCallNumber),
+                playerIds = playerIds.distinct(),
+                typeId = t.match.typeId,
+                tableIds = t.previousTableIds
+            )
+        }
+
+    /** The caller announces the requested calls of the matches. */
+    @Transactional
+    fun announceRequestedCalls(matchIds: List<Long>): Boolean {
+        val announced = mutableListOf<PlayerCall>()
+        return transition(matchIds, { match ->
+            val requested = match.playerCalls.filter { it.requested }
+            match.announceRequestedCall()
+            announced += requested
+        }) { called ->
+            calledEvent(called, callNumber = announced.maxOf { it.callNumber + 1 }, playerIds = announced.map { it.playerId })
+        }
     }
 
     /** A match after a transition, together with the tables it waited at before (two for a group on two tables). */
@@ -287,9 +312,10 @@ class MatchService(
             .sorted()
     }
 
-    private fun calledEvent(matches: List<Transitioned>, callState: CallState) = MatchCalled(
+    private fun calledEvent(matches: List<Transitioned>, callNumber: Int, playerIds: List<Long>) = MatchCalled(
         matchIds = matches.mapNotNull { it.match.id },
-        callState = callState.name,
+        callNumber = callNumber,
+        playerIds = playerIds.distinct(),
         typeIds = matches.mapNotNull { it.match.typeId }.distinct(),
         tableIds = matches.flatMap { it.previousTableIds }.distinct()
     )

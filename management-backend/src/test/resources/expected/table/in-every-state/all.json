@@ -44,7 +44,16 @@
     "isPlaying" : false,
     "isKampflos" : false,
     "waitingList" : false,
-    "callState" : "FirstCall",
+    "playerCalls" : [ {
+      "playerId" : 3,
+      "callNumber" : 1,
+      "requested" : false
+    }, {
+      "playerId" : 4,
+      "callNumber" : 1,
+      "requested" : false
+    } ],
+    "firstCallTime" : "2026-11-16T10:00:00",
     "tableId" : 1,
     "tableNumber" : 1,
     "secondTableId" : null,
@@ -83,6 +92,7 @@
       "paid" : false,
       "club" : null
     },
+    "requestedCallNumber" : null,
     "sets" : [ ],
     "state" : "OnTable",
     "winner" : [ ]
@@ -147,7 +157,24 @@
     "isPlaying" : false,
     "isKampflos" : false,
     "waitingList" : false,
-    "callState" : "SecondCall",
+    "playerCalls" : [ {
+      "playerId" : 1,
+      "callNumber" : 1,
+      "requested" : false
+    }, {
+      "playerId" : 2,
+      "callNumber" : 1,
+      "requested" : false
+    }, {
+      "playerId" : 3,
+      "callNumber" : 2,
+      "requested" : false
+    }, {
+      "playerId" : 4,
+      "callNumber" : 2,
+      "requested" : false
+    } ],
+    "firstCallTime" : "2026-11-16T10:00:00",
     "tableId" : 2,
     "tableNumber" : 2,
     "secondTableId" : null,
@@ -189,6 +216,7 @@
         "name" : "TTV Musterstadt"
       }
     },
+    "requestedCallNumber" : null,
     "sets" : [ ],
     "state" : "OnTable",
     "winner" : [ ]
@@ -236,7 +264,16 @@
     "isPlaying" : true,
     "isKampflos" : false,
     "waitingList" : false,
-    "callState" : "ThirdCall",
+    "playerCalls" : [ {
+      "playerId" : 5,
+      "callNumber" : 1,
+      "requested" : false
+    }, {
+      "playerId" : 6,
+      "callNumber" : 3,
+      "requested" : false
+    } ],
+    "firstCallTime" : "2026-11-16T10:00:00",
     "tableId" : 3,
     "tableNumber" : 3,
     "secondTableId" : null,
@@ -272,6 +309,7 @@
       "paid" : false,
       "club" : null
     },
+    "requestedCallNumber" : null,
     "sets" : [ ],
     "state" : "Started",
     "winner" : [ ]

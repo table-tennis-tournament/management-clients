@@ -6,7 +6,7 @@ The Spring Boot backend shares one MariaDB schema with **mktt**, a third-party f
 
 - **`ALTER TABLE` to add columns** — rejected: mutates mktt-owned schema, breaks the fat client.
 - **Shadow/duplicate tables mirroring mktt** — rejected: duplicates data and invites drift.
-- **Sidecar tables (`mgmt_match_call_state`, `mgmt_table_lock`, `mgmt_player_active`)** — chosen: additive, never touches mktt DDL, read via `LEFT JOIN` + `COALESCE`.
+- **Sidecar tables (`mgmt_match_call_state`, `mgmt_table_lock`, `mgmt_player_active`; the calls later moved to `mgmt_match_call` and `mgmt_player_call`)** — chosen: additive, never touches mktt DDL, read via `LEFT JOIN` + `COALESCE`.
 
 ## Consequences
 

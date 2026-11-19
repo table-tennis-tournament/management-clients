@@ -39,7 +39,9 @@ export const ADMIN_UPDATES: UpdateClientConfig<AdminReloadTarget> = {
     MATCH_FREED: MATCH_CHANGED,
     MATCH_TAKEN_BACK: MATCH_CHANGED,
     MATCH_DELETED: MATCH_CHANGED,
-    MATCH_CALLED: ['caller', 'secondCall', 'thirdCall'],
+    // the Assign view shows each match's Call next to the call lists
+    MATCH_CALLED: ['tables', 'caller', 'secondCall', 'thirdCall'],
+    MATCH_CALL_REQUESTED: ['tables', 'secondCall', 'thirdCall'],
     MATCH_SIDES_SET: MATCH_CHANGED,
     TABLE_LOCKED: ['tables'],
     TABLE_UNLOCKED: ['tables'],

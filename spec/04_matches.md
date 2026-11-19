@@ -13,10 +13,19 @@ A match progresses through several states (the backend `MatchState`, sent as `st
 - **Walkover**: The match is not played ("kampflos"): a Side did not appear, and the other wins it with 3:0 sets and 33:0 points.
 
 ## Player Calling
-Matches that are assigned to a table but have not yet started (OnTable) are called. The calls are not states: every Match DTO carries `callNumber` (0 = not called yet, 1-3 = first to third call).
-- **First Call**: Initial announcement for the players to proceed to the assigned table.
-- **Second Call**: Follow-up announcement if players have not reported within a specific timeframe.
-- **Third Call**: Final announcement before potential disqualification.
+Matches at a table are called at the caller desk. The calls are not states. Every player of a match has their own
+call count; every Match DTO carries `playerCalls` (`playerId`, `callNumber`, `requested`), `callNumber` (the highest of
+its players: 0 = not called yet, 1-3 = first to third call), `requestedCallNumber` and `firstCallTime`.
+- **First Call**: Assigning a match to a table puts it on the caller's list (`/matchaggregates/caller`). The caller
+  announces it ("OK", `POST /match/call`): every player's call becomes 1 and the waiting time starts.
+- **Second and Third Call**: When players have not appeared, the table manager ticks them and requests their next call
+  (`POST /playercall/{matchId}` with their ids). The request waits on the caller's list (`/matchaggregates/secondCall` or
+  `/thirdCall`, by the call it announces, naming only the requested players) until the caller announces it ("OK",
+  `POST /playercall/announce`); then each requested player's call goes up by one. One request per match waits at a time;
+  the Third call is a player's last. The players of a Started match (e.g. after an auto-start) are still called.
+- **Waiting time**: the tablemanager, the Assign view and the caller's lists show the minutes since the first Call.
+- Leaving the table (take back, reassignment, result, Frei) clears the calls. The administrator ends a match kampflos
+  in the Assign view, usually after the Third call (see Walkover below).
 - **Referees**: Assigning a referee during the call is not supported by the backend; the referee list stays empty.
 
 ## Match Planning (Supervisor)
@@ -72,8 +81,9 @@ Sets are sent as `[[pointsSide1, pointsSide2], ...]`, for example `[[11,5],[11,7
 | `POST` | `/match/updateResult/{id}` | Enter an interim result; the match keeps running. Body: sets. |
 | `POST` | `/match/setResult/{id}` | Enter the final result and complete the match; `?kampflos=true` makes it a Walkover won with that result. Body: sets. |
 | `POST` | `/match/call` | First call of matches. Body: `[matchId, ...]`. |
-| `POST` | `/playercall/{matchId}` | Next call (second, then third) of a match. |
-| `GET` | `/matchaggregates/caller`, `/secondCall`, `/thirdCall` | The matches at a table per call, for the caller view. |
+| `POST` | `/playercall/{matchId}` | Request the next call of the players who have not appeared. Body: `[playerId, ...]`. |
+| `POST` | `/playercall/announce` | Announce the requested calls of matches. Body: `[matchId, ...]`. |
+| `GET` | `/matchaggregates/caller`, `/secondCall`, `/thirdCall` | Per table, the first Calls to announce and the requested Second and Third calls, with `callNumber`, `firstCallTime` and the players to call. |
 | `DELETE` | `/match/{id}` | Delete a match. |
 | `GET` | `/match/loadnew` | Kept for the legacy clients; does nothing. |
 | `GET` | `/matchlist/all` | The Queue: `[{"uuid", "matchIds", "asGroup", "position"}]`. |
@@ -85,5 +95,6 @@ Sets are sent as `[[pointsSide1, pointsSide2], ...]`, for example `[[11,5],[11,7
 | `POST` | `/matchlist/auto-start` | Start the next playable Queue entry now. |
 
 Every change is published on the `matches` topic (`MATCH_ASSIGNED`, `MATCH_STARTED`, `MATCH_RESULT_UPDATED`,
-`MATCH_COMPLETED`, `MATCH_FREED`, `MATCH_TAKEN_BACK`, `MATCH_CALLED`, `MATCH_SIDES_SET`, `MATCH_DELETED`) or, for the Queue, as
+`MATCH_COMPLETED`, `MATCH_FREED`, `MATCH_TAKEN_BACK`, `MATCH_CALLED`, `MATCH_CALL_REQUESTED`, `MATCH_SIDES_SET`,
+`MATCH_DELETED`) or, for the Queue, as
 `MATCH_LIST_CHANGED` on the `queue` topic (see [Real-time Updates](06_live_updates.md)).

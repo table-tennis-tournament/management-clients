@@ -9,7 +9,7 @@ Resolved by architecture review candidate 3: the clients use the backend `MatchS
 ## 2. Tablemanager DTO mismatches
 
 - `tablemanager-view/src/app/table-list/tt-table/table.model.ts` declares `table_id` and `table_number` as optional strings; the backend `TableManagerTableInfo` emits nullable `Long`.
-- The backend returns `club = null` for every tablemanager player (`TableController.kt`), so the club is blank. (`call_count` now carries the match's `callNumber`, so the badge shows from the Second call on.)
+- The backend returns `club = null` for every tablemanager player (`TableController.kt`), so the club is blank. (`call_count` is the player's own call count, so a Side's badge shows from its Second call on.)
 - The player IDs selected in the tablemanager player dialog are dropped at the HTTP boundary (`match.service.ts`), and the backend endpoint only needs the `matchId`.
 - The navigation menu lists table managers 1-4 while the routes support 1-5.
 

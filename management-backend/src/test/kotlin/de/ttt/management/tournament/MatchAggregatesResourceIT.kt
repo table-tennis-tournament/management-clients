@@ -52,13 +52,23 @@ class MatchAggregatesResourceIT {
         }
 
         @Test
-        fun `matches in the second call, doubles with both players`() {
+        fun `a requested second call names only the missing player`() {
+            matchService.requestCall(2, listOf(4))
             api.get("/matchaggregates/secondCall").expectStatus().isOk.expectJson("matchaggregates/secondcall")
+            api.get("/matchaggregates/thirdCall").expectStatus().isOk.expectExactJson("[]")
         }
 
         @Test
-        fun `matches in the third call`() {
+        fun `a requested third call of a doubles player`() {
+            matchService.requestCall(4, listOf(3))
             api.get("/matchaggregates/thirdCall").expectStatus().isOk.expectJson("matchaggregates/thirdcall")
+            api.get("/matchaggregates/secondCall").expectStatus().isOk.expectExactJson("[]")
+        }
+
+        @Test
+        fun `announced calls leave the lists`() {
+            api.get("/matchaggregates/secondCall").expectStatus().isOk.expectExactJson("[]")
+            api.get("/matchaggregates/thirdCall").expectStatus().isOk.expectExactJson("[]")
         }
     }
 
@@ -74,15 +84,17 @@ class MatchAggregatesResourceIT {
             api.get("/matchaggregates/caller").expectStatus().isOk.expectJson("matchaggregates/flow-not-called")
 
             api.post("/match/call", listOf(1)).expectStatus().isOk
-            api.post("/playercall/1").expectStatus().isOk
-            api.get("/matchaggregates/secondCall").expectStatus().isOk.expectJson("matchaggregates/flow-second-call")
-
-            api.post("/playercall/1").expectStatus().isOk
-            api.get("/matchaggregates/thirdCall").expectStatus().isOk.expectJson("matchaggregates/flow-third-call")
-
-            // a called match no longer shows up in the views of the earlier calls
             api.get("/matchaggregates/caller").expectStatus().isOk.expectExactJson("[]")
+
+            api.post("/playercall/1", listOf(2)).expectStatus().isOk
+            api.get("/matchaggregates/secondCall").expectStatus().isOk.expectJson("matchaggregates/flow-second-call")
+            api.post("/playercall/announce", listOf(1)).expectStatus().isOk
             api.get("/matchaggregates/secondCall").expectStatus().isOk.expectExactJson("[]")
+
+            api.post("/playercall/1", listOf(2)).expectStatus().isOk
+            api.get("/matchaggregates/thirdCall").expectStatus().isOk.expectJson("matchaggregates/flow-third-call")
+            api.post("/playercall/announce", listOf(1)).expectStatus().isOk
+            api.get("/matchaggregates/thirdCall").expectStatus().isOk.expectExactJson("[]")
         }
 
         @Test

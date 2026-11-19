@@ -45,7 +45,7 @@ class JdbcTournamentMatchRepository(
             isPlaying = rs.getBoolean("matc_isplaying"),
             isKampflos = rs.getInt("matc_kampflos") > 0,
             waitingList = rs.getBoolean("matc_waitinglist"),
-            callState = CallState.fromCode(rs.getInt("matc_callstate")),
+            firstCallTime = rs.getTimestamp("first_call_time")?.toLocalDateTime(),
             tableId = rs.getObject("matc_tabl_id")?.let { (it as Number).toLong() }?.takeIf { it > 0 },
             tableNumber = rs.getString("table_number")?.toIntOrNull(),
             secondTableId = rs.getObject("second_table_id")?.let { (it as Number).toLong() },
@@ -122,11 +122,25 @@ class JdbcTournamentMatchRepository(
         }
     }
 
+    /** Loads the [TournamentMatch.playerCalls] of the matches from `mgmt_player_call`. */
+    private fun withCalls(matches: List<TournamentMatch>): List<TournamentMatch> {
+        val ids = matches.mapNotNull { it.id }
+        if (ids.isEmpty()) return matches
+        val calls = jdbcClient.sql("SELECT matc_id, play_id, call_number, requested FROM mgmt_player_call WHERE matc_id IN (:ids) ORDER BY play_id")
+            .param("ids", ids)
+            .query { rs, _ -> rs.getLong("matc_id") to PlayerCall(rs.getLong("play_id"), rs.getInt("call_number"), rs.getInt("requested") > 0) }
+            .list()
+            .groupBy({ it.first }, { it.second })
+        matches.forEach { m -> m.playerCalls = calls[m.id] ?: emptyList() }
+        return matches
+    }
+
     /**
-     * Sets [TournamentMatch.isPlayable] against every blocking match of the tournament, not only the
-     * loaded ones: a player on a table in one discipline blocks their matches in all others.
+     * Loads the calls and sets [TournamentMatch.isPlayable] against every blocking match of the tournament, not
+     * only the loaded ones: a player on a table in one discipline blocks their matches in all others.
      */
     private fun withPlayability(matches: List<TournamentMatch>): List<TournamentMatch> {
+        withCalls(matches)
         val blockingIds = blockingPlayerIds()
         matches.forEach { m ->
             val ids = (m.team1 + m.team2).mapNotNull { it.id }.toSet()
@@ -143,11 +157,11 @@ class JdbcTournamentMatchRepository(
         ).flatMap { it.team1 + it.team2 }.mapNotNull { it.id }.toSet()
 
     private fun selectMatches(sql: String): String =
-        "SELECT m.*, COALESCE(cs.call_state, 0) AS matc_callstate, mt.maty_name AS match_type_name, g.grou_name AS group_name, " +
+        "SELECT m.*, mc.first_call_time, mt.maty_name AS match_type_name, g.grou_name AS group_name, " +
             "ty.type_name AS type_name, ty.type_kind AS type_kind, ty.type_active AS type_active, tb.tabl_name AS table_number, " +
             "st.tableId AS second_table_id, tb2.tabl_name AS second_table_number " +
             "FROM matches m " +
-            "LEFT JOIN mgmt_match_call_state cs ON cs.matc_id = m.matc_id " +
+            "LEFT JOIN mgmt_match_call mc ON mc.matc_id = m.matc_id " +
             "LEFT JOIN matchtype mt ON mt.maty_id = m.matc_maty_id " +
             "LEFT JOIN playgroups g ON g.grou_id = m.matc_grou_id " +
             "LEFT JOIN type ty ON ty.type_id = m.matc_type_id " +
@@ -189,17 +203,25 @@ class JdbcTournamentMatchRepository(
             .param("typeId", typeId).query(rowMapper).list(), withNames = true))
     }
 
-    override fun findByCallState(callState: CallState): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(
+    override fun findWaitingForFirstCall(): List<TournamentMatch> =
+        withPlayability(resolvePlayers(
             jdbcClient.sql(
-                selectMatches("WHERE COALESCE(cs.call_state, 0) = :callState AND m.matc_tabl_id > 0 ORDER BY m.matc_tabl_id, m.matc_id")
-            )
-                .param("callState", callState.code)
-                .query(rowMapper)
-                .list(),
+                selectMatches("WHERE mc.matc_id IS NULL AND m.matc_tabl_id > 0 AND m.matc_played = 0 ORDER BY m.matc_tabl_id, m.matc_id")
+            ).query(rowMapper).list(),
             withNames = true
         ))
-    }
+
+    override fun findWithRequestedCall(): List<TournamentMatch> =
+        withPlayability(resolvePlayers(
+            jdbcClient.sql(
+                selectMatches(
+                    "WHERE m.matc_tabl_id > 0 AND m.matc_played = 0 " +
+                        "AND EXISTS (SELECT 1 FROM mgmt_player_call pc WHERE pc.matc_id = m.matc_id AND pc.requested > 0) " +
+                        "ORDER BY m.matc_tabl_id, m.matc_id"
+                )
+            ).query(rowMapper).list(),
+            withNames = true
+        ))
 
     override fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch> {
         if (tableIds.isEmpty()) return emptyList()
@@ -254,7 +276,7 @@ class JdbcTournamentMatchRepository(
 
     /**
      * Writes only the lifecycle columns; players, discipline, number and round belong to mktt
-     * (ADR-0001). The call state and the table history live in the `mgmt_` sidecar tables.
+     * (ADR-0001). The calls and the table history live in the `mgmt_` sidecar tables.
      */
     override fun save(match: TournamentMatch): Int {
         val id = requireNotNull(match.id) { "Only an existing match can be saved" }
@@ -285,27 +307,35 @@ class JdbcTournamentMatchRepository(
             .update()
         if (updated == 0) return 0
 
-        saveCallState(id, match.callState)
+        saveCalls(id, match)
         syncMatchTables(id, listOfNotNull(match.tableId, match.secondTableId).toSet())
         return updated
     }
 
-    private fun saveCallState(matchId: Long, callState: CallState) {
-        if (callState == CallState.None) {
-            jdbcClient.sql("DELETE FROM mgmt_match_call_state WHERE matc_id = :id")
+    /** Replaces the match's rows in `mgmt_match_call` and `mgmt_player_call`; no rows while it is not called. */
+    private fun saveCalls(matchId: Long, match: TournamentMatch) {
+        deleteCalls(matchId)
+        match.firstCallTime?.let { time ->
+            jdbcClient.sql("INSERT INTO mgmt_match_call (matc_id, first_call_time) VALUES (:id, :time)")
                 .param("id", matchId)
-                .update()
-        } else {
-            jdbcClient.sql(
-                """
-                INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (:id, :callState)
-                ON DUPLICATE KEY UPDATE call_state = :callState
-                """.trimIndent()
-            )
-                .param("callState", callState.code)
-                .param("id", matchId)
+                .param("time", time)
                 .update()
         }
+        match.playerCalls.forEach { call ->
+            jdbcClient.sql(
+                "INSERT INTO mgmt_player_call (matc_id, play_id, call_number, requested) VALUES (:id, :playerId, :callNumber, :requested)"
+            )
+                .param("id", matchId)
+                .param("playerId", call.playerId)
+                .param("callNumber", call.callNumber)
+                .param("requested", if (call.requested) 1 else 0)
+                .update()
+        }
+    }
+
+    private fun deleteCalls(matchId: Long) {
+        jdbcClient.sql("DELETE FROM mgmt_match_call WHERE matc_id = :id").param("id", matchId).update()
+        jdbcClient.sql("DELETE FROM mgmt_player_call WHERE matc_id = :id").param("id", matchId).update()
     }
 
     /** The Sides belong to mktt; only a winner moving on in the knockout stage writes them, as the legacy backend did. */
@@ -320,6 +350,7 @@ class JdbcTournamentMatchRepository(
 
     override fun deleteById(id: Long): Int {
         deleteMatchTableForMatch(id)
+        deleteCalls(id)
         return jdbcClient.sql("DELETE FROM matches WHERE matc_id = :id").param("id", id).update()
     }
 
@@ -359,6 +390,11 @@ class JdbcTournamentMatchRepository(
         jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
             .param("typeId", typeId)
             .update()
+        listOf("mgmt_match_call", "mgmt_player_call").forEach { table ->
+            jdbcClient.sql("DELETE FROM $table WHERE matc_id IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
+                .param("typeId", typeId)
+                .update()
+        }
         return jdbcClient.sql("DELETE FROM matches WHERE matc_type_id = :typeId").param("typeId", typeId).update()
     }
 }

@@ -8,6 +8,7 @@ import { ResultUpdatesService, UPDATE_TRANSPORT } from './result-updates.service
 import { resultUpdates } from './result-updates';
 // The envelopes the backend publishes, recorded by its UpdateTopicsIT; they all concern discipline 1.
 import matchAssigned from '../../../../management-backend/src/test/resources/expected/events/matches/match-assigned.json';
+import matchCallRequested from '../../../../management-backend/src/test/resources/expected/events/matches/match-call-requested.json';
 import matchCalled from '../../../../management-backend/src/test/resources/expected/events/matches/match-called.json';
 import matchCompleted from '../../../../management-backend/src/test/resources/expected/events/matches/match-completed.json';
 import matchDeleted from '../../../../management-backend/src/test/resources/expected/events/matches/match-deleted.json';
@@ -18,7 +19,7 @@ import matchStarted from '../../../../management-backend/src/test/resources/expe
 import matchTakenBack from '../../../../management-backend/src/test/resources/expected/events/matches/match-taken-back.json';
 
 const RESULT_CHANGES = { matchCompleted, matchDeleted, matchFreed, matchResultUpdated, matchSidesSet, matchTakenBack };
-const NO_RESULT_CHANGES = { matchAssigned, matchCalled, matchStarted };
+const NO_RESULT_CHANGES = { matchAssigned, matchCalled, matchCallRequested, matchStarted };
 
 describe('the result updates service', () => {
   let transport: InMemoryUpdateTransport;

@@ -15,8 +15,14 @@ export interface Match {
   waitingList?: boolean;
   /** The lifecycle state; ask `shared/match-state` instead of comparing it. */
   state?: MatchStateName;
-  /** How many Calls have been announced (0-3). */
+  /** How many Calls have been announced (0-3): the highest call of the match's players. */
   callNumber?: number;
+  /** The call (2 or 3) the table manager requested and the caller has not announced yet. */
+  requestedCallNumber?: number | null;
+  /** When the first Call was announced. */
+  firstCallTime?: string | null;
+  /** The calls of each player; `requested` while their next call waits for the caller. */
+  playerCalls?: { playerId: number; callNumber: number; requested: boolean }[];
   tableId?: number;
   /** The number of the table the match is at, as players see it; not the same as [tableId]. */
   tableNumber?: number;
@@ -33,5 +39,4 @@ export interface Match {
   isPlayed?: boolean;
   isPlaying?: boolean;
   isKampflos?: boolean;
-  callState?: string;
 }

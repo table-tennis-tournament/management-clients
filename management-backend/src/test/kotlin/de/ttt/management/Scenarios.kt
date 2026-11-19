@@ -43,12 +43,13 @@ class Scenarios(
      * | 1     | players 1 vs 2                     | 1 Herren         | Open                           |
      * | 2     | players 3 vs 4                     | 1 Herren         | OnTable 1, first call          |
      * | 3     | players 5 vs 6                     | 1 Herren         | Completed 3:1                  |
-     * | 4     | double 1 (1, 2) vs double 2 (3, 4) | 2 Herren doubles | OnTable 2, second call         |
+     * | 4     | double 1 (1, 2) vs double 2 (3, 4) | 2 Herren doubles | OnTable 2, second call (3, 4)  |
      * | 5     | players 1 vs 3                     | 1 Herren         | InQueue                        |
-     * | 6     | players 5 vs 6                     | 1 Herren         | Started on table 3, third call |
+     * | 6     | players 5 vs 6                     | 1 Herren         | Started on table 3, third call (6) |
      * | 7     | players 7 vs 8                     | 1 Herren         | Open, the only playable match  |
      *
-     * Matches 1-3 and 5-7 are "Gruppenspiel" of group A, match 4 is a "Finale". Discipline 3 ("Senioren") is
+     * The calls in brackets are the players called again; all others had their first call only, and no call
+     * request waits. Matches 1-3 and 5-7 are "Gruppenspiel" of group A, match 4 is a "Finale". Discipline 3 ("Senioren") is
      * inactive and has no matches. Players 1 and 3 play for club 1. Tables 1 to 4 exist; table 4 is free.
      */
     fun givenMatchesInEveryState() {
@@ -82,12 +83,15 @@ class Scenarios(
 
         matchService.assignMatch(4, 2)
         matchService.callMatches(listOf(4))
-        matchService.callPlayers(4)
+        matchService.requestCall(4, listOf(3, 4))
+        matchService.announceRequestedCalls(listOf(4))
 
         matchService.assignMatch(6, 3)
         matchService.callMatches(listOf(6))
-        matchService.callPlayers(6)
-        matchService.callPlayers(6)
+        repeat(2) {
+            matchService.requestCall(6, listOf(6))
+            matchService.announceRequestedCalls(listOf(6))
+        }
         matchService.startMatch(6, 3)
 
         matchListService.addMatchToList(listOf(5), asGroup = null, position = 0)

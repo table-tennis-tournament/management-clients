@@ -37,12 +37,12 @@ describe('the match effects', () => {
     expect(result).toBe('none');
   });
 
-  it('calls the players of a match with its id only', async () => {
+  it('requests a call of the missing players of a match', async () => {
     const called: unknown[][] = [];
     TestBed.configureTestingModule({
       providers: [
         MatchEffects,
-        provideMockActions(() => of(MatchActions.callPlayerForMatch({ matchId: 7 }))),
+        provideMockActions(() => of(MatchActions.callPlayerForMatch({ matchId: 7, playerIds: [3] }))),
         provideMockStore({ initialState: { tables: { tableManagerId: 1, tables: [] } } }),
         { provide: MatSnackBar, useValue: { open: () => undefined } },
         {
@@ -54,6 +54,6 @@ describe('the match effects', () => {
     const effects = TestBed.inject(MatchEffects);
 
     expect(await firstValueFrom(effects.callPlayerForMatch)).toStrictEqual(MatchActions.callPlayerForMatchSuccess());
-    expect(called).toStrictEqual([[7]]);
+    expect(called).toStrictEqual([[7, [3]]]);
   });
 });

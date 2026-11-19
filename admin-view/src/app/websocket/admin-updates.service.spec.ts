@@ -10,6 +10,8 @@ import { ADMIN_UPDATES, AdminReloadTarget, reloadAction } from './admin-updates'
 import { AdminUpdatesService, UPDATE_TRANSPORT } from './admin-updates.service';
 // The envelopes the backend publishes, recorded by its UpdateTopicsIT (management-backend/src/test/resources/expected/events).
 import matchAssigned from '../../../../management-backend/src/test/resources/expected/events/matches/match-assigned.json';
+import matchCallRequested from '../../../../management-backend/src/test/resources/expected/events/matches/match-call-requested.json';
+import matchCalledSecondCall from '../../../../management-backend/src/test/resources/expected/events/matches/match-called-second-call.json';
 import matchCalledBulk from '../../../../management-backend/src/test/resources/expected/events/matches/match-called-bulk.json';
 import matchCalled from '../../../../management-backend/src/test/resources/expected/events/matches/match-called.json';
 import matchCompleted from '../../../../management-backend/src/test/resources/expected/events/matches/match-completed.json';
@@ -35,7 +37,24 @@ const BACKEND_EVENTS: { name: string; topic: UpdateTopic; event: any; reloads: A
   { name: 'match-assigned', topic: 'matches', event: matchAssigned, reloads: MATCH_CHANGED },
   // the called matches are on no table, and the call lists only show matches at a table
   { name: 'match-called-bulk', topic: 'matches', event: matchCalledBulk, reloads: [] },
-  { name: 'match-called', topic: 'matches', event: matchCalled, reloads: ['caller', 'secondCall', 'thirdCall'] },
+  {
+    name: 'match-called',
+    topic: 'matches',
+    event: matchCalled,
+    reloads: ['tables', 'caller', 'secondCall', 'thirdCall'],
+  },
+  {
+    name: 'match-called-second-call',
+    topic: 'matches',
+    event: matchCalledSecondCall,
+    reloads: ['tables', 'caller', 'secondCall', 'thirdCall'],
+  },
+  {
+    name: 'match-call-requested',
+    topic: 'matches',
+    event: matchCallRequested,
+    reloads: ['tables', 'secondCall', 'thirdCall'],
+  },
   { name: 'match-completed', topic: 'matches', event: matchCompleted, reloads: MATCH_CHANGED },
   { name: 'match-deleted', topic: 'matches', event: matchDeleted, reloads: MATCH_CHANGED },
   { name: 'match-freed', topic: 'matches', event: matchFreed, reloads: MATCH_CHANGED },

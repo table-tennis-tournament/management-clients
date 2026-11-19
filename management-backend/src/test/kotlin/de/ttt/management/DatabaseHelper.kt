@@ -165,10 +165,6 @@ class DatabaseHelper(
     /** The final result of a played match, see [insertMatch]. */
     data class MatchResult(val sets1: Int, val sets2: Int, val balls1: Int, val balls2: Int, val resultRaw: String? = null)
 
-    fun insertCallState(matchId: Long, callState: Int) {
-        jdbc.update("INSERT INTO mgmt_match_call_state (matc_id, call_state) VALUES (?, ?)", matchId, callState)
-    }
-
     /**
      * The smallest playable tournament: singles discipline 1 ("Herren"), players 1 and 2,
      * the open match 1 (player 1 vs 2) and table 1.

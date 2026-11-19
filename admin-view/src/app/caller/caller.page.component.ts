@@ -22,6 +22,7 @@ import {
   LoadSecondCallMatches,
   LoadThirdCallMatches,
   SetSelectedMatchAggregate,
+  SecondCallMatch,
   SetSelectedSecondCallMatchAggregate,
 } from './redux/caller.actions';
 
@@ -94,7 +95,8 @@ export class CallerPageComponent implements OnInit {
     this.store.dispatch(new CallMatch(matchIds));
   }
 
-  onSecondCallCalled() {
-    this.store.dispatch(new SetSelectedSecondCallMatchAggregate(null));
+  /** The caller announced the selected Second or Third call. */
+  onSecondCallCalled(matchIds: number[]) {
+    this.store.dispatch(new SecondCallMatch(matchIds));
   }
 }

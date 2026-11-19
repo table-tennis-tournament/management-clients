@@ -37,7 +37,8 @@
   "isPlaying" : true,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "None",
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
   "tableId" : null,
   "tableNumber" : null,
   "secondTableId" : null,
@@ -73,6 +74,7 @@
     "paid" : false,
     "club" : null
   },
+  "requestedCallNumber" : null,
   "sets" : [ {
     "pointsPlayer1" : 11,
     "pointsPlayer2" : 5

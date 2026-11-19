@@ -58,6 +58,29 @@ test.describe('Table Manager UI Tests', () => {
     await expect(firstTable.locator('button:has-text("Zurück")')).toBeVisible({ timeout: 15000 });
   });
 
+  test('should request a second call of the missing player only', async ({ page, request }) => {
+    const firstTable = page.locator('app-tt-table').first();
+
+    // match 3 at table 1, first Call announced by the caller
+    await request.post('/api/v2/match/takeBack', { data: [3] });
+    expect((await request.post('/api/v2/match/matchtotable/1', { data: [3] })).ok()).toBeTruthy();
+    expect((await request.post('/api/v2/match/call', { data: [3] })).ok()).toBeTruthy();
+
+    const matchItem = firstTable.locator('app-match-item');
+    await expect(matchItem).toContainText('Erster Aufruf vor', { timeout: 15000 });
+    await firstTable.getByRole('button', { name: 'Spieler ausrufen' }).click();
+
+    const dialog = page.locator('mat-dialog-container');
+    await dialog.getByRole('checkbox', { name: /Babajide Santos/ }).check();
+    await dialog.getByRole('button', { name: 'Ausrufen' }).click();
+
+    await expect(matchItem).toContainText('2. Aufruf angefordert', { timeout: 15000 });
+    await expect(firstTable.getByRole('button', { name: 'Spieler ausrufen' })).toBeDisabled();
+    const match = await (await request.get('/api/v2/match/3')).json();
+    expect(match.requestedCallNumber).toBe(2);
+    expect(match.playerCalls.filter((call: { requested: boolean }) => call.requested)).toHaveLength(1);
+  });
+
   test('should record a result for match 4 and move it off the table', async ({ page, request }) => {
     const firstTable = page.locator('app-tt-table').first();
 

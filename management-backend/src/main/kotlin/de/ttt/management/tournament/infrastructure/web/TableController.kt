@@ -104,22 +104,26 @@ class TableController(
                 games_won_player_a = match.sets.count { it.pointsPlayer1 > it.pointsPlayer2 },
                 games_won_player_b = match.sets.count { it.pointsPlayer2 > it.pointsPlayer1 }
             ),
-            players_a = match.team1.map { toTableManagerPlayer(it, match.callNumber) },
-            players_b = match.team2.map { toTableManagerPlayer(it, match.callNumber) },
+            players_a = match.team1.map { toTableManagerPlayer(it, match) },
+            players_b = match.team2.map { toTableManagerPlayer(it, match) },
             stage = match.matchType?.name,
             classification = classification,
             state = match.state.name,
-            callNumber = match.callNumber
+            callNumber = match.callNumber,
+            requestedCallNumber = match.requestedCallNumber,
+            firstCallTime = match.firstCallTime
         )
     }
 
-    private fun toTableManagerPlayer(player: TournamentPlayer, callNumber: Int): TableManagerPlayer {
+    private fun toTableManagerPlayer(player: TournamentPlayer, match: TournamentMatch): TableManagerPlayer {
+        val call = match.playerCalls.firstOrNull { it.playerId == player.id }
         return TableManagerPlayer(
             player_id = player.id,
             first_name = player.firstName,
             last_name = player.lastName,
             club = player.club?.name,
-            call_count = callNumber
+            call_count = call?.callNumber ?: 0,
+            call_requested = call?.requested ?: false
         )
     }
 }

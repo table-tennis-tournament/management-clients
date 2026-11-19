@@ -20,7 +20,7 @@ export function resultUpdates(displayedTypeId: () => number | null): UpdateClien
       // a knockout winner moved on: the bracket shows the next match's Sides
       MATCH_SIDES_SET: ['matches'],
     },
-    ignored: ['MATCH_ASSIGNED', 'MATCH_STARTED', 'MATCH_CALLED'],
+    ignored: ['MATCH_ASSIGNED', 'MATCH_STARTED', 'MATCH_CALLED', 'MATCH_CALL_REQUESTED'],
     // reloading the types also reloads the matches of the displayed discipline
     resync: ['types'],
     isRelevant: (_target, scope) => {

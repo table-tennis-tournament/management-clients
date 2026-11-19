@@ -34,7 +34,8 @@
   "isPlaying" : false,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "None",
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
   "tableId" : null,
   "tableNumber" : null,
   "secondTableId" : null,
@@ -70,6 +71,7 @@
     "paid" : false,
     "club" : null
   },
+  "requestedCallNumber" : null,
   "sets" : [ ],
   "state" : "Open",
   "winner" : [ ]
@@ -109,7 +111,8 @@
   "isPlaying" : false,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "None",
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
   "tableId" : null,
   "tableNumber" : null,
   "secondTableId" : null,
@@ -145,6 +148,7 @@
     "paid" : false,
     "club" : null
   },
+  "requestedCallNumber" : null,
   "sets" : [ ],
   "state" : "Open",
   "winner" : [ ]
@@ -170,7 +174,8 @@
   "isPlaying" : false,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "None",
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
   "tableId" : null,
   "tableNumber" : null,
   "secondTableId" : null,
@@ -192,6 +197,7 @@
   "nextKnockoutMatchNr" : 1001,
   "player1" : null,
   "player2" : null,
+  "requestedCallNumber" : null,
   "sets" : [ ],
   "state" : "Open",
   "winner" : [ ]
@@ -231,7 +237,8 @@
   "isPlaying" : false,
   "isKampflos" : false,
   "waitingList" : false,
-  "callState" : "None",
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
   "tableId" : null,
   "tableNumber" : null,
   "secondTableId" : null,
@@ -267,6 +274,7 @@
     "paid" : false,
     "club" : null
   },
+  "requestedCallNumber" : null,
   "sets" : [ {
     "pointsPlayer1" : 11,
     "pointsPlayer2" : 5

@@ -26,4 +26,10 @@ describeRequests(CallerService, [
     response: aggregates,
   },
   { call: (s) => s.callMatch([1, 2]), method: 'POST', url: '/api/v2/match/call', body: [1, 2] },
+  {
+    call: (s) => s.announceRequestedCalls([3]),
+    method: 'POST',
+    url: '/api/v2/playercall/announce',
+    body: [3],
+  },
 ]);

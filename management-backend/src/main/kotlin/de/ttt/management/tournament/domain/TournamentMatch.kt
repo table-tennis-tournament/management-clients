@@ -21,7 +21,10 @@ class TournamentMatch(
     var isPlaying: Boolean = false,
     var isKampflos: Boolean = false,
     var waitingList: Boolean = false,
-    var callState: CallState = CallState.None,
+    /** The Calls of the match's players; empty until the first Call is announced. */
+    var playerCalls: List<PlayerCall> = emptyList(),
+    /** When the first Call was announced: the players have been waited for since then. */
+    var firstCallTime: LocalDateTime? = null,
     var tableId: Long? = null,
     /**
      * The number of the table [tableId] names, as stored (the venue's table number, not the id). Read only: a
@@ -86,11 +89,21 @@ class TournamentMatch(
         }
 
     /**
-     * How many Calls have been announced for the match: 0 (none), 1, 2 (Second call) or 3
+     * The match's Call: the highest call of its players, 0 (not called yet), 1 (Called), 2 (Second call) or 3
      * (Third call). Serialized next to [state] so clients never derive it themselves.
      */
     val callNumber: Int
-        get() = callState.code
+        get() = playerCalls.maxOfOrNull { it.callNumber } ?: 0
+
+    /**
+     * The call a waiting request of the table manager announces (2 or 3): the highest next call of the
+     * requested players. `null` while no request waits.
+     */
+    val requestedCallNumber: Int?
+        get() = playerCalls.filter { it.requested }.maxOfOrNull { it.callNumber + 1 }
+
+    private val playerIds: List<Long>
+        get() = (team1 + team2).mapNotNull { it.id }.distinct()
 
     /**
      * A match blocks other matches involving the same players when it is assigned to a table
@@ -130,7 +143,7 @@ class TournamentMatch(
         startTime = now
         isPlaying = false
         waitingList = false
-        callState = CallState.None
+        clearCalls()
     }
 
     /**
@@ -174,23 +187,40 @@ class TournamentMatch(
     }
 
     /**
-     * Announces the first call for the match, transitioning it to [CallState.FirstCall].
+     * Announces the first Call of the match: every player is called once and the players are waited for from
+     * [now] on. Calling a match again starts its calls over.
      */
-    fun call() {
+    fun call(now: LocalDateTime) {
         require(!isPlayed) { "A completed match cannot be called" }
-        callState = CallState.FirstCall
+        playerCalls = playerIds.map { PlayerCall(it, 1) }
+        firstCallTime = now
     }
 
     /**
-     * Announces the next call for the match (second or third), advancing [CallState.FirstCall]
-     * to [CallState.SecondCall] and [CallState.SecondCall] to [CallState.ThirdCall].
+     * The table manager requests the next call of the players [requestedPlayerIds], who have not appeared. It
+     * waits for the caller to announce it ([announceRequestedCall]); only one request waits at a time.
      */
-    fun callAgain() {
-        callState = when (callState) {
-            CallState.FirstCall -> CallState.SecondCall
-            CallState.SecondCall -> CallState.ThirdCall
-            else -> callState
+    fun requestCall(requestedPlayerIds: Collection<Long>) {
+        require(tableId != null && !isPlayed) { "Only the players of a match at a table are called" }
+        require(callNumber >= 1) { "The first Call is announced before players are called again" }
+        require(requestedCallNumber == null) { "A requested call waits to be announced" }
+        require(requestedPlayerIds.isNotEmpty()) { "A call names the players who have not appeared" }
+        require(requestedPlayerIds.all { id -> playerCalls.any { it.playerId == id } }) { "Only the match's players are called" }
+        require(playerCalls.none { it.playerId in requestedPlayerIds && it.callNumber >= LAST_CALL_NUMBER }) {
+            "The Third call is a player's last"
         }
+        playerCalls = playerCalls.map { if (it.playerId in requestedPlayerIds) it.copy(requested = true) else it }
+    }
+
+    /** The caller announces the requested call: each requested player's call goes up by one. */
+    fun announceRequestedCall() {
+        require(requestedCallNumber != null) { "No requested call waits to be announced" }
+        playerCalls = playerCalls.map { if (it.requested) PlayerCall(it.playerId, it.callNumber + 1) else it }
+    }
+
+    private fun clearCalls() {
+        playerCalls = emptyList()
+        firstCallTime = null
     }
 
     /**
@@ -315,7 +345,7 @@ class TournamentMatch(
         tableNumber = null
         secondTableId = null
         secondTableNumber = null
-        callState = CallState.None
+        clearCalls()
     }
 
     private fun clearResult() {

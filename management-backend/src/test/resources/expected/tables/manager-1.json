@@ -19,19 +19,23 @@
       "first_name" : "Jane",
       "last_name" : "Doe",
       "club" : null,
-      "call_count" : 0
+      "call_count" : 0,
+      "call_requested" : false
     } ],
     "players_b" : [ {
       "player_id" : 2,
       "first_name" : "John",
       "last_name" : "Roe",
       "club" : null,
-      "call_count" : 0
+      "call_count" : 0,
+      "call_requested" : false
     } ],
     "stage" : null,
     "classification" : "Herren",
     "state" : "OnTable",
-    "callNumber" : 0
+    "callNumber" : 0,
+    "requestedCallNumber" : null,
+    "firstCallTime" : null
   } ]
 }, {
   "table_id" : 3,

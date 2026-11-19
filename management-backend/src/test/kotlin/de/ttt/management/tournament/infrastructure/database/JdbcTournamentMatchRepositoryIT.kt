@@ -53,8 +53,10 @@ class JdbcTournamentMatchRepositoryIT {
         jdbcTemplate.queryForList("SELECT * FROM mgmt_matchtable ORDER BY id")
             .map { row -> row.mapKeys { it.key.lowercase() } }
 
+    /** The rows of both call tables, `mgmt_match_call` first. */
     private fun callStateRows(): List<Map<String, Any?>> =
-        jdbcTemplate.queryForList("SELECT * FROM mgmt_match_call_state ORDER BY matc_id")
+        (jdbcTemplate.queryForList("SELECT * FROM mgmt_match_call ORDER BY matc_id") +
+            jdbcTemplate.queryForList("SELECT * FROM mgmt_player_call ORDER BY matc_id, play_id"))
             .map { row -> row.mapKeys { it.key.lowercase() } }
 
     private fun uuid(n: Int) = "00000000-0000-0000-0000-%012d".format(n)
@@ -63,7 +65,8 @@ class JdbcTournamentMatchRepositoryIT {
     fun `persists an assignment, a call and the table history`() {
         val match = load()
         match.assign(3L, now = NOW)
-        match.call()
+        match.call(NOW)
+        match.requestCall(listOf(2L))
         assertEquals(1, repository.save(match))
 
         assertEquals(
@@ -71,7 +74,16 @@ class JdbcTournamentMatchRepositoryIT {
             matchRow()
         )
         assertEquals(listOf(mapOf<String, Any?>("id" to uuid(1), "tableid" to 3, "matchid" to 1, "timestamp" to Timestamp.valueOf(NOW))), matchTableRows())
-        assertEquals(listOf(mapOf<String, Any?>("matc_id" to 1L, "call_state" to 1)), callStateRows())
+        assertEquals(
+            listOf(
+                mapOf<String, Any?>("matc_id" to 1L, "first_call_time" to Timestamp.valueOf(NOW)),
+                mapOf<String, Any?>("matc_id" to 1L, "play_id" to 1L, "call_number" to 1, "requested" to 0),
+                mapOf<String, Any?>("matc_id" to 1L, "play_id" to 2L, "call_number" to 1, "requested" to 1)
+            ),
+            callStateRows()
+        )
+        assertEquals(load().playerCalls, match.playerCalls)
+        assertEquals(NOW, load().firstCallTime)
     }
 
     @Test
@@ -94,7 +106,7 @@ class JdbcTournamentMatchRepositoryIT {
     fun `taking a match back clears the table, the call state and the table history`() {
         val match = load()
         match.assign(3L, now = NOW)
-        match.call()
+        match.call(NOW)
         repository.save(match)
 
         match.takeBack()
