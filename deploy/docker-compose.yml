@@ -1,4 +1,4 @@
-# Production stack for the table tennis tournament manager, release v8.0.0-alpha.
+# Production stack for the table tennis tournament manager, release v8.0.2-beta.
 #
 #   cp .env.example .env    # then set the passwords and the database name
 #   docker compose up -d
@@ -67,8 +67,8 @@ services:
   cups:
     # no CUPS image is published: build it from the cups/ folder of the same release
     build:
-      context: https://github.com/table-tennis-tournament/management-clients.git#v8.0.0-alpha:cups
-    image: ttt-cups:v8.0.0-alpha
+      context: https://github.com/table-tennis-tournament/management-clients.git#v8.0.2-beta:cups
+    image: ttt-cups:v8.0.2-beta
     restart: unless-stopped
     environment:
       CUPS_PRINTER_URI: ${CUPS_PRINTER_URI:-}
@@ -82,7 +82,7 @@ services:
     logging: *logging
 
   management-backend:
-    image: holzleube/ttt-management:v8.0.0-alpha
+    image: holzleube/ttt-management:v8.0.2-beta
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/${TTT_DATABASE}
@@ -103,15 +103,16 @@ services:
       cups:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/actuator/health"]
+      # readiness: database, mktt's tables, Flyway and the WebSocket; each database check answers within 2 s
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/readyz"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 12
       start_period: 30s
     logging: *logging
 
   clients:
-    image: holzleube/ttt-clients:v8.0.0-alpha
+    image: holzleube/ttt-clients:v8.0.2-beta
     restart: unless-stopped
     ports:
       - "${HTTP_BIND_ADDRESS:-0.0.0.0}:${HTTP_PORT:-80}:8080"
@@ -120,10 +121,12 @@ services:
     networks:
       - internal
     depends_on:
+      # started, not healthy: nginx then answers /readyz with what is missing, e.g. before a dump is loaded
       management-backend:
-        condition: service_healthy
+        condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/admin-view/"]
+      # nginx itself; the whole system's readiness through nginx is /readyz (see check-ready.sh)
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
       interval: 15s
       timeout: 5s
       retries: 3

@@ -1,15 +1,15 @@
 # Production deployment
 
-`docker-compose.yml` here runs the tagged release `v8.0.0-alpha` from published images. It builds nothing from the
+`docker-compose.yml` here runs the tagged release `v8.0.2-beta` from published images. It builds nothing from the
 working tree. The development stack in the repository root builds from source and seeds test data; don't use it for a
 tournament.
 
 | Service | Image | Reachable |
 |---|---|---|
-| `clients` | `holzleube/ttt-clients:v8.0.0-alpha` | `http://<host>:80/admin-view`, `/tablemanager-view`, `/result-view` |
-| `management-backend` | `holzleube/ttt-management:v8.0.0-alpha` | internal only, through the clients' nginx (`/api/v2`, `/ttt-websocket`) |
+| `clients` | `holzleube/ttt-clients:v8.0.2-beta` | `http://<host>:80/admin-view`, `/tablemanager-view`, `/result-view` |
+| `management-backend` | `holzleube/ttt-management:v8.0.2-beta` | internal only, through the clients' nginx (`/api/v2`, `/ttt-websocket`) |
 | `mariadb` | `mariadb:13` | host `127.0.0.1:3306` by default |
-| `cups` | built from `cups/` at tag `v8.0.0-alpha` | internal only |
+| `cups` | built from `cups/` at tag `v8.0.2-beta` | internal only |
 
 The published images are `linux/amd64` only.
 
@@ -24,7 +24,7 @@ docker compose ps         # all services healthy / running
 
 ## Health and readiness
 
-From the release after `v8.0.0-alpha` on, the stack reports whether it is ready:
+The stack reports whether it is ready:
 
 ```bash
 ./check-ready.sh http://<host>     # nginx, readiness, the three apps, a WebSocket handshake; exit code 0 = ready
@@ -34,9 +34,8 @@ curl http://<host>/readyz          # database, mktt's tables, Flyway, WebSocket 
 `/readyz` is 503 while one check is DOWN, e.g. `mkttSchema` with `missingTables` when the wrong dump is loaded or
 `TTT_DATABASE` names another database.
 
-`v8.0.0-alpha` has neither endpoint, so `docker-compose.yml` still checks `/actuator/health` and `/admin-view/`.
-When you move to the next release, switch the healthchecks to `http://localhost:8080/readyz` for
-`management-backend` (timeout 10s) and `http://127.0.0.1:8080/healthz` for `clients`.
+The healthchecks use the same endpoints: `management-backend` is healthy when `/readyz` is UP, `clients` when nginx
+answers `/healthz`. `docker compose ps` therefore shows `management-backend` unhealthy until the right dump is loaded.
 
 ## Load the mktt database
 
@@ -66,7 +65,7 @@ For a network printer, set `CUPS_PRINTER_URI`, `CUPS_PRINTER_NAME` and `DEFAULT_
 
 ## Update to a new release
 
-Replace `v8.0.0-alpha` in `docker-compose.yml` (three images and the cups build context), then:
+Replace `v8.0.2-beta` in `docker-compose.yml` (three images and the cups build context), then:
 
 ```bash
 docker compose pull && docker compose up -d --build
