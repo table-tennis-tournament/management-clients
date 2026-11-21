@@ -11,3 +11,10 @@ spring:
 logging:
   level:
     org.flywaydb: DEBUG
+
+management:
+  endpoint:
+    health:
+      # an @ApplicationModuleTest boots one module, without the health module's indicators that the
+      # readiness group names; HealthIT checks the group's members against the complete response
+      validate-group-membership: false

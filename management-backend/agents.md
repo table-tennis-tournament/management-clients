@@ -13,7 +13,7 @@ This file provides guidance to AI agents (like Gemini CLI, Claude Code, etc.) wh
 
 ### Spring Modulith Rules
 - The root package is `de.ttt.management`.
-- Modules are located directly under the root package (`registration`, `grouping`, `tournament`, `settings`, `outbound`).
+- Modules are located directly under the root package (`registration`, `grouping`, `tournament`, `settings`, `outbound`, `health`).
 - **Internal Visibility**: Classes in sub-packages of a module (e.g., `registration.infrastructure`) should be internal or not exported unless they are part of the module's API.
 - **Inter-module Communication**: Prefer **Spring ApplicationEvents** for loose coupling between modules. Avoid direct dependencies between modules if possible.
 - **Verification**: Always run `ApplicationModules.of(ManagementBackendApplication::class.java).verify()` in a test to ensure architectural integrity.

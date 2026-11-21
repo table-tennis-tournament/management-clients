@@ -16,7 +16,8 @@
 === Logging and Monitoring
 
 * Logging with SLF4J/Logback in the backend.
-* Spring Boot Actuator health endpoint (`/actuator/health`), used by Docker Compose and the CI to wait for the backend.
+* Spring Boot Actuator liveness and readiness probes (`/livez`, `/readyz`). Readiness checks the database, mktt's tables, Flyway's migrations and the WebSocket broker, each database check within 2 s. Docker Compose waits on it; nginx serves `/healthz` for itself and proxies `/readyz`, so the whole system's readiness is visible on port 80 (`spec/07_backend_modular_monolith.md`, section 7).
+* `deploy/check-ready.sh` checks a running system from outside, including a WebSocket handshake through nginx.
 
 === Data Consistency
 

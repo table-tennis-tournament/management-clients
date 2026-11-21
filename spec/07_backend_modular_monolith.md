@@ -22,6 +22,7 @@ The root package is `de.ttt.management`. Each direct sub-package is a Spring Mod
 | `tournament` | Match lifecycle and state machine, the Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations. |
 | `settings` | System settings and printing (referee sheets, certificates). |
 | `outbound` | The single WebSocket publisher; consumes domain events and pushes update events to five topics (`/topic/matches`, `tables`, `queue`, `players`, `settings`, ADR 0003). |
+| `health` | Readiness checks for Actuator: the database, mktt's tables, Flyway's migrations and the WebSocket (section 7). Depends on no other module. |
 
 ### Boundaries
 
@@ -65,7 +66,37 @@ Rules (enforced by `OnionArchitectureTests`, an ArchUnit test):
 
 All REST endpoints are prefixed with `/api/v2` by a single global `PathMatchConfigurer.addPathPrefix("/api/v2", …)` (see `ApiVersionConfig`), so controllers keep the legacy path shape (`/match`, `/matchlist`, `/table`, `/players`, …). During the migration this let the legacy backend serve `/api/…` (v1) and this backend serve `/api/v2/…` (v2) in parallel behind a version-switching router; the legacy backend is no longer deployed. WebSocket (`/ttt-websocket`), actuator and library endpoints such as springdoc's `/v3/api-docs` are unaffected. Spring Boot 4's `spring.mvc.apiversion` remains available for version-specific controller mappings later.
 
-## 7. Tracer Bullet
+## 7. Health and readiness
+
+Actuator's probes, also served on the main port. Port 8080 is internal; nginx serves `/healthz` and proxies
+`/readyz`, so `http://<host>/readyz` shows the readiness of the whole system.
+
+| Endpoint | Checks | Used by |
+|---|---|---|
+| `/livez`, `/actuator/health/liveness` | The process runs (`livenessState`). A failing database does not make it fail: a restart would not help. | restart policies |
+| `/readyz`, `/actuator/health/readiness` | `readinessState`, `db`, `mkttSchema`, `flyway`, `webSocket` (below). 503 when one is DOWN. | the backend's Docker healthcheck, nginx `/readyz` |
+| `/actuator/health` | All indicators, including `diskSpace` and `ping`. | |
+| nginx `/healthz` | nginx runs. No backend involved. | the clients' Docker healthcheck |
+| nginx `/readyz` | The backend's `/readyz` through the proxy; `managementBackend` DOWN (503) when the backend does not answer. | people, `deploy/check-ready.sh` |
+
+The indicators live in the `health` module (`health.infrastructure`):
+
+- `db`: a pooled connection is valid. Replaces Spring Boot's `db` indicator (`management.health.db.enabled: false`).
+- `mkttSchema`: every mktt table the backend's SQL uses exists and can be read by the backend's user
+  (`MkttSchemaHealthIndicator.REQUIRED_TABLES`; add a table there when a repository starts using it). Details count
+  the matches, tables and players, to tell whether a tournament is loaded.
+- `flyway`: no migration pending or failed. Details name the current version and the pending or failed migrations.
+- `webSocket`: the simple broker and the STOMP endpoint (`/ttt-websocket`) run. Details count the open WebSocket
+  sessions, i.e. the connected clients.
+
+The three database checks extend `TimeBoxedHealthIndicator`: each answers within 2 s, and is DOWN with
+`no answer within 2000 ms` instead of waiting the connection pool's 30 s while the database is down. The readiness
+response therefore takes at most about 6 s; the probes allow 10 s.
+
+`deploy/check-ready.sh [base-url]` checks the system from outside like a client: nginx, `/readyz`, the three apps and
+a WebSocket handshake through nginx (101).
+
+## 8. Tracer Bullet
 
 The first vertical slice implemented end-to-end is the **match completion** flow in the `tournament` module:
 
@@ -82,7 +113,7 @@ This slice exercises every layer (`domain` → `application` → `infrastructure
 - `SetResult` value object encodes the per-set scoring rule (winner reaches 11, two-point lead from deuce) and the legacy `resultRaw` serialization.
 - `TournamentMatch` aggregate with behaviour: `enterResult(sets)` (playing mode), `complete(sets)` (best-of-five winner → `Completed`), `start()`, `free()`, `takeBack()`.
 
-## 8. Testing Strategy
+## 9. Testing Strategy
 
 | Kind | Class | What it verifies |
 |---|---|---|
@@ -92,10 +123,11 @@ This slice exercises every layer (`domain` → `application` → `infrastructure
 | Full context + WebSocket | `UpdateTopicsIT`, `*OutboundIT` (`@SpringBootTest` + STOMP client) | A write operation produces the complete update event on its topic (compared with `expected/events/**`). |
 | Scenario | `MatchLifecycleScenarioIT` | Full walkthrough against the running app: assign a match to a table, call it, enter set results, finish the game. |
 | Domain unit | `TournamentMatchTest` | Pure unit tests of aggregate behaviour against real objects (no mocks). |
+| Health | `HealthIT`, `HealthIndicatorsTest` | The liveness and readiness responses, complete; each indicator's DOWN state on a database of its own. |
 
 Every REST endpoint gets a module-level integration test with H2. Complex domain logic is unit-tested against real objects only.
 
-## 9. Current status & open work
+## 10. Current status & open work
 
 ### Done (slices shipped)
 
@@ -103,7 +135,7 @@ This list records each slice as it was shipped; later slices changed some detail
 five topics instead of `/topic/updates` (ADR 0003), the backend's own tables in the Flyway migrations
 `V1`–`V7` under `src/main/resources/db/migration`, and the test counts in `docs/test-improvement-plan.md`.
 
-- Onion modules (`registration`, `grouping`, `tournament`, `settings`, `outbound`) + ArchUnit/Modulith verification.
+- Onion modules (`registration`, `grouping`, `tournament`, `settings`, `outbound`, `health`) + ArchUnit/Modulith verification.
 - Tracer: match `setResult`/`updateResult` end-to-end — `SetResult` scoring rules, `TournamentMatch` state machine (`start`/`free`/`takeBack`/`enterResult`/`complete`), `MatchCompleted`/`MatchStarted`/`MatchFreed`/`MatchTakenBack`/`MatchResultUpdated` events → `outbound` WebSocket.
 - API versioning: global `/api/v2` prefix (`ApiVersionConfig`), controllers on legacy path shapes (`/match`, `/matchlist`, `/table`, `/players`, `/disciplines`, `/settings`, `/printer`); stray `registration` match cluster removed.
 - Queue/MatchList (`tournament`): persisted via Flyway `V2__match_list.sql` + `MatchListRepository`/`JdbcMatchListRepository`; match-state integration (`InQueue` via `matc_waitinglist`, `TournamentMatch.queue()`/`dequeue()`); `MatchListChanged` domain event → `outbound` (`MATCH_LIST_CHANGED`); `AutoStartService` replaces the `/matchlist/auto-start` stub (starts the next queued match on each free table).

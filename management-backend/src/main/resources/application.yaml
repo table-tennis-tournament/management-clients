@@ -27,5 +27,25 @@ springdoc:
     path: /v3/api-docs
 
 management:
+  # Health (spec/07_backend_modular_monolith.md, "Health and readiness"). In production port 8080 is internal: nginx
+  # only proxies /readyz to it, so the details stay inside the hall's network.
+  health:
+    db:
+      # replaced by the health module's time-boxed `db` check
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        # /actuator/health/liveness and /readiness, also served as /livez and /readyz
+        enabled: true
+        add-additional-paths: true
+      group:
+        # the process runs; a failing database does not restart it
+        liveness:
+          include: livenessState
+        # ready for the clients: database, mktt's tables, Flyway's tables and the WebSocket
+        readiness:
+          include: readinessState, db, mkttSchema, flyway, webSocket
   printer:
     default-name: ${DEFAULT_PRINTER:PDF}

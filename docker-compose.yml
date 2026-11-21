@@ -61,9 +61,11 @@ services:
       cups:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/actuator/health"]
+      # readiness: database, mktt's tables, Flyway and the WebSocket (spec/07, "Health and readiness")
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/readyz"]
       interval: 10s
-      timeout: 5s
+      # each database check answers within 2 s, see TimeBoxedHealthIndicator
+      timeout: 10s
       retries: 12
       start_period: 30s
   admin:
@@ -76,4 +78,11 @@ services:
       - app-tier
     depends_on:
       - "management-backend"
+    healthcheck:
+      # nginx itself; the system's readiness through nginx is /readyz
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 

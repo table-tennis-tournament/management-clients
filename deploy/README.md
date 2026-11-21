@@ -22,6 +22,22 @@ docker compose up -d
 docker compose ps         # all services healthy / running
 ```
 
+## Health and readiness
+
+From the release after `v8.0.0-alpha` on, the stack reports whether it is ready:
+
+```bash
+./check-ready.sh http://<host>     # nginx, readiness, the three apps, a WebSocket handshake; exit code 0 = ready
+curl http://<host>/readyz          # database, mktt's tables, Flyway, WebSocket broker, with details
+```
+
+`/readyz` is 503 while one check is DOWN, e.g. `mkttSchema` with `missingTables` when the wrong dump is loaded or
+`TTT_DATABASE` names another database.
+
+`v8.0.0-alpha` has neither endpoint, so `docker-compose.yml` still checks `/actuator/health` and `/admin-view/`.
+When you move to the next release, switch the healthchecks to `http://localhost:8080/readyz` for
+`management-backend` (timeout 10s) and `http://127.0.0.1:8080/healthz` for `clients`.
+
 ## Load the mktt database
 
 The backend runs on the database that mktt prepares. Set `TTT_DATABASE` to the database name in the dump (its
