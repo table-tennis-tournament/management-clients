@@ -1,0 +1,11 @@
+[ {
+  "id" : 1,
+  "name" : "Herren",
+  "kind" : 1,
+  "active" : true
+}, {
+  "id" : 2,
+  "name" : "Damen",
+  "kind" : 1,
+  "active" : true
+} ]

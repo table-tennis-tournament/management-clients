@@ -15,7 +15,7 @@ System_Boundary(tournamentSystem, "Table Tennis Tournament Management System") {
     Container(resultView, "Result View", "Angular 21, ngrx", "SPA for displaying live results and standings")
     Container(tableManagerView, "Table Manager View", "Angular 21, ngrx", "SPA for table-specific match management and result entry")
     Container(nginx, "Reverse Proxy", "Nginx", "Serves the SPA bundles and proxies API and WebSocket traffic to the backend")
-    Container(backend, "Backend", "Scala 2.13, Play Framework, Pekko", "REST API, WebSocket broadcasting, PDF generation")
+    Container(backend, "Backend", "Kotlin, Spring Boot 4, Spring Modulith", "REST API, STOMP update events over WebSocket, PDF generation and printing")
     ContainerDb(mariadb, "Tournament Database", "MariaDB/MySQL", "Stores players, matches, tables, groups and settings")
 }
 
@@ -30,7 +30,7 @@ Rel(adminView, nginx, "Served by and proxied through", "HTTPS/WSS")
 Rel(resultView, nginx, "Served by and proxied through", "HTTPS/WSS")
 Rel(tableManagerView, nginx, "Served by and proxied through", "HTTPS/WSS")
 
-Rel(nginx, backend, "Proxies API and WebSocket traffic", "HTTP/WebSocket")
+Rel(nginx, backend, "Proxies /api/v2 and /ttt-websocket", "HTTP/STOMP over WebSocket")
 Rel(backend, mariadb, "Reads and writes", "JDBC")
 
 Rel(mktt, mariadb, "Populates the database", "offline import")

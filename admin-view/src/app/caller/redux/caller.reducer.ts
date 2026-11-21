@@ -57,15 +57,15 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
         refereesLoading: false,
       };
     case CallerActionTypes.LoadSecondCallMatchesSuccess:
-      return {
+      return withSelectedRepeatCall({
         ...state,
         secondCallMatches: action.payload,
-      };
+      });
     case CallerActionTypes.LoadThirdCallMatchesSuccess:
-      return {
+      return withSelectedRepeatCall({
         ...state,
         thirdCallMatches: action.payload,
-      };
+      });
     case CallerActionTypes.SetSelectedMatchAggregate:
       return {
         ...state,
@@ -79,6 +79,20 @@ export function reduceCallerState(state: CallerState = initialState, action: Cal
     default:
       return state;
   }
+}
+
+/** The match ids of an aggregate, to find it again in a reloaded list. */
+const matchIdsOf = (aggregate: MatchAggregate) => (aggregate.matches ?? []).map((match) => match.id).join(',');
+
+/**
+ * Keeps the selected Second or Third call while it still waits to be announced (taking its reloaded data),
+ * otherwise selects the next one: the Second calls first, then the Third calls, as they were requested.
+ */
+function withSelectedRepeatCall(state: CallerState): CallerState {
+  const waiting = [...(state.secondCallMatches ?? []), ...(state.thirdCallMatches ?? [])];
+  const selected = state.selectedSecondCallMatchAggregate;
+  const stillWaiting = selected && waiting.find((aggregate) => matchIdsOf(aggregate) === matchIdsOf(selected));
+  return { ...state, selectedSecondCallMatchAggregate: stillWaiting ?? waiting[0] ?? null };
 }
 
 export const getReferees = (state: CallerState) => state.referees;

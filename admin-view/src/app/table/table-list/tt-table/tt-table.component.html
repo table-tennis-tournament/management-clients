@@ -40,9 +40,13 @@
           @if (isGameAvailable()) {
             <span>
               <button mat-button (click)="takeBackTable.emit(table)">Zurück</button>
-              <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
+              @if (hasMatchOnTwoTables()) {
+                <button mat-button (click)="removeFromTable.emit(table)">Entfernen</button>
+              }
               <button mat-button (click)="printTable.emit(table)">Drucken</button>
-              <button mat-button (click)="assignSecondTable.emit(table)">2.Tisch</button>
+              @if (canUseSecondTable()) {
+                <button mat-button (click)="assignSecondTable.emit(table)">2.Tisch</button>
+              }
             </span>
           }
         </div>

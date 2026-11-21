@@ -1,0 +1,10 @@
+[ {
+  "key" : "printerName",
+  "value" : ""
+}, {
+  "key" : "alwaysPrint",
+  "value" : true
+}, {
+  "key" : "autoStart",
+  "value" : true
+} ]

@@ -1,0 +1,120 @@
+{
+  "id" : 4,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
+  }, {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : 1420,
+    "paid" : false,
+    "club" : null
+  } ],
+  "team2" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
+  }, {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : 1440,
+    "paid" : false,
+    "club" : null
+  } ],
+  "side1Id" : 100001,
+  "side2Id" : 100002,
+  "winnerSideId" : null,
+  "playGroup" : null,
+  "matchType" : {
+    "id" : 2,
+    "name" : "Finale"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ {
+    "playerId" : 1,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 2,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 3,
+    "callNumber" : 2,
+    "requested" : false
+  }, {
+    "playerId" : 4,
+    "callNumber" : 2,
+    "requested" : false
+  } ],
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
+  "tableId" : 2,
+  "tableNumber" : 2,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 2,
+  "type" : {
+    "id" : 2,
+    "name" : "Herren-Doppel",
+    "kind" : 2,
+    "active" : true
+  },
+  "groupId" : null,
+  "nr" : 4,
+  "roundNumber" : 3,
+  "startTime" : "2026-11-16T10:00:00",
+  "callNumber" : 2,
+  "isBlocking" : true,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
+  },
+  "player2" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    }
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "OnTable",
+  "winner" : [ ]
+}

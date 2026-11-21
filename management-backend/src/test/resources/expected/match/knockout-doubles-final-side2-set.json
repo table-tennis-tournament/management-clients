@@ -1,0 +1,92 @@
+{
+  "id" : 22,
+  "team1" : [ {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  }, {
+    "id" : 6,
+    "firstName" : "First6",
+    "lastName" : "Last6",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  } ],
+  "team2" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  }, {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  } ],
+  "side1Id" : 100003,
+  "side2Id" : 100002,
+  "winnerSideId" : null,
+  "playGroup" : null,
+  "matchType" : {
+    "id" : 1,
+    "name" : "Finale"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
+  "tableId" : null,
+  "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 2,
+  "type" : {
+    "id" : 2,
+    "name" : "Herren-Doppel",
+    "kind" : 2,
+    "active" : true
+  },
+  "groupId" : 999,
+  "nr" : 1001,
+  "roundNumber" : 1,
+  "startTime" : null,
+  "callNumber" : 0,
+  "isBlocking" : false,
+  "isPlayable" : true,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  },
+  "player2" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "Open",
+  "winner" : [ ]
+}

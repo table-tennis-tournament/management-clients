@@ -1,20 +1,22 @@
 <div class="row">
-  <div class="col-6">
-    <span>{{ match.players_a | playerName }}</span>
-  </div>
-  <div class="col-6">
-    <span
-      matBadge="{{ match.players_b[0].call_count }}"
-      [matBadgeHidden]="match.players_b[0].call_count < 2"
-      matBadgeColor="warn"
-      matBadgeOverlap="false"
-    >
-      {{ match.players_b | playerName }}
-    </span>
-  </div>
+  @for (side of [match.players_a, match.players_b]; track $index) {
+    <div class="col-6">
+      <span matBadge="{{ highestCall(side) }}" [matBadgeHidden]="highestCall(side) < 2" matBadgeColor="warn" matBadgeOverlap="false">
+        {{ side | playerName }}
+      </span>
+    </div>
+  }
 </div>
+@if (waitingMinutes() !== null) {
+  <div class="call-info">
+    Erster Aufruf vor {{ waitingMinutes() }} min
+    @if (match.requestedCallNumber) {
+      · {{ match.requestedCallNumber }}. Aufruf angefordert
+    }
+  </div>
+}
 <div class="d-flex justify-content-between w-100">
-  <button mat-mini-fab color="accent" (click)="callPlayers()">
+  <button mat-mini-fab color="accent" [disabled]="!canCall()" (click)="callPlayers()" aria-label="Spieler ausrufen">
     <mat-icon aria-hidden="false">alarm</mat-icon>
   </button>
 

@@ -1,4 +1,4 @@
-@for (currentTable of tables$ | async; track currentTable) {
+@for (currentTable of tables$ | async; track currentTable.table_id) {
   <app-tt-table
     [table]="currentTable"
     (updateMatchResult)="onUpdateMatchResult($event)"

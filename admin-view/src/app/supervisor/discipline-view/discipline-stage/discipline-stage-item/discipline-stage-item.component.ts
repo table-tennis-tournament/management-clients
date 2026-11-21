@@ -1,38 +1,51 @@
 import { Component, Input } from '@angular/core';
 import { Match } from '../../../../shared/data/match.model';
-import { MatchState } from '../../../../shared/data/matchstate.model';
+import {
+  callNumber,
+  isAtTable,
+  isCompleted,
+  isFinished,
+  isWalkover,
+  isQueued,
+  isWaiting,
+} from '../../../../shared/match-state/match-state';
+import { TeamItemComponent } from '../../../../shared/team-item/team-item.component';
+import { ResultPipe } from '../../../../shared/pipes/result.pipe';
 
 @Component({
   selector: 'toma-discipline-stage-item',
   templateUrl: './discipline-stage-item.component.html',
   styleUrls: ['./discipline-stage-item.component.scss'],
-  standalone: false,
+  imports: [TeamItemComponent, ResultPipe],
 })
 export class DisciplineStageItemComponent {
   @Input()
   match: Match;
 
   isMatchComplete() {
-    return this.match.state === MatchState[MatchState.Completed];
-  }
-
-  isMatchOpen() {
-    return this.match.state === MatchState[MatchState.Open];
+    return isCompleted(this.match);
   }
 
   isMatchInWaitingList() {
-    return this.match.state === MatchState[MatchState.InWaitingList];
+    return isQueued(this.match);
   }
 
+  /** At its table and waiting for the first Call ("A" badge). */
   isMatchCallable() {
-    return this.match.state === MatchState[MatchState.Callable];
+    return isAtTable(this.match) && callNumber(this.match) === 0;
   }
 
+  /** Freed at its table, its result is still to be entered ("F" badge). */
   isMatchFinished() {
-    return this.match.state === MatchState[MatchState.Finished];
+    return isFinished(this.match);
+  }
+
+  /** Not played: a walkover ("K" badge). */
+  isMatchWalkover() {
+    return isWalkover(this.match);
   }
 
   isMatchBlocked() {
-    return (this.isMatchInWaitingList() || this.isMatchOpen()) && !this.match.isPlayable;
+    return isWaiting(this.match) && !this.match.isPlayable;
   }
 }

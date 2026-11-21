@@ -9,7 +9,8 @@ async function globalTeardown(): Promise<void> {
 
   const composeFile = resolve(__dirname, '..', '..', 'docker-compose.yml');
   try {
-    execFileSync('docker', ['compose', '-f', composeFile, 'down'], { stdio: 'inherit' });
+    // -v drops the seeded database, like admin-view, so the next stack starts with the default test data
+    execFileSync('docker', ['compose', '-f', composeFile, 'down', '-v'], { stdio: 'inherit' });
   } catch (error) {
     console.error('Failed to tear down docker compose:', error);
   }

@@ -4,7 +4,7 @@
       <toma-team-item
         [team]="match.team1"
         [showDisciplines]="true"
-        [result]="match.result ? (match.result | resultPipe: 1) : null"
+        [result]="match.sets?.length ? (match.sets | resultPipe: 1) : null"
       ></toma-team-item>
       <!--div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 2 }}</div-->
     </div>
@@ -12,14 +12,14 @@
       <toma-team-item
         [team]="match.team2"
         [showDisciplines]="true"
-        [result]="match.result ? (match.result | resultPipe: 2) : null"
+        [result]="match.sets?.length ? (match.sets | resultPipe: 2) : null"
       ></toma-team-item>
       <!--div *ngIf="match.result" class="fixed-width align-middle">{{ match.result | resultPipe: 2 }}</div-->
     </div>
   </span>
   <span class="header-right-content">
-    @if (match.table[0]) {
-      <span class="circle right">{{ match.table[0] }}</span>
+    @if (match.tableNumber) {
+      <span class="circle right">{{ match.tableNumber }}</span>
     }
     @if (isMatchInWaitingList()) {
       <span class="circle right">W</span>
@@ -29,6 +29,9 @@
     }
     @if (isMatchFinished()) {
       <span class="circle right">F</span>
+    }
+    @if (isMatchWalkover()) {
+      <span class="circle right">K</span>
     }
     @if (isMatchComplete()) {
       <i class="material-icons right">done</i>

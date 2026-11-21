@@ -3,6 +3,8 @@ import { resetDatabase } from './db-helper';
 
 test.describe('Einstellungen View', () => {
   test.beforeAll(async () => {
+    // a cold start may (re)build the backend image and initialise MariaDB, so the hook needs more than the default 30s
+    test.setTimeout(600_000);
     await resetDatabase();
   });
 

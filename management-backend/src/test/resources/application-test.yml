@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  flyway:
+    enabled: true
+    clean-disabled: true
+
+logging:
+  level:
+    org.flywaydb: DEBUG
+
+management:
+  endpoint:
+    health:
+      # an @ApplicationModuleTest boots one module, without the health module's indicators that the
+      # readiness group names; HealthIT checks the group's members against the complete response
+      validate-group-membership: false

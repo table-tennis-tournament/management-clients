@@ -1,0 +1,55 @@
+[ {
+  "id" : 1,
+  "player" : {
+    "id" : 1,
+    "firstName" : "Jane",
+    "lastName" : "Doe",
+    "email" : null,
+    "telNr" : null,
+    "location" : null,
+    "street" : null,
+    "plz" : null,
+    "sex" : "w",
+    "ttr" : 1600,
+    "club" : {
+      "id" : 1,
+      "name" : "TTC Musterstadt"
+    },
+    "paid" : false,
+    "active" : true
+  },
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "paid" : false
+}, {
+  "id" : 2,
+  "player" : {
+    "id" : 2,
+    "firstName" : "John",
+    "lastName" : "Roe",
+    "email" : null,
+    "telNr" : null,
+    "location" : null,
+    "street" : null,
+    "plz" : null,
+    "sex" : "m",
+    "ttr" : 1500,
+    "club" : {
+      "id" : 1,
+      "name" : "TTC Musterstadt"
+    },
+    "paid" : false,
+    "active" : true
+  },
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "paid" : false
+} ]

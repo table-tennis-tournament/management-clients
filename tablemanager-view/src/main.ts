@@ -1,9 +1,7 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 
 import { environment } from './environments/environment';
-import { WebsocketService } from './app/services/websocket.service';
-import { WebsocketHandlerService } from './app/table-list/websocket-handler.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app/app-routing.module';
@@ -23,7 +21,7 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(),
     importProvidersFrom(
       AppRoutingModule,
       NavigationModule,
@@ -43,7 +41,5 @@ bootstrapApplication(AppComponent, {
         connectInZone: true,
       })
     ),
-    WebsocketService,
-    WebsocketHandlerService,
   ],
 }).catch((err) => console.error(err));

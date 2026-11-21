@@ -36,18 +36,18 @@
               <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
             </div>
           </div>
-          @if (currentMatch.group) {
+          @if (currentMatch.playGroup) {
             <div
               cdkDrag
-              [cdkDragData]="getMatch(currentMatch.group.id)"
+              [cdkDragData]="getMatch(currentMatch.playGroup.id)"
               [cdkDragDisabled]="!currentMatch.isPlayable"
               class="discipline-match-list-square indigo white-text col-2"
             >
               <i *cdkDragPreview class="material-icons">group</i>
-              {{ currentMatch.group.name }}
+              {{ currentMatch.playGroup.name }}
             </div>
           }
-          @if (!currentMatch.group) {
+          @if (!currentMatch.playGroup) {
             <div class="discipline-match-list-square indigo white-text col-2">
               {{ currentMatch.matchType | disciplineType }}
             </div>
@@ -60,7 +60,7 @@
     <mat-list>
       @for (currentMatch of matchList; track currentMatch; let i = $index) {
         <div class="mat-list-item border-bottom border-secondary">
-          @if (currentMatch.matchinfo[0].group !== null) {
+          @if (currentMatch.matchinfo[0].playGroup !== null) {
             <div>
               <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type.id" [typeColors]="typeColors">
                 @if (currentMatch.matchinfo.length === 1) {
@@ -88,7 +88,7 @@
               </div>
             </div>
           }
-          @if (currentMatch.matchinfo[0].group === null) {
+          @if (currentMatch.matchinfo[0].playGroup === null) {
             <div>
               @for (currentMatchItem of currentMatch.matchinfo; track currentMatchItem) {
                 <div

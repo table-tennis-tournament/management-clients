@@ -7,7 +7,8 @@ import {
   MatDialogActions,
 } from '@angular/material/dialog';
 import { Match } from '../../match/match.model';
-import { GameService } from '../game.service';
+import { formatResult, parseResult } from '../../../shared/result-entry/result-entry';
+import { toGames, toSets } from '../../match/games';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatDivider } from '@angular/material/list';
 import { MatFormField } from '@angular/material/form-field';
@@ -38,25 +39,20 @@ import { ClubNamePipe } from '../../club-name.pipe';
 export class ResultDialogComponent implements OnInit {
   dialogRef = inject<MatDialogRef<ResultDialogComponent>>(MatDialogRef);
   match = inject<Match>(MAT_DIALOG_DATA);
-  gameService = inject(GameService);
 
   resultString: string;
 
   ngOnInit(): void {
-    this.resultString = '';
-    this.match.result.games.forEach((game) => {
-      if (game.score_player_b < game.score_player_a) {
-        this.resultString += game.score_player_b + ' ';
-      } else {
-        this.resultString += '-' + game.score_player_a + ' ';
-      }
-    });
+    this.resultString = formatResult(toSets(this.match.result?.games));
   }
 
+  /** Closes with the entered (possibly interim) result; input with an invalid token is not accepted. */
   onOk() {
-    this.dialogRef.close({
-      games: this.gameService.getGames(this.resultString),
-    });
+    const sets = parseResult(this.resultString);
+    if (sets === null) {
+      return;
+    }
+    this.dialogRef.close({ games: toGames(sets) });
   }
 
   onCancel() {

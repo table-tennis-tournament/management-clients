@@ -1,0 +1,122 @@
+[ {
+  "table_id" : 1,
+  "table_number" : 1,
+  "table_manager_id" : 1,
+  "matches" : [ {
+    "match_id" : 2,
+    "result" : {
+      "games" : [ ],
+      "games_won_player_a" : 0,
+      "games_won_player_b" : 0
+    },
+    "players_a" : [ {
+      "player_id" : 3,
+      "first_name" : "First3",
+      "last_name" : "Last3",
+      "club" : "TTV Musterstadt",
+      "call_count" : 1,
+      "call_requested" : false
+    } ],
+    "players_b" : [ {
+      "player_id" : 4,
+      "first_name" : "First4",
+      "last_name" : "Last4",
+      "club" : null,
+      "call_count" : 1,
+      "call_requested" : false
+    } ],
+    "stage" : "Gruppenspiel",
+    "classification" : "Herren",
+    "state" : "OnTable",
+    "callNumber" : 1,
+    "requestedCallNumber" : null,
+    "firstCallTime" : "2026-11-16T10:00:00+01:00"
+  } ]
+}, {
+  "table_id" : 2,
+  "table_number" : 2,
+  "table_manager_id" : 1,
+  "matches" : [ {
+    "match_id" : 4,
+    "result" : {
+      "games" : [ ],
+      "games_won_player_a" : 0,
+      "games_won_player_b" : 0
+    },
+    "players_a" : [ {
+      "player_id" : 1,
+      "first_name" : "First1",
+      "last_name" : "Last1",
+      "club" : "TTV Musterstadt",
+      "call_count" : 1,
+      "call_requested" : false
+    }, {
+      "player_id" : 2,
+      "first_name" : "First2",
+      "last_name" : "Last2",
+      "club" : null,
+      "call_count" : 1,
+      "call_requested" : false
+    } ],
+    "players_b" : [ {
+      "player_id" : 3,
+      "first_name" : "First3",
+      "last_name" : "Last3",
+      "club" : "TTV Musterstadt",
+      "call_count" : 2,
+      "call_requested" : false
+    }, {
+      "player_id" : 4,
+      "first_name" : "First4",
+      "last_name" : "Last4",
+      "club" : null,
+      "call_count" : 2,
+      "call_requested" : false
+    } ],
+    "stage" : "Finale",
+    "classification" : "Herren-Doppel",
+    "state" : "OnTable",
+    "callNumber" : 2,
+    "requestedCallNumber" : null,
+    "firstCallTime" : "2026-11-16T10:00:00+01:00"
+  } ]
+}, {
+  "table_id" : 3,
+  "table_number" : 3,
+  "table_manager_id" : 1,
+  "matches" : [ {
+    "match_id" : 6,
+    "result" : {
+      "games" : [ ],
+      "games_won_player_a" : 0,
+      "games_won_player_b" : 0
+    },
+    "players_a" : [ {
+      "player_id" : 5,
+      "first_name" : "First5",
+      "last_name" : "Last5",
+      "club" : null,
+      "call_count" : 1,
+      "call_requested" : false
+    } ],
+    "players_b" : [ {
+      "player_id" : 6,
+      "first_name" : "First6",
+      "last_name" : "Last6",
+      "club" : null,
+      "call_count" : 3,
+      "call_requested" : false
+    } ],
+    "stage" : "Gruppenspiel",
+    "classification" : "Herren",
+    "state" : "Started",
+    "callNumber" : 3,
+    "requestedCallNumber" : null,
+    "firstCallTime" : "2026-11-16T10:00:00+01:00"
+  } ]
+}, {
+  "table_id" : 4,
+  "table_number" : 4,
+  "table_manager_id" : 1,
+  "matches" : [ ]
+} ]

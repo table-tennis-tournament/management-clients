@@ -1,24 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Player } from './data/player.model';
 import { HttpClient } from '@angular/common/http';
 import { PlayerType } from './data/player.type.model';
+import { StatusDto } from '../shared/statusdto.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayerService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getAllPlayers() {
-    return this.http.get<Player[]>('/api/players/all');
+    return this.http.get<Player[]>('/api/v2/players/all');
   }
 
   getAllPlayerTypes() {
-    return this.http.get<PlayerType[]>('/api/players/allTypePerPlayer');
+    return this.http.get<PlayerType[]>('/api/v2/players/allTypePerPlayer');
   }
 
   setPlayerPaid(playerType: PlayerType) {
-    const paid = playerType.paid ? 1 : 0;
-    return this.http.get<PlayerType[]>(`/api/players/setPayed/${playerType.id}/${paid}`);
+    return this.http.post<StatusDto>(`/api/v2/players/${playerType.id}/paid?paid=${playerType.paid}`, null);
   }
 }

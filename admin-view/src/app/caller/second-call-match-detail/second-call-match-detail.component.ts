@@ -1,15 +1,34 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
+import { MatCard, MatCardTitle, MatCardContent, MatCardActions, MatCardHeader } from '@angular/material/card';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { TtPlayerNameReducerPipe } from '../../shared/pipes/tt-player-name-reducer.pipe';
+import { MinuteClock } from '../../shared/clock/minute-clock.service';
+import { minutesSinceFirstCall } from '../../shared/match-state/match-state';
 
+/** The Second or Third call the caller announces next: only the players who have not appeared. */
 @Component({
   selector: 'toma-second-call-match-detail',
   templateUrl: './second-call-match-detail.component.html',
   styleUrls: ['./second-call-match-detail.component.scss'],
-  standalone: false,
+  imports: [
+    MatCard,
+    TypeColorDirective,
+    MatCardTitle,
+    MatCardContent,
+    MatCardActions,
+    MatButton,
+    MatCardHeader,
+    MatIcon,
+    TtPlayerNameReducerPipe,
+  ],
 })
 export class SecondCallMatchDetailComponent {
+  private clock = inject(MinuteClock);
+
   @Input()
   typeColors: TypeColorMap;
 
@@ -19,14 +38,12 @@ export class SecondCallMatchDetailComponent {
   @Output()
   matchCalled: EventEmitter<number[]> = new EventEmitter();
 
-  onMatchCalled() {
-    this.matchCalled.emit(this.matchAggregate.matches.map((match) => match.id));
+  /** Minutes since the first Call, `null` without one. */
+  waitingMinutes(): number | null {
+    return minutesSinceFirstCall(this.matchAggregate, this.clock.now());
   }
 
-  stateIsCallable() {
-    const notCallableMatches = this.matchAggregate.matches
-      .map((match) => match.state)
-      .filter((state) => state !== MatchState.Callable.toString());
-    return notCallableMatches.length < 1;
+  onMatchCalled() {
+    this.matchCalled.emit(this.matchAggregate.matches.map((match) => match.id));
   }
 }

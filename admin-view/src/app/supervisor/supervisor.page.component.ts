@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   getMatchesLoading,
@@ -25,14 +25,23 @@ import { ResultModalComponent } from '../table/table-list/result-modal/result-mo
 import { ResultForMatch } from '../table/redux/table.actions';
 import { getDisciplineState } from '../discipline/redux';
 import { MatDialog } from '@angular/material/dialog';
+import { CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { DisciplineViewComponent } from './discipline-view/discipline-view.component';
+import { MatchlistViewComponent } from './matchlist-view/matchlist-view.component';
+import { MatFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-supervisor.page',
   templateUrl: './supervisor.page.component.html',
   styleUrls: ['./supervisor.page.component.scss'],
-  standalone: false,
+  imports: [CdkDropListGroup, DisciplineViewComponent, MatchlistViewComponent, MatFabButton, MatIcon, AsyncPipe],
 })
 export class SupervisorPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+  dialog = inject(MatDialog);
+
   matches: Observable<Match[]>;
   matchesLoading: Observable<boolean>;
   matchList: Observable<MatchList[]>;
@@ -41,11 +50,6 @@ export class SupervisorPageComponent implements OnInit {
   selectedDiscipline: Observable<number>;
   private colors: TypeColorMap = {};
   currentColor: string;
-
-  constructor(
-    private store: Store<any>,
-    public dialog: MatDialog
-  ) {}
 
   ngOnInit() {
     this.matches = this.store.select(getMatchesState);
@@ -83,12 +87,13 @@ export class SupervisorPageComponent implements OnInit {
   onResultForMatch(match: Match) {
     const dialogRef = this.dialog.open(ResultModalComponent, {
       width: '250px',
-      data: match,
+      data: { match },
     });
 
     dialogRef.afterClosed().subscribe((matchResult) => {
-      console.log('The dialog was closed');
-      this.store.dispatch(new ResultForMatch(matchResult));
+      if (matchResult) {
+        this.store.dispatch(new ResultForMatch(matchResult));
+      }
     });
     return;
   }

@@ -2,13 +2,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableDto } from '../../../tabledto.model';
 import { MatchToTable } from './matchtotable.model';
 import { Match } from '../../../../shared/data/match.model';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { TtTableMatchItemComponent } from '../tt-table-match-item/tt-table-match-item.component';
 
 @Component({
   selector: 'toma-tt-table-content',
   templateUrl: './tt-table-content.component.html',
   styleUrls: ['./tt-table-content.component.scss'],
-  standalone: false,
+  imports: [MatCardHeader, MatCardTitle, TtTableMatchItemComponent, CdkDropList],
 })
 export class TtTableContentComponent {
   @Input()

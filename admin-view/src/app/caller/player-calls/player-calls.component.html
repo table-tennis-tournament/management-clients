@@ -10,7 +10,7 @@
         >
           @if (currentMatch) {
             <div class="cut-text">
-              {{ getStartTime(currentMatch) }} min.
+              {{ waitingMinutes(currentMatch) }} min.
               {{ currentMatch.name }}
               @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
                 <span class="circle right">{{ tableNumber }}</span>
@@ -34,7 +34,7 @@
         >
           @if (currentMatch) {
             <div class="cut-text">
-              {{ getStartTime(currentMatch) }} min.
+              {{ waitingMinutes(currentMatch) }} min.
               {{ currentMatch.name }}
               @for (tableNumber of currentMatch.tableNumbers; track tableNumber) {
                 <span class="circle right">{{ tableNumber }}</span>

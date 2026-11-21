@@ -1,64 +1,58 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
 import { of, ReplaySubject, throwError } from 'rxjs';
-
+import { emittedBy } from '../../testing/effects-testing';
 import { DisciplineService } from '../discipline.service';
-import { DisciplineActionTypes, LoadDiscipline, LoadDisciplineSuccess } from './discipline.actions';
+import { LoadDiscipline, LoadDisciplineError, LoadDisciplineSuccess } from './discipline.actions';
 import { DisciplineEffects } from './discipline.effects';
 import { DisciplineTestData } from './test-data';
 
 describe('the Discipline effects', () => {
+  const error = { msg: 'Error' };
   let actions: ReplaySubject<any>;
   let disciplineEffects: DisciplineEffects;
   let disciplineService: DisciplineService;
-  const responseDisciplines = DisciplineTestData;
-
-  const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
-  };
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         DisciplineEffects,
         DisciplineService,
-        { provide: ToastrService, useValue: toastServiceMock },
+        { provide: ToastrService, useValue: toast },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
       ],
     });
 
-    disciplineEffects = TestBed.get(DisciplineEffects);
-    disciplineService = TestBed.get(DisciplineService);
+    disciplineEffects = TestBed.inject(DisciplineEffects);
+    disciplineService = TestBed.inject(DisciplineService);
   });
 
   describe('loadDisciplines', () => {
-    it('should return a LoadDisciplineSuccess', (done) => {
-      const expectedResult = new LoadDisciplineSuccess(responseDisciplines);
-      spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(of(responseDisciplines));
+    it('should return a LoadDisciplineSuccess', async () => {
+      const load = vi.spyOn(disciplineService, 'loadAllDisciplines').mockReturnValue(of(DisciplineTestData));
 
-      actions.next(new LoadDiscipline(null));
+      const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
-      disciplineEffects.loadDisciplines.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toStrictEqual([new LoadDisciplineSuccess(DisciplineTestData)]);
+      expect(load.mock.calls).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadDisciplineError', (done) => {
-      spyOn(disciplineService, 'loadAllDisciplines').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadDisciplineError and show an error', async () => {
+      vi.spyOn(disciplineService, 'loadAllDisciplines').mockReturnValue(throwError(() => error));
 
-      actions.next(new LoadDiscipline(null));
+      const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
-      disciplineEffects.loadDisciplines.subscribe((result) => {
-        expect(result.type).toEqual(DisciplineActionTypes.LoadError);
-        done();
-      });
+      expect(result).toStrictEqual([new LoadDisciplineError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Konkurrenzen']]);
     });
   });
 });

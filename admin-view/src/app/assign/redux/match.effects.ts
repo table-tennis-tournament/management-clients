@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -14,6 +14,10 @@ import {
 
 @Injectable()
 export class MatchEffects {
+  private actions$ = inject(Actions);
+  private toastService = inject(ToastrService);
+  private matchService = inject(MatchService);
+
   loadMatches = createEffect(() =>
     this.actions$.pipe(
       ofType(MatchActionTypes.Load),
@@ -46,10 +50,4 @@ export class MatchEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private toastService: ToastrService,
-    private matchService: MatchService
-  ) {}
 }

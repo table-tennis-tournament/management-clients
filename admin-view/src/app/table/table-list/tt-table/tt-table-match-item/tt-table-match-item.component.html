@@ -1,16 +1,16 @@
 @if (matches?.length === 1) {
   <span class="text-truncate">
     <div class="d-flex justify-content-center">
-      @if (!matches[0].group) {
+      @if (!matches[0].playGroup) {
         <b>{{ matches[0].matchType.name }}</b>
       }
-      @if (matches[0].group) {
-        <b>Gruppe {{ matches[0].group.name }}</b>
+      @if (matches[0].playGroup) {
+        <b>Gruppe {{ matches[0].playGroup.name }}</b>
       }
     </div>
-    @if (matches[0].result) {
+    @if (matches[0].sets?.length) {
       <div class="d-flex align-items-center">
-        <b>{{ matches[0].result | resultPipe: 1 }}:{{ matches[0].result | resultPipe: 2 }}</b>
+        <b>{{ matches[0].sets | resultPipe: 1 }}:{{ matches[0].sets | resultPipe: 2 }}</b>
       </div>
     }
     <div class="d-flex align-items-center text-truncate-custom">
@@ -19,14 +19,24 @@
     <div class="d-flex align-items-center text-truncate-custom">
       {{ matches[0].team2 | ttPlayerNameReducer }}
     </div>
+    @if (calls(matches[0]) > 0) {
+      <div class="d-flex align-items-center call-info" [class.last-call]="calls(matches[0]) >= 3">
+        {{ calls(matches[0]) }}. Aufruf · seit {{ waitingMinutes(matches[0]) }} min
+        @if (matches[0].requestedCallNumber) {
+          · {{ matches[0].requestedCallNumber }}. angefordert
+        }
+      </div>
+    }
   </span>
 }
 @if (matches?.length > 1) {
   <span>
-    <b>Gruppe</b>
-    @if (matches[0].group) {
-      <b>{{ matches[0].group.name }}</b>
-    }
+    <b>
+      Gruppe
+      @if (matches[0].playGroup) {
+        {{ matches[0].playGroup.name }}
+      }
+    </b>
     <br />
     Offene Spiele: {{ matches.length }}
   </span>

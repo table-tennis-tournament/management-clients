@@ -7,6 +7,8 @@ import {
   LoadRefereesListSuccess,
   LoadCallerMatchesSuccess,
   SetSelectedMatchAggregate,
+  LoadSecondCallMatchesSuccess,
+  LoadThirdCallMatchesSuccess,
 } from './caller.actions';
 
 const initialState: CallerState = Object.freeze({
@@ -93,5 +95,46 @@ describe('the callerState reducer', () => {
 
     const newState = reduceCallerState(initialState, new SetSelectedMatchAggregate(myNewAggregate));
     expect(newState).toEqual(expectedState);
+  });
+
+  describe('the selected Second or Third call', () => {
+    const repeatCall = (matchId: number, callNumber: number) => ({ callNumber, matches: [{ id: matchId }] });
+
+    it('selects the first waiting Second call when the lists load', () => {
+      const state = reduceCallerState(
+        initialState,
+        new LoadSecondCallMatchesSuccess([repeatCall(1, 2), repeatCall(2, 2)])
+      );
+      expect(state.selectedSecondCallMatchAggregate).toEqual(repeatCall(1, 2));
+    });
+
+    it('selects a Third call when no Second call waits', () => {
+      const state = reduceCallerState(initialState, new LoadThirdCallMatchesSuccess([repeatCall(3, 3)]));
+      expect(state.selectedSecondCallMatchAggregate).toEqual(repeatCall(3, 3));
+    });
+
+    it('keeps the selected call while it still waits, with its reloaded data', () => {
+      const selected = { ...initialState, selectedSecondCallMatchAggregate: repeatCall(2, 2) };
+      const reloaded = { ...repeatCall(2, 2), name: 'reloaded' };
+      const state = reduceCallerState(selected, new LoadSecondCallMatchesSuccess([repeatCall(1, 2), reloaded]));
+      expect(state.selectedSecondCallMatchAggregate).toEqual(reloaded);
+    });
+
+    it('moves on to the next call once the selected one is announced', () => {
+      const selected = {
+        ...initialState,
+        selectedSecondCallMatchAggregate: repeatCall(1, 2),
+        thirdCallMatches: [repeatCall(3, 3)],
+      };
+      const state = reduceCallerState(selected, new LoadSecondCallMatchesSuccess([]));
+      expect(state.selectedSecondCallMatchAggregate).toEqual(repeatCall(3, 3));
+    });
+
+    it('selects nothing when no call waits', () => {
+      const selected = { ...initialState, selectedSecondCallMatchAggregate: repeatCall(1, 2) };
+      expect(
+        reduceCallerState(selected, new LoadSecondCallMatchesSuccess([])).selectedSecondCallMatchAggregate
+      ).toBeNull();
+    });
   });
 });

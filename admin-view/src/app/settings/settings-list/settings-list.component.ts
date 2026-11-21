@@ -1,11 +1,30 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Settings, TypeColor, TypeColorMap } from '../settings.model';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatMiniFabButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'toma-settings-list',
   templateUrl: './settings-list.component.html',
   styleUrls: ['./settings-list.component.scss'],
-  standalone: false,
+  imports: [
+    MatCheckbox,
+    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatMiniFabButton,
+    MatIcon,
+    MatInput,
+    MatHint,
+    MatButton,
+  ],
 })
 export class SettingsListComponent {
   _settings: Settings[];

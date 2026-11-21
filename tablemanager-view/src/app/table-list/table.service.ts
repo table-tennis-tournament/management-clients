@@ -10,6 +10,6 @@ export class TableService {
   private http = inject(HttpClient);
 
   getTables(managerId: number): Observable<Table[]> {
-    return this.http.get<Table[]>(`/api/tables?table_manager=${managerId}`);
+    return this.http.get<Table[]>(`/api/v2/tables?table_manager=${managerId}`);
   }
 }

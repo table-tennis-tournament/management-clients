@@ -1,18 +1,13 @@
-import { Directive, ElementRef, Input, OnChanges, Renderer2, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, Input, OnChanges, Renderer2, SimpleChanges, inject } from '@angular/core';
 import { TypeColorMap } from '../../settings/settings.model';
 
-@Directive({
-  selector: '[tomaTypeColor]',
-  standalone: false,
-})
+@Directive({ selector: '[tomaTypeColor]' })
 export class TypeColorDirective implements OnChanges {
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
+
   @Input() tomaTypeColor: number;
   @Input() typeColors: TypeColorMap;
-
-  constructor(
-    private el: ElementRef,
-    private renderer: Renderer2
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tomaTypeColor'] || changes['typeColors']) {

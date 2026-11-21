@@ -1,0 +1,134 @@
+# Production stack for the table tennis tournament manager, release v8.0.2-beta.
+#
+#   cp .env.example .env    # then set the passwords and the database name
+#   docker compose up -d
+#
+# Only the clients image is published (port 80 by default). nginx in it serves
+# /admin-view, /tablemanager-view and /result-view and proxies /api/v2 and
+# /ttt-websocket to the backend, which is reachable from the internal network only.
+# See README.md in this folder for loading the mktt database and for printing.
+
+name: ttt
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  mariadb-data:
+  cups-output:
+
+configs:
+  # mktt's dumps come from Windows, where table names are case-insensitive, and some of
+  # their views mix the casing (`Team` vs `team`). MariaDB reads this setting only when it
+  # creates the data directory, so it must be in place before the first start.
+  mariadb-lower-case:
+    content: |
+      [mariadbd]
+      lower_case_table_names=1
+
+services:
+  mariadb:
+    image: mariadb:13
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?set MARIADB_ROOT_PASSWORD in .env}
+      MARIADB_DATABASE: ${TTT_DATABASE:?set TTT_DATABASE in .env}
+      MARIADB_USER: ${TTT_DB_USER:-ttt}
+      MARIADB_PASSWORD: ${TTT_DB_PASSWORD:?set TTT_DB_PASSWORD in .env}
+      TZ: ${TZ:-Europe/Berlin}
+    configs:
+      - source: mariadb-lower-case
+        target: /etc/mysql/conf.d/lower_case_table_names.cnf
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      # *.sql / *.sql.gz in ./initdb are loaded once, when the data volume is created
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    # published on the host only (default 127.0.0.1), e.g. to load an mktt dump with HeidiSQL
+    ports:
+      - "${DB_BIND_ADDRESS:-127.0.0.1}:${DB_PORT:-3306}:3306"
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+      start_interval: 2s
+    logging: *logging
+
+  cups:
+    # no CUPS image is published: build it from the cups/ folder of the same release
+    build:
+      context: https://github.com/table-tennis-tournament/management-clients.git#v8.0.2-beta:cups
+    image: ttt-cups:v8.0.2-beta
+    restart: unless-stopped
+    environment:
+      CUPS_PRINTER_URI: ${CUPS_PRINTER_URI:-}
+      CUPS_PRINTER_NAME: ${CUPS_PRINTER_NAME:-}
+      TZ: ${TZ:-Europe/Berlin}
+    volumes:
+      # the PDF printer writes its files here
+      - cups-output:/var/spool/cups-pdf
+    networks:
+      - internal
+    logging: *logging
+
+  management-backend:
+    image: holzleube/ttt-management:v8.0.2-beta
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/${TTT_DATABASE}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.mariadb.jdbc.Driver
+      SPRING_DATASOURCE_USERNAME: ${TTT_DB_USER:-ttt}
+      SPRING_DATASOURCE_PASSWORD: ${TTT_DB_PASSWORD}
+      # the H2 console is for development only
+      SPRING_H2_CONSOLE_ENABLED: "false"
+      CUPS_SERVER: cups
+      DEFAULT_PRINTER: ${DEFAULT_PRINTER:-PDF}
+      TZ: ${TZ:-Europe/Berlin}
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=75 -Duser.timezone=${TZ:-Europe/Berlin}
+    networks:
+      - internal
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      cups:
+        condition: service_started
+    healthcheck:
+      # readiness: database, mktt's tables, Flyway and the WebSocket; each database check answers within 2 s
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/readyz"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+    logging: *logging
+
+  clients:
+    image: holzleube/ttt-clients:v8.0.2-beta
+    restart: unless-stopped
+    ports:
+      - "${HTTP_BIND_ADDRESS:-0.0.0.0}:${HTTP_PORT:-80}:8080"
+    environment:
+      TZ: ${TZ:-Europe/Berlin}
+    networks:
+      - internal
+    depends_on:
+      # started, not healthy: nginx then answers /readyz with what is missing, e.g. before a dump is loaded
+      management-backend:
+        condition: service_started
+    healthcheck:
+      # nginx itself; the whole system's readiness through nginx is /readyz (see check-ready.sh)
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging: *logging

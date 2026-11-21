@@ -9,12 +9,13 @@ import * as fromPlayers from './redux/index';
 import { DisciplineModule } from '../discipline/discipline.module';
 
 @NgModule({
-  declarations: [PlayerPageComponent, PlayerListComponent],
   imports: [
     SharedModule,
     DisciplineModule,
     StoreModule.forFeature('players', fromPlayers.reducers),
     EffectsModule.forFeature([PlayerEffects]),
+    PlayerPageComponent,
+    PlayerListComponent,
   ],
   providers: [],
   exports: [PlayerPageComponent],

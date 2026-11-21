@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -18,10 +18,19 @@ import {
   LoadSecondCallMatchesError,
   LoadThirdCallMatchesSuccess,
   LoadThirdCallMatchesError,
+  LoadSecondCallMatches,
+  LoadThirdCallMatches,
+  SecondCallMatch,
+  SecondCallMatchError,
+  SecondCallMatchSuccess,
 } from './caller.actions';
 
 @Injectable()
 export class CallerEffects {
+  private actions$ = inject(Actions);
+  private toastService = inject(ToastrService);
+  private callerService = inject(CallerService);
+
   load = createEffect(() =>
     this.actions$.pipe(
       ofType(CallerActionTypes.Load),
@@ -82,6 +91,26 @@ export class CallerEffects {
     )
   );
 
+  /** The caller announced a requested Second or Third call: both lists change, the card shows the next one. */
+  announceRequestedCall = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CallerActionTypes.SecondCallMatch),
+      switchMap((action: SecondCallMatch) => {
+        return this.callerService.announceRequestedCalls(action.payload).pipe(
+          switchMap((state) => [
+            new SecondCallMatchSuccess(state),
+            new LoadSecondCallMatches(),
+            new LoadThirdCallMatches(),
+          ]),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Ausrufen der Spieler');
+            return of(new SecondCallMatchError(err));
+          })
+        );
+      })
+    )
+  );
+
   callMatch = createEffect(() =>
     this.actions$.pipe(
       ofType(CallerActionTypes.CallMatch),
@@ -96,10 +125,4 @@ export class CallerEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private toastService: ToastrService,
-    private callerService: CallerService
-  ) {}
 }

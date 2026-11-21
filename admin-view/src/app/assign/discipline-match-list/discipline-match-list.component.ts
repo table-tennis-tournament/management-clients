@@ -2,14 +2,35 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { MatchList } from '../../supervisor/matchlist.model';
 import { Discipline } from '../../discipline/discipline.model';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
+import { isWaiting } from '../../shared/match-state/match-state';
+import { DisciplineSelectComponent } from '../../discipline/discipline-select/discipline-select.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatList } from '@angular/material/list';
+import { CdkDropList, CdkDrag, CdkDragPreview } from '@angular/cdk/drag-drop';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { TeamItemComponent } from '../../shared/team-item/team-item.component';
+import { SingleItemComponent } from './single-item/single-item.component';
+import { MatchlistGroupComponent } from './matchlist-group/matchlist-group.component';
+import { DisciplineTypePipe } from '../../shared/pipes/discipline-type.pipe';
 
 @Component({
   selector: 'toma-discipline-match-list',
   templateUrl: './discipline-match-list.component.html',
   styleUrls: ['./discipline-match-list.component.scss'],
-  standalone: false,
+  imports: [
+    DisciplineSelectComponent,
+    MatProgressSpinner,
+    MatList,
+    CdkDropList,
+    TypeColorDirective,
+    CdkDrag,
+    CdkDragPreview,
+    TeamItemComponent,
+    SingleItemComponent,
+    MatchlistGroupComponent,
+    DisciplineTypePipe,
+  ],
 })
 export class DisciplineMatchListComponent {
   private _matches: Match[];
@@ -59,36 +80,24 @@ export class DisciplineMatchListComponent {
   onDisciplineSelected(disciplineId: number) {
     this.currentDisciplineId = disciplineId;
     if (+disciplineId === 0) {
-      this.currentMatchesToShow = Object.assign(
-        [],
-        this.matches.filter((match) => this.isMatchOpenOrInWaitingList(match))
-      );
+      this.currentMatchesToShow = Object.assign([], this.matches.filter(isWaiting));
       return;
     }
 
     if (+disciplineId === -1) {
-      this.currentMatchesToShow = [].concat.apply(
-        [],
-        this.matchList.map((item) => item.matchinfo)
-      );
+      this.currentMatchesToShow = [].concat(...this.matchList.map((item) => item.matchinfo));
       return;
     }
-    const filteredMatches = this.matches
-      .filter((match) => match.type.id === +disciplineId)
-      .filter((match) => this.isMatchOpenOrInWaitingList(match));
+    const filteredMatches = this.matches.filter((match) => match.type.id === +disciplineId).filter(isWaiting);
     this.currentMatchesToShow = filteredMatches;
-  }
-
-  private isMatchOpenOrInWaitingList(match) {
-    return match.state === MatchState[MatchState.Open] || match.state === MatchState[MatchState.InWaitingList];
   }
 
   isMatchInGroup(groupId: number, currentMatch: Match) {
     return (
       currentMatch != null &&
-      currentMatch.group != null &&
-      currentMatch.group.id === groupId &&
-      this.isMatchOpenOrInWaitingList(currentMatch)
+      currentMatch.playGroup != null &&
+      currentMatch.playGroup.id === groupId &&
+      isWaiting(currentMatch)
     );
   }
 

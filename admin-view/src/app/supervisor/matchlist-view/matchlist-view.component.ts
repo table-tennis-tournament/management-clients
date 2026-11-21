@@ -2,14 +2,28 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchList } from '../matchlist.model';
 import { MatchListItem } from '../matchlistitem.model';
 import { Match } from '../../shared/data/match.model';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
+import { isOpen } from '../../shared/match-state/match-state';
+import { FormsModule } from '@angular/forms';
+import { MatList } from '@angular/material/list';
+import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { MatchlistSingleItemComponent } from './matchlist-single-item/matchlist-single-item.component';
+import { MatchlistGroupItemComponent } from './matchlist-group-item/matchlist-group-item.component';
 
 @Component({
   selector: 'toma-matchlist-view',
   templateUrl: './matchlist-view.component.html',
   styleUrls: ['./matchlist-view.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    MatList,
+    CdkDropList,
+    CdkDrag,
+    TypeColorDirective,
+    MatchlistSingleItemComponent,
+    MatchlistGroupItemComponent,
+  ],
 })
 export class MatchlistViewComponent {
   @Input()
@@ -50,13 +64,9 @@ export class MatchlistViewComponent {
 
   assignMatchesToMatchList(matches: Match[], index: number) {
     const matchListItem = {
-      matchIds: matches.filter((match) => this.isMatchOpen(match)).map((match) => match.id),
+      matchIds: matches.filter(isOpen).map((match) => match.id),
       position: index,
     };
     this.assignMatchListItem.emit(matchListItem);
-  }
-
-  private isMatchOpen(match: Match) {
-    return match.state === MatchState[MatchState.Open];
   }
 }

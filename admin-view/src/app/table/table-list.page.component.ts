@@ -1,8 +1,12 @@
-import { Component, ComponentRef, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import { Observable } from 'rxjs';
+
 import { getTablesLoading, getTableState, getTypeColorsMapState } from '../app-state.reducer';
+
 import { TypeColorMap } from '../settings/settings.model';
+
 import {
   AssignMatchToTable,
   AssignToSecondTable,
@@ -15,32 +19,55 @@ import {
   TakeBackTable,
   UnLockTable,
 } from './redux/table.actions';
+
+import { canUseSecondTable, matchesOnTwoTables } from './table-actions';
+
+import { Match } from '../shared/data/match.model';
+
 import { TableDto } from './tabledto.model';
+
 import { TableMatchEvent } from './redux/table.match.event';
+
 import { ResultModalComponent } from './table-list/result-modal/result-modal.component';
+
 import { SelectMatchModalComponent } from './table-list/select-match-modal/select-match-modal.component';
+
 import { TableService } from './table.service';
+
 import { SelectTableModalComponent } from './table-list/select-table-modal/select-table-modal.component';
+
 import { ToastrService } from 'ngx-toastr';
+
 import { MatchToTable } from './table-list/tt-table/tt-table-content/matchtotable.model';
+
 import { MatDialog } from '@angular/material/dialog';
+
+import { TableListComponent } from './table-list/table-list.component';
+
+import { MatFabButton } from '@angular/material/button';
+
+import { MatIcon } from '@angular/material/icon';
+
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-table-list-page',
   templateUrl: './table-list.page.component.html',
-  standalone: false,
+  imports: [TableListComponent, MatFabButton, MatIcon, AsyncPipe],
 })
 export class TableListPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+  private tableService = inject(TableService);
+  private toastService = inject(ToastrService);
+  dialog = inject(MatDialog);
+
+  /** Offers entering a result kampflos; the Assign view does, the Table view does not. */
+  @Input()
+  kampflosEntry = false;
+
   tables: Observable<TableDto[]>;
   tablesLoading: Observable<boolean>;
   typeColors: Observable<TypeColorMap>;
-
-  constructor(
-    private store: Store<any>,
-    private tableService: TableService,
-    private toastService: ToastrService,
-    public dialog: MatDialog
-  ) {}
 
   ngOnInit() {
     this.tables = this.store.select(getTableState);
@@ -57,56 +84,21 @@ export class TableListPageComponent implements OnInit {
   }
 
   onFreeTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      const freeTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
-      this.store.dispatch(new FreeTable(freeTableEvent));
-      return;
-    }
-    this.selectMatchAndCallFunction(table, (match) =>
-      this.store.dispatch(
-        new FreeTable(
-          new TableMatchEvent(
-            match.map((nextMatch) => nextMatch.id),
-            table.number
-          )
-        )
-      )
+    this.chooseMatches(table.matches, (matchIds) =>
+      this.store.dispatch(new FreeTable(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
   onTakeBackTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
-      this.store.dispatch(new TakeBackTable(takeBackTableEvent));
-      return;
-    }
-    this.selectMatchAndCallFunction(table, (match) =>
-      this.store.dispatch(
-        new TakeBackTable(
-          new TableMatchEvent(
-            match.map((nextMatch) => nextMatch.id),
-            table.number
-          )
-        )
-      )
+    this.chooseMatches(table.matches, (matchIds) =>
+      this.store.dispatch(new TakeBackTable(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
+  /** "Entfernen": a match that waits at two tables leaves this one and stays at the other. */
   onRemoveFromTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      const takeBackTableEvent = new TableMatchEvent([table.matches[0].id], table.number);
-      this.store.dispatch(new TakeBackTable(takeBackTableEvent));
-      return;
-    }
-    this.selectMatchAndCallFunction(table, (match) =>
-      this.store.dispatch(
-        new RemoveMatchFromTable(
-          new TableMatchEvent(
-            match.map((nextMatch) => nextMatch.id),
-            table.number
-          )
-        )
-      )
+    this.chooseMatches(matchesOnTwoTables(table), (matchIds) =>
+      this.store.dispatch(new RemoveMatchFromTable(new TableMatchEvent(matchIds, table.id)))
     );
   }
 
@@ -120,46 +112,43 @@ export class TableListPageComponent implements OnInit {
     }
   }
 
+  /** "2.Tisch": the group's matches wait at a second, free table as well. */
   onAssignSecondTable(table: TableDto) {
-    if (this.isSingleMatchOnTable(table)) {
-      this.toastService.error('Ein Spiel kann nich auf zwei Tische gelegt werden.');
+    if (!canUseSecondTable(table)) {
+      this.toastService.error('Nur eine Gruppe mit mindestens vier Spielern kann an zwei Tischen spielen.');
       return;
     }
     const selectedMatchIds = table.matches.map((match) => match.id);
-    this.tableService.getFreeTables().subscribe(this.onFreeTablesLoaded.bind(this, selectedMatchIds));
+    this.tableService.getFreeTables().subscribe((tables) => this.onFreeTablesLoaded(selectedMatchIds, tables));
   }
 
-  onFreeTablesLoaded(selectedMatchIds, tables: TableDto[]) {
-    if (this.freeTablesAvailable(tables)) {
-      const dialogRef = this.dialog.open(SelectTableModalComponent, {
-        width: '250px',
-        data: tables,
-      });
-
-      dialogRef.afterClosed().subscribe((tableNumber) => {
-        console.log('The dialog was closed');
-        console.log(tableNumber);
-        this.store.dispatch(
-          new AssignToSecondTable({
-            tableNr: tableNumber,
-            matchIds: selectedMatchIds,
-          })
-        );
-      });
+  onFreeTablesLoaded(selectedMatchIds: number[], tables: TableDto[]) {
+    if (!this.freeTablesAvailable(tables)) {
+      this.toastService.error('Es sind keine freien Tische verfügbar.');
       return;
     }
-    this.toastService.error('Es sind keine freien Tische verfügbar.');
+    const dialogRef = this.dialog.open(SelectTableModalComponent, {
+      width: '250px',
+      data: tables,
+    });
+    dialogRef.afterClosed().subscribe((tableNumber) => {
+      if (tableNumber != null) {
+        this.store.dispatch(new AssignToSecondTable({ tableNr: tableNumber, matchIds: selectedMatchIds }));
+      }
+    });
   }
 
   onResultForTable(table: TableDto) {
     if (this.isSingleMatchOnTable(table)) {
       const dialogRef = this.dialog.open(ResultModalComponent, {
         width: '500px',
-        data: table.matches[0],
+        data: { match: table.matches[0], kampflosAllowed: this.kampflosEntry },
       });
 
       dialogRef.afterClosed().subscribe((matchResult) => {
-        this.store.dispatch(new ResultForMatch(matchResult));
+        if (matchResult) {
+          this.store.dispatch(new ResultForMatch(matchResult));
+        }
       });
       return;
     }
@@ -178,11 +167,20 @@ export class TableListPageComponent implements OnInit {
     this.store.dispatch(new AssignMatchToTable(event));
   }
 
-  private selectMatchAndCallFunction(table: TableDto, onMatchSelectedAction: any) {
+  /** Runs [onChosen] with the one match, or with the matches chosen in a dialog when there are several. */
+  private chooseMatches(matches: Match[], onChosen: (matchIds: number[]) => void) {
+    if (matches.length === 1) {
+      onChosen([matches[0].id]);
+      return;
+    }
     const dialogRef = this.dialog.open(SelectMatchModalComponent, {
       width: '400px',
-      data: table.matches,
+      data: matches,
     });
-    dialogRef.afterClosed().subscribe(onMatchSelectedAction);
+    dialogRef.afterClosed().subscribe((chosen: Match[] | undefined) => {
+      if (chosen?.length) {
+        onChosen(chosen.map((match) => match.id));
+      }
+    });
   }
 }

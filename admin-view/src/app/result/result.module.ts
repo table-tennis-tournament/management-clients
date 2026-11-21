@@ -9,8 +9,7 @@ import { DisciplineModule } from '../discipline/discipline.module';
 const components = [ResultListPageComponent, DisciplinePipe, StagePipe, ResultListComponent];
 
 @NgModule({
-  declarations: [...components],
-  imports: [SharedModule, DisciplineModule],
+  imports: [SharedModule, DisciplineModule, ...components],
   providers: [],
   exports: [ResultListPageComponent],
 })

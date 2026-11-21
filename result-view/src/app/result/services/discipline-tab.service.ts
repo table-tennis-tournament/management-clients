@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DisciplineGroup } from '../data/discipline.group';
 import { DisciplineTab } from '../data/discipline.tab';
+import { isOver } from '../../shared/match-state/match-state';
 import { Match } from '../data/match';
 
 @Injectable({
@@ -26,7 +27,7 @@ export class DisciplineTabService {
     for (const match of matches) {
       currentItem = match;
 
-      if (!currentItem.group) {
+      if (!currentItem.playGroup) {
         const localIndex = allStages[currentItem.matchType.name];
         let currentStage = currentItemTab.stages[localIndex];
         if (!currentStage) {
@@ -45,9 +46,9 @@ export class DisciplineTabService {
         continue;
       }
 
-      if (!currentItemTab.groups[currentItem.group.id]) {
-        currentItemTab.groups[currentItem.group.id] = {
-          name: 'Gruppe ' + currentItem.group.name,
+      if (!currentItemTab.groups[currentItem.playGroup.id]) {
+        currentItemTab.groups[currentItem.playGroup.id] = {
+          name: 'Gruppe ' + currentItem.playGroup.name,
           tableNumbers: [],
           isComplete: true,
           isMatchActive: this.isMatchActive,
@@ -58,7 +59,7 @@ export class DisciplineTabService {
 
         allPlayerArray = [];
       }
-      let currentGroup = currentItemTab.groups[currentItem.group.id];
+      let currentGroup = currentItemTab.groups[currentItem.playGroup.id];
       currentGroup.matches.push(currentItem);
       currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
       currentGroup = this.addTableNumbers(currentItem, currentGroup);
@@ -75,13 +76,14 @@ export class DisciplineTabService {
     return currentItemTab;
   }
 
+  /** A Completed or Finished (walkover) match counts as done. */
   private isMatchComplete(currentItem: Match) {
-    return currentItem.state === 'Completed';
+    return isOver(currentItem);
   }
 
   private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-    if (currentItem.table[0] && !this.isMatchComplete(currentItem)) {
-      currentGroup.tableNumbers.push(currentItem.table[0]);
+    if (currentItem.tableId && !this.isMatchComplete(currentItem)) {
+      currentGroup.tableNumbers.push(currentItem.tableId);
     }
     return currentGroup;
   }

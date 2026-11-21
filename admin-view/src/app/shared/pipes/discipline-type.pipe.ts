@@ -1,12 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import { StageType } from '../data/stagetype.model';
 
-@Pipe({
-  name: 'disciplineType',
-  standalone: false,
-})
+@Pipe({ name: 'disciplineType' })
 export class DisciplineTypePipe implements PipeTransform {
-  transform(value: StageType, args?: any): any {
+  transform(value: StageType): any {
     const disciplineMap = [];
     disciplineMap['Finale'] = 'FI';
     disciplineMap['Halbfinale'] = 'HF';

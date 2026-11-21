@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   LoadPrinters,
@@ -16,19 +16,22 @@ import { Settings, TypeColor, TypeColorMap } from './settings.model';
 import { getDisciplineState } from '../discipline/redux';
 import { Discipline } from '../discipline/discipline.model';
 import { LoadDiscipline } from '../discipline/redux/discipline.actions';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { SettingsListComponent } from './settings-list/settings-list.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'toma-settings',
   templateUrl: './settings.page.component.html',
-  standalone: false,
+  imports: [MatCard, MatCardContent, SettingsListComponent, AsyncPipe],
 })
 export class SettingsPageComponent implements OnInit {
+  private store = inject<Store<any>>(Store);
+
   settings: Observable<Settings[]>;
   printers: Observable<string[]>;
   typeColors$: Observable<TypeColorMap>;
   types$: Observable<Discipline[]>;
-
-  constructor(private store: Store<any>) {}
 
   ngOnInit() {
     this.store.dispatch(new LoadSettings());

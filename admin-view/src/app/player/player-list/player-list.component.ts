@@ -1,12 +1,48 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PlayerType } from '../data/player.type.model';
 import { Discipline } from '../../discipline/discipline.model';
+import { DisciplineSelectComponent } from '../../discipline/discipline-select/discipline-select.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'toma-player-list',
   templateUrl: './player-list.component.html',
   styleUrls: ['./player-list.component.scss'],
-  standalone: false,
+  imports: [
+    DisciplineSelectComponent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatProgressSpinner,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatCheckbox,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+  ],
 })
 export class PlayerListComponent {
   private _players: PlayerType[];
@@ -87,7 +123,7 @@ export class PlayerListComponent {
   }
 
   filterByClub(value: string) {
-    this.filterPlayers(value, (p) => p.player.club.clubName);
+    this.filterPlayers(value, (p) => p.player.club.name);
   }
 
   private containsValue(value: string, input: string) {

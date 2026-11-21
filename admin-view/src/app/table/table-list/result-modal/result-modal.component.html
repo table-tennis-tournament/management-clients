@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ currentMatch | ttMatchDiscipline }}</h1>
 <div mat-dialog-content>
-  <div [class.winner-text]="checkerResult.firstPlayerWinning" class="text-center">
+  <div [class.winner-text]="winner === 1" class="text-center">
     {{ currentMatch.team1 | ttPlayerNameReducer }}
   </div>
   <br />
@@ -8,7 +8,7 @@
     <h4>-</h4>
     <br />
   </div>
-  <div [class.winner-text]="checkerResult.secondPlayerWinning" class="text-center">
+  <div [class.winner-text]="winner === 2" class="text-center">
     {{ currentMatch.team2 | ttPlayerNameReducer }}
   </div>
   <form class="d-flex justify-content-center">
@@ -17,6 +17,11 @@
       <input matInput placeholder="" [(ngModel)]="currentInput" #answer (keyup)="onKeyUp(answer.value)" (keyup.enter)="onEnter()" />
     </mat-form-field>
   </form>
+  @if (kampflosAllowed) {
+    <div class="d-flex justify-content-center">
+      <mat-checkbox [(ngModel)]="kampflos" name="kampflos">Kampflos (bsp. 0 0 0)</mat-checkbox>
+    </div>
+  }
 </div>
 <div mat-dialog-actions class="d-flex justify-content-end">
   <button mat-button (click)="onCancel()">Abbrechen</button>

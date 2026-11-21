@@ -17,8 +17,7 @@ const components = [
 ];
 
 @NgModule({
-  imports: [SharedModule],
+  imports: [SharedModule, ...components],
   exports: [CallerPageComponent],
-  declarations: [...components],
 })
 export class CallerModule {}

@@ -1,71 +1,92 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { ResultCheckerService } from './result-checker.service';
-import { ResultCheckModel } from './result-check.model';
+import { Component, inject } from '@angular/core';
 import { Match } from '../../../shared/data/match.model';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogTitle,
+  MatDialogContent,
+  MatDialogActions,
+  MatDialogClose,
+} from '@angular/material/dialog';
+import {
+  formatResult,
+  isFinalResult,
+  matchWinner,
+  parseResult,
+  SetScore,
+  Side,
+} from '../../../shared/result-entry/result-entry';
+import { ResultModalData, TTMatchResult } from './ttmatch-result.model';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { TtPlayerNameReducerPipe } from '../../../shared/pipes/tt-player-name-reducer.pipe';
+import { TtMatchDisciplinePipe } from '../../../shared/pipes/tt-match-discipline.pipe';
 
+/**
+ * Enters the final result of a match. Closes with a [TTMatchResult], or with nothing on cancel. Where
+ * [ResultModalData.kampflosAllowed], the result can be marked kampflos: the match becomes a Walkover won by the
+ * Side that was there, entered as `0 0 0` (or `-0 -0 -0`).
+ */
 @Component({
   selector: 'toma-result-modal',
   templateUrl: './result-modal.component.html',
   styleUrls: ['./result-modal.component.scss'],
-  standalone: false,
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatDialogActions,
+    MatButton,
+    MatCheckbox,
+    MatDialogClose,
+    TtPlayerNameReducerPipe,
+    TtMatchDisciplinePipe,
+  ],
 })
 export class ResultModalComponent {
-  checkerResult: ResultCheckModel = {
-    firstPlayerWinning: false,
-    secondPlayerWinning: false,
-    currentResult: [],
-  };
+  dialogRef = inject<MatDialogRef<ResultModalComponent>>(MatDialogRef);
+  private data = inject<ResultModalData>(MAT_DIALOG_DATA);
+  currentMatch: Match = this.data.match;
+  kampflosAllowed = this.data.kampflosAllowed ?? false;
 
   currentInput: string;
+  kampflos = false;
+  sets: SetScore[] | null = [];
+  winner: Side | null = null;
 
-  @ViewChild('answer', { read: ElementRef, static: false })
-  private elementRef: ElementRef;
+  constructor() {
+    const currentMatch = this.currentMatch;
 
-  constructor(
-    private resultCheckerService: ResultCheckerService,
-    public dialogRef: MatDialogRef<ResultModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public currentMatch: Match
-  ) {
-    this.setInputIfAvailable();
+    this.currentInput = formatResult(currentMatch.sets);
+    this.onKeyUp(this.currentInput);
   }
 
-  onKeyUp(value) {
-    this.checkerResult = this.resultCheckerService.checkResult(value);
+  onKeyUp(value: string) {
+    this.sets = parseResult(value);
+    this.winner = matchWinner(this.sets);
   }
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
-  getResult(): any {
-    if (this.checkerResult.firstPlayerWinning || this.checkerResult.secondPlayerWinning) {
-      return {
-        result: this.checkerResult.currentResult,
-        match: this.currentMatch,
-      };
+  getResult(): TTMatchResult | undefined {
+    if (this.resultNotValid()) {
+      return undefined;
     }
+    return { result: this.sets, match: this.currentMatch, kampflos: this.kampflos };
   }
 
   resultNotValid(): boolean {
-    return !this.checkerResult.firstPlayerWinning && !this.checkerResult.secondPlayerWinning;
-  }
-
-  private setInputIfAvailable() {
-    const matchToSet = this.currentMatch;
-    let resultString = '';
-    if (matchToSet.result) {
-      matchToSet.result.forEach((element) => {
-        if (element[0] > element[1]) {
-          resultString += element[1] + ' ';
-        } else {
-          resultString += '-' + element[0] + ' ';
-        }
-      });
-      resultString = resultString.substr(0, resultString.length - 1);
-      this.onKeyUp(resultString);
-    }
-    this.currentInput = resultString;
+    return !isFinalResult(this.sets);
   }
 
   onEnter() {

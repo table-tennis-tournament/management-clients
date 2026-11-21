@@ -1,0 +1,75 @@
+{
+  "id" : 1,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  } ],
+  "team2" : [ {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  } ],
+  "side1Id" : 1,
+  "side2Id" : 2,
+  "winnerSideId" : null,
+  "playGroup" : {
+    "id" : 1,
+    "name" : "A"
+  },
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "callState" : "None",
+  "tableId" : null,
+  "tableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "nr" : 1,
+  "roundNumber" : 1,
+  "startTime" : null,
+  "callNumber" : 0,
+  "isBlocking" : false,
+  "isPlayable" : true,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  },
+  "player2" : {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null
+  },
+  "sets" : [ ],
+  "state" : "Open",
+  "winner" : [ ]
+}

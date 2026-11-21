@@ -26,13 +26,15 @@ include::../diagrams/container.puml[]
 |Nginx. Serves the three SPA bundles and proxies API and WebSocket traffic to the backend.
 
 |Backend
-|Scala 2.13 on Play Framework. REST API, WebSocket broadcasting and PDF generation.
+|Kotlin 2.4 on Spring Boot 4.1, a modular monolith structured with Spring Modulith. REST API under `/api/v2`, STOMP update events on `/ttt-websocket`, PDF referee sheets and printing.
 
 |Tournament Database
-|MariaDB/MySQL. Persists players, matches, tables, groups and settings.
+|MariaDB/MySQL in production, H2 in tests. Persists players, matches, tables, groups and settings.
 |===
 
-=== Level 3: Backend Components
+=== Level 3: Backend Modules
+
+The backend is a modular monolith. Each top-level package under `de.ttt.management` is a Spring Modulith module and follows an onion architecture (`domain` → `application` → `infrastructure`).
 
 [plantuml, target="backend-components", format="svg"]
 ----
@@ -41,54 +43,52 @@ include::../diagrams/backend-components.puml[]
 
 [cols="1,3"]
 |===
-|Component |Responsibility
+|Module |Responsibility
 
-|Match Controller
-|REST endpoints for match assignment, state changes and results.
+|registration
+|Players, clubs, doubles, disciplines and registration state (paid/active/seed). Register/unregister players.
 
-|Match List Controller
-|Queue management endpoints.
+|grouping
+|Group standings, computed when the last match of a group is completed. Group formation and seeding stay in mktt. A knockout winner moves on into the next match in `tournament`.
 
-|Player Controller
-|Player, club and discipline data.
+|tournament
+|Match lifecycle and state machine, Queue/MatchList, table assignment, results, caller (first/second/third call) and table-manager operations.
 
-|Table Controller
-|Table assignment and locking.
+|settings
+|System settings, printer selection and printing of referee sheets (PDF with a QR code).
 
-|Printer Controller
-|PDF generation and print jobs.
+|outbound
+|The single WebSocket publisher. Consumes domain events after the transaction commits and pushes update events to the five STOMP topics.
 
-|Settings Controller
-|System settings.
+|Shared configuration
+|Cross-cutting Spring configuration in the root package: `ApiVersionConfig` (the `/api/v2` prefix), `OpenApiConfig` and `ClockAndIdConfig` (the injectable `Clock` and id generator).
+|===
 
-|SockJS Controller
-|WebSocket connection upgrade.
+Each module internally layers as follows:
 
-|PDF Service
-|Renders match sheets and documents to PDF.
+[cols="1,3"]
+|===
+|Layer |Responsibility
 
-|Tables (DAO)
-|The single data-access component: all persistence and the in-memory domain state.
+|domain
+|Aggregates, value objects, match-state enum and repository ports (interfaces only).
 
-|Publisher
-|Pekko actor that distributes domain events to connected clients.
+|application
+|Use-case orchestration, application services, event publication.
 
-|Printer Actor
-|Pekko actor that owns the print job queue.
+|infrastructure.database
+|JdbcClient repository adapters (plain SQL, no JPA/Hibernate).
 
-|WebSocket Actor
-|Pekko actor, one per client connection.
+|infrastructure.web
+|REST controllers.
 
-|Scheduler
-|Background tasks and automatic match start.
-
-|Models
-|Scala case classes for the domain objects.
+|infrastructure.messaging
+|Event listeners/publishers.
 |===
 
 === Level 3: Frontend Components
 
-All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application.
+All three SPAs share the same internal structure. The following diagram shows the generic structure; the table below maps the concrete feature modules per application. Three modules under `src/app/shared/` are identical copies in every client that uses them: `update-events` (the STOMP connection, scope filtering, coalescing and resynchronization), `result-entry` (the rules of a Set and a Match) and `match-state` (the questions clients ask about a Match's state).
 
 [plantuml, target="frontend-components", format="svg"]
 ----
@@ -110,7 +110,12 @@ include::../diagrams/frontend-components.puml[]
 |ngrx store
 
 |Communication
-|HTTP and WebSocket services
-|HTTP and WebSocket services
-|HTTP and WebSocket services
+|HTTP services; update events on all five topics
+|HTTP services; update events on `matches`
+|HTTP services; update events on `tables` and `matches`
+
+|Components
+|standalone
+|NgModules
+|standalone
 |===

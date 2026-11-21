@@ -23,14 +23,14 @@ describe('DisciplineTabService', () => {
 
   it('should create two tabs for completeData', inject([DisciplineTabService], (service: DisciplineTabService) => {
     const completeGroup = ThreeMatches.map((match) => match);
-    completeGroup.forEach(
-      (match) =>
-        (match.result = [
-          [11, 5],
-          [11, 5],
-          [11, 5],
-        ])
-    );
+    completeGroup.forEach((match) => {
+      match.result = '3 : 0';
+      match.sets = [
+        { pointsPlayer1: 11, pointsPlayer2: 5 },
+        { pointsPlayer1: 11, pointsPlayer2: 5 },
+        { pointsPlayer1: 11, pointsPlayer2: 5 },
+      ];
+    });
     const result = service.getTabForMatches(completeGroup);
     expect(result.groups.length).toEqual(1);
     expect(result.stages.length).toEqual(0);

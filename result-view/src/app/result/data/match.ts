@@ -1,3 +1,5 @@
+import { MatchStateName } from '../../shared/match-state/match-state';
+import { SetScore } from '../../shared/result-entry/result-entry';
 import { Group } from './group';
 import { MatchType } from './matchType';
 import { Player } from './player';
@@ -7,14 +9,20 @@ export interface Match {
   id?: number;
   startTime?: Date;
   isPlayed?: boolean;
-  result?: any;
+  /** The set summary, e.g. `3 : 1`. */
+  result?: string;
+  /** The per-set points of the match. Read them through `shared/result-entry`. */
+  sets?: SetScore[];
   isPlayable?: boolean;
-  isInWaitingList?: boolean;
-  table?: number[];
+  waitingList?: boolean;
+  tableId?: number;
   team1?: Player[];
   team2?: Player[];
   matchType?: MatchType;
   type?: Type;
-  group?: Group;
-  state?: string;
+  playGroup?: Group;
+  /** The lifecycle state; ask `shared/match-state` instead of comparing it. */
+  state?: MatchStateName;
+  /** How many Calls have been announced (0-3). */
+  callNumber?: number;
 }

@@ -11,6 +11,6 @@ export class MatchService {
   constructor(private http: HttpClient) {}
 
   getMatchesByType(typeId: number): Observable<Match[]> {
-    return this.http.get<Type[]>(`/api/match/typeid/${typeId}`);
+    return this.http.get<Type[]>(`/api/v2/match/typeid/${typeId}`);
   }
 }

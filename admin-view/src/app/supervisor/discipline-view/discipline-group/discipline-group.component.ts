@@ -1,18 +1,41 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DisciplineGroup } from '../models/discipline.group.model';
 import { Match } from '../../../shared/data/match.model';
-import { MatchState } from '../../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../../settings/settings.model';
+import { isOpen, isOver, isQueued } from '../../../shared/match-state/match-state';
+import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { MatIcon } from '@angular/material/icon';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { TypeColorDirective } from '../../../shared/directives/type-color.directive';
+import { MatList, MatListItem } from '@angular/material/list';
+import { TeamItemComponent } from '../../../shared/team-item/team-item.component';
+import { ResultPipe } from '../../../shared/pipes/result.pipe';
 
 @Component({
   selector: 'toma-discipline-group',
   templateUrl: './discipline-group.component.html',
   styleUrls: ['./discipline-group.component.scss'],
-  standalone: false,
+  imports: [
+    MatCard,
+    MatCardTitle,
+    CdkDropList,
+    CdkDrag,
+    MatIcon,
+    MatCardContent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    TypeColorDirective,
+    MatExpansionPanelTitle,
+    MatList,
+    MatListItem,
+    TeamItemComponent,
+    ResultPipe,
+  ],
 })
 export class DisciplineGroupComponent {
-  openMatchState: string = MatchState[MatchState.Open];
-  inWaitingListState: string = MatchState[MatchState.InWaitingList];
+  readonly isOpen = isOpen;
+  readonly isQueued = isQueued;
   tableNumbers: any[];
 
   @Input()
@@ -42,7 +65,7 @@ export class DisciplineGroupComponent {
   }
 
   get openMatches() {
-    return this.group.matches.filter((match) => match.state !== MatchState[MatchState.Completed]).length;
+    return this.group.matches.filter((match) => !isOver(match)).length;
   }
 
   @Input()
@@ -69,11 +92,9 @@ export class DisciplineGroupComponent {
   setTables() {
     const numberArray = [];
     this.group.matches.forEach((element) => {
-      element.table.forEach((tableNumber) => {
-        if (numberArray.indexOf(tableNumber) < 0) {
-          numberArray.push(tableNumber);
-        }
-      });
+      if (element.tableNumber && numberArray.indexOf(element.tableNumber) < 0) {
+        numberArray.push(element.tableNumber);
+      }
     });
     this.tableNumbers = numberArray;
   }
@@ -92,8 +113,7 @@ export class DisciplineGroupComponent {
   }
 
   isGroupInWaitingList() {
-    const playableMatches = this.group.matches.filter((match) => match.state === MatchState[MatchState.InWaitingList]);
-    return playableMatches.length === this.group.matches.length;
+    return this.group.matches.every(isQueued);
   }
 
   groupIsNotPlayable() {
@@ -101,12 +121,10 @@ export class DisciplineGroupComponent {
   }
 
   groupIsNotComplete() {
-    const notFinishedMatches = this.group.matches.filter((match) => match.state !== MatchState[MatchState.Completed]);
-    return notFinishedMatches.length > 0;
+    return this.group.matches.some((match) => !isOver(match));
   }
 
   groupIsDraggable() {
-    const openMatches = this.group.matches.filter((match) => match.state === MatchState[MatchState.Open]);
-    return openMatches.length > 0;
+    return this.group.matches.some(isOpen);
   }
 }

@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Player } from '../../data/player';
 
 @Component({
   standalone: false,
   selector: 'app-team-item',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './team-item.component.html',
 })
 export class TeamItemComponent implements OnInit {

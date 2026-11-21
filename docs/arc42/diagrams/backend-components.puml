@@ -3,43 +3,31 @@
 
 LAYOUT_WITH_LEGEND()
 
-title Component diagram for the Backend
+title Component diagram for the Backend (Spring Modulith modules)
 
 Container_Boundary(backend, "Backend") {
-    Component(matchController, "Match Controller", "Play controller", "REST endpoints for match assignment, state changes and results")
-    Component(matchListController, "Match List Controller", "Play controller", "Queue management endpoints")
-    Component(playerController, "Player Controller", "Play controller", "Player, club and discipline data")
-    Component(tableController, "Table Controller", "Play controller", "Table assignment and locking")
-    Component(printerController, "Printer Controller", "Play controller", "PDF generation and print jobs")
-    Component(settingsController, "Settings Controller", "Play controller", "System settings")
-    Component(sockjsController, "SockJS Controller", "Play controller", "WebSocket connection upgrade")
-
-    Component(pdfService, "PDF Service", "Scala", "Renders match sheets and documents to PDF")
-    Component(tables, "Tables (DAO)", "Scala, Slick", "All data access and the in-memory domain state")
-    Component(publisher, "Publisher", "Pekko actor", "Distributes domain events to connected clients")
-    Component(printerActor, "Printer Actor", "Pekko actor", "Print job queue")
-    Component(webSocketActor, "WebSocket Actor", "Pekko actor", "One actor per client connection")
-    Component(scheduler, "Scheduler", "Pekko", "Background tasks and automatic match start")
-    Component(models, "Models", "Scala case classes", "Domain objects: Match, Player, Table, Group, Discipline")
+    Component(registration, "registration", "Spring Modulith module", "Players, clubs, doubles, disciplines, registration state (paid, active); discipline colors")
+    Component(tournament, "tournament", "Spring Modulith module", "Match lifecycle (TournamentMatch), Queue and auto-start, table assignment and locking, results, calls, table-manager and caller views")
+    Component(grouping, "grouping", "Spring Modulith module", "Group standings when a group's last match is completed")
+    Component(settings, "settings", "Spring Modulith module", "Settings, printers and print on assign; referee sheets as PDF (Flying Saucer) and QR codes")
+    Component(outbound, "outbound", "Spring Modulith module", "The single publisher: turns domain events into update events on five STOMP topics")
+    Component(broker, "STOMP endpoint", "Spring simple broker", "/ttt-websocket with /topic/matches, tables, queue, players, settings")
 }
 
-ContainerDb(mariadb, "Tournament Database", "MariaDB/MySQL", "Stores the tournament data")
+ContainerDb(mariadb, "Tournament Database", "MariaDB/MySQL", "mktt's schema plus the backend's mgmt_ sidecar tables (Flyway)")
+System_Ext(cups, "CUPS", "Print server (lpr)")
 
-Rel(matchController, tables, "Reads and updates match state")
-Rel(matchListController, tables, "Manages the queue")
-Rel(playerController, tables, "Reads player data")
-Rel(tableController, tables, "Assigns and locks tables")
-Rel(settingsController, tables, "Reads and writes settings")
-Rel(printerController, pdfService, "Requests PDFs")
-Rel(sockjsController, webSocketActor, "Creates")
+Rel(tournament, grouping, "MatchCompleted", "domain event")
+Rel(tournament, settings, "MatchAssigned", "domain event")
+Rel(tournament, outbound, "Match, table and queue events", "domain events")
+Rel(registration, outbound, "Player and discipline color events", "domain events")
+Rel(outbound, broker, "Sends update events")
 
-Rel(tables, publisher, "Publishes domain events")
-Rel(publisher, webSocketActor, "Broadcasts")
-Rel(webSocketActor, sockjsController, "Serves")
-Rel(pdfService, printerActor, "Queues print jobs")
-Rel(scheduler, tables, "Triggers automatic match start")
-
-Rel(tables, mariadb, "Reads and writes", "JDBC/Slick")
+Rel(registration, mariadb, "Reads and writes", "JdbcClient")
+Rel(tournament, mariadb, "Reads and writes", "JdbcClient")
+Rel(grouping, mariadb, "Reads matches, writes standings", "JdbcClient")
+Rel(settings, mariadb, "Reads matches for printing, writes settings", "JdbcClient")
+Rel(settings, cups, "Prints referee sheets", "lpr")
 
 SHOW_LEGEND()
 @enduml

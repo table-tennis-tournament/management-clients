@@ -26,5 +26,5 @@ import { RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
   ],
 })
 export class NavigationComponent {
-  managers = [1, 2, 3, 4];
+  managers = [1, 2, 3, 4, 5];
 }
