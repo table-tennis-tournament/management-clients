@@ -1190,7 +1190,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Logging with SLF4J/Logback in the backend.</p>
 </li>
 <li>
-<p>Spring Boot Actuator health endpoint (<code>/actuator/health</code>), used by Docker Compose and the CI to wait for the backend.</p>
+<p>Spring Boot Actuator liveness and readiness probes (<code>/livez</code>, <code>/readyz</code>). Readiness checks the database, mktt&#8217;s tables, Flyway&#8217;s migrations and the WebSocket broker, each database check within 2 s. Docker Compose waits on it; nginx serves <code>/healthz</code> for itself and proxies <code>/readyz</code>, so the whole system&#8217;s readiness is visible on port 80 (<code>spec/07_backend_modular_monolith.md</code>, section 7).</p>
+</li>
+<li>
+<p><code>deploy/check-ready.sh</code> checks a running system from outside, including a WebSocket handshake through nginx.</p>
 </li>
 </ul>
 </div>
