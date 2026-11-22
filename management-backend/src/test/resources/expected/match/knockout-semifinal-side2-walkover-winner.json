@@ -7,7 +7,8 @@
     "lastName" : "Last4",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   } ],
   "side1Id" : null,
   "side2Id" : 4,
@@ -55,7 +56,8 @@
     "lastName" : "Last4",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   },
   "requestedCallNumber" : null,
   "sets" : [ ],

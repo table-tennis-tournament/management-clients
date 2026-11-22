@@ -79,17 +79,51 @@ class GroupingModuleIT {
         assertEquals(completedGroup, standings())
     }
 
+    // 1 beat 2 and 3, the match 2 vs 3 has no result yet; 2 and 3 tie, so they keep their order in the group
+    private val runningGroup = listOf(
+        listOf(1, 1, 2, 0, 6, 0, 66, 30, "2 : 0", "6 : 0", "66 : 30", 1, 6),
+        listOf(2, 2, 0, 1, 0, 3, 15, 33, "0 : 1", "0 : 3", "15 : 33", 0, -3),
+        listOf(3, 3, 0, 1, 0, 3, 15, 33, "0 : 1", "0 : 3", "15 : 33", 0, -3)
+    )
+
     @Test
-    fun `updateStandings does nothing for an incomplete group`() {
+    fun `updateStandings ranks a group that is still being played by the matches with a result`() {
         insertGroupMatches(match12 = null)
 
         groupingService.updateStandings(1)
 
-        // the rows as inserted: nothing computed yet
-        assertEquals(
-            (1..3).map { listOf(it, 0, 0, 0, 0, 0, 0, 0, null, null, null, 0, 0) },
-            standings()
-        )
+        assertEquals(runningGroup, standings())
+    }
+
+    @Test
+    fun `a match freed from its table counts once its result is entered`() {
+        insertGroupMatches(match12 = null)
+        db.jdbc.update("UPDATE matches SET matc_played = 1 WHERE matc_id = 12")
+
+        groupingService.updateStandings(1)
+
+        assertEquals(runningGroup, standings())
+    }
+
+    @Test
+    fun `every result changes the standings, before the group is complete`() {
+        db.insertMatch(10, 1, 2, disciplineId = 1, groupId = 1, result = won)
+        db.insertMatch(11, 1, 3, disciplineId = 1, groupId = 1)
+        db.insertMatch(12, 2, 3, disciplineId = 1, groupId = 1)
+
+        matchService.setResult(11, listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
+
+        assertEquals(runningGroup, standings())
+    }
+
+    @Test
+    fun `taking back a completed match takes its result out of the standings`() {
+        insertGroupMatches(match12 = won)
+        groupingService.updateStandings(1)
+
+        matchService.takeBackMatches(listOf(12))
+
+        assertEquals(runningGroup, standings())
     }
 
     @Test

@@ -29,7 +29,11 @@ Resolved: `container.puml` and `backend-components.puml` show the Kotlin/Spring 
 
 Resolved: the table manager's "Zurück" calls `POST /api/v2/match/takeBack/{id}`, which maps to `MatchService.takeBackRunningMatch`. `POST /api/v2/match/stop/{id}` stays as a deprecated alias for one release (`TournamentModuleIT` covers both); remove it with the next release.
 
-## 7. Other open items
+## 7. Group standings in result-view
+
+The backend keeps the group standings in `playerpergroup` current after every result change, but result-view shows only a group's matches. Showing the standings needs an endpoint for them, a live-update event when they change, and a standings table in result-view's group view.
+
+## 8. Other open items
 
 All resolved:
 

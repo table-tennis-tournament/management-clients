@@ -47,8 +47,9 @@ export const ADMIN_UPDATES: UpdateClientConfig<AdminReloadTarget> = {
     TABLE_LOCKED: ['tables'],
     TABLE_UNLOCKED: ['tables'],
     MATCH_LIST_CHANGED: ['matchList', 'matches'],
-    PLAYER_REGISTERED: ['discipline', 'players'],
-    PLAYER_UNREGISTERED: ['discipline', 'players'],
+    // a registration changes the disciplines a player is in, which the matches carry (`types`)
+    PLAYER_REGISTERED: ['discipline', 'players', 'matches'],
+    PLAYER_UNREGISTERED: ['discipline', 'players', 'matches'],
     PLAYER_PAID: ['players'],
     PLAYER_ACTIVE_CHANGED: ['players', 'discipline'],
     DISCIPLINE_COLORS_CHANGED: ['typeColors'],

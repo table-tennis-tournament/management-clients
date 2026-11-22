@@ -13,7 +13,8 @@
       "club" : {
         "id" : 1,
         "name" : "TTV Musterstadt"
-      }
+      },
+      "types" : [ 1, 2 ]
     } ],
     "team2" : [ {
       "id" : 4,
@@ -21,7 +22,8 @@
       "lastName" : "Last4",
       "ttr" : 1440,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1, 2 ]
     } ],
     "side1Id" : 3,
     "side2Id" : 4,
@@ -82,7 +84,8 @@
       "club" : {
         "id" : 1,
         "name" : "TTV Musterstadt"
-      }
+      },
+      "types" : [ 1, 2 ]
     },
     "player2" : {
       "id" : 4,
@@ -90,7 +93,8 @@
       "lastName" : "Last4",
       "ttr" : 1440,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1, 2 ]
     },
     "requestedCallNumber" : null,
     "sets" : [ ],
@@ -112,14 +116,16 @@
       "club" : {
         "id" : 1,
         "name" : "TTV Musterstadt"
-      }
+      },
+      "types" : [ 1, 2 ]
     }, {
       "id" : 2,
       "firstName" : "First2",
       "lastName" : "Last2",
       "ttr" : 1420,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1, 2 ]
     } ],
     "team2" : [ {
       "id" : 3,
@@ -130,14 +136,16 @@
       "club" : {
         "id" : 1,
         "name" : "TTV Musterstadt"
-      }
+      },
+      "types" : [ 1, 2 ]
     }, {
       "id" : 4,
       "firstName" : "First4",
       "lastName" : "Last4",
       "ttr" : 1440,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1, 2 ]
     } ],
     "side1Id" : 100001,
     "side2Id" : 100002,
@@ -203,7 +211,8 @@
       "club" : {
         "id" : 1,
         "name" : "TTV Musterstadt"
-      }
+      },
+      "types" : [ 1, 2 ]
     },
     "player2" : {
       "id" : 3,
@@ -214,7 +223,8 @@
       "club" : {
         "id" : 1,
         "name" : "TTV Musterstadt"
-      }
+      },
+      "types" : [ 1, 2 ]
     },
     "requestedCallNumber" : null,
     "sets" : [ ],
@@ -233,7 +243,8 @@
       "lastName" : "Last5",
       "ttr" : 1450,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     } ],
     "team2" : [ {
       "id" : 6,
@@ -241,7 +252,8 @@
       "lastName" : "Last6",
       "ttr" : 1460,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     } ],
     "side1Id" : 5,
     "side2Id" : 6,
@@ -299,7 +311,8 @@
       "lastName" : "Last5",
       "ttr" : 1450,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     },
     "player2" : {
       "id" : 6,
@@ -307,7 +320,8 @@
       "lastName" : "Last6",
       "ttr" : 1460,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     },
     "requestedCallNumber" : null,
     "sets" : [ ],

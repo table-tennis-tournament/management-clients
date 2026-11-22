@@ -131,8 +131,12 @@ class DatabaseHelper(
         jdbc.update("INSERT INTO matchtype (maty_id, maty_name) VALUES (?, ?)", id, name)
     }
 
-    fun insertGroup(id: Long, name: String, disciplineId: Long) {
-        jdbc.update("INSERT INTO playgroups (grou_id, grou_name, grou_type_id) VALUES (?, ?, ?)", id, name, disciplineId)
+    /** A group; [qualifyingPlaces] is mktt's `Grou_QualPos`, how many of its places go through. */
+    fun insertGroup(id: Long, name: String, disciplineId: Long, qualifyingPlaces: String? = "2") {
+        jdbc.update(
+            "INSERT INTO playgroups (grou_id, grou_name, grou_type_id, grou_qualpos) VALUES (?, ?, ?, ?)",
+            id, name, disciplineId, qualifyingPlaces
+        )
     }
 
     /**
@@ -183,15 +187,15 @@ class DatabaseHelper(
 
     // --- grouping ----------------------------------------------------------------
 
-    /** A player's (not yet computed) standing in a group. */
-    fun insertPlayerPerGroup(id: Long, playerId: Long, groupId: Long) {
+    /** A player's standing in a group; [position] 0 is not computed yet. */
+    fun insertPlayerPerGroup(id: Long, playerId: Long, groupId: Long, position: Int = 0) {
         jdbc.update(
             """
             INSERT INTO playerpergroup (ppgr_id, ppgr_play_id, ppgr_grou_id, ppgr_position, ppgr_gamesw, ppgr_gamesl,
                                         ppgr_setw, ppgr_setl, ppgr_pointsw, ppgr_pointsl, ppgr_checked, ppgr_setdiff)
-            VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0)
             """.trimIndent(),
-            id, playerId, groupId
+            id, playerId, groupId, position
         )
     }
 }

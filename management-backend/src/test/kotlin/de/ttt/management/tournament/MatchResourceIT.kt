@@ -503,4 +503,70 @@ class MatchResourceIT {
             api.expectMatch(11, "knockout-quarterfinal-completed")
         }
     }
+
+    /**
+     * `types` of every player: the disciplines the player is still in. Each player's expected disciplines:
+     *
+     * | player | disciplines | why |
+     * |---|---|---|
+     * | 1 | 1, 2, 4 | 1st of finished group A; in running group C; doubles team 1 has an open match |
+     * | 2 | 1, 3 | 2nd of finished group A; open knockout match in 3 |
+     * | 3 | 5 | 3rd of group A; lost the knockout match in 3 although 2nd of group D; registered for 5, which has no matches |
+     * | 4 | 1, 3 | won group B, which sends one player on; open knockout match in 3 |
+     * | 5 | 4 | 2nd of group B (one qualifier); registered for 1, which has matches; doubles team 1 |
+     * | 6, 7 | 2, 4 | in running group C (7 has no open match of their own); doubles team 2 |
+     */
+    @Nested
+    inner class `the disciplines a player is still in` {
+
+        private val won = DatabaseHelper.MatchResult(sets1 = 3, sets2 = 0, balls1 = 33, balls2 = 15)
+
+        @BeforeEach
+        fun setup() {
+            db.insertDiscipline(1, "Herren A")
+            db.insertDiscipline(2, "Damen")
+            db.insertDiscipline(3, "Jugend")
+            db.insertDiscipline(4, "Herren A", kind = 2)
+            db.insertDiscipline(5, "Senioren")
+            (1L..7L).forEach { db.insertPlayer(it, "First$it", "Last$it") }
+
+            // discipline 1: groups A (two go through) and B (one goes through), both finished
+            db.insertGroup(1, "A", disciplineId = 1)
+            db.insertGroup(2, "B", disciplineId = 1, qualifyingPlaces = "1")
+            listOf(1L to 1, 2L to 2, 3L to 3).forEach { (player, place) -> db.insertPlayerPerGroup(player, player, groupId = 1, position = place) }
+            listOf(4L to 1, 5L to 2).forEach { (player, place) -> db.insertPlayerPerGroup(player, player, groupId = 2, position = place) }
+            db.insertMatch(1, 1, 2, disciplineId = 1, groupId = 1, result = won)
+            db.insertMatch(2, 1, 3, disciplineId = 1, groupId = 1, result = won)
+            db.insertMatch(3, 2, 3, disciplineId = 1, groupId = 1, result = won)
+            db.insertMatch(4, 4, 5, disciplineId = 1, groupId = 2, result = won)
+            db.insertRegistration(1, playerId = 5, disciplineId = 1)
+
+            // discipline 2: group C is still being played
+            db.insertGroup(3, "C", disciplineId = 2)
+            listOf(6L, 7L, 1L).forEachIndexed { i, player -> db.insertPlayerPerGroup(10 + player, player, groupId = 3, position = i + 1) }
+            db.insertMatch(5, 6, 7, disciplineId = 2, groupId = 3, result = won)
+            db.insertMatch(6, 6, 1, disciplineId = 2, groupId = 3)
+            db.insertMatch(7, 7, 1, disciplineId = 2, groupId = 3, result = won)
+
+            // discipline 3: group D is finished and the knockout stage runs
+            db.insertGroup(4, "D", disciplineId = 3)
+            listOf(2L to 1, 3L to 2).forEach { (player, place) -> db.insertPlayerPerGroup(20 + player, player, groupId = 4, position = place) }
+            db.insertMatch(8, 2, 3, disciplineId = 3, groupId = 4, result = won)
+            db.insertMatch(9, 2, 3, disciplineId = 3, groupId = 999, result = won)
+            db.insertMatch(10, 2, 4, disciplineId = 3, groupId = 999)
+
+            // discipline 4: doubles knockout, team 1 (players 1, 5) against team 2 (players 6, 7)
+            db.insertDouble(1, 1, 5, disciplineId = 4)
+            db.insertDouble(2, 6, 7, disciplineId = 4)
+            db.insertMatch(11, 100001, 100002, disciplineId = 4, groupId = 999)
+
+            // discipline 5: no matches yet
+            db.insertRegistration(2, playerId = 3, disciplineId = 5)
+        }
+
+        @Test
+        fun `every player of every match carries the disciplines they are still in`() {
+            api.get("/match/all").expectStatus().isOk.expectJson("match/disciplines-of-players")
+        }
+    }
 }

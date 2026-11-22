@@ -6,7 +6,9 @@ data class TournamentPlayer(
     var lastName: String? = null,
     var ttr: Int? = null,
     var paid: Boolean = false,
-    var club: TournamentClub? = null
+    var club: TournamentClub? = null,
+    /** The disciplines the player is still in ([DisciplineParticipation]), sorted by id. */
+    var types: List<Long> = emptyList()
 )
 
 /** The club a player plays for. */

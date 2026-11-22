@@ -65,8 +65,18 @@ const BACKEND_EVENTS: { name: string; topic: UpdateTopic; event: any; reloads: A
   { name: 'match-taken-back', topic: 'matches', event: matchTakenBack, reloads: MATCH_CHANGED },
   { name: 'player-active-changed', topic: 'players', event: playerActiveChanged, reloads: ['players', 'discipline'] },
   { name: 'player-paid', topic: 'players', event: playerPaid, reloads: ['players'] },
-  { name: 'player-registered', topic: 'players', event: playerRegistered, reloads: ['discipline', 'players'] },
-  { name: 'player-unregistered', topic: 'players', event: playerUnregistered, reloads: ['discipline', 'players'] },
+  {
+    name: 'player-registered',
+    topic: 'players',
+    event: playerRegistered,
+    reloads: ['discipline', 'players', 'matches'],
+  },
+  {
+    name: 'player-unregistered',
+    topic: 'players',
+    event: playerUnregistered,
+    reloads: ['discipline', 'players', 'matches'],
+  },
   { name: 'match-list-changed', topic: 'queue', event: matchListChanged, reloads: ['matchList', 'matches'] },
   { name: 'discipline-colors-changed', topic: 'settings', event: disciplineColorsChanged, reloads: ['typeColors'] },
   {

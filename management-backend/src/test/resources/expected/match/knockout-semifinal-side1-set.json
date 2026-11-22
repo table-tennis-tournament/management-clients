@@ -6,7 +6,8 @@
     "lastName" : "Last1",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   } ],
   "team2" : [ ],
   "side1Id" : 1,
@@ -54,7 +55,8 @@
     "lastName" : "Last1",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   },
   "player2" : null,
   "requestedCallNumber" : null,

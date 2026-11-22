@@ -21,7 +21,13 @@ Each discipline (e.g., Men's Single, Women's Double) has several attributes:
 - **Registration**: Players or doubles are registered for specific disciplines (in mktt; late entries in the admin view).
 - **Grouping**: mktt assigns players to groups and creates the group and KO matches.
 - **Seeding**: Players are seeded in groups or the KO bracket based on their TTR, in mktt.
-- **Standings**: When the last match of a group is completed, the backend computes the group standings (matches won, then set difference, then points won).
+- **Standings**: After every result change of a group match (a result, a correction, a take back), the backend ranks the group by its matches with a result (matches won, then set difference, then points won) and writes the places to mktt's `playerpergroup`. A match freed from its table counts once its result is entered. The places are current while the group is still being played; mktt draws the knockout stage from them.
+- **Disciplines a player is in**: Every player in a match response carries `types`, the ids of the disciplines the player is still in, sorted. admin-view's supervisor view shows them as small squares in the discipline colors next to the player's name. A doubles team's players are in its discipline. Per discipline:
+  - without matches: a registered player is in;
+  - with a knockout stage (any match of group `999`): a player is in while they have a match without a result, so a knockout loss takes them out;
+  - otherwise: a player is in while they have a match without a result, while their group is not finished, or when they finished their group within its qualifying places (`playgroups.Grou_QualPos`, 2 when it is not a number).
+
+  The disciplines' `active` flag does not matter.
 - **Colors**: Each discipline can get a background and a text color, used by the admin view to mark its matches.
 - **Short name**: Each discipline can get a short name of at most 30 characters (e.g. "J18 B" for "Jungen 18 B 1201-1400"), set in the admin view's settings. The admin view's table cards show it instead of the full name. mktt's `type` table has no column for it, so it is stored in the sidecar table `mgmt_type_short_name`.
 - **KO placement**: Writing the winner of a KO match into the next KO match is not migrated from the legacy backend yet.

@@ -1,16 +1,16 @@
 package de.ttt.management.grouping.domain
 
 /**
- * Pure standings computation for a completed round-robin group.
+ * Pure standings computation for a round-robin group, complete or still being played.
  *
- * For each player the completed matches are tallied into matches/sets/points won and lost,
+ * For each player the matches with a result are tallied into matches/sets/points won and lost,
  * then the players are ranked by `matchesWon` (desc), `setsDiff` (desc), `pointsWon` (desc).
  * Mirrors the legacy `updatePlayerPerGroup`.
  */
 object GroupStandingsCalculator {
 
     fun compute(players: List<PlayerPerGroup>, matches: List<GroupMatchResult>): List<PlayerPerGroup> {
-        val completed = matches.filter { it.isPlayed }
+        val completed = matches.filter { it.hasResult }
 
         val scored = players.map { player ->
             var matchesWon = 0
@@ -52,7 +52,7 @@ object GroupStandingsCalculator {
                 sets = "$setsWon : $setsLost",
                 points = "$pointsWon : $pointsLost",
                 setsDiff = setsWon - setsLost,
-                checked = playerMatches.isNotEmpty() && playerMatches.all { it.isPlayed }
+                checked = playerMatches.isNotEmpty() && playerMatches.all { it.hasResult }
             )
         }
 

@@ -6,14 +6,16 @@
     "lastName" : "Last5",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   }, {
     "id" : 6,
     "firstName" : "First6",
     "lastName" : "Last6",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   } ],
   "team2" : [ {
     "id" : 3,
@@ -21,14 +23,16 @@
     "lastName" : "Last3",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   }, {
     "id" : 4,
     "firstName" : "First4",
     "lastName" : "Last4",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   } ],
   "side1Id" : 100003,
   "side2Id" : 100002,
@@ -75,7 +79,8 @@
     "lastName" : "Last5",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   },
   "player2" : {
     "id" : 3,
@@ -83,7 +88,8 @@
     "lastName" : "Last3",
     "ttr" : null,
     "paid" : false,
-    "club" : null
+    "club" : null,
+    "types" : [ 1, 2 ]
   },
   "requestedCallNumber" : null,
   "sets" : [ ],

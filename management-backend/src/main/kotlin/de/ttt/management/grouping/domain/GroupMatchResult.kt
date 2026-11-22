@@ -12,5 +12,6 @@ data class GroupMatchResult(
     val sets2: Int,
     val balls1: Int,
     val balls2: Int,
-    val isPlayed: Boolean
+    /** The match has a winner. A match freed from its table waits for its result and does not count yet. */
+    val hasResult: Boolean
 )

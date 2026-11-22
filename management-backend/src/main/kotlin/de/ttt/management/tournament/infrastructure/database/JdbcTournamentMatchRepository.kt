@@ -13,7 +13,8 @@ import java.util.*
 class JdbcTournamentMatchRepository(
     private val jdbcClient: JdbcClient,
     private val idGenerator: IdGenerator,
-    private val clock: Clock
+    private val clock: Clock,
+    private val participationFacts: ParticipationFactsRepository
 ) : TournamentMatchRepository {
 
     private val rowMapper = RowMapper { rs, _ -> toMatch(rs) }
@@ -136,6 +137,20 @@ class JdbcTournamentMatchRepository(
         return matches
     }
 
+    /** Adds the calls, [TournamentMatch.isPlayable] and the disciplines each player is still in. */
+    private fun withPlayersInfo(matches: List<TournamentMatch>): List<TournamentMatch> =
+        withDisciplines(withPlayability(matches))
+
+    /** Sets [TournamentPlayer.types] of every player of the matches, computed for the whole tournament. */
+    private fun withDisciplines(matches: List<TournamentMatch>): List<TournamentMatch> {
+        if (matches.isEmpty()) return matches
+        val typesByPlayer = DisciplineParticipation.typeIdsByPlayer(participationFacts.load())
+        matches.flatMap { it.team1 + it.team2 }.forEach { player ->
+            player.types = player.id?.let { typesByPlayer[it] }.orEmpty()
+        }
+        return matches
+    }
+
     /**
      * Loads the calls and sets [TournamentMatch.isPlayable] against every blocking match of the tournament, not
      * only the loaded ones: a player on a table in one discipline blocks their matches in all others.
@@ -172,40 +187,40 @@ class JdbcTournamentMatchRepository(
             "LEFT JOIN tables tb2 ON tb2.tabl_id = st.tableId $sql"
 
     override fun findAll(): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = true))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("")).query(rowMapper).list(), withNames = true))
     }
 
     override fun findById(id: Long): Optional<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).list(), withNames = true))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_id = :id")).param("id", id).query(rowMapper).list(), withNames = true))
             .firstOrNull()
             .let { Optional.ofNullable(it) }
     }
 
     override fun findByTypeId(typeId: Long): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId"))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId"))
             .param("typeId", typeId).query(rowMapper).list(), withNames = true))
     }
 
     override fun findOpen(): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_played = 0")).query(rowMapper).list(), withNames = true))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_played = 0")).query(rowMapper).list(), withNames = true))
     }
 
     override fun findOpenByTypeId(typeId: Long): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 0"))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 0"))
             .param("typeId", typeId).query(rowMapper).list(), withNames = true))
     }
 
     override fun findPlayed(): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_played = 1")).query(rowMapper).list(), withNames = true))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_played = 1")).query(rowMapper).list(), withNames = true))
     }
 
     override fun findPlayedByTypeId(typeId: Long): List<TournamentMatch> {
-        return withPlayability(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 1"))
+        return withPlayersInfo(resolvePlayers(jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_played = 1"))
             .param("typeId", typeId).query(rowMapper).list(), withNames = true))
     }
 
     override fun findWaitingForFirstCall(): List<TournamentMatch> =
-        withPlayability(resolvePlayers(
+        withPlayersInfo(resolvePlayers(
             jdbcClient.sql(
                 selectMatches("WHERE mc.matc_id IS NULL AND m.matc_tabl_id > 0 AND m.matc_played = 0 ORDER BY m.matc_tabl_id, m.matc_id")
             ).query(rowMapper).list(),
@@ -213,7 +228,7 @@ class JdbcTournamentMatchRepository(
         ))
 
     override fun findWithRequestedCall(): List<TournamentMatch> =
-        withPlayability(resolvePlayers(
+        withPlayersInfo(resolvePlayers(
             jdbcClient.sql(
                 selectMatches(
                     "WHERE m.matc_tabl_id > 0 AND m.matc_played = 0 " +
@@ -226,7 +241,7 @@ class JdbcTournamentMatchRepository(
 
     override fun findByTableIds(tableIds: Collection<Long>): List<TournamentMatch> {
         if (tableIds.isEmpty()) return emptyList()
-        return withPlayability(resolvePlayers(
+        return withPlayersInfo(resolvePlayers(
             jdbcClient.sql(
                 selectMatches("WHERE m.matc_tabl_id IN (:tableIds) OR st.tableId IN (:tableIds) ORDER BY m.matc_tabl_id, m.matc_id")
             )
@@ -257,7 +272,7 @@ class JdbcTournamentMatchRepository(
     }
 
     override fun findByTypeIdAndNr(typeId: Long, nr: Int): TournamentMatch? =
-        withPlayability(resolvePlayers(
+        withPlayersInfo(resolvePlayers(
             jdbcClient.sql(selectMatches("WHERE m.matc_type_id = :typeId AND m.matc_nr = :nr ORDER BY m.matc_id"))
                 .param("typeId", typeId)
                 .param("nr", nr)

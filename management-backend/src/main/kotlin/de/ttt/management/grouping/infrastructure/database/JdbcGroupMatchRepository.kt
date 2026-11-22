@@ -19,7 +19,7 @@ class JdbcGroupMatchRepository(private val jdbcClient: JdbcClient) : GroupMatchR
             sets2 = rs.getInt("matc_sets2"),
             balls1 = rs.getInt("matc_balls1"),
             balls2 = rs.getInt("matc_balls2"),
-            isPlayed = rs.getBoolean("matc_played")
+            hasResult = (rs.getObject("matc_winner_id") as? Number)?.toLong()?.let { it > 0 } == true
         )
     }
 

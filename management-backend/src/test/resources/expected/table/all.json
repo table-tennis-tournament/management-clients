@@ -15,7 +15,8 @@
       "lastName" : "Doe",
       "ttr" : null,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     } ],
     "team2" : [ {
       "id" : 2,
@@ -23,7 +24,8 @@
       "lastName" : "Roe",
       "ttr" : null,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     } ],
     "side1Id" : 1,
     "side2Id" : 2,
@@ -67,7 +69,8 @@
       "lastName" : "Doe",
       "ttr" : null,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     },
     "player2" : {
       "id" : 2,
@@ -75,7 +78,8 @@
       "lastName" : "Roe",
       "ttr" : null,
       "paid" : false,
-      "club" : null
+      "club" : null,
+      "types" : [ 1 ]
     },
     "requestedCallNumber" : null,
     "sets" : [ ],

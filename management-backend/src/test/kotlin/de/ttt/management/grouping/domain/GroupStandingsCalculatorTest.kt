@@ -8,7 +8,7 @@ class GroupStandingsCalculatorTest {
     private fun player(id: Long) = PlayerPerGroup(id = id, playerId = id, groupId = 1)
 
     private fun match(id: Long, p1: Long, p2: Long, s1: Int, s2: Int, b1: Int, b2: Int, played: Boolean = true) =
-        GroupMatchResult(id, groupId = 1, player1Id = p1, player2Id = p2, sets1 = s1, sets2 = s2, balls1 = b1, balls2 = b2, isPlayed = played)
+        GroupMatchResult(id, groupId = 1, player1Id = p1, player2Id = p2, sets1 = s1, sets2 = s2, balls1 = b1, balls2 = b2, hasResult = played)
 
     /** The complete expected standing of player [id]; the totals are given, the strings and the set difference follow. */
     private fun standing(
