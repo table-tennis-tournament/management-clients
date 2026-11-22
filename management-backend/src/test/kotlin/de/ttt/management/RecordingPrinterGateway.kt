@@ -8,8 +8,8 @@ import de.ttt.management.settings.domain.PrinterGateway
  */
 class RecordingPrinterGateway : PrinterGateway {
 
-    /** One print job: the printer and the PDF. */
-    data class Job(val printer: String, val pdf: ByteArray)
+    /** One print job: the printer and the PDF. Tests compare its fields, never whole jobs. */
+    class Job(val printer: String, val pdf: ByteArray)
 
     private val jobs = mutableListOf<Job>()
 

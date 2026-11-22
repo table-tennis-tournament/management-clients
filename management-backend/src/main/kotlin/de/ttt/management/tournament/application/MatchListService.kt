@@ -31,7 +31,7 @@ class MatchListService(
         val existingIds = matchListRepository.findAll().flatMap { it.matchIds }.toSet()
         val newIds = matchIds
             .filter { it !in existingIds }
-            .filter { id -> matchRepository.findById(id).map { it.state == MatchState.Open }.orElse(false) }
+            .filter { id -> matchRepository.findById(id).orElse(null)?.state == MatchState.Open }
         if (newIds.isEmpty()) return null
 
         val entries = matchListRepository.findAll().toMutableList()

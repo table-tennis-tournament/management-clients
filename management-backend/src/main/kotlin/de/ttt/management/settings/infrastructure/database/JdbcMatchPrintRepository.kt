@@ -61,7 +61,7 @@ class JdbcMatchPrintRepository(private val jdbcClient: JdbcClient) : MatchPrintR
                 .param("id", rawId - 100000)
                 .query { rs, _ -> listOf(rs.getLong("doub_play1_id"), rs.getLong("doub_play2_id")) }
                 .optional()
-                .orElse(emptyList())
+                .orElse(null) ?: return emptyList()
             return memberIds.flatMap { resolvePlayerNames(it) }
         }
         val name = jdbcClient.sql("SELECT play_lastname, play_firstname FROM player WHERE play_id = :id")
@@ -71,8 +71,8 @@ class JdbcMatchPrintRepository(private val jdbcClient: JdbcClient) : MatchPrintR
                     .joinToString(", ")
             }
             .optional()
-            .orElse("")
-        return listOf(name)
+            .orElse(null)
+        return listOf(name ?: "")
     }
 
     private data class Row(

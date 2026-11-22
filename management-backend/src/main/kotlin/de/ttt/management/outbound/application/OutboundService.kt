@@ -3,6 +3,7 @@ package de.ttt.management.outbound.application
 import de.ttt.management.outbound.domain.Topic
 import de.ttt.management.outbound.domain.UpdateScope
 import de.ttt.management.outbound.domain.WebSocketSender
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -26,6 +27,6 @@ class OutboundService(private val webSocketSender: WebSocketSender) {
     }
 
     private companion object {
-        val log = LoggerFactory.getLogger(OutboundService::class.java)
+        val log: Logger = LoggerFactory.getLogger(OutboundService::class.java)
     }
 }

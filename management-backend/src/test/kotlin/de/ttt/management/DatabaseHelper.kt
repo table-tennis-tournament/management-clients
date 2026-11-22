@@ -36,6 +36,8 @@ class DatabaseHelper(
      * Deletes every row of every table except Flyway's history and restarts the id sequences,
      * including the generated UUIDs.
      */
+    // the table names come from information_schema, not from input
+    @Suppress("SqlSourceToSinkFlow")
     fun clean() {
         val tables = jdbc.queryForList(
             """
@@ -124,10 +126,6 @@ class DatabaseHelper(
 
     /** Tables with ids and numbers [ids]. */
     fun insertTables(ids: LongRange) = ids.forEach { insertTable(it) }
-
-    fun lockTable(tableId: Long) {
-        jdbc.update("INSERT INTO mgmt_table_lock (tabl_id, locked) VALUES (?, 1)", tableId)
-    }
 
     /** A match type (stage), e.g. "Gruppenspiel" or "Finale". */
     fun insertMatchType(id: Long, name: String) {

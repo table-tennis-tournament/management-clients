@@ -6,6 +6,7 @@ import de.ttt.management.grouping.domain.PlayerPerGroupRepository
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchResultUpdated
 import de.ttt.management.tournament.MatchTakenBack
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
@@ -48,6 +49,6 @@ class GroupingService(
     }
 
     private companion object {
-        val log = LoggerFactory.getLogger(GroupingService::class.java)
+        val log: Logger = LoggerFactory.getLogger(GroupingService::class.java)
     }
 }

@@ -116,7 +116,7 @@ class JdbcTournamentMatchRepository(
         doubles: Map<Long, List<Long>>,
         players: Map<Long, TournamentPlayer>
     ): List<TournamentPlayer> = side.flatMap { p ->
-        val raw = p.id ?: return@flatMap emptyList<TournamentPlayer>()
+        val raw = p.id ?: return@flatMap emptyList()
         if (raw >= 100000) {
             (doubles[raw - 100000] ?: emptyList()).map { pid -> players[pid] ?: TournamentPlayer(id = pid) }
         } else {
@@ -406,11 +406,12 @@ class JdbcTournamentMatchRepository(
         jdbcClient.sql("DELETE FROM mgmt_matchtable WHERE matchId IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
             .param("typeId", typeId)
             .update()
-        listOf("mgmt_match_call", "mgmt_player_call").forEach { table ->
-            jdbcClient.sql("DELETE FROM $table WHERE matc_id IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
-                .param("typeId", typeId)
-                .update()
-        }
+        jdbcClient.sql("DELETE FROM mgmt_match_call WHERE matc_id IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
+            .param("typeId", typeId)
+            .update()
+        jdbcClient.sql("DELETE FROM mgmt_player_call WHERE matc_id IN (SELECT matc_id FROM matches WHERE matc_type_id = :typeId)")
+            .param("typeId", typeId)
+            .update()
         return jdbcClient.sql("DELETE FROM matches WHERE matc_type_id = :typeId").param("typeId", typeId).update()
     }
 }

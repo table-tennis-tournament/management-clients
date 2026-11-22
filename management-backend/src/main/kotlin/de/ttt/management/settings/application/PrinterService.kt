@@ -6,6 +6,7 @@ import de.ttt.management.settings.domain.PdfGenerator
 import de.ttt.management.settings.domain.PrinterGateway
 import de.ttt.management.settings.domain.QrCodeGenerator
 import de.ttt.management.tournament.MatchAssigned
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -18,7 +19,7 @@ class PrinterService(
     private val qrCodeGenerator: QrCodeGenerator,
     private val pdfGenerator: PdfGenerator,
     private val matchPrintRepository: MatchPrintRepository,
-    @Value("\${management.printer.default-name:PDF}") private val defaultPrinterName: String
+    @Value($$"${management.printer.default-name:PDF}") private val defaultPrinterName: String
 ) {
 
     private var selectedPrinter: String? = null
@@ -142,6 +143,6 @@ class PrinterService(
     }
 
     private companion object {
-        val log = LoggerFactory.getLogger(PrinterService::class.java)
+        val log: Logger = LoggerFactory.getLogger(PrinterService::class.java)
     }
 }

@@ -31,7 +31,7 @@ class MkttSchemaHealthIndicator(private val jdbcClient: JdbcClient) : TimeBoxedH
     }
 
     private fun isReadable(table: String): Boolean =
-        runCatching { jdbcClient.sql("SELECT 1 FROM $table WHERE 1 = 0").query().listOfRows() }.isSuccess
+        runCatching { jdbcClient.sql("SELECT 1 FROM $table LIMIT 0").query().listOfRows() }.isSuccess
 
     private fun count(table: String): Long =
         jdbcClient.sql("SELECT COUNT(*) FROM $table").query(Long::class.java).single()

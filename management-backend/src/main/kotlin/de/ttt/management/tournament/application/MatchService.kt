@@ -11,6 +11,7 @@ import de.ttt.management.tournament.MatchResultUpdated
 import de.ttt.management.tournament.MatchStarted
 import de.ttt.management.tournament.MatchTakenBack
 import de.ttt.management.tournament.domain.*
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -57,7 +58,7 @@ class MatchService(
 
     /** A match can only go to a table that exists and is not locked. */
     private fun isUsableTable(tableId: Long): Boolean =
-        tableRepository.findById(tableId).map { !it.isLocked }.orElse(false)
+        tableRepository.findById(tableId).orElse(null)?.isLocked == false
 
     @Transactional
     fun assignMatch(matchId: Long, tableId: Long): Boolean = isUsableTable(tableId) &&
@@ -79,11 +80,11 @@ class MatchService(
     fun takeBackRunningMatch(matchId: Long): Boolean =
         transition(listOf(matchId), { require(it.isPlaying) { "Only a running match can be taken back" }; it.takeBack() }, event = ::takenBackEvent)
 
-    @Transactional
     /**
      * Takes matches that wait at two tables off table [tableId] ("Entfernen"); each keeps waiting at its other
      * table. A match at only one table is rejected.
      */
+    @Transactional
     fun removeMatchesFromTable(tableId: Long, matchIds: List<Long>): Boolean =
         matchIds.map { matchId ->
             transition(listOf(matchId), { it.leaveOneTable(tableId) }) { (t) ->
@@ -277,7 +278,7 @@ class MatchService(
             val previousTableIds = listOfNotNull(match.tableId, match.secondTableId)
             try {
                 apply(match)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 allSuccess = false
                 continue
             }
@@ -322,6 +323,6 @@ class MatchService(
     )
 
     private companion object {
-        val log = LoggerFactory.getLogger(MatchService::class.java)
+        val log: Logger = LoggerFactory.getLogger(MatchService::class.java)
     }
 }

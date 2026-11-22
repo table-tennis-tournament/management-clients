@@ -6,7 +6,3 @@ data class MatchList(
     val asGroup: Long? = null,
     var position: Int
 )
-
-data class MatchListInfo(
-    val matchList: MatchList
-)

@@ -1,3 +1,6 @@
+// snake_case property names are the JSON contract with tablemanager-view (its models use the same names)
+@file:Suppress("PropertyName")
+
 package de.ttt.management.tournament.infrastructure.web
 
 import java.time.OffsetDateTime
