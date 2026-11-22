@@ -34,6 +34,8 @@ For development, start each client with `npm start` (admin-view on 4201, result-
 
 ## Architecture Documentation
 
+The documentation is published on GitHub Pages: **<https://table-tennis-tournament.github.io/management-clients/>** ([arc42 architecture](https://table-tennis-tournament.github.io/management-clients/arc42/architecture.html)), rebuilt on every push to `main` and every `v*` tag.
+
 - **[arc42 Architecture](./docs/arc42/architecture.adoc)** - Architecture documentation with embedded C4 diagrams (context, container, component and dynamic)
 - **[Architecture decisions](./docs/adr/)** - ADRs
 - **[Glossary](./GLOSSARY.md)** - Canonical domain language of the system

@@ -8,13 +8,23 @@ on:
       - 'v*'
   workflow_dispatch:
 
+# Deploys with GitHub's Pages actions (repository Settings > Pages > Source: "GitHub Actions").
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+# one deployment at a time; a newer run does not cancel one that is deploying
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
-    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -134,11 +144,14 @@ jobs:
           </html>
           EOF
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'docs: update documentation to ${{ github.sha }}'
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
