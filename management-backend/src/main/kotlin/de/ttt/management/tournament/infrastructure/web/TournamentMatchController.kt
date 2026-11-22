@@ -73,11 +73,10 @@ class TournamentMatchController(
         }
     }
 
-    @PostMapping("/match/takeBack/{id}", "/match/stop/{id}")
+    @PostMapping("/match/takeBack/{id}")
     @Operation(
         summary = "Take back a running match",
-        description = "Takes a running match back from its table (the table manager's \"Zurück\"). " +
-            "`/match/stop/{id}` is the deprecated name of this endpoint and will be removed."
+        description = "Takes a running match back from its table (the table manager's \"Zurück\")."
     )
     fun takeBackRunningMatch(
         @Parameter(description = "ID of the match") @PathVariable id: Long

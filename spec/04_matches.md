@@ -76,7 +76,7 @@ Sets are sent as `[[pointsSide1, pointsSide2], ...]`, for example `[[11,5],[11,7
 | `GET` | `/match/open/all`, `/match/open/typeid/{typeId}` | Matches that are not played yet. |
 | `GET` | `/match/played/all`, `/match/played/typeid/{typeId}` | Played matches. |
 | `POST` | `/match/start/{id}/{tableId}` | Start a match on the table with the **id** `{tableId}`. |
-| `POST` | `/match/takeBack/{id}` | Take back a running match (the table manager's "Zurück"). `/match/stop/{id}` is its deprecated alias. |
+| `POST` | `/match/takeBack/{id}` | Take back a running match (the table manager's "Zurück"). |
 | `POST` | `/match/takeBack` | Take back matches. Body: `[matchId, ...]`. |
 | `POST` | `/match/free` | Free matches: they leave their table and wait for their result (Finished). Body: `[matchId, ...]`. |
 | `POST` | `/match/updateResult/{id}` | Enter an interim result; the match keeps running. Body: sets. |

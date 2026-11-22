@@ -161,10 +161,9 @@ class MatchResourceIT {
         }
 
         @Test
-        fun `the deprecated stop path still takes back a running match`() {
+        fun `the removed stop path is not found`() {
             api.post("/match/start/1/3").expectStatus().isOk
-            api.post("/match/stop/1").expectStatus().isOk.expectExactJson(success)
-            api.expectMatch(1, "after-take-back-running")
+            api.post("/match/stop/1").expectStatus().isNotFound
         }
 
         @Test
