@@ -35,6 +35,14 @@ class JdbcPlayerPerGroupRepository(private val jdbcClient: JdbcClient) : PlayerP
             .query(rowMapper)
             .list()
 
+    override fun findByDisciplineId(disciplineId: Long): List<PlayerPerGroup> =
+        jdbcClient.sql(
+            "SELECT ppg.* FROM playerpergroup ppg JOIN playgroups g ON g.grou_id = ppg.ppgr_grou_id WHERE g.grou_type_id = :typeId"
+        )
+            .param("typeId", disciplineId)
+            .query(rowMapper)
+            .list()
+
     override fun save(playerPerGroup: PlayerPerGroup) {
         jdbcClient.sql(
             """

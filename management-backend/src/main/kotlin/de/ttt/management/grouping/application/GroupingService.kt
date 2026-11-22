@@ -2,6 +2,7 @@ package de.ttt.management.grouping.application
 
 import de.ttt.management.grouping.domain.GroupMatchRepository
 import de.ttt.management.grouping.domain.GroupStandingsCalculator
+import de.ttt.management.grouping.domain.PlayerPerGroup
 import de.ttt.management.grouping.domain.PlayerPerGroupRepository
 import de.ttt.management.tournament.MatchCompleted
 import de.ttt.management.tournament.MatchResultUpdated
@@ -48,7 +49,54 @@ class GroupingService(
             .forEach { playerPerGroupRepository.save(it) }
     }
 
+    /**
+     * The standings of every group of discipline [disciplineId], ordered by group, each group by place. A side
+     * not ranked yet (place 0) comes last.
+     */
+    fun getStandings(disciplineId: Long): List<GroupStandings> =
+        playerPerGroupRepository.findByDisciplineId(disciplineId)
+            .groupBy { it.groupId }
+            .toSortedMap()
+            .map { (groupId, rows) ->
+                GroupStandings(
+                    groupId = groupId,
+                    rows = rows.sortedWith(compareBy<PlayerPerGroup>({ it.position == 0 }, { it.position }, { it.playerId }))
+                        .map(StandingRow::of)
+                )
+            }
+
     private companion object {
         val log: Logger = LoggerFactory.getLogger(GroupingService::class.java)
+    }
+}
+
+/** The standings of one group. */
+data class GroupStandings(
+    val groupId: Long,
+    val rows: List<StandingRow>
+)
+
+/** A side's place in its group: `sideId` is the match side id (a player id, or `100000 + doub_id`). */
+data class StandingRow(
+    val sideId: Long,
+    val position: Int,
+    val matchesWon: Int,
+    val matchesLost: Int,
+    val setsWon: Int,
+    val setsLost: Int,
+    val pointsWon: Int,
+    val pointsLost: Int
+) {
+    companion object {
+        fun of(standing: PlayerPerGroup) = StandingRow(
+            sideId = standing.playerId,
+            position = standing.position,
+            matchesWon = standing.matchesWon,
+            matchesLost = standing.matchesLost,
+            setsWon = standing.setsWon,
+            setsLost = standing.setsLost,
+            pointsWon = standing.pointsWon,
+            pointsLost = standing.pointsLost
+        )
     }
 }

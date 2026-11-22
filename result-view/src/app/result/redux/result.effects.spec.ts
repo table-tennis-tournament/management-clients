@@ -72,6 +72,8 @@ describe('the result effects', () => {
       playGroup: { id: 3, name: 'C' },
       team1: [{ id: 1 }],
       team2: [{ id: 2 }],
+      side1Id: 1,
+      side2Id: 2,
       state: 'Open' as const,
     };
     const final = {
@@ -82,19 +84,55 @@ describe('the result effects', () => {
       state: 'Open' as const,
     };
     const getMatchesByType = vi.fn(() => of([group, final]));
-    const effects = effectsWith(ResultActions.loadMatches({ typeId: 5 }), 5, { match: { getMatchesByType } });
+    const standing = (sideId: number, position: number) => ({
+      sideId,
+      position,
+      matchesWon: 0,
+      matchesLost: 0,
+      setsWon: 0,
+      setsLost: 0,
+      pointsWon: 0,
+      pointsLost: 0,
+    });
+    const getStandings = vi.fn(() => of([{ groupId: 3, rows: [standing(2, 1), standing(1, 2)] }]));
+    const effects = effectsWith(ResultActions.loadMatches({ typeId: 5 }), 5, {
+      match: { getMatchesByType, getStandings },
+    });
 
     const [success] = (await emitted(effects.loadMatches$)) as any[];
 
     expect(getMatchesByType.mock.calls).toStrictEqual([[5]]);
+    expect(getStandings.mock.calls).toStrictEqual([[5]]);
+    expect(success.groups[0].standings.map((line) => [line.position, line.players])).toEqual([
+      [1, [{ id: 2 }]],
+      [2, [{ id: 1 }]],
+    ]);
     expect(success.matches).toEqual([group, final]);
     expect(success.groups.map((g) => [g.name, g.matches.map((m) => m.id)])).toEqual([['Gruppe C', [1]]]);
     expect(success.stages.map((s) => [s.name, s.matches.map((m) => m.id)])).toEqual([['Finale', [2]]]);
   });
 
+  it('shows the matches without standings when the standings do not load', async () => {
+    const group = {
+      id: 1,
+      playGroup: { id: 3, name: 'C' },
+      team1: [{ id: 1 }],
+      team2: [{ id: 2 }],
+      side1Id: 1,
+      side2Id: 2,
+    };
+    const effects = effectsWith(ResultActions.loadMatches({ typeId: 5 }), 5, {
+      match: { getMatchesByType: () => of([group]), getStandings: () => throwError(() => 'down') },
+    });
+
+    const [success] = (await emitted(effects.loadMatches$)) as any[];
+
+    expect(success.groups.map((g) => [g.name, g.standings])).toEqual([['Gruppe C', []]]);
+  });
+
   it('reports an error when the matches do not load', async () => {
     const effects = effectsWith(ResultActions.loadMatches({ typeId: 5 }), 5, {
-      match: { getMatchesByType: () => throwError(() => 'down') },
+      match: { getMatchesByType: () => throwError(() => 'down'), getStandings: () => of([]) },
     });
 
     expect(await emitted(effects.loadMatches$)).toStrictEqual([ResultActions.loadMatchesError()]);

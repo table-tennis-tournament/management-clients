@@ -8,10 +8,7 @@ Resolved by architecture review candidate 3: the clients use the backend `MatchS
 
 ## 2. Tablemanager DTO mismatches
 
-- `tablemanager-view/src/app/table-list/tt-table/table.model.ts` declares `table_id` and `table_number` as optional strings; the backend `TableManagerTableInfo` emits nullable `Long`.
-- The backend returns `club = null` for every tablemanager player (`TableController.kt`), so the club is blank. (`call_count` is the player's own call count, so a Side's badge shows from its Second call on.)
-- The player IDs selected in the tablemanager player dialog are dropped at the HTTP boundary (`match.service.ts`), and the backend endpoint only needs the `matchId`.
-- The navigation menu lists table managers 1-4 while the routes support 1-5.
+Resolved: `Table` declares `table_id`, `table_number` and `table_manager_id` as numbers, the backend sends each player's club, the player dialog's ids reach `POST /playercall/{matchId}`, and the navigation lists table managers 1-5 like the routes.
 
 ## 3. Standalone Dockerfiles and nginx configs
 
@@ -27,11 +24,11 @@ Resolved: `container.puml` and `backend-components.puml` show the Kotlin/Spring 
 
 ## 6. Rename "stop" to "take back"
 
-Resolved: the table manager's "Zurück" calls `POST /api/v2/match/takeBack/{id}`, which maps to `MatchService.takeBackRunningMatch`. `POST /api/v2/match/stop/{id}` stays as a deprecated alias for one release (`TournamentModuleIT` covers both); remove it with the next release.
+Resolved: the table manager's "Zurück" calls `POST /api/v2/match/takeBack/{id}`, which maps to `MatchService.takeBackRunningMatch`. The deprecated alias `POST /api/v2/match/stop/{id}` shipped in v8.0.0-alpha and v8.0.2-beta and is removed (`MatchResourceIT` checks it is not found).
 
 ## 7. Group standings in result-view
 
-The backend keeps the group standings in `playerpergroup` current after every result change, but result-view shows only a group's matches. Showing the standings needs an endpoint for them, a live-update event when they change, and a standings table in result-view's group view.
+Resolved: `GET /api/v2/groups/standings/{typeId}` (`grouping` module, `GroupsResourceIT`) returns each group's rows by place. result-view loads them with the matches, names each side by the players of its matches (`side1Id`/`side2Id`) and shows a standings table above each group's matches; it shows the matches alone when the standings do not load. No new event: the standings are written in the transaction of the result, before its update event reaches result-view.
 
 ## 8. Other open items
 

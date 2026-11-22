@@ -21,7 +21,9 @@ Each discipline (e.g., Men's Single, Women's Double) has several attributes:
 - **Registration**: Players or doubles are registered for specific disciplines (in mktt; late entries in the admin view).
 - **Grouping**: mktt assigns players to groups and creates the group and KO matches.
 - **Seeding**: Players are seeded in groups or the KO bracket based on their TTR, in mktt.
-- **Standings**: After every result change of a group match (a result, a correction, a take back), the backend ranks the group by its matches with a result (matches won, then set difference, then points won) and writes the places to mktt's `playerpergroup`. A match freed from its table counts once its result is entered. The places are current while the group is still being played; mktt draws the knockout stage from them.
+- **Standings**: After every result change of a group match (a result, a correction, a take back), the backend ranks the group by its matches with a result (matches won, then set difference, then points won) and writes the places to mktt's `playerpergroup`. A match freed from its table counts once its result is entered. The places are current while the group is still being played; mktt draws the knockout stage from them. The result view
+  shows them as a table above each group's matches; it reloads them with the matches on every result event, so they need
+  no update event of their own.
 - **Disciplines a player is in**: Every player in a match response carries `types`, the ids of the disciplines the player is still in, sorted. admin-view's supervisor view shows them as small squares in the discipline colors next to the player's name. A doubles team's players are in its discipline. Per discipline:
   - without matches: a registered player is in;
   - with a knockout stage (any match of group `999`): a player is in while they have a match without a result, so a knockout loss takes them out;
@@ -42,6 +44,7 @@ is served by the backend itself (port 8080, not through nginx) at `/v3/api-docs`
 |---|---|---|
 | `GET` | `/types/all` | All disciplines of the tournament module, doubles named "…-Doppel". |
 | `GET` | `/types/open/all` | The active disciplines (used by the result view). |
+| `GET` | `/groups/standings/{typeId}` | The standings of every group of a discipline: `[{"groupId", "rows": [{"sideId", "position", "matchesWon", "matchesLost", "setsWon", "setsLost", "pointsWon", "pointsLost"}]}]`, groups by id, rows by place; place 0 (not ranked yet) last. `sideId` is the match side id. |
 | `GET` | `/disciplines` | All disciplines of the registration module. |
 | `GET` | `/disciplines/active` | The active disciplines of the registration module. |
 | `DELETE` | `/match/type/{id}` | Delete all matches of a discipline. |

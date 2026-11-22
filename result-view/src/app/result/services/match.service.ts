@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match } from '../data/match';
 import { Type } from '../data/type';
+import { GroupStandings } from '../data/standing';
 
 @Injectable({
   providedIn: 'root',
@@ -12,5 +13,9 @@ export class MatchService {
 
   getMatchesByType(typeId: number): Observable<Match[]> {
     return this.http.get<Type[]>(`/api/v2/match/typeid/${typeId}`);
+  }
+
+  getStandings(typeId: number): Observable<GroupStandings[]> {
+    return this.http.get<GroupStandings[]>(`/api/v2/groups/standings/${typeId}`);
   }
 }

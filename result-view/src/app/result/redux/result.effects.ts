@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { DisciplineTabService } from '../services/discipline-tab.service';
 import { MatchService } from '../services/match.service';
@@ -50,12 +50,16 @@ export class ResultEffects {
     this.actions$.pipe(
       ofType(ResultActions.loadMatches),
       switchMap(({ typeId }) =>
-        this.matchService.getMatchesByType(typeId).pipe(
-          map((matches) => {
+        forkJoin({
+          matches: this.matchService.getMatchesByType(typeId),
+          // the matches are shown without standings when these do not load
+          standings: this.matchService.getStandings(typeId).pipe(catchError(() => of([]))),
+        }).pipe(
+          map(({ matches, standings }) => {
             const tab = this.tabService.getTabForMatches(matches);
             return ResultActions.loadMatchesSuccess({
               matches,
-              groups: tab.groups,
+              groups: this.tabService.withStandings(tab.groups, standings),
               stages: tab.stages,
             });
           }),

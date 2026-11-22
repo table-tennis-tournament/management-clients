@@ -18,6 +18,9 @@ export interface Match {
   tableId?: number;
   team1?: Player[];
   team2?: Player[];
+  /** The side ids of [team1] and [team2]: a player id, or `100000 + doubles id`. */
+  side1Id?: number;
+  side2Id?: number;
   matchType?: MatchType;
   type?: Type;
   playGroup?: Group;

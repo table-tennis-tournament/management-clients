@@ -3,6 +3,8 @@ import { DisciplineGroup } from '../data/discipline.group';
 import { DisciplineTab } from '../data/discipline.tab';
 import { isOver } from '../../shared/match-state/match-state';
 import { Match } from '../data/match';
+import { GroupStandings, StandingLine } from '../data/standing';
+import { Player } from '../data/player';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +49,7 @@ export class DisciplineTabService {
 
       if (!currentItemTab.groups[currentItem.playGroup.id]) {
         currentItemTab.groups[currentItem.playGroup.id] = {
+          id: currentItem.playGroup.id,
           name: 'Gruppe ' + currentItem.playGroup.name,
           isComplete: true,
           isMatchActive: this.isMatchActive,
@@ -73,6 +76,30 @@ export class DisciplineTabService {
   /** A Completed or Finished (walkover) match counts as done. */
   private isMatchComplete(currentItem: Match) {
     return isOver(currentItem);
+  }
+
+  /**
+   * Gives each group its standings, the players of each side taken from the group's matches. Rows of a side
+   * without a match in the group are left out.
+   */
+  withStandings(groups: DisciplineGroup[], standings: GroupStandings[]): DisciplineGroup[] {
+    return groups.map((group) => {
+      const rows = standings.find((s) => s.groupId === group.id)?.rows ?? [];
+      const players = this.playersBySide(group.matches);
+      const lines: StandingLine[] = rows
+        .filter((row) => players.has(row.sideId))
+        .map((row) => ({ ...row, players: players.get(row.sideId) }));
+      return { ...group, standings: lines };
+    });
+  }
+
+  private playersBySide(matches: Match[]): Map<number, Player[]> {
+    const players = new Map<number, Player[]>();
+    for (const match of matches) {
+      if (match.side1Id != null && match.team1?.length) players.set(match.side1Id, match.team1);
+      if (match.side2Id != null && match.team2?.length) players.set(match.side2Id, match.team2);
+    }
+    return players;
   }
 
   getCleanedGroups(groupsToClean: DisciplineGroup[]) {
