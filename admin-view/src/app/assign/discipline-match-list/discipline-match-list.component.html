@@ -59,7 +59,7 @@
   @if (currentDisciplineId === -1) {
     <mat-list>
       @for (currentMatch of matchList; track currentMatch; let i = $index) {
-        <div class="mat-list-item border-bottom border-secondary">
+        <div class="queue-item border-bottom border-secondary">
           @if (currentMatch.matchinfo[0].playGroup !== null) {
             <div>
               <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type.id" [typeColors]="typeColors">

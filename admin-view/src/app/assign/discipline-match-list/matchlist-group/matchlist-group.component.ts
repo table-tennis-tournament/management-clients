@@ -5,12 +5,7 @@ import { TypeColorMap } from '../../../settings/settings.model';
 
 import { TypeColorDirective } from '../../../shared/directives/type-color.directive';
 
-import {
-  MatExpansionPanel,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-  MatExpansionPanelDescription,
-} from '@angular/material/expansion';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 import { MatList } from '@angular/material/list';
 
@@ -27,7 +22,6 @@ import { DisciplineTypePipe } from '../../../shared/pipes/discipline-type.pipe';
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
     MatList,
     TeamItemComponent,
     DisciplineTypePipe,

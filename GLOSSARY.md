@@ -12,7 +12,7 @@ This glossary defines the canonical domain language of the Table Tennis Tourname
 
 **TTR** — the official table tennis ranking used for players in Germany.
 
-**Discipline** — a competition category within the tournament, for example "Herren A" or "Damen D 0-1500". Each discipline has a *kind* (Singles or Doubles) plus attributes such as a TTR range, an age range, a playing system and a knockout size. A discipline is stored in the `type` table.
+**Discipline** — a competition category within the tournament, for example "Herren A" or "Damen D 0-1500". Each discipline has a *kind* (Singles or Doubles) plus attributes such as a TTR range, an age range, a playing system and a knockout size. A discipline is stored in the `type` table. It may have a *short name* for places with little room, such as the table cards.
 
 **Singles** — a playing format in which a Side consists of one Player.
 

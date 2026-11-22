@@ -18,3 +18,8 @@
 .mat-list-item {
   height: 60px;
 }
+
+// A queue entry grows with its content: an opened group shows its matches instead of covering the entries below.
+.queue-item {
+  min-height: 60px;
+}

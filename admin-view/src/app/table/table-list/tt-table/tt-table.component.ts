@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableDto } from '../../tabledto.model';
 import { MatchToTable } from './tt-table-content/matchtotable.model';
-import { TypeColorMap } from '../../../settings/settings.model';
+import { ShortNameMap, TypeColorMap } from '../../../settings/settings.model';
 import { canUseSecondTable, matchesOnTwoTables } from '../../table-actions';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { TypeColorDirective } from '../../../shared/directives/type-color.directive';
@@ -37,6 +37,9 @@ export class TtTableComponent {
 
   @Input()
   typeColors: TypeColorMap;
+
+  @Input()
+  shortNames: ShortNameMap;
 
   @Output()
   resultForMatch = new EventEmitter<any>();

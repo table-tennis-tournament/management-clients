@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Settings, TypeColor, TypeColorMap } from '../settings.model';
+import { Settings, ShortNameMap, TypeColor, TypeColorMap } from '../settings.model';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
-import { MatMiniFabButton, MatButton } from '@angular/material/button';
+import { MatMiniFabButton, MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 
@@ -24,6 +24,7 @@ import { MatInput } from '@angular/material/input';
     MatInput,
     MatHint,
     MatButton,
+    MatIconButton,
   ],
 })
 export class SettingsListComponent {
@@ -66,6 +67,33 @@ export class SettingsListComponent {
 
   @Input()
   types: any[];
+
+  /** The saved short names; [shortNameDrafts] holds what is typed but not saved yet. */
+  @Input()
+  set shortNames(value: ShortNameMap) {
+    this._shortNames = value ?? {};
+    this.shortNameDrafts = { ...this._shortNames };
+  }
+
+  get shortNames() {
+    return this._shortNames;
+  }
+
+  private _shortNames: ShortNameMap = {};
+  shortNameDrafts: ShortNameMap = {};
+
+  readonly maxShortNameLength = 30;
+
+  @Output()
+  saveShortName: EventEmitter<{ typeId: number; shortName: string }> = new EventEmitter();
+
+  isShortNameChanged(typeId: number) {
+    return (this.shortNameDrafts[typeId] ?? '').trim() !== (this._shortNames[typeId] ?? '');
+  }
+
+  saveShortNameClick(typeId: number) {
+    this.saveShortName.emit({ typeId, shortName: (this.shortNameDrafts[typeId] ?? '').trim() });
+  }
 
   @Output()
   printForAssign: EventEmitter<boolean> = new EventEmitter();

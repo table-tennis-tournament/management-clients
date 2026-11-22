@@ -4,6 +4,7 @@ import de.ttt.management.outbound.application.OutboundService
 import de.ttt.management.outbound.domain.Topic
 import de.ttt.management.outbound.domain.UpdateScope
 import de.ttt.management.registration.DisciplineColorsChanged
+import de.ttt.management.registration.DisciplineShortNameChanged
 import de.ttt.management.registration.PlayerActiveChanged
 import de.ttt.management.registration.PlayerPaid
 import de.ttt.management.registration.PlayerRegistered
@@ -134,6 +135,11 @@ class OutboundEventListeners(private val outboundService: OutboundService) {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun on(event: DisciplineColorsChanged) {
         push(Topic.SETTINGS, "DISCIPLINE_COLORS_CHANGED", scope(emptyList(), event.disciplineIds, emptyList()), event)
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun on(event: DisciplineShortNameChanged) {
+        push(Topic.SETTINGS, "DISCIPLINE_SHORT_NAME_CHANGED", scope(emptyList(), listOf(event.disciplineId), emptyList()), event)
     }
 
     private fun push(topic: Topic, type: String, scope: UpdateScope, payload: Any) =

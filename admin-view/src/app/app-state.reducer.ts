@@ -74,6 +74,7 @@ export const getResultMatchesLoading = createSelector(
 export const getSettingsState = createSelector((state: State) => state.settings, fromSettings.getSettings);
 export const getSettingsLoading = createSelector((state: State) => state.settings, fromSettings.getSettingsLoading);
 export const getTypeColorsMapState = createSelector((state: State) => state.settings, fromSettings.getTypeColors);
+export const getShortNamesState = createSelector((state: State) => state.settings, fromSettings.getShortNames);
 export const getPrintersState = createSelector((state: State) => state.settings, fromSettings.getPrinters);
 
 export const getRefereesState = createSelector((state: State) => state.caller, fromCaller.getReferees);

@@ -1,11 +1,17 @@
-.header-main-container {
-  display: flex;
-  justify-content: space-between;
-  flex: 1;
-  min-width: 160px;
+// The Assign view's queue is a narrow column: the header must not push its icons out of the panel.
+.group-header {
+  padding: 0 12px;
 }
 
-.header-center-content {
-  flex: 1;
-  order: 1;
+.group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-right: 0;
+}
+
+.blocked-icon {
+  margin-left: auto;
+  flex-shrink: 0;
 }

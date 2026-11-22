@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableDto } from '../tabledto.model';
 import { MatchToTable } from './tt-table/tt-table-content/matchtotable.model';
-import { TypeColorMap } from '../../settings/settings.model';
+import { ShortNameMap, TypeColorMap } from '../../settings/settings.model';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TtTableComponent } from './tt-table/tt-table.component';
 
@@ -20,6 +20,9 @@ export class TableListComponent {
 
   @Input()
   typeColors: TypeColorMap;
+
+  @Input()
+  shortNames: ShortNameMap;
 
   @Output()
   lockTable = new EventEmitter<number>();

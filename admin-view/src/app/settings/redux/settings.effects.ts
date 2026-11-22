@@ -31,6 +31,11 @@ import {
   SetBulkTypeColors,
   SetBulkTypeColorsSuccess,
   SetBulkTypeColorsError,
+  LoadShortNamesSuccess,
+  LoadShortNamesError,
+  SaveShortName,
+  SaveShortNameSuccess,
+  SaveShortNameError,
 } from './settings.actions';
 import { SettingsService } from '../settings.service';
 
@@ -163,6 +168,43 @@ export class SettingsEffects {
           })
         );
       })
+    )
+  );
+
+  loadShortNames = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SettingsActionTypes.LoadShortNames),
+      mergeMap(() =>
+        this.settingsService.loadShortNames().pipe(
+          map((shortNames) => new LoadShortNamesSuccess(shortNames)),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Laden der Kurznamen');
+            return of(new LoadShortNamesError(err));
+          })
+        )
+      )
+    )
+  );
+
+  saveShortName = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SettingsActionTypes.SaveShortName),
+      mergeMap((action: SaveShortName) =>
+        this.settingsService.saveShortName(action.payload.typeId, action.payload.shortName).pipe(
+          map((status) => {
+            if (!status.success) {
+              this.toastService.error('Kurzname nicht gespeichert (höchstens 30 Zeichen)');
+              return new SaveShortNameError(status);
+            }
+            this.toastService.success('Kurzname gespeichert');
+            return new SaveShortNameSuccess(action.payload);
+          }),
+          catchError((err) => {
+            this.toastService.error('Fehler beim Speichern des Kurznamens');
+            return of(new SaveShortNameError(err));
+          })
+        )
+      )
     )
   );
 }

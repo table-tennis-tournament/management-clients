@@ -2,6 +2,7 @@
   <mat-card-content class="p-2">
     <toma-tt-table-content
       [table]="table"
+      [shortNames]="shortNames"
       (freeTable)="freeTable.emit(table)"
       (assignMatchToTable)="assignMatchToTable.emit($event)"
     ></toma-tt-table-content>

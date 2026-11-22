@@ -297,6 +297,15 @@ class UpdateTopicsIT {
         assertNextEvent(messages, "settings", "discipline-colors-changed")
     }
 
+    @Test
+    fun `a discipline short name publishes on the settings topic`() {
+        val messages = subscribe()
+
+        assertTrue(disciplineService.saveShortName(disciplineId, "J18B"))
+
+        assertNextEvent(messages, "settings", "discipline-short-name-changed")
+    }
+
     // --- players -----------------------------------------------------------------
 
     @Test

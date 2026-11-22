@@ -12,7 +12,7 @@ Update events are published after the originating transaction commits, on five t
 - `tables`: table lock and unlock.
 - `queue`: changes to the ordered match list.
 - `players`: player registration, payment and active state.
-- `settings`: discipline colors.
+- `settings`: discipline colors and short names.
 
 The envelope is `{"type": "MATCH_COMPLETED", "scope": {"matchIds": [42], "typeIds": [8], "tableIds": [3]}, "payload": {...}}`. The *scope* names the part of the tournament the event refers to, so a client can ignore events that do not concern what it currently displays. admin-view listens to all five topics; tablemanager-view listens to `matches` and `tables`; the result view will listen to `matches` and `settings`.
 

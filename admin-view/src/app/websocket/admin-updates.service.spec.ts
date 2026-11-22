@@ -27,6 +27,7 @@ import playerRegistered from '../../../../management-backend/src/test/resources/
 import playerUnregistered from '../../../../management-backend/src/test/resources/expected/events/players/player-unregistered.json';
 import matchListChanged from '../../../../management-backend/src/test/resources/expected/events/queue/match-list-changed.json';
 import disciplineColorsChanged from '../../../../management-backend/src/test/resources/expected/events/settings/discipline-colors-changed.json';
+import disciplineShortNameChanged from '../../../../management-backend/src/test/resources/expected/events/settings/discipline-short-name-changed.json';
 import tableLocked from '../../../../management-backend/src/test/resources/expected/events/tables/table-locked.json';
 import tableUnlocked from '../../../../management-backend/src/test/resources/expected/events/tables/table-unlocked.json';
 
@@ -68,6 +69,12 @@ const BACKEND_EVENTS: { name: string; topic: UpdateTopic; event: any; reloads: A
   { name: 'player-unregistered', topic: 'players', event: playerUnregistered, reloads: ['discipline', 'players'] },
   { name: 'match-list-changed', topic: 'queue', event: matchListChanged, reloads: ['matchList', 'matches'] },
   { name: 'discipline-colors-changed', topic: 'settings', event: disciplineColorsChanged, reloads: ['typeColors'] },
+  {
+    name: 'discipline-short-name-changed',
+    topic: 'settings',
+    event: disciplineShortNameChanged,
+    reloads: ['shortNames'],
+  },
   { name: 'table-locked', topic: 'tables', event: tableLocked, reloads: ['tables'] },
   { name: 'table-unlocked', topic: 'tables', event: tableUnlocked, reloads: ['tables'] },
 ];

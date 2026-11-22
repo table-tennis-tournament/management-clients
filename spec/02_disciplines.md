@@ -23,6 +23,7 @@ Each discipline (e.g., Men's Single, Women's Double) has several attributes:
 - **Seeding**: Players are seeded in groups or the KO bracket based on their TTR, in mktt.
 - **Standings**: When the last match of a group is completed, the backend computes the group standings (matches won, then set difference, then points won).
 - **Colors**: Each discipline can get a background and a text color, used by the admin view to mark its matches.
+- **Short name**: Each discipline can get a short name of at most 30 characters (e.g. "J18 B" for "Jungen 18 B 1201-1400"), set in the admin view's settings. The admin view's table cards show it instead of the full name. mktt's `type` table has no column for it, so it is stored in the sidecar table `mgmt_type_short_name`.
 - **KO placement**: Writing the winner of a KO match into the next KO match is not migrated from the legacy backend yet.
 
 ## API Endpoints
@@ -41,5 +42,8 @@ is served by the backend itself (port 8080, not through nginx) at `/v3/api-docs`
 | `GET` | `/disciplines/colors` | The colors of all disciplines: `{"<typeId>": {"bgColor", "textColor"}}`. |
 | `POST` | `/disciplines/{id}/color` | Set the colors of one discipline. Body: `{"bgColor", "textColor"}`, each a CSS color of at most 7 characters. |
 | `PUT` | `/disciplines/colors` | Set the colors of several disciplines. Body: the map of `GET /disciplines/colors`. |
+| `GET` | `/disciplines/short-names` | The short names of the disciplines that have one: `{"<typeId>": "<shortName>"}`. |
+| `PUT` | `/disciplines/{id}/short-name` | Set the short name of one discipline. Body: `{"shortName"}`, trimmed, at most 30 characters; a blank one removes it. |
 
-Color changes are published on the `settings` topic as `DISCIPLINE_COLORS_CHANGED`.
+Color changes are published on the `settings` topic as `DISCIPLINE_COLORS_CHANGED`, short name changes as
+`DISCIPLINE_SHORT_NAME_CHANGED`.

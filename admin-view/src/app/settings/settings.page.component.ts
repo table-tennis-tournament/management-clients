@@ -3,16 +3,18 @@ import { Store } from '@ngrx/store';
 import {
   LoadPrinters,
   LoadSettings,
+  LoadShortNames,
   LoadTypeColors,
+  SaveShortName,
   SaveAssignAutomatically,
   SavePrintOnAssign,
   SaveTypeColor,
   SetBulkTypeColors,
   SetPrinter,
 } from './redux/settings.actions';
-import { getPrintersState, getSettingsState, getTypeColorsMapState } from '../app-state.reducer';
+import { getPrintersState, getSettingsState, getShortNamesState, getTypeColorsMapState } from '../app-state.reducer';
 import { Observable } from 'rxjs';
-import { Settings, TypeColor, TypeColorMap } from './settings.model';
+import { Settings, ShortNameMap, TypeColor, TypeColorMap } from './settings.model';
 import { getDisciplineState } from '../discipline/redux';
 import { Discipline } from '../discipline/discipline.model';
 import { LoadDiscipline } from '../discipline/redux/discipline.actions';
@@ -31,16 +33,19 @@ export class SettingsPageComponent implements OnInit {
   settings: Observable<Settings[]>;
   printers: Observable<string[]>;
   typeColors$: Observable<TypeColorMap>;
+  shortNames$: Observable<ShortNameMap>;
   types$: Observable<Discipline[]>;
 
   ngOnInit() {
     this.store.dispatch(new LoadSettings());
     this.store.dispatch(new LoadPrinters());
     this.store.dispatch(new LoadTypeColors());
+    this.store.dispatch(new LoadShortNames());
     this.store.dispatch(new LoadDiscipline(null));
     this.settings = this.store.select(getSettingsState);
     this.printers = this.store.select(getPrintersState);
     this.typeColors$ = this.store.select(getTypeColorsMapState);
+    this.shortNames$ = this.store.select(getShortNamesState);
     this.types$ = this.store.select(getDisciplineState);
   }
 
@@ -62,5 +67,9 @@ export class SettingsPageComponent implements OnInit {
 
   onSetBulkTypeColors(typeColors: TypeColorMap) {
     this.store.dispatch(new SetBulkTypeColors(typeColors));
+  }
+
+  onSaveShortName(payload: { typeId: number; shortName: string }) {
+    this.store.dispatch(new SaveShortName(payload));
   }
 }

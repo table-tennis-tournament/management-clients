@@ -44,7 +44,7 @@ class HealthIT {
             "db": {"status": "UP", "details": {"database": "H2", "validationQuery": "isValid()"}},
             "flyway": {
               "status": "UP",
-              "details": {"currentVersion": "50", "applied": 9, "pending": [], "failed": []}
+              "details": {"currentVersion": "50", "applied": 10, "pending": [], "failed": []}
             },
             "mkttSchema": {
               "status": "UP",
@@ -122,7 +122,7 @@ class HealthIT {
                         "db": {"status": "UP", "details": {"database": "H2", "validationQuery": "isValid()"}},
                         "flyway": {
                           "status": "UP",
-                          "details": {"currentVersion": "50", "applied": 9, "pending": [], "failed": []}
+                          "details": {"currentVersion": "50", "applied": 10, "pending": [], "failed": []}
                         },
                         "mkttSchema": {
                           "status": "DOWN",

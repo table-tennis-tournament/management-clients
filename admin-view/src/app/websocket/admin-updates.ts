@@ -4,7 +4,7 @@ import { LoadCallerMatches, LoadSecondCallMatches, LoadThirdCallMatches } from '
 import { LoadDiscipline } from '../discipline/redux/discipline.actions';
 import { LoadPlayers } from '../player/redux/player.actions';
 import { LoadResults } from '../result/redux/result.actions';
-import { LoadTypeColors } from '../settings/redux/settings.actions';
+import { LoadShortNames, LoadTypeColors } from '../settings/redux/settings.actions';
 import { touches, UpdateClientConfig } from '../shared/update-events/update-events';
 import { LoadMatchList } from '../supervisor/redux/matchlist.actions';
 import { LoadTables } from '../table/redux/table.actions';
@@ -20,7 +20,8 @@ export type AdminReloadTarget =
   | 'matchList'
   | 'discipline'
   | 'players'
-  | 'typeColors';
+  | 'typeColors'
+  | 'shortNames';
 
 /** Events that can change a match, the tables, the call lists and the results. */
 const MATCH_CHANGED: AdminReloadTarget[] = ['matches', 'tables', 'caller', 'secondCall', 'thirdCall', 'results'];
@@ -51,10 +52,12 @@ export const ADMIN_UPDATES: UpdateClientConfig<AdminReloadTarget> = {
     PLAYER_PAID: ['players'],
     PLAYER_ACTIVE_CHANGED: ['players', 'discipline'],
     DISCIPLINE_COLORS_CHANGED: ['typeColors'],
+    DISCIPLINE_SHORT_NAME_CHANGED: ['shortNames'],
   },
   // everything the AppComponent loads on start
   resync: [
     'typeColors',
+    'shortNames',
     'discipline',
     'matches',
     'tables',
@@ -90,5 +93,7 @@ export function reloadAction(target: AdminReloadTarget): Action {
       return new LoadPlayers(null);
     case 'typeColors':
       return new LoadTypeColors();
+    case 'shortNames':
+      return new LoadShortNames();
   }
 }

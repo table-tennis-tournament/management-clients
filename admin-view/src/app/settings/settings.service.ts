@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Settings, TypeColor, TypeColorMap } from './settings.model';
+import { Settings, ShortNameMap, TypeColor, TypeColorMap } from './settings.model';
 import { HttpClient } from '@angular/common/http';
 import { StatusDto } from '../shared/statusdto.model';
 
@@ -40,5 +40,13 @@ export class SettingsService {
 
   setBulkTypeColors(typeColors: TypeColorMap): Observable<StatusDto> {
     return this.http.put<StatusDto>('/api/v2/disciplines/colors', typeColors);
+  }
+
+  loadShortNames(): Observable<ShortNameMap> {
+    return this.http.get<ShortNameMap>('/api/v2/disciplines/short-names');
+  }
+
+  saveShortName(typeId: number, shortName: string): Observable<StatusDto> {
+    return this.http.put<StatusDto>(`/api/v2/disciplines/${typeId}/short-name`, { shortName });
   }
 }

@@ -3,9 +3,9 @@ import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
 
-import { getTablesLoading, getTableState, getTypeColorsMapState } from '../app-state.reducer';
+import { getShortNamesState, getTablesLoading, getTableState, getTypeColorsMapState } from '../app-state.reducer';
 
-import { TypeColorMap } from '../settings/settings.model';
+import { ShortNameMap, TypeColorMap } from '../settings/settings.model';
 
 import {
   AssignMatchToTable,
@@ -68,11 +68,13 @@ export class TableListPageComponent implements OnInit {
   tables: Observable<TableDto[]>;
   tablesLoading: Observable<boolean>;
   typeColors: Observable<TypeColorMap>;
+  shortNames: Observable<ShortNameMap>;
 
   ngOnInit() {
     this.tables = this.store.select(getTableState);
     this.tablesLoading = this.store.select(getTablesLoading);
     this.typeColors = this.store.select(getTypeColorsMapState);
+    this.shortNames = this.store.select(getShortNamesState);
   }
 
   onLockTable(tableNr: number) {

@@ -109,6 +109,43 @@
 
   <hr class="mb-4" />
 
+  <!-- Discipline short names, shown where the full name does not fit (the table cards) -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="mb-3">Kurznamen der Konkurrenzen</h5>
+      <p class="text-muted small">Auf den Tischkarten wird der Kurzname angezeigt. Leer lassen für den vollen Namen.</p>
+      @for (type of types; track type.id) {
+        <div class="row align-items-center">
+          <div class="col-12 col-md-4">{{ type.name }}</div>
+          <div class="col-8 col-md-3">
+            <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+              <mat-label>Kurzname</mat-label>
+              <input
+                matInput
+                [maxlength]="maxShortNameLength"
+                [(ngModel)]="shortNameDrafts[type.id]"
+                (keyup.enter)="saveShortNameClick(type.id)"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-auto">
+            <button
+              mat-icon-button
+              color="primary"
+              [disabled]="!isShortNameChanged(type.id)"
+              (click)="saveShortNameClick(type.id)"
+              title="Kurzname speichern"
+            >
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <hr class="mb-4" />
+
   <!-- Bulk Configuration Section -->
   <div class="row mb-4">
     <div class="col-12">

@@ -5,7 +5,7 @@ import { LoadMatches } from './assign/redux/match.actions';
 import { LoadMatchList } from './supervisor/redux/matchlist.actions';
 import { LoadDiscipline } from './discipline/redux/discipline.actions';
 import { AdminUpdatesService } from './websocket/admin-updates.service';
-import { LoadTypeColors } from './settings/redux/settings.actions';
+import { LoadShortNames, LoadTypeColors } from './settings/redux/settings.actions';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.updates.start();
     this.store.dispatch(new LoadTypeColors());
+    this.store.dispatch(new LoadShortNames());
     this.store.dispatch(new LoadDiscipline(null));
     this.store.dispatch(new LoadMatches(null));
     this.store.dispatch(new LoadTables(null));

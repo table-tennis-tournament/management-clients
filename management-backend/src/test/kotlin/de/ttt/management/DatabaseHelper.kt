@@ -108,6 +108,10 @@ class DatabaseHelper(
         )
     }
 
+    fun insertDisciplineShortName(disciplineId: Long, shortName: String) {
+        jdbc.update("INSERT INTO mgmt_type_short_name (tysn_type_id, tysn_short_name) VALUES (?, ?)", disciplineId, shortName)
+    }
+
     // --- tournament --------------------------------------------------------------
 
     /** A table; its [name] is the table number shown to the users. */

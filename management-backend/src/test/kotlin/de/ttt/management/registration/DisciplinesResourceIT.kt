@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 
-/** `/api/v2/disciplines`: the disciplines as the registration module sees them, and their colors. */
+/** `/api/v2/disciplines`: the disciplines as the registration module sees them, their colors and short names. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
@@ -32,7 +32,7 @@ class DisciplinesResourceIT {
 
     private val success = """{"success": true}"""
 
-    /** Disciplines 1 and 2, discipline 3 inactive; discipline 2 has the colors #ff0000 on #fff. */
+    /** Disciplines 1 and 2, discipline 3 inactive; discipline 2 has the colors #ff0000 on #fff and the short name "D". */
     @BeforeEach
     fun setup() {
         testState.reset()
@@ -40,6 +40,11 @@ class DisciplinesResourceIT {
         db.insertDiscipline(2, "Damen")
         db.insertDiscipline(3, "Senioren", active = false)
         db.insertDisciplineColor(2, "#ff0000", "#fff")
+        db.insertDisciplineShortName(2, "D")
+    }
+
+    private fun expectShortNames(json: String) {
+        api.get("/disciplines/short-names").expectStatus().isOk.expectExactJson(json)
     }
 
     private fun expectColors(json: String) {
@@ -97,5 +102,42 @@ class DisciplinesResourceIT {
         api.put("/disciplines/colors", mapOf("1" to mapOf("bgColor" to "blue", "textColor" to "black")))
             .expectStatus().isOk.expectExactJson(success)
         expectColors("""{"1": {"bgColor": "blue", "textColor": "black"}, "2": {"bgColor": "#ff0000", "textColor": "#fff"}}""")
+    }
+
+    @Test
+    fun `the short names`() {
+        expectShortNames("""{"2": "D"}""")
+    }
+
+    @Test
+    fun `saves the short name of a discipline, trimmed`() {
+        api.put("/disciplines/1/short-name", mapOf("shortName" to " H ")).expectStatus().isOk.expectExactJson(success)
+        expectShortNames("""{"1": "H", "2": "D"}""")
+    }
+
+    @Test
+    fun `overwrites the short name of a discipline`() {
+        api.put("/disciplines/2/short-name", mapOf("shortName" to "Da")).expectStatus().isOk.expectExactJson(success)
+        expectShortNames("""{"2": "Da"}""")
+    }
+
+    @Test
+    fun `a blank short name removes it`() {
+        api.put("/disciplines/2/short-name", mapOf("shortName" to " ")).expectStatus().isOk.expectExactJson(success)
+        expectShortNames("""{}""")
+    }
+
+    @Test
+    fun `saving the short name of an unknown discipline fails`() {
+        api.put("/disciplines/9999/short-name", mapOf("shortName" to "X")).expectStatus().isOk
+            .expectExactJson("""{"success": false}""")
+        expectShortNames("""{"2": "D"}""")
+    }
+
+    @Test
+    fun `a short name longer than thirty characters fails and changes nothing`() {
+        api.put("/disciplines/2/short-name", mapOf("shortName" to "x".repeat(31))).expectStatus().isOk
+            .expectExactJson("""{"success": false}""")
+        expectShortNames("""{"2": "D"}""")
     }
 }

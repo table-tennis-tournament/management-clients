@@ -54,7 +54,7 @@ class HealthIndicatorsTest {
                     listOf(
                         "1__mgmt matchtable", "2__mgmt typecolors", "3__mgmt match list", "4__mgmt match call state",
                         "5__mgmt table lock", "6__mgmt player active", "7__mgmt typecolors hex text color",
-                        "8__mgmt player call", "50__mktt schema"
+                        "8__mgmt player call", "9__mgmt type short name", "50__mktt schema"
                     )
                 )
                 .withDetail("failed", emptyList<String>())
@@ -71,7 +71,7 @@ class HealthIndicatorsTest {
         assertEquals(
             Health.up()
                 .withDetail("currentVersion", "50")
-                .withDetail("applied", 9)
+                .withDetail("applied", 10)
                 .withDetail("pending", emptyList<String>())
                 .withDetail("failed", emptyList<String>())
                 .build(),

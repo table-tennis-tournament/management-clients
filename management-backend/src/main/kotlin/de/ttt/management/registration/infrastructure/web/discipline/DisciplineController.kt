@@ -2,6 +2,7 @@ package de.ttt.management.registration.infrastructure.web.discipline
 
 import de.ttt.management.registration.application.DisciplineColorData
 import de.ttt.management.registration.application.DisciplineService
+import de.ttt.management.registration.application.DisciplineShortNameData
 import de.ttt.management.registration.domain.discipline.Discipline
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -49,4 +50,18 @@ class DisciplineController(private val disciplineService: DisciplineService) {
         val success = disciplineService.saveBulkTypeColors(colors)
         return mapOf("success" to success)
     }
+
+    @GetMapping("/short-names")
+    @Operation(summary = "Get all discipline short names", description = "Retrieves the short names of the disciplines that have one, by discipline id.")
+    fun getAllShortNames(): Map<Long, String> = disciplineService.getAllShortNames()
+
+    @PutMapping("/{id}/short-name")
+    @Operation(
+        summary = "Set discipline short name",
+        description = "Sets the short name of a discipline (at most 30 characters). A blank short name removes it."
+    )
+    fun saveShortName(
+        @Parameter(description = "ID of the discipline") @PathVariable id: Long,
+        @RequestBody data: DisciplineShortNameData
+    ): Map<String, Any> = mapOf("success" to disciplineService.saveShortName(id, data.shortName))
 }
