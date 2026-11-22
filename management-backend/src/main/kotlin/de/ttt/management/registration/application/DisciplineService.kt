@@ -10,8 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class DisciplineService(
     private val disciplineRepository: DisciplineRepository,
-    private val disciplineColorRepository: DisciplineColorRepository,
-    private val disciplineShortNameRepository: DisciplineShortNameRepository,
+    private val disciplineDisplayRepository: DisciplineDisplayRepository,
     private val eventPublisher: ApplicationEventPublisher
 ) {
 
@@ -20,9 +19,13 @@ class DisciplineService(
     fun getActiveDisciplines(): List<Discipline> = disciplineRepository.findAll().filter { it.active }
 
     fun getAllTypeColors(): Map<Long, DisciplineColorData> {
-        return disciplineColorRepository.findAll().associate {
-            it.discipline!!.id!! to DisciplineColorData(it.bgColor ?: "", it.textColor ?: "")
-        }
+        return disciplineDisplayRepository.findAll()
+            .mapNotNull { display ->
+                val bg = display.bgColor ?: return@mapNotNull null
+                val text = display.textColor ?: return@mapNotNull null
+                display.disciplineId to DisciplineColorData(bg, text)
+            }
+            .toMap()
     }
 
     @Transactional
@@ -36,15 +39,8 @@ class DisciplineService(
 
     private fun persistTypeColor(disciplineId: Long, bgColor: String, textColor: String): Boolean {
         if (!isStorableColor(bgColor) || !isStorableColor(textColor)) return false
-        val discipline = disciplineRepository.findById(disciplineId).orElse(null) ?: return false
-        val existingColor = disciplineColorRepository.findByDisciplineId(disciplineId).orElse(null)
-        
-        val color = existingColor ?: DisciplineColor(
-            discipline = discipline
-        )
-        color.bgColor = bgColor
-        color.textColor = textColor
-        disciplineColorRepository.save(color)
+        if (disciplineRepository.findById(disciplineId).isEmpty) return false
+        disciplineDisplayRepository.saveColors(disciplineId, bgColor, textColor)
         return true
     }
 
@@ -57,7 +53,8 @@ class DisciplineService(
         return true
     }
 
-    fun getAllShortNames(): Map<Long, String> = disciplineShortNameRepository.findAll()
+    fun getAllShortNames(): Map<Long, String> =
+        disciplineDisplayRepository.findAll().mapNotNull { d -> d.shortName?.let { d.disciplineId to it } }.toMap()
 
     /**
      * Sets the short name of a discipline; a blank [shortName] removes it, so the discipline is shown by its
@@ -68,22 +65,18 @@ class DisciplineService(
         val trimmed = shortName?.trim().orEmpty()
         if (trimmed.length > MAX_SHORT_NAME_LENGTH) return false
         if (disciplineRepository.findById(disciplineId).isEmpty) return false
-        if (trimmed.isEmpty()) {
-            disciplineShortNameRepository.delete(disciplineId)
-        } else {
-            disciplineShortNameRepository.save(disciplineId, trimmed)
-        }
+        disciplineDisplayRepository.saveShortName(disciplineId, trimmed.ifEmpty { null })
         eventPublisher.publishEvent(DisciplineShortNameChanged(disciplineId))
         return true
     }
 
     companion object {
-        /** The length `mgmt_type_short_name.tysn_short_name` holds. */
+        /** The length `mgmt_type_display.tydi_short_name` holds. */
         const val MAX_SHORT_NAME_LENGTH = 30
     }
 }
 
-/** A CSS color the `mgmt_typecolors` columns can hold: a name like "white" or a hex color like "#ffffff". */
+/** A CSS color the `mgmt_type_display` color columns can hold: a name like "white" or a hex color like "#ffffff". */
 private fun isStorableColor(color: String) = color.isNotBlank() && color.length <= 7
 
 data class DisciplineColorData(

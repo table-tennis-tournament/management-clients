@@ -29,7 +29,7 @@ Each discipline (e.g., Men's Single, Women's Double) has several attributes:
 
   The disciplines' `active` flag does not matter.
 - **Colors**: Each discipline can get a background and a text color, used by the admin view to mark its matches.
-- **Short name**: Each discipline can get a short name of at most 30 characters (e.g. "J18 B" for "Jungen 18 B 1201-1400"), set in the admin view's settings. The admin view's table cards show it instead of the full name. mktt's `type` table has no column for it, so it is stored in the sidecar table `mgmt_type_short_name`.
+- **Short name**: Each discipline can get a short name of at most 30 characters (e.g. "J18 B" for "Jungen 18 B 1201-1400"), set in the admin view's settings. The admin view's table cards show it instead of the full name. mktt's `type` table has no columns for the colors or the short name, so both are stored in the sidecar table `mgmt_type_display`.
 - **KO placement**: Writing the winner of a KO match into the next KO match is not migrated from the legacy backend yet.
 
 ## API Endpoints

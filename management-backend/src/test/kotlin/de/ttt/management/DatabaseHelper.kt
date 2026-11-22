@@ -103,13 +103,16 @@ class DatabaseHelper(
 
     fun insertDisciplineColor(disciplineId: Long, bgColor: String, textColor: String) {
         jdbc.update(
-            "INSERT INTO mgmt_typecolors (tyco_type_id, tyco_bg_color, tyco_text_color) VALUES (?, ?, ?)",
+            "INSERT INTO mgmt_type_display (tydi_type_id, tydi_bg_color, tydi_text_color) VALUES (?, ?, ?)",
             disciplineId, bgColor, textColor
         )
     }
 
     fun insertDisciplineShortName(disciplineId: Long, shortName: String) {
-        jdbc.update("INSERT INTO mgmt_type_short_name (tysn_type_id, tysn_short_name) VALUES (?, ?)", disciplineId, shortName)
+        // the discipline may have its colors already: they share the row
+        if (jdbc.update("UPDATE mgmt_type_display SET tydi_short_name = ? WHERE tydi_type_id = ?", shortName, disciplineId) == 0) {
+            jdbc.update("INSERT INTO mgmt_type_display (tydi_type_id, tydi_short_name) VALUES (?, ?)", disciplineId, shortName)
+        }
     }
 
     // --- tournament --------------------------------------------------------------

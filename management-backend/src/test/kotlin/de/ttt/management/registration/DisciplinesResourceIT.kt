@@ -140,4 +140,16 @@ class DisciplinesResourceIT {
             .expectExactJson("""{"success": false}""")
         expectShortNames("""{"2": "D"}""")
     }
+
+    @Test
+    fun `colors and short name of a discipline leave each other as they are`() {
+        api.put("/disciplines/2/short-name", mapOf("shortName" to " ")).expectStatus().isOk.expectExactJson(success)
+        expectColors("""{"2": {"bgColor": "#ff0000", "textColor": "#fff"}}""")
+
+        api.post("/disciplines/1/color", mapOf("bgColor" to "red", "textColor" to "white")).expectStatus().isOk.expectExactJson(success)
+        api.put("/disciplines/1/short-name", mapOf("shortName" to "H")).expectStatus().isOk.expectExactJson(success)
+        api.post("/disciplines/1/color", mapOf("bgColor" to "blue", "textColor" to "black")).expectStatus().isOk.expectExactJson(success)
+        expectShortNames("""{"1": "H"}""")
+        expectColors("""{"1": {"bgColor": "blue", "textColor": "black"}, "2": {"bgColor": "#ff0000", "textColor": "#fff"}}""")
+    }
 }

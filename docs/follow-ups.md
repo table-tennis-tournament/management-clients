@@ -40,7 +40,7 @@ All resolved:
 - Playwright 1.65.1 installs its browsers on Ubuntu 26.04 (the sandbox and GitHub's `ubuntu-latest`); the e2e suites of all three clients pass locally and run in CI.
 - `MATCH_LIST_CHANGED` names the queued matches, those just added to or removed from the queue, and their disciplines.
 - Assigning, starting, completing, freeing, taking back and deleting a match carry `affectedTypeIds`: the other disciplines whose open matches of the same players change `isPlayable`. The outbound scopes include them.
-- admin-view has e2e tests for the reconnect resync and for `TABLE_LOCKED`/`TABLE_UNLOCKED`, `PLAYER_PAID`, `PLAYER_ACTIVE_CHANGED` and `DISCIPLINE_COLORS_CHANGED` (`e2e/live-updates.spec.ts`). Writing them found two backend bugs, both fixed: `/table/{nr}/lock` treated the table number as the id, and a hex text color did not fit `mgmt_typecolors` (V7).
+- admin-view has e2e tests for the reconnect resync and for `TABLE_LOCKED`/`TABLE_UNLOCKED`, `PLAYER_PAID`, `PLAYER_ACTIVE_CHANGED` and `DISCIPLINE_COLORS_CHANGED` (`e2e/live-updates.spec.ts`). Writing them found two backend bugs, both fixed: `/table/{nr}/lock` treated the table number as the id, and a hex text color did not fit the color table (now `mgmt_type_display`).
 - The table manager retries a failed load twice and its error snackbar offers "Erneut laden".
 - The table manager's table, table list and match item components use `OnPush`, compute the started match and the calls once per table change, and track tables and matches by id.
 - The simple broker sends and expects STOMP heartbeats every 10 s (`WebSocketHeartbeatIT`).
