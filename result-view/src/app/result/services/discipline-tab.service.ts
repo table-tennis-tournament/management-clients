@@ -22,7 +22,6 @@ export class DisciplineTabService {
     }
     const allStages: number[] = [];
     let currentIndex = 0;
-    let allPlayerArray: boolean[] = [];
     let currentItem: Match = null;
     for (const match of matches) {
       currentItem = match;
@@ -49,26 +48,21 @@ export class DisciplineTabService {
       if (!currentItemTab.groups[currentItem.playGroup.id]) {
         currentItemTab.groups[currentItem.playGroup.id] = {
           name: 'Gruppe ' + currentItem.playGroup.name,
-          tableNumbers: [],
           isComplete: true,
           isMatchActive: this.isMatchActive,
           isPlayerActive: this.isPlayerActive,
           players: [],
           matches: [],
         };
-
-        allPlayerArray = [];
       }
-      let currentGroup = currentItemTab.groups[currentItem.playGroup.id];
+      const currentGroup = currentItemTab.groups[currentItem.playGroup.id];
       currentGroup.matches.push(currentItem);
       currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
-      currentGroup = this.addTableNumbers(currentItem, currentGroup);
 
-      const allPlayers = currentItem.team1.concat(currentItem.team2);
-      for (const player of allPlayers) {
-        if (!allPlayerArray[player.id]) {
+      // per group, so the matches of several groups may come in any order
+      for (const player of currentItem.team1.concat(currentItem.team2)) {
+        if (!currentGroup.players.some((known) => known.id === player.id)) {
           currentGroup.players.push(player);
-          allPlayerArray[player.id] = true;
         }
       }
     }
@@ -79,13 +73,6 @@ export class DisciplineTabService {
   /** A Completed or Finished (walkover) match counts as done. */
   private isMatchComplete(currentItem: Match) {
     return isOver(currentItem);
-  }
-
-  private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-    if (currentItem.tableId && !this.isMatchComplete(currentItem)) {
-      currentGroup.tableNumbers.push(currentItem.tableId);
-    }
-    return currentGroup;
   }
 
   getCleanedGroups(groupsToClean: DisciplineGroup[]) {

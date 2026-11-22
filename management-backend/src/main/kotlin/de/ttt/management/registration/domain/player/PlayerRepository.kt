@@ -11,5 +11,4 @@ interface PlayerRepository {
     fun setTypePerPlayerPaid(typlId: Long, paid: Boolean): Boolean
     fun save(player: Player): Player
     fun deleteById(id: Long)
-    fun deleteAll()
 }

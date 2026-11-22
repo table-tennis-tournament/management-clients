@@ -155,11 +155,6 @@ class JdbcPlayerRepository(private val jdbcClient: JdbcClient) : PlayerRepositor
         jdbcClient.sql("DELETE FROM mgmt_player_active WHERE play_id = :id").param("id", id).update()
     }
 
-    override fun deleteAll() {
-        jdbcClient.sql("DELETE FROM player").update()
-        jdbcClient.sql("DELETE FROM mgmt_player_active").update()
-    }
-
     private fun saveActive(playId: Long, active: Boolean) {
         if (active) {
             jdbcClient.sql("DELETE FROM mgmt_player_active WHERE play_id = :id").param("id", playId).update()

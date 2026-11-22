@@ -23,6 +23,21 @@ import {
   SetPrinter,
   SetPrinterError,
   SetPrinterSuccess,
+  LoadTypeColors,
+  LoadTypeColorsError,
+  LoadTypeColorsSuccess,
+  SaveTypeColor,
+  SaveTypeColorError,
+  SaveTypeColorSuccess,
+  SetBulkTypeColors,
+  SetBulkTypeColorsError,
+  SetBulkTypeColorsSuccess,
+  LoadShortNames,
+  LoadShortNamesError,
+  LoadShortNamesSuccess,
+  SaveShortName,
+  SaveShortNameError,
+  SaveShortNameSuccess,
 } from './settings.actions';
 import { settingsTestData } from './test.data';
 
@@ -162,6 +177,119 @@ describe('the settings effects', () => {
 
       expect(result).toStrictEqual([new SetPrinterError(error)]);
       expect(toast.error.mock.calls).toEqual([['Fehler beim setzen des Druckers']]);
+    });
+  });
+
+  describe('the discipline colors', () => {
+    const colors = { 1: { bgColor: '#ff0000', textColor: 'white' } };
+    const saved = { typeId: 1, colorData: colors[1] };
+
+    it('loads them', async () => {
+      const load = vi.spyOn(settingsService, 'loadTypeColors').mockReturnValue(of(colors));
+
+      expect(await emittedBy(settingsEffects.loadTypeColors, actions, new LoadTypeColors())).toStrictEqual([
+        new LoadTypeColorsSuccess(colors),
+      ]);
+      expect(load.mock.calls).toEqual([[]]);
+    });
+
+    it('shows an error when they do not load', async () => {
+      vi.spyOn(settingsService, 'loadTypeColors').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(settingsEffects.loadTypeColors, actions, new LoadTypeColors())).toStrictEqual([
+        new LoadTypeColorsError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Type-Farben']]);
+    });
+
+    it('saves the colors of one discipline and confirms it', async () => {
+      const save = vi.spyOn(settingsService, 'saveTypeColor').mockReturnValue(of(status));
+
+      expect(await emittedBy(settingsEffects.saveTypeColor, actions, new SaveTypeColor(saved))).toStrictEqual([
+        new SaveTypeColorSuccess(saved),
+      ]);
+      expect(save.mock.calls).toEqual([[1, colors[1]]]);
+      expect(toast.success.mock.calls).toEqual([['Type-Farbe gespeichert']]);
+    });
+
+    it('shows an error when saving the colors of one discipline fails', async () => {
+      vi.spyOn(settingsService, 'saveTypeColor').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(settingsEffects.saveTypeColor, actions, new SaveTypeColor(saved))).toStrictEqual([
+        new SaveTypeColorError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern der Type-Farbe']]);
+    });
+
+    it('sets the colors of several disciplines and confirms it', async () => {
+      const set = vi.spyOn(settingsService, 'setBulkTypeColors').mockReturnValue(of(status));
+
+      expect(await emittedBy(settingsEffects.setBulkTypeColors, actions, new SetBulkTypeColors(colors))).toStrictEqual([
+        new SetBulkTypeColorsSuccess(colors),
+      ]);
+      expect(set.mock.calls).toEqual([[colors]]);
+      expect(toast.success.mock.calls).toEqual([['Type-Farben erfolgreich gesetzt']]);
+    });
+
+    it('shows an error when setting the colors of several disciplines fails', async () => {
+      vi.spyOn(settingsService, 'setBulkTypeColors').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(settingsEffects.setBulkTypeColors, actions, new SetBulkTypeColors(colors))).toStrictEqual([
+        new SetBulkTypeColorsError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Setzen der Type-Farben']]);
+    });
+  });
+
+  describe('the discipline short names', () => {
+    const shortName = { typeId: 2, shortName: 'J18 B' };
+
+    it('loads them', async () => {
+      const load = vi.spyOn(settingsService, 'loadShortNames').mockReturnValue(of({ 2: 'J18 B' }));
+
+      expect(await emittedBy(settingsEffects.loadShortNames, actions, new LoadShortNames())).toStrictEqual([
+        new LoadShortNamesSuccess({ 2: 'J18 B' }),
+      ]);
+      expect(load.mock.calls).toEqual([[]]);
+    });
+
+    it('shows an error when they do not load', async () => {
+      vi.spyOn(settingsService, 'loadShortNames').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(settingsEffects.loadShortNames, actions, new LoadShortNames())).toStrictEqual([
+        new LoadShortNamesError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Kurznamen']]);
+    });
+
+    it('saves a short name and confirms it', async () => {
+      const save = vi.spyOn(settingsService, 'saveShortName').mockReturnValue(of(status));
+
+      expect(await emittedBy(settingsEffects.saveShortName, actions, new SaveShortName(shortName))).toStrictEqual([
+        new SaveShortNameSuccess(shortName),
+      ]);
+      expect(save.mock.calls).toEqual([[2, 'J18 B']]);
+      expect(toast.success.mock.calls).toEqual([['Kurzname gespeichert']]);
+    });
+
+    it('keeps the short name unsaved when the backend rejects it, e.g. for being too long', async () => {
+      const rejected = { success: false };
+      vi.spyOn(settingsService, 'saveShortName').mockReturnValue(of(rejected));
+
+      expect(await emittedBy(settingsEffects.saveShortName, actions, new SaveShortName(shortName))).toStrictEqual([
+        new SaveShortNameError(rejected),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Kurzname nicht gespeichert (höchstens 30 Zeichen)']]);
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+
+    it('shows an error when saving a short name fails', async () => {
+      vi.spyOn(settingsService, 'saveShortName').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(settingsEffects.saveShortName, actions, new SaveShortName(shortName))).toStrictEqual([
+        new SaveShortNameError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern des Kurznamens']]);
     });
   });
 });

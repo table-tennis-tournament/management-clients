@@ -148,3 +148,33 @@ survivors in `TournamentMatch`, `AutoStartHeuristic`, `GroupStandingsCalculator`
   three copies together if wanted. The result-view component test ("should create") stays until result-view gets
   live updates (`docs/follow-ups.md` 4).
 - Leave the Playwright e2e tests on visibility/text checks.
+
+### Step 7: line coverage (done)
+
+- **Backend:** `mvn test -Pcoverage` runs JaCoCo over the whole suite; the report is `target/site/jacoco/index.html`.
+  97.3 % of the lines and 85.6 % of the branches are covered (before: 92.4 % and 81.4 %). Most of the gain came from
+  deleting unused code: the settings repository stack (`SettingsController` builds the runtime settings itself), the
+  club and doubles-player repositories, `DisciplineRegistration`, the placeholder `grouping.domain.Group` and unused
+  `save`/`deleteAll` methods. New unit tests pin that a failing WebSocket push (`OutboundServiceTest`) and a failing
+  print on assign (`PrinterServiceTest`) do not fail the request. `LprPrinterGateway` stays uncovered: it calls `lpr`.
+- **Clients:** `npm run test:coverage` in admin-view and tablemanager-view (Vitest's V8 provider, report in
+  `coverage/`). result-view has no `@vitest/coverage-v8` yet: npm 10 fails to add it to the existing lock file
+  ("Cannot read properties of null (reading 'edgesOut')"), and the lock written with `--legacy-peer-deps` breaks
+  `npm ci`. Add it when result-view's Vitest is upgraded.
+- Lines covered by the unit tests, before and after: admin-view 44 % → 73 %, tablemanager-view 52 % → 86 %, result-view
+  61 % → 86 %. The rest is mostly templates and page wiring, which the Playwright e2e tests exercise; Vitest measures
+  only the unit tests.
+- The new specs cover effects (every command with success, failure and its message), reducers, pipes, the type-color
+  directive (rendered in a host component) and the logic of component classes, created with
+  `TestBed.runInInjectionContext(() => new Component())` and stubbed `Store`, `MatDialog` and services, so the
+  templates are not compiled.
+- Bugs they found, all fixed:
+  - tablemanager-view: the game dialog asked for "Satz Nr. 1" for every Set after the first, because the next Set's
+    number fell back to 0 once every entered Set had a winner.
+  - admin-view player list: the name filters did not combine (a first name disabled the last-name and club filters),
+    the club filter crashed on a player without a club, and choosing a discipline dropped the name filters.
+  - Supervisor and result-view tab builders: a group's players were listed twice when its matches came interleaved
+    with another group's. The supervisor collected table ids as `tableNumbers` (unused for display, now numbers).
+  - Supervisor discipline view: selecting a discipline before the matches arrived threw.
+  - result-view: `TypeColors` was dead code (never constructed, never read) and is deleted.
+- Documented, not changed: the table manager's game dialog takes an empty input as 0 (a Set won 11:0).

@@ -85,7 +85,7 @@ export class UnLockTableSuccess implements Action {
 export class UnLockTableError implements Action {
   readonly type = TableActionTypes.UnLockError;
 
-  constructor(public payload: number) {}
+  constructor(public payload: any) {}
 }
 
 export class FreeTable implements Action {

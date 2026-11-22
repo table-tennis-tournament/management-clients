@@ -24,7 +24,6 @@ export class DisciplineTabService {
     currentItemTab.id = matches[0].type.id;
     const allStages: number[] = [];
     let currentIndex = 0;
-    let allPlayerArray: boolean[] = [];
     let currentItem: Match = null;
     for (let index = 0; index < matches.length; index++) {
       currentItem = matches[index];
@@ -60,19 +59,16 @@ export class DisciplineTabService {
           players: [],
           matches: [],
         };
-
-        allPlayerArray = [];
       }
       let currentGroup = currentItemTab.groups[currentItem.playGroup.id];
       currentGroup.matches.push(currentItem);
       currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
       currentGroup = this.addTableNumbers(currentItem, currentGroup);
 
-      const allPlayers = currentItem.team1.concat(currentItem.team2);
-      for (let playerIndex = 0; playerIndex < allPlayers.length; playerIndex++) {
-        if (!allPlayerArray[allPlayers[playerIndex].id]) {
-          currentGroup.players.push(allPlayers[playerIndex]);
-          allPlayerArray[allPlayers[playerIndex].id] = true;
+      // per group, so the matches of several groups may come in any order
+      for (const player of currentItem.team1.concat(currentItem.team2)) {
+        if (!currentGroup.players.some((known) => known.id === player.id)) {
+          currentGroup.players.push(player);
         }
       }
     }
@@ -98,8 +94,9 @@ export class DisciplineTabService {
   }
 
   private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-    if (currentItem.tableId && !this.isMatchComplete(currentItem)) {
-      currentGroup.tableNumbers.push(currentItem.tableId);
+    // the number people see, not the table id
+    if (currentItem.tableNumber && !this.isMatchComplete(currentItem)) {
+      currentGroup.tableNumbers.push(currentItem.tableNumber);
     }
     return currentGroup;
   }

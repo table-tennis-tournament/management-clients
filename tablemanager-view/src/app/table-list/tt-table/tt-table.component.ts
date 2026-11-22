@@ -178,10 +178,11 @@ export class TtTableComponent {
     this.finishMatch.emit(this.startedMatch);
   }
 
-  /** The index of the first Set without a winner, or 0. */
+  /** The index of the Set being entered: the first Set without a winner, else the one after the last. */
   private getGameNumber() {
-    const index = toSets(this.startedMatch.result.games).findIndex((set) => setWinner(set) === null);
-    return index >= 0 ? index : 0;
+    const sets = toSets(this.startedMatch.result?.games);
+    const index = sets.findIndex((set) => setWinner(set) === null);
+    return index >= 0 ? index : sets.length;
   }
 
   takeBack() {

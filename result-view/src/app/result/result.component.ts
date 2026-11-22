@@ -6,7 +6,6 @@ import { DisciplineStage } from './data/discipline.stage';
 import { DisciplineTab } from './data/discipline.tab';
 import { Match } from './data/match';
 import { Type } from './data/type';
-import { TypeColors } from './data/typeColors';
 import * as ResultActions from './redux/result.actions';
 import { AppState, getGroups, getMatches, getSelectedTypeId, getStages, getTypes } from './redux/result.reducer';
 
@@ -21,7 +20,6 @@ export class ResultComponent implements OnInit {
   public rowCount: number[];
   public selectedTab: DisciplineTab;
   private lineStageClass: string[] = ['first-stage-result', 'second-stage-result', 'third-stage-result'];
-  public colors: string[];
   private changeTime = 15000;
   private currentIndex = 0;
   public isFixed = false;
@@ -33,7 +31,6 @@ export class ResultComponent implements OnInit {
   selectedTypeId$: Observable<number | null>;
 
   constructor(private store: Store<AppState>) {
-    this.colors = TypeColors.TYPE_COLORS;
     this.types$ = store.pipe(select(getTypes));
     this.selectedTypeId$ = store.pipe(select(getSelectedTypeId));
     this.matches$ = store.pipe(select(getMatches));

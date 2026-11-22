@@ -4,7 +4,6 @@ import de.ttt.management.tournament.domain.TTTable
 import de.ttt.management.tournament.domain.TTTableRepository
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.simple.JdbcClient
-import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -37,22 +36,6 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
         return jdbcClient.sql(selectTables("AND t.tabl_name = :name")).param("name", name).query(rowMapper).optional()
     }
 
-    override fun save(table: TTTable): TTTable {
-        if (table.id == null) {
-            val keyHolder = GeneratedKeyHolder()
-            jdbcClient.sql("INSERT INTO tables (Tabl_Name) VALUES (:name)")
-                .param("name", table.name)
-                .update(keyHolder)
-            table.id = (keyHolder.keys?.get("tabl_id") as? Number)?.toLong()
-        } else {
-            jdbcClient.sql("UPDATE tables SET Tabl_Name = :name WHERE Tabl_ID = :id")
-                .param("name", table.name)
-                .param("id", table.id).update()
-        }
-        setLocked(table.id!!, table.isLocked)
-        return table
-    }
-
     override fun setLocked(id: Long, locked: Boolean): Int {
         val exists = jdbcClient.sql("SELECT tabl_id FROM tables WHERE tabl_id = :id")
             .param("id", id)
@@ -69,9 +52,5 @@ class JdbcTTTableRepository(private val jdbcClient: JdbcClient) : TTTableReposit
                 .param("id", id)
                 .update()
         }
-    }
-
-    override fun deleteAll() {
-        jdbcClient.sql("DELETE FROM tables").update()
     }
 }

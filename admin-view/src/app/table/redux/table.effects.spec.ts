@@ -14,13 +14,33 @@ import {
   AssignToSecondTable,
   AssignToSecondTableError,
   AssignToSecondTableSuccess,
+  FreeTable,
+  FreeTableError,
+  FreeTableSuccess,
   LoadTables,
   LoadTablesError,
   LoadTablesSuccess,
+  LockTable,
+  LockTableError,
+  LockTableSuccess,
+  PrintTable,
+  PrintTableError,
+  PrintTableSuccess,
+  RemoveMatchFromTable,
+  RemoveMatchFromTableError,
+  RemoveMatchFromTableSuccess,
   ResultForMatch,
   ResultForMatchError,
   ResultForMatchSuccess,
+  TakeBackTable,
+  TakeBackTableError,
+  TakeBackTableSuccess,
+  UnLockTable,
+  UnLockTableError,
+  UnLockTableSuccess,
 } from './table.actions';
+import { PrintService } from '../../shared/print.service';
+import { LoadMatches } from '../../assign/redux/match.actions';
 import { TableEffects } from './table.effects';
 import { TTMatchResult } from '../table-list/result-modal/ttmatch-result.model';
 import { MatchToTable } from '../table-list/tt-table/tt-table-content/matchtotable.model';
@@ -32,6 +52,7 @@ describe('the table effects', () => {
   let tableEffects: TableEffects;
   let tableService: TableService;
   let matchService: MatchService;
+  let printService: PrintService;
   let toast: { error: Mock; success: Mock; info: Mock };
 
   const responseTables = [
@@ -73,6 +94,7 @@ describe('the table effects', () => {
     tableEffects = TestBed.inject(TableEffects);
     tableService = TestBed.inject(TableService);
     matchService = TestBed.inject(MatchService);
+    printService = TestBed.inject(PrintService);
   });
 
   describe('loadTables', () => {
@@ -202,6 +224,140 @@ describe('the table effects', () => {
 
       expect(result).toStrictEqual([new AssignMatchToTableError(failedStatus)]);
       expect(toast.error.mock.calls).toEqual([['Tisch belegt']]);
+    });
+  });
+
+  describe('locking and unlocking a table by its number', () => {
+    it('should return a LockTableSuccess', async () => {
+      const lock = vi.spyOn(tableService, 'lockTable').mockReturnValue(of(statusDto));
+
+      expect(await emittedBy(tableEffects.lockTables, actions, new LockTable(7))).toStrictEqual([
+        new LockTableSuccess(7),
+      ]);
+      expect(lock.mock.calls).toEqual([[7]]);
+    });
+
+    it('should return a LockTableError and show an error', async () => {
+      vi.spyOn(tableService, 'lockTable').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(tableEffects.lockTables, actions, new LockTable(7))).toStrictEqual([
+        new LockTableError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Sperren des Tisches', '']]);
+    });
+
+    it('should return an UnLockTableSuccess', async () => {
+      const unlock = vi.spyOn(tableService, 'unLockTable').mockReturnValue(of(statusDto));
+
+      expect(await emittedBy(tableEffects.unLockTables, actions, new UnLockTable(7))).toStrictEqual([
+        new UnLockTableSuccess(7),
+      ]);
+      expect(unlock.mock.calls).toEqual([[7]]);
+    });
+
+    it('should return an UnLockTableError and show an error', async () => {
+      vi.spyOn(tableService, 'unLockTable').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(tableEffects.unLockTables, actions, new UnLockTable(7))).toStrictEqual([
+        new UnLockTableError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Entsperren des Tisches', '']]);
+    });
+  });
+
+  describe('freeing a table', () => {
+    const payload = { matchIds: [4, 5] };
+
+    it('should free its matches, confirm it and return a FreeTableSuccess', async () => {
+      const free = vi.spyOn(matchService, 'freeMatches').mockReturnValue(of(statusDto));
+
+      expect(await emittedBy(tableEffects.freeTables, actions, new FreeTable(payload))).toStrictEqual([
+        new FreeTableSuccess(payload),
+      ]);
+      expect(free.mock.calls).toEqual([[[4, 5]]]);
+      expect(toast.success.mock.calls).toEqual([['SpielNr. 4,5 frei gemacht']]);
+    });
+
+    it('should return a FreeTableError and show an error', async () => {
+      vi.spyOn(matchService, 'freeMatches').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(tableEffects.freeTables, actions, new FreeTable(payload))).toStrictEqual([
+        new FreeTableError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Freigeben des Tisches', '']]);
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('taking back the matches of a table', () => {
+    const payload = { matchIds: [4] };
+
+    it('should return a TakeBackTableSuccess', async () => {
+      const takeBack = vi.spyOn(matchService, 'takeBackMatches').mockReturnValue(of(statusDto));
+
+      expect(await emittedBy(tableEffects.takeBackTables, actions, new TakeBackTable(payload))).toStrictEqual([
+        new TakeBackTableSuccess(payload),
+      ]);
+      expect(takeBack.mock.calls).toEqual([[[4]]]);
+    });
+
+    it('should return a TakeBackTableError and show an error', async () => {
+      vi.spyOn(matchService, 'takeBackMatches').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(tableEffects.takeBackTables, actions, new TakeBackTable(payload))).toStrictEqual([
+        new TakeBackTableError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Zurücknehmen der Spiele', '']]);
+    });
+  });
+
+  describe('printing the match of a table', () => {
+    const payload = { matchId: 4 };
+
+    it('should return a PrintTableSuccess', async () => {
+      const print = vi.spyOn(printService, 'printMatch').mockReturnValue(of(statusDto));
+
+      expect(await emittedBy(tableEffects.printTables, actions, new PrintTable(payload))).toStrictEqual([
+        new PrintTableSuccess(payload),
+      ]);
+      expect(print.mock.calls).toEqual([[4]]);
+    });
+
+    it('should return a PrintTableError and show an error', async () => {
+      vi.spyOn(printService, 'printMatch').mockReturnValue(throwError(() => error));
+
+      expect(await emittedBy(tableEffects.printTables, actions, new PrintTable(payload))).toStrictEqual([
+        new PrintTableError(error),
+      ]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Drucken des Spiels', '']]);
+    });
+  });
+
+  describe('removing a match from one of its two tables', () => {
+    const payload = { tableId: 2, matchIds: [4] };
+
+    it('should return a RemoveMatchFromTableSuccess', async () => {
+      const remove = vi.spyOn(matchService, 'removeMatchFromTable').mockReturnValue(of(statusDto));
+
+      expect(
+        await emittedBy(tableEffects.removeMatchFromTable, actions, new RemoveMatchFromTable(payload))
+      ).toStrictEqual([new RemoveMatchFromTableSuccess(payload)]);
+      expect(remove.mock.calls).toEqual([[payload]]);
+    });
+
+    it('should return a RemoveMatchFromTableError and show an error', async () => {
+      vi.spyOn(matchService, 'removeMatchFromTable').mockReturnValue(throwError(() => error));
+
+      expect(
+        await emittedBy(tableEffects.removeMatchFromTable, actions, new RemoveMatchFromTable(payload))
+      ).toStrictEqual([new RemoveMatchFromTableError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Entfernen der Spiele', '']]);
+    });
+
+    it('should reload the tables and the matches once it is removed, without waiting for the update event', async () => {
+      expect(
+        await emittedBy(tableEffects.reloadAfterRemoveMatchFromTable, actions, new RemoveMatchFromTableSuccess(payload))
+      ).toStrictEqual([new LoadTables(null), new LoadMatches(null)]);
     });
   });
 });

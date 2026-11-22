@@ -7,5 +7,4 @@ interface MatchListRepository {
     fun findById(uuid: String): Optional<MatchList>
     fun save(entry: MatchList): MatchList
     fun deleteById(uuid: String): Boolean
-    fun deleteAll()
 }

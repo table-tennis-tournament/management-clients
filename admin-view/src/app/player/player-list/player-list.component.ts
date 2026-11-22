@@ -95,48 +95,42 @@ export class PlayerListComponent {
     this.filteredPlayers = this.filteredPlayers.filter((player) => this.containsValue(callback(player), value));
   }
 
+  /** Applies the discipline and every name filter together. */
   applyFilters() {
-    this.filteredPlayers = this.players;
+    this.filteredPlayers = this.players ?? [];
     if (this.currentDisciplineFilter > 0) {
       this.filteredPlayers = this.filteredPlayers.filter((pl) => pl.type.id === this.currentDisciplineFilter);
     }
     if (this.firstNameInput) {
       this.filterByFirstName(this.firstNameInput);
-      return;
     }
     if (this.lastNameInput) {
       this.filterByLastName(this.lastNameInput);
-      return;
     }
     if (this.clubInput) {
       this.filterByClub(this.clubInput);
-      return;
     }
   }
 
   filterByFirstName(value: string) {
-    this.filterPlayers(value, (p) => p.player.firstName);
+    this.filterPlayers(value, (p) => p.player?.firstName);
   }
 
   filterByLastName(value: string) {
-    this.filterPlayers(value, (p) => p.player.lastName);
+    this.filterPlayers(value, (p) => p.player?.lastName);
   }
 
   filterByClub(value: string) {
-    this.filterPlayers(value, (p) => p.player.club.name);
+    this.filterPlayers(value, (p) => p.player?.club?.name);
   }
 
-  private containsValue(value: string, input: string) {
-    return value.toLowerCase().indexOf(input.toLowerCase()) > -1;
+  private containsValue(value: string | undefined, input: string) {
+    return (value ?? '').toLowerCase().includes(input.toLowerCase());
   }
 
   onDisciplineChanged(disciplineId: number) {
     this.currentDisciplineFilter = disciplineId;
-    if (disciplineId < 1) {
-      this.filteredPlayers = this.players;
-      return;
-    }
-    this.filteredPlayers = this.players.filter((pl) => pl.type.id === disciplineId);
+    this.applyFilters();
   }
 
   getPaidPlayersCount() {

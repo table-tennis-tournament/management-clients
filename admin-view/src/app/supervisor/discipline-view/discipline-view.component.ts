@@ -106,7 +106,9 @@ export class DisciplineViewComponent {
   }
 
   private mergeMatches(id: number) {
-    const createdTab = this.disciplineTabService.getTabForMatches(this.matches.filter((match) => match.type.id === id));
+    // the selection may arrive before the matches
+    const matchesOfDiscipline = (this.matches ?? []).filter((match) => match.type.id === id);
+    const createdTab = this.disciplineTabService.getTabForMatches(matchesOfDiscipline);
     if (this.isBigChange(createdTab)) {
       this.selectedTab = createdTab;
       return;
