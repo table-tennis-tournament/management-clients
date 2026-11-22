@@ -16,7 +16,6 @@ import { Player } from '../match/player.model';
 import { GameDialogComponent } from './game-dialog/game-dialog.component';
 import { ResultDialogComponent } from './result-dialog/result-dialog.component';
 import { Table } from './table.model';
-import { canRequestCall, choosePlayersToCall } from './player-dialog/player-dialog.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatBadge } from '@angular/material/badge';
 import { MatChipSet, MatChip } from '@angular/material/chips';
@@ -153,18 +152,6 @@ export class TtTableComponent {
         });
       }
     });
-  }
-
-  /** A started match whose players are still missing, e.g. after an auto-start, is called like a waiting one. */
-  canCallStartedMatch(): boolean {
-    return this.startedMatch != null && canRequestCall(this.startedMatch);
-  }
-
-  callPlayersOfStartedMatch() {
-    const match = this.startedMatch;
-    choosePlayersToCall(this.dialog, match).subscribe((playerIds) =>
-      this.callPlayersForMatch.emit({ matchId: match.match_id, playerIds })
-    );
   }
 
   startMatch(matchId) {

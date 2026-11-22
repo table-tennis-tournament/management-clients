@@ -116,9 +116,6 @@
       <div class="d-flex justify-content-between w-100">
         <button mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>
         <button mat-raised-button color="primary" (click)="takeBack()">Zurück</button>
-        @if (canCallStartedMatch()) {
-          <button mat-raised-button color="accent" (click)="callPlayersOfStartedMatch()">Ausrufen</button>
-        }
         @if (scoreboard.winner !== null) {
           <button mat-raised-button color="accent" (click)="endMatch()" class="float-right">Beenden</button>
         }

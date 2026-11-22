@@ -6,7 +6,6 @@ import { Table } from './table.model';
 import { TtTableComponent } from './tt-table.component';
 import { ResultDialogComponent } from './result-dialog/result-dialog.component';
 import { GameDialogComponent } from './game-dialog/game-dialog.component';
-import { PlayerDialogComponent } from './player-dialog/player-dialog.component';
 
 describe('the table card of a table manager', () => {
   let card: TtTableComponent;
@@ -132,23 +131,5 @@ describe('the table card of a table manager', () => {
 
     expect(dialog.open.mock.calls[0][1].data.gameNr).toBe(0);
     expect(emitted['updateMatchResult']).toEqual([]);
-  });
-
-  it('calls the missing players of a started match, e.g. after an auto-start', () => {
-    card.table = tableWith(started());
-    expect(card.canCallStartedMatch()).toBe(true);
-
-    card.callPlayersOfStartedMatch();
-    expect(dialog.open.mock.calls).toEqual([[PlayerDialogComponent, { width: '400px', data: [anna, bernd] }]]);
-
-    dialogClosed.next([]);
-    dialogClosed.next([2]);
-    expect(emitted['callPlayersForMatch']).toEqual([{ matchId: 7, playerIds: [2] }]);
-  });
-
-  it('calls nobody without a started match', () => {
-    card.table = tableWith(waiting(1));
-
-    expect(card.canCallStartedMatch()).toBe(false);
   });
 });

@@ -37,6 +37,8 @@ test.describe('Table Manager UI Tests', () => {
     // 2. Assign match 3 to table_number 1 (same endpoint as admin-view)
     const assignResponse = await request.post('/api/v2/match/matchtotable/1', { data: [3] });
     expect(assignResponse.ok()).toBeTruthy();
+    // the caller announces the first Call, so the players could be called again
+    expect((await request.post('/api/v2/match/call', { data: [3] })).ok()).toBeTruthy();
 
     // 3. Match 3 (Priyanka Sow vs Babajide Santos) appears on the first table via websocket
     const matchItem = firstTable.locator('app-match-item');
@@ -56,6 +58,10 @@ test.describe('Table Manager UI Tests', () => {
     // 6. After starting, the Erfassen and Zurück buttons appear
     await expect(firstTable.locator('button:has-text("Erfassen")')).toBeVisible({ timeout: 15000 });
     await expect(firstTable.locator('button:has-text("Zurück")')).toBeVisible({ timeout: 15000 });
+
+    // 7. A started match cannot be called any more: no call button is left on the table
+    await expect(secondCallButton).toHaveCount(0);
+    await expect(firstTable.getByRole('button', { name: /ausrufen/i })).toHaveCount(0);
   });
 
   test('should request a second call of the missing player only', async ({ page, request }) => {

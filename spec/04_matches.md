@@ -22,7 +22,8 @@ its players: 0 = not called yet, 1-3 = first to third call), `requestedCallNumbe
   (`POST /playercall/{matchId}` with their ids). The request waits on the caller's list (`/matchaggregates/secondCall` or
   `/thirdCall`, by the call it announces, naming only the requested players) until the caller announces it ("OK",
   `POST /playercall/announce`); then each requested player's call goes up by one. One request per match waits at a time;
-  the Third call is a player's last. The players of a Started match (e.g. after an auto-start) are still called.
+  the Third call is a player's last. The table manager requests calls only for a match that has not started: once it is
+  started, its call button is gone.
 - **Waiting time**: the tablemanager, the Assign view and the caller's lists show the minutes since the first Call.
 - Leaving the table (take back, reassignment, result, Frei) clears the calls. The administrator ends a match kampflos
   in the Assign view, usually after the Third call (see Walkover below).
