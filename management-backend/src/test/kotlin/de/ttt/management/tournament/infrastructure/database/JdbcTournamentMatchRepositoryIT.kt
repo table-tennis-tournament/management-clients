@@ -16,6 +16,9 @@ import org.springframework.test.context.ActiveProfiles
 import java.sql.Timestamp
 import kotlin.test.assertEquals
 
+/** The test clock's time with its offset, as the service passes it. */
+private val NOW_WITH_OFFSET = NOW.atZone(DeterministicTestConfiguration.ZONE).toOffsetDateTime()
+
 /**
  * Compares whole database rows: the `matches` row against its state before the save plus the columns
  * the save is expected to change, so a write to any other (mktt-owned) column breaks the test.
@@ -65,7 +68,7 @@ class JdbcTournamentMatchRepositoryIT {
     @Test
     fun `persists an assignment, a call and the table history`() {
         val match = load()
-        match.assign(3L, now = NOW)
+        match.assign(3L, now = NOW_WITH_OFFSET)
         match.call(NOW.atZone(DeterministicTestConfiguration.ZONE).toOffsetDateTime())
         match.requestCall(listOf(2L))
         assertEquals(1, repository.save(match))
@@ -90,9 +93,9 @@ class JdbcTournamentMatchRepositoryIT {
     @Test
     fun `moving a match to another table replaces its table history row`() {
         val match = load()
-        match.assign(3L, now = NOW)
+        match.assign(3L, now = NOW_WITH_OFFSET)
         repository.save(match)
-        match.start(5L, now = NOW)
+        match.start(5L, now = NOW_WITH_OFFSET)
         repository.save(match)
 
         assertEquals(
@@ -106,7 +109,7 @@ class JdbcTournamentMatchRepositoryIT {
     @Test
     fun `taking a match back clears the table, the call state and the table history`() {
         val match = load()
-        match.assign(3L, now = NOW)
+        match.assign(3L, now = NOW_WITH_OFFSET)
         match.call(NOW.atZone(DeterministicTestConfiguration.ZONE).toOffsetDateTime())
         repository.save(match)
 
@@ -122,7 +125,7 @@ class JdbcTournamentMatchRepositoryIT {
     @Test
     fun `completing a match persists the result and leaves mktt-owned columns untouched`() {
         val match = load()
-        match.start(3L, now = NOW)
+        match.start(3L, now = NOW_WITH_OFFSET)
         match.complete(listOf(SetResult(11, 5), SetResult(11, 7), SetResult(11, 3)))
         repository.save(match)
 

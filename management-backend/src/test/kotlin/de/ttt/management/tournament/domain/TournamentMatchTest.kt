@@ -6,12 +6,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 class TournamentMatchTest {
 
-    private val now = LocalDateTime.of(2026, 11, 16, 10, 0)
+    private val now = OffsetDateTime.of(2026, 11, 16, 10, 0, 0, 0, ZoneOffset.ofHours(1))
 
     private fun match() = TournamentMatch(
         id = 1L,
@@ -284,7 +284,7 @@ class TournamentMatchTest {
     // --- calls ----------------------------------------------------------------------
 
     /** [now] with its offset, as the first Call is stamped. */
-    private val callTime = now.atOffset(ZoneOffset.ofHours(1))
+    private val callTime = now
     private val later = callTime.plusMinutes(4)
 
     /** The match at table 7, its first Call announced at [now]. */
@@ -399,7 +399,7 @@ class TournamentMatchTest {
     @Test
     fun `players of a started match are still called, as after an auto-start`() {
         val match = calledMatch()
-        match.start(now = later.toLocalDateTime())
+        match.start(now = later)
         match.requestCall(listOf(1L))
         match.announceRequestedCall()
 
@@ -426,7 +426,7 @@ class TournamentMatchTest {
     fun `reassigning a match clears its calls`() {
         val match = calledMatch()
         match.requestCall(listOf(1L))
-        match.assign(tableId = 8, now = later.toLocalDateTime())
+        match.assign(tableId = 8, now = later)
 
         assertEquals(emptyList(), match.playerCalls)
         assertEquals(null, match.firstCallTime)

@@ -1,6 +1,6 @@
 [ {
   "name" : "Gruppenspiel A",
-  "startTime" : "2026-11-16T10:00:00",
+  "startTime" : "2026-11-16T10:00:00+01:00",
   "callNumber" : 1,
   "firstCallTime" : null,
   "tableNumbers" : [ 1 ],
@@ -23,7 +23,7 @@
   } ],
   "matches" : [ {
     "id" : 1,
-    "startTime" : "2026-11-16T10:00:00",
+    "startTime" : "2026-11-16T10:00:00+01:00",
     "team1" : [ {
       "id" : 1,
       "firstName" : "First1",

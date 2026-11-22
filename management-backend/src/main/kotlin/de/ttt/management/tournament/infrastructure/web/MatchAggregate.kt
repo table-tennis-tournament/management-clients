@@ -1,12 +1,11 @@
 package de.ttt.management.tournament.infrastructure.web
 
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 /** The matches at one table the caller announces a Call for. */
 data class MatchAggregate(
     val name: String?,
-    val startTime: LocalDateTime?,
+    val startTime: OffsetDateTime?,
     /** The Call to announce: 1 for the first Call, 2 or 3 for a requested Second or Third call. */
     val callNumber: Int,
     /** When the first Call was announced; `null` before it. */
@@ -34,7 +33,7 @@ data class PlayerDto(
 
 data class CallerMatchDto(
     val id: Long,
-    val startTime: LocalDateTime?,
+    val startTime: OffsetDateTime?,
     val team1: List<PlayerDto>,
     val team2: List<PlayerDto>
 )

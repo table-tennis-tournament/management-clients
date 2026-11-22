@@ -9,7 +9,9 @@ This document specifies the functionality for managing tournament tables.
 - **Matches**: The matches assigned to or being played on the table.
 
 ## Table Operations
-- **Overview**: Administrators see a list of all tables and their current status (Free, Occupied).
+- **Overview**: Administrators see a list of all tables and their current status (Free, Occupied). In the Tables and
+  the Assign view, a table with a started match shows its current result (the Sets won and the points of each Set) and
+  when it started and for how long it has been running (`startTime`).
 - **Match Assignment**: A match can be assigned to a specific table.
 - **Multiple Assignments**: Some tables may support multiple matches assigned in a sequence (Match List).
 

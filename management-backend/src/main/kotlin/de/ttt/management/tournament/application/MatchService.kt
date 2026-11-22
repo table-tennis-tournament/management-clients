@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 @Service("tournamentMatchService")
@@ -62,13 +61,13 @@ class MatchService(
 
     @Transactional
     fun assignMatch(matchId: Long, tableId: Long): Boolean = isUsableTable(tableId) &&
-        transition(listOf(matchId), { it.assign(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
+        transition(listOf(matchId), { it.assign(tableId, OffsetDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
             MatchAssigned(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId), affectedTypeIds = affectedTypeIds(listOf(t.match)))
         }
 
     @Transactional
     fun startMatch(matchId: Long, tableId: Long): Boolean = isUsableTable(tableId) &&
-        transition(listOf(matchId), { it.start(tableId, LocalDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
+        transition(listOf(matchId), { it.start(tableId, OffsetDateTime.now(clock)) }, onSaved = { matchListService.removeMatchFromList(matchId) }) { (t) ->
             MatchStarted(matchId = matchId, tableId = tableId, typeId = t.match.typeId, previousTableId = t.movedFrom(tableId), affectedTypeIds = affectedTypeIds(listOf(t.match)))
         }
 

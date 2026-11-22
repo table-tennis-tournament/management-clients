@@ -1,5 +1,4 @@
 package de.ttt.management.tournament.domain
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 class TournamentMatch(
     var id: Long? = null,
@@ -48,7 +47,8 @@ class TournamentMatch(
     var groupId: Long? = null,
     var nr: Int? = null,
     var roundNumber: Int? = null,
-    var startTime: LocalDateTime? = null
+    /** When the match was assigned to its table, then when it was started there. */
+    var startTime: OffsetDateTime? = null
 ) {
 
     /**
@@ -139,7 +139,7 @@ class TournamentMatch(
      * Assigns the match to a table without starting it, transitioning it to [MatchState.OnTable].
      * Any previous call is cleared.
      */
-    fun assign(tableId: Long, now: LocalDateTime) {
+    fun assign(tableId: Long, now: OffsetDateTime) {
         require(!isPlayed) { "A completed match cannot be assigned" }
         require(!isPlaying) { "A match that is already playing cannot be reassigned" }
         if (tableId != this.tableId) tableNumber = null
@@ -154,7 +154,7 @@ class TournamentMatch(
      * Starts the match on [tableId] (by default the table it is assigned to),
      * transitioning it to [MatchState.Started].
      */
-    fun start(tableId: Long? = this.tableId, now: LocalDateTime) {
+    fun start(tableId: Long? = this.tableId, now: OffsetDateTime) {
         require(!isPlayed) { "A completed match cannot be started" }
         require(!isPlaying) { "A match that is already playing cannot be started again" }
         require(secondTableId == null || tableId == this.tableId || tableId == secondTableId) {

@@ -15,7 +15,9 @@ A match progresses through several states (the backend `MatchState`, sent as `st
 ## Player Calling
 Matches at a table are called at the caller desk. The calls are not states. Every player of a match has their own
 call count; every Match DTO carries `playerCalls` (`playerId`, `callNumber`, `requested`), `callNumber` (the highest of
-its players: 0 = not called yet, 1-3 = first to third call), `requestedCallNumber` and `firstCallTime`.
+its players: 0 = not called yet, 1-3 = first to third call), `requestedCallNumber` and `firstCallTime`. Like `startTime`
+(when the match was assigned, then when it was started), `firstCallTime` carries its offset, e.g.
+`2026-11-16T10:00:00+01:00`: the backend may run in UTC while the browsers count in local time.
 - **First Call**: Assigning a match to a table puts it on the caller's list (`/matchaggregates/caller`). The caller
   announces it ("OK", `POST /match/call`): every player's call becomes 1 and the waiting time starts.
 - **Second and Third Call**: When players have not appeared, the table manager ticks them and requests their next call

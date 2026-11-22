@@ -90,7 +90,7 @@
   "groupId" : null,
   "nr" : 4,
   "roundNumber" : 3,
-  "startTime" : "2026-11-16T10:00:00",
+  "startTime" : "2026-11-16T10:00:00+01:00",
   "callNumber" : 2,
   "isBlocking" : true,
   "isPlayable" : false,

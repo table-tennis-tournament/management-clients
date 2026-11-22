@@ -64,7 +64,7 @@ class JdbcTournamentMatchRepository(
             },
             nr = rs.getInt("matc_nr"),
             roundNumber = rs.getInt("matc_roundnumber"),
-            startTime = rs.getTimestamp("matc_starttime")?.toLocalDateTime()
+            startTime = rs.getTimestamp("matc_starttime")?.toLocalDateTime()?.atZone(clock.zone)?.toOffsetDateTime()
         )
     }
 
@@ -311,7 +311,7 @@ class JdbcTournamentMatchRepository(
             .param("played", if (match.isPlayed) 1 else 0)
             .param("kampflos", if (match.isKampflos) 1 else 0)
             .param("waiting", if (match.waitingList) 1 else 0)
-            .param("startTime", match.startTime)
+            .param("startTime", match.startTime?.atZoneSameInstant(clock.zone)?.toLocalDateTime())
             .param("winnerId", match.winnerSideId)
             .param("result", match.result)
             .param("resultRaw", match.resultRaw)
