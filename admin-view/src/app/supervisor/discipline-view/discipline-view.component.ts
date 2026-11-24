@@ -5,7 +5,8 @@ import { DisciplineTab } from './models/discipline.tab.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { DisciplineStage } from './models/discipline.stage.model';
 import { DisciplineGroup } from './models/discipline.group.model';
-import { TypeColorMap } from '../../settings/settings.model';
+import { ShortNameMap, TypeColorMap } from '../../settings/settings.model';
+import { DisciplineNamePipe } from '../../shared/pipes/discipline-name.pipe';
 import deepEqual from 'deep-equal';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatButton } from '@angular/material/button';
@@ -27,6 +28,7 @@ import { DisciplineGroupComponent } from './discipline-group/discipline-group.co
     FormsModule,
     DisciplineStageComponent,
     DisciplineGroupComponent,
+    DisciplineNamePipe,
   ],
 })
 export class DisciplineViewComponent {
@@ -58,6 +60,9 @@ export class DisciplineViewComponent {
 
   @Input()
   typeColors: TypeColorMap;
+
+  @Input()
+  shortNames: ShortNameMap;
 
   _disciplines: Discipline[];
 

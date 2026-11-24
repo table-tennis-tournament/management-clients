@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Settings, ShortNameMap, TypeColor, TypeColorMap } from '../settings.model';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
-import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
 import { MatMiniFabButton, MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 
@@ -22,9 +23,10 @@ import { MatInput } from '@angular/material/input';
     MatMiniFabButton,
     MatIcon,
     MatInput,
-    MatHint,
     MatButton,
     MatIconButton,
+    MatButtonToggleGroup,
+    MatButtonToggle,
   ],
 })
 export class SettingsListComponent {
@@ -35,12 +37,10 @@ export class SettingsListComponent {
   isPrintForAssign: boolean;
   assignAutomatically: boolean;
 
-  // Type color management
-  selectedTypeId: number;
-  selectedBgColor: string = '#FF0000';
-  selectedTextColor: string = 'white';
+  /** The colors picked but not saved yet, by discipline id. */
+  colorDrafts: TypeColorMap = {};
 
-  constructor() {}
+  static readonly defaultColor: TypeColor = { bgColor: '#ff0000', textColor: 'white' };
 
   @Input()
   set settings(value: Settings[]) {
@@ -57,8 +57,8 @@ export class SettingsListComponent {
 
   @Input()
   set typeColors(value: TypeColorMap) {
-    this._typeColors = value;
-    this.updateSelectedColors();
+    this._typeColors = value ?? {};
+    this.colorDrafts = {};
   }
 
   get typeColors() {
@@ -91,8 +91,40 @@ export class SettingsListComponent {
     return (this.shortNameDrafts[typeId] ?? '').trim() !== (this._shortNames[typeId] ?? '');
   }
 
-  saveShortNameClick(typeId: number) {
-    this.saveShortName.emit({ typeId, shortName: (this.shortNameDrafts[typeId] ?? '').trim() });
+  /** The picked colors of a discipline, else its saved ones, else red on white. */
+  colorDraft(typeId: number): TypeColor {
+    return this.colorDrafts[typeId] ?? this._typeColors[typeId] ?? SettingsListComponent.defaultColor;
+  }
+
+  setBgColor(typeId: number, bgColor: string) {
+    this.colorDrafts[typeId] = { ...this.colorDraft(typeId), bgColor };
+  }
+
+  setTextColor(typeId: number, textColor: string) {
+    this.colorDrafts[typeId] = { ...this.colorDraft(typeId), textColor };
+  }
+
+  isColorChanged(typeId: number) {
+    const draft = this.colorDrafts[typeId];
+    const saved = this._typeColors[typeId];
+    if (!draft) {
+      return false;
+    }
+    return !saved || draft.bgColor.toLowerCase() !== saved.bgColor.toLowerCase() || draft.textColor !== saved.textColor;
+  }
+
+  isRowChanged(typeId: number) {
+    return this.isColorChanged(typeId) || this.isShortNameChanged(typeId);
+  }
+
+  /** Saves what changed in the row of a discipline: its colors, its short name or both. */
+  saveRow(typeId: number) {
+    if (this.isColorChanged(typeId)) {
+      this.saveTypeColor.emit({ typeId, colorData: { ...this.colorDrafts[typeId] } });
+    }
+    if (this.isShortNameChanged(typeId)) {
+      this.saveShortName.emit({ typeId, shortName: (this.shortNameDrafts[typeId] ?? '').trim() });
+    }
   }
 
   @Output()
@@ -109,40 +141,6 @@ export class SettingsListComponent {
 
   @Output()
   setBulkTypeColors: EventEmitter<TypeColorMap> = new EventEmitter();
-
-  onTypeSelected() {
-    this.updateSelectedColors();
-  }
-
-  private updateSelectedColors() {
-    if (this.selectedTypeId && this._typeColors && this._typeColors[this.selectedTypeId]) {
-      const colors = this._typeColors[this.selectedTypeId];
-      this.selectedBgColor = colors.bgColor;
-      this.selectedTextColor = colors.textColor;
-    } else {
-      this.selectedBgColor = '#FF0000';
-      this.selectedTextColor = 'white';
-    }
-  }
-
-  saveTypeColorClick() {
-    if (!this.selectedTypeId) {
-      return;
-    }
-
-    if (!/^#[0-9A-Fa-f]{6}$/.test(this.selectedBgColor)) {
-      alert('Ungültiges Farbformat. Bitte verwenden Sie #RRGGBB');
-      return;
-    }
-
-    this.saveTypeColor.emit({
-      typeId: this.selectedTypeId,
-      colorData: {
-        bgColor: this.selectedBgColor,
-        textColor: this.selectedTextColor,
-      },
-    });
-  }
 
   setSaturdayColors() {
     const saturdayColors: TypeColorMap = {

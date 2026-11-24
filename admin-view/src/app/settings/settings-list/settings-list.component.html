@@ -48,94 +48,54 @@
 
   <hr class="mb-4" />
 
-  <!-- Type Color Configuration Section -->
+  <!-- One row per discipline: its colors and its short name, saved together -->
   <div class="row mb-4">
     <div class="col-12">
-      <h5 class="mb-3">Type-Farben Konfiguration</h5>
-
-      <div class="row mb-3 align-items-center">
-        <div class="col-12 col-md-4">
-          <mat-form-field appearance="outline" class="w-100 h-100">
-            <mat-label>Wähle Type</mat-label>
-            <mat-select [(value)]="selectedTypeId" (selectionChange)="onTypeSelected()">
-              @for (type of types; track type) {
-                <mat-option [value]="type.id">
-                  {{ type.name }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-        @if (selectedTypeId) {
-          <div class="col-auto mb-3">
-            <button mat-mini-fab color="primary" (click)="saveTypeColorClick()" title="Farbe Speichern">
-              <mat-icon>save</mat-icon>
-            </button>
-          </div>
-        }
-      </div>
-
-      @if (selectedTypeId) {
-        <div class="row align-items-center mb-3">
-          <div class="col-12 col-md-4">
-            <mat-form-field appearance="outline" class="w-100 h-100">
-              <mat-label>Hintergrundfarbe (Hex)</mat-label>
-              <input matInput [(ngModel)]="selectedBgColor" placeholder="#FF0000" />
-              <mat-hint>Format: #RRGGBB</mat-hint>
-            </mat-form-field>
-          </div>
-          @if (selectedBgColor) {
-            <div class="col-12 col-md-2 mb-3 d-flex flex-column align-items-center">
-              <span class="small text-muted mb-1">Vorschau</span>
-              <div class="color-preview" [style.background-color]="selectedBgColor" [style.color]="selectedTextColor">A</div>
-            </div>
-          }
-        </div>
-
-        <div class="row mb-4">
-          <div class="col-12 col-md-4">
-            <mat-form-field appearance="outline" class="w-100 h-100">
-              <mat-label>Textfarbe</mat-label>
-              <mat-select [(value)]="selectedTextColor">
-                <mat-option value="white">Weiß</mat-option>
-                <mat-option value="black">Schwarz</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-
-  <hr class="mb-4" />
-
-  <!-- Discipline short names, shown where the full name does not fit (the table cards) -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <h5 class="mb-3">Kurznamen der Konkurrenzen</h5>
-      <p class="text-muted small">Auf den Tischkarten wird der Kurzname angezeigt. Leer lassen für den vollen Namen.</p>
+      <h5 class="mb-3">Konkurrenzen</h5>
+      <p class="text-muted small">
+        Farbe und Kurzname je Konkurrenz. Der Kurzname steht auf den Tischkarten und im Supervisor; leer lassen für den vollen Namen.
+      </p>
       @for (type of types; track type.id) {
-        <div class="row align-items-center">
-          <div class="col-12 col-md-4">{{ type.name }}</div>
-          <div class="col-8 col-md-3">
+        <div class="row align-items-center discipline-row">
+          <div class="col-12 col-md-3">{{ type.name }}</div>
+          <div class="col-auto">
+            <input
+              type="color"
+              class="color-input"
+              [value]="colorDraft(type.id).bgColor"
+              (input)="setBgColor(type.id, $any($event.target).value)"
+              title="Hintergrundfarbe"
+            />
+          </div>
+          <div class="col-auto">
+            <mat-button-toggle-group
+              hideSingleSelectionIndicator
+              [value]="colorDraft(type.id).textColor"
+              (change)="setTextColor(type.id, $event.value)"
+              aria-label="Textfarbe"
+            >
+              <mat-button-toggle value="white">Weiß</mat-button-toggle>
+              <mat-button-toggle value="black">Schwarz</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+          <div class="col-8 col-md-2">
             <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
               <mat-label>Kurzname</mat-label>
-              <input
-                matInput
-                [maxlength]="maxShortNameLength"
-                [(ngModel)]="shortNameDrafts[type.id]"
-                (keyup.enter)="saveShortNameClick(type.id)"
-              />
+              <input matInput [maxlength]="maxShortNameLength" [(ngModel)]="shortNameDrafts[type.id]" (keyup.enter)="saveRow(type.id)" />
             </mat-form-field>
           </div>
           <div class="col-auto">
-            <button
-              mat-icon-button
-              color="primary"
-              [disabled]="!isShortNameChanged(type.id)"
-              (click)="saveShortNameClick(type.id)"
-              title="Kurzname speichern"
+            <div
+              class="color-preview"
+              [style.background-color]="colorDraft(type.id).bgColor"
+              [style.color]="colorDraft(type.id).textColor"
+              title="Vorschau"
             >
+              {{ shortNameDrafts[type.id]?.trim() || type.name }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <button mat-icon-button color="primary" [disabled]="!isRowChanged(type.id)" (click)="saveRow(type.id)" title="Speichern">
               <mat-icon>save</mat-icon>
             </button>
           </div>

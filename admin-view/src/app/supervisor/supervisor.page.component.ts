@@ -5,9 +5,10 @@ import {
   getMatchesState,
   getMatchListState,
   getSelectedDiscipline,
+  getShortNamesState,
   getTypeColorsMapState,
 } from '../app-state.reducer';
-import { TypeColorMap } from '../settings/settings.model';
+import { ShortNameMap, TypeColorMap } from '../settings/settings.model';
 import { Match } from '../shared/data/match.model';
 import { Observable } from 'rxjs';
 import { MatchList } from './matchlist.model';
@@ -47,6 +48,7 @@ export class SupervisorPageComponent implements OnInit {
   matchList: Observable<MatchList[]>;
   disciplines: Observable<Discipline[]>;
   typeColors: Observable<TypeColorMap>;
+  shortNames: Observable<ShortNameMap>;
   selectedDiscipline: Observable<number>;
   private colors: TypeColorMap = {};
   currentColor: string;
@@ -57,6 +59,7 @@ export class SupervisorPageComponent implements OnInit {
     this.matchList = this.store.select(getMatchListState);
     this.disciplines = this.store.select(getDisciplineState);
     this.typeColors = this.store.select(getTypeColorsMapState);
+    this.shortNames = this.store.select(getShortNamesState);
     this.selectedDiscipline = this.store.select(getSelectedDiscipline);
     this.typeColors.subscribe((color) => (this.colors = color));
     this.selectedDiscipline.subscribe(this.changeColor.bind(this));

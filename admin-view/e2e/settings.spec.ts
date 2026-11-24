@@ -17,8 +17,11 @@ test.describe('Einstellungen View', () => {
 
     await expect(page.getByText('Wähle Drucker')).toBeVisible();
 
-    await expect(page.getByText('Type-Farben Konfiguration')).toBeVisible();
-    await expect(page.getByText('Wähle Type')).toBeVisible();
+    // one row per discipline with its colors and its short name
+    await expect(page.getByRole('heading', { name: 'Konkurrenzen' })).toBeVisible();
+    await expect(page.getByTitle('Hintergrundfarbe').first()).toBeVisible();
+    await expect(page.getByText('Weiß').first()).toBeVisible();
+    await expect(page.getByLabel('Kurzname').first()).toBeVisible();
 
     await expect(page.getByText('Schnellkonfiguration')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Setze Samstag Farben' })).toBeVisible();

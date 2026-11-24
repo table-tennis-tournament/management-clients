@@ -28,52 +28,43 @@ describe('the settings list', () => {
       list.typeColors = { 2: { bgColor: '#00ff00', textColor: 'black' } };
     });
 
-    it('shows the colors of the selected discipline', () => {
-      list.selectedTypeId = 2;
-      list.onTypeSelected();
-
-      expect([list.selectedBgColor, list.selectedTextColor]).toEqual(['#00ff00', 'black']);
+    it('shows the saved colors of a discipline, and red on white for one without colors', () => {
+      expect([list.colorDraft(2), list.colorDraft(3)]).toEqual([
+        { bgColor: '#00ff00', textColor: 'black' },
+        { bgColor: '#ff0000', textColor: 'white' },
+      ]);
     });
 
-    it('offers red on white for a discipline without colors', () => {
-      list.selectedTypeId = 3;
-      list.onTypeSelected();
+    it('shows the picked colors until they are saved', () => {
+      list.setBgColor(2, '#123abc');
+      list.setTextColor(3, 'black');
 
-      expect([list.selectedBgColor, list.selectedTextColor]).toEqual(['#FF0000', 'white']);
+      expect([list.colorDraft(2), list.colorDraft(3)]).toEqual([
+        { bgColor: '#123abc', textColor: 'black' },
+        { bgColor: '#ff0000', textColor: 'black' },
+      ]);
     });
 
-    it('updates the shown colors when the saved colors change', () => {
-      list.selectedTypeId = 2;
+    it('offers saving only changed colors, ignoring the case of the hex digits', () => {
+      list.setBgColor(2, '#00FF00');
+      expect([list.isColorChanged(2), list.isColorChanged(3)]).toEqual([false, false]);
+
+      list.setTextColor(2, 'white');
+      list.setBgColor(3, '#ff0000');
+      expect([list.isColorChanged(2), list.isColorChanged(3)]).toEqual([true, true]);
+    });
+
+    it('drops the picked colors when the saved colors arrive again', () => {
+      list.setBgColor(2, '#123abc');
       list.typeColors = { 2: { bgColor: '#0000ff', textColor: 'white' } };
 
-      expect([list.selectedBgColor, list.selectedTextColor]).toEqual(['#0000ff', 'white']);
+      expect([list.colorDraft(2), list.isColorChanged(2)]).toEqual([{ bgColor: '#0000ff', textColor: 'white' }, false]);
     });
 
-    it('saves the colors of the selected discipline', () => {
-      list.selectedTypeId = 2;
-      list.selectedBgColor = '#123ABC';
-      list.selectedTextColor = 'black';
+    it('copes with colors that are not loaded yet', () => {
+      list.typeColors = null;
 
-      list.saveTypeColorClick();
-
-      expect(emitted['saveTypeColor']).toEqual([{ typeId: 2, colorData: { bgColor: '#123ABC', textColor: 'black' } }]);
-    });
-
-    it('rejects a background color that is not #RRGGBB', () => {
-      const alert = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
-      list.selectedTypeId = 2;
-      list.selectedBgColor = 'red';
-
-      list.saveTypeColorClick();
-
-      expect(emitted['saveTypeColor']).toEqual([]);
-      expect(alert.mock.calls).toEqual([['Ungültiges Farbformat. Bitte verwenden Sie #RRGGBB']]);
-    });
-
-    it('saves nothing without a selected discipline', () => {
-      list.saveTypeColorClick();
-
-      expect(emitted['saveTypeColor']).toEqual([]);
+      expect([list.colorDraft(2), list.isColorChanged(2)]).toEqual([{ bgColor: '#ff0000', textColor: 'white' }, false]);
     });
 
     it('sets the Saturday and the Sunday colors of every discipline at once', () => {
@@ -116,12 +107,13 @@ describe('the settings list', () => {
 
     it('saves the trimmed draft, and a blank one to remove the short name', () => {
       list.shortNameDrafts[3] = '  M15 ';
-      list.saveShortNameClick(3);
-      list.saveShortNameClick(4);
+      list.shortNameDrafts[2] = ' ';
+      list.saveRow(3);
+      list.saveRow(2);
 
       expect(emitted['saveShortName']).toEqual([
         { typeId: 3, shortName: 'M15' },
-        { typeId: 4, shortName: '' },
+        { typeId: 2, shortName: '' },
       ]);
     });
 
@@ -136,6 +128,49 @@ describe('the settings list', () => {
       list.shortNames = null;
 
       expect([list.shortNames, list.shortNameDrafts, list.isShortNameChanged(2)]).toEqual([{}, {}, false]);
+    });
+  });
+
+  describe('the row of a discipline', () => {
+    beforeEach(() => {
+      list.typeColors = { 2: { bgColor: '#00ff00', textColor: 'black' } };
+      list.shortNames = { 2: 'J18 B' };
+    });
+
+    it('offers saving once its colors or its short name changed', () => {
+      expect(list.isRowChanged(2)).toBe(false);
+
+      list.setTextColor(2, 'white');
+      list.shortNameDrafts[3] = 'M15';
+
+      expect([list.isRowChanged(2), list.isRowChanged(3)]).toEqual([true, true]);
+    });
+
+    it('saves its colors and its short name together', () => {
+      list.setBgColor(2, '#123abc');
+      list.shortNameDrafts[2] = 'J18';
+
+      list.saveRow(2);
+
+      expect(emitted).toEqual({
+        saveTypeColor: [{ typeId: 2, colorData: { bgColor: '#123abc', textColor: 'black' } }],
+        setBulkTypeColors: [],
+        saveShortName: [{ typeId: 2, shortName: 'J18' }],
+      });
+    });
+
+    it('saves only what changed', () => {
+      list.setBgColor(2, '#123abc');
+      list.saveRow(2);
+      list.shortNameDrafts[3] = 'M15';
+      list.saveRow(3);
+      list.saveRow(4);
+
+      expect(emitted).toEqual({
+        saveTypeColor: [{ typeId: 2, colorData: { bgColor: '#123abc', textColor: 'black' } }],
+        setBulkTypeColors: [],
+        saveShortName: [{ typeId: 3, shortName: 'M15' }],
+      });
     });
   });
 });
