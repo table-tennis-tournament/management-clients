@@ -21,7 +21,7 @@ export class TeamItemComponent implements OnInit {
 
   @Input() showClubs = false;
 
-  @Input() result: string;
+  @Input() result: string | number;
 
   typeColor: string[];
 

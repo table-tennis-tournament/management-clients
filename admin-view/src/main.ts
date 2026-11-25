@@ -28,7 +28,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    // Angular 21 defaults to zoneless; the admin view relies on zone.js change detection.
+    // Angular defaults to zoneless since v21; the admin view relies on zone.js change detection.
     provideZoneChangeDetection(),
     importProvidersFrom(
       AppRoutingModule,
