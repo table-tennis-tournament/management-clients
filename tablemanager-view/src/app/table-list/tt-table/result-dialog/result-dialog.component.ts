@@ -41,7 +41,7 @@ export class ResultDialogComponent implements OnInit {
   dialogRef = inject<MatDialogRef<ResultDialogComponent>>(MatDialogRef);
   match = inject<Match>(MAT_DIALOG_DATA);
 
-  resultString: string;
+  resultString = '';
 
   ngOnInit(): void {
     this.resultString = formatResult(toSets(this.match.result?.games));

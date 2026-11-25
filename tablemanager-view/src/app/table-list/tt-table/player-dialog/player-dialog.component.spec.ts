@@ -16,7 +16,7 @@ const called = (player2Calls = 1, requestedCallNumber: number | null = null): Ma
 describe('requesting a call', () => {
   it('names the players of both Sides', () => {
     expect(playersOf(called()).map((p) => p.player_id)).toStrictEqual([1, 2]);
-    expect(playersOf({})).toStrictEqual([]);
+    expect(playersOf({ players_a: [], players_b: [] })).toStrictEqual([]);
   });
 
   it('calls a player again until the Third call', () => {

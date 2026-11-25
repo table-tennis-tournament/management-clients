@@ -92,7 +92,7 @@ describe('the table manager dialogs', () => {
   describe('the start dialog', () => {
     it('closes with the chosen match, or with nothing on cancel', () => {
       const dialog = open(StartDialogComponent, [{ match_id: 7 }, { match_id: 8 }]);
-      dialog.selectedMatch = { match_id: 8 };
+      dialog.selectedMatch = { match_id: 8, players_a: [], players_b: [] };
       dialog.onOk();
       dialog.onCancel();
 

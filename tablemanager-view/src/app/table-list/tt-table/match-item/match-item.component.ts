@@ -21,8 +21,8 @@ export class MatchItemComponent {
   dialog = inject(MatDialog);
   private clock = inject(MinuteClock);
 
-  @Input()
-  match: Match;
+  @Input({ required: true })
+  match!: Match;
 
   @Output()
   startMatch = new EventEmitter();

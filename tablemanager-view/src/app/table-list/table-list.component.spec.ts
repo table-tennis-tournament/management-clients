@@ -31,7 +31,7 @@ describe('the table list of a table manager', () => {
     const result = { games: [{ score_player_a: 11, score_player_b: 3 }] };
 
     list.onUpdateMatchResult({ matchId: 7, result });
-    list.onFinishMatch({ match_id: 7, result });
+    list.onFinishMatch({ match_id: 7, result, players_a: [], players_b: [] });
     list.onMatchOnTableStarted({ tableId: 30, matchId: 8 });
     list.onCallPlayersForMatch({ matchId: 8, playerIds: [2] });
     list.onTakeBackMatch({ matchId: 7 });

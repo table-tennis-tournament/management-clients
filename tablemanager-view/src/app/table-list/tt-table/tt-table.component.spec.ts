@@ -24,7 +24,13 @@ describe('the table card of a table manager', () => {
     players_b: [bernd],
     result: { games },
   });
-  const waiting = (callNumber: number): Match => ({ match_id: 8, state: 'OnTable', callNumber });
+  const waiting = (callNumber: number): Match => ({
+    match_id: 8,
+    state: 'OnTable',
+    callNumber,
+    players_a: [],
+    players_b: [],
+  });
   const tableWith = (...matches: Match[]): Table => ({ table_id: 30, table_number: 3, matches });
 
   beforeEach(() => {
@@ -48,7 +54,7 @@ describe('the table card of a table manager', () => {
   it('shows the scoreboard of the started match with five Sets', () => {
     card.table = tableWith(started(), waiting(1));
 
-    expect(card.startedMatch.match_id).toBe(7);
+    expect(card.startedMatch?.match_id).toBe(7);
     expect(card.scoreboard).toEqual({
       sets: [
         { pointsPlayer1: 11, pointsPlayer2: 5, winner: 1 },

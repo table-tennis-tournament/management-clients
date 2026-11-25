@@ -5,8 +5,9 @@ import { Result } from './result.model';
 export interface Match {
   match_id?: number;
   result?: Result;
-  players_a?: Player[];
-  players_b?: Player[];
+  /** The players of each side; the backend always sends both lists. */
+  players_a: Player[];
+  players_b: Player[];
   stage?: string;
   classification?: string;
   /** The lifecycle state; ask `shared/match-state` instead of comparing it. */

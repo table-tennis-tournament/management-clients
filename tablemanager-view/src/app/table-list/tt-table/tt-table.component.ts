@@ -55,7 +55,7 @@ interface Scoreboard {
 })
 export class TtTableComponent {
   dialog = inject(MatDialog);
-  private _table: Table;
+  private _table!: Table;
 
   // Computed once whenever the table changes, so the template reads fields instead of scanning the matches.
   /** The match being played on the table. */
@@ -66,7 +66,7 @@ export class TtTableComponent {
   secondCall = false;
   thirdCall = false;
 
-  @Input()
+  @Input({ required: true })
   set table(table: Table) {
     this._table = table;
     this.startedMatch = table.matches.find(isBeingPlayed) ?? null;
@@ -115,6 +115,9 @@ export class TtTableComponent {
 
   openResultDialog() {
     const match = this.startedMatch;
+    if (!match) {
+      return;
+    }
     const dialogRef = this.dialog.open(ResultDialogComponent, {
       width: '400px',
       data: match,
@@ -141,11 +144,12 @@ export class TtTableComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+      const match = this.startedMatch;
+      if (result && match) {
         const newGame = toGames([setWonBy(result.isPlayerA ? 1 : 2, Number(result.result))]);
-        const newGames = this.startedMatch.result.games.concat(newGame);
+        const newGames = (match.result?.games ?? []).concat(newGame);
         this.updateMatchResult.emit({
-          matchId: this.startedMatch.match_id,
+          matchId: match.match_id,
           result: {
             games: newGames,
           },
@@ -154,7 +158,7 @@ export class TtTableComponent {
     });
   }
 
-  startMatch(matchId) {
+  startMatch(matchId: number) {
     this.startMatchOnTable.emit({
       tableId: this.table.table_id,
       matchId,
@@ -167,12 +171,14 @@ export class TtTableComponent {
 
   /** The index of the Set being entered: the first Set without a winner, else the one after the last. */
   private getGameNumber() {
-    const sets = toSets(this.startedMatch.result?.games);
+    const sets = toSets(this.startedMatch?.result?.games);
     const index = sets.findIndex((set) => setWinner(set) === null);
     return index >= 0 ? index : sets.length;
   }
 
   takeBack() {
-    this.takeBackMatch.emit({ matchId: this.startedMatch.match_id });
+    if (this.startedMatch) {
+      this.takeBackMatch.emit({ matchId: this.startedMatch.match_id });
+    }
   }
 }

@@ -39,7 +39,7 @@ export class GameDialogComponent implements OnInit {
   dialogRef = inject<MatDialogRef<GameDialogComponent>>(MatDialogRef);
   gameData = inject<GameData>(MAT_DIALOG_DATA);
 
-  public resultString: string;
+  public resultString = '';
 
   ngOnInit(): void {
     this.resultString = '';
