@@ -47,6 +47,10 @@ All resolved:
 Open:
 
 - **OnPush everywhere.** The `ng update` migration added `ChangeDetectionStrategy.Eager` to every component without a strategy (40 in admin-view, 6 in tablemanager-view, 4 in result-view), and the lint rule `@angular-eslint/prefer-on-push-component-change-detection` is off in all three clients. Move them to OnPush, turn the rule back on, then consider dropping zone.js (zoneless is Angular's default since v21).
-- **TypeScript strict mode.** TypeScript 6 defaults to `strict: true`; every client's `tsconfig.json` sets `"strict": false` to keep the checks it had. Turning strict on in admin-view gave about 360 errors (uninitialised properties, nullability, implicit any). Do it per client on its own branch.
 - **Sass `@import`.** tablemanager-view's `styles.scss` uses `@import`, which Dart Sass 3 removes; move to `@use`.
 - **Console errors in admin-view, seen in the e2e run.** Neither fails a test and both predate the update. The result list's quick entry binds `[(ngModel)]="element.result"` to a frozen store object ("Cannot assign to read only property 'result'"). An `ngModel` inside a `<form>` without `name` or `standalone` throws NG01352 (`result-modal` or `select-match-modal`, seen in the assign tests).
+- **Flaky reconnect e2e tests.** "resynchronizes after a reconnect" (admin-view `e2e/live-updates.spec.ts`) and "should resynchronize after the websocket connection was lost" (tablemanager-view `e2e/tablemanager.spec.ts`) fail now and then on `main` as well: the admin test failed 4 of 5 repeats there, the table manager test about every second full run. Both wait for the resync after a reconnect.
+
+Resolved:
+
+- **TypeScript strict mode.** All three clients compile with `strict: true` (TypeScript 6's default). The models say what the backend always sends (`Match.team1`/`team2`, `Match.id`, `TableDto.id`/`number` in admin-view, the players of a Match in the other two), and selections that can be missing say so.
