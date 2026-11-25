@@ -17,13 +17,13 @@ import {
 
 import { PlayerService } from '../player.service';
 
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 
 @Injectable()
 export class PlayerEffects {
   private actions$ = inject(Actions);
   private playerService = inject(PlayerService);
-  private toastService = inject(ToastrService);
+  private notifications = inject(NotificationService);
 
   loadTables = createEffect(() =>
     this.actions$.pipe(
@@ -32,7 +32,7 @@ export class PlayerEffects {
         return this.playerService.getAllPlayerTypes().pipe(
           map((players) => new LoadPlayersSuccess(players)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Spieler', '');
+            this.notifications.error('Fehler beim Laden der Spieler');
             return of(new LoadPlayersError(err));
           })
         );
@@ -47,7 +47,7 @@ export class PlayerEffects {
         return this.playerService.setPlayerPaid(action.payload).pipe(
           map(() => new SetPlayerPaidSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim aktiv setzen des Spielers', '');
+            this.notifications.error('Fehler beim aktiv setzen des Spielers');
             return of(new SetPlayerPaidError(err));
           })
         );

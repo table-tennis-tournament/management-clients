@@ -36,7 +36,7 @@ import { TableService } from './table.service';
 
 import { SelectTableModalComponent } from './table-list/select-table-modal/select-table-modal.component';
 
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../shared/notification.service';
 
 import { MatchToTable } from './table-list/tt-table/tt-table-content/matchtotable.model';
 
@@ -58,7 +58,7 @@ import { AsyncPipe } from '@angular/common';
 export class TableListPageComponent implements OnInit {
   private store = inject<Store<any>>(Store);
   private tableService = inject(TableService);
-  private toastService = inject(ToastrService);
+  private notifications = inject(NotificationService);
   dialog = inject(MatDialog);
 
   /** Offers entering a result kampflos; the Assign view does, the Table view does not. */
@@ -117,7 +117,7 @@ export class TableListPageComponent implements OnInit {
   /** "2.Tisch": the group's matches wait at a second, free table as well. */
   onAssignSecondTable(table: TableDto) {
     if (!canUseSecondTable(table)) {
-      this.toastService.error('Nur eine Gruppe mit mindestens vier Spielern kann an zwei Tischen spielen.');
+      this.notifications.error('Nur eine Gruppe mit mindestens vier Spielern kann an zwei Tischen spielen.');
       return;
     }
     const selectedMatchIds = table.matches.map((match) => match.id);
@@ -126,7 +126,7 @@ export class TableListPageComponent implements OnInit {
 
   onFreeTablesLoaded(selectedMatchIds: number[], tables: TableDto[]) {
     if (!this.freeTablesAvailable(tables)) {
-      this.toastService.error('Es sind keine freien Tische verfügbar.');
+      this.notifications.error('Es sind keine freien Tische verfügbar.');
       return;
     }
     const dialogRef = this.dialog.open(SelectTableModalComponent, {
@@ -154,7 +154,7 @@ export class TableListPageComponent implements OnInit {
       });
       return;
     }
-    this.toastService.error('Ergebnis für zwei Tische kann nicht eingegeben werden.');
+    this.notifications.error('Ergebnis für zwei Tische kann nicht eingegeben werden.');
   }
 
   private freeTablesAvailable(tables: TableDto[]) {

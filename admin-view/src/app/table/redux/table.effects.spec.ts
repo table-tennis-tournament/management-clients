@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { MatchService } from '../../assign/match.service';
@@ -53,7 +53,7 @@ describe('the table effects', () => {
   let tableService: TableService;
   let matchService: MatchService;
   let printService: PrintService;
-  let toast: { error: Mock; success: Mock; info: Mock };
+  let notifications: { error: Mock; success: Mock; info: Mock };
 
   const responseTables = [
     {
@@ -78,13 +78,13 @@ describe('the table effects', () => {
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         TableEffects,
         TableService,
         MatchService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -105,7 +105,7 @@ describe('the table effects', () => {
 
       expect(result).toStrictEqual([new LoadTablesSuccess(responseTables)]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadTablesError and show an error', async () => {
@@ -114,7 +114,7 @@ describe('the table effects', () => {
       const result = await emittedBy(tableEffects.loadTables, actions, new LoadTables(null));
 
       expect(result).toStrictEqual([new LoadTablesError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Tische', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Tische']]);
     });
   });
 
@@ -130,7 +130,7 @@ describe('the table effects', () => {
 
       expect(result).toStrictEqual([new AssignToSecondTableSuccess(assign2ndTablePayload)]);
       expect(assign.mock.calls).toEqual([[1, [4, 5]]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a AssignToSecondTableError and show an error', async () => {
@@ -143,7 +143,7 @@ describe('the table effects', () => {
       );
 
       expect(result).toStrictEqual([new AssignToSecondTableError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim zuweisen des zweiten Tisches', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim zuweisen des zweiten Tisches']]);
     });
   });
 
@@ -155,7 +155,7 @@ describe('the table effects', () => {
 
       expect(result).toStrictEqual([new ResultForMatchSuccess(resultForMatchPayload)]);
       expect(enter.mock.calls).toEqual([[resultForMatchPayload]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a ResultForMatchError and show an error', async () => {
@@ -164,7 +164,7 @@ describe('the table effects', () => {
       const result = await emittedBy(tableEffects.resultForMatch, actions, new ResultForMatch(resultForMatchPayload));
 
       expect(result).toStrictEqual([new ResultForMatchError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler bei der Eingabe des Ergebnisses', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler bei der Eingabe des Ergebnisses']]);
     });
   });
 
@@ -181,7 +181,7 @@ describe('the table effects', () => {
 
       expect(result).toStrictEqual([new AssignMatchToTableSuccess(assignMatchToTable)]);
       expect(assign.mock.calls).toEqual([[assignMatchToTable]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a AssignMatchToTableError with the default message when the request fails', async () => {
@@ -194,7 +194,7 @@ describe('the table effects', () => {
       );
 
       expect(result).toStrictEqual([new AssignMatchToTableError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Zuweisen des Spiels zum Tisch', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Zuweisen des Spiels zum Tisch']]);
     });
 
     it('should show the backend message when the request fails with one', async () => {
@@ -208,7 +208,7 @@ describe('the table effects', () => {
       );
 
       expect(result).toStrictEqual([new AssignMatchToTableError(backendError)]);
-      expect(toast.error.mock.calls).toEqual([['Could not assign all matches to table.', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Could not assign all matches to table.']]);
     });
 
     it('should return a AssignMatchToTableError when the status is not successful', async () => {
@@ -223,7 +223,7 @@ describe('the table effects', () => {
       );
 
       expect(result).toStrictEqual([new AssignMatchToTableError(failedStatus)]);
-      expect(toast.error.mock.calls).toEqual([['Tisch belegt']]);
+      expect(notifications.error.mock.calls).toEqual([['Tisch belegt']]);
     });
   });
 
@@ -243,7 +243,7 @@ describe('the table effects', () => {
       expect(await emittedBy(tableEffects.lockTables, actions, new LockTable(7))).toStrictEqual([
         new LockTableError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Sperren des Tisches', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Sperren des Tisches']]);
     });
 
     it('should return an UnLockTableSuccess', async () => {
@@ -261,7 +261,7 @@ describe('the table effects', () => {
       expect(await emittedBy(tableEffects.unLockTables, actions, new UnLockTable(7))).toStrictEqual([
         new UnLockTableError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Entsperren des Tisches', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Entsperren des Tisches']]);
     });
   });
 
@@ -275,7 +275,7 @@ describe('the table effects', () => {
         new FreeTableSuccess(payload),
       ]);
       expect(free.mock.calls).toEqual([[[4, 5]]]);
-      expect(toast.success.mock.calls).toEqual([['SpielNr. 4,5 frei gemacht']]);
+      expect(notifications.success.mock.calls).toEqual([['SpielNr. 4,5 frei gemacht']]);
     });
 
     it('should return a FreeTableError and show an error', async () => {
@@ -284,8 +284,8 @@ describe('the table effects', () => {
       expect(await emittedBy(tableEffects.freeTables, actions, new FreeTable(payload))).toStrictEqual([
         new FreeTableError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Freigeben des Tisches', '']]);
-      expect(toast.success).not.toHaveBeenCalled();
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Freigeben des Tisches']]);
+      expect(notifications.success).not.toHaveBeenCalled();
     });
   });
 
@@ -307,7 +307,7 @@ describe('the table effects', () => {
       expect(await emittedBy(tableEffects.takeBackTables, actions, new TakeBackTable(payload))).toStrictEqual([
         new TakeBackTableError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Zurücknehmen der Spiele', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Zurücknehmen der Spiele']]);
     });
   });
 
@@ -329,7 +329,7 @@ describe('the table effects', () => {
       expect(await emittedBy(tableEffects.printTables, actions, new PrintTable(payload))).toStrictEqual([
         new PrintTableError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Drucken des Spiels', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Drucken des Spiels']]);
     });
   });
 
@@ -351,7 +351,7 @@ describe('the table effects', () => {
       expect(
         await emittedBy(tableEffects.removeMatchFromTable, actions, new RemoveMatchFromTable(payload))
       ).toStrictEqual([new RemoveMatchFromTableError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Entfernen der Spiele', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Entfernen der Spiele']]);
     });
 
     it('should reload the tables and the matches once it is removed, without waiting for the update event', async () => {

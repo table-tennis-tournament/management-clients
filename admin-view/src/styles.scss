@@ -64,3 +64,21 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+// Notifications (NotificationService): the panel class names the kind.
+.mat-mdc-snack-bar-container {
+  &.notification-error {
+    --mat-snack-bar-container-color: #bd362f;
+    --mat-snack-bar-supporting-text-color: #fff;
+  }
+
+  &.notification-success {
+    --mat-snack-bar-container-color: #51a351;
+    --mat-snack-bar-supporting-text-color: #fff;
+  }
+
+  &.notification-info {
+    --mat-snack-bar-container-color: #2f96b4;
+    --mat-snack-bar-supporting-text-color: #fff;
+  }
+}

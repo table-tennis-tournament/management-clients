@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { MatchService } from '../match.service';
@@ -22,16 +22,16 @@ describe('the match effects', () => {
   let actions: ReplaySubject<any>;
   let matchEffects: MatchEffects;
   let matchService: MatchService;
-  let toast: { error: Mock; success: Mock; info: Mock };
+  let notifications: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         MatchEffects,
         MatchService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -50,7 +50,7 @@ describe('the match effects', () => {
 
       expect(result).toStrictEqual([new LoadMatchesSuccess(MatchTestData)]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadMatchesError and show an error', async () => {
@@ -59,7 +59,7 @@ describe('the match effects', () => {
       const result = await emittedBy(matchEffects.loadMatches, actions, new LoadMatches(null));
 
       expect(result).toStrictEqual([new LoadMatchesError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Matches', '']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Matches']]);
     });
   });
 
@@ -72,8 +72,8 @@ describe('the match effects', () => {
 
       expect(result).toStrictEqual([new ReloadMatchesSuccess(statusDto)]);
       expect(reload.mock.calls).toEqual([[]]);
-      expect(toast.success.mock.calls).toEqual([['Daten erfolgreich geladen', '']]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.success.mock.calls).toEqual([['Daten erfolgreich geladen']]);
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a ReloadMatchesError and show an error', async () => {
@@ -82,8 +82,8 @@ describe('the match effects', () => {
       const result = await emittedBy(matchEffects.reloadMatches, actions, new ReloadMatches());
 
       expect(result).toStrictEqual([new ReloadMatchesError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Lesen der Matches aus der DB', '']]);
-      expect(toast.success).not.toHaveBeenCalled();
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Lesen der Matches aus der DB']]);
+      expect(notifications.success).not.toHaveBeenCalled();
     });
   });
 });

@@ -59,7 +59,7 @@ export function tableCard(page: Page, number: number): Locator {
     .filter({ has: page.locator('span.circle', { hasText: new RegExp(`^\\s*${number}\\s*$`) }) });
 }
 
-/** An entry of the admin view's error toasts. */
-export function errorToast(page: Page, message: string): Locator {
-  return page.locator('.toast-error').filter({ hasText: message });
+/** The admin view's error notification with the text [message]. */
+export function errorNotification(page: Page, message: string): Locator {
+  return page.locator('.notification-error').filter({ hasText: message });
 }

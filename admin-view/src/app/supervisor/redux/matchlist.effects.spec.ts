@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { StatusDto } from '../../shared/statusdto.model';
@@ -30,16 +30,16 @@ describe('the matchlist effects', () => {
   let actions: ReplaySubject<any>;
   let matchListEffects: MatchListEffects;
   let matchListService: MatchListService;
-  let toast: { error: Mock; success: Mock; info: Mock };
+  let notifications: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         MatchListEffects,
         MatchListService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -57,7 +57,7 @@ describe('the matchlist effects', () => {
 
       expect(result).toStrictEqual([new LoadMatchListSuccess(testData)]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadMatchListError and show an error', async () => {
@@ -66,7 +66,7 @@ describe('the matchlist effects', () => {
       const result = await emittedBy(matchListEffects.loadMatchList, actions, new LoadMatchList(null));
 
       expect(result).toStrictEqual([new LoadMatchListError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der MatchList']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der MatchList']]);
     });
   });
 
@@ -80,8 +80,8 @@ describe('the matchlist effects', () => {
 
       expect(result).toStrictEqual([new AssignToMatchListSuccess(status)]);
       expect(assign.mock.calls).toEqual([[request]]);
-      expect(toast.info.mock.calls).toEqual([['In Warteliste eingefügt']]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.info.mock.calls).toEqual([['In Warteliste eingefügt']]);
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a AssignToMatchListError and show an error', async () => {
@@ -90,8 +90,8 @@ describe('the matchlist effects', () => {
       const result = await emittedBy(matchListEffects.assignToMatchList, actions, new AssignToMatchList(request));
 
       expect(result).toStrictEqual([new AssignToMatchListError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Hinzufügen des Matchlist-items']]);
-      expect(toast.info).not.toHaveBeenCalled();
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Hinzufügen des Matchlist-items']]);
+      expect(notifications.info).not.toHaveBeenCalled();
     });
   });
 
@@ -103,7 +103,7 @@ describe('the matchlist effects', () => {
 
       expect(result).toStrictEqual([new DeleteMatchListItemSuccess(status)]);
       expect(remove.mock.calls).toEqual([['myId']]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a DeleteMatchListItemError and show an error', async () => {
@@ -112,7 +112,7 @@ describe('the matchlist effects', () => {
       const result = await emittedBy(matchListEffects.deleteMatchListItem, actions, new DeleteMatchListItem('myId'));
 
       expect(result).toStrictEqual([new DeleteMatchListItemError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Löschen des Matchlist-items']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Löschen des Matchlist-items']]);
     });
   });
 
@@ -126,7 +126,7 @@ describe('the matchlist effects', () => {
 
       expect(result).toStrictEqual([new MoveMatchListItemSuccess(status)]);
       expect(moveItem.mock.calls).toEqual([[move]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a MoveMatchListItemError and show an error', async () => {
@@ -135,7 +135,7 @@ describe('the matchlist effects', () => {
       const result = await emittedBy(matchListEffects.moveMatchListItem, actions, new MoveMatchListItem(move));
 
       expect(result).toStrictEqual([new MoveMatchListItemError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Verschieben des Matchlist-items']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Verschieben des Matchlist-items']]);
     });
   });
 });

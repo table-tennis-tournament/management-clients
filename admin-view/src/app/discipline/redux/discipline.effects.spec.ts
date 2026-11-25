@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { DisciplineService } from '../discipline.service';
@@ -15,16 +15,16 @@ describe('the Discipline effects', () => {
   let actions: ReplaySubject<any>;
   let disciplineEffects: DisciplineEffects;
   let disciplineService: DisciplineService;
-  let toast: { error: Mock; success: Mock; info: Mock };
+  let notifications: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         DisciplineEffects,
         DisciplineService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -43,7 +43,7 @@ describe('the Discipline effects', () => {
 
       expect(result).toStrictEqual([new LoadDisciplineSuccess(DisciplineTestData)]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadDisciplineError and show an error', async () => {
@@ -52,7 +52,7 @@ describe('the Discipline effects', () => {
       const result = await emittedBy(disciplineEffects.loadDisciplines, actions, new LoadDiscipline(null));
 
       expect(result).toStrictEqual([new LoadDisciplineError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Konkurrenzen']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Konkurrenzen']]);
     });
   });
 });

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { MatchService } from '../match.service';
@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class MatchEffects {
   private actions$ = inject(Actions);
-  private toastService = inject(ToastrService);
+  private notifications = inject(NotificationService);
   private matchService = inject(MatchService);
 
   loadMatches = createEffect(() =>
@@ -25,7 +25,7 @@ export class MatchEffects {
         return this.matchService.loadAllMatches().pipe(
           map((matches) => new LoadMatchesSuccess(matches)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Matches', '');
+            this.notifications.error('Fehler beim Laden der Matches');
             return of(new LoadMatchesError(err));
           })
         );
@@ -39,11 +39,11 @@ export class MatchEffects {
       switchMap(() => {
         return this.matchService.reloadMatchesFromDb().pipe(
           map((matches) => {
-            this.toastService.success('Daten erfolgreich geladen', '');
+            this.notifications.success('Daten erfolgreich geladen');
             return new ReloadMatchesSuccess(matches);
           }),
           catchError((err) => {
-            this.toastService.error('Fehler beim Lesen der Matches aus der DB', '');
+            this.notifications.error('Fehler beim Lesen der Matches aus der DB');
             return of(new ReloadMatchesError(err));
           })
         );

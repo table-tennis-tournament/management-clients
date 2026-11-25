@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { PlayerService } from '../player.service';
@@ -23,16 +23,16 @@ describe('the player effects', () => {
   let actions: ReplaySubject<any>;
   let effects: PlayerEffects;
   let playerService: PlayerService;
-  let toast: { error: Mock; success: Mock };
+  let notifications: { error: Mock; success: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         PlayerEffects,
         PlayerService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -49,7 +49,7 @@ describe('the player effects', () => {
       new LoadPlayersSuccess([registration]),
     ]);
     expect(load.mock.calls).toEqual([[]]);
-    expect(toast.error).not.toHaveBeenCalled();
+    expect(notifications.error).not.toHaveBeenCalled();
   });
 
   it('shows an error when the registrations do not load', async () => {
@@ -58,7 +58,7 @@ describe('the player effects', () => {
     expect(await emittedBy(effects.loadTables, actions, new LoadPlayers(null))).toStrictEqual([
       new LoadPlayersError(error),
     ]);
-    expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Spieler', '']]);
+    expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Spieler']]);
   });
 
   it('marks a registration as paid', async () => {
@@ -76,6 +76,6 @@ describe('the player effects', () => {
     expect(await emittedBy(effects.playerPaid, actions, new SetPlayerPaid(registration))).toStrictEqual([
       new SetPlayerPaidError(error),
     ]);
-    expect(toast.error.mock.calls).toEqual([['Fehler beim aktiv setzen des Spielers', '']]);
+    expect(notifications.error.mock.calls).toEqual([['Fehler beim aktiv setzen des Spielers']]);
   });
 });

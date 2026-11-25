@@ -6,7 +6,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app/navigation/app-routing.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SharedModule } from './app/shared/shared.module';
-import { ToastrModule } from 'ngx-toastr';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './app/app-state.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -35,12 +34,6 @@ bootstrapApplication(AppComponent, {
       AppRoutingModule,
       DragDropModule,
       SharedModule.forRoot(),
-      ToastrModule.forRoot({
-        timeOut: 5000,
-        extendedTimeOut: 2000,
-        closeButton: false,
-        positionClass: 'toast-bottom-center',
-      }),
       StoreModule.forRoot(reducers, {
         metaReducers,
         runtimeChecks: {

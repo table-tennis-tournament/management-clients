@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { MatchService } from '../../assign/match.service';
@@ -13,16 +13,16 @@ describe('the result effects', () => {
   let actions: ReplaySubject<any>;
   let effects: ResultEffects;
   let matchService: MatchService;
-  let toast: { error: Mock };
+  let notifications: { error: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn() };
+    notifications = { error: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         ResultEffects,
         MatchService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -49,6 +49,6 @@ describe('the result effects', () => {
     expect(await emittedBy(effects.loadResults, actions, new LoadResults(null))).toStrictEqual([
       new LoadResultsError(error),
     ]);
-    expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Ergebnisliste']]);
+    expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Ergebnisliste']]);
   });
 });
