@@ -2,38 +2,32 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Result } from './result.model';
+import { toRequestBody } from '../../shared/result-entry/result-entry';
+import { toSets } from './games';
 
 @Injectable({ providedIn: 'root' })
 export class MatchService {
   private http = inject(HttpClient);
 
-  // updateMatchResult(matchId: number, result: Result): Observable<any> {
-  //   return this.http.put<any>(`api/matches/${matchId}/result`, result);
-  // }
-
   updateMatchResult(matchId: number, result: Result): Observable<any> {
-    const results = result.games.map((game) => [game.score_player_a, game.score_player_b]);
-    return this.http.post<any>(`api/match/${matchId}/updateResult`, results);
+    return this.http.post<any>(`/api/v2/match/updateResult/${matchId}`, toRequestBody(toSets(result.games)));
   }
 
-  // finishMatch(matchId: number) {
-  //   return this.http.put<any>(`api/matches/${matchId}/state`, {state: 'FINISHED'});
-  // }
-
   finishMatch(matchId: number, result: Result) {
-    const results = result.games.map((game) => [game.score_player_a, game.score_player_b]);
-    return this.http.post<any>(`api/match/${matchId}/setResult`, results);
+    return this.http.post<any>(`/api/v2/match/setResult/${matchId}`, toRequestBody(toSets(result.games)));
   }
 
   startMatch(tableId: number, matchId: number): Observable<any> {
-    return this.http.get<any>(`api/match/start/${matchId}/${tableId}`);
+    return this.http.post<any>(`/api/v2/match/start/${matchId}/${tableId}`, null);
   }
 
-  callPlayersForMatch(playerIds: number[], matchId: number) {
-    return this.http.post<any>(`api/playercall/${matchId}`, { player_ids: playerIds });
+  /** Announces the next Call of the match; a Call always names all players of the match. */
+  /** Requests the next call of the players [playerIds] of the match, who have not appeared. */
+  callPlayersForMatch(matchId: number, playerIds: number[]) {
+    return this.http.post<any>(`/api/v2/playercall/${matchId}`, playerIds);
   }
 
   takeBackMatch(matchId: number) {
-    return this.http.get<any>(`api/match/stop/${matchId}`);
+    return this.http.post<any>(`/api/v2/match/takeBack/${matchId}`, null);
   }
 }

@@ -2,16 +2,16 @@
   <div *ngFor="let round of rounds; let r = index" class="round" [style.left.px]="r * roundWidth">
     <div class="stage-title">{{ names[r] }}</div>
     <div class="round-matches" [style.height.px]="matchAreaHeight">
-      <div *ngFor="let entry of round" class="match" [style.top.px]="entry.top">
+      <div *ngFor="let entry of round; trackBy: trackByMatch" class="match" [style.top.px]="entry.top">
         <div class="match-content">
           <div class="team">
             <span>{{ teamLabel(entry.match.team1) }}</span>
-            <span class="score">{{ entry.match.result | resultPipe: true }}</span>
+            <span class="score">{{ entry.match | resultPipe: true }}</span>
           </div>
           <div class="divider"></div>
           <div class="team">
             <span>{{ teamLabel(entry.match.team2) }}</span>
-            <span class="score">{{ entry.match.result | resultPipe: false }}</span>
+            <span class="score">{{ entry.match | resultPipe: false }}</span>
           </div>
         </div>
         <div *ngIf="entry.hasIncoming" class="line line-incoming"></div>

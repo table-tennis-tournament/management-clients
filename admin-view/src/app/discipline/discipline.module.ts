@@ -7,11 +7,11 @@ import { DisciplineSelectComponent } from './discipline-select/discipline-select
 import { DisciplineEffects } from './redux/discipline.effects';
 
 @NgModule({
-  declarations: [DisciplineSelectComponent],
   imports: [
     SharedModule,
     StoreModule.forFeature('discipline', fromDiscipline.reducers),
     EffectsModule.forFeature([DisciplineEffects]),
+    DisciplineSelectComponent,
   ],
   providers: [],
   exports: [DisciplineSelectComponent],

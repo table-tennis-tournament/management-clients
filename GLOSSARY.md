@@ -6,11 +6,13 @@ This glossary defines the canonical domain language of the Table Tennis Tourname
 
 **Player** — a person registered for a tournament. A player has a TTR rating, belongs to a Club and is registered for one or more disciplines. A player is also the person who reads live results in the Result View.
 
+**Active player** — a player whose registration is active and who therefore takes part in the tournament. An inactive player is retained in the system but excluded from play.
+
 **Club** — the organization a player belongs to.
 
 **TTR** — the official table tennis ranking used for players in Germany.
 
-**Discipline** — a competition category within the tournament, for example "Herren A" or "Damen D 0-1500". Each discipline has a *kind* (Singles or Doubles) plus attributes such as a TTR range, an age range, a playing system and a knockout size. A discipline is stored in the `type` table.
+**Discipline** — a competition category within the tournament, for example "Herren A" or "Damen D 0-1500". Each discipline has a *kind* (Singles or Doubles) plus attributes such as a TTR range, an age range, a playing system and a knockout size. A discipline is stored in the `type` table. It may have a *short name* for places with little room, such as the table cards.
 
 **Singles** — a playing format in which a Side consists of one Player.
 
@@ -34,13 +36,13 @@ This glossary defines the canonical domain language of the Table Tennis Tourname
 
 **Group** — a round-robin group of players within a discipline. A group stage is played first; its results determine the knockout placement.
 
-**Knockout stage** — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier `999`.
+**Knockout stage** — the elimination bracket of a discipline, played after the group stage. Represented in the data by the reserved group identifier `999`. The winner of a knockout match, played or Walkover, moves on into its Side of the next match of the bracket.
 
 **Stage** — where a match sits within its discipline: either the Group stage (Gruppenspiel) or a specific Knockout stage (Final, Semi-final, Quarter-final, Round of 16, Rounds 0–3, Third-place match, Placement matches, Top48/ER rounds). Stored in the `matchtype` table. In the knockout stage, the round number identifies the round within the bracket.
 
 **Queue** — the ordered waiting list of matches used to let the tournament run without manual interaction. Matches in the queue are started automatically as tables become free. *Deprecated code name: "MatchList".*
 
-**Call** — the announcement of a match and its players. **Second call** and **Third call** are repeat announcements issued when a player has not appeared.
+**Call** — the announcement of a match and its players at the caller desk. A match at a table is due for its first call; announcing it makes the match Called. **Second call** and **Third call** are repeat announcements for single players who have not appeared: the table manager requests one for the missing players, the caller announces it. Each player of a match has their own call count; the match's call is the highest of them. The time since the first call shows how long the players have been waited for.
 
 **Infrastructure**
 
@@ -62,15 +64,31 @@ The lifecycle of a Match is expressed through its state:
 
 **Called** — the first call for the match has been announced.
 
-**Second call** / **Third call** — a repeat call has been announced because a player has not appeared.
+**Second call** / **Third call** — a repeat call has been announced for a player who has not appeared. Usually the administrator ends the match as a Walkover after the Third call, but may do so at any time.
+
+**Take back** — returning a match from its Table to Open, either by the administrator or by the table manager ("Zurück"). *Deprecated: "stop".*
 
 **Started** — the match is being played.
 
 **Completed** — the result has been entered and the match is finished.
 
-**Finished** — the match has ended without a played result, for example a bye or a walkover ("free match"). Like Completed, it is a terminal state.
+**Finished** — the match has been played and freed at its table ("Frei"), but its result is entered later, in the administrator's result list. Entering the result completes it.
 
-The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InWaitingList`, `Callable`, `OnTable`, `SecondCall`, `ThirdCall`, `Started`, `Finished` and `Completed`. Two code names are counter-intuitive: assigning a match to a table sets the state `Callable`, while announcing the call sets the state `OnTable`.
+**Walkover** — the match is not played at all ("kampflos") because a Side did not appear after its calls; the Side that was there wins it without playing, counted as 3:0 Sets and 33:0 Points. When neither Side appears, the administrator still names a winner. Like Completed, it is a terminal state.
+
+**Second table** — a group of at least four players may play its matches on two tables ("2.Tisch"). Its upcoming matches then wait at both tables; a match is started at one of them and leaves the other. The table manager starts each match at the right table. **Remove** ("Entfernen") takes a match that waits at two tables off one of them; it keeps waiting at the other.
+
+The lifecycle state is represented in code by `MatchState`, whose values are `Open`, `InQueue`, `OnTable` (At Table), `Started`, `Completed`, `Finished` and `Walkover`. The calls are not states: every Match DTO carries `callNumber` next to `state` (0 = not called yet, 1 = Called, 2 = Second call, 3 = Third call; the highest call of its players). Clients ask the questions in `src/app/shared/match-state/match-state.ts` (`isWaiting`, `isAtTable`, `isBeingPlayed`, `isFinished`, `isWalkover`, `isOver`, `callNumber`, …) instead of comparing state names. The legacy names `InWaitingList`, `Callable`, `SecondCall` and `ThirdCall` are gone.
+
+**Live updates**
+
+**Update event** — a short notification that something in the tournament changed, for example that a match was completed. It does not carry the full data; each client fetches the current state it needs itself. *Deprecated: "snapshot" (full state pushed to clients).*
+
+**Topic** — a named channel for update events about one functional area. The topics are Matches (match lifecycle and results), Tables (table assignment and locking), Queue (the ordered waiting list), Players (registration and payment) and Settings (discipline colors and automation switches). A client listens only to the topics its view needs.
+
+**Scope** — the part of the tournament an update event refers to, such as a discipline, a table or a single match. A client uses the scope to ignore events that do not concern what it currently displays.
+
+**Resynchronization** — a client reloading the complete state it displays after it may have missed update events, for example after its connection dropped and was re-established.
 
 **External systems**
 

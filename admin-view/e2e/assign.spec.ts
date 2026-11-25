@@ -1,10 +1,48 @@
-import { expect, test } from '@playwright/test';
+import { APIRequestContext, expect, Page, test } from '@playwright/test';
 import { resetDatabase } from './db-helper';
-import { dragAndDrop } from './helpers';
+import { dragAndDrop, errorToast, getMatch, resetTournament, tableCard } from './helpers';
+
+// Herren A, group A: match 1 Nicolas Kowalska vs Babajide Santos, 2 Nicolas Kowalska vs Priyanka Sow,
+// 3 Priyanka Sow vs Babajide Santos; group B: match 4 Ji-hoon Mensah vs Mei Castro. Tables 1 to 9 are free.
+// Matches 244 to 249 are a group of four players, which may play on two tables.
+const groupOfFour = [244, 245, 246, 247, 248, 249];
+
+async function chooseDiscipline(page: Page, name: string): Promise<void> {
+  await page.locator('toma-discipline-match-list mat-select').click();
+  await page.getByRole('option', { name, exact: true }).click();
+}
+
+function matchItem(page: Page, player1: string, player2: string) {
+  return page.locator('.discipline-match-list-item').filter({ hasText: player1 }).filter({ hasText: player2 }).first();
+}
+
+/** Types like a user: the result dialog checks the input on every key. */
+async function typeResult(page: Page, text: string): Promise<void> {
+  const input = page.locator('mat-dialog-container input[matinput]');
+  await input.clear();
+  await input.pressSequentially(text);
+}
+
+async function openTableActions(page: Page, number: number): Promise<void> {
+  await tableCard(page, number).locator('mat-panel-title').click();
+}
+
+function dialog(page: Page) {
+  return page.locator('mat-dialog-container');
+}
 
 test.describe('Zuweiser View', () => {
+  // matches a test completed or freed, taken back before the next test
+  const touched = [1, 2, 3, 4];
+
   test.beforeAll(async () => {
+    // a cold start may (re)build the backend image and initialise MariaDB, so the hook needs more than the default 30s
+    test.setTimeout(600_000);
     await resetDatabase();
+  });
+
+  test.beforeEach(async ({ request }) => {
+    await resetTournament(request, touched);
   });
 
   test('should assign a match to a table via drag and drop with "Alle" selected', async ({ page }) => {
@@ -21,20 +59,280 @@ test.describe('Zuweiser View', () => {
     await options.filter({ hasText: 'Alle' }).click();
 
     // Match 3 is uniquely identified by both of its players.
-    const matchItem = page
-      .locator('.discipline-match-list-item')
-      .filter({ hasText: 'Priyanka Sow' })
-      .filter({ hasText: 'Babajide Santos' })
-      .first();
-    await expect(matchItem).toBeVisible({ timeout: 15000 });
+    const item = matchItem(page, 'Priyanka Sow', 'Babajide Santos');
+    await expect(item).toBeVisible({ timeout: 15000 });
 
     const firstTable = page.locator('toma-tt-table').first();
     await expect(firstTable).toContainText('Frei');
 
-    await dragAndDrop(page, matchItem, firstTable.locator('span.card-title'));
+    await dragAndDrop(page, item, firstTable.locator('span.card-title'));
 
     await expect(firstTable.locator('toma-tt-table-match-item')).toBeVisible({ timeout: 15000 });
     await expect(firstTable).toContainText('Priyanka Sow');
     await expect(firstTable).toContainText('Babajide Santos');
+  });
+
+  test('lists only the matches of the selected discipline', async ({ page }) => {
+    await page.goto('/admin-view/assignView');
+
+    await chooseDiscipline(page, 'Herren A');
+    await expect(matchItem(page, 'Priyanka Sow', 'Babajide Santos')).toBeVisible({ timeout: 15000 });
+
+    await chooseDiscipline(page, 'Damen A');
+    await expect(page.locator('.discipline-match-list-item').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.discipline-match-list-item').filter({ hasText: 'Priyanka Sow' })).toHaveCount(0);
+  });
+
+  test('blocks a match whose player is already at a table', async ({ page, request }) => {
+    await page.goto('/admin-view/assignView');
+    await chooseDiscipline(page, 'Herren A');
+    const blocked = matchItem(page, 'Nicolas Kowalska', 'Babajide Santos');
+    await expect(blocked).toBeVisible({ timeout: 15000 });
+
+    // another client puts match 3 (with Babajide Santos) on table 1
+    expect((await request.post('/api/v2/match/matchtotable/1', { data: [3] })).ok()).toBeTruthy();
+    await expect(blocked.locator('xpath=..')).toHaveClass(/disabled-item/, { timeout: 15000 });
+
+    // the blocked match cannot be dragged to a table
+    await dragAndDrop(page, blocked, tableCard(page, 2).locator('span.card-title'));
+    await expect(tableCard(page, 2)).toContainText('Frei');
+    expect((await getMatch(request, 1)).state).toBe('Open');
+  });
+
+  test('assigns a whole group to a table by dragging its group square', async ({ page, request }) => {
+    await page.goto('/admin-view/assignView');
+    await chooseDiscipline(page, 'Herren A');
+    const row = page.locator('.mat-list-item').filter({ has: matchItem(page, 'Priyanka Sow', 'Babajide Santos') });
+    await expect(row).toBeVisible({ timeout: 15000 });
+
+    await dragAndDrop(
+      page,
+      row.locator('.discipline-match-list-square'),
+      tableCard(page, 1).locator('span.card-title')
+    );
+
+    await expect(tableCard(page, 1)).toContainText('Gruppe A', { timeout: 15000 });
+    await expect(tableCard(page, 1)).toContainText('Offene Spiele: 3');
+    for (const id of [1, 2, 3]) {
+      expect((await getMatch(request, id)).state).toBe('OnTable');
+    }
+  });
+
+  test('assigns a queued match to a table from the "Warteschlange"', async ({ page, request }) => {
+    expect(
+      (await request.post('/api/v2/matchlist/add', { data: { matchIds: [4], asGroup: null, position: 0 } })).ok()
+    ).toBeTruthy();
+    await page.goto('/admin-view/assignView');
+    await chooseDiscipline(page, 'Warteschlange');
+
+    const queued = page.locator('toma-single-item').filter({ hasText: 'Ji-hoon Mensah' });
+    await expect(queued).toBeVisible({ timeout: 15000 });
+    await dragAndDrop(page, queued, tableCard(page, 1).locator('span.card-title'));
+
+    await expect(tableCard(page, 1)).toContainText('Ji-hoon Mensah', { timeout: 15000 });
+    await expect(page.locator('toma-single-item').filter({ hasText: 'Ji-hoon Mensah' })).toHaveCount(0);
+    expect(await (await request.get('/api/v2/matchlist/all')).json()).toEqual([]);
+  });
+
+  test('rejects a match dropped on a locked table', async ({ page, request }) => {
+    expect((await request.post('/api/v2/table/1/lock')).ok()).toBeTruthy();
+    await page.goto('/admin-view/assignView');
+    await chooseDiscipline(page, 'Herren A');
+    const item = matchItem(page, 'Priyanka Sow', 'Babajide Santos');
+    await expect(item).toBeVisible({ timeout: 15000 });
+    await expect(tableCard(page, 1)).toContainText('Gesperrt');
+
+    await dragAndDrop(page, item, tableCard(page, 1).locator('span.card-title'));
+
+    await expect(errorToast(page, 'Could not assign all matches to table.')).toBeVisible({ timeout: 15000 });
+    await expect(tableCard(page, 1)).toContainText('Gesperrt');
+    expect((await getMatch(request, 3)).state).toBe('Open');
+  });
+
+  test.describe('the actions of a table', () => {
+    test.beforeEach(async ({ request }) => {
+      // match 3 is at table 1
+      expect((await request.post('/api/v2/match/matchtotable/1', { data: [3] })).ok()).toBeTruthy();
+    });
+
+    test('"Frei" frees the table and the match waits for its result', async ({ page, request }) => {
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
+
+      await tableCard(page, 1).getByRole('button', { name: 'Frei', exact: true }).click();
+
+      await expect(tableCard(page, 1).locator('span.card-title')).toContainText('Frei', { timeout: 15000 });
+      expect((await getMatch(request, 3)).state).toBe('Finished');
+    });
+
+    test('"Eingeben" completes the match with the entered result', async ({ page, request }) => {
+      await page.goto('/admin-view/assignView');
+      await tableCard(page, 1).getByRole('button', { name: 'Eingeben', exact: true }).click({ timeout: 15000 });
+
+      await typeResult(page, '5 7 3');
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+      await expect(tableCard(page, 1).locator('span.card-title')).toContainText('Frei', { timeout: 15000 });
+      const match = await getMatch(request, 3);
+      expect(match.state).toBe('Completed');
+      expect(match.resultRaw).toBe('11=5,11=7,11=3');
+    });
+
+    test('"Eingeben" accepts no result without a winner, and cancelling changes nothing', async ({ page, request }) => {
+      await page.goto('/admin-view/assignView');
+      await tableCard(page, 1).getByRole('button', { name: 'Eingeben', exact: true }).click({ timeout: 15000 });
+      const ok = dialog(page).getByRole('button', { name: 'Ok' });
+
+      // two sets have no winner yet, and "abc" is no result
+      await typeResult(page, '5 7');
+      await expect(ok).toBeDisabled();
+      await typeResult(page, 'abc');
+      await expect(ok).toBeDisabled();
+
+      await dialog(page).getByRole('button', { name: 'Abbrechen' }).click();
+      await expect(dialog(page)).toHaveCount(0);
+      await expect(tableCard(page, 1)).toContainText('Priyanka Sow');
+      expect((await getMatch(request, 3)).state).toBe('OnTable');
+    });
+
+    test('"Zurück" takes the match back to the open matches', async ({ page, request }) => {
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
+
+      await openTableActions(page, 1);
+      await tableCard(page, 1).getByRole('button', { name: 'Zurück' }).click();
+
+      await expect(tableCard(page, 1).locator('span.card-title')).toContainText('Frei', { timeout: 15000 });
+      expect((await getMatch(request, 3)).state).toBe('Open');
+    });
+
+    test('a result entered "Kampflos" ends the match as a walkover won by the Side that was there', async ({
+      page,
+      request,
+    }) => {
+      await page.goto('/admin-view/assignView');
+      await tableCard(page, 1).getByRole('button', { name: 'Eingeben', exact: true }).click({ timeout: 15000 });
+
+      await typeResult(page, '0 0 0');
+      await dialog(page)
+        .getByRole('checkbox', { name: /Kampflos/ })
+        .check();
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+      await expect(tableCard(page, 1).locator('span.card-title')).toContainText('Frei', { timeout: 15000 });
+      const match = await getMatch(request, 3);
+      expect(match.state).toBe('Walkover');
+      expect(match.isKampflos).toBe(true);
+      expect(match.resultRaw).toBe('11=0,11=0,11=0');
+      expect(match.winnerSideId).toBe(match.side1Id);
+    });
+
+    test('the Table view offers no "Kampflos" when entering a result', async ({ page }) => {
+      await page.goto('/admin-view/tableView');
+      await tableCard(page, 1).getByRole('button', { name: 'Eingeben', exact: true }).click({ timeout: 15000 });
+
+      await expect(dialog(page).getByRole('button', { name: 'Ok' })).toBeVisible();
+      await expect(dialog(page).getByRole('checkbox')).toHaveCount(0);
+    });
+
+    test('a single match is offered neither "2.Tisch" nor "Entfernen"', async ({ page }) => {
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 1)).toContainText('Priyanka Sow', { timeout: 15000 });
+
+      await openTableActions(page, 1);
+      await expect(tableCard(page, 1).getByRole('button', { name: 'Zurück' })).toBeVisible();
+      await expect(tableCard(page, 1).getByRole('button', { name: '2.Tisch' })).toHaveCount(0);
+      await expect(tableCard(page, 1).getByRole('button', { name: 'Entfernen' })).toHaveCount(0);
+    });
+  });
+
+  test.describe('a group of four players on two tables', () => {
+    test.beforeEach(async ({ request }) => {
+      expect((await request.post('/api/v2/match/matchtotable/1', { data: groupOfFour })).ok()).toBeTruthy();
+    });
+
+    const onTwoTables = async (request: APIRequestContext) => {
+      const matches = await Promise.all(groupOfFour.map((id) => getMatch(request, id)));
+      return matches.filter((match) => match.secondTableNumber != null).map((match) => match.id);
+    };
+
+    test('"2.Tisch" lets the matches wait at a chosen free table as well', async ({ page, request }) => {
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+      await expect(tableCard(page, 1).getByRole('button', { name: 'Entfernen' })).toHaveCount(0);
+
+      await openTableActions(page, 1);
+      await tableCard(page, 1).getByRole('button', { name: '2.Tisch' }).click();
+      await dialog(page).locator('mat-select').click();
+      await page.getByRole('option', { name: 'Tisch Nr. 2', exact: true }).click();
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 6');
+      expect(await onTwoTables(request)).toEqual(groupOfFour);
+      // the group already plays on two tables
+      await expect(tableCard(page, 1).getByRole('button', { name: '2.Tisch' })).toHaveCount(0);
+    });
+
+    test('"Entfernen" takes a match off one of its two tables', async ({ page, request }) => {
+      expect((await request.post('/api/v2/match/matchtosecondtable/2', { data: groupOfFour })).ok()).toBeTruthy();
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+
+      await openTableActions(page, 2);
+      await tableCard(page, 2).getByRole('button', { name: 'Entfernen' }).click();
+      await dialog(page).locator('label').first().click();
+      await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 5', { timeout: 15000 });
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 6');
+      expect(await onTwoTables(request)).toHaveLength(5);
+    });
+
+    test('a match started at one of its two tables leaves the other', async ({ page, request }) => {
+      expect((await request.post('/api/v2/match/matchtosecondtable/2', { data: groupOfFour })).ok()).toBeTruthy();
+      await page.goto('/admin-view/assignView');
+      await expect(tableCard(page, 2)).toContainText('Offene Spiele: 6', { timeout: 15000 });
+
+      // the table manager of table 2 starts match 244 there
+      const tables: Array<{ id: number; number: number }> = await (await request.get('/api/v2/table/all')).json();
+      const table2 = tables.find((table) => table.number === 2)!;
+      expect((await request.post(`/api/v2/match/start/244/${table2.id}`)).ok()).toBeTruthy();
+
+      await expect(tableCard(page, 1)).toContainText('Offene Spiele: 5', { timeout: 15000 });
+      const started = await getMatch(request, 244);
+      expect([started.state, started.tableNumber, started.secondTableNumber]).toEqual(['Started', 2, null]);
+    });
+  });
+
+  test('"Frei" on a table with a group asks which match to free', async ({ page, request }) => {
+    expect((await request.post('/api/v2/match/matchtotable/1', { data: [1, 2, 3] })).ok()).toBeTruthy();
+    await page.goto('/admin-view/assignView');
+    await expect(tableCard(page, 1)).toContainText('Offene Spiele: 3', { timeout: 15000 });
+
+    await tableCard(page, 1).getByRole('button', { name: 'Frei', exact: true }).click();
+    await dialog(page)
+      .locator('label')
+      .filter({ hasText: 'Priyanka Sow' })
+      .filter({ hasText: 'Babajide Santos' })
+      .click();
+    await dialog(page).getByRole('button', { name: 'Ok' }).click();
+
+    await expect(tableCard(page, 1)).toContainText('Offene Spiele: 2', { timeout: 15000 });
+    expect((await getMatch(request, 3)).state).toBe('Finished');
+    expect((await getMatch(request, 1)).state).toBe('OnTable');
+  });
+
+  test('locks and unlocks a free table', async ({ page, request }) => {
+    await page.goto('/admin-view/assignView');
+    const card = tableCard(page, 2);
+    await expect(card).toContainText('Frei', { timeout: 15000 });
+
+    await card.getByRole('button', { name: 'Sperren' }).click();
+    await expect(card).toContainText('Gesperrt', { timeout: 15000 });
+    expect((await (await request.get('/api/v2/table/free')).json()).map((table: any) => table.number)).not.toContain(2);
+
+    await card.getByRole('button', { name: 'Entsperren' }).click();
+    await expect(card).toContainText('Frei', { timeout: 15000 });
   });
 });

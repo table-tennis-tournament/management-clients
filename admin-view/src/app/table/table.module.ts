@@ -23,8 +23,7 @@ const components = [
 ];
 
 @NgModule({
-  imports: [SharedModule],
+  imports: [SharedModule, ...components],
   exports: [TableListPageComponent],
-  declarations: [...components],
 })
 export class TableModule {}

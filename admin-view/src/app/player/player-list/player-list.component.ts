@@ -1,12 +1,48 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PlayerType } from '../data/player.type.model';
 import { Discipline } from '../../discipline/discipline.model';
+import { DisciplineSelectComponent } from '../../discipline/discipline-select/discipline-select.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow,
+} from '@angular/material/table';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'toma-player-list',
   templateUrl: './player-list.component.html',
   styleUrls: ['./player-list.component.scss'],
-  standalone: false,
+  imports: [
+    DisciplineSelectComponent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatProgressSpinner,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatCheckbox,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+  ],
 })
 export class PlayerListComponent {
   private _players: PlayerType[];
@@ -59,48 +95,42 @@ export class PlayerListComponent {
     this.filteredPlayers = this.filteredPlayers.filter((player) => this.containsValue(callback(player), value));
   }
 
+  /** Applies the discipline and every name filter together. */
   applyFilters() {
-    this.filteredPlayers = this.players;
+    this.filteredPlayers = this.players ?? [];
     if (this.currentDisciplineFilter > 0) {
       this.filteredPlayers = this.filteredPlayers.filter((pl) => pl.type.id === this.currentDisciplineFilter);
     }
     if (this.firstNameInput) {
       this.filterByFirstName(this.firstNameInput);
-      return;
     }
     if (this.lastNameInput) {
       this.filterByLastName(this.lastNameInput);
-      return;
     }
     if (this.clubInput) {
       this.filterByClub(this.clubInput);
-      return;
     }
   }
 
   filterByFirstName(value: string) {
-    this.filterPlayers(value, (p) => p.player.firstName);
+    this.filterPlayers(value, (p) => p.player?.firstName);
   }
 
   filterByLastName(value: string) {
-    this.filterPlayers(value, (p) => p.player.lastName);
+    this.filterPlayers(value, (p) => p.player?.lastName);
   }
 
   filterByClub(value: string) {
-    this.filterPlayers(value, (p) => p.player.club.clubName);
+    this.filterPlayers(value, (p) => p.player?.club?.name);
   }
 
-  private containsValue(value: string, input: string) {
-    return value.toLowerCase().indexOf(input.toLowerCase()) > -1;
+  private containsValue(value: string | undefined, input: string) {
+    return (value ?? '').toLowerCase().includes(input.toLowerCase());
   }
 
   onDisciplineChanged(disciplineId: number) {
     this.currentDisciplineFilter = disciplineId;
-    if (disciplineId < 1) {
-      this.filteredPlayers = this.players;
-      return;
-    }
-    this.filteredPlayers = this.players.filter((pl) => pl.type.id === disciplineId);
+    this.applyFilters();
   }
 
   getPaidPlayersCount() {

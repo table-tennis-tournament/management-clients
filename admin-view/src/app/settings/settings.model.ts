@@ -8,6 +8,11 @@ export interface TypeColor {
   textColor: string;
 }
 
+/** The short names of the disciplines that have one, by discipline id. */
+export interface ShortNameMap {
+  [typeId: number]: string;
+}
+
 export interface TypeColorMap {
   [typeId: number]: TypeColor;
 }

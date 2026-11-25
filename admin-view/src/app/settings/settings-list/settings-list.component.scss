@@ -1,12 +1,14 @@
 .color-preview {
-  width: 50px;
-  height: 50px;
+  min-width: 80px;
+  height: 40px;
+  padding: 0 0.5rem;
+  white-space: nowrap;
   border: 1px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 0.9rem;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -28,4 +30,18 @@ mat-checkbox {
 h5 {
   color: #3f51b5; /* Material primary color hint */
   font-weight: 500;
+}
+
+.discipline-row {
+  padding: 0.25rem 0;
+}
+
+.color-input {
+  width: 48px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
 }

@@ -1,33 +1,23 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TTResult } from '../../table/table-list/result-modal/ttresult.model';
+import { SetScore, setsWon } from '../result-entry/result-entry';
 
-@Pipe({
-  name: 'resultPipe',
-  standalone: false,
-})
+/**
+ * Shows the Sets won: `sets | resultPipe` gives `3 : 1`, `sets | resultPipe: 1` (or `: 2`) the
+ * Sets won by that Side. No Sets give an empty string.
+ */
+@Pipe({ name: 'resultPipe' })
 export class ResultPipe implements PipeTransform {
-  FIRST_PLAYER_SETS = 1;
-  SECOND_PLAYER_SETS = 2;
-
-  transform(value: TTResult[], setsForPlayer?: number): any {
-    if (value == null || value.length < 1) {
+  transform(sets: SetScore[] | null | undefined, side?: 1 | 2): string | number {
+    if (!Array.isArray(sets) || sets.length < 1) {
       return '';
     }
-    let firstPlayerSets = 0;
-    let secondPlayerSets = 0;
-    value.forEach((element) => {
-      if (element[0] > element[1]) {
-        firstPlayerSets++;
-        return;
-      }
-      secondPlayerSets++;
-    });
-    if (setsForPlayer === this.FIRST_PLAYER_SETS) {
-      return firstPlayerSets;
+    const won = setsWon(sets);
+    if (side === 1) {
+      return won.player1;
     }
-    if (setsForPlayer === this.SECOND_PLAYER_SETS) {
-      return secondPlayerSets;
+    if (side === 2) {
+      return won.player2;
     }
-    return firstPlayerSets + ' : ' + secondPlayerSets;
+    return `${won.player1} : ${won.player2}`;
   }
 }

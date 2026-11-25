@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { TypeColor, TypeColorMap } from '../settings.model';
+import { ShortNameMap, TypeColor, TypeColorMap } from '../settings.model';
 
 export enum SettingsActionTypes {
   Load = '[Settings] Load',
@@ -26,6 +26,12 @@ export enum SettingsActionTypes {
   SetBulkTypeColors = '[Settings] Set Bulk Type Colors',
   SetBulkTypeColorsSuccess = '[Settings] Set Bulk Type Colors Success',
   SetBulkTypeColorsError = '[Settings] Set Bulk Type Colors Error',
+  LoadShortNames = '[Settings] Load Short Names',
+  LoadShortNamesSuccess = '[Settings] Load Short Names Success',
+  LoadShortNamesError = '[Settings] Load Short Names Error',
+  SaveShortName = '[Settings] Save Short Name',
+  SaveShortNameSuccess = '[Settings] Save Short Name Success',
+  SaveShortNameError = '[Settings] Save Short Name Error',
 }
 
 export class LoadSettings implements Action {
@@ -172,6 +178,43 @@ export class SetBulkTypeColorsError implements Action {
   constructor(public payload: any) {}
 }
 
+export class LoadShortNames implements Action {
+  readonly type = SettingsActionTypes.LoadShortNames;
+
+  constructor() {}
+}
+
+export class LoadShortNamesSuccess implements Action {
+  readonly type = SettingsActionTypes.LoadShortNamesSuccess;
+
+  constructor(public payload: ShortNameMap) {}
+}
+
+export class LoadShortNamesError implements Action {
+  readonly type = SettingsActionTypes.LoadShortNamesError;
+
+  constructor(public payload: any) {}
+}
+
+/** Sets the short name of a discipline; a blank one removes it. */
+export class SaveShortName implements Action {
+  readonly type = SettingsActionTypes.SaveShortName;
+
+  constructor(public payload: { typeId: number; shortName: string }) {}
+}
+
+export class SaveShortNameSuccess implements Action {
+  readonly type = SettingsActionTypes.SaveShortNameSuccess;
+
+  constructor(public payload: { typeId: number; shortName: string }) {}
+}
+
+export class SaveShortNameError implements Action {
+  readonly type = SettingsActionTypes.SaveShortNameError;
+
+  constructor(public payload: any) {}
+}
+
 export type SettingsActionUnion =
   | LoadSettings
   | LoadSettingsSuccess
@@ -196,4 +239,10 @@ export type SettingsActionUnion =
   | SaveTypeColorError
   | SetBulkTypeColors
   | SetBulkTypeColorsSuccess
-  | SetBulkTypeColorsError;
+  | SetBulkTypeColorsError
+  | LoadShortNames
+  | LoadShortNamesSuccess
+  | LoadShortNamesError
+  | SaveShortName
+  | SaveShortNameSuccess
+  | SaveShortNameError;

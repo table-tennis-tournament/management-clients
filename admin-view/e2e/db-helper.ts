@@ -33,11 +33,11 @@ function isMariadbReady(): boolean {
 
 function isBackendReady(): Promise<boolean> {
   return new Promise((resolvePromise) => {
-    const request = get('http://localhost:9000/api/types/all', (response) => {
+    const request = get('http://localhost:8080/actuator/health', (response) => {
       let body = '';
       response.setEncoding('utf8');
       response.on('data', (chunk) => (body += chunk));
-      response.on('end', () => resolvePromise(response.statusCode === 200 && body.includes('Herren A')));
+      response.on('end', () => resolvePromise(response.statusCode === 200 && body.includes('"UP"')));
     });
     request.on('error', () => resolvePromise(false));
     request.setTimeout(3000, () => {
@@ -74,9 +74,10 @@ async function waitForBackend(timeoutMs = 180000): Promise<void> {
 }
 
 export async function resetDatabase(): Promise<void> {
-  dockerCompose('up', '-d', 'mariadb', 'backend');
+  dockerCompose('up', '-d', 'mariadb', 'management-backend');
   await waitForMariadb();
-  mariadbExec(`DROP DATABASE IF EXISTS tournamentManager;\n${readFileSync(seedFile, 'utf8')}`);
-  dockerCompose('restart', 'backend');
+  const seed = readFileSync(seedFile, 'utf8').replace(/tournamentManager/g, 'saturday_test');
+  mariadbExec(`DROP DATABASE IF EXISTS saturday_test;\n${seed}`);
+  dockerCompose('restart', 'management-backend');
   await waitForBackend();
 }

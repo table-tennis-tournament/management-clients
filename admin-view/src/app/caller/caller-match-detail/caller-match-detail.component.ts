@@ -1,13 +1,27 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
-import { MatchState } from '../../shared/data/matchstate.model';
 import { TypeColorMap } from '../../settings/settings.model';
+import { MatCard, MatCardTitle, MatCardContent, MatCardActions, MatCardHeader } from '@angular/material/card';
+import { TypeColorDirective } from '../../shared/directives/type-color.directive';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { TtPlayerNameReducerPipe } from '../../shared/pipes/tt-player-name-reducer.pipe';
 
 @Component({
   selector: 'toma-caller-match-detail',
   templateUrl: './caller-match-detail.component.html',
   styleUrls: ['./caller-match-detail.component.scss'],
-  standalone: false,
+  imports: [
+    MatCard,
+    TypeColorDirective,
+    MatCardTitle,
+    MatCardContent,
+    MatCardActions,
+    MatButton,
+    MatCardHeader,
+    MatIcon,
+    TtPlayerNameReducerPipe,
+  ],
 })
 export class CallerMatchDetailComponent {
   @Input()
@@ -21,12 +35,5 @@ export class CallerMatchDetailComponent {
 
   onMatchCalled() {
     this.matchCalled.emit(this.matchAggregate.matches.map((match) => match.id));
-  }
-
-  stateIsCallable() {
-    const notCallableMatches = this.matchAggregate.matches
-      .map((match) => match.state)
-      .filter((state) => state !== MatchState.Callable.toString());
-    return notCallableMatches.length < 1;
   }
 }

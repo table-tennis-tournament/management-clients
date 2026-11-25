@@ -1,0 +1,586 @@
+[ {
+  "id" : 1,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  } ],
+  "team2" : [ {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : 1420,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  } ],
+  "side1Id" : 1,
+  "side2Id" : 2,
+  "winnerSideId" : null,
+  "playGroup" : {
+    "id" : 1,
+    "name" : "A"
+  },
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
+  "tableId" : null,
+  "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "groupId" : 1,
+  "nr" : 1,
+  "roundNumber" : 1,
+  "startTime" : null,
+  "callNumber" : 0,
+  "isBlocking" : false,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  },
+  "player2" : {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : 1420,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "Open",
+  "winner" : [ ]
+}, {
+  "id" : 2,
+  "team1" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  } ],
+  "team2" : [ {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : 1440,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  } ],
+  "side1Id" : 3,
+  "side2Id" : 4,
+  "winnerSideId" : null,
+  "playGroup" : {
+    "id" : 1,
+    "name" : "A"
+  },
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ {
+    "playerId" : 3,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 4,
+    "callNumber" : 1,
+    "requested" : false
+  } ],
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
+  "tableId" : 1,
+  "tableNumber" : 1,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "groupId" : 1,
+  "nr" : 2,
+  "roundNumber" : 1,
+  "startTime" : "2026-11-16T10:00:00+01:00",
+  "callNumber" : 1,
+  "isBlocking" : true,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  },
+  "player2" : {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : 1440,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "OnTable",
+  "winner" : [ ]
+}, {
+  "id" : 4,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  }, {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : 1420,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  } ],
+  "team2" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  }, {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : 1440,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  } ],
+  "side1Id" : 100001,
+  "side2Id" : 100002,
+  "winnerSideId" : null,
+  "playGroup" : null,
+  "matchType" : {
+    "id" : 2,
+    "name" : "Finale"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ {
+    "playerId" : 1,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 2,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 3,
+    "callNumber" : 2,
+    "requested" : false
+  }, {
+    "playerId" : 4,
+    "callNumber" : 2,
+    "requested" : false
+  } ],
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
+  "tableId" : 2,
+  "tableNumber" : 2,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 2,
+  "type" : {
+    "id" : 2,
+    "name" : "Herren-Doppel",
+    "kind" : 2,
+    "active" : true
+  },
+  "groupId" : null,
+  "nr" : 4,
+  "roundNumber" : 3,
+  "startTime" : "2026-11-16T10:00:00+01:00",
+  "callNumber" : 2,
+  "isBlocking" : true,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  },
+  "player2" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "OnTable",
+  "winner" : [ ]
+}, {
+  "id" : 5,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  } ],
+  "team2" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  } ],
+  "side1Id" : 1,
+  "side2Id" : 3,
+  "winnerSideId" : null,
+  "playGroup" : {
+    "id" : 1,
+    "name" : "A"
+  },
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : true,
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
+  "tableId" : null,
+  "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "groupId" : 1,
+  "nr" : 5,
+  "roundNumber" : 1,
+  "startTime" : null,
+  "callNumber" : 0,
+  "isBlocking" : false,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : 1410,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  },
+  "player2" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : 1430,
+    "paid" : false,
+    "club" : {
+      "id" : 1,
+      "name" : "TTV Musterstadt"
+    },
+    "types" : [ 1, 2 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "InQueue",
+  "winner" : [ ]
+}, {
+  "id" : 6,
+  "team1" : [ {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : 1450,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  } ],
+  "team2" : [ {
+    "id" : 6,
+    "firstName" : "First6",
+    "lastName" : "Last6",
+    "ttr" : 1460,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  } ],
+  "side1Id" : 5,
+  "side2Id" : 6,
+  "winnerSideId" : null,
+  "playGroup" : {
+    "id" : 1,
+    "name" : "A"
+  },
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : true,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ {
+    "playerId" : 5,
+    "callNumber" : 1,
+    "requested" : false
+  }, {
+    "playerId" : 6,
+    "callNumber" : 3,
+    "requested" : false
+  } ],
+  "firstCallTime" : "2026-11-16T10:00:00+01:00",
+  "tableId" : 3,
+  "tableNumber" : 3,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "groupId" : 1,
+  "nr" : 6,
+  "roundNumber" : 1,
+  "startTime" : "2026-11-16T10:00:00+01:00",
+  "callNumber" : 3,
+  "isBlocking" : true,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 5,
+    "firstName" : "First5",
+    "lastName" : "Last5",
+    "ttr" : 1450,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  },
+  "player2" : {
+    "id" : 6,
+    "firstName" : "First6",
+    "lastName" : "Last6",
+    "ttr" : 1460,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "Started",
+  "winner" : [ ]
+}, {
+  "id" : 7,
+  "team1" : [ {
+    "id" : 7,
+    "firstName" : "First7",
+    "lastName" : "Last7",
+    "ttr" : 1470,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  } ],
+  "team2" : [ {
+    "id" : 8,
+    "firstName" : "First8",
+    "lastName" : "Last8",
+    "ttr" : 1480,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  } ],
+  "side1Id" : 7,
+  "side2Id" : 8,
+  "winnerSideId" : null,
+  "playGroup" : {
+    "id" : 1,
+    "name" : "A"
+  },
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
+  "tableId" : null,
+  "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "groupId" : 1,
+  "nr" : 7,
+  "roundNumber" : 1,
+  "startTime" : null,
+  "callNumber" : 0,
+  "isBlocking" : false,
+  "isPlayable" : true,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 7,
+    "firstName" : "First7",
+    "lastName" : "Last7",
+    "ttr" : 1470,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  },
+  "player2" : {
+    "id" : 8,
+    "firstName" : "First8",
+    "lastName" : "Last8",
+    "ttr" : 1480,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "Open",
+  "winner" : [ ]
+} ]

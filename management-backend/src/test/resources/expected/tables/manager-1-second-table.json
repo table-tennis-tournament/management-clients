@@ -1,0 +1,84 @@
+[ {
+  "table_id" : 1,
+  "table_number" : 1,
+  "table_manager_id" : 1,
+  "matches" : [ ]
+}, {
+  "table_id" : 2,
+  "table_number" : 2,
+  "table_manager_id" : 1,
+  "matches" : [ {
+    "match_id" : 1,
+    "result" : {
+      "games" : [ ],
+      "games_won_player_a" : 0,
+      "games_won_player_b" : 0
+    },
+    "players_a" : [ {
+      "player_id" : 1,
+      "first_name" : "Jane",
+      "last_name" : "Doe",
+      "club" : null,
+      "call_count" : 0,
+      "call_requested" : false
+    } ],
+    "players_b" : [ {
+      "player_id" : 2,
+      "first_name" : "John",
+      "last_name" : "Roe",
+      "club" : null,
+      "call_count" : 0,
+      "call_requested" : false
+    } ],
+    "stage" : null,
+    "classification" : "Herren",
+    "state" : "OnTable",
+    "callNumber" : 0,
+    "requestedCallNumber" : null,
+    "firstCallTime" : null
+  } ]
+}, {
+  "table_id" : 3,
+  "table_number" : 3,
+  "table_manager_id" : 1,
+  "matches" : [ {
+    "match_id" : 1,
+    "result" : {
+      "games" : [ ],
+      "games_won_player_a" : 0,
+      "games_won_player_b" : 0
+    },
+    "players_a" : [ {
+      "player_id" : 1,
+      "first_name" : "Jane",
+      "last_name" : "Doe",
+      "club" : null,
+      "call_count" : 0,
+      "call_requested" : false
+    } ],
+    "players_b" : [ {
+      "player_id" : 2,
+      "first_name" : "John",
+      "last_name" : "Roe",
+      "club" : null,
+      "call_count" : 0,
+      "call_requested" : false
+    } ],
+    "stage" : null,
+    "classification" : "Herren",
+    "state" : "OnTable",
+    "callNumber" : 0,
+    "requestedCallNumber" : null,
+    "firstCallTime" : null
+  } ]
+}, {
+  "table_id" : 4,
+  "table_number" : 4,
+  "table_manager_id" : 1,
+  "matches" : [ ]
+}, {
+  "table_id" : 5,
+  "table_number" : 5,
+  "table_manager_id" : 1,
+  "matches" : [ ]
+} ]

@@ -1,0 +1,11 @@
+{
+  "type" : "DISCIPLINE_SHORT_NAME_CHANGED",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "disciplineId" : 1
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type" : "PLAYER_REGISTERED",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "playerId" : 7,
+    "firstName" : "Jane",
+    "lastName" : "Doe"
+  }
+}

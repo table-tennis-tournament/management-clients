@@ -1,0 +1,12 @@
+{
+  "type" : "PLAYER_ACTIVE_CHANGED",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "playerId" : 1,
+    "active" : false
+  }
+}

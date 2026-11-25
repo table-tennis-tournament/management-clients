@@ -2,10 +2,9 @@
   <mat-card [tomaTypeColor]="matchAggregate.discipline.id" [typeColors]="typeColors">
     <mat-card-title></mat-card-title>
     <mat-card-content class="text-center">
-      <h1>{{ matchAggregate.discipline.name }}</h1>
-      <br />
+      <h1>{{ matchAggregate.callNumber }}. Aufruf</h1>
+      <h2>{{ matchAggregate.discipline.name }}</h2>
       <h2>{{ matchAggregate.name }}</h2>
-      <br />
       <br />
       <h2>
         Tisch
@@ -14,45 +13,16 @@
         }
       </h2>
       <br />
-      <br />
-      @if (matchAggregate?.matches?.length === 1) {
-        <div class="row">
-          <div class="col-12">
-            <h3>
-              <div class="text-center">Schiedsrichter: ?</div>
-              <br />
-              <br />
-              @for (currentPlayer of matchAggregate.matches[0].team1; track currentPlayer) {
-                <div>
-                  {{ [currentPlayer] | ttPlayerNameReducer }}
-                </div>
-              }
-              <br />
-              -
-              <br />
-              <br />
-              @for (currentPlayer of matchAggregate.matches[0].team2; track currentPlayer) {
-                <div>
-                  {{ [currentPlayer] | ttPlayerNameReducer }}
-                </div>
-              }
-            </h3>
+      <h3>
+        @for (currentPlayer of matchAggregate.players; track currentPlayer.id) {
+          <div>
+            {{ [currentPlayer] | ttPlayerNameReducer }}
           </div>
-        </div>
-      }
-      @if (matchAggregate?.matches?.length > 1) {
-        <div class="row">
-          <div class="col-12">
-            <div class="text-center"><h2>Spieler:</h2></div>
-            <h3>
-              @for (currentPlayer of matchAggregate.players; track currentPlayer) {
-                <div>
-                  {{ [currentPlayer] | ttPlayerNameReducer }}
-                </div>
-              }
-            </h3>
-          </div>
-        </div>
+        }
+      </h3>
+      @if (waitingMinutes() !== null) {
+        <br />
+        <div class="waiting-time">Erster Aufruf vor {{ waitingMinutes() }} min</div>
       }
     </mat-card-content>
     <mat-card-actions class="d-flex justify-content-center">
@@ -63,7 +33,7 @@
 @if (!matchAggregate) {
   <mat-card class="text-center">
     <mat-card-header>
-      <mat-card-title class="text-center"><h2>Keine 2. Aufrufe</h2></mat-card-title>
+      <mat-card-title class="text-center"><h2>Keine weiteren Aufrufe</h2></mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <mat-icon aria-hidden="false">beach_access</mat-icon>

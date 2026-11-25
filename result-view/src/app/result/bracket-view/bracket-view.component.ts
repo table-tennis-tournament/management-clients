@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DisciplineStage } from '../data/discipline.stage';
 import { Match } from '../data/match';
 import { Player } from '../data/player';
@@ -13,6 +13,7 @@ interface BracketEntry {
 
 @Component({
   selector: 'app-bracket-view',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
   templateUrl: './bracket-view.component.html',
   styleUrls: ['./bracket-view.component.scss'],
@@ -32,6 +33,11 @@ export class BracketViewComponent implements OnChanges {
   names: string[] = [];
 
   @Input() stages: DisciplineStage[] = [];
+
+  /** Keeps the rendered matches across reloads. */
+  trackByMatch(_index: number, entry: BracketEntry): number {
+    return entry.match.id;
+  }
 
   teamLabel(players: Player[] | undefined): string {
     if (!players || players.length === 0) {

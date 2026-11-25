@@ -1,0 +1,99 @@
+{
+  "id" : 11,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 2 ]
+  } ],
+  "team2" : [ {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 2 ]
+  } ],
+  "side1Id" : 1,
+  "side2Id" : 2,
+  "winnerSideId" : 1,
+  "playGroup" : null,
+  "matchType" : {
+    "id" : 3,
+    "name" : "Viertelfinale"
+  },
+  "result" : "3 : 0",
+  "resultRaw" : "11=5,11=7,11=3",
+  "sets1" : 3,
+  "sets2" : 0,
+  "balls1" : 33,
+  "balls2" : 15,
+  "isPlayed" : true,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
+  "tableId" : null,
+  "tableNumber" : null,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 1,
+  "type" : {
+    "id" : 1,
+    "name" : "Herren",
+    "kind" : 1,
+    "active" : true
+  },
+  "groupId" : 999,
+  "nr" : 3001,
+  "roundNumber" : 1,
+  "startTime" : null,
+  "callNumber" : 0,
+  "isBlocking" : false,
+  "isPlayable" : true,
+  "nextKnockoutMatchNr" : 2001,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 2 ]
+  },
+  "player2" : {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 2 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ {
+    "pointsPlayer1" : 11,
+    "pointsPlayer2" : 5
+  }, {
+    "pointsPlayer1" : 11,
+    "pointsPlayer2" : 7
+  }, {
+    "pointsPlayer1" : 11,
+    "pointsPlayer2" : 3
+  } ],
+  "state" : "Completed",
+  "winner" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 2 ]
+  } ]
+}

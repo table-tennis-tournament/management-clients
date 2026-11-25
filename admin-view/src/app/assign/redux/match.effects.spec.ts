@@ -1,99 +1,89 @@
+import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { ToastrService } from 'ngx-toastr';
-import { IndividualConfig } from 'ngx-toastr/toastr/toastr-config';
 import { of, ReplaySubject, throwError } from 'rxjs';
+import { emittedBy } from '../../testing/effects-testing';
 import { MatchService } from '../match.service';
-
 import { MatchEffects } from './match.effects';
 import {
   LoadMatches,
+  LoadMatchesError,
   LoadMatchesSuccess,
-  MatchActionTypes,
   ReloadMatches,
+  ReloadMatchesError,
   ReloadMatchesSuccess,
 } from './match.actions';
 import { MatchTestData } from './test-data';
 
 describe('the match effects', () => {
+  const error = { msg: 'Error' };
   let actions: ReplaySubject<any>;
   let matchEffects: MatchEffects;
   let matchService: MatchService;
-  const responseMatches = MatchTestData;
-
-  const toastServiceMock: ToastrService = <ToastrService>{
-    error: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
-    success: (message?: string, title?: string, override?: Partial<IndividualConfig>) => null,
-  };
+  let toast: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
+    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         MatchEffects,
         MatchService,
-        { provide: ToastrService, useValue: toastServiceMock },
+        { provide: ToastrService, useValue: toast },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
       ],
     });
 
-    matchEffects = TestBed.get(MatchEffects);
-    matchService = TestBed.get(MatchService);
+    matchEffects = TestBed.inject(MatchEffects);
+    matchService = TestBed.inject(MatchService);
   });
 
   describe('loadMatches', () => {
-    it('should return a LoadMatchesSuccess', (done) => {
-      const expectedResult = new LoadMatchesSuccess(responseMatches);
-      spyOn(matchService, 'loadAllMatches').and.returnValue(of(responseMatches));
+    it('should return a LoadMatchesSuccess', async () => {
+      const load = vi.spyOn(matchService, 'loadAllMatches').mockReturnValue(of(MatchTestData));
 
-      actions.next(new LoadMatches(null));
+      const result = await emittedBy(matchEffects.loadMatches, actions, new LoadMatches(null));
 
-      matchEffects.loadMatches.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toStrictEqual([new LoadMatchesSuccess(MatchTestData)]);
+      expect(load.mock.calls).toEqual([[]]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a LoadTableError', (done) => {
-      spyOn(matchService, 'loadAllMatches').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a LoadMatchesError and show an error', async () => {
+      vi.spyOn(matchService, 'loadAllMatches').mockReturnValue(throwError(() => error));
 
-      actions.next(new LoadMatches(null));
+      const result = await emittedBy(matchEffects.loadMatches, actions, new LoadMatches(null));
 
-      matchEffects.loadMatches.subscribe((result) => {
-        expect(result.type).toEqual(MatchActionTypes.LoadError);
-        done();
-      });
-      // expect(toastServiceMock.error).toHaveBeenCalled();
+      expect(result).toStrictEqual([new LoadMatchesError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Matches', '']]);
     });
   });
 
   describe('reloadMatches', () => {
-    it('should return a ReloadMatchesSuccess', (done) => {
+    it('should return a ReloadMatchesSuccess and confirm it', async () => {
       const statusDto = { success: true };
-      const expectedResult = new ReloadMatchesSuccess(statusDto);
-      spyOn(matchService, 'reloadMatchesFromDb').and.returnValue(of(statusDto));
+      const reload = vi.spyOn(matchService, 'reloadMatchesFromDb').mockReturnValue(of(statusDto));
 
-      actions.next(new ReloadMatches());
+      const result = await emittedBy(matchEffects.reloadMatches, actions, new ReloadMatches());
 
-      matchEffects.reloadMatches.subscribe((result) => {
-        expect(result).toEqual(expectedResult);
-        done();
-      });
+      expect(result).toStrictEqual([new ReloadMatchesSuccess(statusDto)]);
+      expect(reload.mock.calls).toEqual([[]]);
+      expect(toast.success.mock.calls).toEqual([['Daten erfolgreich geladen', '']]);
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('should return a ReloadMatchesError', (done) => {
-      spyOn(matchService, 'reloadMatchesFromDb').and.returnValue(throwError({ msg: 'Error' }));
+    it('should return a ReloadMatchesError and show an error', async () => {
+      vi.spyOn(matchService, 'reloadMatchesFromDb').mockReturnValue(throwError(() => error));
 
-      actions.next(new ReloadMatches());
+      const result = await emittedBy(matchEffects.reloadMatches, actions, new ReloadMatches());
 
-      matchEffects.reloadMatches.subscribe((result) => {
-        expect(result.type).toEqual(MatchActionTypes.ReloadError);
-        done();
-      });
-      // expect(toastServiceMock.error).toHaveBeenCalled();
+      expect(result).toStrictEqual([new ReloadMatchesError(error)]);
+      expect(toast.error.mock.calls).toEqual([['Fehler beim Lesen der Matches aus der DB', '']]);
+      expect(toast.success).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -13,6 +13,7 @@ import {
   FreeTable,
   FreeTableError,
   FreeTableSuccess,
+  LoadTables,
   LoadTablesError,
   LoadTablesSuccess,
   LockTable,
@@ -35,19 +36,18 @@ import {
   UnLockTableError,
   UnLockTableSuccess,
 } from './table.actions';
+import { LoadMatches } from '../../assign/redux/match.actions';
 import { TableService } from '../table.service';
 import { MatchService } from '../../assign/match.service';
 import { PrintService } from '../../shared/print.service';
 
 @Injectable()
 export class TableEffects {
-  constructor(
-    private actions$: Actions,
-    private tableService: TableService,
-    private toastService: ToastrService,
-    private matchService: MatchService,
-    private printService: PrintService
-  ) {}
+  private actions$ = inject(Actions);
+  private tableService = inject(TableService);
+  private toastService = inject(ToastrService);
+  private matchService = inject(MatchService);
+  private printService = inject(PrintService);
 
   loadTables = createEffect(() =>
     this.actions$.pipe(
@@ -178,7 +178,7 @@ export class TableEffects {
       mergeMap((action: AssignMatchToTable) => {
         return this.matchService.assignMatchToTable(action.payload).pipe(
           map((status) => {
-            if (status.successful === true) {
+            if (status.success === true) {
               return new AssignMatchToTableSuccess(action.payload);
             }
             this.toastService.error(status.message);
@@ -209,6 +209,14 @@ export class TableEffects {
           })
         );
       })
+    )
+  );
+
+  // the initiating client must not depend on the websocket event to see its own change
+  reloadAfterRemoveMatchFromTable = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TableActionTypes.RemoveSuccess),
+      mergeMap(() => [new LoadTables(null), new LoadMatches(null)])
     )
   );
 }

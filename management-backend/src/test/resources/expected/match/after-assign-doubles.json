@@ -1,0 +1,98 @@
+{
+  "id" : 3,
+  "team1" : [ {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  }, {
+    "id" : 2,
+    "firstName" : "First2",
+    "lastName" : "Last2",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  } ],
+  "team2" : [ {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  }, {
+    "id" : 4,
+    "firstName" : "First4",
+    "lastName" : "Last4",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 2 ]
+  } ],
+  "side1Id" : 100001,
+  "side2Id" : 100002,
+  "winnerSideId" : null,
+  "playGroup" : null,
+  "matchType" : {
+    "id" : 1,
+    "name" : "Gruppenspiel"
+  },
+  "result" : null,
+  "resultRaw" : null,
+  "sets1" : 0,
+  "sets2" : 0,
+  "balls1" : 0,
+  "balls2" : 0,
+  "isPlayed" : false,
+  "isPlaying" : false,
+  "isKampflos" : false,
+  "waitingList" : false,
+  "playerCalls" : [ ],
+  "firstCallTime" : null,
+  "tableId" : 2,
+  "tableNumber" : 2,
+  "secondTableId" : null,
+  "secondTableNumber" : null,
+  "typeId" : 2,
+  "type" : {
+    "id" : 2,
+    "name" : "Herren-Doppel",
+    "kind" : 2,
+    "active" : true
+  },
+  "groupId" : null,
+  "nr" : 3,
+  "roundNumber" : 1,
+  "startTime" : "2026-11-16T10:00:00+01:00",
+  "callNumber" : 0,
+  "isBlocking" : true,
+  "isPlayable" : false,
+  "nextKnockoutMatchNr" : null,
+  "player1" : {
+    "id" : 1,
+    "firstName" : "First1",
+    "lastName" : "Last1",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  },
+  "player2" : {
+    "id" : 3,
+    "firstName" : "First3",
+    "lastName" : "Last3",
+    "ttr" : null,
+    "paid" : false,
+    "club" : null,
+    "types" : [ 1, 2 ]
+  },
+  "requestedCallNumber" : null,
+  "sets" : [ ],
+  "state" : "OnTable",
+  "winner" : [ ]
+}

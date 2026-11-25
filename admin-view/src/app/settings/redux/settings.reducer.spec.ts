@@ -8,12 +8,15 @@ import {
   SaveAssignAutomaticallySuccess,
   SavePrintOnAssignSuccess,
   SetPrinterSuccess,
+  LoadShortNamesSuccess,
+  SaveShortNameSuccess,
 } from './settings.actions';
 import { ALWAYS_PRINT_SETTING, AUTOSTART_SETTING, PRINTER_NAME_SETTING } from '../settings.coonstants';
 
 const initialState: SettingsState = Object.freeze({
   typeColor: [],
   typeColors: {},
+  shortNames: {},
   settings: [],
   printers: [],
   settingsLoading: false,
@@ -116,5 +119,22 @@ describe('the settings reducer', () => {
 
     const newState = reduceSettingsState(startState, new SetPrinterSuccess('MyPrinterName'));
     expect(newState).toEqual(expectedState);
+  });
+
+  it('stores the loaded short names', () => {
+    const newState = reduceSettingsState(initialState, new LoadShortNamesSuccess({ 1: 'H', 2: 'D' }));
+    expect(newState).toEqual({ ...initialState, shortNames: { 1: 'H', 2: 'D' } });
+  });
+
+  it('stores a saved short name, trimmed', () => {
+    const state = { ...initialState, shortNames: { 1: 'H' } };
+    const newState = reduceSettingsState(state, new SaveShortNameSuccess({ typeId: 2, shortName: ' D ' }));
+    expect(newState).toEqual({ ...initialState, shortNames: { 1: 'H', 2: 'D' } });
+  });
+
+  it('removes a short name saved blank', () => {
+    const state = { ...initialState, shortNames: { 1: 'H', 2: 'D' } };
+    const newState = reduceSettingsState(state, new SaveShortNameSuccess({ typeId: 2, shortName: ' ' }));
+    expect(newState).toEqual({ ...initialState, shortNames: { 1: 'H' } });
   });
 });

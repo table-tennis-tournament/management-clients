@@ -4,12 +4,14 @@
       [printers]="printers | async"
       [settings]="settings | async"
       [typeColors]="typeColors$ | async"
+      [shortNames]="shortNames$ | async"
       [types]="types$ | async"
       (automaticallyAssign)="assignAutomatically($event)"
       (printForAssign)="printOnAssign($event)"
       (savePrinter)="savePrinter($event)"
       (saveTypeColor)="onSaveTypeColor($event)"
       (setBulkTypeColors)="onSetBulkTypeColors($event)"
+      (saveShortName)="onSaveShortName($event)"
     ></toma-settings-list>
   </mat-card-content>
 </mat-card>

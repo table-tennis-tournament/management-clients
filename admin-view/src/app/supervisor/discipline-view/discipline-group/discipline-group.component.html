@@ -58,10 +58,10 @@
             <mat-list-item
               (dblclick)="resultForMatch.emit(currentMatch)"
               cdkDrag
-              [cdkDragDisabled]="currentMatch.state !== openMatchState"
+              [cdkDragDisabled]="!isOpen(currentMatch)"
               [cdkDragData]="[currentMatch]"
               class="collection-item"
-              [class.disabled-item]="currentMatch.state === inWaitingListState"
+              [class.disabled-item]="isQueued(currentMatch)"
             >
               <div class="d-flex justify-content-between w-100">
                 <div class="text-truncate">
@@ -70,13 +70,13 @@
                   <toma-team-item [team]="currentMatch.team2" [showDisciplines]="false"></toma-team-item>
                 </div>
                 <div class="ms-auto">
-                  @if (currentMatch.table[0]) {
-                    <span class="circle right">{{ currentMatch.table[0] }}</span>
+                  @if (currentMatch.tableNumber) {
+                    <span class="circle right">{{ currentMatch.tableNumber }}</span>
                   }
-                  @if (currentMatch.result) {
-                    <span class="right">{{ currentMatch.result | resultPipe }}</span>
+                  @if (currentMatch.sets?.length) {
+                    <span class="right">{{ currentMatch.sets | resultPipe }}</span>
                   }
-                  @if (currentMatch.state === inWaitingListState) {
+                  @if (isQueued(currentMatch)) {
                     <span class="circle right">W</span>
                   }
                 </div>

@@ -1,0 +1,11 @@
+{
+  "type" : "PLAYER_UNREGISTERED",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "playerId" : 6
+  }
+}

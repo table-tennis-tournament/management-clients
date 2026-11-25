@@ -1,0 +1,11 @@
+{
+  "type" : "DISCIPLINE_COLORS_CHANGED",
+  "scope" : {
+    "matchIds" : [ ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ ]
+  },
+  "payload" : {
+    "disciplineIds" : [ 1 ]
+  }
+}

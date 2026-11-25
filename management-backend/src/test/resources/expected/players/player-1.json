@@ -1,0 +1,18 @@
+{
+  "id" : 1,
+  "firstName" : "Jane",
+  "lastName" : "Doe",
+  "email" : null,
+  "telNr" : null,
+  "location" : null,
+  "street" : null,
+  "plz" : null,
+  "sex" : "w",
+  "ttr" : 1600,
+  "club" : {
+    "id" : 1,
+    "name" : "TTC Musterstadt"
+  },
+  "paid" : false,
+  "active" : true
+}

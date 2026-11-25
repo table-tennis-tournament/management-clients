@@ -1,0 +1,15 @@
+{
+  "type" : "MATCH_CALLED",
+  "scope" : {
+    "matchIds" : [ 1 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ 1 ]
+  },
+  "payload" : {
+    "matchIds" : [ 1 ],
+    "callNumber" : 1,
+    "playerIds" : [ 1, 2 ],
+    "typeIds" : [ 1 ],
+    "tableIds" : [ 1 ]
+  }
+}

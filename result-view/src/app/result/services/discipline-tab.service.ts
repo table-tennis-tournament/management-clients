@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { DisciplineGroup } from '../data/discipline.group';
 import { DisciplineTab } from '../data/discipline.tab';
+import { isOver } from '../../shared/match-state/match-state';
 import { Match } from '../data/match';
+import { GroupStandings, StandingLine } from '../data/standing';
+import { Player } from '../data/player';
 
 @Injectable({
   providedIn: 'root',
@@ -21,12 +24,11 @@ export class DisciplineTabService {
     }
     const allStages: number[] = [];
     let currentIndex = 0;
-    let allPlayerArray: boolean[] = [];
     let currentItem: Match = null;
     for (const match of matches) {
       currentItem = match;
 
-      if (!currentItem.group) {
+      if (!currentItem.playGroup) {
         const localIndex = allStages[currentItem.matchType.name];
         let currentStage = currentItemTab.stages[localIndex];
         if (!currentStage) {
@@ -45,29 +47,25 @@ export class DisciplineTabService {
         continue;
       }
 
-      if (!currentItemTab.groups[currentItem.group.id]) {
-        currentItemTab.groups[currentItem.group.id] = {
-          name: 'Gruppe ' + currentItem.group.name,
-          tableNumbers: [],
+      if (!currentItemTab.groups[currentItem.playGroup.id]) {
+        currentItemTab.groups[currentItem.playGroup.id] = {
+          id: currentItem.playGroup.id,
+          name: 'Gruppe ' + currentItem.playGroup.name,
           isComplete: true,
           isMatchActive: this.isMatchActive,
           isPlayerActive: this.isPlayerActive,
           players: [],
           matches: [],
         };
-
-        allPlayerArray = [];
       }
-      let currentGroup = currentItemTab.groups[currentItem.group.id];
+      const currentGroup = currentItemTab.groups[currentItem.playGroup.id];
       currentGroup.matches.push(currentItem);
       currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
-      currentGroup = this.addTableNumbers(currentItem, currentGroup);
 
-      const allPlayers = currentItem.team1.concat(currentItem.team2);
-      for (const player of allPlayers) {
-        if (!allPlayerArray[player.id]) {
+      // per group, so the matches of several groups may come in any order
+      for (const player of currentItem.team1.concat(currentItem.team2)) {
+        if (!currentGroup.players.some((known) => known.id === player.id)) {
           currentGroup.players.push(player);
-          allPlayerArray[player.id] = true;
         }
       }
     }
@@ -75,15 +73,33 @@ export class DisciplineTabService {
     return currentItemTab;
   }
 
+  /** A Completed or Finished (walkover) match counts as done. */
   private isMatchComplete(currentItem: Match) {
-    return currentItem.state === 'Completed';
+    return isOver(currentItem);
   }
 
-  private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
-    if (currentItem.table[0] && !this.isMatchComplete(currentItem)) {
-      currentGroup.tableNumbers.push(currentItem.table[0]);
+  /**
+   * Gives each group its standings, the players of each side taken from the group's matches. Rows of a side
+   * without a match in the group are left out.
+   */
+  withStandings(groups: DisciplineGroup[], standings: GroupStandings[]): DisciplineGroup[] {
+    return groups.map((group) => {
+      const rows = standings.find((s) => s.groupId === group.id)?.rows ?? [];
+      const players = this.playersBySide(group.matches);
+      const lines: StandingLine[] = rows
+        .filter((row) => players.has(row.sideId))
+        .map((row) => ({ ...row, players: players.get(row.sideId) }));
+      return { ...group, standings: lines };
+    });
+  }
+
+  private playersBySide(matches: Match[]): Map<number, Player[]> {
+    const players = new Map<number, Player[]>();
+    for (const match of matches) {
+      if (match.side1Id != null && match.team1?.length) players.set(match.side1Id, match.team1);
+      if (match.side2Id != null && match.team2?.length) players.set(match.side2Id, match.team2);
     }
-    return currentGroup;
+    return players;
   }
 
   getCleanedGroups(groupsToClean: DisciplineGroup[]) {

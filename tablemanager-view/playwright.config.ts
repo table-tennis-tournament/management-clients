@@ -7,6 +7,7 @@ export default defineConfig({
   retries: process.env['CI'] ? 2 : 0,
   workers: 1,
   reporter: 'html',
+  globalSetup: './e2e/global-setup.ts',
   globalTeardown: './e2e/global-teardown.ts',
   use: {
     baseURL: 'http://localhost:4200',
@@ -20,9 +21,10 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'docker compose -f ../docker-compose.yml up mariadb backend',
-      url: 'http://localhost:9000/',
-      reuseExistingServer: !!process.env['CI'],
+      command: 'docker compose -f ../docker-compose.yml up mariadb management-backend',
+      url: 'http://localhost:8080/actuator/health',
+      // reuse a running stack (CI and `docker compose up`), otherwise start one
+      reuseExistingServer: true,
       timeout: 180000,
     },
     {

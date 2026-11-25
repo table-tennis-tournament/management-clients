@@ -1,0 +1,356 @@
+package de.ttt.management.tournament.infrastructure.web
+
+import de.ttt.management.tournament.application.MatchService
+import de.ttt.management.tournament.application.TableService
+import de.ttt.management.tournament.domain.*
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping
+@Tag(name = "Tournament Match Management", description = "Comprehensive operations for managing tournament matches, types, and assignments")
+class TournamentMatchController(
+    private val matchService: MatchService,
+    private val tableService: TableService
+) {
+
+    @get:GetMapping("/match/all")
+    @get:Operation(summary = "Get all tournament matches", description = "Retrieves a complete list of all matches in the tournament.")
+    val allMatches: List<TournamentMatch>
+        get() = matchService.getAllMatches()
+
+    @GetMapping("/match/{id}")
+    @Operation(summary = "Get tournament match by ID", description = "Retrieves details for a specific tournament match.")
+    fun getMatch(
+        @Parameter(description = "ID of the tournament match") @PathVariable id: Long
+    ): ResponseEntity<TournamentMatch> {
+        val match = matchService.getMatch(id)
+        return if (match != null) ResponseEntity.ok(match) else ResponseEntity.notFound().build()
+    }
+
+    @GetMapping("/match/typeid/{typeid}")
+    @Operation(summary = "Get matches by type", description = "Retrieves all matches belonging to a specific discipline type.")
+    fun getMatchesByType(
+        @Parameter(description = "ID of the discipline type") @PathVariable typeid: Long
+    ): List<TournamentMatch> = matchService.getMatchesByType(typeid)
+
+    @get:GetMapping("/match/open/all")
+    @get:Operation(summary = "Get all open matches", description = "Retrieves all matches that are currently open/not completed.")
+    val openMatches: List<TournamentMatch>
+        get() = matchService.getOpenMatches()
+
+    @GetMapping("/match/open/typeid/{typeid}")
+    @Operation(summary = "Get open matches by type", description = "Retrieves open matches for a specific discipline type.")
+    fun getOpenMatchesByTypeId(
+        @Parameter(description = "ID of the discipline type") @PathVariable typeid: Long
+    ): List<TournamentMatch> = matchService.getOpenMatchesByTypeId(typeid)
+
+    @get:GetMapping("/match/played/all")
+    @get:Operation(summary = "Get all played matches", description = "Retrieves all matches that have been completed.")
+    val playedMatches: List<TournamentMatch>
+        get() = matchService.getPlayedMatches()
+
+    @GetMapping("/match/played/typeid/{typeid}")
+    @Operation(summary = "Get played matches by type", description = "Retrieves completed matches for a specific discipline type.")
+    fun getPlayedMatchesByTypeId(
+        @Parameter(description = "ID of the discipline type") @PathVariable typeid: Long
+    ): List<TournamentMatch> = matchService.getPlayedMatchesByTypeId(typeid)
+
+    @PostMapping("/match/start/{id}/{tableId}")
+    @Operation(summary = "Start match on table", description = "Marks a match as started and assigns it to a specific table.")
+    fun startMatch(
+        @Parameter(description = "ID of the match") @PathVariable id: Long,
+        @Parameter(description = "ID of the table") @PathVariable tableId: Long
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.startMatch(id, tableId)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not start match."))
+        }
+    }
+
+    @PostMapping("/match/takeBack/{id}")
+    @Operation(
+        summary = "Take back a running match",
+        description = "Takes a running match back from its table (the table manager's \"Zurück\")."
+    )
+    fun takeBackRunningMatch(
+        @Parameter(description = "ID of the match") @PathVariable id: Long
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.takeBackRunningMatch(id)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not take back the match."))
+        }
+    }
+
+    @PostMapping("/match/setResult/{id}")
+    @Operation(
+        summary = "Set match result",
+        description = "Records the final sets and completes the match. With kampflos=true the match is a Walkover: a Side did not appear and the other wins with the entered result (usually 0 0 0, i.e. 3:0 sets and 33:0 points)."
+    )
+    fun setResult(
+        @Parameter(description = "ID of the match") @PathVariable id: Long,
+        @Parameter(description = "The match was not played: a Side did not appear (\"kampflos\")") @RequestParam(defaultValue = "false") kampflos: Boolean,
+        @RequestBody sets: List<List<Int>>
+    ): ResponseEntity<Map<String, Any>> {
+        // an invalid set (e.g. 11:10) is a rejected command, not a server error
+        val setResults = runCatching { sets.toSetResults() }.getOrNull()
+            ?: return ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not set result."))
+        val success = matchService.setResult(id, setResults, kampflos)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not set result."))
+        }
+    }
+
+    @PostMapping("/match/updateResult/{id}")
+    @Operation(summary = "Update match result", description = "Records an interim set result for a match that is still being played.")
+    fun updateResult(
+        @Parameter(description = "ID of the match") @PathVariable id: Long,
+        @RequestBody sets: List<List<Int>>
+    ): ResponseEntity<Map<String, Any>> {
+        // an invalid set (e.g. 11:10) is a rejected command, not a server error
+        val setResults = runCatching { sets.toSetResults() }.getOrNull()
+            ?: return ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not update result."))
+        val success = matchService.updateResult(id, setResults)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not update result."))
+        }
+    }
+
+    @DeleteMapping("/match/{id}")
+    @Operation(summary = "Delete match", description = "Removes a match from the tournament.")
+    fun deleteMatch(
+        @Parameter(description = "ID of the match") @PathVariable id: Long
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.deleteMatch(id)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Match not found"))
+        }
+    }
+
+    @DeleteMapping("/match/type/{id}")
+    @Operation(summary = "Delete all matches for type", description = "Removes all matches belonging to a specific discipline type.")
+    fun deleteType(
+        @Parameter(description = "ID of the discipline type") @PathVariable id: Long
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.deleteType(id)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Type not found or matches not found for type"))
+        }
+    }
+
+    @PostMapping("/match/matchtotable/{tableName}")
+    @Operation(summary = "Assign matches to table", description = "Assigns multiple matches to a specific table by its name.")
+    fun setMatchToTable(
+        @Parameter(description = "Name of the table") @PathVariable tableName: String,
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = tableService.setMatchToTable(tableName, matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not assign all matches to table."))
+        }
+    }
+
+    @PostMapping("/match/free")
+    @Operation(summary = "Free matches", description = "Ends matches at their tables (\"Frei\"): they leave the table and wait for their result (Finished).")
+    fun freeMatches(
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.freeMatches(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not free all matches."))
+        }
+    }
+
+    @PostMapping("/match/takeBack")
+    @Operation(summary = "Take back matches", description = "Takes back matches to the match list.")
+    fun takeBackMatches(
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.takeBackMatches(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not take back all matches."))
+        }
+    }
+
+    @get:GetMapping("/types/all")
+    @get:Operation(summary = "Get all discipline types", description = "Retrieves all discipline types in the tournament.")
+    val allTypes: List<TournamentDiscipline>
+        get() = matchService.getAllTypes().sortedBy { it.name }
+
+    @get:GetMapping("/types/open/all")
+    @get:Operation(summary = "Get active discipline types", description = "Retrieves all active discipline types.")
+    val activeTypes: List<TournamentDiscipline>
+        get() = matchService.getActiveTypes().sortedBy { it.name }
+
+    @GetMapping("/match/allmatchtable")
+    @Operation(summary = "Get all match table data", description = "Retrieves the current match-to-table assignments.")
+    fun allMatchTable(): List<Map<String, Any>> =
+        matchService.getAllMatches()
+            .filter { it.tableId != null && it.id != null }
+            .map { mapOf<String, Any>("matchId" to it.id!!, "tableId" to it.tableId!!) }
+
+    @GetMapping("/testsocket")
+    @Operation(summary = "Test WebSocket connection", description = "Simple endpoint to verify WebSocket communication.")
+    fun testSocket(): Map<String, Any> = mapOf("success" to true)
+
+    @PostMapping("/match/matchtosecondtable/{tableName}")
+    @Operation(summary = "Assign matches to a second table", description = "Puts matches waiting at a table on the table with this number as well, for a group that plays on two tables; each match is started at one of them.")
+    fun setMatchToSecondTable(
+        @Parameter(description = "Name of the second table") @PathVariable tableName: String,
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = tableService.setMatchToSecondTable(tableName, matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not assign all matches to the second table."))
+        }
+    }
+
+    @GetMapping("/match/loadnew")
+    @Operation(summary = "Load new matches", description = "Triggers loading of new matches from the registration system.")
+    fun loadNewMatches(): Map<String, Any> = mapOf("success" to true)
+
+    @GetMapping("/matchaggregates/caller")
+    @Operation(summary = "Get match aggregates for caller", description = "The matches at a table whose first Call the caller announces next, per table, with all their players.")
+    fun getMatchAggregateForCaller(): List<MatchAggregate> =
+        toMatchAggregates(matchService.getMatchesWaitingForFirstCall(), callNumber = 1) { it.team1 + it.team2 }
+
+    @GetMapping("/matchaggregates/secondCall")
+    @Operation(summary = "Get match aggregates for second call", description = "The requested Second calls the caller announces next, per table, with only the players to call.")
+    fun getMatchAggregateForSecondCall(): List<MatchAggregate> = requestedCalls(2)
+
+    @GetMapping("/matchaggregates/thirdCall")
+    @Operation(summary = "Get match aggregates for third call", description = "The requested Third calls the caller announces next, per table, with only the players to call.")
+    fun getMatchAggregateForThirdCall(): List<MatchAggregate> = requestedCalls(3)
+
+    private fun requestedCalls(callNumber: Int): List<MatchAggregate> =
+        toMatchAggregates(matchService.getMatchesWithRequestedCall().filter { it.requestedCallNumber == callNumber }, callNumber) { match ->
+            val requested = match.playerCalls.filter { it.requested }.map { it.playerId }.toSet()
+            (match.team1 + match.team2).filter { it.id in requested }
+        }
+
+    @PostMapping("/match/remove/{tableId}")
+    @Operation(summary = "Remove matches from one of their tables", description = "Takes matches that wait at two tables (a group on a second table) off the table with this id (\"Entfernen\"); a match at one table only is rejected.")
+    fun removeMatchesFromTable(
+        @Parameter(description = "ID of the table") @PathVariable tableId: Long,
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.removeMatchesFromTable(tableId, matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not remove all matches from table."))
+        }
+    }
+
+    @PostMapping("/match/call")
+    @Operation(summary = "Call matches", description = "Marks a list of matches as 'called'.")
+    fun callMatches(
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.callMatches(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not call all matches."))
+        }
+    }
+
+    @PostMapping("/playercall/{matchId}")
+    @Operation(
+        summary = "Request a call of players",
+        description = "The table manager requests the next call (Second or Third) of the players who have not appeared. The caller announces it with /playercall/announce. Rejected before the first Call, while another request waits, for a player after the Third call or for a player of another match."
+    )
+    fun requestCall(
+        @Parameter(description = "ID of the match") @PathVariable matchId: Long,
+        @RequestBody playerIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.requestCall(matchId, playerIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not request the call."))
+        }
+    }
+
+    @PostMapping("/playercall/announce")
+    @Operation(summary = "Announce requested calls", description = "The caller announces the requested calls of matches: each requested player's call goes up by one. Body: [matchId, ...].")
+    fun announceRequestedCalls(
+        @RequestBody matchIds: List<Long>
+    ): ResponseEntity<Map<String, Any>> {
+        val success = matchService.announceRequestedCalls(matchIds)
+        return if (success) {
+            ResponseEntity.ok(mapOf("success" to true))
+        } else {
+            ResponseEntity.badRequest().body(mapOf("success" to false, "message" to "Could not announce all calls."))
+        }
+    }
+
+    /** The matches per table, with the call the caller announces next and the [toCall] players it names. */
+    private fun toMatchAggregates(
+        matches: List<TournamentMatch>,
+        callNumber: Int,
+        toCall: (TournamentMatch) -> List<TournamentPlayer>
+    ): List<MatchAggregate> {
+        val disciplines = matchService.getAllTypes().associateBy { it.id }
+        return matches
+            .groupBy { it.tableId }
+            .map { (tableId, ms) ->
+                val head = ms.first()
+                val discipline = head.typeId?.let { disciplines[it] }
+                val players = ms.flatMap(toCall).distinctBy { it.id }
+                MatchAggregate(
+                    name = aggregateName(head),
+                    startTime = head.startTime,
+                    callNumber = callNumber,
+                    firstCallTime = head.firstCallTime,
+                    tableNumbers = listOfNotNull(tableId),
+                    discipline = discipline?.let { DisciplineDto(it.id, it.name, it.kind, it.active) },
+                    players = players.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },
+                    matches = ms.map { m ->
+                        CallerMatchDto(
+                            id = m.id!!,
+                            startTime = m.startTime,
+                            team1 = m.team1.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) },
+                            team2 = m.team2.map { PlayerDto(it.id, it.firstName, it.lastName, it.ttr) }
+                        )
+                    }
+                )
+            }
+            .sortedBy { it.tableNumbers.firstOrNull() }
+    }
+
+    private fun aggregateName(match: TournamentMatch): String? {
+        val matchTypeName = match.matchType?.name ?: return null
+        val groupName = match.playGroup?.name
+        return if (groupName.isNullOrBlank()) matchTypeName else "$matchTypeName $groupName"
+    }
+}
+
+private fun List<List<Int>>.toSetResults(): List<SetResult> =
+    map { pair ->
+        require(pair.size == 2) { "Each set must be a [player1, player2] pair" }
+        SetResult(pair[0], pair[1])
+    }

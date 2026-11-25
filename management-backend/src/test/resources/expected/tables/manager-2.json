@@ -1,0 +1,26 @@
+[ {
+  "table_id" : 6,
+  "table_number" : 6,
+  "table_manager_id" : 2,
+  "matches" : [ ]
+}, {
+  "table_id" : 7,
+  "table_number" : 7,
+  "table_manager_id" : 2,
+  "matches" : [ ]
+}, {
+  "table_id" : 8,
+  "table_number" : 8,
+  "table_manager_id" : 2,
+  "matches" : [ ]
+}, {
+  "table_id" : 11,
+  "table_number" : 11,
+  "table_manager_id" : 2,
+  "matches" : [ ]
+}, {
+  "table_id" : 12,
+  "table_number" : 12,
+  "table_manager_id" : 2,
+  "matches" : [ ]
+} ]

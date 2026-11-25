@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { StatusDto } from '../shared/statusdto.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { TTMatchResult } from '../table/table-list/result-modal/ttmatch-result.model';
+import { toRequestBody } from '../shared/result-entry/result-entry';
 import { Match } from '../shared/data/match.model';
 import { MatchToTable } from '../table/table-list/tt-table/tt-table-content/matchtotable.model';
 import { TableMatchEvent } from '../table/redux/table.match.event';
@@ -11,10 +12,10 @@ import { TableMatchEvent } from '../table/redux/table.match.event';
   providedIn: 'root',
 })
 export class MatchService {
-  private freeMatchUrl = 'api/match/free';
-  private takeBackMatchUrl = 'api/match/takeBack';
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private freeMatchUrl = '/api/v2/match/free';
+  private takeBackMatchUrl = '/api/v2/match/takeBack';
 
   freeMatches(matchIds: number[]): Observable<StatusDto> {
     return this.http.post<StatusDto>(this.freeMatchUrl, matchIds);
@@ -25,30 +26,33 @@ export class MatchService {
   }
 
   assignToSecondTable(tableNr: number, matchIds: number[]): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/match/matchtosecondtable/${tableNr}`, matchIds);
+    return this.http.post<StatusDto>(`/api/v2/match/matchtosecondtable/${tableNr}`, matchIds);
   }
 
   resultForMatch(matchResult: TTMatchResult): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/match/${matchResult.match.id}/setResult`, matchResult.result);
+    return this.http.post<StatusDto>(
+      `/api/v2/match/setResult/${matchResult.match.id}${matchResult.kampflos ? '?kampflos=true' : ''}`,
+      toRequestBody(matchResult.result)
+    );
   }
 
   loadAllMatches(): Observable<Match[]> {
-    return this.http.get<Match[]>(`api/match/all`);
+    return this.http.get<Match[]>(`/api/v2/match/all`);
   }
 
   assignMatchToTable(matchToTable: MatchToTable): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`api/match/matchtotable/${matchToTable.tableNr}`, matchToTable.matchIds);
+    return this.http.post<StatusDto>(`/api/v2/match/matchtotable/${matchToTable.tableNr}`, matchToTable.matchIds);
   }
 
   reloadMatchesFromDb(): Observable<StatusDto> {
-    return this.http.get<StatusDto>(`/api/match/loadnew`);
+    return this.http.get<StatusDto>(`/api/v2/match/loadnew`);
   }
 
   loadPlayedMatches(): Observable<Match[]> {
-    return this.http.get<Match[]>(`/api/match/played/all`);
+    return this.http.get<Match[]>(`/api/v2/match/played/all`);
   }
 
   removeMatchFromTable(payload: TableMatchEvent): Observable<StatusDto> {
-    return this.http.post<StatusDto>(`/api/match/remove/${payload.tableId}`, payload.matchIds);
+    return this.http.post<StatusDto>(`/api/v2/match/remove/${payload.tableId}`, payload.matchIds);
   }
 }

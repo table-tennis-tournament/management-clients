@@ -8,6 +8,7 @@
         <toma-tt-table
           [table]="currentTable"
           [typeColors]="typeColors"
+          [shortNames]="shortNames"
           (lockTable)="lockTable.emit($event)"
           (unLockTable)="unLockTable.emit($event)"
           (freeTable)="freeTable.emit($event)"

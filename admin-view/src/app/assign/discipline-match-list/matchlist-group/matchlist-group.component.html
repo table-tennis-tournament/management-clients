@@ -1,33 +1,23 @@
-<div class="p-3" [tomaTypeColor]="matchListItem.matchinfo[0].type.id" [typeColors]="typeColors">
+<div class="p-2" [tomaTypeColor]="matchListItem.matchinfo[0].type.id" [typeColors]="typeColors">
   <mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <div class="black-text header-main-container">
-          @if (matchListItem.matchinfo[0].group) {
-            <span class="header-center-content">
-              <i class="material-icons m-0">group</i>
-              <span class="align-top">Gruppe {{ matchListItem.matchinfo[0].group.name }}</span>
-            </span>
-          }
-          @if (!matchListItem.matchinfo[0].group) {
-            <span class="header-center-content">
-              <i class="material-icons m-0">view_list</i>
-              <span class="align-top">{{ matchListItem.matchinfo[0].matchType | disciplineType }}</span>
-            </span>
-          }
-        </div>
-      </mat-panel-title>
-      <mat-panel-description>
-        @if (isBlocked()) {
-          <span class="header-right-content">
-            <i class="material-icons">remove_circle_outline</i>
-          </span>
+    <mat-expansion-panel-header class="group-header">
+      <mat-panel-title class="group-title black-text">
+        @if (matchListItem.matchinfo[0].playGroup) {
+          <i class="material-icons">group</i>
+          <span class="text-truncate">Gruppe {{ matchListItem.matchinfo[0].playGroup.name }}</span>
         }
-      </mat-panel-description>
+        @if (!matchListItem.matchinfo[0].playGroup) {
+          <i class="material-icons">view_list</i>
+          <span class="text-truncate">{{ matchListItem.matchinfo[0].matchType | disciplineType }}</span>
+        }
+        @if (isBlocked()) {
+          <i class="material-icons blocked-icon" title="Nicht alle Spiele sind spielbar">remove_circle_outline</i>
+        }
+      </mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-list>
+    <mat-list class="pt-0">
       @for (matchGroup of matchListItem.matchinfo; track matchGroup) {
-        <div class="cut-text border-bottom border-dark" [class.disabled-item]="!matchGroup.isPlayable">
+        <div class="cut-text border-bottom border-dark py-1" [class.disabled-item]="!matchGroup.isPlayable">
           <toma-team-item [team]="matchGroup.team1"></toma-team-item>
           -
           <toma-team-item [team]="matchGroup.team2"></toma-team-item>

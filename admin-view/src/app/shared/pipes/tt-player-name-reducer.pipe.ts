@@ -1,13 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import { Player } from '../data/player.model';
 
-@Pipe({
-  name: 'ttPlayerNameReducer',
-  standalone: false,
-})
+@Pipe({ name: 'ttPlayerNameReducer' })
 export class TtPlayerNameReducerPipe implements PipeTransform {
-  transform(players: Player[], args?: any): any {
-    if (players === null || players.length === 0) {
+  transform(players: Player[]): any {
+    if (!players || players.length === 0) {
       return '';
     }
     if (players.length === 1) {
@@ -20,10 +18,13 @@ export class TtPlayerNameReducerPipe implements PipeTransform {
   }
 
   getSinglePlayerString(player: Player) {
-    return player.firstName + ' ' + player.lastName + ' (' + player.club.clubName + ')';
+    const name = `${player?.firstName ?? ''} ${player?.lastName ?? ''}`.trim();
+    const club = player?.club?.name;
+    return club ? `${name} (${club})` : name;
   }
 
   getSinglePlayerStringShort(player: Player) {
-    return player.firstName.substr(0, 2) + '. ' + player.lastName;
+    const firstName = player?.firstName ?? '';
+    return `${firstName.substring(0, 2)}. ${player?.lastName ?? ''}`;
   }
 }

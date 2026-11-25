@@ -4,6 +4,24 @@
     <span class="float-right" *ngIf="group.isComplete"><i class="material-icons">done</i></span>
   </mat-card-title>
   <mat-card-content>
-    <app-match-item *ngFor="let currentMatch of group.matches" [match]="currentMatch"></app-match-item>
+    <table class="standings" *ngIf="group.standings?.length">
+      <thead>
+        <tr>
+          <th>Pl.</th>
+          <th class="name">Spieler</th>
+          <th>Spiele</th>
+          <th>Sätze</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of group.standings; trackBy: trackBySide">
+          <td>{{ line.position > 0 ? line.position : '' }}</td>
+          <td class="name"><app-team-item [team]="line.players"></app-team-item></td>
+          <td>{{ line.matchesWon }} : {{ line.matchesLost }}</td>
+          <td>{{ line.setsWon }} : {{ line.setsLost }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <app-match-item *ngFor="let currentMatch of group.matches; trackBy: trackById" [match]="currentMatch"></app-match-item>
   </mat-card-content>
 </mat-card>

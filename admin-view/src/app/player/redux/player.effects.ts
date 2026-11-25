@@ -1,7 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+
 import { of } from 'rxjs';
+
 import { catchError, map, switchMap } from 'rxjs/operators';
+
 import {
   LoadPlayersError,
   LoadPlayersSuccess,
@@ -10,11 +14,17 @@ import {
   SetPlayerPaidError,
   SetPlayerPaidSuccess,
 } from './player.actions';
+
 import { PlayerService } from '../player.service';
+
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class PlayerEffects {
+  private actions$ = inject(Actions);
+  private playerService = inject(PlayerService);
+  private toastService = inject(ToastrService);
+
   loadTables = createEffect(() =>
     this.actions$.pipe(
       ofType(PlayerActionTypes.Load),
@@ -35,7 +45,7 @@ export class PlayerEffects {
       ofType(PlayerActionTypes.SetPaid),
       switchMap((action: SetPlayerPaid) => {
         return this.playerService.setPlayerPaid(action.payload).pipe(
-          map((players) => new SetPlayerPaidSuccess(action.payload)),
+          map(() => new SetPlayerPaidSuccess(action.payload)),
           catchError((err) => {
             this.toastService.error('Fehler beim aktiv setzen des Spielers', '');
             return of(new SetPlayerPaidError(err));
@@ -44,10 +54,4 @@ export class PlayerEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private playerService: PlayerService,
-    private toastService: ToastrService
-  ) {}
 }

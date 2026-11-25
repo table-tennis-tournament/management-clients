@@ -1,9 +1,10 @@
-import { Settings, TypeColorMap } from '../settings.model';
+import { Settings, ShortNameMap, TypeColorMap } from '../settings.model';
 import { SettingsActionTypes, SettingsActionUnion } from './settings.actions';
 import { ALWAYS_PRINT_SETTING, AUTOSTART_SETTING, PRINTER_NAME_SETTING } from '../settings.coonstants';
 
 export interface SettingsState {
   typeColors: TypeColorMap;
+  shortNames: ShortNameMap;
   settings: Settings[];
   printers: string[];
   settingsLoading: boolean;
@@ -11,6 +12,7 @@ export interface SettingsState {
 
 const initialState: SettingsState = {
   typeColors: {},
+  shortNames: {},
   settings: [],
   printers: [],
   settingsLoading: false,
@@ -96,6 +98,20 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
         ...state,
         typeColors: action.payload,
       };
+    case SettingsActionTypes.LoadShortNamesSuccess:
+      return {
+        ...state,
+        shortNames: action.payload,
+      };
+    case SettingsActionTypes.SaveShortNameSuccess: {
+      const others = { ...state.shortNames };
+      delete others[action.payload.typeId];
+      const shortName = action.payload.shortName.trim();
+      return {
+        ...state,
+        shortNames: shortName ? { ...others, [action.payload.typeId]: shortName } : others,
+      };
+    }
     default:
       return state;
   }
@@ -104,4 +120,5 @@ export function reduceSettingsState(state: SettingsState = initialState, action:
 export const getSettings = (state: SettingsState) => state.settings;
 export const getSettingsLoading = (state: SettingsState) => state.settingsLoading;
 export const getTypeColors = (state: SettingsState) => state.typeColors;
+export const getShortNames = (state: SettingsState) => state.shortNames;
 export const getPrinters = (state: SettingsState) => state.printers;

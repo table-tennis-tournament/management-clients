@@ -6,9 +6,8 @@ import { DisciplineStage } from './data/discipline.stage';
 import { DisciplineTab } from './data/discipline.tab';
 import { Match } from './data/match';
 import { Type } from './data/type';
-import { TypeColors } from './data/typeColors';
 import * as ResultActions from './redux/result.actions';
-import { AppState, getGroups, getMatches, getStages, getTypes } from './redux/result.reducer';
+import { AppState, getGroups, getMatches, getSelectedTypeId, getStages, getTypes } from './redux/result.reducer';
 
 @Component({
   standalone: false,
@@ -21,7 +20,6 @@ export class ResultComponent implements OnInit {
   public rowCount: number[];
   public selectedTab: DisciplineTab;
   private lineStageClass: string[] = ['first-stage-result', 'second-stage-result', 'third-stage-result'];
-  public colors: string[];
   private changeTime = 15000;
   private currentIndex = 0;
   public isFixed = false;
@@ -30,31 +28,23 @@ export class ResultComponent implements OnInit {
   matches$: Observable<Match[]>;
   stages$: Observable<DisciplineStage[]>;
   groups$: Observable<DisciplineGroup[]>;
-  currentTabId: number;
+  selectedTypeId$: Observable<number | null>;
 
   constructor(private store: Store<AppState>) {
-    this.colors = TypeColors.TYPE_COLORS;
     this.types$ = store.pipe(select(getTypes));
-    this.types$.subscribe(this.onTypesLoaded.bind(this));
+    this.selectedTypeId$ = store.pipe(select(getSelectedTypeId));
     this.matches$ = store.pipe(select(getMatches));
     this.stages$ = store.pipe(select(getStages));
     this.groups$ = store.pipe(select(getGroups));
   }
 
   ngOnInit() {
+    // the matches of the first discipline follow from loadTypesSuccess
     this.store.dispatch(ResultActions.loadTypes());
-    this.store.dispatch(ResultActions.loadMatches({ typeId: 8 }));
-  }
-
-  onTypesLoaded(types: Type[]) {
-    if (types.length > 0) {
-      this.onTabSelected(types[0]);
-    }
   }
 
   onTabSelected(selectedTab: Type) {
-    this.currentTabId = selectedTab.id;
-    this.store.dispatch(ResultActions.loadMatches({ typeId: selectedTab.id }));
+    this.store.dispatch(ResultActions.selectType({ typeId: selectedTab.id }));
   }
 
   onSubscribed() {
@@ -67,10 +57,16 @@ export class ResultComponent implements OnInit {
 
   private startTimer() {}
 
-  getColor(currentType: Type) {
-    if (currentType.id === this.currentTabId) {
-      return 'warn';
-    }
-    return 'accent';
+  trackByTypeId(_index: number, type: Type): number {
+    return type.id;
+  }
+
+  /** Keeps the rendered group cards across reloads. */
+  trackByGroupName(_index: number, group: DisciplineGroup): string {
+    return group.name;
+  }
+
+  getColor(currentType: Type, selectedTypeId: number | null) {
+    return currentType.id === selectedTypeId ? 'warn' : 'accent';
   }
 }

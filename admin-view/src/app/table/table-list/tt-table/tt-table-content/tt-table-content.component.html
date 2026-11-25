@@ -5,8 +5,8 @@
         @if (table.number) {
           <span class="circle">{{ table.number }}</span>
         }
-        <div class="flex-grow-1 text-truncate text-center">
-          {{ table.matches[0].type.name }}
+        <div class="flex-grow-1 text-truncate text-center" [title]="table.matches[0].type.name">
+          {{ table.matches[0].type | disciplineName: shortNames }}
         </div>
       </mat-card-title>
     </mat-card-header>

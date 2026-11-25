@@ -3,7 +3,7 @@
     <mat-spinner></mat-spinner>
   }
   @if (selectedTab) {
-    <div>{{ selectedTab.name }}</div>
+    <div>{{ selectedTab | disciplineName: shortNames }}</div>
   }
   @for (currentTab of tabs; track currentTab) {
     <div>
@@ -13,7 +13,7 @@
         [typeColors]="typeColors"
         (click)="this.selectDiscipline.emit(currentTab.id)"
       >
-        {{ currentTab.name }}
+        {{ currentTab | disciplineName: shortNames }}
       </button>
     </div>
   }

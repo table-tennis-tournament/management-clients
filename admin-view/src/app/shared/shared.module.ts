@@ -24,8 +24,7 @@ const providers = [
 ];
 
 @NgModule({
-  declarations: [...providers],
-  imports: [...modules],
+  imports: [...modules, ...providers],
   exports: [...modules, ...providers],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

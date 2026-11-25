@@ -10,7 +10,7 @@ describe('ResultComponent', () => {
   let component: ResultComponent;
   let fixture: ComponentFixture<ResultComponent>;
   const initialState = {
-    disciplines: { types: [] },
+    disciplines: { types: [], selectedTypeId: null },
     matches: { matches: [], groups: [], stages: [] },
   };
 
