@@ -34,6 +34,6 @@
 === Technical Debt
 
 * Code duplication between the three frontend applications. The shared modules (`update-events`, `result-entry`, `match-state`) are identical copies per application by decision; a change must reach every copy.
-* All three frontends are kept on the same major Angular version (currently Angular 21); keeping them in sync requires a coordinated upgrade effort.
+* All three frontends are kept on the same major Angular version (currently Angular 22); keeping them in sync requires a coordinated upgrade effort.
 * There is no authentication (chapter 8).
 * Open follow-ups are tracked in `docs/follow-ups.md`.

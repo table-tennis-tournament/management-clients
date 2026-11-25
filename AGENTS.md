@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## What this is
 
-A table tennis tournament manager: a Kotlin/Spring Boot backend and three Angular 21 single-page applications.
+A table tennis tournament manager: a Kotlin/Spring Boot backend and three Angular 22 single-page applications.
 The tournament database is prepared offline by **mktt**, a third-party tool; this system runs the tournament on it.
 
 | Path | What | Notes |
