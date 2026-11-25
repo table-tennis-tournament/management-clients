@@ -10,7 +10,7 @@
 === Error Handling
 
 * Controllers translate a rejected command into a 400 with a status body; unexpected errors use Spring's default error response.
-* The frontends show German snackbar or toast messages for failed requests; the Table Manager View retries a failed table load and offers a reload.
+* The frontends show German snackbar messages for failed requests; the Table Manager View retries a failed table load and offers a reload.
 * STOMP heartbeats every 10 s in both directions detect dead connections; clients reconnect after 5 s and then resynchronize.
 
 === Logging and Monitoring
