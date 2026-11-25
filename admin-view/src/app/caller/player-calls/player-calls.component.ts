@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { TypeColorMap } from '../../settings/settings.model';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -11,6 +11,7 @@ import { minutesSinceFirstCall } from '../../shared/match-state/match-state';
   selector: 'toma-player-calls',
   templateUrl: './player-calls.component.html',
   styleUrls: ['./player-calls.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatList, MatListItem, TypeColorDirective],
 })
 export class PlayerCallsComponent {

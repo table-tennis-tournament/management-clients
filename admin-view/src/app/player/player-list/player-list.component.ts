@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { PlayerType } from '../data/player.type.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { DisciplineSelectComponent } from '../../discipline/discipline-select/discipline-select.component';
@@ -24,6 +24,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
   selector: 'toma-player-list',
   templateUrl: './player-list.component.html',
   styleUrls: ['./player-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DisciplineSelectComponent,
     MatFormField,

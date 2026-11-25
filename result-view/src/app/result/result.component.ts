@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { DisciplineGroup } from './data/discipline.group';
@@ -13,6 +13,7 @@ import { AppState, getGroups, getMatches, getSelectedTypeId, getStages, getTypes
   standalone: false,
   selector: 'app-result',
   templateUrl: './result.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./result.component.scss'],
 })
 export class ResultComponent implements OnInit {

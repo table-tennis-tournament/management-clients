@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { DisciplineGroup } from '../models/discipline.group.model';
 import { Match } from '../../../shared/data/match.model';
 import { TypeColorMap } from '../../../settings/settings.model';
@@ -16,6 +16,7 @@ import { ResultPipe } from '../../../shared/pipes/result.pipe';
   selector: 'toma-discipline-group',
   templateUrl: './discipline-group.component.html',
   styleUrls: ['./discipline-group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCard,
     MatCardTitle,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { MatchList } from '../../supervisor/matchlist.model';
 import { Discipline } from '../../discipline/discipline.model';
@@ -18,6 +18,7 @@ import { DisciplineTypePipe } from '../../shared/pipes/discipline-type.pipe';
   selector: 'toma-discipline-match-list',
   templateUrl: './discipline-match-list.component.html',
   styleUrls: ['./discipline-match-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DisciplineSelectComponent,
     MatProgressSpinner,

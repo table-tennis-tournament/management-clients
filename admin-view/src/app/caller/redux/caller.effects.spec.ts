@@ -3,7 +3,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { of, ReplaySubject, throwError } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { emittedBy } from '../../testing/effects-testing';
 import { StatusDto } from '../../shared/statusdto.model';
 import { CallerEffects } from './caller.effects';
@@ -30,16 +30,16 @@ describe('the caller effects', () => {
   let actions: ReplaySubject<any>;
   let callerEffects: CallerEffects;
   let callerService: CallerService;
-  let toast: { error: Mock; success: Mock; info: Mock };
+  let notifications: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         CallerEffects,
         CallerService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -57,7 +57,7 @@ describe('the caller effects', () => {
 
       expect(result).toStrictEqual([new LoadCallerMatchesSuccess([])]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadCallerMatchesError and show an error', async () => {
@@ -66,7 +66,7 @@ describe('the caller effects', () => {
       const result = await emittedBy(callerEffects.load, actions, new LoadCallerMatches());
 
       expect(result).toStrictEqual([new LoadCallerMatchesError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Ausrufermatches']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Ausrufermatches']]);
     });
   });
 
@@ -78,7 +78,7 @@ describe('the caller effects', () => {
 
       expect(result).toStrictEqual([new LoadRefereesListSuccess([])]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadRefereesListError and show an error', async () => {
@@ -87,7 +87,7 @@ describe('the caller effects', () => {
       const result = await emittedBy(callerEffects.loadRefereeList, actions, new LoadRefereesList(null));
 
       expect(result).toStrictEqual([new LoadRefereesListError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Schiedsrichter']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Schiedsrichter']]);
     });
   });
 
@@ -100,7 +100,7 @@ describe('the caller effects', () => {
 
       expect(result).toStrictEqual([new CallMatchSuccess(status), new LoadCallerMatches()]);
       expect(call.mock.calls).toEqual([[[1]]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a CallMatchError and show an error', async () => {
@@ -109,7 +109,7 @@ describe('the caller effects', () => {
       const result = await emittedBy(callerEffects.callMatch, actions, new CallMatch([1]));
 
       expect(result).toStrictEqual([new CallMatchError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Ausrufen des Matches']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Ausrufen des Matches']]);
     });
   });
 
@@ -134,7 +134,7 @@ describe('the caller effects', () => {
       const result = await emittedBy(callerEffects.announceRequestedCall, actions, new SecondCallMatch([3]));
 
       expect(result).toStrictEqual([new SecondCallMatchError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Ausrufen der Spieler']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Ausrufen der Spieler']]);
     });
   });
 });

@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.21 AS builder
+FROM node:24-alpine AS builder
 
 COPY admin-view/ ./admin-view/
 COPY result-view/ ./result-view/

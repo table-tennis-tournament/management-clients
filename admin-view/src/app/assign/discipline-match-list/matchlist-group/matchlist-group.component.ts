@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { MatchList } from '../../../supervisor/matchlist.model';
 
 import { TypeColorMap } from '../../../settings/settings.model';
@@ -17,6 +17,7 @@ import { DisciplineTypePipe } from '../../../shared/pipes/discipline-type.pipe';
   selector: 'toma-matchlist-group',
   templateUrl: './matchlist-group.component.html',
   styleUrls: ['./matchlist-group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TypeColorDirective,
     MatExpansionPanel,

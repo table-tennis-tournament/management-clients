@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { DisciplineTabService } from './discipline-tab.service';
 import { DisciplineTab } from './models/discipline.tab.model';
@@ -20,6 +20,7 @@ import { DisciplineGroupComponent } from './discipline-group/discipline-group.co
   selector: 'toma-discipline-view',
   templateUrl: './discipline-view.component.html',
   styleUrls: ['./discipline-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatProgressSpinner,
     MatButton,

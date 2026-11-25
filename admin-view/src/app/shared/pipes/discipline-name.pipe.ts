@@ -6,7 +6,7 @@ import { ShortNameMap } from '../../settings/settings.model';
 @Pipe({ name: 'disciplineName' })
 export class DisciplineNamePipe implements PipeTransform {
   transform(
-    type: { id: number; name: string } | null | undefined,
+    type: { id?: number; name?: string } | null | undefined,
     shortNames: ShortNameMap | null | undefined
   ): string {
     if (!type) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   getMatchesLoading,
@@ -37,6 +37,7 @@ import { AsyncPipe } from '@angular/common';
   selector: 'toma-supervisor.page',
   templateUrl: './supervisor.page.component.html',
   styleUrls: ['./supervisor.page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CdkDropListGroup, DisciplineViewComponent, MatchlistViewComponent, MatFabButton, MatIcon, AsyncPipe],
 })
 export class SupervisorPageComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Match } from '../../../../shared/data/match.model';
 import { MinuteClock } from '../../../../shared/clock/minute-clock.service';
@@ -17,6 +17,7 @@ import { ResultPipe } from '../../../../shared/pipes/result.pipe';
   selector: 'toma-tt-table-match-item',
   templateUrl: './tt-table-match-item.component.html',
   styles: ['.call-info, .set-points { font-size: small; } .last-call { color: red; font-weight: bold; }'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TtPlayerNameReducerPipe, ResultPipe, DatePipe],
 })
 export class TtTableMatchItemComponent {

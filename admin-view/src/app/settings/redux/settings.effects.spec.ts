@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of, ReplaySubject, throwError } from 'rxjs';
 import { emittedBy } from '../../testing/effects-testing';
 import { SettingsEffects } from './settings.effects';
@@ -47,16 +47,16 @@ describe('the settings effects', () => {
   let actions: ReplaySubject<any>;
   let settingsEffects: SettingsEffects;
   let settingsService: SettingsService;
-  let toast: { error: Mock; success: Mock; info: Mock };
+  let notifications: { error: Mock; success: Mock; info: Mock };
 
   beforeEach(() => {
     actions = new ReplaySubject<any>();
-    toast = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
+    notifications = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         SettingsEffects,
         SettingsService,
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         HttpClient,
         HttpHandler,
         provideMockActions(() => actions),
@@ -74,7 +74,7 @@ describe('the settings effects', () => {
 
       expect(result).toStrictEqual([new LoadSettingsSuccess(settingsTestData)]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadSettingsError and show an error', async () => {
@@ -83,7 +83,7 @@ describe('the settings effects', () => {
       const result = await emittedBy(settingsEffects.loadSettings, actions, new LoadSettings());
 
       expect(result).toStrictEqual([new LoadSettingsError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Settings']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Settings']]);
     });
   });
 
@@ -96,7 +96,7 @@ describe('the settings effects', () => {
 
       expect(result).toStrictEqual([new LoadPrintersSuccess(printers)]);
       expect(load.mock.calls).toEqual([[]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a LoadPrintersError and show an error', async () => {
@@ -105,7 +105,7 @@ describe('the settings effects', () => {
       const result = await emittedBy(settingsEffects.loadPrinters, actions, new LoadPrinters());
 
       expect(result).toStrictEqual([new LoadPrintersError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Drucker']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Drucker']]);
     });
   });
 
@@ -121,7 +121,7 @@ describe('the settings effects', () => {
 
       expect(result).toStrictEqual([new SaveAssignAutomaticallySuccess(true)]);
       expect(save.mock.calls).toEqual([[true]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a SaveAssignAutomaticallyError and show an error', async () => {
@@ -134,7 +134,7 @@ describe('the settings effects', () => {
       );
 
       expect(result).toStrictEqual([new SaveAssignAutomaticallyError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern des automatischen zuweisens']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Speichern des automatischen zuweisens']]);
     });
   });
 
@@ -146,7 +146,7 @@ describe('the settings effects', () => {
 
       expect(result).toStrictEqual([new SavePrintOnAssignSuccess(true)]);
       expect(save.mock.calls).toEqual([[true]]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a SavePrintOnAssignError and show an error', async () => {
@@ -155,7 +155,7 @@ describe('the settings effects', () => {
       const result = await emittedBy(settingsEffects.savePrintOnAssign, actions, new SavePrintOnAssign(false));
 
       expect(result).toStrictEqual([new SavePrintOnAssignError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern des druckens bei aufruf']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Speichern des druckens bei aufruf']]);
     });
   });
 
@@ -167,7 +167,7 @@ describe('the settings effects', () => {
 
       expect(result).toStrictEqual([new SetPrinterSuccess('printerName')]);
       expect(set.mock.calls).toEqual([['printerName']]);
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(notifications.error).not.toHaveBeenCalled();
     });
 
     it('should return a SetPrinterError and show an error', async () => {
@@ -176,7 +176,7 @@ describe('the settings effects', () => {
       const result = await emittedBy(settingsEffects.setPrinter, actions, new SetPrinter('printerName'));
 
       expect(result).toStrictEqual([new SetPrinterError(error)]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim setzen des Druckers']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim setzen des Druckers']]);
     });
   });
 
@@ -199,7 +199,7 @@ describe('the settings effects', () => {
       expect(await emittedBy(settingsEffects.loadTypeColors, actions, new LoadTypeColors())).toStrictEqual([
         new LoadTypeColorsError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Type-Farben']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Type-Farben']]);
     });
 
     it('saves the colors of one discipline and confirms it', async () => {
@@ -209,7 +209,7 @@ describe('the settings effects', () => {
         new SaveTypeColorSuccess(saved),
       ]);
       expect(save.mock.calls).toEqual([[1, colors[1]]]);
-      expect(toast.success.mock.calls).toEqual([['Type-Farbe gespeichert']]);
+      expect(notifications.success.mock.calls).toEqual([['Type-Farbe gespeichert']]);
     });
 
     it('shows an error when saving the colors of one discipline fails', async () => {
@@ -218,7 +218,7 @@ describe('the settings effects', () => {
       expect(await emittedBy(settingsEffects.saveTypeColor, actions, new SaveTypeColor(saved))).toStrictEqual([
         new SaveTypeColorError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern der Type-Farbe']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Speichern der Type-Farbe']]);
     });
 
     it('sets the colors of several disciplines and confirms it', async () => {
@@ -228,7 +228,7 @@ describe('the settings effects', () => {
         new SetBulkTypeColorsSuccess(colors),
       ]);
       expect(set.mock.calls).toEqual([[colors]]);
-      expect(toast.success.mock.calls).toEqual([['Type-Farben erfolgreich gesetzt']]);
+      expect(notifications.success.mock.calls).toEqual([['Type-Farben erfolgreich gesetzt']]);
     });
 
     it('shows an error when setting the colors of several disciplines fails', async () => {
@@ -237,7 +237,7 @@ describe('the settings effects', () => {
       expect(await emittedBy(settingsEffects.setBulkTypeColors, actions, new SetBulkTypeColors(colors))).toStrictEqual([
         new SetBulkTypeColorsError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Setzen der Type-Farben']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Setzen der Type-Farben']]);
     });
   });
 
@@ -259,7 +259,7 @@ describe('the settings effects', () => {
       expect(await emittedBy(settingsEffects.loadShortNames, actions, new LoadShortNames())).toStrictEqual([
         new LoadShortNamesError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Laden der Kurznamen']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Laden der Kurznamen']]);
     });
 
     it('saves a short name and confirms it', async () => {
@@ -269,7 +269,7 @@ describe('the settings effects', () => {
         new SaveShortNameSuccess(shortName),
       ]);
       expect(save.mock.calls).toEqual([[2, 'J18 B']]);
-      expect(toast.success.mock.calls).toEqual([['Kurzname gespeichert']]);
+      expect(notifications.success.mock.calls).toEqual([['Kurzname gespeichert']]);
     });
 
     it('keeps the short name unsaved when the backend rejects it, e.g. for being too long', async () => {
@@ -279,8 +279,8 @@ describe('the settings effects', () => {
       expect(await emittedBy(settingsEffects.saveShortName, actions, new SaveShortName(shortName))).toStrictEqual([
         new SaveShortNameError(rejected),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Kurzname nicht gespeichert (höchstens 30 Zeichen)']]);
-      expect(toast.success).not.toHaveBeenCalled();
+      expect(notifications.error.mock.calls).toEqual([['Kurzname nicht gespeichert (höchstens 30 Zeichen)']]);
+      expect(notifications.success).not.toHaveBeenCalled();
     });
 
     it('shows an error when saving a short name fails', async () => {
@@ -289,7 +289,7 @@ describe('the settings effects', () => {
       expect(await emittedBy(settingsEffects.saveShortName, actions, new SaveShortName(shortName))).toStrictEqual([
         new SaveShortNameError(error),
       ]);
-      expect(toast.error.mock.calls).toEqual([['Fehler beim Speichern des Kurznamens']]);
+      expect(notifications.error.mock.calls).toEqual([['Fehler beim Speichern des Kurznamens']]);
     });
   });
 });

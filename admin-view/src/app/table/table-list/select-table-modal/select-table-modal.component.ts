@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject } from '@angular/core';
+import { Component, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import {
   MAT_DIALOG_DATA,
@@ -21,6 +21,7 @@ import { MatButton } from '@angular/material/button';
   selector: 'toma-select-table-modal',
   templateUrl: './select-table-modal.component.html',
   styleUrls: ['./select-table-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     CdkScrollable,

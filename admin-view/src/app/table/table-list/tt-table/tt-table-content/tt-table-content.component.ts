@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { TableDto } from '../../../tabledto.model';
 import { MatchToTable } from './matchtotable.model';
 import { Match } from '../../../../shared/data/match.model';
@@ -12,6 +12,7 @@ import { DisciplineNamePipe } from '../../../../shared/pipes/discipline-name.pip
   selector: 'toma-tt-table-content',
   templateUrl: './tt-table-content.component.html',
   styleUrls: ['./tt-table-content.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatCardHeader, MatCardTitle, TtTableMatchItemComponent, CdkDropList, DisciplineNamePipe],
 })
 export class TtTableContentComponent {

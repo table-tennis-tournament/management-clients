@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../shared/notification.service';
 import { of, Subject } from 'rxjs';
 import { Match } from '../shared/data/match.model';
 import { TableListPageComponent } from './table-list.page.component';
@@ -27,7 +27,7 @@ import { SelectTableModalComponent } from './table-list/select-table-modal/selec
 describe('the tables page', () => {
   let page: TableListPageComponent;
   let dispatched: unknown[];
-  let toast: { error: ReturnType<typeof vi.fn> };
+  let notifications: { error: ReturnType<typeof vi.fn> };
   let dialogClosed: Subject<unknown>;
   let dialog: { open: ReturnType<typeof vi.fn> };
   let freeTables: TableDto[];
@@ -44,7 +44,7 @@ describe('the tables page', () => {
 
   beforeEach(() => {
     dispatched = [];
-    toast = { error: vi.fn() };
+    notifications = { error: vi.fn() };
     dialogClosed = new Subject();
     dialog = { open: vi.fn(() => ({ afterClosed: () => dialogClosed })) };
     freeTables = [{ id: 50, number: 5, isLocked: false, matches: [] } as TableDto];
@@ -52,7 +52,7 @@ describe('the tables page', () => {
       providers: [
         { provide: Store, useValue: { dispatch: (action: unknown) => dispatched.push(action), select: vi.fn() } },
         { provide: TableService, useValue: { getFreeTables: () => of(freeTables) } },
-        { provide: ToastrService, useValue: toast },
+        { provide: NotificationService, useValue: notifications },
         { provide: MatDialog, useValue: dialog },
       ],
     });
@@ -137,7 +137,7 @@ describe('the tables page', () => {
       page.onResultForTable(table(match(1), match(2)));
 
       expect(dialog.open).not.toHaveBeenCalled();
-      expect(toast.error.mock.calls).toEqual([['Ergebnis für zwei Tische kann nicht eingegeben werden.']]);
+      expect(notifications.error.mock.calls).toEqual([['Ergebnis für zwei Tische kann nicht eingegeben werden.']]);
     });
   });
 
@@ -163,7 +163,7 @@ describe('the tables page', () => {
       page.onAssignSecondTable(table(match(1, 1, [1, 2]), match(2, 1, [1, 3])));
 
       expect(dialog.open).not.toHaveBeenCalled();
-      expect(toast.error.mock.calls).toEqual([
+      expect(notifications.error.mock.calls).toEqual([
         ['Nur eine Gruppe mit mindestens vier Spielern kann an zwei Tischen spielen.'],
       ]);
     });
@@ -173,7 +173,7 @@ describe('the tables page', () => {
       page.onAssignSecondTable(groupOfFour());
 
       expect(dialog.open).not.toHaveBeenCalled();
-      expect(toast.error.mock.calls).toEqual([['Es sind keine freien Tische verfügbar.']]);
+      expect(notifications.error.mock.calls).toEqual([['Es sind keine freien Tische verfügbar.']]);
     });
   });
 });

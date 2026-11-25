@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Match } from '../../../../shared/data/match.model';
 import {
   callNumber,
@@ -16,6 +16,7 @@ import { ResultPipe } from '../../../../shared/pipes/result.pipe';
   selector: 'toma-discipline-stage-item',
   templateUrl: './discipline-stage-item.component.html',
   styleUrls: ['./discipline-stage-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TeamItemComponent, ResultPipe],
 })
 export class DisciplineStageItemComponent {

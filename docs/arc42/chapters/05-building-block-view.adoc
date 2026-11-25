@@ -14,13 +14,13 @@ include::../diagrams/container.puml[]
 |Container |Responsibility
 
 |Admin View
-|Angular 21 SPA for tournament administration: match assignment, calling, queue management, results.
+|Angular 22 SPA for tournament administration: match assignment, calling, queue management, results.
 
 |Result View
-|Angular 21 SPA for displaying live results and standings.
+|Angular 22 SPA for displaying live results and standings.
 
 |Table Manager View
-|Angular 21 SPA for table-specific match management and result entry.
+|Angular 22 SPA for table-specific match management and result entry.
 
 |Reverse Proxy
 |Nginx. Serves the three SPA bundles and proxies API and WebSocket traffic to the backend.

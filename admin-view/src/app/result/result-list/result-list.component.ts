@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Match } from '../../shared/data/match.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { isFinalResult, matchWinner, parseResult, SetScore, Side } from '../../shared/result-entry/result-entry';
@@ -31,6 +31,7 @@ import { StagePipe } from '../pipes/stage.pipe';
   selector: 'toma-result-list',
   templateUrl: './result-list.component.html',
   styleUrls: ['./result-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatProgressSpinner,
     DisciplineSelectComponent,

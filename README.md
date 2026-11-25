@@ -1,6 +1,6 @@
 # management-clients
 
-Table tennis tournament management: a backend and three single-page applications (SPAs) that run a tournament on a database prepared offline by the tournament tool mktt. The backend is a Kotlin/Spring Boot modular monolith with MariaDB; the clients are Angular 21 applications using [ngrx](https://ngrx.io/) for client-side state. Clients receive live updates over STOMP on a WebSocket and re-fetch what changed over REST.
+Table tennis tournament management: a backend and three single-page applications (SPAs) that run a tournament on a database prepared offline by the tournament tool mktt. The backend is a Kotlin/Spring Boot modular monolith with MariaDB; the clients are Angular 22 applications using [ngrx](https://ngrx.io/) for client-side state. Clients receive live updates over STOMP on a WebSocket and re-fetch what changed over REST.
 
 ## management-backend
 

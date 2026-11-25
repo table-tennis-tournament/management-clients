@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, Page, test } from '@playwright/test';
 import { resetDatabase } from './db-helper';
-import { dragAndDrop, errorToast, getMatch, resetTournament, tableCard } from './helpers';
+import { dragAndDrop, errorNotification, getMatch, resetTournament, tableCard } from './helpers';
 
 // Herren A, group A: match 1 Nicolas Kowalska vs Babajide Santos, 2 Nicolas Kowalska vs Priyanka Sow,
 // 3 Priyanka Sow vs Babajide Santos; group B: match 4 Ji-hoon Mensah vs Mei Castro. Tables 1 to 9 are free.
@@ -144,7 +144,7 @@ test.describe('Zuweiser View', () => {
 
     await dragAndDrop(page, item, tableCard(page, 1).locator('span.card-title'));
 
-    await expect(errorToast(page, 'Could not assign all matches to table.')).toBeVisible({ timeout: 15000 });
+    await expect(errorNotification(page, 'Could not assign all matches to table.')).toBeVisible({ timeout: 15000 });
     await expect(tableCard(page, 1)).toContainText('Gesperrt');
     expect((await getMatch(request, 3)).state).toBe('Open');
   });

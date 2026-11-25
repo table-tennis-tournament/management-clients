@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -17,6 +17,7 @@ import { PlayerNamePipe } from '../../player-name.pipe';
   selector: 'app-start-dialog',
   templateUrl: './start-dialog.component.html',
   styleUrls: ['./start-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     CdkScrollable,

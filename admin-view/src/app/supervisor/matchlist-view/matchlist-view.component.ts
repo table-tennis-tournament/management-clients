@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MatchList } from '../matchlist.model';
 import { MatchListItem } from '../matchlistitem.model';
 import { Match } from '../../shared/data/match.model';
@@ -15,6 +15,7 @@ import { MatchlistGroupItemComponent } from './matchlist-group-item/matchlist-gr
   selector: 'toma-matchlist-view',
   templateUrl: './matchlist-view.component.html',
   styleUrls: ['./matchlist-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     MatList,

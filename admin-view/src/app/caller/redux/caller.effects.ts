@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CallerService } from '../caller.service';
@@ -28,7 +28,7 @@ import {
 @Injectable()
 export class CallerEffects {
   private actions$ = inject(Actions);
-  private toastService = inject(ToastrService);
+  private notifications = inject(NotificationService);
   private callerService = inject(CallerService);
 
   load = createEffect(() =>
@@ -38,7 +38,7 @@ export class CallerEffects {
         return this.callerService.loadMatchAggregateForCaller().pipe(
           map((matches) => new LoadCallerMatchesSuccess(matches)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Ausrufermatches');
+            this.notifications.error('Fehler beim Laden der Ausrufermatches');
             return of(new LoadCallerMatchesError(err));
           })
         );
@@ -53,7 +53,7 @@ export class CallerEffects {
         return this.callerService.loadAvailableReferees().pipe(
           map((matches) => new LoadRefereesListSuccess(matches)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Schiedsrichter');
+            this.notifications.error('Fehler beim Laden der Schiedsrichter');
             return of(new LoadRefereesListError(err));
           })
         );
@@ -68,7 +68,7 @@ export class CallerEffects {
         return this.callerService.loadSecondCallMatches().pipe(
           map((matches) => new LoadSecondCallMatchesSuccess(matches)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der 2. Aufruf Spiele');
+            this.notifications.error('Fehler beim Laden der 2. Aufruf Spiele');
             return of(new LoadSecondCallMatchesError(err));
           })
         );
@@ -83,7 +83,7 @@ export class CallerEffects {
         return this.callerService.loadThirdCallMatches().pipe(
           map((matches) => new LoadThirdCallMatchesSuccess(matches)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der 3. Aufruf Spiele');
+            this.notifications.error('Fehler beim Laden der 3. Aufruf Spiele');
             return of(new LoadThirdCallMatchesError(err));
           })
         );
@@ -103,7 +103,7 @@ export class CallerEffects {
             new LoadThirdCallMatches(),
           ]),
           catchError((err) => {
-            this.toastService.error('Fehler beim Ausrufen der Spieler');
+            this.notifications.error('Fehler beim Ausrufen der Spieler');
             return of(new SecondCallMatchError(err));
           })
         );
@@ -118,7 +118,7 @@ export class CallerEffects {
         return this.callerService.callMatch(action.payload).pipe(
           switchMap((state) => [new CallMatchSuccess(state), new LoadCallerMatches()]),
           catchError((err) => {
-            this.toastService.error('Fehler beim Ausrufen des Matches');
+            this.notifications.error('Fehler beim Ausrufen des Matches');
             return of(new CallMatchError(err));
           })
         );

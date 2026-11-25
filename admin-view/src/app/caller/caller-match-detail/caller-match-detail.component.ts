@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { TypeColorMap } from '../../settings/settings.model';
 import { MatCard, MatCardTitle, MatCardContent, MatCardActions, MatCardHeader } from '@angular/material/card';
@@ -11,6 +11,7 @@ import { TtPlayerNameReducerPipe } from '../../shared/pipes/tt-player-name-reduc
   selector: 'toma-caller-match-detail',
   templateUrl: './caller-match-detail.component.html',
   styleUrls: ['./caller-match-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCard,
     TypeColorDirective,

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { getResultMatchesLoading, getResultMatchesState } from '../app-state.reducer';
@@ -26,6 +26,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'toma-result-list-page',
   templateUrl: './result-list.page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ResultListComponent, AsyncPipe],
 })
 export class ResultListPageComponent implements OnInit {

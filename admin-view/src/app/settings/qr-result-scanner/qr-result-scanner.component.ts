@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 //import { ZXingScannerComponent } from '@zxing/ngx-scanner';
@@ -8,6 +8,7 @@ import { FreeTable } from '../../table/redux/table.actions';
 @Component({
   selector: 'toma-qr-result-scanner',
   templateUrl: './qr-result-scanner.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./qr-result-scanner.component.scss'],
 })
 export class QrResultScannerComponent {

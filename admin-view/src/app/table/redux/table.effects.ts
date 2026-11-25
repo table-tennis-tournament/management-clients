@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import {
@@ -45,7 +45,7 @@ import { PrintService } from '../../shared/print.service';
 export class TableEffects {
   private actions$ = inject(Actions);
   private tableService = inject(TableService);
-  private toastService = inject(ToastrService);
+  private notifications = inject(NotificationService);
   private matchService = inject(MatchService);
   private printService = inject(PrintService);
 
@@ -56,7 +56,7 @@ export class TableEffects {
         return this.tableService.getAllTables().pipe(
           map((tables) => new LoadTablesSuccess(tables)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Tische', '');
+            this.notifications.error('Fehler beim Laden der Tische');
             return of(new LoadTablesError(err));
           })
         );
@@ -71,7 +71,7 @@ export class TableEffects {
         return this.tableService.lockTable(action.payload).pipe(
           map(() => new LockTableSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Sperren des Tisches', '');
+            this.notifications.error('Fehler beim Sperren des Tisches');
             return of(new LockTableError(err));
           })
         );
@@ -86,7 +86,7 @@ export class TableEffects {
         return this.tableService.unLockTable(action.payload).pipe(
           map(() => new UnLockTableSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Entsperren des Tisches', '');
+            this.notifications.error('Fehler beim Entsperren des Tisches');
             return of(new UnLockTableError(err));
           })
         );
@@ -100,11 +100,11 @@ export class TableEffects {
       mergeMap((action: FreeTable) => {
         return this.matchService.freeMatches(action.payload.matchIds).pipe(
           map(() => {
-            this.toastService.success(`SpielNr. ${action.payload.matchIds} frei gemacht`);
+            this.notifications.success(`SpielNr. ${action.payload.matchIds} frei gemacht`);
             return new FreeTableSuccess(action.payload);
           }),
           catchError((err) => {
-            this.toastService.error('Fehler beim Freigeben des Tisches', '');
+            this.notifications.error('Fehler beim Freigeben des Tisches');
             return of(new FreeTableError(err));
           })
         );
@@ -119,7 +119,7 @@ export class TableEffects {
         return this.matchService.takeBackMatches(action.payload.matchIds).pipe(
           map(() => new TakeBackTableSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Zurücknehmen der Spiele', '');
+            this.notifications.error('Fehler beim Zurücknehmen der Spiele');
             return of(new TakeBackTableError(err));
           })
         );
@@ -134,7 +134,7 @@ export class TableEffects {
         return this.printService.printMatch(action.payload.matchId).pipe(
           map(() => new PrintTableSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Drucken des Spiels', '');
+            this.notifications.error('Fehler beim Drucken des Spiels');
             return of(new PrintTableError(err));
           })
         );
@@ -149,7 +149,7 @@ export class TableEffects {
         return this.matchService.assignToSecondTable(action.payload.tableNr, action.payload.matchIds).pipe(
           map(() => new AssignToSecondTableSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim zuweisen des zweiten Tisches', '');
+            this.notifications.error('Fehler beim zuweisen des zweiten Tisches');
             return of(new AssignToSecondTableError(err));
           })
         );
@@ -164,7 +164,7 @@ export class TableEffects {
         return this.matchService.resultForMatch(action.payload).pipe(
           map(() => new ResultForMatchSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler bei der Eingabe des Ergebnisses', '');
+            this.notifications.error('Fehler bei der Eingabe des Ergebnisses');
             return of(new ResultForMatchError(err));
           })
         );
@@ -181,7 +181,7 @@ export class TableEffects {
             if (status.success === true) {
               return new AssignMatchToTableSuccess(action.payload);
             }
-            this.toastService.error(status.message);
+            this.notifications.error(status.message);
             return new AssignMatchToTableError(status);
           }),
           catchError((err) => {
@@ -189,7 +189,7 @@ export class TableEffects {
             if (err.error && err.error.message) {
               errorMessage = err.error.message;
             }
-            this.toastService.error(errorMessage, '');
+            this.notifications.error(errorMessage);
             return of(new AssignMatchToTableError(err));
           })
         );
@@ -204,7 +204,7 @@ export class TableEffects {
         return this.matchService.removeMatchFromTable(action.payload).pipe(
           map(() => new RemoveMatchFromTableSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Entfernen der Spiele', '');
+            this.notifications.error('Fehler beim Entfernen der Spiele');
             return of(new RemoveMatchFromTableError(err));
           })
         );

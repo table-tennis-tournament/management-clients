@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
 import { TypeColorMap } from '../../settings/settings.model';
 import { MatCard, MatCardTitle, MatCardContent, MatCardActions, MatCardHeader } from '@angular/material/card';
@@ -14,6 +14,7 @@ import { minutesSinceFirstCall } from '../../shared/match-state/match-state';
   selector: 'toma-second-call-match-detail',
   templateUrl: './second-call-match-detail.component.html',
   styleUrls: ['./second-call-match-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCard,
     TypeColorDirective,

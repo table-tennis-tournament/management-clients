@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match } from '../shared/data/match.model';
 import { Store } from '@ngrx/store';
@@ -17,6 +17,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'toma-assign-match.page',
   templateUrl: './assign-match.page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CdkDropListGroup, DisciplineMatchListComponent, TableListPageComponent, AsyncPipe],
 })
 export class AssignMatchPageComponent implements OnInit {

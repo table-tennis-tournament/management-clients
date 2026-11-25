@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../shared/notification.service';
 
 import { of } from 'rxjs';
 
@@ -42,7 +42,7 @@ import { SettingsService } from '../settings.service';
 @Injectable()
 export class SettingsEffects {
   private actions$ = inject(Actions);
-  private toastService = inject(ToastrService);
+  private notifications = inject(NotificationService);
   private settingsService = inject(SettingsService);
 
   loadSettings = createEffect(() =>
@@ -52,7 +52,7 @@ export class SettingsEffects {
         return this.settingsService.loadSettings().pipe(
           map((settings) => new LoadSettingsSuccess(settings)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Settings');
+            this.notifications.error('Fehler beim Laden der Settings');
             return of(new LoadSettingsError(err));
           })
         );
@@ -67,7 +67,7 @@ export class SettingsEffects {
         return this.settingsService.loadPrinters().pipe(
           map((printers) => new LoadPrintersSuccess(printers)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Drucker');
+            this.notifications.error('Fehler beim Laden der Drucker');
             return of(new LoadPrintersError(err));
           })
         );
@@ -82,7 +82,7 @@ export class SettingsEffects {
         return this.settingsService.saveAssignAutomatically(action.payload).pipe(
           map(() => new SaveAssignAutomaticallySuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Speichern des automatischen zuweisens');
+            this.notifications.error('Fehler beim Speichern des automatischen zuweisens');
             return of(new SaveAssignAutomaticallyError(err));
           })
         );
@@ -97,7 +97,7 @@ export class SettingsEffects {
         return this.settingsService.savePrintOnAssign(action.payload).pipe(
           map(() => new SavePrintOnAssignSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Speichern des druckens bei aufruf');
+            this.notifications.error('Fehler beim Speichern des druckens bei aufruf');
             return of(new SavePrintOnAssignError(err));
           })
         );
@@ -112,7 +112,7 @@ export class SettingsEffects {
         return this.settingsService.setPrinter(action.payload).pipe(
           map(() => new SetPrinterSuccess(action.payload)),
           catchError((err) => {
-            this.toastService.error('Fehler beim setzen des Druckers');
+            this.notifications.error('Fehler beim setzen des Druckers');
             return of(new SetPrinterError(err));
           })
         );
@@ -127,7 +127,7 @@ export class SettingsEffects {
         return this.settingsService.loadTypeColors().pipe(
           map((typeColors) => new LoadTypeColorsSuccess(typeColors)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Type-Farben');
+            this.notifications.error('Fehler beim Laden der Type-Farben');
             return of(new LoadTypeColorsError(err));
           })
         );
@@ -141,11 +141,11 @@ export class SettingsEffects {
       mergeMap((action: SaveTypeColor) => {
         return this.settingsService.saveTypeColor(action.payload.typeId, action.payload.colorData).pipe(
           map(() => {
-            this.toastService.success('Type-Farbe gespeichert');
+            this.notifications.success('Type-Farbe gespeichert');
             return new SaveTypeColorSuccess(action.payload);
           }),
           catchError((err) => {
-            this.toastService.error('Fehler beim Speichern der Type-Farbe');
+            this.notifications.error('Fehler beim Speichern der Type-Farbe');
             return of(new SaveTypeColorError(err));
           })
         );
@@ -159,11 +159,11 @@ export class SettingsEffects {
       mergeMap((action: SetBulkTypeColors) => {
         return this.settingsService.setBulkTypeColors(action.payload).pipe(
           map(() => {
-            this.toastService.success('Type-Farben erfolgreich gesetzt');
+            this.notifications.success('Type-Farben erfolgreich gesetzt');
             return new SetBulkTypeColorsSuccess(action.payload);
           }),
           catchError((err) => {
-            this.toastService.error('Fehler beim Setzen der Type-Farben');
+            this.notifications.error('Fehler beim Setzen der Type-Farben');
             return of(new SetBulkTypeColorsError(err));
           })
         );
@@ -178,7 +178,7 @@ export class SettingsEffects {
         this.settingsService.loadShortNames().pipe(
           map((shortNames) => new LoadShortNamesSuccess(shortNames)),
           catchError((err) => {
-            this.toastService.error('Fehler beim Laden der Kurznamen');
+            this.notifications.error('Fehler beim Laden der Kurznamen');
             return of(new LoadShortNamesError(err));
           })
         )
@@ -193,14 +193,14 @@ export class SettingsEffects {
         this.settingsService.saveShortName(action.payload.typeId, action.payload.shortName).pipe(
           map((status) => {
             if (!status.success) {
-              this.toastService.error('Kurzname nicht gespeichert (höchstens 30 Zeichen)');
+              this.notifications.error('Kurzname nicht gespeichert (höchstens 30 Zeichen)');
               return new SaveShortNameError(status);
             }
-            this.toastService.success('Kurzname gespeichert');
+            this.notifications.success('Kurzname gespeichert');
             return new SaveShortNameSuccess(action.payload);
           }),
           catchError((err) => {
-            this.toastService.error('Fehler beim Speichern des Kurznamens');
+            this.notifications.error('Fehler beim Speichern des Kurznamens');
             return of(new SaveShortNameError(err));
           })
         )

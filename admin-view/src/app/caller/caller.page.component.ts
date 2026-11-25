@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -41,6 +41,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'toma-caller-page',
   templateUrl: './caller.page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CallerMatchListComponent,
     CallerMatchDetailComponent,
