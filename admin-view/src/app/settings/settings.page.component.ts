@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   LoadPrinters,
@@ -25,6 +25,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'toma-settings',
   templateUrl: './settings.page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatCard, MatCardContent, SettingsListComponent, AsyncPipe],
 })
 export class SettingsPageComponent implements OnInit {

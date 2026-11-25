@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject } from '@angular/core';
+import { Component, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TableDto } from '../../tabledto.model';
 
 import { Player } from '../../../shared/data/player.model';
@@ -22,6 +22,7 @@ import { TtPlayerNameReducerPipe } from '../../../shared/pipes/tt-player-name-re
   selector: 'toma-show-match-modal',
   templateUrl: './show-match-modal.component.html',
   styleUrls: ['./show-match-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     CdkScrollable,

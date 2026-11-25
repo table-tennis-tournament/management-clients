@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Discipline } from '../discipline.model';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'toma-discipline-select',
   templateUrl: './discipline-select.component.html',
   styleUrls: ['./discipline-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatFormField, MatLabel, MatSelect, MatOption, MatMiniFabButton, MatIcon],
 })
 export class DisciplineSelectComponent {

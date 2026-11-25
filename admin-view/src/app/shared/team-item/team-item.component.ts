@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Player } from '../data/player.model';
 import { Store } from '@ngrx/store';
 import { getTypeColorsMapState } from '../../app-state.reducer';
@@ -9,6 +9,7 @@ import { TypeColorDirective } from '../directives/type-color.directive';
   selector: 'toma-team-item',
   templateUrl: './team-item.component.html',
   styleUrls: ['./team-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TypeColorDirective],
 })
 export class TeamItemComponent implements OnInit {

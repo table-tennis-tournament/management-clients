@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { TableDto } from '../tabledto.model';
 import { MatchToTable } from './tt-table/tt-table-content/matchtotable.model';
 import { ShortNameMap, TypeColorMap } from '../../settings/settings.model';
@@ -9,6 +9,7 @@ import { TtTableComponent } from './tt-table/tt-table.component';
   selector: 'toma-table-list',
   templateUrl: './table-list.component.html',
   styleUrls: ['./table-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatProgressSpinner, TtTableComponent],
 })
 export class TableListComponent {

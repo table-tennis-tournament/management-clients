@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
@@ -53,6 +53,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'toma-table-list-page',
   templateUrl: './table-list.page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TableListComponent, MatFabButton, MatIcon, AsyncPipe],
 })
 export class TableListPageComponent implements OnInit {

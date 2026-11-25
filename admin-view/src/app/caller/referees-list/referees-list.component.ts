@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Player } from '../../shared/data/player.model';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -7,6 +7,7 @@ import { MatList, MatListItem } from '@angular/material/list';
   selector: 'toma-referees-list',
   templateUrl: './referees-list.component.html',
   styleUrls: ['./referees-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatProgressSpinner, MatList, MatListItem],
 })
 export class RefereesListComponent {

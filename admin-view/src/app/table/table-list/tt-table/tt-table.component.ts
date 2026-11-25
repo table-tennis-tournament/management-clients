@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { TableDto } from '../../tabledto.model';
 import { MatchToTable } from './tt-table-content/matchtotable.model';
 import { ShortNameMap, TypeColorMap } from '../../../settings/settings.model';
@@ -18,6 +18,7 @@ import {
   selector: 'toma-tt-table',
   templateUrl: './tt-table.component.html',
   styleUrls: ['./tt-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCard,
     TypeColorDirective,

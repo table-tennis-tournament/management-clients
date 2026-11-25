@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -26,6 +26,7 @@ import { AsyncPipe } from '@angular/common';
   selector: 'toma-player-page',
   templateUrl: './player.page.component.html',
   styleUrls: ['./player.page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PlayerListComponent, AsyncPipe],
 })
 export class PlayerPageComponent implements OnInit {

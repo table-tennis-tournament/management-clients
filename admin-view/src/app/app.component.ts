@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LoadTables } from './table/redux/table.actions';
 import { LoadMatches } from './assign/redux/match.actions';
@@ -11,6 +11,7 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'toma-root',
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Match } from '../../../shared/data/match.model';
 
 import { TypeColorMap } from '../../../settings/settings.model';
@@ -13,6 +13,7 @@ import { DisciplineTypePipe } from '../../../shared/pipes/discipline-type.pipe';
   selector: 'toma-single-item',
   templateUrl: './single-item.component.html',
   styleUrls: ['./single-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TypeColorDirective, TeamItemComponent, DisciplineTypePipe],
 })
 export class SingleItemComponent {

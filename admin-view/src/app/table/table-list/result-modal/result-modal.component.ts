@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Match } from '../../../shared/data/match.model';
 import {
   MAT_DIALOG_DATA,
@@ -35,6 +35,7 @@ import { TtMatchDisciplinePipe } from '../../../shared/pipes/tt-match-discipline
   selector: 'toma-result-modal',
   templateUrl: './result-modal.component.html',
   styleUrls: ['./result-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     CdkScrollable,

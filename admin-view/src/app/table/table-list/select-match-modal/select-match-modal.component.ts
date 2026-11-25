@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import {
   MAT_DIALOG_DATA,
@@ -21,6 +21,7 @@ import { TtPlayerNameReducerPipe } from '../../../shared/pipes/tt-player-name-re
   selector: 'toma-select-match-modal',
   templateUrl: './select-match-modal.component.html',
   styleUrls: ['./select-match-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     CdkScrollable,
