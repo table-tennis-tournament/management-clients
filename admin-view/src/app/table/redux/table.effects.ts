@@ -181,7 +181,7 @@ export class TableEffects {
             if (status.success === true) {
               return new AssignMatchToTableSuccess(action.payload);
             }
-            this.notifications.error(status.message);
+            this.notifications.error(status.message ?? 'Fehler beim Zuweisen des Spiels zum Tisch');
             return new AssignMatchToTableError(status);
           }),
           catchError((err) => {

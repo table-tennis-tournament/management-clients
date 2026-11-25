@@ -20,8 +20,8 @@ import { ResultPipe } from '../../../../shared/pipes/result.pipe';
   imports: [TeamItemComponent, ResultPipe],
 })
 export class DisciplineStageItemComponent {
-  @Input()
-  match: Match;
+  @Input({ required: true })
+  match!: Match;
 
   isMatchComplete() {
     return isCompleted(this.match);

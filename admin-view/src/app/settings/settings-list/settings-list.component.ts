@@ -31,12 +31,12 @@ import { MatInput } from '@angular/material/input';
   ],
 })
 export class SettingsListComponent {
-  _settings: Settings[];
+  _settings: Settings[] = [];
   _typeColors: TypeColorMap = {};
 
-  selectedPrinter: string;
-  isPrintForAssign: boolean;
-  assignAutomatically: boolean;
+  selectedPrinter = '';
+  isPrintForAssign = false;
+  assignAutomatically = false;
 
   /** The colors picked but not saved yet, by discipline id. */
   colorDrafts: TypeColorMap = {};
@@ -54,29 +54,29 @@ export class SettingsListComponent {
   }
 
   @Input()
-  printers: string[];
+  printers: string[] = [];
 
   @Input()
-  set typeColors(value: TypeColorMap) {
+  set typeColors(value: TypeColorMap | null) {
     this._typeColors = value ?? {};
     this.colorDrafts = {};
   }
 
-  get typeColors() {
+  get typeColors(): TypeColorMap {
     return this._typeColors;
   }
 
   @Input()
-  types: any[];
+  types: any[] = [];
 
   /** The saved short names; [shortNameDrafts] holds what is typed but not saved yet. */
   @Input()
-  set shortNames(value: ShortNameMap) {
+  set shortNames(value: ShortNameMap | null) {
     this._shortNames = value ?? {};
     this.shortNameDrafts = { ...this._shortNames };
   }
 
-  get shortNames() {
+  get shortNames(): ShortNameMap {
     return this._shortNames;
   }
 

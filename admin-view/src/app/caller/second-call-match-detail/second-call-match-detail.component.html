@@ -1,9 +1,9 @@
 @if (matchAggregate) {
-  <mat-card [tomaTypeColor]="matchAggregate.discipline.id" [typeColors]="typeColors">
+  <mat-card [tomaTypeColor]="matchAggregate.discipline?.id" [typeColors]="typeColors">
     <mat-card-title></mat-card-title>
     <mat-card-content class="text-center">
       <h1>{{ matchAggregate.callNumber }}. Aufruf</h1>
-      <h2>{{ matchAggregate.discipline.name }}</h2>
+      <h2>{{ matchAggregate.discipline?.name }}</h2>
       <h2>{{ matchAggregate.name }}</h2>
       <br />
       <h2>

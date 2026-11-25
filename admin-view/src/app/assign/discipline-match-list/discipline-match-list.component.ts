@@ -34,9 +34,9 @@ import { DisciplineTypePipe } from '../../shared/pipes/discipline-type.pipe';
   ],
 })
 export class DisciplineMatchListComponent {
-  private _matches: Match[];
-  currentDisciplineId: number;
-  private _matchList: MatchList[];
+  private _matches: Match[] = [];
+  currentDisciplineId?: number;
+  private _matchList: MatchList[] = [];
 
   @Input()
   set matches(value: Match[]) {
@@ -52,7 +52,7 @@ export class DisciplineMatchListComponent {
   }
 
   @Input()
-  matchesLoading: boolean;
+  matchesLoading: boolean = false;
 
   @Input()
   set matchList(value: MatchList[]) {
@@ -68,15 +68,15 @@ export class DisciplineMatchListComponent {
   }
 
   @Input()
-  disciplines: Discipline[];
+  disciplines: Discipline[] = [];
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Output()
   disciplineRefresh = new EventEmitter<number>();
 
-  currentMatchesToShow: Match[];
+  currentMatchesToShow: Match[] = [];
 
   onDisciplineSelected(disciplineId: number) {
     this.currentDisciplineId = disciplineId;
@@ -86,14 +86,14 @@ export class DisciplineMatchListComponent {
     }
 
     if (+disciplineId === -1) {
-      this.currentMatchesToShow = [].concat(...this.matchList.map((item) => item.matchinfo));
+      this.currentMatchesToShow = this.matchList.flatMap((item) => item.matchinfo);
       return;
     }
-    const filteredMatches = this.matches.filter((match) => match.type.id === +disciplineId).filter(isWaiting);
+    const filteredMatches = this.matches.filter((match) => match.type?.id === +disciplineId).filter(isWaiting);
     this.currentMatchesToShow = filteredMatches;
   }
 
-  isMatchInGroup(groupId: number, currentMatch: Match) {
+  isMatchInGroup(groupId: number | undefined, currentMatch: Match) {
     return (
       currentMatch != null &&
       currentMatch.playGroup != null &&
@@ -102,7 +102,7 @@ export class DisciplineMatchListComponent {
     );
   }
 
-  getMatch(groupId: number) {
+  getMatch(groupId: number | undefined) {
     return this.matches.filter((x) => this.isMatchInGroup(groupId, x));
   }
 

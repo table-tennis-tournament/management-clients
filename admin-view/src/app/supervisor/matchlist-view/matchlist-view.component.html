@@ -17,7 +17,7 @@
         <div
           cdkDrag
           class="border-bottom border-dark px-3"
-          [tomaTypeColor]="currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type.id : 0"
+          [tomaTypeColor]="currentMatch.matchinfo[0] ? currentMatch.matchinfo[0].type?.id : 0"
           [typeColors]="typeColors"
         >
           @if (!currentMatch.matchinfo[1] && currentMatch.matchinfo[0]) {

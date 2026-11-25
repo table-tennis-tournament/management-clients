@@ -39,10 +39,10 @@ export class ShowMatchModalComponent {
 
   public OnTableCalled: EventEmitter<void> = new EventEmitter<void>();
 
-  public players: Player[];
+  /** The players of a group at the table, each once; null for a single match. */
+  public players: Player[] | null = null;
 
   constructor() {
-    this.players = null;
     if (this.isGroupOfMatches()) {
       this.setPlayers();
     }
@@ -57,21 +57,20 @@ export class ShowMatchModalComponent {
   }
 
   setPlayers() {
-    const playerArray = [];
+    // indexed by player id, so the players come out sorted by id
+    const playerArray: Player[] = [];
     this.currentTable.matches.forEach((match) => {
-      const firstPlayer = match.team1;
-      if (firstPlayer && !playerArray[firstPlayer[0].id]) {
-        playerArray[firstPlayer[0].id] = match.team1[0];
-      }
-      const secondPlayer = match.team2;
-      if (secondPlayer && !playerArray[secondPlayer[0].id]) {
-        playerArray[secondPlayer[0].id] = match.team2[0];
+      for (const player of [match.team1?.[0], match.team2?.[0]]) {
+        if (player?.id != null && !playerArray[player.id]) {
+          playerArray[player.id] = player;
+        }
       }
     });
-    this.players = [];
+    const players: Player[] = [];
+    this.players = players;
     playerArray.forEach((player) => {
       if (player) {
-        this.players.push(player);
+        players.push(player);
       }
     });
   }

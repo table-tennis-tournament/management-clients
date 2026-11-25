@@ -46,16 +46,16 @@ import { MatCheckbox } from '@angular/material/checkbox';
   ],
 })
 export class PlayerListComponent {
-  private _players: PlayerType[];
-  private currentDisciplineFilter: number;
-  private _disciplines: Discipline[];
-  filteredDisciplines: Discipline[];
+  private _players: PlayerType[] = [];
+  private currentDisciplineFilter?: number;
+  private _disciplines: Discipline[] = [];
+  filteredDisciplines: Discipline[] = [];
   paidValues: any = {};
-  filteredPlayers: PlayerType[];
+  filteredPlayers: PlayerType[] = [];
 
-  firstNameInput: string;
-  clubInput: string;
-  lastNameInput: string;
+  firstNameInput = '';
+  clubInput = '';
+  lastNameInput = '';
 
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'club', 'discipline', 'paid'];
 
@@ -85,21 +85,21 @@ export class PlayerListComponent {
   }
 
   @Input()
-  playersLoading: boolean;
+  playersLoading: boolean = false;
 
   @Output()
   playerChanged: EventEmitter<PlayerType> = new EventEmitter<PlayerType>();
 
   constructor() {}
 
-  filterPlayers(value: string, callback: (player: PlayerType) => string) {
+  filterPlayers(value: string, callback: (player: PlayerType) => string | undefined) {
     this.filteredPlayers = this.filteredPlayers.filter((player) => this.containsValue(callback(player), value));
   }
 
   /** Applies the discipline and every name filter together. */
   applyFilters() {
     this.filteredPlayers = this.players ?? [];
-    if (this.currentDisciplineFilter > 0) {
+    if ((this.currentDisciplineFilter ?? 0) > 0) {
       this.filteredPlayers = this.filteredPlayers.filter((pl) => pl.type.id === this.currentDisciplineFilter);
     }
     if (this.firstNameInput) {

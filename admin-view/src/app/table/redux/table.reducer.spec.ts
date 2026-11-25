@@ -54,7 +54,7 @@ describe('the table reducer', () => {
       ...initialState,
     };
 
-    const newState = reduceTableState(initialState, new LockTable(null));
+    const newState = reduceTableState(initialState, new LockTable(1));
     expect(newState).toEqual(expectedState);
   });
 

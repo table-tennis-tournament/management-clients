@@ -12,6 +12,7 @@ import { ShortNameMap, TypeColorMap } from '../settings/settings.model';
 import { Match } from '../shared/data/match.model';
 import { Observable } from 'rxjs';
 import { MatchList } from './matchlist.model';
+import { MatchListItem } from './matchlistitem.model';
 import { Discipline } from '../discipline/discipline.model';
 import { LoadDiscipline } from '../discipline/redux/discipline.actions';
 import { LoadMatches, ReloadMatches } from '../assign/redux/match.actions';
@@ -44,24 +45,17 @@ export class SupervisorPageComponent implements OnInit {
   private store = inject<Store<any>>(Store);
   dialog = inject(MatDialog);
 
-  matches: Observable<Match[]>;
-  matchesLoading: Observable<boolean>;
-  matchList: Observable<MatchList[]>;
-  disciplines: Observable<Discipline[]>;
-  typeColors: Observable<TypeColorMap>;
-  shortNames: Observable<ShortNameMap>;
-  selectedDiscipline: Observable<number>;
+  matches: Observable<Match[]> = this.store.select(getMatchesState);
+  matchesLoading: Observable<boolean> = this.store.select(getMatchesLoading);
+  matchList: Observable<MatchList[]> = this.store.select(getMatchListState);
+  disciplines: Observable<Discipline[]> = this.store.select(getDisciplineState);
+  typeColors: Observable<TypeColorMap> = this.store.select(getTypeColorsMapState);
+  shortNames: Observable<ShortNameMap> = this.store.select(getShortNamesState);
+  selectedDiscipline: Observable<number> = this.store.select(getSelectedDiscipline);
   private colors: TypeColorMap = {};
-  currentColor: string;
+  currentColor = '';
 
   ngOnInit() {
-    this.matches = this.store.select(getMatchesState);
-    this.matchesLoading = this.store.select(getMatchesLoading);
-    this.matchList = this.store.select(getMatchListState);
-    this.disciplines = this.store.select(getDisciplineState);
-    this.typeColors = this.store.select(getTypeColorsMapState);
-    this.shortNames = this.store.select(getShortNamesState);
-    this.selectedDiscipline = this.store.select(getSelectedDiscipline);
     this.typeColors.subscribe((color) => (this.colors = color));
     this.selectedDiscipline.subscribe(this.changeColor.bind(this));
   }
@@ -76,15 +70,17 @@ export class SupervisorPageComponent implements OnInit {
     this.store.dispatch(new ReloadMatches());
   }
 
-  onMatchListItemDelete(event) {
-    this.store.dispatch(new DeleteMatchListItem(event.matchListItem.id));
+  onMatchListItemDelete(event: MatchList) {
+    if (event.matchListItem) {
+      this.store.dispatch(new DeleteMatchListItem(event.matchListItem.id));
+    }
   }
 
-  onAssignMatchListItem(event) {
+  onAssignMatchListItem(event: MatchListItem) {
     this.store.dispatch(new AssignToMatchList(event));
   }
 
-  onMatchListItemMove(event) {
+  onMatchListItemMove(event: MatchListItem) {
     this.store.dispatch(new MoveMatchListItem(event));
   }
 

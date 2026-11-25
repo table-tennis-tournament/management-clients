@@ -98,7 +98,10 @@ describe('the callerState reducer', () => {
   });
 
   describe('the selected Second or Third call', () => {
-    const repeatCall = (matchId: number, callNumber: number) => ({ callNumber, matches: [{ id: matchId }] });
+    const repeatCall = (matchId: number, callNumber: number) => ({
+      callNumber,
+      matches: [{ id: matchId, team1: [], team2: [] }],
+    });
 
     it('selects the first waiting Second call when the lists load', () => {
       const state = reduceCallerState(

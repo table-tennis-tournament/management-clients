@@ -15,6 +15,8 @@ describe('the match list of the Assign view', () => {
     state,
     isPlayable,
     playGroup: groupId ? { id: groupId, name: 'A' } : undefined,
+    team1: [],
+    team2: [],
   });
   const matches = [
     match(1, 1),

@@ -9,7 +9,7 @@ import { TypeColorDirective } from './type-color.directive';
 })
 class HostComponent {
   typeId = signal<number>(1);
-  colors = signal<TypeColorMap>({ 1: { bgColor: 'rgb(255, 0, 0)', textColor: 'rgb(255, 255, 255)' } });
+  colors = signal<TypeColorMap | null>({ 1: { bgColor: 'rgb(255, 0, 0)', textColor: 'rgb(255, 255, 255)' } });
 }
 
 describe('the type color directive', () => {

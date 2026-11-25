@@ -70,7 +70,7 @@ describe('the table effects', () => {
   const assign2ndTablePayload = { tableNr: 1, matchIds: [4, 5] };
 
   const resultForMatchPayload: TTMatchResult = {
-    match: { id: 4 },
+    match: { id: 4, team1: [], team2: [] },
     result: [],
   };
 

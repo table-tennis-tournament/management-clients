@@ -39,7 +39,7 @@ export class SelectTableModalComponent {
   dialogRef = inject<MatDialogRef<SelectTableModalComponent>>(MatDialogRef);
   data = inject(MAT_DIALOG_DATA);
 
-  public selectedTable: number;
+  public selectedTable?: number;
 
   public OnTableSelected: EventEmitter<number> = new EventEmitter<number>();
 

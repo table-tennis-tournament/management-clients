@@ -20,8 +20,8 @@ export class SingleItemComponent {
   constructor() {}
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
-  @Input()
-  currentMatch: Match;
+  @Input({ required: true })
+  currentMatch!: Match;
 }

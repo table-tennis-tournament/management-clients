@@ -33,14 +33,14 @@ import {
   ],
 })
 export class TtTableComponent {
-  @Input()
-  table: TableDto;
+  @Input({ required: true })
+  table!: TableDto;
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Input()
-  shortNames: ShortNameMap;
+  shortNames: ShortNameMap = {};
 
   @Output()
   resultForMatch = new EventEmitter<any>();

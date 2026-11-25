@@ -8,6 +8,8 @@ describe('the match on a table card', () => {
   let item: TtTableMatchItemComponent;
   const started: Match = {
     id: 1,
+    team1: [],
+    team2: [],
     state: 'Started',
     startTime: '2026-11-22T10:05:00+01:00',
     sets: [
@@ -25,7 +27,7 @@ describe('the match on a table card', () => {
 
   it('shows the points of each Set of the current result', () => {
     expect(item.setPoints(started)).toBe('11:5 9:11');
-    expect(item.setPoints({ id: 2 })).toBe('');
+    expect(item.setPoints({})).toBe('');
   });
 
   it('shows the whole minutes since the start, in the offset the backend sends', () => {

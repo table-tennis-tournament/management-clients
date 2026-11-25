@@ -6,7 +6,7 @@ import { TypeColorMap } from '../../settings/settings.model';
 import { isOpen } from '../../shared/match-state/match-state';
 import { FormsModule } from '@angular/forms';
 import { MatList } from '@angular/material/list';
-import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { CdkDropList, CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { TypeColorDirective } from '../../shared/directives/type-color.directive';
 import { MatchlistSingleItemComponent } from './matchlist-single-item/matchlist-single-item.component';
 import { MatchlistGroupItemComponent } from './matchlist-group-item/matchlist-group-item.component';
@@ -31,7 +31,7 @@ export class MatchlistViewComponent {
   matchListMatches: MatchList[] = [];
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Output()
   matchListItemDelete = new EventEmitter<MatchList>();
@@ -46,15 +46,19 @@ export class MatchlistViewComponent {
 
   constructor() {}
 
-  onDropSuccess(event) {
+  /** A drop of open matches from the discipline view, or a move of a match list item. */
+  onDropSuccess(event: CdkDragDrop<MatchList[]>) {
     if (this.isMatchData(event.item.data)) {
       this.assignMatchesToMatchList(event.item.data, event.currentIndex);
       return;
     }
 
-    const matchListItem = this.matchListMatches[event.previousIndex];
+    const matchListItem = this.matchListMatches[event.previousIndex]?.matchListItem;
+    if (!matchListItem) {
+      return;
+    }
     this.moveMatchListItem.emit({
-      id: matchListItem.matchListItem.id,
+      id: matchListItem.id,
       position: event.currentIndex,
     });
   }
@@ -65,7 +69,10 @@ export class MatchlistViewComponent {
 
   assignMatchesToMatchList(matches: Match[], index: number) {
     const matchListItem = {
-      matchIds: matches.filter(isOpen).map((match) => match.id),
+      matchIds: matches
+        .filter(isOpen)
+        .map((match) => match.id)
+        .filter((id): id is number => id != null),
       position: index,
     };
     this.assignMatchListItem.emit(matchListItem);

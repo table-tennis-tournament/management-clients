@@ -16,6 +16,11 @@ import { FormsModule } from '@angular/forms';
 import { DisciplineStageComponent } from './discipline-stage/discipline-stage.component';
 import { DisciplineGroupComponent } from './discipline-group/discipline-group.component';
 
+/** `id < 1` as JavaScript compares it: true for null, false for undefined. */
+function isBelowOne(id: number | null | undefined): boolean {
+  return id === null || (id !== undefined && id < 1);
+}
+
 @Component({
   selector: 'toma-discipline-view',
   templateUrl: './discipline-view.component.html',
@@ -35,16 +40,16 @@ import { DisciplineGroupComponent } from './discipline-group/discipline-group.co
 export class DisciplineViewComponent {
   private disciplineTabService = inject(DisciplineTabService);
 
-  tabs: DisciplineTab[];
-  selectedTab: DisciplineTab;
+  tabs: DisciplineTab[] = [];
+  selectedTab?: DisciplineTab;
 
   showAllMatches = false;
   playersAreOpen = true;
   matchesAreOpen = true;
   stopRefresh = false;
 
-  private _matches: Match[];
-  private _selectedDiscipline: number;
+  private _matches: Match[] = [];
+  private _selectedDiscipline: number | null | undefined;
 
   @Input()
   set matches(value: Match[]) {
@@ -60,12 +65,12 @@ export class DisciplineViewComponent {
   }
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Input()
-  shortNames: ShortNameMap;
+  shortNames: ShortNameMap = {};
 
-  _disciplines: Discipline[];
+  _disciplines: Discipline[] = [];
 
   get disciplines() {
     return this._disciplines;
@@ -75,27 +80,30 @@ export class DisciplineViewComponent {
   set disciplines(value: Discipline[]) {
     this._disciplines = value.filter((discipline) => discipline.active);
     this.tabs = this.disciplineTabService.getTabsForDisciplines(this._disciplines);
-    if (this.selectedDiscipline < 1) {
-      this.selectDiscipline.emit(this.tabs[0].id);
+    const firstId = this.tabs[0]?.id;
+    if (isBelowOne(this.selectedDiscipline) && firstId != null) {
+      this.selectDiscipline.emit(firstId);
     }
   }
 
-  get selectedDiscipline() {
+  get selectedDiscipline(): number | null | undefined {
     return this._selectedDiscipline;
   }
 
+  /** Null until the store has a selection. */
   @Input()
-  set selectedDiscipline(value: number) {
+  set selectedDiscipline(value: number | null) {
     this._selectedDiscipline = value;
-    if (value < 1 && this.disciplines && this.disciplines.length > 0) {
-      this.selectDiscipline.emit(this.disciplines[0].id);
+    const firstId = this.disciplines?.[0]?.id;
+    if (isBelowOne(value) && firstId != null) {
+      this.selectDiscipline.emit(firstId);
       return;
     }
     this.setTabForId(value);
   }
 
   @Input()
-  matchesLoading: boolean;
+  matchesLoading: boolean = false;
 
   @Output()
   resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
@@ -103,24 +111,26 @@ export class DisciplineViewComponent {
   @Output()
   selectDiscipline: EventEmitter<number> = new EventEmitter<number>();
 
-  setTabForId(id: number) {
-    if (id < 1) {
+  /** Before any selection arrives (undefined), the tab shows the matches without a discipline. */
+  setTabForId(id: number | null | undefined) {
+    if (isBelowOne(id)) {
       return;
     }
     this.mergeMatches(id);
     this.removePlayedItems();
   }
 
-  private mergeMatches(id: number) {
+  private mergeMatches(id: number | null | undefined) {
     // the selection may arrive before the matches
-    const matchesOfDiscipline = (this.matches ?? []).filter((match) => match.type.id === id);
+    const matchesOfDiscipline = (this.matches ?? []).filter((match) => match.type?.id === id);
     const createdTab = this.disciplineTabService.getTabForMatches(matchesOfDiscipline);
-    if (this.isBigChange(createdTab)) {
+    const currentTab = this.selectedTab;
+    if (!currentTab || this.isBigChange(currentTab, createdTab)) {
       this.selectedTab = createdTab;
       return;
     }
-    this.mergeStage(this.selectedTab.stages, createdTab.stages);
-    this.mergeGroups(this.selectedTab.groups, createdTab.groups);
+    this.mergeStage(currentTab.stages, createdTab.stages);
+    this.mergeGroups(currentTab.groups, createdTab.groups);
   }
 
   private mergeStage(existingStages: DisciplineStage[], newStages: DisciplineStage[]) {
@@ -143,18 +153,16 @@ export class DisciplineViewComponent {
     }
   }
 
-  private isBigChange(createdTab) {
+  private isBigChange(currentTab: DisciplineTab, createdTab: DisciplineTab) {
     return (
-      createdTab == null ||
-      this.selectedTab == null ||
-      createdTab.id !== this.selectedTab.id ||
-      this.selectedTab.groups.length !== createdTab.groups.length ||
-      this.selectedTab.stages.length !== createdTab.stages.length
+      createdTab.id !== currentTab.id ||
+      currentTab.groups.length !== createdTab.groups.length ||
+      currentTab.stages.length !== createdTab.stages.length
     );
   }
 
   removePlayedItems() {
-    if (this.showAllMatches === false) {
+    if (this.selectedTab && this.showAllMatches === false) {
       this.selectedTab.stages = this.selectedTab.stages.filter((x) => x.isComplete === false);
       this.selectedTab.groups = this.selectedTab.groups.filter((y) => y.isComplete === false);
     }
@@ -169,6 +177,9 @@ export class DisciplineViewComponent {
   }
 
   onDeleteStage(stageToRemove: DisciplineStage) {
+    if (!this.selectedTab) {
+      return;
+    }
     this.selectedTab.stages = this.selectedTab.stages.filter((stage) => stage !== stageToRemove);
   }
 }

@@ -13,8 +13,8 @@ import { DisciplineTypePipe } from '../../../shared/pipes/discipline-type.pipe';
   imports: [TeamItemComponent, DisciplineTypePipe],
 })
 export class MatchlistSingleItemComponent {
-  @Input()
-  matchListItem: MatchList;
+  @Input({ required: true })
+  matchListItem!: MatchList;
 
   @Output()
   matchListItemDelete = new EventEmitter<MatchList>();

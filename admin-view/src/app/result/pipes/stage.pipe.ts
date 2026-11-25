@@ -4,10 +4,10 @@ import { Match } from '../../shared/data/match.model';
 
 @Pipe({ name: 'stage' })
 export class StagePipe implements PipeTransform {
-  transform(value: Match): any {
+  transform(value: Match): string | undefined {
     if (value.matchType) {
       return value.matchType.name;
     }
-    return value.playGroup.name;
+    return value.playGroup?.name;
   }
 }

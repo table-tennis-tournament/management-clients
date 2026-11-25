@@ -33,16 +33,12 @@ export class ResultListPageComponent implements OnInit {
   private store = inject<Store<any>>(Store);
   dialog = inject(MatDialog);
 
-  matches: Observable<Match[]>;
-  matchesLoading: Observable<boolean>;
-  disciplines: Observable<Discipline[]>;
-  disciplinesLoading: Observable<boolean>;
+  matches: Observable<Match[]> = this.store.select(getResultMatchesState);
+  matchesLoading: Observable<boolean> = this.store.select(getResultMatchesLoading);
+  disciplines: Observable<Discipline[]> = this.store.select(getDisciplineState);
+  disciplinesLoading: Observable<boolean> = this.store.select(getDisciplineLoading);
 
   ngOnInit() {
-    this.matches = this.store.select(getResultMatchesState);
-    this.matchesLoading = this.store.select(getResultMatchesLoading);
-    this.disciplines = this.store.select(getDisciplineState);
-    this.disciplinesLoading = this.store.select(getDisciplineLoading);
     this.store.dispatch(new LoadResults({}));
   }
 

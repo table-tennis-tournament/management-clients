@@ -14,16 +14,16 @@ import { TtTableComponent } from './tt-table/tt-table.component';
 })
 export class TableListComponent {
   @Input()
-  tables: TableDto[];
+  tables: TableDto[] = [];
 
   @Input()
-  tablesLoading: boolean;
+  tablesLoading: boolean = false;
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Input()
-  shortNames: ShortNameMap;
+  shortNames: ShortNameMap = {};
 
   @Output()
   lockTable = new EventEmitter<number>();

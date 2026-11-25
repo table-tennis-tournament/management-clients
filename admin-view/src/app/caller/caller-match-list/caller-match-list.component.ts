@@ -14,15 +14,15 @@ import { TypeColorDirective } from '../../shared/directives/type-color.directive
 })
 export class CallerMatchListComponent {
   @Input()
-  matchAggregates: MatchAggregate[];
+  matchAggregates: MatchAggregate[] = [];
 
   constructor() {}
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Input()
-  matchesLoading: boolean;
+  matchesLoading: boolean = false;
 
   @Output()
   matchesSelected: EventEmitter<MatchAggregate> = new EventEmitter<MatchAggregate>();

@@ -53,26 +53,21 @@ import { AsyncPipe } from '@angular/common';
 export class CallerPageComponent implements OnInit {
   private store = inject<Store<any>>(Store);
 
-  selectedItem: Observable<MatchAggregate>;
-  selectedSecondCallItem: Observable<MatchAggregate>;
-  typeColors: Observable<TypeColorMap>;
-  refereesLoading: Observable<boolean>;
-  matchAggregates: Observable<MatchAggregate[]>;
-  secondCalls: Observable<MatchAggregate[]>;
-  thirdCalls: Observable<MatchAggregate[]>;
+  selectedItem: Observable<MatchAggregate | null> = this.store.select(getSelectedMatchAggregateState);
+  selectedSecondCallItem: Observable<MatchAggregate | null> = this.store.select(
+    getSelectedSecondCallMatchAggregateState
+  );
+  typeColors: Observable<TypeColorMap> = this.store.select(getTypeColorsMapState);
+  refereesLoading: Observable<boolean> = this.store.select(getRefereesLoading);
+  matchAggregates: Observable<MatchAggregate[]> = this.store.select(getCallerMatchAggregateState);
+  secondCalls: Observable<MatchAggregate[]> = this.store.select(getSecondCallMatchesState);
+  thirdCalls: Observable<MatchAggregate[]> = this.store.select(getThirdCallMatchesState);
 
   ngOnInit() {
     this.store.dispatch(new LoadCallerMatches());
     this.store.dispatch(new LoadSecondCallMatches());
     this.store.dispatch(new LoadThirdCallMatches());
-    this.typeColors = this.store.select(getTypeColorsMapState);
-    this.refereesLoading = this.store.select(getRefereesLoading);
-    this.matchAggregates = this.store.select(getCallerMatchAggregateState);
-    this.selectedItem = this.store.select(getSelectedMatchAggregateState);
-    this.selectedSecondCallItem = this.store.select(getSelectedSecondCallMatchAggregateState);
     this.matchAggregates.subscribe(this.onMatchesLoaded.bind(this));
-    this.secondCalls = this.store.select(getSecondCallMatchesState);
-    this.thirdCalls = this.store.select(getThirdCallMatchesState);
   }
 
   onMatchesLoaded(aggregates: MatchAggregate[]) {

@@ -12,6 +12,6 @@ export class DisciplineNamePipe implements PipeTransform {
     if (!type) {
       return '';
     }
-    return shortNames?.[type.id] || type.name;
+    return (type.id != null ? shortNames?.[type.id] : undefined) || type.name || '';
   }
 }

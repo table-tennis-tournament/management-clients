@@ -1,3 +1,4 @@
+import { Action } from '@ngrx/store';
 import { Settings, ShortNameMap, TypeColorMap } from '../settings.model';
 import { SettingsActionTypes, SettingsActionUnion } from './settings.actions';
 import { ALWAYS_PRINT_SETTING, AUTOSTART_SETTING, PRINTER_NAME_SETTING } from '../settings.coonstants';
@@ -18,7 +19,9 @@ const initialState: SettingsState = {
   settingsLoading: false,
 };
 
-export function reduceSettingsState(state: SettingsState = initialState, action: SettingsActionUnion) {
+/** Every action reaches the reducer; it handles those of [SettingsActionUnion]. */
+export function reduceSettingsState(state: SettingsState = initialState, incoming: Action): SettingsState {
+  const action = incoming as SettingsActionUnion;
   switch (action.type) {
     case SettingsActionTypes.Load:
       return {

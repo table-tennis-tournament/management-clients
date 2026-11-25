@@ -26,15 +26,16 @@ import { TtPlayerNameReducerPipe } from '../../shared/pipes/tt-player-name-reduc
 })
 export class CallerMatchDetailComponent {
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
+  /** The selected aggregate; nothing is shown without one. */
   @Input()
-  matchAggregate: MatchAggregate;
+  matchAggregate: MatchAggregate | null = null;
 
   @Output()
   matchCalled: EventEmitter<number[]> = new EventEmitter();
 
   onMatchCalled() {
-    this.matchCalled.emit(this.matchAggregate.matches.map((match) => match.id));
+    this.matchCalled.emit((this.matchAggregate?.matches ?? []).map((match) => match.id));
   }
 }
