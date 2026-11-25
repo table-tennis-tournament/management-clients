@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -53,6 +53,7 @@ export function choosePlayersToCall(dialog: MatDialog, match: Match): Observable
   selector: 'app-player-dialog',
   templateUrl: './player-dialog.component.html',
   styleUrls: ['./player-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, MatCheckbox, PlayerNamePipe],
 })
 export class PlayerDialogComponent {

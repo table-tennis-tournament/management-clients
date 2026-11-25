@@ -36,7 +36,9 @@ module.exports = tseslint.config(
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-empty-function": "off",
       "@typescript-eslint/consistent-type-assertions": "off",
-      "@angular-eslint/prefer-inject": "off"
+      "@angular-eslint/prefer-inject": "off",
+      // The Angular 22 migration made these components Eager; moving them to OnPush is a follow-up.
+      "@angular-eslint/prefer-on-push-component-change-detection": "off"
     },
   },
   {
