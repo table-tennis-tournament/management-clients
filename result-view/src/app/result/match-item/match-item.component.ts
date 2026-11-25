@@ -11,7 +11,7 @@ import { Match } from '../data/match';
 export class MatchItemComponent implements OnInit {
   constructor() {}
 
-  @Input() match: Match;
+  @Input({ required: true }) match!: Match;
 
   ngOnInit() {}
 }

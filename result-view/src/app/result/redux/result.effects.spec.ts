@@ -99,11 +99,11 @@ describe('the result effects', () => {
       match: { getMatchesByType, getStandings },
     });
 
-    const [success] = (await emitted(effects.loadMatches$)) as any[];
+    const [success] = (await emitted(effects.loadMatches$)) as ReturnType<typeof ResultActions.loadMatchesSuccess>[];
 
     expect(getMatchesByType.mock.calls).toStrictEqual([[5]]);
     expect(getStandings.mock.calls).toStrictEqual([[5]]);
-    expect(success.groups[0].standings.map((line) => [line.position, line.players])).toEqual([
+    expect(success.groups[0].standings?.map((line) => [line.position, line.players])).toEqual([
       [1, [{ id: 2 }]],
       [2, [{ id: 1 }]],
     ]);
@@ -125,7 +125,7 @@ describe('the result effects', () => {
       match: { getMatchesByType: () => of([group]), getStandings: () => throwError(() => 'down') },
     });
 
-    const [success] = (await emitted(effects.loadMatches$)) as any[];
+    const [success] = (await emitted(effects.loadMatches$)) as ReturnType<typeof ResultActions.loadMatchesSuccess>[];
 
     expect(success.groups.map((g) => [g.name, g.standings])).toEqual([['Gruppe C', []]]);
   });

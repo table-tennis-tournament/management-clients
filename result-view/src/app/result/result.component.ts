@@ -3,7 +3,6 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { DisciplineGroup } from './data/discipline.group';
 import { DisciplineStage } from './data/discipline.stage';
-import { DisciplineTab } from './data/discipline.tab';
 import { Match } from './data/match';
 import { Type } from './data/type';
 import * as ResultActions from './redux/result.actions';
@@ -17,9 +16,6 @@ import { AppState, getGroups, getMatches, getSelectedTypeId, getStages, getTypes
   styleUrls: ['./result.component.scss'],
 })
 export class ResultComponent implements OnInit {
-  public currentTabs: DisciplineTab[];
-  public rowCount: number[];
-  public selectedTab: DisciplineTab;
   private lineStageClass: string[] = ['first-stage-result', 'second-stage-result', 'third-stage-result'];
   private changeTime = 15000;
   private currentIndex = 0;
@@ -45,7 +41,9 @@ export class ResultComponent implements OnInit {
   }
 
   onTabSelected(selectedTab: Type) {
-    this.store.dispatch(ResultActions.selectType({ typeId: selectedTab.id }));
+    if (selectedTab.id != null) {
+      this.store.dispatch(ResultActions.selectType({ typeId: selectedTab.id }));
+    }
   }
 
   onSubscribed() {
@@ -58,7 +56,7 @@ export class ResultComponent implements OnInit {
 
   private startTimer() {}
 
-  trackByTypeId(_index: number, type: Type): number {
+  trackByTypeId(_index: number, type: Type): number | undefined {
     return type.id;
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DisciplineGroup } from '../data/discipline.group';
+import { DisciplineStage } from '../data/discipline.stage';
 import { DisciplineTab } from '../data/discipline.tab';
 import { isOver } from '../../shared/match-state/match-state';
 import { Match } from '../data/match';
@@ -14,7 +15,7 @@ export class DisciplineTabService {
   isMatchActive = true;
   isPlayerActive = true;
 
-  public getTabForMatches(matches: Match[]): DisciplineTab {
+  public getTabForMatches(matches: Match[] | null): DisciplineTab {
     const currentItemTab: DisciplineTab = {
       groups: [],
       stages: [],
@@ -22,35 +23,31 @@ export class DisciplineTabService {
     if (matches == null || matches.length < 1) {
       return currentItemTab;
     }
-    const allStages: number[] = [];
-    let currentIndex = 0;
-    let currentItem: Match = null;
+    // the knockout stages in the order they first appear, by name
+    const stagesByName = new Map<string, DisciplineStage>();
     for (const match of matches) {
-      currentItem = match;
-
-      if (!currentItem.playGroup) {
-        const localIndex = allStages[currentItem.matchType.name];
-        let currentStage = currentItemTab.stages[localIndex];
+      if (!match.playGroup) {
+        const name = match.matchType?.name ?? '';
+        let currentStage = stagesByName.get(name);
         if (!currentStage) {
-          allStages[currentItem.matchType.name] = currentIndex;
-          currentItemTab.stages[currentIndex] = {
-            name: currentItem.matchType.name,
-            isComplete: true,
-            matches: [],
-          };
-          currentStage = currentItemTab.stages[currentIndex];
-          currentIndex++;
+          currentStage = { name, isComplete: true, matches: [] };
+          stagesByName.set(name, currentStage);
+          currentItemTab.stages.push(currentStage);
         }
-        currentStage.isComplete = currentStage.isComplete && this.isMatchComplete(currentItem);
-
-        currentStage.matches.push(currentItem);
+        currentStage.isComplete = currentStage.isComplete && this.isMatchComplete(match);
+        currentStage.matches.push(match);
         continue;
       }
 
-      if (!currentItemTab.groups[currentItem.playGroup.id]) {
-        currentItemTab.groups[currentItem.playGroup.id] = {
-          id: currentItem.playGroup.id,
-          name: 'Gruppe ' + currentItem.playGroup.name,
+      // indexed by group id, so the groups come out sorted by id; a group without an id is not shown
+      const groupId = match.playGroup.id;
+      if (groupId == null) {
+        continue;
+      }
+      if (!currentItemTab.groups[groupId]) {
+        currentItemTab.groups[groupId] = {
+          id: groupId,
+          name: 'Gruppe ' + match.playGroup.name,
           isComplete: true,
           isMatchActive: this.isMatchActive,
           isPlayerActive: this.isPlayerActive,
@@ -58,12 +55,12 @@ export class DisciplineTabService {
           matches: [],
         };
       }
-      const currentGroup = currentItemTab.groups[currentItem.playGroup.id];
-      currentGroup.matches.push(currentItem);
-      currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
+      const currentGroup = currentItemTab.groups[groupId];
+      currentGroup.matches.push(match);
+      currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(match);
 
       // per group, so the matches of several groups may come in any order
-      for (const player of currentItem.team1.concat(currentItem.team2)) {
+      for (const player of match.team1.concat(match.team2)) {
         if (!currentGroup.players.some((known) => known.id === player.id)) {
           currentGroup.players.push(player);
         }
@@ -86,9 +83,10 @@ export class DisciplineTabService {
     return groups.map((group) => {
       const rows = standings.find((s) => s.groupId === group.id)?.rows ?? [];
       const players = this.playersBySide(group.matches);
-      const lines: StandingLine[] = rows
-        .filter((row) => players.has(row.sideId))
-        .map((row) => ({ ...row, players: players.get(row.sideId) }));
+      const lines: StandingLine[] = rows.flatMap((row) => {
+        const sidePlayers = players.get(row.sideId);
+        return sidePlayers ? [{ ...row, players: sidePlayers }] : [];
+      });
       return { ...group, standings: lines };
     });
   }

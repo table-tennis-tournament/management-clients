@@ -4,7 +4,7 @@ import { StandingLine } from './standing';
 
 export class DisciplineGroup {
   id?: number;
-  name: string;
+  name = '';
   players: Player[] = [];
   matches: Match[] = [];
   isPlayerActive = true;

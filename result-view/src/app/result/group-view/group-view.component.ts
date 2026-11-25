@@ -13,10 +13,10 @@ import { StandingLine } from '../data/standing';
 export class GroupViewComponent implements OnInit {
   constructor() {}
 
-  @Input() group: DisciplineGroup;
+  @Input({ required: true }) group!: DisciplineGroup;
 
   /** Keeps the rendered matches across reloads. */
-  trackById(_index: number, match: Match): number {
+  trackById(_index: number, match: Match): number | undefined {
     return match.id;
   }
 

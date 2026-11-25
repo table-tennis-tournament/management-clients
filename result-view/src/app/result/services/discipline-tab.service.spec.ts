@@ -97,7 +97,7 @@ describe('the discipline tab service of the result view', () => {
         [{ groupId: 1, rows: [row(100001, 1), row(100003, 2), row(100002, 3)] }]
       );
 
-      expect(withStandings.standings.map((line) => [line.position, line.players.map((p) => p.id)])).toEqual([
+      expect(withStandings.standings?.map((line) => [line.position, line.players.map((p) => p.id)])).toEqual([
         [1, [1, 2]],
         [2, [5, 6]],
         [3, [3, 4]],
@@ -114,7 +114,7 @@ describe('the discipline tab service of the result view', () => {
 
       const result = service.withStandings(groups, [{ groupId: 1, rows: [row(1, 1), row(9, 2)] }]);
 
-      expect(result.map((g) => [g.name, g.standings.map((line) => line.sideId)])).toEqual([
+      expect(result.map((g) => [g.name, g.standings?.map((line) => line.sideId)])).toEqual([
         ['Gruppe A', [1]],
         ['Gruppe B', []],
       ]);

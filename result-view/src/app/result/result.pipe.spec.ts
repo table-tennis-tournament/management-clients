@@ -15,7 +15,10 @@ const nilThree = [
 
 describe('the result pipe', () => {
   const pipe = new ResultPipe();
-  const results = (match: Match | null) => [pipe.transform(match, true), pipe.transform(match, false)];
+  const results = (match: Pick<Match, 'state' | 'sets'> | null) => [
+    pipe.transform(match, true),
+    pipe.transform(match, false),
+  ];
 
   it('gives the Sets won by each Side', () => {
     expect(results({ state: 'Completed', sets: threeOne })).toStrictEqual([3, 1]);

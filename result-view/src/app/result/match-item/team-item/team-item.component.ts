@@ -8,7 +8,7 @@ import { Player } from '../../data/player';
   templateUrl: './team-item.component.html',
 })
 export class TeamItemComponent implements OnInit {
-  @Input() team: Player[];
+  @Input() team: Player[] = [];
 
   constructor() {}
 
