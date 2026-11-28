@@ -15,7 +15,7 @@ describeRequests(MatchService, [
   {
     call: (s) =>
       s.resultForMatch({
-        match: { id: 7 },
+        match: { id: 7, team1: [], team2: [] },
         result: [
           { pointsPlayer1: 11, pointsPlayer2: 5 },
           { pointsPlayer1: 9, pointsPlayer2: 11 },
@@ -31,7 +31,7 @@ describeRequests(MatchService, [
   {
     call: (s) =>
       s.resultForMatch({
-        match: { id: 7 },
+        match: { id: 7, team1: [], team2: [] },
         result: [
           { pointsPlayer1: 0, pointsPlayer2: 11 },
           { pointsPlayer1: 0, pointsPlayer2: 11 },

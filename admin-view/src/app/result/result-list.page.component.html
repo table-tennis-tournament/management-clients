@@ -1,7 +1,7 @@
 <toma-result-list
-  [matches]="matches | async"
-  [matchesLoading]="matchesLoading | async"
-  [disciplines]="disciplines | async"
+  [matches]="(matches | async) ?? []"
+  [matchesLoading]="(matchesLoading | async) ?? false"
+  [disciplines]="(disciplines | async) ?? []"
   (takeBackMatch)="onTakeBackMatch($event)"
   (resultForMatch)="onResultForMatch($event)"
   (resultCompleteForMatch)="onResultCompleteForMatch($event)"

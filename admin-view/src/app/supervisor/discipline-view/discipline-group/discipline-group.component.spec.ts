@@ -2,10 +2,25 @@ import { Match } from '../../../shared/data/match.model';
 import { DisciplineGroupComponent } from './discipline-group.component';
 
 describe('the discipline group', () => {
-  const match = (id: number, extra: Partial<Match> = {}): Match => ({ id, state: 'Open', isPlayable: true, ...extra });
+  const match = (id: number, extra: Partial<Match> = {}): Match => ({
+    id,
+    state: 'Open',
+    isPlayable: true,
+    team1: [],
+    team2: [],
+    ...extra,
+  });
   const groupOf = (...matches: Match[]) => {
     const component = new DisciplineGroupComponent();
-    component.group = { name: 'Gruppe A', isComplete: matches.every((m) => m.state === 'Completed'), matches };
+    component.group = {
+      name: 'Gruppe A',
+      isComplete: matches.every((m) => m.state === 'Completed'),
+      matches,
+      players: [],
+      tableNumbers: [],
+      isPlayerActive: true,
+      isMatchActive: true,
+    };
     return component;
   };
 

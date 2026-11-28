@@ -46,7 +46,7 @@
       }
     </mat-card-content>
   }
-  @if (scoreboard) {
+  @if (startedMatch && scoreboard) {
     <mat-card-content>
       <div class="row">
         <div class="col-5"></div>
@@ -111,7 +111,7 @@
       </div>
     </mat-card-content>
   }
-  @if (scoreboard) {
+  @if (startedMatch && scoreboard) {
     <mat-card-actions>
       <div class="d-flex justify-content-between w-100">
         <button mat-raised-button color="primary" (click)="openResultDialog()">Erfassen</button>

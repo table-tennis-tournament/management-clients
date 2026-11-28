@@ -34,13 +34,13 @@ export class StartDialogComponent {
   dialogRef = inject<MatDialogRef<StartDialogComponent>>(MatDialogRef);
   matches = inject(MAT_DIALOG_DATA);
 
-  selectedMatch: Match;
+  selectedMatch?: Match;
 
   onCancel() {
     this.dialogRef.close();
   }
 
   onOk() {
-    this.dialogRef.close(this.selectedMatch.match_id);
+    this.dialogRef.close(this.selectedMatch?.match_id);
   }
 }

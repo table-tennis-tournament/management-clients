@@ -31,20 +31,21 @@ export class SecondCallMatchDetailComponent {
   private clock = inject(MinuteClock);
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
+  /** The selected aggregate; nothing is shown without one. */
   @Input()
-  matchAggregate: MatchAggregate;
+  matchAggregate: MatchAggregate | null = null;
 
   @Output()
   matchCalled: EventEmitter<number[]> = new EventEmitter();
 
   /** Minutes since the first Call, `null` without one. */
   waitingMinutes(): number | null {
-    return minutesSinceFirstCall(this.matchAggregate, this.clock.now());
+    return this.matchAggregate ? minutesSinceFirstCall(this.matchAggregate, this.clock.now()) : null;
   }
 
   onMatchCalled() {
-    this.matchCalled.emit(this.matchAggregate.matches.map((match) => match.id));
+    this.matchCalled.emit((this.matchAggregate?.matches ?? []).map((match) => match.id));
   }
 }

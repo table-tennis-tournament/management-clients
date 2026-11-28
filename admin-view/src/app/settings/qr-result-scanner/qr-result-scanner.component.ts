@@ -23,11 +23,11 @@ export class QrResultScannerComponent {
   // })
   // scanner: ZXingScannerComponent;
 
-  private hasCameras: boolean;
-  availableDevices: MediaDeviceInfo[];
+  private hasCameras = false;
+  availableDevices: MediaDeviceInfo[] = [];
 
-  private _selectedDevice: string;
-  selectedMediaDevice: MediaDeviceInfo;
+  private _selectedDevice = '';
+  selectedMediaDevice?: MediaDeviceInfo;
 
   set selectedDevice(value: string) {
     this._selectedDevice = value;
@@ -38,7 +38,7 @@ export class QrResultScannerComponent {
     return this._selectedDevice;
   }
 
-  handleQrCodeResult(result) {
+  handleQrCodeResult(result: string) {
     if (+result > 0) {
       this.store.dispatch(
         new FreeTable({
@@ -50,7 +50,7 @@ export class QrResultScannerComponent {
     console.log(result);
   }
 
-  onDeviceSelectChange(selectedDevice) {
+  onDeviceSelectChange(selectedDevice: unknown) {
     console.log(selectedDevice);
   }
 }

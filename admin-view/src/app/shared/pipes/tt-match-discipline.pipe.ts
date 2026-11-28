@@ -4,7 +4,7 @@ import { Match } from '../data/match.model';
 
 @Pipe({ name: 'ttMatchDiscipline' })
 export class TtMatchDisciplinePipe implements PipeTransform {
-  transform(match: Match): any {
-    return match.type.name + ' ' + match.matchType.name;
+  transform(match: Match): string {
+    return [match.type?.name, match.matchType?.name].filter((name) => name != null).join(' ');
   }
 }

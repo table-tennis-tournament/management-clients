@@ -11,7 +11,7 @@
   </div>
 
   <div class="row ml-1" *ngIf="(stages$ | async)?.length">
-    <app-bracket-view [stages]="stages$ | async"></app-bracket-view>
+    <app-bracket-view [stages]="(stages$ | async) ?? []"></app-bracket-view>
     <!--    <div *ngFor="let currentStage of stages$ | async" class="col-3">-->
     <!--      <app-stage-view [stage]="currentStage"></app-stage-view>-->
     <!--    </div>-->

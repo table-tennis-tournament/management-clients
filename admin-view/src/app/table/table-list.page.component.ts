@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
@@ -56,7 +56,7 @@ import { AsyncPipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TableListComponent, MatFabButton, MatIcon, AsyncPipe],
 })
-export class TableListPageComponent implements OnInit {
+export class TableListPageComponent {
   private store = inject<Store<any>>(Store);
   private tableService = inject(TableService);
   private notifications = inject(NotificationService);
@@ -66,17 +66,10 @@ export class TableListPageComponent implements OnInit {
   @Input()
   kampflosEntry = false;
 
-  tables: Observable<TableDto[]>;
-  tablesLoading: Observable<boolean>;
-  typeColors: Observable<TypeColorMap>;
-  shortNames: Observable<ShortNameMap>;
-
-  ngOnInit() {
-    this.tables = this.store.select(getTableState);
-    this.tablesLoading = this.store.select(getTablesLoading);
-    this.typeColors = this.store.select(getTypeColorsMapState);
-    this.shortNames = this.store.select(getShortNamesState);
-  }
+  tables: Observable<TableDto[]> = this.store.select(getTableState);
+  tablesLoading: Observable<boolean> = this.store.select(getTablesLoading);
+  typeColors: Observable<TypeColorMap> = this.store.select(getTypeColorsMapState);
+  shortNames: Observable<ShortNameMap> = this.store.select(getShortNamesState);
 
   onLockTable(tableNr: number) {
     this.store.dispatch(new LockTable(tableNr));

@@ -32,9 +32,8 @@ export function tablemanagerUpdates(displayedTables: () => Table[]): UpdateClien
     resync: ['tables'],
     isRelevant: (_target, scope) => {
       const displayedIds = displayedTables()
-        .filter((table) => table.table_id != null)
         .map((table) => table.table_id)
-        .filter((id) => !Number.isNaN(id));
+        .filter((id): id is number => id != null && !Number.isNaN(id));
       return displayedIds.length === 0 || touchesAny(scope.tableIds, displayedIds);
     },
   };

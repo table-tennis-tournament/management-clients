@@ -1,3 +1,4 @@
+import { Action } from '@ngrx/store';
 import { MatchListActionTypes, MatchListActionUnion } from './matchlist.actions';
 import { MatchList } from '../matchlist.model';
 
@@ -13,7 +14,9 @@ const initialState: MatchListState = {
   selectedDiscipline: 0,
 };
 
-export function reduceMatchListState(state: MatchListState = initialState, action: MatchListActionUnion) {
+/** Every action reaches the reducer; it handles those of [MatchListActionUnion]. */
+export function reduceMatchListState(state: MatchListState = initialState, incoming: Action): MatchListState {
+  const action = incoming as MatchListActionUnion;
   switch (action.type) {
     case MatchListActionTypes.Load:
       return {

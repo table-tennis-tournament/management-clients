@@ -6,8 +6,10 @@ export class TypeColorDirective implements OnChanges {
   private el = inject(ElementRef);
   private renderer = inject(Renderer2);
 
-  @Input() tomaTypeColor: number;
-  @Input() typeColors: TypeColorMap;
+  /** The discipline id whose colors to apply; nothing changes without one. */
+  @Input({ required: true }) tomaTypeColor: number | null | undefined;
+  /** Null while the colors are not loaded: the element is left alone. */
+  @Input() typeColors: TypeColorMap | null = {};
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tomaTypeColor'] || changes['typeColors']) {

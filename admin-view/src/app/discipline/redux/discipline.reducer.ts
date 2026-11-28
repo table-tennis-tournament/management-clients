@@ -1,3 +1,4 @@
+import { Action } from '@ngrx/store';
 import { DisciplineActionsUnion, DisciplineActionTypes } from './discipline.actions';
 import { Discipline } from '../discipline.model';
 
@@ -11,7 +12,9 @@ const initialState: DisciplineState = {
   disciplinesLoading: false,
 };
 
-export function reduceDisciplineState(state: DisciplineState = initialState, action: DisciplineActionsUnion) {
+/** Every action reaches the reducer; it handles those of [DisciplineActionsUnion]. */
+export function reduceDisciplineState(state: DisciplineState = initialState, incoming: Action): DisciplineState {
+  const action = incoming as DisciplineActionsUnion;
   switch (action.type) {
     case DisciplineActionTypes.Load:
       return {

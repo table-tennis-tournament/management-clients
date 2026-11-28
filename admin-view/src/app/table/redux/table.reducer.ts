@@ -1,3 +1,4 @@
+import { Action } from '@ngrx/store';
 import { TableDto } from '../tabledto.model';
 import { TableActionsUnion, TableActionTypes } from './table.actions';
 import { TTMatchResult } from '../table-list/result-modal/ttmatch-result.model';
@@ -12,7 +13,9 @@ const initialState: TableState = {
   tablesLoading: false,
 };
 
-export function reduceTableState(state: TableState = initialState, action: TableActionsUnion) {
+/** Every action reaches the reducer; it handles those of [TableActionsUnion]. */
+export function reduceTableState(state: TableState = initialState, incoming: Action): TableState {
+  const action = incoming as TableActionsUnion;
   switch (action.type) {
     case TableActionTypes.Load:
       return {

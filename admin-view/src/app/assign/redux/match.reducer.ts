@@ -1,3 +1,4 @@
+import { Action } from '@ngrx/store';
 import { MatchActionsUnion, MatchActionTypes } from './match.actions';
 
 import { Match } from '../../shared/data/match.model';
@@ -12,7 +13,9 @@ const initialState: MatchesState = {
   matchesLoading: false,
 };
 
-export function reduceMatchState(state: MatchesState = initialState, action: MatchActionsUnion) {
+/** Every action reaches the reducer; it handles those of [MatchActionsUnion]. */
+export function reduceMatchState(state: MatchesState = initialState, incoming: Action): MatchesState {
+  const action = incoming as MatchActionsUnion;
   switch (action.type) {
     case MatchActionTypes.Load:
       return {

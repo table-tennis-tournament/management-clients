@@ -24,7 +24,7 @@ export class TtTableMatchItemComponent {
   private clock = inject(MinuteClock);
 
   @Input()
-  matches: Match[];
+  matches: Match[] = [];
 
   calls(match: Match): number {
     return callNumber(match);
@@ -39,7 +39,7 @@ export class TtTableMatchItemComponent {
   }
 
   /** The points of each Set entered so far, e.g. `11:5 9:11`. */
-  setPoints(match: Match): string {
+  setPoints(match: Pick<Match, 'sets'>): string {
     return (match.sets ?? []).map((set) => `${set.pointsPlayer1}:${set.pointsPlayer2}`).join(' ');
   }
 

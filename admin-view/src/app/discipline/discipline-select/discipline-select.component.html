@@ -1,7 +1,7 @@
 <div class="ps-2 d-flex gap-2">
   <mat-form-field appearance="fill" class="flex-grow-1">
     <mat-label>Konkurrenz</mat-label>
-    <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(+selectedDiscipline)">
+    <mat-select [(value)]="selectedDiscipline" (selectionChange)="disciplineChanged.emit(selectedNumber())">
       @for (currentDiscipline of openDisciplines; track currentDiscipline) {
         <mat-option [value]="currentDiscipline.id">
           {{ currentDiscipline.name }}
@@ -9,7 +9,7 @@
       }
     </mat-select>
   </mat-form-field>
-  <button mat-mini-fab color="primary" (click)="disciplineRefresh.emit(+selectedDiscipline)" class="mt-2">
+  <button mat-mini-fab color="primary" (click)="disciplineRefresh.emit(selectedNumber())" class="mt-2">
     <mat-icon>refresh</mat-icon>
   </button>
 </div>

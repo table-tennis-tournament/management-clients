@@ -31,11 +31,11 @@ import { AsyncPipe } from '@angular/common';
 export class SettingsPageComponent implements OnInit {
   private store = inject<Store<any>>(Store);
 
-  settings: Observable<Settings[]>;
-  printers: Observable<string[]>;
-  typeColors$: Observable<TypeColorMap>;
-  shortNames$: Observable<ShortNameMap>;
-  types$: Observable<Discipline[]>;
+  settings: Observable<Settings[]> = this.store.select(getSettingsState);
+  printers: Observable<string[]> = this.store.select(getPrintersState);
+  typeColors$: Observable<TypeColorMap> = this.store.select(getTypeColorsMapState);
+  shortNames$: Observable<ShortNameMap> = this.store.select(getShortNamesState);
+  types$: Observable<Discipline[]> = this.store.select(getDisciplineState);
 
   ngOnInit() {
     this.store.dispatch(new LoadSettings());
@@ -43,11 +43,6 @@ export class SettingsPageComponent implements OnInit {
     this.store.dispatch(new LoadTypeColors());
     this.store.dispatch(new LoadShortNames());
     this.store.dispatch(new LoadDiscipline(null));
-    this.settings = this.store.select(getSettingsState);
-    this.printers = this.store.select(getPrintersState);
-    this.typeColors$ = this.store.select(getTypeColorsMapState);
-    this.shortNames$ = this.store.select(getShortNamesState);
-    this.types$ = this.store.select(getDisciplineState);
   }
 
   assignAutomatically(assignAutomatically: boolean) {

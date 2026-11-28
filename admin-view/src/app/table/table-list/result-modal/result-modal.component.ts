@@ -80,7 +80,7 @@ export class ResultModalComponent {
   }
 
   getResult(): TTMatchResult | undefined {
-    if (this.resultNotValid()) {
+    if (this.sets === null || this.resultNotValid()) {
       return undefined;
     }
     return { result: this.sets, match: this.currentMatch, kampflos: this.kampflos };

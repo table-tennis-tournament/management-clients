@@ -6,7 +6,7 @@ import { StageType } from './stagetype.model';
 import { SetScore } from '../result-entry/result-entry';
 
 export interface Match {
-  id?: number;
+  id: number;
   startTime?: string;
   /** The set summary, e.g. `3 : 1`; also bound to the quick-entry input of the result list. */
   result?: any;
@@ -30,8 +30,8 @@ export interface Match {
   secondTableId?: number;
   /** The number of [secondTableId], as players see it. */
   secondTableNumber?: number;
-  team1?: Player[];
-  team2?: Player[];
+  team1: Player[];
+  team2: Player[];
   matchType?: StageType;
   type?: Discipline;
   playGroup?: Group;

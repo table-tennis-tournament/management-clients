@@ -8,7 +8,7 @@ import { DisciplineTabService } from '../services/discipline-tab.service';
 import { MatchService } from '../services/match.service';
 import { TypeService } from '../services/type.service';
 import * as ResultActions from './result.actions';
-import { getSelectedTypeId } from './result.reducer';
+import { AppState, getSelectedTypeId } from './result.reducer';
 
 @Injectable()
 export class ResultEffects {
@@ -82,7 +82,7 @@ export class ResultEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store,
+    private store: Store<AppState>,
     private snackBar: MatSnackBar,
     private matchService: MatchService,
     private tabService: DisciplineTabService,

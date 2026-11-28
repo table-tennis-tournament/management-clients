@@ -2,7 +2,7 @@
   <span class="text-truncate">
     <div class="d-flex justify-content-center">
       @if (!matches[0].playGroup) {
-        <b>{{ matches[0].matchType.name }}</b>
+        <b>{{ matches[0].matchType?.name }}</b>
       }
       @if (matches[0].playGroup) {
         <b>Gruppe {{ matches[0].playGroup.name }}</b>

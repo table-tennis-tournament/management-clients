@@ -31,12 +31,12 @@ export class DisciplineStageComponent {
   constructor() {}
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
-  @Input()
-  stage: DisciplineStage;
+  @Input({ required: true })
+  stage!: DisciplineStage;
 
-  @Input() index: number;
+  @Input({ required: true }) index!: number;
 
   @Output()
   resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();

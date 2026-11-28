@@ -31,11 +31,11 @@ import { DisciplineTypePipe } from '../../../shared/pipes/discipline-type.pipe';
 export class MatchlistGroupComponent {
   constructor() {}
 
-  @Input()
-  matchListItem: MatchList;
+  @Input({ required: true })
+  matchListItem!: MatchList;
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   isBlocked() {
     return this.matchListItem.matchinfo.filter((x) => !x.isPlayable).length > 0;

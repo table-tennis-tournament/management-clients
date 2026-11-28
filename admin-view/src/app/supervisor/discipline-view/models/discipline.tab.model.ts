@@ -4,7 +4,7 @@ import { DisciplineStage } from './discipline.stage.model';
 export interface DisciplineTab {
   id?: number;
   name?: string;
-  groups?: DisciplineGroup[];
-  stages?: DisciplineStage[];
+  groups: DisciplineGroup[];
+  stages: DisciplineStage[];
   isActive?: boolean;
 }

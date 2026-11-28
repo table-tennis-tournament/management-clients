@@ -12,10 +12,10 @@ import { MatList, MatListItem } from '@angular/material/list';
 })
 export class RefereesListComponent {
   @Input()
-  referees: Player[];
+  referees: Player[] = [];
 
   @Input()
-  refereesLoading: boolean;
+  refereesLoading: boolean = false;
 
   constructor() {}
 }

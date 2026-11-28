@@ -1,4 +1,5 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Match } from '../../../shared/data/match.model';
 
 import {
   MAT_DIALOG_DATA,
@@ -35,13 +36,13 @@ import { TtPlayerNameReducerPipe } from '../../../shared/pipes/tt-player-name-re
 })
 export class SelectMatchModalComponent {
   dialogRef = inject<MatDialogRef<SelectMatchModalComponent>>(MatDialogRef);
-  matches = inject(MAT_DIALOG_DATA);
+  matches = inject<Match[]>(MAT_DIALOG_DATA);
 
   currentValues: boolean[] = [];
 
   getSelectedMatches() {
     // ugly solution because [(ngModel)]=match.isPlayable is not working
-    const result = [];
+    const result: Match[] = [];
     this.currentValues.forEach((x, index) => {
       if (x) {
         result.push(this.matches[index]);

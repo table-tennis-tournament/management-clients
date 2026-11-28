@@ -13,11 +13,11 @@ import { MatIcon } from '@angular/material/icon';
   imports: [MatFormField, MatLabel, MatSelect, MatOption, MatMiniFabButton, MatIcon],
 })
 export class DisciplineSelectComponent {
-  selectedDiscipline: number;
-  openDisciplines: Discipline[];
+  selectedDiscipline?: number;
+  openDisciplines: Discipline[] = [];
 
-  _disciplines: Discipline[];
-  private _showWaitingList: boolean;
+  _disciplines: Discipline[] = [];
+  private _showWaitingList = false;
 
   get disciplines(): Discipline[] {
     return this._disciplines;
@@ -50,12 +50,17 @@ export class DisciplineSelectComponent {
 
   constructor() {}
 
+  /** The selection as a number; NaN without one. */
+  selectedNumber(): number {
+    return Number(this.selectedDiscipline);
+  }
+
   private refreshSelectBox() {
     let disciplines = this._disciplines;
     if (!this.showAll && disciplines) {
       disciplines = this.disciplines.filter((discipline) => discipline.active);
     }
-    const result = [];
+    const result: Discipline[] = [];
     if (this.showWaitingList) {
       result.push({
         id: -1,

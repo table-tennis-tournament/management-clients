@@ -35,7 +35,7 @@ export class BracketViewComponent implements OnChanges {
   @Input() stages: DisciplineStage[] = [];
 
   /** Keeps the rendered matches across reloads. */
-  trackByMatch(_index: number, entry: BracketEntry): number {
+  trackByMatch(_index: number, entry: BracketEntry): number | undefined {
     return entry.match.id;
   }
 

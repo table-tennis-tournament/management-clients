@@ -1,3 +1,4 @@
+import { Action } from '@ngrx/store';
 import { CallerActionTypes, CallerActionUnion } from './caller.actions';
 import { Player } from '../../shared/data/player.model';
 import { MatchAggregate } from '../../shared/data/match.aggregate';
@@ -6,8 +7,8 @@ export interface CallerState {
   referees: Player[];
   refereesLoading: boolean;
   callerMatches: MatchAggregate[];
-  selectedMatchAggregate: MatchAggregate;
-  selectedSecondCallMatchAggregate: MatchAggregate;
+  selectedMatchAggregate: MatchAggregate | null;
+  selectedSecondCallMatchAggregate: MatchAggregate | null;
   secondCallMatches: MatchAggregate[];
   thirdCallMatches: MatchAggregate[];
 }
@@ -22,7 +23,9 @@ const initialState: CallerState = {
   thirdCallMatches: [],
 };
 
-export function reduceCallerState(state: CallerState = initialState, action: CallerActionUnion) {
+/** Every action reaches the reducer; it handles those of [CallerActionUnion]. */
+export function reduceCallerState(state: CallerState = initialState, incoming: Action): CallerState {
+  const action = incoming as CallerActionUnion;
   switch (action.type) {
     case CallerActionTypes.Load:
       return {

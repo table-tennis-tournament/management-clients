@@ -3,6 +3,7 @@ import { Match } from '../../shared/data/match.model';
 import { DisciplineTab } from './models/discipline.tab.model';
 import { Discipline } from '../../discipline/discipline.model';
 import { DisciplineGroup } from './models/discipline.group.model';
+import { DisciplineStage } from './models/discipline.stage.model';
 import { isOver } from '../../shared/match-state/match-state';
 
 @Injectable({
@@ -13,7 +14,7 @@ export class DisciplineTabService {
   isMatchActive = true;
   isPlayerActive = true;
 
-  public getTabForMatches(matches: Match[]): DisciplineTab {
+  public getTabForMatches(matches: Match[] | null): DisciplineTab {
     const currentItemTab: DisciplineTab = {
       groups: [],
       stages: [],
@@ -21,37 +22,33 @@ export class DisciplineTabService {
     if (matches == null || matches.length < 1) {
       return currentItemTab;
     }
-    currentItemTab.id = matches[0].type.id;
-    const allStages: number[] = [];
-    let currentIndex = 0;
-    let currentItem: Match = null;
-    for (let index = 0; index < matches.length; index++) {
-      currentItem = matches[index];
-      currentItemTab.name = currentItem.type.name;
+    currentItemTab.id = matches[0].type?.id;
+    // the knockout stages in the order they first appear, by name
+    const stagesByName = new Map<string, DisciplineStage>();
+    for (const match of matches) {
+      currentItemTab.name = match.type?.name;
 
-      if (!currentItem.playGroup) {
-        const localIndex = allStages[currentItem.matchType.name];
-        let currentStage = currentItemTab.stages[localIndex];
+      if (!match.playGroup) {
+        const name = match.matchType?.name ?? '';
+        let currentStage = stagesByName.get(name);
         if (!currentStage) {
-          allStages[currentItem.matchType.name] = currentIndex;
-          currentItemTab.stages[currentIndex] = {
-            name: currentItem.matchType.name,
-            isComplete: true,
-            matches: [],
-            id: currentItem.type.id,
-          };
-          currentStage = currentItemTab.stages[currentIndex];
-          currentIndex++;
+          currentStage = { name, isComplete: true, matches: [], id: match.type?.id };
+          stagesByName.set(name, currentStage);
+          currentItemTab.stages.push(currentStage);
         }
-        currentStage.isComplete = currentStage.isComplete && this.isMatchComplete(currentItem);
-
-        currentStage.matches.push(currentItem);
+        currentStage.isComplete = currentStage.isComplete && this.isMatchComplete(match);
+        currentStage.matches.push(match);
         continue;
       }
 
-      if (!currentItemTab.groups[currentItem.playGroup.id]) {
-        currentItemTab.groups[currentItem.playGroup.id] = {
-          name: 'Gruppe ' + currentItem.playGroup.name,
+      // indexed by group id, so the groups come out sorted by id; a group without an id is not shown
+      const groupId = match.playGroup.id;
+      if (groupId == null) {
+        continue;
+      }
+      if (!currentItemTab.groups[groupId]) {
+        currentItemTab.groups[groupId] = {
+          name: 'Gruppe ' + match.playGroup.name,
           tableNumbers: [],
           isComplete: true,
           isMatchActive: this.isMatchActive,
@@ -60,13 +57,13 @@ export class DisciplineTabService {
           matches: [],
         };
       }
-      let currentGroup = currentItemTab.groups[currentItem.playGroup.id];
-      currentGroup.matches.push(currentItem);
-      currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(currentItem);
-      currentGroup = this.addTableNumbers(currentItem, currentGroup);
+      const currentGroup = currentItemTab.groups[groupId];
+      currentGroup.matches.push(match);
+      currentGroup.isComplete = currentGroup.isComplete && this.isMatchComplete(match);
+      this.addTableNumbers(match, currentGroup);
 
       // per group, so the matches of several groups may come in any order
-      for (const player of currentItem.team1.concat(currentItem.team2)) {
+      for (const player of [...(match.team1 ?? []), ...(match.team2 ?? [])]) {
         if (!currentGroup.players.some((known) => known.id === player.id)) {
           currentGroup.players.push(player);
         }
@@ -93,12 +90,11 @@ export class DisciplineTabService {
     });
   }
 
-  private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): DisciplineGroup {
+  private addTableNumbers(currentItem: Match, currentGroup: DisciplineGroup): void {
     // the number people see, not the table id
     if (currentItem.tableNumber && !this.isMatchComplete(currentItem)) {
       currentGroup.tableNumbers.push(currentItem.tableNumber);
     }
-    return currentGroup;
   }
 
   getCleanedGroups(groupsToClean: DisciplineGroup[]) {

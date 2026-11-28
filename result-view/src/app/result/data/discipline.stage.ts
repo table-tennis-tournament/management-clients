@@ -1,7 +1,7 @@
 import { Match } from './match';
 
 export class DisciplineStage {
-  name: string;
+  name = '';
   matches: Match[] = [];
-  isComplete: boolean;
+  isComplete = false;
 }

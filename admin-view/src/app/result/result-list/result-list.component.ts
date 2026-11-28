@@ -57,7 +57,7 @@ import { StagePipe } from '../pipes/stage.pipe';
   ],
 })
 export class ResultListComponent {
-  private _matches: Match[];
+  private _matches: Match[] = [];
   selectedDisciplineId = 0;
 
   displayedColumns: string[] = ['back', 'id', 'player1', 'player2', 'type', 'discipline', 'fastCapture', 'endCapture'];
@@ -78,7 +78,7 @@ export class ResultListComponent {
   }
 
   @Input()
-  disciplines: Discipline[];
+  disciplines: Discipline[] = [];
 
   @Output()
   takeBackMatch: EventEmitter<Match> = new EventEmitter<Match>();
@@ -93,23 +93,23 @@ export class ResultListComponent {
   refreshResultList: EventEmitter<any> = new EventEmitter<any>();
 
   @Input()
-  matchesLoading: boolean;
+  matchesLoading: boolean = false;
 
   selectedMatches: Match[] = [];
 
-  onTypeChanged(disciplineId) {
+  onTypeChanged(disciplineId: number) {
     this.selectedDisciplineId = disciplineId;
     if (disciplineId === 0) {
       this.setSelectedMatchesOnChange(this.matches.filter(this.matchIsReadyForResult));
       return;
     }
     const filteredMatches = this.matches
-      .filter((match) => match.type.id === disciplineId)
+      .filter((match) => match.type?.id === disciplineId)
       .filter(this.matchIsReadyForResult);
     this.setSelectedMatchesOnChange(filteredMatches);
   }
 
-  private setSelectedMatchesOnChange(filteredMatches) {
+  private setSelectedMatchesOnChange(filteredMatches: Match[]) {
     if (filteredMatches.length !== this.selectedMatches.length) {
       this.selectedMatches = filteredMatches;
     }
@@ -127,7 +127,7 @@ export class ResultListComponent {
   }
 
   checkResultAndClose(sets: SetScore[] | null, match: Match) {
-    if (isFinalResult(sets)) {
+    if (sets !== null && isFinalResult(sets)) {
       this.resultCompleteForMatch.emit({ result: sets, match });
       this.enteredSets = [];
       this.enteredWinners = [];

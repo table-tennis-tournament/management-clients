@@ -1,8 +1,8 @@
 <toma-table-list
-  [tables]="tables | async"
-  [tablesLoading]="tablesLoading | async"
-  [typeColors]="typeColors | async"
-  [shortNames]="shortNames | async"
+  [tables]="(tables | async) ?? []"
+  [tablesLoading]="(tablesLoading | async) ?? false"
+  [typeColors]="(typeColors | async) ?? {}"
+  [shortNames]="(shortNames | async) ?? {}"
   (lockTable)="onLockTable($event)"
   (unLockTable)="onUnLockTable($event)"
   (freeTable)="onFreeTable($event)"

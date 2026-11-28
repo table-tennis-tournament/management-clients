@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match } from '../shared/data/match.model';
 import { Store } from '@ngrx/store';
@@ -20,22 +20,14 @@ import { AsyncPipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CdkDropListGroup, DisciplineMatchListComponent, TableListPageComponent, AsyncPipe],
 })
-export class AssignMatchPageComponent implements OnInit {
+export class AssignMatchPageComponent {
   private store = inject<Store<any>>(Store);
 
-  matches: Observable<Match[]>;
-  matchesLoading: Observable<boolean>;
-  matchList: Observable<MatchList[]>;
-  disciplines: Observable<Discipline[]>;
-  typeColors: Observable<TypeColorMap>;
-
-  ngOnInit() {
-    this.matches = this.store.select(getMatchesState);
-    this.matchesLoading = this.store.select(getMatchesLoading);
-    this.matchList = this.store.select(getMatchListState);
-    this.disciplines = this.store.select(getDisciplineState);
-    this.typeColors = this.store.select(getTypeColorsMapState);
-  }
+  matches: Observable<Match[]> = this.store.select(getMatchesState);
+  matchesLoading: Observable<boolean> = this.store.select(getMatchesLoading);
+  matchList: Observable<MatchList[]> = this.store.select(getMatchListState);
+  disciplines: Observable<Discipline[]> = this.store.select(getDisciplineState);
+  typeColors: Observable<TypeColorMap> = this.store.select(getTypeColorsMapState);
 
   onDisciplineRefresh(disciplineId: number) {
     if (disciplineId === -1) {

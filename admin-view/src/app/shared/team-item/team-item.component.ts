@@ -15,15 +15,15 @@ import { TypeColorDirective } from '../directives/type-color.directive';
 export class TeamItemComponent implements OnInit {
   private store = inject<Store<any>>(Store);
 
-  @Input() team: Player[];
+  @Input() team: Player[] = [];
 
-  @Input() showDisciplines: boolean;
+  @Input() showDisciplines: boolean = false;
 
   @Input() showClubs = false;
 
-  @Input() result: string | number;
+  @Input() result?: string | number | null;
 
-  typeColor: string[];
+  typeColor: string[] = [];
 
   typeColors: TypeColorMap = {};
 

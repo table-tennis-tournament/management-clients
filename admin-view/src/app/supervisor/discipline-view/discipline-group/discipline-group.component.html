@@ -23,12 +23,12 @@
     <mat-card-content>
       <mat-expansion-panel [expanded]="showPlayers">
         <mat-expansion-panel-header
-          [tomaTypeColor]="group?.matches[0]?.type.id"
+          [tomaTypeColor]="group?.matches[0]?.type?.id"
           [typeColors]="typeColors"
           collapsedHeight="40px"
           expandedHeight="40px"
         >
-          <mat-panel-title [tomaTypeColor]="group?.matches[0]?.type.id" [typeColors]="typeColors">
+          <mat-panel-title [tomaTypeColor]="group?.matches[0]?.type?.id" [typeColors]="typeColors">
             <mat-icon>perm_identity</mat-icon>
             Spieler
           </mat-panel-title>
@@ -43,12 +43,12 @@
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="showMatches">
         <mat-expansion-panel-header
-          [tomaTypeColor]="group?.matches[0]?.type.id"
+          [tomaTypeColor]="group?.matches[0]?.type?.id"
           [typeColors]="typeColors"
           collapsedHeight="40px"
           expandedHeight="40px"
         >
-          <mat-panel-title [tomaTypeColor]="group?.matches[0]?.type.id" [typeColors]="typeColors">
+          <mat-panel-title [tomaTypeColor]="group?.matches[0]?.type?.id" [typeColors]="typeColors">
             <mat-icon>view_list</mat-icon>
             Spiele
           </mat-panel-title>

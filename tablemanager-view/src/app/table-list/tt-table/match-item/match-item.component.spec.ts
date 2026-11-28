@@ -42,7 +42,7 @@ describe('a match waiting at a table', () => {
 
   it('shows the whole minutes since the first Call', () => {
     expect(item.waitingMinutes()).toBe(12);
-    item.match = { match_id: 8 };
+    item.match = { match_id: 8, players_a: [], players_b: [] };
     expect(item.waitingMinutes()).toBeNull();
   });
 

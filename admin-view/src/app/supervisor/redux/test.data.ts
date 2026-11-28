@@ -1,3 +1,6 @@
+import { MatchList } from '../matchlist.model';
+
+/** A recorded payload in an older shape; the specs only pass it through. */
 export const testData = [
   {
     matchListItem: {
@@ -429,4 +432,4 @@ export const testData = [
       },
     ],
   },
-];
+] as unknown as MatchList[];

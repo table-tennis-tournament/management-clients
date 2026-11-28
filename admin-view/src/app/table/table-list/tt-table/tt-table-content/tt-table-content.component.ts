@@ -16,12 +16,12 @@ import { DisciplineNamePipe } from '../../../../shared/pipes/discipline-name.pip
   imports: [MatCardHeader, MatCardTitle, TtTableMatchItemComponent, CdkDropList, DisciplineNamePipe],
 })
 export class TtTableContentComponent {
-  @Input()
-  table: TableDto;
+  @Input({ required: true })
+  table!: TableDto;
 
   /** The table card has little room: it shows a discipline's short name where it has one. */
   @Input()
-  shortNames: ShortNameMap;
+  shortNames: ShortNameMap = {};
 
   @Output()
   freeTable = new EventEmitter<number>();
@@ -29,7 +29,7 @@ export class TtTableContentComponent {
   @Output()
   assignMatchToTable = new EventEmitter<MatchToTable>();
 
-  private isDropDataValid(event) {
+  private isDropDataValid(event: CdkDragDrop<Match, Match>) {
     return (!this.table.matches || !this.table.matches[0]) && event.item.data;
   }
 

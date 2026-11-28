@@ -10,7 +10,7 @@ export function isOnTwoTables(match: Match): boolean {
 }
 
 /** The matches of [table] that also wait at another table; "Entfernen" takes them off this one. */
-export function matchesOnTwoTables(table: TableDto): Match[] {
+export function matchesOnTwoTables(table: Pick<TableDto, 'matches'>): Match[] {
   return (table?.matches ?? []).filter(isOnTwoTables);
 }
 
@@ -18,7 +18,7 @@ export function matchesOnTwoTables(table: TableDto): Match[] {
  * "2.Tisch": the matches at [table] are one group of at least four players,
  * so its upcoming matches may wait at a second table as well.
  */
-export function canUseSecondTable(table: TableDto): boolean {
+export function canUseSecondTable(table: Pick<TableDto, 'matches'>): boolean {
   const matches = table?.matches ?? [];
   if (matches.length < 2 || matches.some(isOnTwoTables)) {
     return false;

@@ -37,19 +37,19 @@ import { ResultPipe } from '../../../shared/pipes/result.pipe';
 export class DisciplineGroupComponent {
   readonly isOpen = isOpen;
   readonly isQueued = isQueued;
-  tableNumbers: any[];
+  tableNumbers: any[] = [];
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Output()
   resultForMatch: EventEmitter<Match> = new EventEmitter<Match>();
 
   @Input()
-  stopRefresh: boolean;
+  stopRefresh: boolean = false;
 
-  _showPlayers: boolean;
-  _showMatches: boolean;
+  _showPlayers = false;
+  _showMatches = false;
 
   @Input()
   set showMatches(value: boolean) {
@@ -79,19 +79,19 @@ export class DisciplineGroupComponent {
     return this._showPlayers;
   }
 
-  _group: DisciplineGroup;
+  _group!: DisciplineGroup;
   get group(): DisciplineGroup {
     return this._group;
   }
 
-  @Input()
+  @Input({ required: true })
   set group(value: DisciplineGroup) {
     this._group = value;
     this.setTables();
   }
 
   setTables() {
-    const numberArray = [];
+    const numberArray: number[] = [];
     this.group.matches.forEach((element) => {
       if (element.tableNumber && numberArray.indexOf(element.tableNumber) < 0) {
         numberArray.push(element.tableNumber);

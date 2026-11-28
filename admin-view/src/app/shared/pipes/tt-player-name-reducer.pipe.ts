@@ -4,7 +4,7 @@ import { Player } from '../data/player.model';
 
 @Pipe({ name: 'ttPlayerNameReducer' })
 export class TtPlayerNameReducerPipe implements PipeTransform {
-  transform(players: Player[]): any {
+  transform(players: Player[] | null | undefined): string {
     if (!players || players.length === 0) {
       return '';
     }

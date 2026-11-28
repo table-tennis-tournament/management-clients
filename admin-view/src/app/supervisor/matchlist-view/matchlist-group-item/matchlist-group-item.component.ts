@@ -17,8 +17,8 @@ import { DisciplineTypePipe } from '../../../shared/pipes/discipline-type.pipe';
   imports: [MatExpansionPanel, MatExpansionPanelHeader, MatList, TeamItemComponent, DisciplineTypePipe],
 })
 export class MatchlistGroupItemComponent {
-  @Input()
-  matchListItem: MatchList;
+  @Input({ required: true })
+  matchListItem!: MatchList;
 
   @Output()
   matchListItemDelete = new EventEmitter<MatchList>();

@@ -11,10 +11,10 @@ import { DisciplineStage } from '../data/discipline.stage';
 export class StageViewComponent implements OnInit {
   constructor() {}
 
-  @Input() stage: DisciplineStage;
+  @Input({ required: true }) stage!: DisciplineStage;
 
   /** Keeps the rendered matches across reloads. */
-  trackById(_index: number, match: Match): number {
+  trackById(_index: number, match: Match): number | undefined {
     return match.id;
   }
 

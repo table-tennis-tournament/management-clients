@@ -22,7 +22,7 @@ export class TableListComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   tables$: Observable<Table[]>;
-  subscription: Subscription;
+  subscription?: Subscription;
 
   constructor() {
     const store = this.store;
@@ -32,7 +32,7 @@ export class TableListComponent implements OnInit {
 
   ngOnInit() {
     this.subscription = this.route.data.subscribe((v) =>
-      this.store.dispatch(TableActions.loadTables({ tableManagerId: v.tableManagerId }))
+      this.store.dispatch(TableActions.loadTables({ tableManagerId: v['tableManagerId'] }))
     );
   }
 
@@ -41,6 +41,9 @@ export class TableListComponent implements OnInit {
   }
 
   onFinishMatch(match: Match) {
+    if (match.match_id == null || !match.result) {
+      return;
+    }
     this.store.dispatch(MatchActions.finishMatch({ matchId: match.match_id, result: match.result }));
   }
 

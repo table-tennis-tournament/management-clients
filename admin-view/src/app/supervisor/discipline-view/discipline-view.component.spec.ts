@@ -25,7 +25,7 @@ describe('the discipline view', () => {
     team2: [{ id: 2 }],
     state,
   });
-  const groupNames = () => view.selectedTab.groups.map((group) => group.name);
+  const groupNames = () => view.selectedTab?.groups.map((group) => group.name);
 
   beforeEach(() => {
     view = TestBed.runInInjectionContext(() => new DisciplineViewComponent());
@@ -66,13 +66,13 @@ describe('the discipline view', () => {
     view.showAllMatches = true;
     view.matches = [match(1, 1, 1), match(2, 1, 2)];
     view.selectedDiscipline = 1;
-    const [first, second] = view.selectedTab.groups;
+    const [first, second] = view.selectedTab?.groups ?? [];
 
     view.matches = [match(1, 1, 1), match(2, 1, 2, 'OnTable')];
 
-    expect(view.selectedTab.groups[0]).toBe(first);
-    expect(view.selectedTab.groups[1]).not.toBe(second);
-    expect(view.selectedTab.groups[1].matches[0].state).toBe('OnTable');
+    expect(view.selectedTab?.groups[0]).toBe(first);
+    expect(view.selectedTab?.groups[1]).not.toBe(second);
+    expect(view.selectedTab?.groups[1]?.matches[0].state).toBe('OnTable');
   });
 
   it('stops following new matches while refreshing is stopped', () => {
@@ -90,9 +90,9 @@ describe('the discipline view', () => {
     view.matches = [ko(1, 'Completed')];
     view.selectedDiscipline = 1;
 
-    view.onDeleteStage(view.selectedTab.stages[0]);
+    view.onDeleteStage(view.selectedTab!.stages[0]);
 
-    expect(view.selectedTab.stages).toEqual([]);
+    expect(view.selectedTab?.stages).toEqual([]);
   });
 
   it('copes with a selected discipline before the matches arrive', () => {

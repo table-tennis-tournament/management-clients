@@ -32,16 +32,13 @@ import { AsyncPipe } from '@angular/common';
 export class PlayerPageComponent implements OnInit {
   private store = inject<Store<any>>(Store);
 
-  players: Observable<PlayerType[]>;
-  playersLoading: Observable<boolean>;
-  disciplines: Observable<Discipline[]>;
+  players: Observable<PlayerType[]> = this.store.select(getAllPlayersState);
+  playersLoading: Observable<boolean> = this.store.select(getPlayersLoading);
+  disciplines: Observable<Discipline[]> = this.store.select(getDisciplineState);
 
   ngOnInit() {
     this.store.dispatch(new LoadPlayers(null));
     this.store.dispatch(new LoadDiscipline(null));
-    this.disciplines = this.store.select(getDisciplineState);
-    this.players = this.store.select(getAllPlayersState);
-    this.playersLoading = this.store.select(getPlayersLoading);
   }
 
   onPlayerChanged(playerType: PlayerType) {

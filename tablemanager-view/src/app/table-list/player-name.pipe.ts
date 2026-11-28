@@ -3,7 +3,7 @@ import { Player } from './match/player.model';
 
 @Pipe({ name: 'playerName' })
 export class PlayerNamePipe implements PipeTransform {
-  transform(value: Player[]): string | undefined {
+  transform(value: Player[] | null | undefined): string | undefined {
     if (value && value.length === 1) {
       return value[0].first_name + ' ' + value[0].last_name;
     }
@@ -14,6 +14,6 @@ export class PlayerNamePipe implements PipeTransform {
   }
 
   private getShortForm(value: Player) {
-    return value.last_name + ' ' + value.first_name.substring(0, 3) + '.';
+    return value.last_name + ' ' + (value.first_name ?? '').substring(0, 3) + '.';
   }
 }

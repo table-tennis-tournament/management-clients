@@ -18,7 +18,7 @@
         <div
           class="mat-list-item border-bottom border-secondary"
           cdkDropList
-          [tomaTypeColor]="currentMatch.type.id"
+          [tomaTypeColor]="currentMatch.type?.id"
           [typeColors]="typeColors"
           [class.disabled-item]="!currentMatch.isPlayable"
         >
@@ -62,7 +62,7 @@
         <div class="queue-item border-bottom border-secondary">
           @if (currentMatch.matchinfo[0].playGroup !== null) {
             <div>
-              <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type.id" [typeColors]="typeColors">
+              <div cdkDropList [tomaTypeColor]="firstMatch(currentMatch).type?.id" [typeColors]="typeColors">
                 @if (currentMatch.matchinfo.length === 1) {
                   <toma-single-item
                     [typeColors]="typeColors"
@@ -94,7 +94,7 @@
                 <div
                   class="mat-list-item border-bottom border-secondary"
                   cdkDropList
-                  [tomaTypeColor]="firstMatch(currentMatch).type.id"
+                  [tomaTypeColor]="firstMatch(currentMatch).type?.id"
                   [typeColors]="typeColors"
                 >
                   <toma-single-item

@@ -12,9 +12,9 @@ import { Match } from './data/match';
   standalone: false,
 })
 export class ResultPipe implements PipeTransform {
-  transform(match: Match | null | undefined, firstPlayer: boolean): number | string {
+  transform(match: Pick<Match, 'state' | 'sets'> | null | undefined, firstPlayer: boolean): number | string {
     const sets = match?.sets;
-    if (!Array.isArray(sets) || sets.length < 1) {
+    if (!match || !Array.isArray(sets) || sets.length < 1) {
       return '';
     }
     if (isWalkover(match)) {

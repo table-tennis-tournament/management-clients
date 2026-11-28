@@ -18,13 +18,13 @@ export class PlayerCallsComponent {
   private clock = inject(MinuteClock);
 
   @Input()
-  secondCalls: MatchAggregate[];
+  secondCalls: MatchAggregate[] = [];
 
   @Input()
-  thirdCalls: MatchAggregate[];
+  thirdCalls: MatchAggregate[] = [];
 
   @Input()
-  typeColors: TypeColorMap;
+  typeColors: TypeColorMap = {};
 
   @Output()
   matchesSelected: EventEmitter<MatchAggregate> = new EventEmitter<MatchAggregate>();

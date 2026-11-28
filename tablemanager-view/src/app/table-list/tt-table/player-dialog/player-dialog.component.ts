@@ -21,7 +21,7 @@ export const LAST_CALL_NUMBER = 3;
 
 /** The players of both Sides of [match]. */
 export function playersOf(match: Match): Player[] {
-  return [...(match.players_a ?? []), ...(match.players_b ?? [])];
+  return [...match.players_a, ...match.players_b];
 }
 
 /** Whether [player] can still be called again: the Third call is the last. */
@@ -42,7 +42,7 @@ export function choosePlayersToCall(dialog: MatDialog, match: Match): Observable
   return dialog
     .open(PlayerDialogComponent, { width: '400px', data: playersOf(match) })
     .afterClosed()
-    .pipe(filter((playerIds: number[] | undefined) => !!playerIds?.length));
+    .pipe(filter((playerIds: number[] | undefined): playerIds is number[] => !!playerIds?.length));
 }
 
 /**
@@ -65,6 +65,9 @@ export class PlayerDialogComponent {
   canBeCalledAgain = canBeCalledAgain;
 
   toggle(player: Player, checked: boolean) {
+    if (player.player_id == null) {
+      return;
+    }
     if (checked) {
       this.missing.add(player.player_id);
     } else {
