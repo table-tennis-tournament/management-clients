@@ -54,3 +54,4 @@ Open:
 Resolved:
 
 - **TypeScript strict mode.** All three clients compile with `strict: true` (TypeScript 6's default). The models say what the backend always sends (`Match.team1`/`team2`, `Match.id`, `TableDto.id`/`number` in admin-view, the players of a Match in the other two), and selections that can be missing say so.
+- **Angular strict mode.** All three clients also use the rest of Angular's strict options: `strictTemplates`, `strictInputAccessModifiers`, `strictInjectionParameters`, `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns` and `noFallthroughCasesInSwitch`.

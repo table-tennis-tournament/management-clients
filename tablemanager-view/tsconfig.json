@@ -12,9 +12,16 @@
     "importHelpers": true,
     "target": "ES2022",
     "typeRoots": ["node_modules/@types"],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "angularCompilerOptions": {
-    "strictInjectionParameters": true
+    "strictInjectionParameters": true,
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   }
 }

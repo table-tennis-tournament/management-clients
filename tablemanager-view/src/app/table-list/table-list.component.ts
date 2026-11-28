@@ -32,7 +32,7 @@ export class TableListComponent implements OnInit {
 
   ngOnInit() {
     this.subscription = this.route.data.subscribe((v) =>
-      this.store.dispatch(TableActions.loadTables({ tableManagerId: v.tableManagerId }))
+      this.store.dispatch(TableActions.loadTables({ tableManagerId: v['tableManagerId'] }))
     );
   }
 
